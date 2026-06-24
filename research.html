@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signals &amp; Sources — a physics investigation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f5f1e8;
+    --card:#fffdf8;
+    --ink:#1b1320;
+    --ink-soft:#574c5f;
+    --line:#e0d8cc;
+    --line-strong:#cdc2b3;
+    --sun:#e3950f;        /* energy */
+    --sun-deep:#b9760a;
+    --tide:#13807a;       /* waves */
+    --tide-deep:#0d5d58;
+    --plum:#1b1320;
+    --good:#13807a;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(27,19,32,.05), 0 10px 30px rgba(27,19,32,.07);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Space Grotesk",system-ui,sans-serif;line-height:1.55;font-size:16.5px;}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+
+  /* ---------- hero ---------- */
+  header{background:var(--plum);color:#f3ece6;position:relative;overflow:hidden;}
+  .wave-band{position:absolute;inset:0;opacity:.55;pointer-events:none;}
+  .wave-band svg{width:100%;height:100%;display:block;}
+  .head-inner{position:relative;max-width:940px;margin:0 auto;padding:34px 22px 30px;}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--sun);margin:0 0 10px;}
+  h1{font-size:clamp(28px,5.4vw,46px);line-height:1.02;font-weight:700;margin:0 0 12px;letter-spacing:-.015em;}
+  h1 .t{color:var(--tide);} h1 .s{color:var(--sun);}
+  .lede{color:#d8cdd6;margin:0;max-width:62ch;font-size:16px;}
+  .lede strong{color:#fff;}
+
+  /* ---------- sticky strip ---------- */
+  .strip{background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;}
+  .strip-inner{max-width:940px;margin:0 auto;padding:11px 22px;display:flex;flex-wrap:wrap;gap:14px;
+    align-items:flex-end;justify-content:space-between;}
+  .fields{display:flex;flex-wrap:wrap;gap:14px;flex:1 1 auto;}
+  .field{display:flex;flex-direction:column;gap:3px;}
+  .field label{font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);}
+  .field input{font-family:"Space Grotesk",sans-serif;font-size:15px;border:1px solid var(--line-strong);
+    border-radius:8px;padding:7px 10px;background:#fffdf8;color:var(--ink);width:150px;}
+  .field input:focus{outline:2px solid var(--tide);outline-offset:1px;border-color:var(--tide);}
+  .timer{display:flex;align-items:center;gap:9px;border:1px solid var(--line-strong);border-radius:10px;
+    padding:6px 10px;background:#fffdf8;}
+  .timer .clock{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:20px;color:var(--tide-deep);
+    min-width:74px;text-align:center;}
+  .timer .clock.low{color:var(--sun-deep);}
+  .timer button{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.07em;text-transform:uppercase;
+    border:1px solid var(--line-strong);background:#fff;color:var(--ink);border-radius:7px;padding:6px 9px;cursor:pointer;}
+  .timer button:hover{border-color:var(--tide);color:var(--tide-deep);}
+
+  main{max-width:940px;margin:0 auto;padding:28px 22px 64px;}
+
+  /* ---------- the spark ---------- */
+  .spark{background:var(--plum);color:#f3ece6;border-radius:var(--radius);padding:24px 26px;margin-bottom:14px;
+    position:relative;overflow:hidden;}
+  .spark .k{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--sun);margin:0 0 8px;}
+  .spark p{margin:0;font-size:18px;line-height:1.5;max-width:60ch;}
+  .spark p .hl{color:var(--tide);font-weight:600;}
+  .spark p .hl2{color:var(--sun);font-weight:600;}
+
+  .howto{font-size:14px;color:var(--ink-soft);margin:0 0 26px;padding:0 4px;}
+  .howto strong{color:var(--ink);}
+
+  .section-title{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);margin:30px 0 12px;display:flex;align-items:center;gap:10px;}
+  .section-title::after{content:"";flex:1;height:1px;background:var(--line);}
+
+  /* ---------- track cards ---------- */
+  .tracks{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .track{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;
+    cursor:pointer;text-align:left;font:inherit;color:inherit;transition:border-color .15s, box-shadow .15s, transform .12s;
+    display:flex;flex-direction:column;gap:8px;}
+  .track:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-2px);}
+  .track:focus-visible{outline:2px solid var(--tide);outline-offset:2px;}
+  .track .role{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;}
+  .track.wave .role{color:var(--tide-deep);} .track.energy .role{color:var(--sun-deep);}
+  .track h3{margin:0;font-size:19px;line-height:1.12;}
+  .track .teaser{margin:0;font-size:14px;color:var(--ink-soft);}
+  .track[aria-pressed="true"]{border-color:var(--tide);box-shadow:0 0 0 2px var(--tide) inset, var(--shadow);}
+  .track.energy[aria-pressed="true"]{border-color:var(--sun);box-shadow:0 0 0 2px var(--sun) inset, var(--shadow);}
+  .pick{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-soft);margin-top:2px;}
+  .track[aria-pressed="true"] .pick{color:var(--tide-deep);font-weight:700;}
+  .track.energy[aria-pressed="true"] .pick{color:var(--sun-deep);}
+
+  /* ---------- brief panel ---------- */
+  .brief{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--tide);
+    border-radius:0 14px 14px 0;padding:20px 22px;margin-top:18px;box-shadow:var(--shadow);display:none;}
+  .brief.energy{border-left-color:var(--sun);}
+  .brief.show{display:block;}
+  .brief h3{margin:0 0 4px;font-size:21px;}
+  .brief .hook{margin:0 0 14px;color:var(--ink-soft);font-style:italic;}
+  .brief .sub{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);margin:14px 0 7px;}
+  .brief ul{margin:0;padding-left:20px;}
+  .brief li{margin-bottom:6px;}
+  .brief .opts{display:flex;flex-wrap:wrap;gap:8px;margin:2px 0 4px;}
+  .brief .opts span{font-size:13px;background:var(--paper);border:1px solid var(--line-strong);border-radius:20px;
+    padding:4px 11px;}
+  .brief .link{background:#f0f6f5;border:1px solid #cfe3e0;border-radius:10px;padding:11px 14px;margin-top:14px;font-size:14px;}
+  .brief.energy .link{background:#fdf4e6;border-color:#f0dcb6;}
+  .brief .link b{color:var(--ink);}
+  .brief .deliver{margin-top:14px;font-size:15px;}
+  .brief .deliver b{color:var(--ink);}
+
+  /* ---------- workspace ---------- */
+  .ws{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+    box-shadow:var(--shadow);margin-top:14px;}
+  .ws .q{margin-top:18px;}
+  .ws .q:first-child{margin-top:0;}
+  .ws label.q-label{display:block;font-weight:600;font-size:15.5px;margin-bottom:7px;}
+  .ws .hint{font-size:13px;color:var(--ink-soft);margin:-2px 0 8px;}
+  .ws input.line,.ws textarea{width:100%;font-family:"Space Grotesk",sans-serif;font-size:15px;color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:9px;padding:10px 12px;background:#fffdf8;resize:vertical;}
+  .ws textarea{min-height:84px;}
+  .ws #piece{min-height:230px;}
+  .ws input.line:focus,.ws textarea:focus{outline:2px solid var(--tide);outline-offset:1px;border-color:var(--tide);}
+  .wc{font-family:"JetBrains Mono",monospace;font-size:10.5px;color:var(--ink-soft);text-align:right;margin-top:3px;}
+  .wc.target{color:var(--good);}
+  .ws-locked{opacity:.45;pointer-events:none;filter:saturate(.4);}
+  .pick-first{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--sun-deep);margin-top:-6px;}
+
+  /* preflight checklist */
+  .check{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px;}
+  .check li{display:flex;gap:10px;align-items:flex-start;font-size:14px;}
+  .check input{width:18px;height:18px;margin-top:2px;accent-color:var(--tide);flex:0 0 auto;}
+
+  /* ---------- submit ---------- */
+  .submit-panel{background:var(--plum);color:#f3ece6;border-radius:var(--radius);padding:26px 22px;text-align:center;margin-top:30px;}
+  .submit-panel h2{margin:0 0 6px;font-size:21px;}
+  .submit-panel p{margin:0 auto 16px;color:#d8cdd6;font-size:14.5px;max-width:54ch;}
+  .submit-panel .buttons{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+  .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:15px;border:none;border-radius:10px;
+    padding:12px 20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+  .btn-primary{background:var(--sun);color:#1b1320;} .btn-primary:hover{background:var(--sun-deep);color:#fff;}
+  .btn-ghost{background:transparent;color:#f3ece6;border:1px solid #4a3f52;} .btn-ghost:hover{border-color:var(--tide);color:#fff;}
+  .save-note{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--tide);margin-top:14px;}
+
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(120%);background:var(--good);
+    color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;box-shadow:var(--shadow);z-index:80;transition:transform .35s ease;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:620px){.tracks{grid-template-columns:1fr;} .field input{width:100%;} .field{flex:1 1 110px;}}
+  @media (prefers-reduced-motion:reduce){.wave-anim{animation:none !important;} html{scroll-behavior:auto;}}
+
+  @media print{
+    body{background:#fff;font-size:12px;} header,.strip{position:static;} .wave-band{display:none;}
+    .timer,.submit-panel .buttons,.save-note,.tracks,.howto,.spark .k{display:none !important;}
+    header,.spark,.submit-panel{background:#fff;color:#000;border:1px solid #999;}
+    .spark p .hl,.spark p .hl2,.lede strong,h1 .t,h1 .s{color:#000;}
+    .lede,.submit-panel p{color:#333;} .brief,.ws{box-shadow:none;border:1px solid #999;break-inside:avoid;}
+    .ws-locked{opacity:1;filter:none;} .wc{display:none;} textarea,input{border:1px solid #999;background:#fff;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wave-band" aria-hidden="true">
+    <svg viewBox="0 0 1440 130" preserveAspectRatio="none">
+      <path class="wave-anim" id="w1" fill="none" stroke="#e3950f" stroke-width="3"/>
+      <path class="wave-anim" id="w2" fill="none" stroke="#13807a" stroke-width="2.5" opacity="0.8"/>
+    </svg>
+  </div>
+  <div class="head-inner">
+    <p class="eyebrow">Physics investigation · Edexcel IGCSE · Energy &amp; Waves</p>
+    <h1>Signals &amp; <span class="s">Sources</span></h1>
+    <p class="lede">You've learned the physics. Now go and use it on something real. Pick an investigation, chase the evidence, and come back in <strong>70 minutes</strong> with something worth sharing — not answers in boxes, but a piece of work that's yours.</p>
+  </div>
+</header>
+
+<div class="strip">
+  <div class="strip-inner">
+    <div class="fields">
+      <div class="field"><label for="sName">Name</label><input id="sName" autocomplete="off"></div>
+      <div class="field"><label for="sClass">Class</label><input id="sClass" autocomplete="off"></div>
+      <div class="field"><label for="sDate">Date</label><input id="sDate" type="date"></div>
+    </div>
+    <div class="timer" role="timer" aria-label="Lesson countdown">
+      <span class="clock mono" id="clock">70:00</span>
+      <button id="tStart" type="button">Start</button>
+      <button id="tReset" type="button">Reset</button>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <section class="spark">
+    <p class="k">// the spark</p>
+    <p>The light reaching your screen left the Sun about eight minutes ago. The <span class="hl2">energy</span> in your breakfast, the wind off the Pembrokeshire coast, even the petrol in a car — almost all of it is sunlight in disguise, delivered across space as a <span class="hl">wave</span>. Energy and waves are the same story told twice. Your job is to go and find a piece of that story in the real world.</p>
+  </section>
+
+  <p class="howto">
+    <strong>How this works:</strong> choose <strong>one</strong> investigation below. Follow the leads using your device — but think like an investigator, not a copy-and-paste machine. Decide which sources you trust. Then write up your findings as the piece your track asks for (aim for 200–250 words). Use the buttons at the bottom to send your work in. There are no "right answers" to fill in — there's a real question to answer well.
+  </p>
+
+  <div class="section-title">Choose your investigation</div>
+
+  <div class="tracks" id="tracks">
+    <button class="track wave" type="button" data-key="C"
+      data-role="Tech investigator"
+      data-hook="Doctors see inside you without a single cut. Ships map the seabed in the dark. The entire internet rides on glass threads under the ocean. All of it is waves doing a job."
+      data-focus="Pick a technology to investigate"
+      data-opts="Ultrasound|Sonar|Radar|Fibre-optic broadband|Infrared night vision|X-ray imaging"
+      data-leads="What type of wave does it use, and which property makes it work — reflection, total internal reflection, frequency, absorption?|Follow the energy: where does the wave's energy come from, and where does it end up?|Find one striking number — a frequency, a speed, a critical angle, a data rate — and explain what it means."
+      data-link="Don't just describe the wave. Say where the <b>energy</b> comes from and where it goes — that's the link back to your Energy topic."
+      data-deliver="an <b>explainer</b> a curious 11-year-old would actually enjoy reading.">
+      <span class="role">Waves to the rescue</span>
+      <h3>How does it <em>see</em> what we can't?</h3>
+      <p class="teaser">Ultrasound, radar, sonar, fibre optics — pick a technology and crack open the wave physics behind it.</p>
+      <span class="pick">Tap to choose →</span>
+    </button>
+
+    <button class="track energy" type="button" data-key="A"
+      data-role="Myth-buster"
+      data-hook="Some scary headlines are completely true. Some are nonsense. Physics is how you tell them apart — and how you reassure someone who's worried."
+      data-focus="Pick a claim to put on trial"
+      data-opts="‘5G masts are dangerous to your health’|‘Solar panels are pointless in cloudy Wales’|‘Microwave ovens cook food from the inside out’|‘Wireless charging wastes loads of energy’"
+      data-leads="What is physically involved — what kind of wave (and is it ionising or non-ionising?) or what energy transfer?|What does the best evidence actually say? Find a reputable source, and find a dodgy one — how can you tell them apart?|Where do people go wrong? Pin down the exact misunderstanding."
+      data-link="Your verdict should name the <b>type of wave</b> involved AND describe the <b>energy</b> transfer — both topics, working together."
+      data-deliver="a <b>verdict</b> — Busted / Confirmed / It's complicated — written so a worried family member would understand it.">
+      <span class="role">Science vs the headlines</span>
+      <h3>True, or total nonsense?</h3>
+      <p class="teaser">Put a real-world claim on trial. Gather the evidence, spot the misinformation, and deliver your verdict.</p>
+      <span class="pick">Tap to choose →</span>
+    </button>
+
+    <button class="track energy" type="button" data-key="B"
+      data-role="Energy advisor"
+      data-hook="Milford Haven is one of Britain's biggest energy ports, and the Celtic Sea off Pembrokeshire is about to fill with floating wind turbines. Someone has to decide what comes next — today, that's you."
+      data-focus="Investigate your local options"
+      data-opts="Offshore / floating wind|Tidal range or tidal stream|Wave power|Solar|Imported gas (LNG)|Hydroelectric"
+      data-leads="Which energy resources actually suit your part of Wales? Find one real, named local example.|Pick two options and weigh them up: how reliable is each, and what's the environmental trade-off?|Find one number that matters — a power output in MW, a share of supply, an efficiency."
+      data-link="Include at least one place where <b>waves</b> matter: solar runs on light (an EM wave), or wave/tidal power, or how an offshore farm sends power and data back to shore."
+      data-deliver="a short <b>recommendation</b> to a decision-maker: which resource(s) should the area back, and why.">
+      <span class="role">Power Pembrokeshire</span>
+      <h3>What should keep the lights on?</h3>
+      <p class="teaser">You're advising on how to power your corner of Wales for the next 30 years. Weigh the real options and make the call.</p>
+      <span class="pick">Tap to choose →</span>
+    </button>
+
+    <button class="track wave" type="button" data-key="D"
+      data-role="Energy detective"
+      data-hook="Pick one ordinary moment. Trace its energy backwards, step by step, and see how far you can get. Spoiler: most roads lead back to the Sun — and sunlight arrives as a wave."
+      data-focus="Pick an everyday moment"
+      data-opts="Toast popping up|A hot shower|Charging your phone|A bus pulling away|The lights coming on"
+      data-leads="Build the chain of energy stores and transfers, step by step, working backwards as far as you can.|Where does the chain ultimately begin? Don't stop at the plug — keep going.|Which step in your chain is actually a wave? (Hint: how does energy cross empty space from the Sun?)"
+      data-link="Name the <b>wave</b> in your chain and the original <b>energy resource</b> it traces back to — that's both topics in one story."
+      data-deliver="the <b>story</b> of that energy's journey, told from this moment all the way back to its source.">
+      <span class="role">Follow the energy</span>
+      <h3>Where did it <em>really</em> come from?</h3>
+      <p class="teaser">Trace one everyday moment's energy back to its origin. How far back can you get before you hit the Sun?</p>
+      <span class="pick">Tap to choose →</span>
+    </button>
+  </div>
+
+  <div class="brief" id="brief" aria-live="polite"></div>
+
+  <div class="section-title">Your workspace</div>
+
+  <div class="ws" id="ws">
+    <p class="pick-first" id="pickFirst">↑ Choose an investigation above to unlock your workspace.</p>
+    <div id="wsInner" class="ws-locked">
+      <div class="q">
+        <label class="q-label" for="focus">My specific focus</label>
+        <div class="hint">Which claim, technology, moment or resource did you pick?</div>
+        <input class="line" id="focus" data-q="Specific focus">
+      </div>
+      <div class="q">
+        <label class="q-label" for="piece" id="pieceLabel">My piece</label>
+        <div class="hint" id="pieceHint">Write up your findings here. Aim for 200–250 words, in your own words.</div>
+        <textarea id="piece" data-q="The piece"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label" for="sources">Sources I used — and one I <em>didn't</em> trust</label>
+        <div class="hint">List where you got your information. Then name one source you decided <em>not</em> to rely on, and say why.</div>
+        <textarea id="sources" data-q="Sources used and rejected" style="min-height:70px;"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label" for="surprise">The most surprising thing I found out</label>
+        <textarea id="surprise" data-q="Most surprising finding" style="min-height:60px;"></textarea>
+      </div>
+      <div class="q">
+        <label class="q-label">Before you send it — can you tick all four?</label>
+        <ul class="check">
+          <li><input type="checkbox" id="ck1"><label for="ck1">I named a type of wave, or a part of the electromagnetic spectrum.</label></li>
+          <li><input type="checkbox" id="ck2"><label for="ck2">I described an energy transfer or an energy store.</label></li>
+          <li><input type="checkbox" id="ck3"><label for="ck3">I used at least one real number, with its unit.</label></li>
+          <li><input type="checkbox" id="ck4"><label for="ck4">I checked a key fact against a second source.</label></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <section class="submit-panel">
+    <h2>Done? Send it in.</h2>
+    <p>Pick whichever method your teacher asked for — your name, class and chosen investigation are included automatically.</p>
+    <div class="buttons">
+      <button class="btn btn-primary" id="btnPdf" type="button">Save / print as PDF</button>
+      <button class="btn btn-ghost" id="btnDownload" type="button">Download my work</button>
+      <button class="btn btn-ghost" id="btnCopy" type="button">Copy my work</button>
+    </div>
+    <p class="save-note" id="saveNote">Your work saves automatically in this browser as you type.</p>
+  </section>
+
+</main>
+
+<div class="toast" id="toast">Done</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- header waveform ---- */
+  function buildWave(amp, midY, phase){
+    var period=200, d="M0,"+midY, total=1640;
+    for(var x=0;x<=total;x+=period/14){ var y=midY-amp*Math.sin((2*Math.PI*x/period)+phase); d+=" L"+x.toFixed(1)+","+y.toFixed(1); }
+    return d;
+  }
+  try{ document.getElementById("w1").setAttribute("d",buildWave(28,65,0));
+       document.getElementById("w2").setAttribute("d",buildWave(18,65,1.5)); }catch(e){}
+  var st=document.createElement("style");
+  st.textContent="@keyframes drift{from{transform:translateX(0)}to{transform:translateX(-200px)}}"+
+    "@media (prefers-reduced-motion:no-preference){.wave-anim{animation:drift 7s linear infinite}#w2{animation-duration:10s}}";
+  document.head.appendChild(st);
+
+  /* ---- references ---- */
+  var meta={sName:document.getElementById("sName"),sClass:document.getElementById("sClass"),sDate:document.getElementById("sDate")};
+  var textEls=[].slice.call(document.querySelectorAll("[data-q]"));
+  var checks=["ck1","ck2","ck3","ck4"].map(function(id){return document.getElementById(id);});
+  var trackChoice={key:null,role:null,title:null};
+  var KEY="edx_signals_sources_v1";
+  var storageOK=true;
+
+  /* ---- track selection ---- */
+  var brief=document.getElementById("brief"), wsInner=document.getElementById("wsInner"), pickFirst=document.getElementById("pickFirst");
+  function renderBrief(btn){
+    var role=btn.dataset.role, title=btn.querySelector(".role").textContent;
+    var isEnergy=btn.classList.contains("energy");
+    brief.className="brief show"+(isEnergy?" energy":"");
+    var opts=btn.dataset.opts.split("|").map(function(o){return "<span>"+o+"</span>";}).join("");
+    var leads=btn.dataset.leads.split("|").map(function(l){return "<li>"+l+"</li>";}).join("");
+    brief.innerHTML=
+      '<h3>'+title+'</h3>'+
+      '<p class="hook">'+btn.dataset.hook+'</p>'+
+      '<p class="sub">'+btn.dataset.focus+'</p>'+
+      '<div class="opts">'+opts+'</div>'+
+      '<p class="sub">Leads to follow</p>'+
+      '<ul>'+leads+'</ul>'+
+      '<div class="link">'+btn.dataset.link+'</div>'+
+      '<p class="deliver">Come back with: <b>'+btn.dataset.deliver+'</b></p>';
+    document.getElementById("pieceLabel").textContent="My "+btn.dataset.deliver.replace(/<[^>]+>/g,"").replace(/\.$/,"").replace(/^a[n]? /,"").replace(/ .*/,"")||"piece";
+    // simpler, safe label:
+    document.getElementById("pieceLabel").textContent="My write-up — "+role.toLowerCase();
+    wsInner.classList.remove("ws-locked");
+    pickFirst.style.display="none";
+    trackChoice={key:btn.dataset.key,role:role,title:title};
+  }
+  document.querySelectorAll(".track").forEach(function(btn){
+    btn.setAttribute("aria-pressed","false");
+    btn.addEventListener("click",function(){
+      document.querySelectorAll(".track").forEach(function(b){b.setAttribute("aria-pressed","false");b.querySelector(".pick").textContent="Tap to choose →";});
+      btn.setAttribute("aria-pressed","true");
+      btn.querySelector(".pick").textContent="✓ Chosen";
+      renderBrief(btn);
+      save();
+      brief.scrollIntoView({behavior:"smooth",block:"nearest"});
+    });
+  });
+
+  /* ---- autosave ---- */
+  function save(){
+    if(!storageOK) return;
+    try{
+      var d={meta:{},text:{},checks:{},track:trackChoice.key};
+      for(var k in meta) d.meta[k]=meta[k].value;
+      textEls.forEach(function(el,i){d.text[i]=el.value;});
+      checks.forEach(function(c,i){d.checks[i]=c.checked;});
+      localStorage.setItem(KEY,JSON.stringify(d));
+    }catch(e){storageOK=false;var n=document.getElementById("saveNote");if(n)n.textContent="Auto-save is off in this browser — remember to save your work before the end.";}
+  }
+  function load(){
+    try{
+      var raw=localStorage.getItem(KEY); if(!raw) return;
+      var d=JSON.parse(raw);
+      if(d.meta) for(var k in meta){ if(d.meta[k]!=null) meta[k].value=d.meta[k]; }
+      if(d.text) textEls.forEach(function(el,i){ if(d.text[i]!=null) el.value=d.text[i]; });
+      if(d.checks) checks.forEach(function(c,i){ if(d.checks[i]!=null) c.checked=d.checks[i]; });
+      if(d.track){ var b=document.querySelector('.track[data-key="'+d.track+'"]'); if(b) b.click(); }
+    }catch(e){storageOK=false;}
+  }
+  load();
+  if(!meta.sDate.value){ try{ meta.sDate.value=new Date().toISOString().slice(0,10); }catch(e){} }
+  document.addEventListener("input",save);
+  document.addEventListener("change",save);
+
+  /* ---- word count with target on the main piece ---- */
+  (function(){
+    var t=document.getElementById("piece");
+    var c=document.createElement("div"); c.className="wc"; t.parentNode.insertBefore(c,t.nextSibling);
+    function upd(){ var w=t.value.trim()?t.value.trim().split(/\s+/).length:0;
+      c.textContent=w+" words"+(w>=200&&w<=270?" · spot on":(w>270?" · trim it a little":" · aim for 200–250"));
+      c.classList.toggle("target",w>=200&&w<=270);}
+    t.addEventListener("input",upd); upd();
+  })();
+
+  /* ---- transcript ---- */
+  function transcript(){
+    var L=[];
+    L.push("SIGNALS & SOURCES — PHYSICS INVESTIGATION (Edexcel IGCSE: Energy & Waves)");
+    L.push("Name: "+(meta.sName.value||"—")+"   Class: "+(meta.sClass.value||"—")+"   Date: "+(meta.sDate.value||"—"));
+    L.push("Investigation: "+(trackChoice.title?trackChoice.title+" ("+trackChoice.role+")":"— not chosen —"));
+    L.push("".padEnd(64,"="));
+    textEls.forEach(function(el){ L.push(""); L.push(el.getAttribute("data-q")+":"); L.push((el.value||"").trim()||"(blank)"); });
+    L.push(""); L.push("Pre-flight check:");
+    var labels=["Named a wave / EM region","Described an energy transfer or store","Used a real number with unit","Checked a fact against a second source"];
+    checks.forEach(function(c,i){ L.push("  ["+(c.checked?"x":" ")+"] "+labels[i]); });
+    return L.join("\n");
+  }
+
+  /* ---- toast ---- */
+  var toast=document.getElementById("toast"),tt;
+  function flash(m){toast.textContent=m;toast.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("show");},2600);}
+
+  function fileName(ext){var n=(meta.sName.value||"student").replace(/[^a-z0-9]+/gi,"-").replace(/^-+|-+$/g,"");return n+"-Signals-and-Sources."+ext;}
+
+  document.getElementById("btnPdf").addEventListener("click",function(){save();window.print();});
+  document.getElementById("btnDownload").addEventListener("click",function(){
+    save();
+    var blob=new Blob([transcript()],{type:"text/plain;charset=utf-8"}),url=URL.createObjectURL(blob);
+    var a=document.createElement("a");a.href=url;a.download=fileName("txt");document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1000);
+    flash("Downloaded — now attach it to your message to your teacher.");
+  });
+  document.getElementById("btnCopy").addEventListener("click",function(){
+    save();var text=transcript();
+    function done(){flash("Copied — paste it into your email or message.");}
+    function fb(){var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done();}catch(e){flash("Couldn't copy automatically — select and copy manually.");}document.body.removeChild(ta);}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(fb);}else{fb();}
+  });
+
+  /* ---- timer ---- */
+  var TOTAL=70*60,remaining=TOTAL,running=false,tick,clock=document.getElementById("clock");
+  function fmt(s){var m=Math.floor(s/60),ss=s%60;return (m<10?"0":"")+m+":"+(ss<10?"0":"")+ss;}
+  function render(){clock.textContent=fmt(remaining);clock.classList.toggle("low",remaining<=300);}
+  function startStop(){var b=document.getElementById("tStart");
+    if(running){running=false;clearInterval(tick);b.textContent="Resume";}
+    else{running=true;b.textContent="Pause";tick=setInterval(function(){if(remaining>0){remaining--;render();}else{running=false;clearInterval(tick);b.textContent="Start";flash("Time's up — save and send your work now.");}},1000);}}
+  document.getElementById("tStart").addEventListener("click",startStop);
+  document.getElementById("tReset").addEventListener("click",function(){running=false;clearInterval(tick);remaining=TOTAL;render();document.getElementById("tStart").textContent="Start";});
+  render();
+
+  window.addEventListener("beforeunload",function(e){var has=textEls.some(function(el){return el.value.trim();});if(has&&!storageOK){e.preventDefault();e.returnValue="";}});
+})();
+</script>
+</body>
+</html>
