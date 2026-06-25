@@ -534,6 +534,12 @@
     var p=fmtPair(value, unc);
     return resultPill((label? label+' ':'')+p.v, p.u, unit);
   }
+  // % uncertainty computed from the *quoted* (rounded) uncertainty, so it always agrees with the value ± uncertainty pill shown alongside it
+  function pctUnc(value, unc){
+    var U=Math.abs(unc);
+    if(value===0 || !(U>0)) return 0;
+    return Math.abs(uncRoundDP(U).uR / value * 100);
+  }
 
   /* ---------- tab switching ---------- */
   var tabs = root.querySelectorAll('.ugt-tab');
@@ -649,7 +655,7 @@
   function calcSingle(){
     var val = num($('ugt-sr-val').value), res = num($('ugt-sr-res').value);
     var unc = singleUnc(res);
-    var pc = val !== 0 ? Math.abs(unc/val*100) : 0;
+    var pc = pctUnc(val, unc);
     $('ugt-sr-note').innerHTML = singleNote();
     $('ugt-sr-out').innerHTML =
       pairPill(val, unc) +
@@ -663,7 +669,7 @@
     var mean = vals.reduce(function(a,b){return a+b;},0)/vals.length;
     var mx = Math.max.apply(null,vals), mn = Math.min.apply(null,vals);
     var range = mx-mn, unc = range/2;
-    var pc = mean!==0 ? Math.abs(unc/mean*100) : 0;
+    var pc = pctUnc(mean, unc);
     $('ugt-rr-out').innerHTML =
       '<div class="ugt-step">n = <b>'+vals.length+'</b> · max '+fmt(mx)+' · min '+fmt(mn)+' · range '+fmt(range)+'</div>'+
       '<div class="ugt-step">mean = <b>'+fmt(mean)+'</b> · uncertainty = range ÷ 2 = '+fmt(range)+' ÷ 2</div>'+
@@ -815,7 +821,7 @@
   function calcSum(){
     var Z=0, absZ=0;
     sumData.forEach(function(r){ Z += r.sign*r.val; absZ += Math.abs(r.unc); });
-    var pc = Z!==0 ? Math.abs(absZ/Z*100) : 0;
+    var pc = pctUnc(Z, absZ);
     $('ugt-s-out').innerHTML =
       '<div class="ugt-step">Z = '+sumData.map(function(r){return (r.sign>0?'+':'−')+fmt(r.val);}).join(' ')+' = <b>'+fmt(Z)+'</b></div>'+
       '<div class="ugt-step">ΔZ = '+sumData.map(function(r){return fmt(r.unc);}).join(' + ')+' = <b>'+fmt(absZ)+'</b></div>'+
@@ -1134,8 +1140,8 @@
     var html='';
     if(boardMode!=='wjec'){
       var be=GL.best, wo=GL.b;
-      var dm=Math.abs(be.m-wo.m), pcm=be.m!==0?Math.abs(dm/be.m*100):0;
-      var dc=Math.abs(be.c-wo.c), pcc=be.c!==0?Math.abs(dc/be.c*100):0;
+      var dm=Math.abs(be.m-wo.m), pcm=pctUnc(be.m, dm);
+      var dc=Math.abs(be.c-wo.c), pcc=pctUnc(be.c, dc);
       html += '<div class="ugt-step">best-fit gradient = <b>'+fmt(be.m,4)+(gunit?(' '+gunit):'')+'</b> · intercept = <b>'+fmt(be.c,4)+(yu?(' '+yu):'')+'</b></div>';
       if(showWorst){
         html += '<div class="ugt-step">worst-line gradient = '+fmt(wo.m,4)+' · intercept = '+fmt(wo.c,4)+'</div>';
@@ -1145,8 +1151,8 @@
       }
     } else {
       var mx=GL.a, mn=GL.b, best=GL.best, ce=centroid();
-      var dm2=Math.abs(mx.m-mn.m)/2, pcm2=best.m!==0?Math.abs(dm2/best.m*100):0;
-      var dc2=Math.abs(mx.c-mn.c)/2, pcc2=best.c!==0?Math.abs(dc2/best.c*100):0;
+      var dm2=Math.abs(mx.m-mn.m)/2, pcm2=pctUnc(best.m, dm2);
+      var dc2=Math.abs(mx.c-mn.c)/2, pcc2=pctUnc(best.c, dc2);
       html += '<div class="ugt-step">centroid (x̄, ȳ) = ('+fmt(ce.x,3)+', '+fmt(ce.y,3)+') — both lines pass through it</div>';
       if(showWorst){
         html += '<div class="ugt-step">m(max) = '+fmt(mx.m,4)+' · m(min) = '+fmt(mn.m,4)+'</div>';
@@ -1216,7 +1222,7 @@
     if(u<=0){ $('ugt-rp-out').innerHTML='<div class="ugt-step">Enter a non-zero uncertainty.</div>'; return; }
     var sf=uSig();
     var r=uncRoundDP(u);
-    var pc=v!==0?Math.abs(r.uR/v*100):0;
+    var pc=pctUnc(v,u);
     $('ugt-rp-out').innerHTML =
       '<div class="ugt-step">Uncertainty to '+(sf===2?'≤2':'1')+' s.f. = <b>'+fixDP(r.uR,r.dp)+'</b> → value quoted to '+r.dp+' d.p.</div>'+
       pairPill(v, u, unit) +
