@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Etymology Explorer - Precision Edition</title>
+    <style>
+        /* Core sizing to prevent squashing in Fasthosts web builders */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 1400px; /* Enforces height in web builder iframes */
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            color: #1a252f;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #6c757d;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Controls: Stats, Search, Filters */
+        .controls-container {
+            width: 100%;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+            margin-bottom: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            border: 1px solid #e9ecef;
+        }
+
+        .stats {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2980b9;
+            padding: 12px 30px;
+            border-radius: 30px;
+            background-color: #ebf5fb;
+            transition: all 0.3s ease;
+        }
+
+        #searchBar {
+            width: 100%;
+            max-width: 600px;
+            padding: 14px 25px;
+            font-size: 1.05rem;
+            border: 2px solid #dee2e6;
+            border-radius: 30px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        #searchBar:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            background-color: #f1f3f5;
+            color: #495057;
+            border: 1px solid #ced4da;
+        }
+
+        button:hover {
+            background-color: #e9ecef;
+        }
+
+        button.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-reveal {
+            background-color: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        .btn-reveal:hover { background-color: #2ecc71; }
+
+        /* Flashcard Grid */
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+            width: 100%;
+            padding-bottom: 50px;
+        }
+
+        /* Card Animation & Layout */
+        .card {
+            background-color: transparent;
+            height: 240px; /* Taller card to fit multiple examples */
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-front {
+            background-color: white;
+            color: #2c3e50;
+            border-bottom: 6px solid #bdc3c7;
+        }
+
+        .card-front h2 {
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            word-wrap: break-word;
+            width: 100%;
+        }
+
+        .card-front .visual {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .card-front .lang-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: #f1f3f5;
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #6c757d;
+        }
+
+        .card-back {
+            background-color: #2c3e50;
+            color: white;
+            transform: rotateY(180deg);
+            border-bottom: 6px solid #1a252f;
+            justify-content: flex-start;
+            padding-top: 25px;
+        }
+
+        .card-back h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.4rem;
+            color: #f1c40f;
+            text-transform: capitalize;
+        }
+        
+        .card-back .origin-text {
+            font-size: 0.9rem;
+            color: #adb5bd;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-back p.subject {
+            margin: 0 0 15px 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .example-container {
+            width: 100%;
+            text-align: left;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        .example-title {
+            font-size: 0.8rem;
+            color: #adb5bd;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .examples {
+            font-style: italic;
+            color: #ecf0f1;
+            font-size: 0.95rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Subject Indicator Colours */
+        .card.biology .card-front { border-bottom-color: #2ecc71; }
+        .card.chemistry .card-front { border-bottom-color: #e74c3c; }
+        .card.physics .card-front { border-bottom-color: #9b59b6; }
+        
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            font-size: 1.3rem;
+            color: #6c757d;
+            background: white;
+            border-radius: 15px;
+            border: 1px dashed #ced4da;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <header>
+        <h1>Scientific Etymology Explorer</h1>
+        <p class="subtitle">Precision verified translations of Ancient Greek and Latin roots used across modern Biology, Chemistry, and Physics.</p>
+    </header>
+
+    <div class="controls-container">
+        <div class="stats" id="stats">Terms Discovered: 0 / 0</div>
+        
+        <input type="text" id="searchBar" placeholder="Search a root, translation, or example (e.g., 'blood', 'Greek', 'haemoglobin')...">
+        
+        <div class="filter-group" id="subjectFilters">
+            <span class="filter-label">Subject:</span>
+            <button class="active" data-filter="all">All Subjects</button>
+            <button data-filter="biology">Biology 🌿</button>
+            <button data-filter="chemistry">Chemistry 🧪</button>
+            <button data-filter="physics">Physics ⚡</button>
+        </div>
+        
+        <div class="filter-group" id="langFilters">
+            <span class="filter-label">Origin:</span>
+            <button class="active" data-filter="all">All Languages</button>
+            <button data-filter="greek">Ancient Greek 🏛️</button>
+            <button data-filter="latin">Latin 🦅</button>
+            <button class="btn-reveal" onclick="revealAllCards()">Reveal All 📖</button>
+        </div>
+    </div>
+
+    <div id="grid"></div>
+</div>
+
+<script>
+    // Precision verified dataset
+    // Format: { root, originalWord, language, meaning, subject, examples, visual }
+    const dictionary = [
+        // BIOLOGY - GREEK
+        { root: "a-, an-", originalWord: "a- / an-", language: "Greek", meaning: "without / lacking", subject: "biology", examples: "Anaerobic, Abiotic, Anarchy", visual: "❌" },
+        { root: "arthro-", originalWord: "arthron", language: "Greek", meaning: "joint", subject: "biology", examples: "Arthropod, Arthritis, Arthroscopy", visual: "🦴" },
+        { root: "bio-", originalWord: "bios", language: "Greek", meaning: "life", subject: "biology", examples: "Biology, Biosphere, Symbiosis", visual: "🌱" },
+        { root: "chloro-", originalWord: "chloros", language: "Greek", meaning: "pale green", subject: "biology", examples: "Chloroplast, Chlorophyll, Chlorine", visual: "🥬" },
+        { root: "cyto-", originalWord: "kytos", language: "Greek", meaning: "hollow vessel / cell", subject: "biology", examples: "Cytoplasm, Erythrocyte, Cytoskeleton", visual: "🦠" },
+        { root: "derma-", originalWord: "derma", language: "Greek", meaning: "skin", subject: "biology", examples: "Epidermis, Dermatology, Pachyderm", visual: "🦏" },
+        { root: "haemo-", originalWord: "haima", language: "Greek", meaning: "blood", subject: "biology", examples: "Haemoglobin, Haemorrhage, Haemophilia", visual: "🩸" },
+        { root: "hetero-", originalWord: "heteros", language: "Greek", meaning: "different / other", subject: "biology", examples: "Heterozygous, Heterotroph, Heterogeneous", visual: "🔀" },
+        { root: "homo-", originalWord: "homos", language: "Greek", meaning: "same / alike", subject: "biology", examples: "Homologous, Homozygous, Homeostasis", visual: "🟰" },
+        { root: "macro-", originalWord: "makros", language: "Greek", meaning: "large / long", subject: "biology", examples: "Macrophage, Macromolecule, Macroevolution", visual: "🐘" },
+        { root: "micro-", originalWord: "mikros", language: "Greek", meaning: "small", subject: "biology", examples: "Microscope, Microorganism, Microbe", visual: "🔬" },
+        { root: "osteo-", originalWord: "osteon", language: "Greek", meaning: "bone", subject: "biology", examples: "Osteoporosis, Osteocyte, Teleost", visual: "🦴" },
+        { root: "phago-", originalWord: "phagein", language: "Greek", meaning: "to eat / devour", subject: "biology", examples: "Phagocytosis, Macrophage, Bacteriophage", visual: "🍽️" },
+        { root: "photo-", originalWord: "phos / photos", language: "Greek", meaning: "light", subject: "biology", examples: "Photosynthesis, Photon, Phototropism", visual: "☀️" },
+        { root: "phyto-", originalWord: "phyton", language: "Greek", meaning: "plant", subject: "biology", examples: "Phytoplankton, Phytohormone, Phytotoxin", visual: "🌿" },
+        { root: "zoo-", originalWord: "zoion", language: "Greek", meaning: "animal", subject: "biology", examples: "Zoology, Zooplankton, Protozoa", visual: "🦓" },
+
+        // BIOLOGY - LATIN
+        { root: "avi-", originalWord: "avis", language: "Latin", meaning: "bird", subject: "biology", examples: "Avian, Aviary, Aviation", visual: "🦅" },
+        { root: "carni-", originalWord: "caro / carnis", language: "Latin", meaning: "flesh / meat", subject: "biology", examples: "Carnivore, Carnal, Reincarnation", visual: "🥩" },
+        { root: "lacto-", originalWord: "lac / lactis", language: "Latin", meaning: "milk", subject: "biology", examples: "Lactose, Lactation, Lactobacillus", visual: "🥛" },
+        { root: "oculo-", originalWord: "oculus", language: "Latin", meaning: "eye", subject: "biology", examples: "Binocular, Ocular, Oculomotor", visual: "👁️" },
+        { root: "pisc-", originalWord: "piscis", language: "Latin", meaning: "fish", subject: "biology", examples: "Piscivore, Pisces, Pisciculture", visual: "🐟" },
+        { root: "vivi-", originalWord: "vivus", language: "Latin", meaning: "alive / living", subject: "biology", examples: "Viviparous, Vivisection, Vivid", visual: "🐣" },
+        
+        // CHEMISTRY - GREEK
+        { root: "chromo-", originalWord: "chroma", language: "Greek", meaning: "colour", subject: "chemistry", examples: "Chromatography, Chromosome, Monochromatic", visual: "🎨" },
+        { root: "halo-", originalWord: "hals / halos", language: "Greek", meaning: "salt", subject: "chemistry", examples: "Halogen, Halite, Halophile", visual: "🧂" },
+        { root: "iso-", originalWord: "isos", language: "Greek", meaning: "equal", subject: "chemistry", examples: "Isotope, Isomer, Isosceles", visual: "⚖️" },
+        { root: "litho-", originalWord: "lithos", language: "Greek", meaning: "stone", subject: "chemistry", examples: "Lithosphere, Lithium, Monolith", visual: "🪨" },
+        { root: "poly-", originalWord: "polus", language: "Greek", meaning: "many", subject: "chemistry", examples: "Polymer, Polyatomic, Polythene", visual: "⛓️" },
+        { root: "pyro-", originalWord: "pur / pyros", language: "Greek", meaning: "fire", subject: "chemistry", examples: "Pyrolysis, Pyrometer, Pyrotechnics", visual: "🔥" },
+        
+        // CHEMISTRY - LATIN
+        { root: "aqua-", originalWord: "aqua", language: "Latin", meaning: "water", subject: "chemistry", examples: "Aqueous, Aquarium, Aquifer", visual: "💧" },
+        { root: "argen-", originalWord: "argentum", language: "Latin", meaning: "silver", subject: "chemistry", examples: "Argent, Argentite, Ag (Symbol)", visual: "🥈" },
+        { root: "aur-", originalWord: "aurum", language: "Latin", meaning: "gold", subject: "chemistry", examples: "Aura, Auric, Au (Symbol)", visual: "🥇" },
+        { root: "calci-", originalWord: "calx / calcis", language: "Latin", meaning: "limestone / chalk", subject: "chemistry", examples: "Calcium, Calcification, Calcareous", visual: "🦴" },
+        { root: "ferro-", originalWord: "ferrum", language: "Latin", meaning: "iron", subject: "chemistry", examples: "Ferromagnetic, Ferrous, Fe (Symbol)", visual: "🧲" },
+        { root: "igni-", originalWord: "ignis", language: "Latin", meaning: "fire", subject: "chemistry", examples: "Ignition, Igneous, Ignite", visual: "🧨" },
+        { root: "plumbo-", originalWord: "plumbum", language: "Latin", meaning: "lead", subject: "chemistry", examples: "Plumbism, Plumber, Pb (Symbol)", visual: "🪠" },
+
+        // PHYSICS - GREEK
+        { root: "baro-", originalWord: "baros", language: "Greek", meaning: "weight / pressure", subject: "physics", examples: "Barometer, Barometric, Isobar", visual: "🏋️" },
+        { root: "chrono-", originalWord: "chronos", language: "Greek", meaning: "time", subject: "physics", examples: "Chronometer, Chronology, Synchronous", visual: "⏱️" },
+        { root: "dyna-", originalWord: "dunamis", language: "Greek", meaning: "power / force", subject: "physics", examples: "Dynamics, Dynamo, Aerodynamics", visual: "💥" },
+        { root: "gyro-", originalWord: "guros", language: "Greek", meaning: "circle / ring / spin", subject: "physics", examples: "Gyroscope, Gyration, Gyre", visual: "🌀" },
+        { root: "kine- / cine-", originalWord: "kinein", language: "Greek", meaning: "to move", subject: "physics", examples: "Kinetic, Kinematics, Cinema", visual: "🏃" },
+        { root: "metr-", originalWord: "metron", language: "Greek", meaning: "measure", subject: "physics", examples: "Kilometre, Thermometer, Geometry", visual: "📏" },
+        { root: "tele-", originalWord: "tele", language: "Greek", meaning: "far off / distance", subject: "physics", examples: "Telescope, Telemetry, Television", visual: "📡" },
+        { root: "thermo-", originalWord: "therme", language: "Greek", meaning: "heat", subject: "physics", examples: "Thermodynamics, Thermometer, Exothermic", visual: "🌡️" },
+
+        // PHYSICS - LATIN
+        { root: "gravi-", originalWord: "gravis", language: "Latin", meaning: "heavy / weighty", subject: "physics", examples: "Gravity, Gravitation, Gravimetry", visual: "🍎" },
+        { root: "lumen- / luc-", originalWord: "lumen / lux", language: "Latin", meaning: "light", subject: "physics", examples: "Luminosity, Translucent, Illumination", visual: "💡" },
+        { root: "radi-", originalWord: "radius", language: "Latin", meaning: "ray / spoke", subject: "physics", examples: "Radiation, Radioactive, Radius", visual: "☢️" },
+        { root: "sono-", originalWord: "sonus", language: "Latin", meaning: "sound", subject: "physics", examples: "Sonar, Supersonic, Resonance", visual: "🔊" },
+        { root: "vect-", originalWord: "vehere / vectus", language: "Latin", meaning: "to carry", subject: "physics", examples: "Vector, Convection, Advection", visual: "➡️" },
+        { root: "veloci-", originalWord: "velox / velocis", language: "Latin", meaning: "swift / speed", subject: "physics", examples: "Velocity, Velocimeter, Velociraptor", visual: "🏎️" }
+    ];
+
+    let discoveredCards = new Set();
+    let currentSubject = 'all';
+    let currentLang = 'all';
+
+    function initFilters() {
+        // Subject Filters
+        document.querySelectorAll('#subjectFilters button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#subjectFilters button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentSubject = e.target.dataset.filter;
+                renderCards();
+            });
+        });
+
+        // Language Filters
+        document.querySelectorAll('#langFilters button[data-filter]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#langFilters button[data-filter]').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentLang = e.target.dataset.filter;
+                renderCards();
+            });
+        });
+        
+        // Search bar
+        document.getElementById('searchBar').addEventListener('input', renderCards);
+    }
+
+    function renderCards() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+        let visibleCount = 0;
+
+        dictionary.forEach((item, index) => {
+            // Check Filters
+            const matchesSubject = currentSubject === 'all' || item.subject === currentSubject;
+            const matchesLang = currentLang === 'all' || item.language.toLowerCase() === currentLang;
+            
+            // Check Search
+            const matchesSearch = 
+                item.root.toLowerCase().includes(searchTerm) || 
+                item.meaning.toLowerCase().includes(searchTerm) ||
+                item.examples.toLowerCase().includes(searchTerm) ||
+                item.language.toLowerCase().includes(searchTerm);
+
+            if (matchesSubject && matchesLang && matchesSearch) {
+                visibleCount++;
+                const card = document.createElement('div');
+                card.className = `card ${item.subject}`;
+                
+                // Set language icon logic
+                const langIcon = item.language === "Greek" ? "🏛️" : "🦅";
+                
+                if (discoveredCards.has(index)) {
+                    card.classList.add('flipped');
+                }
+
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <span class="lang-badge">${langIcon} ${item.language}</span>
+                            <div class="visual">${item.visual}</div>
+                            <h2>${item.root}</h2>
+                        </div>
+                        <div class="card-back">
+                            <h3>${item.meaning}</h3>
+                            <div class="origin-text">From ${item.language}: <em>${item.originalWord}</em></div>
+                            <p class="subject">${item.subject}</p>
+                            <div class="example-container">
+                                <div class="example-title">Examples (UK English)</div>
+                                <p class="examples">${item.examples}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    card.classList.toggle('flipped');
+                    if (card.classList.contains('flipped')) {
+                        discoveredCards.add(index);
+                    } else {
+                        discoveredCards.delete(index); 
+                    }
+                    updateStats();
+                });
+
+                grid.appendChild(card);
+            }
+        });
+
+        if (visibleCount === 0) {
+            grid.innerHTML = `<div class="no-results">No terms found matching your precise criteria. Try adjusting the filters!</div>`;
+        }
+        
+        // Ensure total dictionary count reflects the current database
+        document.getElementById('stats').innerText = `Terms Discovered: ${discoveredCards.size} / ${dictionary.length}`;
+    }
+
+    function updateStats() {
+        const stats = document.getElementById('stats');
+        stats.innerText = `Terms Discovered: ${discoveredCards.size} / ${dictionary.length}`;
+        if (discoveredCards.size === dictionary.length && dictionary.length > 0) {
+            stats.innerText = `🎉 All ${dictionary.length} Terms Discovered! 🎉`;
+            stats.style.backgroundColor = "#27ae60";
+            stats.style.color = "white";
+        } else {
+            stats.style.backgroundColor = "#ebf5fb";
+            stats.style.color = "#2980b9";
+        }
+    }
+
+    function revealAllCards() {
+        dictionary.forEach((_, index) => discoveredCards.add(index));
+        renderCards();
+        updateStats();
+    }
+
+    // Initialize the app on load
+    window.onload = () => {
+        initFilters();
+        renderCards();
+        updateStats();
+    };
+</script>
+
+</body>
+</html>
