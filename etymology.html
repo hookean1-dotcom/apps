@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Etymology Explorer - Expanded Edition</title>
+    <style>
+        /* Core sizing to prevent squashing in Fasthosts web builders */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 1400px; /* Enforces height in web builder iframes */
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            margin-bottom: 10px;
+            color: #1a252f;
+        }
+
+        p.subtitle {
+            font-size: 1.1rem;
+            color: #6c757d;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Controls: Stats, Search, Filters */
+        .controls-container {
+            width: 100%;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+            margin-bottom: 35px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            box-sizing: border-box;
+            border: 1px solid #e9ecef;
+        }
+
+        .stats {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2980b9;
+            padding: 12px 30px;
+            border-radius: 30px;
+            background-color: #ebf5fb;
+            transition: all 0.3s ease;
+        }
+
+        #searchBar {
+            width: 100%;
+            max-width: 600px;
+            padding: 14px 25px;
+            font-size: 1.05rem;
+            border: 2px solid #dee2e6;
+            border-radius: 30px;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        #searchBar:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            margin-right: 5px;
+        }
+
+        button {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            background-color: #f1f3f5;
+            color: #495057;
+            border: 1px solid #ced4da;
+        }
+
+        button:hover {
+            background-color: #e9ecef;
+        }
+
+        button.active {
+            background-color: #3498db;
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-reveal {
+            background-color: #27ae60;
+            color: white;
+            border-color: #27ae60;
+        }
+        .btn-reveal:hover { background-color: #2ecc71; }
+
+        /* Flashcard Grid */
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+            width: 100%;
+            padding-bottom: 50px;
+        }
+
+        /* Card Animation & Layout */
+        .card {
+            background-color: transparent;
+            height: 240px; /* Taller card to fit multiple examples */
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-front {
+            background-color: white;
+            color: #2c3e50;
+            border-bottom: 6px solid #bdc3c7;
+        }
+
+        .card-front h2 {
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            word-wrap: break-word;
+            width: 100%;
+        }
+
+        .card-front .visual {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .card-front .lang-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            background: #f1f3f5;
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #6c757d;
+        }
+
+        .card-back {
+            background-color: #2c3e50;
+            color: white;
+            transform: rotateY(180deg);
+            border-bottom: 6px solid #1a252f;
+            justify-content: flex-start;
+            padding-top: 25px;
+        }
+
+        .card-back h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.4rem;
+            color: #f1c40f;
+            text-transform: capitalize;
+        }
+        
+        .card-back .origin-text {
+            font-size: 0.9rem;
+            color: #adb5bd;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .card-back p.subject {
+            margin: 0 0 15px 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+        }
+
+        .example-container {
+            width: 100%;
+            text-align: left;
+            background: rgba(255,255,255,0.05);
+            padding: 10px 15px;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        
+        .example-title {
+            font-size: 0.8rem;
+            color: #adb5bd;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .examples {
+            font-style: italic;
+            color: #ecf0f1;
+            font-size: 0.95rem;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        /* Subject Indicator Colours */
+        .card.biology .card-front { border-bottom-color: #2ecc71; }
+        .card.chemistry .card-front { border-bottom-color: #e74c3c; }
+        .card.physics .card-front { border-bottom-color: #9b59b6; }
+        
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            font-size: 1.3rem;
+            color: #6c757d;
+            background: white;
+            border-radius: 15px;
+            border: 1px dashed #ced4da;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <header>
+        <h1>Scientific Etymology Explorer</h1>
+        <p class="subtitle">Expanded flashcards of Greek and Latin roots used across Biology, Chemistry, Physics, and related science vocabulary — now with extra scientific examples.</p>
+    </header>
+
+    <div class="controls-container">
+        <div class="stats" id="stats">Terms Discovered: 0 / 0</div>
+        
+        <input type="text" id="searchBar" placeholder="Search a root, translation, or example (e.g., 'blood', 'Greek', 'haemoglobin')...">
+        
+        <div class="filter-group" id="subjectFilters">
+            <span class="filter-label">Subject:</span>
+            <button class="active" data-filter="all">All Subjects</button>
+            <button data-filter="biology">Biology 🌿</button>
+            <button data-filter="chemistry">Chemistry 🧪</button>
+            <button data-filter="physics">Physics ⚡</button>
+        </div>
+        
+        <div class="filter-group" id="langFilters">
+            <span class="filter-label">Origin:</span>
+            <button class="active" data-filter="all">All Languages</button>
+            <button data-filter="greek">Ancient Greek 🏛️</button>
+            <button data-filter="latin">Latin 🦅</button>
+            <button class="btn-reveal" onclick="revealAllCards()">Reveal All 📖</button>
+        </div>
+    </div>
+
+    <div id="grid"></div>
+</div>
+
+<script>
+    // Expanded dataset: original Gemini terms plus stems extracted from the uploaded PDF and additional Greek/Latin science roots.
+    // Example words were reordered and, where useful, swapped for related scientific terms.
+    const dictionary = [
+        { root: "a-, an-", originalWord: "a- / an-", language: "Greek", meaning: "without / lacking", subject: "biology", examples: "Abiotic, Anaerobic, Anhydrous", visual: "❌" },
+        { root: "ana-", originalWord: "ana", language: "Greek", meaning: "up / back / again", subject: "biology", examples: "Anabolism, Analysis, Anaphase", visual: "↩️" },
+        { root: "anti-", originalWord: "anti", language: "Greek", meaning: "against / opposite", subject: "biology", examples: "Antiseptic, Antibody, Antigen", visual: "🛡️" },
+        { root: "arthro-", originalWord: "arthron", language: "Greek", meaning: "joint", subject: "biology", examples: "Arthropod, Arthritis, Arthroscopy", visual: "🦴" },
+        { root: "auto-", originalWord: "autos", language: "Greek", meaning: "self", subject: "biology", examples: "Autotroph, Autocatalysis, Automatic", visual: "🤖" },
+        { root: "biblio-", originalWord: "biblion", language: "Greek", meaning: "book", subject: "biology", examples: "Bibliometrics, Bibliography, Bibliographic database", visual: "📚" },
+        { root: "bio-", originalWord: "bios", language: "Greek", meaning: "life", subject: "biology", examples: "Biosphere, Symbiosis, Biodiversity", visual: "🌱" },
+        { root: "cardi- / cardio-", originalWord: "kardia", language: "Greek", meaning: "heart", subject: "biology", examples: "Electrocardiogram, Cardiac, Cardiomyocyte", visual: "❤️" },
+        { root: "chlor- / chloro-", originalWord: "chloros", language: "Greek", meaning: "pale green", subject: "biology", examples: "Chlorophyll, Chloroform, Chloroplast", visual: "🥬" },
+        { root: "cyt- / cyto-", originalWord: "kytos", language: "Greek", meaning: "hollow vessel / cell", subject: "biology", examples: "Erythrocyte, Cytoskeleton, Cytokinesis", visual: "🦠" },
+        { root: "derm- / derma-", originalWord: "derma", language: "Greek", meaning: "skin", subject: "biology", examples: "Dermal, Endoderm, Dermatophyte", visual: "🦏" },
+        { root: "endo-", originalWord: "endon", language: "Greek", meaning: "inside / within", subject: "biology", examples: "Endocytosis, Endothermic, Endoscope", visual: "📥" },
+        { root: "exo-", originalWord: "exo", language: "Greek", meaning: "outside / external", subject: "biology", examples: "Exoplanet, Exoskeleton, Exothermic", visual: "📤" },
+        { root: "gen-", originalWord: "genos / gignesthai", language: "Greek", meaning: "produce / make", subject: "biology", examples: "Biogenesis, Genetic, Gene expression", visual: "🧬" },
+        { root: "haemo- / hemo-", originalWord: "haima", language: "Greek", meaning: "blood", subject: "biology", examples: "Haematology, Haemoglobin, Haemotoxin", visual: "🩸" },
+        { root: "hetero-", originalWord: "heteros", language: "Greek", meaning: "different / other", subject: "biology", examples: "Heterotroph, Heterogeneous, Heterozygous", visual: "🔀" },
+        { root: "homo-", originalWord: "homos", language: "Greek", meaning: "same / alike", subject: "biology", examples: "Homogeneous, Homozygous, Homologous", visual: "🟰" },
+        { root: "hyper-", originalWord: "hyper", language: "Greek", meaning: "above / excessive", subject: "biology", examples: "Hyperglycaemia, Hypertonic, Hyperthermia", visual: "⬆️" },
+        { root: "hypo-", originalWord: "hypo", language: "Greek", meaning: "below / deficient", subject: "biology", examples: "Hypoglycaemia, Hypotonic, Hypodermic", visual: "⬇️" },
+        { root: "leuk- / leuco-", originalWord: "leukos", language: "Greek", meaning: "white", subject: "biology", examples: "Leukocyte, Leukaemia, Leukoplast", visual: "⚪" },
+        { root: "lipo-", originalWord: "lipos", language: "Greek", meaning: "fat", subject: "biology", examples: "Lipoprotein, Phospholipid, Lipase", visual: "🫧" },
+        { root: "macro-", originalWord: "makros", language: "Greek", meaning: "large / long", subject: "biology", examples: "Macromolecule, Macrophage, Macroscopic", visual: "🐘" },
+        { root: "meta-", originalWord: "meta", language: "Greek", meaning: "change / beyond", subject: "biology", examples: "Metabolism, Metamorphic, Metastasis", visual: "🔁" },
+        { root: "micro-", originalWord: "mikros", language: "Greek", meaning: "small", subject: "biology", examples: "Microbiology, Micrometre, Microorganism", visual: "🔬" },
+        { root: "myo-", originalWord: "mys / myos", language: "Greek", meaning: "muscle", subject: "biology", examples: "Myocyte, Myosin, Myopathy", visual: "💪" },
+        { root: "neuro-", originalWord: "neuron", language: "Greek", meaning: "nerve", subject: "biology", examples: "Neurotransmitter, Neurology, Neuron", visual: "🧠" },
+        { root: "osteo-", originalWord: "osteon", language: "Greek", meaning: "bone", subject: "biology", examples: "Osteocyte, Osteopathy, Osteoporosis", visual: "🦴" },
+        { root: "ped- / pod-", originalWord: "pes / pous", language: "Greek", meaning: "foot", subject: "biology", examples: "Tripod, Podiatry, Bipedal", visual: "🦶" },
+        { root: "peri-", originalWord: "peri", language: "Greek", meaning: "around", subject: "biology", examples: "Perimeter, Pericardium, Periscope", visual: "⭕" },
+        { root: "phago-", originalWord: "phagein", language: "Greek", meaning: "to eat / devour", subject: "biology", examples: "Phagocytosis, Macrophage, Bacteriophage", visual: "🍽️" },
+        { root: "phas-", originalWord: "phasis", language: "Greek", meaning: "appearance / stage", subject: "biology", examples: "Metaphase, Interphase, Prophase", visual: "🔬" },
+        { root: "photo-", originalWord: "phos / photos", language: "Greek", meaning: "light", subject: "biology", examples: "Phototropism, Photophosphorylation, Photon", visual: "☀️" },
+        { root: "phyto-", originalWord: "phyton", language: "Greek", meaning: "plant", subject: "biology", examples: "Phytoplankton, Phytohormone, Phytotoxin", visual: "🌿" },
+        { root: "plasm-", originalWord: "plasma", language: "Greek", meaning: "formed substance / shape", subject: "biology", examples: "Plasmolysis, Cytoplasm, Plasma", visual: "🧫" },
+        { root: "steth-", originalWord: "stethos", language: "Greek", meaning: "chest", subject: "biology", examples: "Stethoscope, Stethograph, Stethometry", visual: "🩺" },
+        { root: "tope- / topo-", originalWord: "topos", language: "Greek", meaning: "place", subject: "biology", examples: "Biotope, Isotope, Topography", visual: "📍" },
+        { root: "zoo-", originalWord: "zoion", language: "Greek", meaning: "animal", subject: "biology", examples: "Zoology, Zooplankton, Protozoa", visual: "🦓" },
+        { root: "avi-", originalWord: "avis", language: "Latin", meaning: "bird", subject: "biology", examples: "Avian, Aviary, Aviation", visual: "🦅" },
+        { root: "bi-", originalWord: "bis", language: "Latin", meaning: "two", subject: "biology", examples: "Bivalent, Binary fission, Bipedal", visual: "2️⃣" },
+        { root: "carn- / carni-", originalWord: "caro / carnis", language: "Latin", meaning: "flesh / meat", subject: "biology", examples: "Carnassial, Carnivorous, Carnivore", visual: "🥩" },
+        { root: "cerebro-", originalWord: "cerebrum", language: "Latin", meaning: "brain", subject: "biology", examples: "Cerebrospinal fluid, Cerebral cortex, Cerebrum", visual: "🧠" },
+        { root: "glob-", originalWord: "globus", language: "Latin", meaning: "sphere / ball", subject: "biology", examples: "Globulin, Haemoglobin, Globule", visual: "🔵" },
+        { root: "herb-", originalWord: "herba", language: "Latin", meaning: "green plant", subject: "biology", examples: "Herbivore, Herbal extract, Herbicide", visual: "🌿" },
+        { root: "inter-", originalWord: "inter", language: "Latin", meaning: "between", subject: "biology", examples: "Intercellular, Intermolecular, Interplanetary", visual: "↔️" },
+        { root: "intra-", originalWord: "intra", language: "Latin", meaning: "within", subject: "biology", examples: "Intracellular, Intravascular, Intravenous", visual: "⭕" },
+        { root: "lacto-", originalWord: "lac / lactis", language: "Latin", meaning: "milk", subject: "biology", examples: "Lactose, Lactation, Lactobacillus", visual: "🥛" },
+        { root: "lymph-", originalWord: "lympha", language: "Latin", meaning: "clear water / lymph", subject: "biology", examples: "Lymphoma, Lymphocyte, Lymphatic", visual: "💦" },
+        { root: "multi-", originalWord: "multus", language: "Latin", meaning: "many", subject: "biology", examples: "Multicellular, Multimeter, Multivalent", visual: "🔢" },
+        { root: "oculo-", originalWord: "oculus", language: "Latin", meaning: "eye", subject: "biology", examples: "Binocular, Ocular, Oculomotor", visual: "👁️" },
+        { root: "pisc-", originalWord: "piscis", language: "Latin", meaning: "fish", subject: "biology", examples: "Piscivore, Pisces, Pisciculture", visual: "🐟" },
+        { root: "pulm- / pulmo-", originalWord: "pulmo", language: "Latin", meaning: "lung", subject: "biology", examples: "Pulmonology, Pulmonary, Pulmogram", visual: "🫁" },
+        { root: "sapien-", originalWord: "sapiens", language: "Latin", meaning: "wise", subject: "biology", examples: "Homo sapiens, Sapient, Sapiens lineage", visual: "🧑‍🔬" },
+        { root: "trans-", originalWord: "trans", language: "Latin", meaning: "across / through", subject: "biology", examples: "Translocation, Transverse, Transmembrane", visual: "↪️" },
+        { root: "vas- / vaso-", originalWord: "vas", language: "Latin", meaning: "vessel", subject: "biology", examples: "Vasoconstriction, Cardiovascular, Vascular", visual: "🩸" },
+        { root: "vivi-", originalWord: "vivus", language: "Latin", meaning: "alive / living", subject: "biology", examples: "Viviparous, Vivisection, Vivid", visual: "🐣" },
+        { root: "vore-", originalWord: "vorare", language: "Latin", meaning: "to devour", subject: "biology", examples: "Herbivore, Detritivore, Carnivore", visual: "🍽️" },
+        { root: "chemo-", originalWord: "chemeia", language: "Greek", meaning: "chemical", subject: "chemistry", examples: "Chemoautotroph, Chemosynthesis, Chemoreceptor", visual: "🧪" },
+        { root: "chrom- / chromo-", originalWord: "chroma", language: "Greek", meaning: "colour", subject: "chemistry", examples: "Chromosome, Chromatophore, Chromium", visual: "🎨" },
+        { root: "di-", originalWord: "di", language: "Greek", meaning: "two", subject: "chemistry", examples: "Dipole, Dioxide, Diatomic", visual: "₂" },
+        { root: "glyco- / gluco-", originalWord: "glykys / glukus", language: "Greek", meaning: "sweet / sugar", subject: "chemistry", examples: "Glycolysis, Glycoprotein, Glucose", visual: "🍬" },
+        { root: "halo-", originalWord: "hals / halos", language: "Greek", meaning: "salt", subject: "chemistry", examples: "Halogen, Halite, Halophile", visual: "🧂" },
+        { root: "hydro-", originalWord: "hydor", language: "Greek", meaning: "water", subject: "chemistry", examples: "Hydrolysis, Hydroponic, Hydroelectric", visual: "💧" },
+        { root: "iso-", originalWord: "isos", language: "Greek", meaning: "equal", subject: "chemistry", examples: "Isomer, Isothermal, Isotope", visual: "⚖️" },
+        { root: "litho-", originalWord: "lithos", language: "Greek", meaning: "stone", subject: "chemistry", examples: "Lithosphere, Lithium, Monolith", visual: "🪨" },
+        { root: "lysis-", originalWord: "lysis", language: "Greek", meaning: "loosening / splitting", subject: "chemistry", examples: "Hydrolysis, Lysis, Electrolysis", visual: "🧩" },
+        { root: "mono-", originalWord: "monos", language: "Greek", meaning: "one / single", subject: "chemistry", examples: "Monoxide, Monosaccharide, Monomer", visual: "1️⃣" },
+        { root: "phil-", originalWord: "philos", language: "Greek", meaning: "love / attraction", subject: "chemistry", examples: "Lipophilic, Hydrophilic, Bibliophile", visual: "❤️" },
+        { root: "phobi-", originalWord: "phobos", language: "Greek", meaning: "fear / repulsion", subject: "chemistry", examples: "Hydrophobic, Lipophobic, Photophobic", visual: "🚫" },
+        { root: "poly-", originalWord: "polus", language: "Greek", meaning: "many", subject: "chemistry", examples: "Polypeptide, Polyatomic, Polymer", visual: "⛓️" },
+        { root: "pyro-", originalWord: "pur / pyros", language: "Greek", meaning: "fire", subject: "chemistry", examples: "Pyrolysis, Pyrometer, Pyrotechnics", visual: "🔥" },
+        { root: "synth-", originalWord: "syntithenai", language: "Greek", meaning: "put together / combine", subject: "chemistry", examples: "Photosynthesis, Chemosynthesis, Synthetic", visual: "🧬" },
+        { root: "tri-", originalWord: "treis / tria", language: "Greek", meaning: "three", subject: "chemistry", examples: "Triglyceride, Trichromatic, Tripod", visual: "3️⃣" },
+        { root: "aqua-", originalWord: "aqua", language: "Latin", meaning: "water", subject: "chemistry", examples: "Aquifer, Aqueous, Aquatic", visual: "💧" },
+        { root: "argen-", originalWord: "argentum", language: "Latin", meaning: "silver", subject: "chemistry", examples: "Argent, Argentite, Ag (Symbol)", visual: "🥈" },
+        { root: "aur-", originalWord: "aurum", language: "Latin", meaning: "gold", subject: "chemistry", examples: "Aura, Auric, Au (Symbol)", visual: "🥇" },
+        { root: "calc- / calci-", originalWord: "calx / calcis", language: "Latin", meaning: "limestone / chalk", subject: "chemistry", examples: "Calcite, Calcareous, Calcification", visual: "🦴" },
+        { root: "cide-", originalWord: "caedere", language: "Latin", meaning: "to kill", subject: "chemistry", examples: "Bactericide, Herbicide, Germicide", visual: "🧴" },
+        { root: "com- / con-", originalWord: "cum", language: "Latin", meaning: "together", subject: "chemistry", examples: "Composite, Compound, Commensalism", visual: "🤝" },
+        { root: "ferro-", originalWord: "ferrum", language: "Latin", meaning: "iron", subject: "chemistry", examples: "Ferromagnetic, Ferrous, Fe (Symbol)", visual: "🧲" },
+        { root: "igneo- / igni-", originalWord: "ignis", language: "Latin", meaning: "fire", subject: "chemistry", examples: "Igneous, Ignition, Igniter", visual: "🧨" },
+        { root: "plumbo-", originalWord: "plumbum", language: "Latin", meaning: "lead", subject: "chemistry", examples: "Plumbism, Plumber, Pb (Symbol)", visual: "🪠" },
+        { root: "quad-", originalWord: "quattuor", language: "Latin", meaning: "four", subject: "chemistry", examples: "Quadrivalent, Quadruped, Quadrant", visual: "4️⃣" },
+        { root: "sed-", originalWord: "sedere", language: "Latin", meaning: "sit / settle", subject: "chemistry", examples: "Sedimentation, Sedimentary, Sediment", visual: "🪨" },
+        { root: "aero-", originalWord: "aer", language: "Greek", meaning: "air", subject: "physics", examples: "Aerogel, Aerodynamics, Aerobic respiration", visual: "🌬️" },
+        { root: "astro-", originalWord: "astron", language: "Greek", meaning: "star", subject: "physics", examples: "Astrophysics, Astral, Astronomy", visual: "⭐" },
+        { root: "atmos-", originalWord: "atmos", language: "Greek", meaning: "vapour", subject: "physics", examples: "Atmospheric, Atmosphere, Atmospheric pressure", visual: "💨" },
+        { root: "bar- / baro-", originalWord: "baros", language: "Greek", meaning: "weight / pressure", subject: "physics", examples: "Isobar, Barograph, Barometric", visual: "🏋️" },
+        { root: "chron- / chrono-", originalWord: "chronos", language: "Greek", meaning: "time", subject: "physics", examples: "Chronometer, Chronobiology, Synchronous", visual: "⏱️" },
+        { root: "dyna- / dynam-", originalWord: "dunamis", language: "Greek", meaning: "power / force", subject: "physics", examples: "Thermodynamics, Hydrodynamic, Dynamo", visual: "💥" },
+        { root: "geo-", originalWord: "ge", language: "Greek", meaning: "earth", subject: "physics", examples: "Geochemistry, Geodesic, Geoscience", visual: "🌍" },
+        { root: "gon-", originalWord: "gonia", language: "Greek", meaning: "angle", subject: "physics", examples: "Hexagon, Trigonometry, Polygon", visual: "📐" },
+        { root: "graph-", originalWord: "graphein", language: "Greek", meaning: "write / record", subject: "physics", examples: "Cardiograph, Graphene, Photomicrograph", visual: "✍️" },
+        { root: "gyro-", originalWord: "guros", language: "Greek", meaning: "circle / ring / spin", subject: "physics", examples: "Gyroscope, Gyration, Gyre", visual: "🌀" },
+        { root: "helio-", originalWord: "helios", language: "Greek", meaning: "sun", subject: "physics", examples: "Helioseismology, Heliosphere, Heliocentric", visual: "☀️" },
+        { root: "kine- / cine-", originalWord: "kinein", language: "Greek", meaning: "to move", subject: "physics", examples: "Kinetic, Kinematics, Cinema", visual: "🏃" },
+        { root: "metr-", originalWord: "metron", language: "Greek", meaning: "measure", subject: "physics", examples: "Perimeter, Geometry, Thermometer", visual: "📏" },
+        { root: "naut-", originalWord: "nautes", language: "Greek", meaning: "sailor / traveller", subject: "physics", examples: "Cosmonaut, Aeronautics, Astronaut", visual: "🚀" },
+        { root: "phone- / phono-", originalWord: "phone", language: "Greek", meaning: "sound / voice", subject: "physics", examples: "Phonon, Phonetics, Telephone", visual: "🔊" },
+        { root: "pol- / polar-", originalWord: "polos", language: "Greek", meaning: "pole / opposite end", subject: "physics", examples: "Polarity, Dipole, Polarisation", visual: "🧲" },
+        { root: "proto-", originalWord: "protos", language: "Greek", meaning: "first", subject: "physics", examples: "Protostar, Protozoa, Proton", visual: "🥇" },
+        { root: "scope-", originalWord: "skopein", language: "Greek", meaning: "see / examine", subject: "physics", examples: "Spectroscope, Microscope, Stethoscope", visual: "🔭" },
+        { root: "tele-", originalWord: "tele", language: "Greek", meaning: "far off / distance", subject: "physics", examples: "Telemetry, Telescope, Teleoperation", visual: "📡" },
+        { root: "therm- / thermo-", originalWord: "therme", language: "Greek", meaning: "heat", subject: "physics", examples: "Thermistor, Endothermic, Thermal", visual: "🌡️" },
+        { root: "ton-", originalWord: "tonos", language: "Greek", meaning: "tone / sound", subject: "physics", examples: "Monotone, Tonometer, Semitone", visual: "🎵" },
+        { root: "calor-", originalWord: "calor", language: "Latin", meaning: "warmth / heat", subject: "physics", examples: "Calorimeter, Kilocalorie, Calorimetry", visual: "🔥" },
+        { root: "centri-", originalWord: "centrum", language: "Latin", meaning: "centre", subject: "physics", examples: "Centrifuge, Centriole, Centripetal", visual: "🎯" },
+        { root: "circum-", originalWord: "circum", language: "Latin", meaning: "around", subject: "physics", examples: "Circumpolar, Circumference, Circumnuclear", visual: "🔄" },
+        { root: "gravi-", originalWord: "gravis", language: "Latin", meaning: "heavy / weighty", subject: "physics", examples: "Gravity, Gravitation, Gravimetry", visual: "🍎" },
+        { root: "infra-", originalWord: "infra", language: "Latin", meaning: "below", subject: "physics", examples: "Infrasound, Infrared, Infrasonic", visual: "🌈" },
+        { root: "libr-", originalWord: "libra", language: "Latin", meaning: "balance", subject: "physics", examples: "Libration, Equilibrium, Librate", visual: "⚖️" },
+        { root: "luc- / lumin-", originalWord: "lumen / lux", language: "Latin", meaning: "light", subject: "physics", examples: "Bioluminescence, Translucent, Illuminance", visual: "💡" },
+        { root: "luna-", originalWord: "luna", language: "Latin", meaning: "moon", subject: "physics", examples: "Lunation, Lunar orbit, Sublunar", visual: "🌙" },
+        { root: "par- / pare-", originalWord: "parere", language: "Latin", meaning: "appear / visible", subject: "physics", examples: "Transparency, Apparent magnitude, Transparent", visual: "👁️" },
+        { root: "pet- / -petal", originalWord: "petere", language: "Latin", meaning: "seeking / moving toward", subject: "physics", examples: "Centripetal, Centripetal force, Petitory", visual: "🎯" },
+        { root: "radi-", originalWord: "radius", language: "Latin", meaning: "ray / spoke", subject: "physics", examples: "Radiation, Radioactive, Radius", visual: "☢️" },
+        { root: "sono-", originalWord: "sonus", language: "Latin", meaning: "sound", subject: "physics", examples: "Sonar, Supersonic, Resonance", visual: "🔊" },
+        { root: "tempo-", originalWord: "tempus", language: "Latin", meaning: "time", subject: "physics", examples: "Spatiotemporal, Temporal, Temporary", visual: "⏳" },
+        { root: "terra-", originalWord: "terra", language: "Latin", meaning: "land / earth", subject: "physics", examples: "Terrestrial, Subterranean, Terrarium", visual: "🏔️" },
+        { root: "ultra-", originalWord: "ultra", language: "Latin", meaning: "beyond", subject: "physics", examples: "Ultrasound, Ultracentrifuge, Ultraviolet", visual: "🟣" },
+        { root: "vect-", originalWord: "vehere / vectus", language: "Latin", meaning: "to carry", subject: "physics", examples: "Vector, Convection, Advection", visual: "➡️" },
+        { root: "veloci-", originalWord: "velox / velocis", language: "Latin", meaning: "swift / speed", subject: "physics", examples: "Velocity, Velocimeter, Velociraptor", visual: "🏎️" },
+        { root: "vers- / vert-", originalWord: "vertere", language: "Latin", meaning: "turn", subject: "physics", examples: "Reversible, Transverse, Inversion", visual: "🔄" },
+        { root: "acoust-", originalWord: "akouein", language: "Greek", meaning: "to hear", subject: "physics", examples: "Acoustics, Acoustic impedance, Acousto-optics", visual: "🎧" },
+        { root: "acid-", originalWord: "acidus", language: "Latin", meaning: "sour / sharp", subject: "chemistry", examples: "Acidification, Acidity, Amino acid", visual: "🧪" },
+        { root: "bacteri-", originalWord: "bakterion", language: "Greek", meaning: "small staff / rod", subject: "biology", examples: "Bacteriophage, Bacteriology, Bacterium", visual: "🦠" },
+        { root: "botan- / botano-", originalWord: "botane", language: "Greek", meaning: "plant / herb", subject: "biology", examples: "Palaeobotany, Botanical, Botany", visual: "🌿" },
+        { root: "cephal- / cephalo-", originalWord: "kephale", language: "Greek", meaning: "head", subject: "biology", examples: "Cephalic, Cephalopod, Encephalon", visual: "🧠" },
+        { root: "corpus- / corpor-", originalWord: "corpus", language: "Latin", meaning: "body", subject: "biology", examples: "Corpuscle, Corpus luteum, Corpus callosum", visual: "🧍" },
+        { root: "crystall- / crystallo-", originalWord: "krystallos", language: "Greek", meaning: "ice / crystal", subject: "chemistry", examples: "Crystallography, Crystal lattice, Crystallisation", visual: "💎" },
+        { root: "cryo-", originalWord: "kryos", language: "Greek", meaning: "icy cold", subject: "chemistry", examples: "Cryopreservation, Cryogenic, Cryolite", visual: "❄️" },
+        { root: "dent- / denti-", originalWord: "dens / dentis", language: "Latin", meaning: "tooth", subject: "biology", examples: "Dentine, Dental formula, Dentition", visual: "🦷" },
+        { root: "electr- / electro-", originalWord: "elektron", language: "Greek", meaning: "amber / electricity", subject: "physics", examples: "Electrolysis, Electrode, Electron", visual: "⚡" },
+        { root: "flor- / flori-", originalWord: "flos / floris", language: "Latin", meaning: "flower", subject: "biology", examples: "Florigen, Floral morphology, Flora", visual: "🌸" },
+        { root: "flux-", originalWord: "fluere / fluxus", language: "Latin", meaning: "flow", subject: "physics", examples: "Magnetic flux, Fluxmeter, Heat flux", visual: "🌊" },
+        { root: "folio- / foli-", originalWord: "folium", language: "Latin", meaning: "leaf", subject: "biology", examples: "Foliar, Trifoliate, Foliage", visual: "🍃" },
+        { root: "foss- / fossil-", originalWord: "fossus", language: "Latin", meaning: "dug up", subject: "biology", examples: "Fossiliferous, Fossil record, Fossorial", visual: "🦕" },
+        { root: "gam- / gameto-", originalWord: "gamos", language: "Greek", meaning: "marriage / union", subject: "biology", examples: "Gametogenesis, Syngamy, Gamete", visual: "🧬" },
+        { root: "hist- / histo-", originalWord: "histos", language: "Greek", meaning: "tissue / web", subject: "biology", examples: "Histopathology, Histochemistry, Histology", visual: "🧫" },
+        { root: "log- / -logy", originalWord: "logos", language: "Greek", meaning: "study / account", subject: "biology", examples: "Ecology, Geology, Biology", visual: "📖" },
+        { root: "magnet-", originalWord: "magnetis lithos", language: "Greek", meaning: "magnesian stone", subject: "physics", examples: "Electromagnet, Magnetometer, Magnetism", visual: "🧲" },
+        { root: "mar- / mari-", originalWord: "mare", language: "Latin", meaning: "sea", subject: "biology", examples: "Submarine ecosystem, Marine biology, Maritime climate", visual: "🌊" },
+        { root: "meteor-", originalWord: "meteoros", language: "Greek", meaning: "high in the air", subject: "physics", examples: "Meteorite, Meteoroid, Meteorology", visual: "☄️" },
+        { root: "morph-", originalWord: "morphe", language: "Greek", meaning: "form / shape", subject: "biology", examples: "Polymorphism, Amorphous, Morphology", visual: "🔷" },
+        { root: "mot- / mov-", originalWord: "movere / motus", language: "Latin", meaning: "move", subject: "physics", examples: "Locomotion, Motion, Motor neuron", visual: "🏃" },
+        { root: "nephro-", originalWord: "nephros", language: "Greek", meaning: "kidney", subject: "biology", examples: "Nephron, Nephrology, Nephritis", visual: "🫘" },
+        { root: "nitro-", originalWord: "nitron", language: "Greek", meaning: "natron / mineral soda", subject: "chemistry", examples: "Nitrobenzene, Nitrate, Nitrification", visual: "🧪" },
+        { root: "odont- / odonto-", originalWord: "odous / odont-", language: "Greek", meaning: "tooth", subject: "biology", examples: "Odontoblast, Periodontal, Odontocete", visual: "🦷" },
+        { root: "ophthalm- / ophthalmo-", originalWord: "ophthalmos", language: "Greek", meaning: "eye", subject: "biology", examples: "Ophthalmic, Ophthalmoscope, Ophthalmology", visual: "👁️" },
+        { root: "opt- / optico-", originalWord: "optikos", language: "Greek", meaning: "sight / seeing", subject: "physics", examples: "Optical fibre, Optics, Optogenetics", visual: "🔎" },
+        { root: "ov- / ovo-", originalWord: "ovum", language: "Latin", meaning: "egg", subject: "biology", examples: "Oviparous, Ovule, Ovary", visual: "🥚" },
+        { root: "oxy-", originalWord: "oxys", language: "Greek", meaning: "sharp / acid", subject: "chemistry", examples: "Oxidation, Oxalic acid, Oxygen", visual: "🫧" },
+        { root: "path- / patho-", originalWord: "pathos", language: "Greek", meaning: "suffering / disease", subject: "biology", examples: "Pathogenesis, Pathogen, Pathology", visual: "🩹" },
+        { root: "phosphor- / phospho-", originalWord: "phosphoros", language: "Greek", meaning: "light-bringing", subject: "chemistry", examples: "Phospholipid, Phosphate, Phosphorescence", visual: "✨" },
+        { root: "pneumo-", originalWord: "pneuma", language: "Greek", meaning: "air / lung", subject: "biology", examples: "Pneumothorax, Pneumatophore, Pneumonia", visual: "🫁" },
+        { root: "press-", originalWord: "premere / pressus", language: "Latin", meaning: "to press", subject: "physics", examples: "Compressibility, Pressure, Depressurisation", visual: "⬇️" },
+        { root: "rhizo-", originalWord: "rhiza", language: "Greek", meaning: "root", subject: "biology", examples: "Mycorrhiza, Rhizobium, Rhizome", visual: "🌱" },
+        { root: "rot- / rota-", originalWord: "rota", language: "Latin", meaning: "wheel", subject: "physics", examples: "Rotameter, Rotation, Rotor", visual: "🛞" },
+        { root: "seism- / seismo-", originalWord: "seismos", language: "Greek", meaning: "earthquake / shaking", subject: "physics", examples: "Seismometer, Seismic wave, Seismology", visual: "🌋" },
+        { root: "silic- / silico-", originalWord: "silex / silicis", language: "Latin", meaning: "flint / hard stone", subject: "chemistry", examples: "Silicate, Silicic acid, Silicon", visual: "🪨" },
+        { root: "soma- / somato-", originalWord: "soma", language: "Greek", meaning: "body", subject: "biology", examples: "Somatic cell, Somatotropin, Chromosome", visual: "🧍" },
+        { root: "spectr- / spectro-", originalWord: "spectrum", language: "Latin", meaning: "image / appearance", subject: "physics", examples: "Spectrometer, Spectroscopy, Electromagnetic spectrum", visual: "🌈" },
+        { root: "spher- / sphero-", originalWord: "sphaira", language: "Greek", meaning: "sphere / globe", subject: "physics", examples: "Spherical aberration, Spherometer, Biosphere", visual: "🌐" },
+        { root: "stereo-", originalWord: "stereos", language: "Greek", meaning: "solid / three-dimensional", subject: "chemistry", examples: "Stereoisomer, Stereochemistry, Stereographic", visual: "🧊" },
+        { root: "strat- / strato-", originalWord: "stratum", language: "Latin", meaning: "layer", subject: "physics", examples: "Stratigraphy, Stratification, Stratosphere", visual: "🪨" },
+        { root: "sulphur- / sulfur-", originalWord: "sulfur", language: "Latin", meaning: "sulphur / brimstone", subject: "chemistry", examples: "Sulphide, Sulphate, Sulphuric acid", visual: "🟨" },
+        { root: "tens-", originalWord: "tendere / tensus", language: "Latin", meaning: "stretch", subject: "physics", examples: "Tensile strength, Tension, Tensiometer", visual: "↔️" },
+        { root: "tox- / toxico-", originalWord: "toxikon", language: "Greek", meaning: "poison", subject: "biology", examples: "Cytotoxicity, Toxin, Toxicology", visual: "☣️" },
+        { root: "troph- / tropho-", originalWord: "trophe", language: "Greek", meaning: "nourishment", subject: "biology", examples: "Trophic level, Autotroph, Eutrophication", visual: "🍽️" },
+        { root: "und-", originalWord: "unda", language: "Latin", meaning: "wave", subject: "physics", examples: "Undulator, Undulatory motion, Undulation", visual: "〰️" },
+        { root: "vacu-", originalWord: "vacuus", language: "Latin", meaning: "empty", subject: "physics", examples: "Vacuum, Vacuole, Evacuation", visual: "◻️" },
+        { root: "ven- / veno-", originalWord: "vena", language: "Latin", meaning: "vein", subject: "biology", examples: "Venule, Venous return, Intravenous", visual: "🩸" },
+        { root: "vir- / viro-", originalWord: "virus", language: "Latin", meaning: "poison / slimy liquid", subject: "biology", examples: "Virion, Virology, Antiviral", visual: "🦠" },
+        { root: "vitri-", originalWord: "vitrum", language: "Latin", meaning: "glass", subject: "chemistry", examples: "Vitrification, Vitreous silica, Devitrification", visual: "🔬" },
+        { root: "xyl- / xylo-", originalWord: "xylon", language: "Greek", meaning: "wood", subject: "biology", examples: "Xylophage, Xylem, Xylitol", visual: "🪵" }
+    ];
+
+    let discoveredCards = new Set();
+    let currentSubject = 'all';
+    let currentLang = 'all';
+
+    function initFilters() {
+        // Subject Filters
+        document.querySelectorAll('#subjectFilters button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#subjectFilters button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentSubject = e.target.dataset.filter;
+                renderCards();
+            });
+        });
+
+        // Language Filters
+        document.querySelectorAll('#langFilters button[data-filter]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('#langFilters button[data-filter]').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentLang = e.target.dataset.filter;
+                renderCards();
+            });
+        });
+        
+        // Search bar
+        document.getElementById('searchBar').addEventListener('input', renderCards);
+    }
+
+    function renderCards() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+        let visibleCount = 0;
+
+        // Always display cards alphabetically by root, including on first load and after filtering.
+        dictionary
+            .map((item, index) => ({ item, index }))
+            .sort((a, b) => a.item.root.localeCompare(b.item.root, undefined, { sensitivity: 'base' }))
+            .forEach(({ item, index }) => {
+            // Check Filters
+            const matchesSubject = currentSubject === 'all' || item.subject === currentSubject;
+            const matchesLang = currentLang === 'all' || item.language.toLowerCase() === currentLang;
+            
+            // Check Search
+            const matchesSearch = 
+                item.root.toLowerCase().includes(searchTerm) || 
+                item.meaning.toLowerCase().includes(searchTerm) ||
+                item.examples.toLowerCase().includes(searchTerm) ||
+                item.language.toLowerCase().includes(searchTerm);
+
+            if (matchesSubject && matchesLang && matchesSearch) {
+                visibleCount++;
+                const card = document.createElement('div');
+                card.className = `card ${item.subject}`;
+                
+                // Set language icon logic
+                const langIcon = item.language === "Greek" ? "🏛️" : "🦅";
+                
+                if (discoveredCards.has(index)) {
+                    card.classList.add('flipped');
+                }
+
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-front">
+                            <span class="lang-badge">${langIcon} ${item.language}</span>
+                            <div class="visual">${item.visual}</div>
+                            <h2>${item.root}</h2>
+                        </div>
+                        <div class="card-back">
+                            <h3>${item.meaning}</h3>
+                            <div class="origin-text">From ${item.language}: <em>${item.originalWord}</em></div>
+                            <p class="subject">${item.subject}</p>
+                            <div class="example-container">
+                                <div class="example-title">Examples (UK English)</div>
+                                <p class="examples">${item.examples}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => {
+                    card.classList.toggle('flipped');
+                    if (card.classList.contains('flipped')) {
+                        discoveredCards.add(index);
+                    } else {
+                        discoveredCards.delete(index); 
+                    }
+                    updateStats();
+                });
+
+                grid.appendChild(card);
+            }
+        });
+
+        if (visibleCount === 0) {
+            grid.innerHTML = `<div class="no-results">No terms found matching your precise criteria. Try adjusting the filters!</div>`;
+        }
+        
+        // Ensure total dictionary count reflects the current database
+        document.getElementById('stats').innerText = `Terms Discovered: ${discoveredCards.size} / ${dictionary.length}`;
+    }
+
+    function updateStats() {
+        const stats = document.getElementById('stats');
+        stats.innerText = `Terms Discovered: ${discoveredCards.size} / ${dictionary.length}`;
+        if (discoveredCards.size === dictionary.length && dictionary.length > 0) {
+            stats.innerText = `🎉 All ${dictionary.length} Terms Discovered! 🎉`;
+            stats.style.backgroundColor = "#27ae60";
+            stats.style.color = "white";
+        } else {
+            stats.style.backgroundColor = "#ebf5fb";
+            stats.style.color = "#2980b9";
+        }
+    }
+
+    function revealAllCards() {
+        dictionary.forEach((_, index) => discoveredCards.add(index));
+        renderCards();
+        updateStats();
+    }
+
+    // Initialize the app on load
+    window.onload = () => {
+        initFilters();
+        renderCards();
+        updateStats();
+    };
+</script>
+
+</body>
+</html>
