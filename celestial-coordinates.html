@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Celestial Coordinates Explorer — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#141b31; --panel2:#1b2440; --line:#2a3556;
+  --ink:#e8ecf7; --dim:#96a2c4; --accent:#ffc94d; --accent2:#4fc3f7;
+  --green:#5ddc9a; --red:#ff7b7b; --purple:#b48cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px;letter-spacing:.2px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:290px minmax(0,1fr) 320px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1150px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 4px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2);margin:2px 0}
+select,input[type=number]{width:100%;background:var(--panel2);color:var(--ink);
+  border:1px solid var(--line);border-radius:7px;padding:7px 8px;font-size:14px;font-family:inherit}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+.val{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600;font-size:14px;
+  min-width:74px;text-align:right;flex:0 0 auto}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);
+  border-radius:20px;padding:3px 10px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#07101f;font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:8px;padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.views{grid-template-columns:1fr}}
+canvas{width:100%;display:block;border-radius:9px;background:#070c1a;cursor:grab;touch-action:none}
+canvas:active{cursor:grabbing}
+.cap{font-size:12px;color:var(--dim);margin-top:7px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.b-up{background:rgba(93,220,154,.16);color:var(--green)}
+.b-dn{background:rgba(255,123,123,.16);color:var(--red)}
+.b-cp{background:rgba(180,140,255,.16);color:var(--purple)}
+.work{background:#080e1e;border:1px solid var(--line);border-radius:8px;padding:11px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.75;
+  white-space:pre-wrap;overflow-x:auto;color:#cdd7f0;margin:0}
+.work .hl{color:var(--accent)}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.tabs{display:flex;gap:5px;margin-bottom:11px;flex-wrap:wrap}
+.tab{padding:5px 11px;font-size:13px;border-radius:7px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:600}
+.hide{display:none}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;color:var(--dim);margin-top:7px}
+.legend i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:4px}
+details{margin-top:9px}
+summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.glos b{color:var(--ink)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Celestial Coordinates Explorer</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 6.7 – 6.16 · converting between equatorial (RA/Dec) and horizon (Alt/Az) coordinates</p>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ LEFT: CONTROLS ============ -->
+  <div>
+    <div class="card">
+      <h2>1 · Where are you?</h2>
+      <label>Observer's latitude (φ) <span style="float:right" class="val" id="latOut">51.5° N</span></label>
+      <input type="range" id="lat" min="-90" max="90" step="0.5" value="51.5">
+      <div class="chips" id="latChips"></div>
+      <div class="note">Your latitude fixes how the sky is tilted. The <b style="color:var(--accent)">celestial pole</b> always sits at an altitude equal to your latitude.</div>
+    </div>
+
+    <div class="card">
+      <h2>2 · When is it?</h2>
+      <label>Local Sidereal Time (LST) <span style="float:right" class="val" id="lstOut">18h 00m</span></label>
+      <input type="range" id="lst" min="0" max="24" step="0.01" value="18">
+      <div class="row" style="margin-top:9px">
+        <button id="play" class="primary">▶ Play</button>
+        <button id="toTransit">Jump to transit</button>
+      </div>
+      <div class="note"><b style="color:var(--accent)">LST is simply the RA that is on your meridian right now.</b> So when LST = the object's RA, the object is crossing the meridian — that is its culmination.</div>
+    </div>
+
+    <div class="card">
+      <h2>3 · What are you looking at?</h2>
+      <label>Choose an object</label>
+      <select id="target"></select>
+
+      <div class="tabs" style="margin-top:12px">
+        <div class="tab on" data-mode="eq">Set RA / Dec →</div>
+        <div class="tab" data-mode="hor">← Set Alt / Az</div>
+      </div>
+
+      <div id="eqPane">
+        <label>Right ascension, RA <span style="float:right" class="val" id="raOut">18h 37m</span></label>
+        <input type="range" id="ra" min="0" max="24" step="0.01" value="18.615">
+        <label>Declination, Dec (δ) <span style="float:right" class="val" id="decOut">+38.8°</span></label>
+        <input type="range" id="dec" min="-90" max="90" step="0.1" value="38.78">
+      </div>
+
+      <div id="horPane" class="hide">
+        <label>Altitude (alt) <span style="float:right" class="val" id="altIn2">45.0°</span></label>
+        <input type="range" id="altIn" min="-90" max="90" step="0.1" value="45">
+        <label>Azimuth (az) <span style="float:right" class="val" id="azIn2">180.0°</span></label>
+        <input type="range" id="azIn" min="0" max="359.9" step="0.1" value="180">
+        <div class="note">Set a position in your own sky and read off which RA/Dec is there.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Display</h2>
+      <div class="chips" id="opts">
+        <div class="chip on" data-opt="path">Diurnal path</div>
+        <div class="chip on" data-opt="equator">Celestial equator</div>
+        <div class="chip on" data-opt="meridian">Meridian</div>
+        <div class="chip on" data-opt="stars">Bright stars</div>
+        <div class="chip on" data-opt="lines">Asterisms</div>
+        <div class="chip" data-opt="grid">RA/Dec grid</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CENTRE: VIEWS ============ -->
+  <div>
+    <div class="views">
+      <div class="card" style="margin-bottom:0">
+        <h2>The celestial sphere</h2>
+        <canvas id="sphere"></canvas>
+        <div class="cap">Drag to rotate. You are standing at the centre; the shaded disc is your horizon.</div>
+        <div class="legend">
+          <span><i style="background:#4fc3f7"></i>celestial equator</span>
+          <span><i style="background:#ffc94d"></i>diurnal path</span>
+          <span><i style="background:#b48cff"></i>meridian</span>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <h2>Your view of the sky</h2>
+        <canvas id="sky"></canvas>
+        <div class="cap">Looking straight up. Zenith at the centre, horizon at the edge. East is on the <b>left</b> — because you are facing upwards, not at a map.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <h2>Show the working</h2>
+      <pre class="work" id="work"></pre>
+      <details>
+        <summary>Why these formulae?</summary>
+        <p>The two coordinate systems describe the same sky, but the equatorial system is fixed to the stars while the horizon system is fixed to you. Your <b>latitude</b> and the <b>hour angle</b> are what connect them, which is exactly what spec point 6.10 asks for.</p>
+        <p>You are not required to recall these formulae for the exam — but working through them makes the link between the two systems concrete, and the meridian results (culmination altitude, circumpolarity) <i>are</i> examinable.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- ============ RIGHT: READOUT ============ -->
+  <div>
+    <div class="card">
+      <h2>Right now</h2>
+      <table>
+        <tr><td>Object</td><td id="rName">Vega</td></tr>
+        <tr><td>Right ascension (RA)</td><td id="rRA">—</td></tr>
+        <tr><td>Declination (δ)</td><td id="rDec">—</td></tr>
+        <tr><td>Hour angle (HA)</td><td id="rHA">—</td></tr>
+        <tr><td>Altitude</td><td id="rAlt">—</td></tr>
+        <tr><td>Azimuth</td><td id="rAz">—</td></tr>
+        <tr><td>Compass direction</td><td id="rDir">—</td></tr>
+        <tr><td>Status</td><td id="rStat">—</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>On the meridian</h2>
+      <table>
+        <tr><td>Upper transit (culmination)</td><td id="mUp">—</td></tr>
+        <tr><td>Lower transit</td><td id="mLow">—</td></tr>
+        <tr><td>Circumpolar?</td><td id="mCirc">—</td></tr>
+        <tr><td>Rises (LST)</td><td id="mRise">—</td></tr>
+        <tr><td>Transits (LST)</td><td id="mTran">—</td></tr>
+        <tr><td>Sets (LST)</td><td id="mSet">—</td></tr>
+        <tr><td>Hours above horizon</td><td id="mUpH">—</td></tr>
+      </table>
+      <div class="note" id="bestNote"></div>
+    </div>
+
+    <div class="card">
+      <h2>Challenge</h2>
+      <div class="q" id="qText">Press <b>New question</b> to start.</div>
+      <div class="opts" id="qOpts"></div>
+      <div class="fb hide" id="qFb"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="primary" id="newQ">New question</button>
+        <button id="showQ">Show me</button>
+      </div>
+      <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+    </div>
+
+    <div class="card glos">
+      <h2>Key terms (6.7 & 6.13)</h2>
+      <details><summary>Celestial sphere</summary><p>An imaginary sphere of very large radius, centred on the Earth, onto which all celestial objects appear to be projected.</p></details>
+      <details><summary>Celestial poles &amp; equator</summary><p>The points and circle you get by extending the Earth's axis and equator out onto the celestial sphere. The <b>NCP</b> sits at altitude = your latitude, due north. Note that Polaris is not exactly at the NCP — it sits about 0.7° away, which is why the app shows the two separately.</p></details>
+      <details><summary>Meridian</summary><p>The great circle running from due north, through the zenith, to due south. An object is at its highest as it crosses it.</p></details>
+      <details><summary>Zenith</summary><p>The point directly overhead, altitude 90°.</p></details>
+      <details><summary>Culmination</summary><p>The moment an object crosses the observer's meridian at upper transit — its greatest altitude of the day.</p></details>
+      <details><summary>Circumpolar</summary><p>A star that never sets from your latitude, because even at lower transit it stays above the horizon. Requires δ ≥ 90° − φ in the northern hemisphere.</p></details>
+      <details><summary>Hour angle</summary><p>How far west of the meridian an object has travelled, measured in hours. HA = LST − RA. HA = 0 means the object is on the meridian.</p></details>
+      <details><summary>Cardinal points</summary><p>North, east, south and west on the horizon — azimuth 0°, 90°, 180° and 270°.</p></details>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+const D=Math.PI/180, R=180/Math.PI;
+const sin=a=>Math.sin(a*D), cos=a=>Math.cos(a*D);
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const wrap360=a=>((a%360)+360)%360;
+const wrap24=h=>((h%24)+24)%24;
+
+/* ---------- catalogue ---------- */
+const STARS=[
+ ["Polaris",2.530,89.26,2.0],["Sirius",6.752,-16.72,-1.5],["Canopus",6.399,-52.70,-0.7],
+ ["Arcturus",14.261,19.18,-0.1],["Vega",18.615,38.78,0.0],["Capella",5.278,46.00,0.1],
+ ["Rigel",5.242,-8.20,0.2],["Procyon",7.655,5.22,0.4],["Betelgeuse",5.919,7.41,0.5],
+ ["Achernar",1.629,-57.24,0.5],["Altair",19.846,8.87,0.8],["Aldebaran",4.599,16.51,0.9],
+ ["Antares",16.490,-26.43,1.0],["Spica",13.420,-11.16,1.0],["Pollux",7.755,28.03,1.1],
+ ["Fomalhaut",22.961,-29.62,1.2],["Deneb",20.690,45.28,1.3],["Mimosa",12.795,-59.69,1.3],
+ ["Regulus",10.140,11.97,1.4],["Acrux",12.443,-63.10,0.8],["Gacrux",12.519,-57.11,1.6],
+ ["Castor",7.577,31.89,1.6],["Bellatrix",5.418,6.35,1.6],["Elnath",5.438,28.61,1.7],
+ ["Alnilam",5.604,-1.20,1.7],["Alnitak",5.679,-1.94,1.8],["Alioth",12.900,55.96,1.8],
+ ["Dubhe",11.062,61.75,1.8],["Mintaka",5.533,-0.30,2.2],["Alkaid",13.792,49.31,1.9],
+ ["Mizar",13.399,54.92,2.2],["Merak",11.031,56.38,2.4],["Phecda",11.897,53.69,2.4],
+ ["Megrez",12.257,57.03,3.3],["Schedar",0.675,56.54,2.2],["Caph",0.153,59.15,2.3],
+ ["Gamma Cas",0.945,60.72,2.5],["Ruchbah",1.430,60.24,2.7],["Segin",1.906,63.67,3.4],
+ ["Alpheratz",0.140,29.09,2.1],["Markab",23.079,15.21,2.5],["Scheat",23.063,28.08,2.4],
+ ["Algenib",0.221,15.18,2.8],["Saiph",5.796,-9.67,2.1],["Sadr",20.370,40.26,2.2],
+ ["Albireo",19.512,27.96,3.1],["Gienah Cygni",20.770,33.97,2.5],["Delta Cygni",19.749,45.13,2.9],
+ ["Kaus Australis",18.403,-34.38,1.8],["Shaula",17.560,-37.10,1.6]
+];
+const ASTERISMS=[
+ ["Plough",["Alkaid","Mizar","Alioth","Megrez","Phecda","Merak","Dubhe"]],
+ ["Plough bowl",["Megrez","Dubhe"]],
+ ["Orion belt",["Alnitak","Alnilam","Mintaka"]],
+ ["Orion A",["Betelgeuse","Alnilam"]],["Orion B",["Bellatrix","Mintaka"]],
+ ["Orion C",["Alnitak","Saiph"]],["Orion D",["Mintaka","Rigel"]],
+ ["Orion E",["Betelgeuse","Bellatrix"]],["Orion F",["Rigel","Saiph"]],
+ ["Cassiopeia",["Segin","Ruchbah","Gamma Cas","Schedar","Caph"]],
+ ["Summer Triangle",["Vega","Deneb","Altair","Vega"]],
+ ["Cygnus spine",["Deneb","Sadr","Albireo"]],
+ ["Cygnus wings",["Delta Cygni","Sadr","Gienah Cygni"]],
+ ["Square of Pegasus",["Alpheratz","Scheat","Markab","Algenib","Alpheratz"]],
+ ["Southern Cross",["Gacrux","Acrux"]],["Southern Cross 2",["Mimosa","Acrux"]]
+];
+const TARGETS=[
+ ["Vega  (Summer Triangle)",18.615,38.78],["Polaris  (the Pole Star)",2.530,89.26],
+ ["Sirius  (brightest star)",6.752,-16.72],["Betelgeuse  (Orion)",5.919,7.41],
+ ["Rigel  (Orion)",5.242,-8.20],["Orion's Belt  (Alnilam)",5.604,-1.20],
+ ["Aldebaran  (Taurus)",4.599,16.51],["Pleiades  M45",3.790,24.11],
+ ["Deneb  (Cygnus)",20.690,45.28],["Altair  (Aquila)",19.846,8.87],
+ ["Arcturus  (Boötes)",14.261,19.18],["Dubhe  (the Plough)",11.062,61.75],
+ ["Schedar  (Cassiopeia)",0.675,56.54],["Andromeda Galaxy  M31",0.712,41.27],
+ ["Orion Nebula  M42",5.588,-5.39],["Fomalhaut",22.961,-29.62],
+ ["Acrux  (Southern Cross)",12.443,-63.10],["Antares  (Scorpius)",16.490,-26.43],
+ ["A star on the celestial equator",6.000,0.00],
+ ["The Sun in late June",6.000,23.44],["The Sun in late December",18.000,-23.44]
+];
+const LATS=[["N Pole",90],["Edinburgh",55.9],["London",51.5],["Cairo",30.0],
+            ["Tropic of Cancer",23.4],["Equator",0],["Sydney",-33.9],["S Pole",-90]];
+
+/* ---------- state ---------- */
+const S={lat:51.5,lst:18,ra:18.615,dec:38.78,mode:"eq",alt:45,az:180,
+  playing:false, cam:{yaw:0,pitch:22},
+  opts:{path:1,equator:1,meridian:1,stars:1,lines:1,grid:0}};
+
+/* ---------- maths ---------- */
+function eqToHor(ra,dec,lst,lat){
+  const H=(lst-ra)*15;                                  // hour angle in degrees
+  const sa=sin(dec)*sin(lat)+cos(dec)*cos(lat)*cos(H);
+  const alt=Math.asin(clamp(sa,-1,1))*R;
+  const east=-cos(dec)*sin(H);
+  const north=cos(lat)*sin(dec)-sin(lat)*cos(dec)*cos(H);
+  const az=wrap360(Math.atan2(east,north)*R);
+  return {alt,az,H:wrap360(H)>180?wrap360(H)-360:wrap360(H)};
+}
+function horToEq(alt,az,lst,lat){
+  const sd=sin(alt)*sin(lat)+cos(alt)*cos(lat)*cos(az);
+  const dec=Math.asin(clamp(sd,-1,1))*R;
+  const H=Math.atan2(-cos(alt)*sin(az), sin(alt)*cos(lat)-cos(alt)*sin(lat)*cos(az))*R;
+  return {dec, ra:wrap24(lst-H/15)};
+}
+// unit vector in the observer frame: x = east, y = north, z = up
+function vec(alt,az){return {x:cos(alt)*sin(az), y:cos(alt)*cos(az), z:sin(alt)};}
+function vecEq(dec,H,lat){
+  return {x:-cos(dec)*sin(H),
+          y:cos(lat)*sin(dec)-sin(lat)*cos(dec)*cos(H),
+          z:sin(dec)*sin(lat)+cos(dec)*cos(lat)*cos(H)};
+}
+function upperTransit(dec,lat){return 90-Math.abs(dec-lat);}
+function lowerTransit(dec,lat){return Math.abs(dec+lat)-90;}
+function riseHA(dec,lat){                     // hour angle of rising/setting, degrees
+  const c=-Math.tan(dec*D)*Math.tan(lat*D);
+  if(c>1) return null;                        // never rises
+  if(c<-1) return "circ";                     // circumpolar
+  return Math.acos(clamp(c,-1,1))*R;
+}
+const compass=az=>["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"]
+  [Math.round(wrap360(az)/22.5)%16];
+const hm=h=>{h=wrap24(h);const m=Math.round((h%1)*60);let H=Math.floor(h);
+  if(m===60)return `${wrap24(H+1)|0}h 00m`;return `${H}h ${String(m).padStart(2,"0")}m`;};
+const dms=d=>`${d<0?"−":"+"}${Math.abs(d).toFixed(1)}°`;
+
+/* ---------- canvases ---------- */
+function fit(cv,ratio){
+  const w=cv.clientWidth, dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr; cv.height=w*ratio*dpr; cv.style.height=(w*ratio)+"px";
+  const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h:w*ratio};
+}
+function project(p){
+  const cy=cos(S.cam.yaw), sy=sin(S.cam.yaw);
+  const ex=p.x*cy+p.y*sy, ey=-p.x*sy+p.y*cy;
+  const cp=cos(S.cam.pitch), sp=sin(S.cam.pitch);
+  return {x:ex, y:ey*sin(S.cam.pitch)+p.z*cos(S.cam.pitch),
+          d:-ey*cos(S.cam.pitch)+p.z*sin(S.cam.pitch)};
+}
+
+/* ---------- celestial sphere view ---------- */
+function drawSphere(){
+  const cv=document.getElementById("sphere");
+  const {c,w,h}=fit(cv,0.92);
+  const cx=w/2, cy=h/2, Rr=Math.min(w,h)*0.40;
+  c.clearRect(0,0,w,h);
+  const P=p=>{const q=project(p);return {sx:cx+q.x*Rr, sy:cy-q.y*Rr, d:q.d};};
+
+  // outline of sphere
+  c.strokeStyle="#1e2a4a"; c.lineWidth=1;
+  c.beginPath(); c.arc(cx,cy,Rr,0,7); c.stroke();
+
+  // ground disc
+  const gp=[]; for(let a=0;a<=360;a+=3) gp.push(P(vec(0,a)));
+  c.beginPath(); gp.forEach((p,i)=>i?c.lineTo(p.sx,p.sy):c.moveTo(p.sx,p.sy)); c.closePath();
+  c.fillStyle="rgba(60,90,150,.16)"; c.fill();
+  c.strokeStyle="#6f86bd"; c.lineWidth=1.6; c.stroke();
+
+  const curve=(pts,col,wid,dashBack)=>{
+    for(let i=1;i<pts.length;i++){
+      const a=pts[i-1],b=pts[i]; const back=(a.d+b.d)/2<0;
+      c.beginPath(); c.moveTo(a.sx,a.sy); c.lineTo(b.sx,b.sy);
+      c.strokeStyle=col; c.globalAlpha=back?0.28:1; c.lineWidth=back?wid*0.8:wid;
+      c.setLineDash(back&&dashBack?[3,4]:[]); c.stroke();
+    }
+    c.globalAlpha=1; c.setLineDash([]);
+  };
+
+  // RA/Dec grid
+  if(S.opts.grid){
+    for(let d=-60;d<=60;d+=30){
+      const pts=[]; for(let H=0;H<=360;H+=4) pts.push(P(vecEq(d,H,S.lat)));
+      curve(pts,"#39508a",1,true);
+    }
+    for(let H=0;H<360;H+=30){
+      const pts=[]; for(let d=-90;d<=90;d+=4) pts.push(P(vecEq(d,H,S.lat)));
+      curve(pts,"#39508a",1,true);
+    }
+  }
+  // celestial equator
+  if(S.opts.equator){
+    const pts=[]; for(let H=0;H<=360;H+=2) pts.push(P(vecEq(0,H,S.lat)));
+    curve(pts,"#4fc3f7",2,true);
+  }
+  // meridian (N – zenith – S)
+  if(S.opts.meridian){
+    const pts=[]; for(let t=0;t<=360;t+=2) pts.push(P({x:0,y:cos(t),z:sin(t)}));
+    curve(pts,"#b48cff",1.6,true);
+  }
+  // diurnal path of the target
+  if(S.opts.path){
+    const pts=[]; for(let H=0;H<=360;H+=2) pts.push(P(vecEq(S.dec,H,S.lat)));
+    curve(pts,"#ffc94d",2,true);
+  }
+  // background stars
+  if(S.opts.stars){
+    STARS.forEach(s=>{
+      const p=P(vecEq(s[2],(S.lst-s[1])*15,S.lat));
+      if(p.d<-0.05) return;
+      const r=Math.max(1,3.1-s[3]*0.42);
+      c.beginPath(); c.arc(p.sx,p.sy,r,0,7);
+      c.fillStyle="rgba(232,236,247,"+(p.d<0.1?0.35:0.85)+")"; c.fill();
+    });
+  }
+  // poles, zenith, cardinal points
+  const mark=(p,col,lab,rad)=>{
+    if(p.d<-0.1) c.globalAlpha=0.35;
+    c.beginPath(); c.arc(p.sx,p.sy,rad,0,7); c.fillStyle=col; c.fill();
+    c.fillStyle=col; c.font="600 11px system-ui";
+    c.textAlign="center"; c.textBaseline="alphabetic";
+    c.fillText(lab,p.sx,p.sy-rad-4); c.globalAlpha=1;
+  };
+  mark(P({x:0,y:cos(S.lat),z:sin(S.lat)}),"#7fe3ff",S.lat>=0?"NCP":"NCP",3.5);
+  mark(P({x:0,y:-cos(S.lat),z:-sin(S.lat)}),"#7fe3ff","SCP",3.5);
+  mark(P({x:0,y:0,z:1}),"#8ea3d6","zenith",2.5);
+  c.font="600 12px system-ui"; c.textAlign="center"; c.textBaseline="middle";
+  [["N",0],["E",90],["S",180],["W",270]].forEach(([l,a])=>{
+    const p=P(vec(0,a)); c.globalAlpha=p.d<0?0.4:1;
+    c.fillStyle="#c7d2ee"; c.fillText(l,p.sx,p.sy); c.globalAlpha=1;
+  });
+
+  // the object
+  const t=eqToHor(S.ra,S.dec,S.lst,S.lat);
+  const p=P(vec(t.alt,t.az));
+  c.beginPath(); c.arc(p.sx,p.sy,7,0,7);
+  c.fillStyle=t.alt>=0?"rgba(255,201,77,.25)":"rgba(255,123,123,.22)"; c.fill();
+  c.beginPath(); c.arc(p.sx,p.sy,3.6,0,7);
+  c.fillStyle=t.alt>=0?"#ffc94d":"#ff7b7b"; c.fill();
+
+  // altitude drop-line to the horizon
+  const foot=P(vec(0,t.az));
+  c.beginPath(); c.moveTo(p.sx,p.sy); c.lineTo(foot.sx,foot.sy);
+  c.strokeStyle=t.alt>=0?"rgba(255,201,77,.55)":"rgba(255,123,123,.45)";
+  c.lineWidth=1; c.setLineDash([3,3]); c.stroke(); c.setLineDash([]);
+}
+
+/* ---------- all-sky view ---------- */
+function drawSky(){
+  const cv=document.getElementById("sky");
+  const {c,w,h}=fit(cv,0.92);
+  const cx=w/2, cy=h/2, Rr=Math.min(w,h)*0.43;
+  c.clearRect(0,0,w,h);
+  const P=(alt,az)=>{const r=(90-alt)/90*Rr;
+    return {sx:cx-r*sin(az), sy:cy-r*cos(az), r};};
+
+  c.beginPath(); c.arc(cx,cy,Rr,0,7);
+  const g=c.createRadialGradient(cx,cy,0,cx,cy,Rr);
+  g.addColorStop(0,"#101a33"); g.addColorStop(1,"#070c1a");
+  c.fillStyle=g; c.fill();
+  c.strokeStyle="#6f86bd"; c.lineWidth=1.6; c.stroke();
+
+  // altitude rings
+  c.strokeStyle="#1e2a4a"; c.lineWidth=1;
+  [30,60].forEach(a=>{c.beginPath();c.arc(cx,cy,(90-a)/90*Rr,0,7);c.stroke();});
+  c.fillStyle="#5d6b91"; c.font="10px system-ui"; c.textAlign="left";
+  c.fillText("alt 30°",cx+4,cy-(60/90*Rr)-3);
+  c.fillText("alt 60°",cx+4,cy-(30/90*Rr)-3);
+
+  // asterism lines
+  if(S.opts.lines){
+    const map={}; STARS.forEach(s=>map[s[0]]=s);
+    c.strokeStyle="rgba(120,160,230,.45)"; c.lineWidth=1;
+    ASTERISMS.forEach(([,names])=>{
+      c.beginPath(); let started=false;
+      names.forEach(n=>{
+        const s=map[n]; if(!s){started=false;return;}
+        const t=eqToHor(s[1],s[2],S.lst,S.lat);
+        if(t.alt<0){started=false;return;}
+        const p=P(t.alt,t.az);
+        started?c.lineTo(p.sx,p.sy):c.moveTo(p.sx,p.sy); started=true;
+      });
+      c.stroke();
+    });
+  }
+  // stars
+  if(S.opts.stars){
+    STARS.forEach(s=>{
+      const t=eqToHor(s[1],s[2],S.lst,S.lat);
+      if(t.alt<0) return;
+      const p=P(t.alt,t.az), r=Math.max(1,3.2-s[3]*0.45);
+      c.beginPath(); c.arc(p.sx,p.sy,r,0,7); c.fillStyle="#e8ecf7"; c.fill();
+      if(s[3]<1.0){c.fillStyle="rgba(150,162,196,.85)";c.font="10px system-ui";
+        c.textAlign="left";c.fillText(s[0],p.sx+r+3,p.sy+3);}
+    });
+  }
+  // diurnal path
+  if(S.opts.path){
+    c.beginPath(); let started=false;
+    for(let H=0;H<=360;H+=1.5){
+      const sa=sin(S.dec)*sin(S.lat)+cos(S.dec)*cos(S.lat)*cos(H);
+      const alt=Math.asin(clamp(sa,-1,1))*R;
+      if(alt<0){started=false;continue;}
+      const east=-cos(S.dec)*sin(H);
+      const north=cos(S.lat)*sin(S.dec)-sin(S.lat)*cos(S.dec)*cos(H);
+      const p=P(alt,wrap360(Math.atan2(east,north)*R));
+      started?c.lineTo(p.sx,p.sy):c.moveTo(p.sx,p.sy); started=true;
+    }
+    c.strokeStyle="rgba(255,201,77,.75)"; c.lineWidth=2; c.stroke();
+  }
+  // cardinal points
+  c.font="600 13px system-ui"; c.textAlign="center"; c.textBaseline="middle";
+  c.fillStyle="#c7d2ee";
+  [["N",0],["E",90],["S",180],["W",270]].forEach(([l,a])=>{
+    const p=P(-7,a); c.fillText(l,p.sx,p.sy);
+  });
+
+  // the object
+  const t=eqToHor(S.ra,S.dec,S.lst,S.lat);
+  if(t.alt>=0){
+    const p=P(t.alt,t.az);
+    c.beginPath(); c.arc(p.sx,p.sy,9,0,7);
+    c.strokeStyle="#ffc94d"; c.lineWidth=1.8; c.stroke();
+    c.beginPath(); c.arc(p.sx,p.sy,3.5,0,7); c.fillStyle="#ffc94d"; c.fill();
+    // azimuth spoke
+    const edge=P(0,t.az);
+    c.beginPath(); c.moveTo(cx,cy); c.lineTo(edge.sx,edge.sy);
+    c.strokeStyle="rgba(255,201,77,.28)"; c.lineWidth=1;
+    c.setLineDash([4,4]); c.stroke(); c.setLineDash([]);
+  }else{
+    c.fillStyle="rgba(255,123,123,.9)"; c.font="600 13px system-ui"; c.textAlign="center";
+    c.fillText("target is below the horizon", cx, h-8);
+  }
+}
+
+/* ---------- readouts ---------- */
+function update(){
+  // keep the two modes consistent
+  if(S.mode==="hor"){
+    const e=horToEq(S.alt,S.az,S.lst,S.lat); S.ra=e.ra; S.dec=e.dec;
+    document.getElementById("ra").value=S.ra;
+    document.getElementById("dec").value=S.dec;
+  }
+  const t=eqToHor(S.ra,S.dec,S.lst,S.lat);
+  if(S.mode==="eq"){
+    S.alt=t.alt; S.az=t.az;
+    document.getElementById("altIn").value=S.alt;
+    document.getElementById("azIn").value=S.az;
+    document.getElementById("altIn2").textContent=S.alt.toFixed(1)+"°";
+    document.getElementById("azIn2").textContent=S.az.toFixed(1)+"°";
+  }
+  // labels
+  document.getElementById("latOut").textContent=Math.abs(S.lat).toFixed(1)+"° "+(S.lat<0?"S":"N");
+  document.getElementById("lstOut").textContent=hm(S.lst);
+  document.getElementById("raOut").textContent=hm(S.ra);
+  document.getElementById("decOut").textContent=dms(S.dec);
+
+  // right-hand panel
+  document.getElementById("rRA").textContent=hm(S.ra);
+  document.getElementById("rDec").textContent=dms(S.dec);
+  const haH=S.lst-S.ra, hn=haH>12?haH-24:(haH<-12?haH+24:haH);
+  document.getElementById("rHA").textContent=
+    (hn<0?"−":"+")+hm(Math.abs(hn)).replace("h ","h ")+"  ("+(hn*15).toFixed(1)+"°)";
+  document.getElementById("rAlt").textContent=t.alt.toFixed(1)+"°";
+  document.getElementById("rAz").textContent=t.az.toFixed(1)+"°";
+  document.getElementById("rDir").textContent=compass(t.az);
+
+  const up=upperTransit(S.dec,S.lat), lo=lowerTransit(S.dec,S.lat);
+  const circ=lo>=0, never=up<0;
+  document.getElementById("rStat").innerHTML= never
+    ? '<span class="badge b-dn">never visible</span>'
+    : t.alt>=0 ? '<span class="badge b-up">above horizon</span>'
+               : '<span class="badge b-dn">below horizon</span>';
+  document.getElementById("mUp").textContent=up.toFixed(1)+"°  ("+(S.dec>S.lat?"north":"south")+" of zenith)";
+  document.getElementById("mLow").textContent=lo.toFixed(1)+"°";
+  document.getElementById("mCirc").innerHTML= circ
+    ? '<span class="badge b-cp">yes — never sets</span>'
+    : never ? '<span class="badge b-dn">never rises</span>'
+            : '<span class="badge">rises &amp; sets</span>';
+
+  const H0=riseHA(S.dec,S.lat);
+  const set=(id,v)=>document.getElementById(id).textContent=v;
+  if(H0===null){set("mRise","—");set("mSet","—");set("mUpH","0 h");}
+  else if(H0==="circ"){set("mRise","never sets");set("mSet","never sets");set("mUpH","24 h");}
+  else{set("mRise",hm(S.ra-H0/15)); set("mSet",hm(S.ra+H0/15));
+       set("mUpH",(2*H0/15).toFixed(1)+" h");}
+  set("mTran",hm(S.ra));
+
+  document.getElementById("bestNote").innerHTML= never
+    ? "This object never rises from latitude "+S.lat.toFixed(1)+"°. You would have to travel towards the "+(S.dec>0?"north":"south")+" to see it."
+    : "<b>Best time to observe (6.12):</b> when LST ≈ "+hm(S.ra)+", because the object is then on the meridian at its highest altitude of "+up.toFixed(1)+"°, with the least atmosphere in the way.";
+
+  workings(t,hn,up,lo,circ,never);
+  drawSphere(); drawSky();
+}
+
+function workings(t,hn,up,lo,circ,never){
+  const φ=S.lat, δ=S.dec, H=hn*15;
+  const A=sin(δ)*sin(φ), B=cos(δ)*cos(φ)*cos(H);
+  const n=(x,p=3)=>(x<0?"−":"")+Math.abs(x).toFixed(p);
+  let txt=
+`STEP 1 — hour angle          (spec 6.11)
+HA = LST − RA
+   = ${S.lst.toFixed(2)} h − ${S.ra.toFixed(2)} h
+   = <span class="hl">${n(hn,2)} h  =  ${n(H,1)}°</span>
+${Math.abs(hn)<0.02?"   HA = 0 → the object is ON the meridian right now." :
+  hn>0?"   HA positive → the object has already crossed the meridian (west).":
+       "   HA negative → the object has not yet reached the meridian (east)."}
+
+STEP 2 — altitude             (spec 6.10)
+sin(alt) = sin δ · sin φ  +  cos δ · cos φ · cos H
+         = sin(${n(δ,1)}) · sin(${n(φ,1)}) + cos(${n(δ,1)}) · cos(${n(φ,1)}) · cos(${n(H,1)})
+         = ${n(A)} + ${n(B)}
+         = ${n(A+B)}
+     alt = <span class="hl">${n(t.alt,1)}°</span>
+
+STEP 3 — azimuth              (measured N → E)
+     az = <span class="hl">${t.az.toFixed(1)}°</span>  (${compass(t.az)})
+
+STEP 4 — the meridian results  (spec 6.13, 6.15, 6.16)
+upper transit alt = 90° − |δ − φ|
+                  = 90° − |${n(δ,1)} − ${n(φ,1)}|
+                  = <span class="hl">${up.toFixed(1)}°</span>
+lower transit alt = |δ + φ| − 90°
+                  = <span class="hl">${lo.toFixed(1)}°</span>
+
+circumpolar test: lower transit ${lo>=0?"≥":"<"} 0°  →  <span class="hl">${circ?"CIRCUMPOLAR — it never sets":never?"never rises from here":"it rises and sets"}</span>`;
+  document.getElementById("work").innerHTML=txt;
+}
+
+/* ---------- wiring ---------- */
+const $=id=>document.getElementById(id);
+$("lat").oninput=e=>{S.lat=+e.target.value;syncChips();update();};
+$("lst").oninput=e=>{S.lst=+e.target.value;update();};
+$("ra").oninput=e=>{S.ra=+e.target.value;update();};
+$("dec").oninput=e=>{S.dec=+e.target.value;update();};
+$("altIn").oninput=e=>{S.alt=+e.target.value;$("altIn2").textContent=S.alt.toFixed(1)+"°";update();};
+$("azIn").oninput=e=>{S.az=+e.target.value;$("azIn2").textContent=S.az.toFixed(1)+"°";update();};
+
+// latitude chips
+const lc=$("latChips");
+LATS.forEach(([n,v])=>{const d=document.createElement("div");d.className="chip";
+  d.textContent=n;d.dataset.v=v;
+  d.onclick=()=>{S.lat=v;$("lat").value=v;syncChips();update();};lc.appendChild(d);});
+function syncChips(){[...lc.children].forEach(d=>
+  d.classList.toggle("on",Math.abs(+d.dataset.v-S.lat)<0.25));}
+
+// target list
+const tsel=$("target");
+TARGETS.forEach(([n,ra,dec],i)=>{const o=document.createElement("option");
+  o.value=i;o.textContent=n;tsel.appendChild(o);});
+tsel.onchange=()=>{const [n,ra,dec]=TARGETS[+tsel.value];
+  S.ra=ra;S.dec=dec;$("ra").value=ra;$("dec").value=dec;
+  $("rName").textContent=n.split("  ")[0];
+  S.mode="eq";document.querySelectorAll(".tab").forEach(t=>
+    t.classList.toggle("on",t.dataset.mode==="eq"));
+  $("eqPane").classList.remove("hide");$("horPane").classList.add("hide");update();};
+
+// mode tabs
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+  t.classList.add("on"); S.mode=t.dataset.mode;
+  $("eqPane").classList.toggle("hide",S.mode!=="eq");
+  $("horPane").classList.toggle("hide",S.mode!=="hor");
+  if(S.mode==="hor") $("rName").textContent="(your own position)";
+  update();});
+
+// display options
+$("opts").onclick=e=>{const c=e.target.closest(".chip"); if(!c)return;
+  c.classList.toggle("on"); S.opts[c.dataset.opt]=c.classList.contains("on")?1:0; update();};
+
+// animation
+let anim=null;
+$("play").onclick=()=>{
+  S.playing=!S.playing; $("play").textContent=S.playing?"❚❚ Pause":"▶ Play";
+  if(S.playing){
+    let last=performance.now();
+    const step=now=>{ if(!S.playing) return;
+      S.lst=wrap24(S.lst+(now-last)/1000*0.9); last=now;
+      $("lst").value=S.lst; update(); anim=requestAnimationFrame(step);};
+    anim=requestAnimationFrame(step);
+  } else cancelAnimationFrame(anim);
+};
+$("toTransit").onclick=()=>{S.lst=S.ra;$("lst").value=S.lst;update();};
+
+// drag to rotate the sphere
+(()=>{const cv=$("sphere");let dr=false,px=0,py=0;
+ const down=e=>{dr=true;const p=e.touches?e.touches[0]:e;px=p.clientX;py=p.clientY;};
+ const move=e=>{if(!dr)return;e.preventDefault();
+   const p=e.touches?e.touches[0]:e;
+   S.cam.yaw=wrap360(S.cam.yaw+(p.clientX-px)*0.5);
+   S.cam.pitch=clamp(S.cam.pitch+(p.clientY-py)*0.35,-85,85);
+   px=p.clientX;py=p.clientY;drawSphere();};
+ const upE=()=>dr=false;
+ cv.addEventListener("mousedown",down);window.addEventListener("mousemove",move);
+ window.addEventListener("mouseup",upE);
+ cv.addEventListener("touchstart",down,{passive:true});
+ cv.addEventListener("touchmove",move,{passive:false});
+ cv.addEventListener("touchend",upE);})();
+
+window.addEventListener("resize",()=>{drawSphere();drawSky();});
+
+/* ---------- challenge ---------- */
+let score=0, asked=0, cur=null;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const QGEN=[
+ ()=>{const φ=Math.round(rnd(20,65)); return {
+   q:`An observer is at latitude ${φ}° N. What is the altitude of Polaris?`,
+   opts:[`${φ}°`,`${90-φ}°`,`90°`,`${Math.round(φ/2)}°`], ans:0,
+   why:`The north celestial pole always sits at an altitude equal to the observer's latitude — that is how spec point 6.18 lets you find your latitude from Polaris. So alt ≈ ${φ}°.`};},
+
+ ()=>{const φ=Math.round(rnd(30,60)), δ=Math.round(rnd(-20,80));
+   const lim=90-φ, circ=δ>=lim; return {
+   q:`From latitude ${φ}° N, is a star with declination ${δ>=0?"+":""}${δ}° circumpolar?`,
+   opts:["Yes — it never sets","No — it rises and sets"], ans:circ?0:1,
+   why:`A star is circumpolar when δ ≥ 90° − φ. Here 90° − ${φ}° = ${lim}°, and δ = ${δ}°, so the star ${circ?"IS":"is NOT"} circumpolar.`};},
+
+ ()=>{const φ=Math.round(rnd(25,60)), δ=Math.round(rnd(-30,40));
+   const a=90-Math.abs(δ-φ); return {
+   q:`A star of declination ${δ>=0?"+":""}${δ}° culminates for an observer at latitude ${φ}° N. What is its altitude at upper transit?`,
+   opts:shuffleKeep([`${a.toFixed(0)}°`,`${(90-φ).toFixed(0)}°`,`${(φ+δ).toFixed(0)}°`,`${Math.abs(δ).toFixed(0)}°`]),
+   ansText:`${a.toFixed(0)}°`,
+   why:`Altitude at upper transit = 90° − |δ − φ| = 90° − |${δ} − ${φ}| = ${a.toFixed(0)}°.`};},
+
+ ()=>{const lst=Math.round(rnd(0,23)), ra=Math.round(rnd(0,23));
+   let ha=lst-ra; if(ha<0)ha+=24; return {
+   q:`The local sidereal time is ${lst}h and a star has RA ${ra}h. What is the star's hour angle?`,
+   opts:shuffleKeep([`${ha}h`,`${(24-ha)%24}h`,`${lst+ra>=24?lst+ra-24:lst+ra}h`,`${ra}h`]),
+   ansText:`${ha}h`,
+   why:`HA = LST − RA = ${lst}h − ${ra}h = ${lst-ra}h${lst-ra<0?`, which we add 24h to, giving ${ha}h`:""}. An hour angle of 0h would mean the star is on the meridian.`};},
+
+ ()=>{const φ=Math.round(rnd(35,60)), δ=Math.round(rnd(φ+3,85));
+   return {
+   q:`From latitude ${φ}° N, does a star of declination +${δ}° cross the meridian to the north or the south of the zenith?`,
+   opts:["North of the zenith","South of the zenith"], ans:0,
+   why:`The zenith has a declination equal to your latitude (${φ}°). Because δ = +${δ}° is greater than ${φ}°, the star lies closer to the pole than the zenith does, so it transits on the northern side.`};},
+
+ ()=>{const δ=Math.round(rnd(-25,25)); return {
+   q:`At which latitude would a star of declination ${δ>=0?"+":""}${δ}° pass directly through the zenith?`,
+   opts:shuffleKeep([`${δ}°`,`${90-Math.abs(δ)}°`,`0°`,`${-δ}°`]),
+   ansText:`${δ}°`,
+   why:`An object passes through the zenith only when its declination equals the observer's latitude. So you would need latitude ${δ}°.`};},
+
+ ()=>{const az=pick([0,45,90,135,180,225,270,315]);
+   const dirs={0:"due north",45:"north-east",90:"due east",135:"south-east",
+     180:"due south",225:"south-west",270:"due west",315:"north-west"};
+   const opts=shuffle(["due north","due east","due south","due west","north-east","south-west"]).slice(0,3);
+   if(!opts.includes(dirs[az])) opts[0]=dirs[az];
+   return {q:`An object has an azimuth of ${az}°. In which direction should you look?`,
+   opts:shuffle(opts), ansText:dirs[az],
+   why:`Azimuth is measured from due north (0°) clockwise through east (90°), south (180°) and west (270°). So ${az}° is ${dirs[az]}.`};},
+
+ ()=>{const φ=Math.round(rnd(30,60)); return {
+   q:`An observer at latitude ${φ}° N looks at a star on the celestial equator (δ = 0°) as it culminates. What is its altitude?`,
+   opts:shuffleKeep([`${90-φ}°`,`${φ}°`,`90°`,`0°`]),
+   ansText:`${90-φ}°`,
+   why:`Upper transit altitude = 90° − |δ − φ| = 90° − ${φ}° = ${90-φ}°. The celestial equator always crosses the meridian at an altitude of 90° minus your latitude.`};}
+];
+function shuffleKeep(arr){return shuffle([...new Set(arr)]);}
+
+$("newQ").onclick=()=>{
+  cur=pick(QGEN)();
+  if(cur.ansText!==undefined) cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;
+  const box=$("qOpts"); box.innerHTML="";
+  cur.opts.forEach((o,i)=>{const b=document.createElement("button");
+    b.className="opt"; b.textContent=o;
+    b.onclick=()=>answer(i,b); box.appendChild(b);});
+  $("qFb").classList.add("hide"); asked++; $("asked").textContent=asked;
+};
+function answer(i,btn){
+  if(btn.disabled) return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;
+    if(j===cur.ans) b.classList.add("right");});
+  if(i!==cur.ans) btn.classList.add("wrong"); else score++;
+  $("score").textContent=score;
+  $("qFb").innerHTML=(i===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");
+}
+$("showQ").onclick=()=>{ if(!cur) return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;
+    if(j===cur.ans) b.classList.add("right");});
+  $("qFb").innerHTML=cur.why; $("qFb").classList.remove("hide");};
+
+/* ---------- go ---------- */
+syncChips(); update();
+</script>
+</body>
+</html>
