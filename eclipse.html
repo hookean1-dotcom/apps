@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eclipse Simulator — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;--sun:#ffcf4a;--blood:#c1553a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:290px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:13px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.seg{display:flex;gap:6px}
+.seg button{flex:1}
+.seg button.on{background:var(--accent);color:#0b1020;border-color:var(--accent);font-weight:700}
+canvas{width:100%;display:block;border-radius:9px;background:#04060d}
+.tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:6px 12px;font-size:13px;border-radius:7px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:600}
+.hide{display:none!important}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.jumps{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.jumps button{flex:1;min-width:52px;font-size:12.5px;padding:7px 4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.b-part{background:rgba(255,201,77,.16);color:var(--accent)}
+.b-tot{background:rgba(255,123,123,.16);color:var(--red)}
+.b-ann{background:rgba(79,195,247,.16);color:var(--accent2)}
+.b-non{background:rgba(150,162,196,.16);color:var(--dim)}
+.contacts .ct{padding:9px 11px;border-radius:8px;background:var(--panel2);border:1px solid var(--line);
+  margin-bottom:7px;font-size:13px}
+.contacts .ct.on{border-color:var(--accent);background:rgba(255,201,77,.10)}
+.contacts .ct b{color:var(--ink)}
+.contacts .ct .k{display:inline-block;width:74px;color:var(--accent);font-weight:700}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+details{margin-top:8px}
+summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Eclipse Simulator</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 3.8 – 3.10 · solar &amp; lunar eclipses, the 1st–4th umbral contacts, total / annular / partial</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT: CONTROLS ============ -->
+<div>
+  <div class="card">
+    <h2>1 · Type of eclipse</h2>
+    <div class="seg" id="typeSeg">
+      <button data-t="solar" class="on">☀ Solar</button>
+      <button data-t="lunar">🌑 Lunar</button>
+    </div>
+    <div class="note" id="typeNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Timeline</h2>
+    <label>Position through the eclipse <span class="val" id="pOut">start</span></label>
+    <input type="range" id="p" min="0" max="1000" value="120">
+    <div class="row" style="margin-top:9px">
+      <button id="play" class="primary">▶ Play</button>
+      <button id="reset">⭮ Reset</button>
+    </div>
+    <div class="jumps" id="jumps"></div>
+    <div class="note">Use the <b>jump buttons</b> to snap to each contact — this is exactly what exam questions ask you to identify.</div>
+  </div>
+
+  <div class="card" id="ratioCard">
+    <h2>3 · Moon's distance</h2>
+    <label>Apparent size of the Moon vs the Sun <span class="val" id="ratioOut">1.03×</span></label>
+    <input type="range" id="ratio" min="900" max="1080" value="1030">
+    <div class="cap" id="ratioNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>4 · Alignment</h2>
+    <label>How central is the line-up? <span class="val" id="offOut">central</span></label>
+    <input type="range" id="off" min="0" max="115" value="15">
+    <div class="cap">Perfect alignment gives a total/annular eclipse; a near-miss gives only a partial one. A big miss gives no eclipse at all — which is what happens at <b>most</b> new and full Moons (3.10).</div>
+  </div>
+</div>
+
+<!-- ============ CENTRE: VIEWS ============ -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" data-v="app">What you see</div>
+      <div class="tab" data-v="geo">Geometry &amp; shadows</div>
+      <div class="tab" data-v="why">Why not every month?</div>
+    </div>
+
+    <div id="vApp">
+      <canvas id="cApp"></canvas>
+      <canvas id="cTime" style="margin-top:10px;background:transparent"></canvas>
+      <div class="cap" id="appCap"></div>
+    </div>
+    <div id="vGeo" class="hide">
+      <canvas id="cGeo"></canvas>
+      <div class="cap" id="geoCap"></div>
+    </div>
+    <div id="vWhy" class="hide">
+      <canvas id="cWhy"></canvas>
+      <div class="row" style="margin-top:10px;align-items:center">
+        <button id="whyPlay" class="primary" style="flex:0 0 140px">▶ Play the year</button>
+        <div style="flex:1">
+          <label style="margin:0 0 3px">Time of year <span class="val" id="whyMonthOut">Jan</span></label>
+          <input type="range" id="whyYear" min="0" max="1000" value="120">
+        </div>
+      </div>
+      <div class="cap" id="whyCap"></div>
+      <div class="note" style="border-top:none;padding-top:4px">The Moon's orbit is tilted ~5° to the ecliptic (shown exaggerated here). Scrub the year: the full Moon rides <b>above and below</b> Earth's shadow and only slips into it near a <b>node</b>, twice a year. Those windows are the eclipse seasons.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What's happening now</h2>
+    <div id="statusBig" style="font-size:15px"></div>
+  </div>
+</div>
+
+<!-- ============ RIGHT: READOUT ============ -->
+<div>
+  <div class="card">
+    <h2>Status</h2>
+    <table>
+      <tr><td>Eclipse type</td><td id="rType">—</td></tr>
+      <tr><td>Current phase</td><td id="rPhase">—</td></tr>
+      <tr><td>Separation of centres</td><td id="rSep">—</td></tr>
+      <tr><td>Eclipse magnitude</td><td id="rMag">—</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>The four contacts</h2>
+    <div class="contacts" id="ctList"></div>
+    <div class="note" id="ctNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas (3.10)</h2>
+    <details><summary>What causes a solar eclipse?</summary><p>At <b>new Moon</b> the Moon passes between the Earth and Sun. If the alignment is close enough, the Moon's shadow falls on the Earth and blocks the Sun. Seen from inside the dark <b>umbra</b> it is total; from the lighter <b>penumbra</b> it is partial.</p></details>
+    <details><summary>What causes a lunar eclipse?</summary><p>At <b>full Moon</b> the Earth passes between the Sun and Moon, and the Moon moves into the Earth's shadow. It is visible from the entire night side of Earth, unlike a solar eclipse.</p></details>
+    <details><summary>Why is a total lunar eclipse red?</summary><p>Sunlight is refracted and scattered by the Earth's atmosphere into the umbra. Blue light is scattered away and red light bent inward, so the Moon glows a dim coppery red — the light of every sunrise and sunset on Earth at once.</p></details>
+    <details><summary>Total vs annular (3.8)</summary><p>The Moon's distance varies. Near <b>perigee</b> it looks slightly larger than the Sun and can cover it completely — <b>total</b>. Near <b>apogee</b> it looks slightly smaller, leaving a bright ring — <b>annular</b>.</p></details>
+    <details><summary>Why not every month?</summary><p>The Moon's orbit is tilted ~5°, so usually the new or full Moon is above or below the exact line-up. Eclipses only occur near the nodes (3.10).</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2;
+
+const S={type:"solar",p:0.12,ratio:1.03,off:0.15,view:"app",playing:false,
+         whyMonth:0,whyNode:0.75,whyYearPlaying:false};
+
+/* ---------- geometry helpers ---------- */
+// target radius R1 (fixed, centre), occulter/shadow radius R2 (moving)
+function radii(){
+  if(S.type==="solar"){
+    const Rs=1, Rm=S.ratio;                 // work in units where Sun radius = 1
+    return {R1:Rs,R2:Rm,tOut:Rs+Rm,tIn:Math.abs(Rs-Rm)};
+  } else {
+    const Rm=1, Ru=2.6;                      // Earth umbra ≈ 2.6 lunar radii
+    return {R1:Rm,R2:Ru,tOut:Ru+Rm,tIn:Ru-Rm};
+  }
+}
+function geomAt(p){
+  const {R1,R2,tOut,tIn}=radii();
+  const b=S.off*tOut;                        // impact parameter
+  const X=tOut*1.18;
+  const dx=(p*2-1)*X;
+  const d=Math.hypot(dx,b);
+  return {R1,R2,tOut,tIn,b,X,dx,d};
+}
+function contactList(){
+  const {R1,R2,tOut,tIn,b,X}=geomAt(0.5);
+  const pOf=dx=>(dx/X+1)/2;
+  if(b>tOut) return [];                       // miss — no eclipse
+  const out=[{k:"1st",p:pOf(-Math.sqrt(tOut*tOut-b*b))}];
+  const central=b<tIn;
+  if(central) out.push({k:"2nd",p:pOf(-Math.sqrt(tIn*tIn-b*b))});
+  out.push({k:"Max",p:0.5});
+  if(central) out.push({k:"3rd",p:pOf(Math.sqrt(tIn*tIn-b*b))});
+  out.push({k:"4th",p:pOf(Math.sqrt(tOut*tOut-b*b))});
+  return out;
+}
+// phase classification at current p
+function phase(){
+  const g=geomAt(S.p);
+  if(g.b>g.tOut) return {key:"none",label:"No eclipse",cls:"b-non"};
+  if(g.d>g.tOut) return {key:"before",label:S.p<0.5?"Before 1st contact":"After 4th contact",cls:"b-non"};
+  if(g.d>g.tIn)  return {key:"partial",label:"Partial",cls:"b-part"};
+  // fully inside
+  if(S.type==="lunar") return {key:"total",label:"Total (totality)",cls:"b-tot"};
+  return S.ratio>=1 ? {key:"total",label:"Total (totality)",cls:"b-tot"}
+                    : {key:"annular",label:"Annular (ring)",cls:"b-ann"};
+}
+
+/* ---------- canvas fit ---------- */
+function fit(cv,ratio){
+  const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);
+  return {c,w,h};
+}
+
+/* ---------- appearance view ---------- */
+function drawApp(){
+  const {c,w,h}=fit(document.getElementById("cApp"),0.62);
+  c.clearRect(0,0,w,h); c.fillStyle="#04060d"; c.fillRect(0,0,w,h);
+  const cx=w/2, cy=h/2;
+  const g=geomAt(S.p);
+  const unit=Math.min(w,h)*(S.type==="solar"?0.30:0.16); // px per radius-unit
+  const ph=phase();
+
+  if(S.type==="solar"){
+    const Rs=g.R1*unit, Rm=g.R2*unit;
+    const mx=cx+g.dx*unit, my=cy+g.b*unit;
+    const totality=(ph.key==="total");
+    // corona during totality
+    if(totality){
+      const cg=c.createRadialGradient(cx,cy,Rm*0.9,cx,cy,Rm*2.5);
+      cg.addColorStop(0,"rgba(255,250,235,.55)");
+      cg.addColorStop(.4,"rgba(255,240,210,.18)");
+      cg.addColorStop(1,"rgba(255,240,210,0)");
+      c.fillStyle=cg; c.beginPath(); c.arc(cx,cy,Rm*2.5,0,TAU); c.fill();
+      // simple streamers
+      c.save(); c.translate(cx,cy);
+      for(let i=0;i<12;i++){c.rotate(TAU/12);
+        c.fillStyle="rgba(255,248,230,.10)";
+        c.beginPath();c.moveTo(Rm*0.95,-Rm*0.06);c.lineTo(Rm*2.2,0);c.lineTo(Rm*0.95,Rm*0.06);c.fill();}
+      c.restore();
+    }
+    // Sun
+    const sg=c.createRadialGradient(cx-Rs*0.2,cy-Rs*0.2,Rs*0.2,cx,cy,Rs);
+    sg.addColorStop(0,"#fff2c0"); sg.addColorStop(.7,"#ffcf4a"); sg.addColorStop(1,"#ff9d1c");
+    c.beginPath(); c.arc(cx,cy,Rs,0,TAU); c.fillStyle=sg; c.fill();
+    // Moon (dark, occulting)
+    c.beginPath(); c.arc(mx,my,Rm,0,TAU);
+    c.fillStyle="#070b16"; c.fill();
+    c.strokeStyle="rgba(120,140,190,.35)"; c.lineWidth=1; c.stroke();
+    // diamond-ring flash near 2nd / 3rd contact of a total eclipse
+    if(S.ratio>=1 && Math.abs(g.d-g.tIn)<0.05 && g.d>g.tIn*0.4){
+      const ang=Math.atan2(cy-my,cx-mx);
+      const bx=mx+Math.cos(ang)*Rm, by=my+Math.sin(ang)*Rm;
+      const dg=c.createRadialGradient(bx,by,0,bx,by,Rm*0.6);
+      dg.addColorStop(0,"rgba(255,255,245,.95)"); dg.addColorStop(1,"rgba(255,255,245,0)");
+      c.fillStyle=dg; c.beginPath(); c.arc(bx,by,Rm*0.6,0,TAU); c.fill();
+    }
+    c.fillStyle="rgba(150,162,196,.9)";c.font="12px system-ui";c.textAlign="left";
+    c.fillText(totality?"totality — corona visible":"the Sun as seen through a safe solar filter",12,20);
+  }
+
+  else { // lunar
+    const Rm=g.R1*unit, Ru=g.R2*unit;
+    const ux=cx+g.dx*unit, uy=cy+g.b*unit;   // umbra centre
+    const Rp=Ru+2*Rm;                         // penumbra radius
+    // faint starry sky
+    // bright Moon
+    const mg=c.createRadialGradient(cx-Rm*0.25,cy-Rm*0.25,Rm*0.2,cx,cy,Rm);
+    mg.addColorStop(0,"#eef1f7"); mg.addColorStop(.8,"#d7dae2"); mg.addColorStop(1,"#b9bcc6");
+    c.beginPath(); c.arc(cx,cy,Rm,0,TAU); c.fillStyle=mg; c.fill();
+    // maria for realism
+    const R2=(s=>{let x=s;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};})(7);
+    c.save();c.beginPath();c.arc(cx,cy,Rm,0,TAU);c.clip();
+    for(let i=0;i<5;i++){const a=R2()*TAU,dd=R2()*0.6*Rm,rr=Rm*(0.14+R2()*0.16);
+      c.beginPath();c.ellipse(cx+Math.cos(a)*dd,cy+Math.sin(a)*dd,rr,rr*0.8,a,0,TAU);
+      c.fillStyle="rgba(120,124,138,.4)";c.fill();}
+    // penumbra dimming
+    c.beginPath(); c.arc(ux,uy,Rp,0,TAU);
+    c.fillStyle="rgba(0,0,10,.28)"; c.fill();
+    // umbra — coppery red where it covers the Moon
+    const ug=c.createRadialGradient(ux,uy,0,ux,uy,Ru);
+    ug.addColorStop(0,"rgba(150,55,35,.95)"); ug.addColorStop(.7,"rgba(95,32,20,.95)");
+    ug.addColorStop(1,"rgba(60,20,14,.97)");
+    c.beginPath(); c.arc(ux,uy,Ru,0,TAU); c.fillStyle=ug; c.fill();
+    c.restore();
+    c.fillStyle="rgba(150,162,196,.9)";c.font="12px system-ui";c.textAlign="left";
+    c.fillText(ph.key==="total"?"totality — the Moon glows coppery red":
+      ph.key==="partial"?"partial — a dark bite of the umbra crosses the Moon":
+      "the full Moon before the umbra reaches it",12,20);
+  }
+  drawTimeline();
+}
+
+/* ---------- timeline strip ---------- */
+function drawTimeline(){
+  const cv=document.getElementById("cTime");
+  const {c,w,h}=fit(cv,0.12);
+  c.clearRect(0,0,w,h);
+  const y=h*0.55, x0=14, x1=w-14, L=x1-x0;
+  c.strokeStyle="#2a3556"; c.lineWidth=3; c.lineCap="round";
+  c.beginPath(); c.moveTo(x0,y); c.lineTo(x1,y); c.stroke();
+  // shaded partial / total bands
+  const cs=contactList();
+  const px=p=>x0+p*L;
+  if(cs.length){
+    const first=cs[0].p, last=cs[cs.length-1].p;
+    c.strokeStyle="rgba(255,201,77,.5)"; c.lineWidth=3;
+    c.beginPath(); c.moveTo(px(first),y); c.lineTo(px(last),y); c.stroke();
+    const c2=cs.find(k=>k.k==="2nd"), c3=cs.find(k=>k.k==="3rd");
+    if(c2&&c3){c.strokeStyle=S.type==="lunar"||S.ratio>=1?"rgba(255,123,123,.8)":"rgba(79,195,247,.8)";
+      c.beginPath(); c.moveTo(px(c2.p),y); c.lineTo(px(c3.p),y); c.stroke();}
+    cs.forEach(k=>{
+      c.beginPath(); c.arc(px(k.p),y,4,0,TAU);
+      c.fillStyle=k.k==="Max"?"#96a2c4":"#ffc94d"; c.fill();
+      c.fillStyle="#c7d2ee"; c.font="10px system-ui"; c.textAlign="center";
+      c.fillText(k.k,px(k.p),y-9);
+    });
+  } else {
+    c.fillStyle="#96a2c4";c.font="11px system-ui";c.textAlign="center";
+    c.fillText("alignment too poor — no eclipse occurs",w/2,y-9);
+  }
+  // playhead
+  c.beginPath(); c.arc(px(S.p),y,6,0,TAU);
+  c.fillStyle="#4fc3f7"; c.fill();
+  c.strokeStyle="#04060d"; c.lineWidth=2; c.stroke();
+}
+
+/* ---------- geometry (shadow) view ---------- */
+function drawGeo(){
+  const {c,w,h}=fit(document.getElementById("cGeo"),0.62);
+  c.clearRect(0,0,w,h); c.fillStyle="#04060d"; c.fillRect(0,0,w,h);
+  const cy=h/2;
+  const lab=(x,y,t,col)=>{c.fillStyle=col||"#96a2c4";c.font="12px system-ui";c.textAlign="center";c.fillText(t,x,y);};
+  const g=geomAt(S.p);
+
+  if(S.type==="solar"){
+    // Sun (left), Moon (middle), Earth (right)
+    const sunX=w*0.06, sunR=h*0.42;
+    const earthX=w*0.9, earthR=h*0.16;
+    const moonX=w*0.6, moonR=h*0.03;
+    const moonY=cy+g.b*h*0.14;
+    // sunlight envelope to Moon → umbra + penumbra cones
+    // umbra: tangents that cross
+    c.fillStyle="rgba(60,70,110,.18)";
+    c.beginPath();c.moveTo(sunX,cy-sunR);c.lineTo(moonX,moonY-moonR);
+    c.lineTo(moonX,moonY+moonR);c.lineTo(sunX,cy+sunR);c.closePath();c.fill();
+    // umbra shadow cone behind Moon (converging)
+    const conv=moonX+ (moonR)*(earthX-moonX)/(sunR-moonR); // apex where umbra closes
+    c.fillStyle="rgba(0,0,0,.55)";
+    c.beginPath();c.moveTo(moonX,moonY-moonR);c.lineTo(conv,cy);c.lineTo(moonX,moonY+moonR);c.closePath();c.fill();
+    // penumbra behind (diverging)
+    c.fillStyle="rgba(120,130,170,.12)";
+    c.beginPath();
+    c.moveTo(moonX,moonY-moonR);c.lineTo(w,cy-h*0.33);
+    c.lineTo(w,cy+h*0.33);c.lineTo(moonX,moonY+moonR);c.closePath();c.fill();
+    // Sun
+    const sg=c.createRadialGradient(sunX,cy,10,sunX,cy,sunR);
+    sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+    c.beginPath();c.arc(sunX,cy,sunR,0,TAU);c.fillStyle=sg;c.fill();
+    lab(sunX+sunR*0.2,cy-sunR-6,"Sun","#ffcf4a");
+    // Earth
+    c.beginPath();c.arc(earthX,cy,earthR,0,TAU);
+    c.fillStyle="#2b6cb0";c.fill();c.strokeStyle="#7fb0e0";c.stroke();
+    lab(earthX,cy-earthR-8,"Earth","#7fb0e0");
+    // Moon
+    c.beginPath();c.arc(moonX,moonY,moonR+1.5,0,TAU);c.fillStyle="#c9ccd6";c.fill();
+    lab(moonX,moonY-moonR-8,"Moon","#c9ccd6");
+    const reaches = conv>earthX-earthR;
+    document.getElementById("geoCap").innerHTML=
+      "At <b>new Moon</b> the Moon sits between Earth and Sun and casts a shadow. The dark central cone is the <b>umbra</b>; the lighter surrounding cone is the <b>penumbra</b>. Observers in the umbra see a <b>total</b> eclipse; in the penumbra, a <b>partial</b> one. When the Moon is far away the umbra's tip falls short of the Earth and observers there see an <b>annular</b> eclipse instead.";
+  }
+  else {
+    // Sun (left, off-view large), Earth (middle) casting shadow right, Moon passing
+    const earthX=w*0.34, earthR=h*0.16;
+    const sunR=h*0.46, sunX=-w*0.02;
+    // sunlight to Earth
+    c.fillStyle="rgba(60,70,110,.16)";
+    c.beginPath();c.moveTo(sunX,cy-sunR);c.lineTo(earthX,cy-earthR);
+    c.lineTo(earthX,cy+earthR);c.lineTo(sunX,cy+sunR);c.closePath();c.fill();
+    // umbra cone (converging to a point beyond the Moon)
+    const apex=w*1.15;
+    c.fillStyle="rgba(0,0,0,.6)";
+    c.beginPath();c.moveTo(earthX,cy-earthR);c.lineTo(apex,cy);c.lineTo(earthX,cy+earthR);c.closePath();c.fill();
+    // reddish tint of umbra (refracted light)
+    c.fillStyle="rgba(150,55,35,.18)";
+    c.beginPath();c.moveTo(earthX,cy-earthR);c.lineTo(apex,cy);c.lineTo(earthX,cy+earthR);c.closePath();c.fill();
+    // penumbra diverging
+    c.fillStyle="rgba(120,130,170,.12)";
+    c.beginPath();c.moveTo(earthX,cy-earthR);c.lineTo(w,cy-h*0.42);
+    c.lineTo(w,cy+h*0.42);c.lineTo(earthX,cy+earthR);c.closePath();c.fill();
+    // Sun sliver
+    const sg=c.createRadialGradient(sunX,cy,10,sunX,cy,sunR);
+    sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+    c.beginPath();c.arc(sunX,cy,sunR,0,TAU);c.fillStyle=sg;c.fill();
+    lab(sunX+sunR*0.5,cy-sunR*0.6,"Sun","#ffcf4a");
+    // Earth
+    c.beginPath();c.arc(earthX,cy,earthR,0,TAU);c.fillStyle="#2b6cb0";c.fill();
+    c.strokeStyle="#7fb0e0";c.stroke();
+    lab(earthX,cy-earthR-8,"Earth","#7fb0e0");
+    // Moon on its path through the shadow
+    const moonPathX=w*0.8;
+    const moonR=h*0.045;
+    const moonY=cy + (S.p*2-1)*h*0.30 + g.b*0 ; // move vertically along path
+    const my=cy + (0.5-S.p)*2*h*0.32;
+    const inUmb=phase().key==="total";
+    c.beginPath();c.arc(moonPathX,my,moonR,0,TAU);
+    c.fillStyle=inUmb?"#a5432e":"#c9ccd6";c.fill();
+    // dashed path
+    c.strokeStyle="rgba(150,162,196,.3)";c.setLineDash([4,4]);
+    c.beginPath();c.moveTo(moonPathX,h*0.12);c.lineTo(moonPathX,h*0.88);c.stroke();c.setLineDash([]);
+    lab(moonPathX,h*0.10,"Moon's path","#c9ccd6");
+    document.getElementById("geoCap").innerHTML=
+      "At <b>full Moon</b> the Earth lies between the Sun and Moon, and the Moon moves through the Earth's shadow. The dark central <b>umbra</b> gives totality; the surrounding <b>penumbra</b> only dims the Moon slightly. Because the shadow is cast on the Moon itself, the eclipse looks the same from anywhere on Earth's night side.";
+  }
+}
+
+/* ---------- why-not-every-month view (true 3D) ---------- */
+const WHY={R:10, incl:22*Math.PI/180, shadowR:1.6, plane:12.5};
+function whyOrbit(t){                       // 3D point on the tilted lunar orbit
+  const O=S.whyNode, ci=Math.cos(WHY.incl), si=Math.sin(WHY.incl);
+  const nx=Math.cos(O), ny=Math.sin(O), mx=-Math.sin(O), my=Math.cos(O);
+  return {x:WHY.R*(Math.cos(t)*nx+Math.sin(t)*ci*mx),
+          y:WHY.R*(Math.cos(t)*ny+Math.sin(t)*ci*my),
+          z:WHY.R*Math.sin(t)*si};
+}
+function whyKey(){                           // full & new Moon points for current year
+  let tf=0,bf=-1e9,tn=0,bn=1e9;
+  for(let t=0;t<TAU;t+=0.008){const p=whyOrbit(t);
+    if(p.x>bf){bf=p.x;tf=t;} if(p.x<bn){bn=p.x;tn=t;}}
+  const full=whyOrbit(tf), nw=whyOrbit(tn);
+  const off=Math.hypot(full.y,full.z);
+  return {tf,tn,full,nw,off,eclipse:off<WHY.shadowR};
+}
+function drawWhy(){
+  const {c,w,h}=fit(document.getElementById("cWhy"),0.60);
+  c.clearRect(0,0,w,h); c.fillStyle="#04060d"; c.fillRect(0,0,w,h);
+  const ISO=Math.min(w,h)/30, cx=w*0.5, cy=h*0.32;
+  const P=(x,y,z)=>({X:cx+(x-y)*ISO*0.86, Y:cy+(x+y)*ISO*0.5-z*ISO});
+  const line=(a,b,col,wd,dash)=>{c.beginPath();c.moveTo(a.X,a.Y);c.lineTo(b.X,b.Y);
+    c.strokeStyle=col;c.lineWidth=wd||1;c.setLineDash(dash||[]);c.stroke();c.setLineDash([]);};
+  const dot=(p,r,col)=>{c.beginPath();c.arc(p.X,p.Y,r,0,TAU);c.fillStyle=col;c.fill();};
+  const txt=(p,t,col,dx,dy)=>{c.fillStyle=col;c.font="11px system-ui";c.textAlign="center";
+    c.fillText(t,p.X+(dx||0),p.Y+(dy||0));};
+  const K=whyKey(), pl=WHY.plane;
+
+  // ---- ecliptic plane (a receding tabletop) ----
+  const c1=P(-pl,-pl,0),c2=P(pl,-pl,0),c3=P(pl,pl,0),c4=P(-pl,pl,0);
+  c.beginPath();c.moveTo(c1.X,c1.Y);c.lineTo(c2.X,c2.Y);c.lineTo(c3.X,c3.Y);c.lineTo(c4.X,c4.Y);c.closePath();
+  c.fillStyle="rgba(50,80,140,.13)";c.fill();
+  c.strokeStyle="rgba(120,160,230,.28)";c.lineWidth=1;
+  for(let g=-pl;g<=pl;g+=pl/2){line(P(g,-pl,0),P(g,pl,0),"rgba(120,160,230,.14)",1);
+    line(P(-pl,g,0),P(pl,g,0),"rgba(120,160,230,.14)",1);}
+  txt(P(-pl+3,pl,0),"ecliptic plane","rgba(120,160,230,.75)",0,16);
+
+  // ---- Sun (upper-left, on the plane, -X) ----
+  const sun=P(-pl*1.15,0,0);
+  const sg=c.createRadialGradient(sun.X,sun.Y,2,sun.X,sun.Y,ISO*1.5);
+  sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+  c.beginPath();c.arc(sun.X,sun.Y,ISO*1.4,0,TAU);c.fillStyle=sg;c.fill();
+  txt(sun,"Sun","#ffcf4a",0,-ISO*1.4-6);
+  line(sun,P(0,0,0),"rgba(255,207,74,.35)",1,[5,5]);
+
+  // ---- Earth's shadow: cone in the plane pointing +X (away from Sun) ----
+  const sE=P(0,0,0), sTa=P(pl*1.05,WHY.shadowR,0), sTb=P(pl*1.05,-WHY.shadowR,0);
+  c.beginPath();c.moveTo(sE.X,sE.Y);c.lineTo(sTa.X,sTa.Y);c.lineTo(sTb.X,sTb.Y);c.closePath();
+  c.fillStyle="rgba(120,40,26,.34)";c.fill();
+  // umbra cross-section ring at the Moon's distance (x = R) — the "target"
+  c.beginPath();
+  for(let a=0;a<=TAU+0.01;a+=0.15){const p=P(WHY.R,WHY.shadowR*Math.cos(a),WHY.shadowR*Math.sin(a));
+    a===0?c.moveTo(p.X,p.Y):c.lineTo(p.X,p.Y);}
+  c.strokeStyle="rgba(255,120,90,.85)";c.lineWidth=1.6;c.stroke();
+  txt(P(WHY.R,0,-WHY.shadowR),"Earth's shadow","#ff8a66",0,ISO*WHY.shadowR+14);
+
+  // ---- lunar orbit: back half (z<0 / behind) dim, front bright ----
+  const seg=(from,to)=>{let prev=null;
+    for(let t=from;t<=to+0.001;t+=0.06){const p=whyOrbit(t),s=P(p.x,p.y,p.z);
+      if(prev){const below=whyOrbit(t-0.03).z<0;
+        line(prev,s, below?"rgba(180,140,255,.35)":"rgba(200,170,255,.95)", below?1.4:2.2, below?[4,4]:[]);}
+      prev=s;}};
+  seg(0,TAU);
+  // nodes
+  [0,Math.PI].forEach(t=>{const p=whyOrbit(t);dot(P(p.x,p.y,0),4.5,"#5ddc9a");});
+  txt(P(whyOrbit(0).x,whyOrbit(0).y,0),"node","#5ddc9a",0,-9);
+  txt(P(whyOrbit(Math.PI).x,whyOrbit(Math.PI).y,0),"node","#5ddc9a",0,-9);
+
+  // ---- Earth ----
+  const E=P(0,0,0);
+  c.beginPath();c.arc(E.X,E.Y,ISO*0.7,0,TAU);c.fillStyle="#2b6cb0";c.fill();
+  c.strokeStyle="#7fb0e0";c.lineWidth=1.2;c.stroke();
+  txt(E,"Earth","#7fb0e0",-ISO*1.4,4);
+
+  // ---- ghost "full Moon" marker (the teaching focus) ----
+  const drawGhost=(pt,label,emphasise)=>{
+    const foot=P(pt.x,pt.y,0), top=P(pt.x,pt.y,pt.z);
+    line(foot,top,"rgba(255,255,255,.35)",1,[3,3]);
+    dot(foot,2.5,"rgba(255,255,255,.4)");
+    const col=emphasise?(K.eclipse?"#ff7b7b":"#ffc94d"):"rgba(160,170,200,.8)";
+    c.beginPath();c.arc(top.X,top.Y, emphasise?7:5,0,TAU);
+    c.fillStyle=col;c.fill();
+    if(emphasise){c.strokeStyle="#fff";c.lineWidth=1.5;c.stroke();}
+    txt(top,label,col,0,-emphasise?-12:-10);
+  };
+  drawGhost(K.nw,"new Moon",false);
+  drawGhost(K.full,"full Moon",true);
+
+  // ---- live Moon going around (this month) ----
+  const mp=whyOrbit(S.whyMonth), mS=P(mp.x,mp.y,mp.z);
+  line(P(mp.x,mp.y,0),mS,"rgba(200,170,255,.5)",1,[3,3]);
+  const fu=(mp.x/WHY.R+1)/2;                    // 0 new .. 1 full
+  dot(mS,ISO*0.42, `rgb(${120+120*fu|0},${124+118*fu|0},${138+110*fu|0})`);
+
+  // ---- status ----
+  const status = K.eclipse
+    ? "The full Moon lies AT a node — it passes through Earth's shadow → LUNAR ECLIPSE possible"
+    : `At full Moon this month, the Moon passes ${K.full.z>0?"ABOVE":"BELOW"} Earth's shadow → no eclipse`;
+  c.fillStyle=K.eclipse?"#ff7b7b":"#96a2c4";
+  c.font="600 14px system-ui";c.textAlign="center";
+  c.fillText(status,w/2,h-10);
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  $("pOut").textContent=(S.p*100).toFixed(0)+"%";
+  $("ratioOut").textContent=S.ratio.toFixed(2)+"×";
+  $("offOut").textContent=S.off<0.02?"central":S.off.toFixed(2);
+  $("ratioNote").innerHTML=S.ratio>=1
+    ? `Moon looks <b>larger</b> than the Sun (near perigee) → a <b>total</b> eclipse is possible.`
+    : `Moon looks <b>smaller</b> than the Sun (near apogee) → only an <b>annular</b> eclipse, leaving a ring.`;
+  $("typeNote").innerHTML=S.type==="solar"
+    ? "Happens at <b>new Moon</b>, when the Moon blocks the Sun. Seen only from a narrow track on Earth."
+    : "Happens at <b>full Moon</b>, when the Moon enters Earth's shadow. Seen from the whole night side of Earth.";
+  $("ratioCard").classList.toggle("hide",S.type==="lunar");
+
+  const g=geomAt(S.p), ph=phase();
+  $("rType").textContent=S.type==="solar"?"Solar (new Moon)":"Lunar (full Moon)";
+  $("rPhase").innerHTML=`<span class="badge ${ph.cls}">${ph.label}</span>`;
+  $("rSep").textContent=(g.d/g.tOut).toFixed(2)+" (of max)";
+  // eclipse magnitude = fraction of target diameter covered
+  const mag=clamp((g.tOut-g.d)/(2*g.R1),0,S.type==="lunar"?(g.R2+g.R1)/(2*g.R1):1);
+  $("rMag").textContent=g.d>g.tOut?"0.00":mag.toFixed(2);
+
+  statusText(ph,g);
+  buildContacts();
+  buildJumps();
+
+  if(S.view==="app") drawApp();
+  else if(S.view==="geo"){drawGeo();drawTimeline();}
+  else if(S.view==="why") drawWhy();
+}
+
+function statusText(ph,g){
+  let t="";
+  if(S.type==="solar"){
+    if(ph.key==="none") t="The alignment is too poor — the Moon's shadow misses the Earth entirely, so <b>no eclipse</b> happens. This is the situation at most new Moons (3.10).";
+    else if(ph.key==="before") t=S.p<0.5?"The Moon has not yet reached the Sun. Waiting for <b>1st contact</b>.":"The Moon has cleared the Sun. The eclipse is over.";
+    else if(ph.key==="partial") t="<b>Partial phase.</b> The Moon covers part of the Sun's disc — a crescent of Sun remains. A safe solar filter is essential.";
+    else if(ph.key==="total") t="<b>Totality.</b> The Moon completely hides the Sun's bright photosphere and the faint <b>corona</b> springs into view. This is the only time it is safe to look without a filter.";
+    else t="<b>Annularity.</b> The Moon is too small to cover the Sun, so a brilliant <b>ring</b> of sunlight remains around it. A filter is still needed throughout.";
+  } else {
+    if(ph.key==="none") t="The alignment is too poor — the Moon passes above or below Earth's shadow, so <b>no eclipse</b> happens. This is the situation at most full Moons (3.10).";
+    else if(ph.key==="before") t=S.p<0.5?"The full Moon is bright; the umbra has not yet reached it. Waiting for <b>1st contact</b>.":"The Moon has left the shadow. The eclipse is over.";
+    else if(ph.key==="partial") t="<b>Partial (umbral) phase.</b> A dark, curved bite of the Earth's umbra crosses the Moon — the curved edge is itself evidence that the Earth is round.";
+    else t="<b>Totality.</b> The Moon lies fully inside the umbra and glows a dim <b>coppery red</b>, lit only by sunlight refracted through the Earth's atmosphere.";
+  }
+  $("statusBig").innerHTML=t;
+}
+
+const CT_DESC={
+ solar:{
+  "1st":"Moon's disc first touches the Sun's edge. The <b>partial phase begins</b>.",
+  "2nd":()=>S.ratio>=1?"Moon completely covers the Sun. <b>Totality begins</b> — corona and the diamond ring appear.":"Moon moves fully onto the Sun, leaving a bright ring. <b>Annularity begins</b>.",
+  "Max":"<b>Maximum eclipse</b> — the Sun is most obscured.",
+  "3rd":()=>S.ratio>=1?"The Sun's edge reappears. <b>Totality ends</b>.":"The ring breaks as the Moon starts to exit. <b>Annularity ends</b>.",
+  "4th":"Moon's disc leaves the Sun's edge. The <b>eclipse ends</b>."
+ },
+ lunar:{
+  "1st":"Moon's edge enters the <b>umbra</b>. The partial (umbral) eclipse begins.",
+  "2nd":"Moon is completely inside the umbra. <b>Totality begins</b> — the Moon turns red.",
+  "Max":"<b>Maximum eclipse</b> — the Moon is deepest in the umbra.",
+  "3rd":"Moon's edge starts to leave the umbra. <b>Totality ends</b>.",
+  "4th":"Moon fully leaves the umbra. The umbral eclipse ends."
+ }
+};
+function buildContacts(){
+  const cs=contactList(), box=$("ctList");
+  const active=nearestContact();
+  box.innerHTML="";
+  if(!cs.length){box.innerHTML='<div class="ct">No contacts — the alignment is too poor for an eclipse.</div>';
+    $("ctNote").textContent="";return;}
+  cs.forEach(k=>{
+    let d=CT_DESC[S.type][k.k]; if(typeof d==="function") d=d();
+    const div=document.createElement("div");
+    div.className="ct"+(active===k.k?" on":"");
+    div.innerHTML=`<span class="k">${k.k==="Max"?"Max":k.k+" contact"}</span>${d}`;
+    div.onclick=()=>{S.p=k.p;$("p").value=k.p*1000;update();};
+    box.appendChild(div);
+  });
+  const hasT=cs.some(k=>k.k==="2nd");
+  $("ctNote").innerHTML=hasT?"Click any contact to jump to it. The spec calls these the 1st–4th <b>umbral contacts</b>."
+    :"Only a <b>partial</b> eclipse here — there is no 2nd or 3rd contact because the Moon never fully "+(S.type==="solar"?"covers the Sun":"enters the umbra")+".";
+}
+function nearestContact(){
+  const cs=contactList(); if(!cs.length) return null;
+  let best=null,bd=1e9; cs.forEach(k=>{const dd=Math.abs(k.p-S.p); if(dd<bd){bd=dd;best=k.k;}});
+  return bd<0.03?best:null;
+}
+function buildJumps(){
+  const cs=contactList(), box=$("jumps"); box.innerHTML="";
+  if(!cs.length) return;
+  cs.forEach(k=>{const b=document.createElement("button");
+    b.textContent=k.k==="Max"?"Max":k.k; b.onclick=()=>{S.p=k.p;$("p").value=k.p*1000;update();};
+    box.appendChild(b);});
+}
+
+/* ---------- controls ---------- */
+$("p").oninput=e=>{S.p=+e.target.value/1000;update();};
+$("ratio").oninput=e=>{S.ratio=+e.target.value/1000;update();};
+$("off").oninput=e=>{S.off=+e.target.value/100;update();};
+$("reset").onclick=()=>{S.p=0.12;$("p").value=120;update();};
+$("typeSeg").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+  S.type=b.dataset.t;[...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===b));update();};
+
+let anim=null;
+$("play").onclick=()=>{
+  S.playing=!S.playing; $("play").textContent=S.playing?"❚❚ Pause":"▶ Play";
+  if(S.playing){
+    let last=performance.now();
+    const step=now=>{if(!S.playing)return;
+      S.p+=(now-last)/1000*0.10; last=now;
+      if(S.p>1)S.p=0;
+      $("p").value=S.p*1000; update(); anim=requestAnimationFrame(step);};
+    anim=requestAnimationFrame(step);
+  } else cancelAnimationFrame(anim);
+};
+
+// why-view animation
+const MONTHS=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+let whyAnim=null;
+function whyCaption(){
+  const K=whyKey();
+  $("whyMonthOut").textContent=MONTHS[Math.floor(S.whyNode/TAU*12)%12];
+  $("whyCap").innerHTML=K.eclipse
+    ? "<b style='color:var(--red)'>Eclipse season.</b> The line of nodes points at the Sun, so the full Moon sits in the shadow and the new Moon sits between Earth and Sun — a lunar and a solar eclipse happen about two weeks apart."
+    : "The full Moon (yellow) is riding <b>"+(K.full.z>0?"above":"below")+"</b> the red shadow ring, so it misses it. Scrub the year until the full Moon drops into the ring.";
+}
+function runWhy(){ if(S.view!=="why"){cancelAnimationFrame(whyAnim);return;}
+  S.whyMonth=(S.whyMonth+0.035)%TAU;
+  if(S.whyYearPlaying){S.whyNode=(S.whyNode+0.006)%TAU; $("whyYear").value=S.whyNode/TAU*1000;}
+  drawWhy(); whyCaption(); whyAnim=requestAnimationFrame(runWhy);}
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+  t.classList.add("on"); S.view=t.dataset.v;
+  $("vApp").classList.toggle("hide",S.view!=="app");
+  $("vGeo").classList.toggle("hide",S.view!=="geo");
+  $("vWhy").classList.toggle("hide",S.view!=="why");
+  cancelAnimationFrame(whyAnim);
+  if(S.view==="why") runWhy();
+  update();});
+
+// why-view controls
+$("whyYear").oninput=e=>{S.whyNode=+e.target.value/1000*TAU;drawWhy();whyCaption();};
+$("whyPlay").onclick=()=>{S.whyYearPlaying=!S.whyYearPlaying;
+  $("whyPlay").textContent=S.whyYearPlaying?"❚❚ Pause the year":"▶ Play the year";};
+
+// timeline click / drag
+(()=>{const cv=$("cTime");let dr=false;
+ const setP=e=>{const r=cv.getBoundingClientRect();const x=(e.touches?e.touches[0]:e).clientX-r.left;
+   S.p=clamp((x-14)/(r.width-28),0,1);$("p").value=S.p*1000;update();};
+ cv.addEventListener("mousedown",e=>{dr=true;setP(e);});
+ window.addEventListener("mousemove",e=>{if(dr)setP(e);});
+ window.addEventListener("mouseup",()=>dr=false);
+ cv.addEventListener("touchstart",e=>{dr=true;setP(e);},{passive:true});
+ cv.addEventListener("touchmove",e=>{if(dr){e.preventDefault();setP(e);}},{passive:false});
+ cv.addEventListener("touchend",()=>dr=false);})();
+
+window.addEventListener("resize",update);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"During a total <b>solar</b> eclipse, what happens at <b>second contact</b>?",
+   opts:shuffle(["The Moon completely covers the Sun and totality begins",
+     "The Moon first touches the edge of the Sun",
+     "The Sun begins to reappear",
+     "The Moon leaves the Sun completely"]),
+   ansText:"The Moon completely covers the Sun and totality begins",
+   why:"1st contact = Moon first touches the Sun (partial begins); 2nd contact = Moon fully covers it (totality begins); 3rd = Sun reappears; 4th = Moon leaves the Sun."}),
+ ()=>({q:"Why does an <b>annular</b> solar eclipse happen instead of a total one?",
+   opts:shuffle(["The Moon is near apogee and looks smaller than the Sun",
+     "The Moon is near perigee and looks larger than the Sun",
+     "The Earth is closer to the Sun than usual",
+     "The eclipse is seen from the penumbra"]),
+   ansText:"The Moon is near apogee and looks smaller than the Sun",
+   why:"Near apogee the Moon's angular size is slightly less than the Sun's, so it cannot cover it completely and a bright ring (annulus) remains (3.8)."}),
+ ()=>({q:"A <b>lunar</b> eclipse can only happen at which Moon phase?",
+   opts:shuffle(["Full Moon","New Moon","First quarter","Any phase"]),
+   ansText:"Full Moon",
+   why:"At full Moon the Earth is between the Sun and Moon, so the Moon can pass into Earth's shadow. A solar eclipse, by contrast, needs a new Moon (3.10)."}),
+ ()=>({q:"Why does the totally eclipsed Moon look <b>coppery red</b> rather than black?",
+   opts:shuffle(["Sunlight is refracted through Earth's atmosphere into the umbra",
+     "The Moon emits its own red light",
+     "The Moon reflects light from Mars",
+     "Red light passes straight through the Moon"]),
+   ansText:"Sunlight is refracted through Earth's atmosphere into the umbra",
+   why:"Earth's atmosphere bends and reddens sunlight into the shadow, so the Moon is lit by the combined light of all Earth's sunrises and sunsets."}),
+ ()=>({q:"Why is there <b>not</b> a solar eclipse at every new Moon?",
+   opts:shuffle(["The Moon's orbit is tilted ~5°, so it usually passes above or below the Sun",
+     "The Moon is too far away every month",
+     "The Sun moves out of the way",
+     "Clouds block most eclipses"]),
+   ansText:"The Moon's orbit is tilted ~5°, so it usually passes above or below the Sun",
+   why:"Eclipses only occur when a new or full Moon falls near a node, where the tilted lunar orbit crosses the ecliptic (3.10)."}),
+ ()=>({q:"At <b>third contact</b> of a total solar eclipse, what is happening?",
+   opts:shuffle(["The Sun's bright disc begins to reappear — totality ends",
+     "Totality begins","The partial phase begins","The Moon leaves the Sun entirely"]),
+   ansText:"The Sun's bright disc begins to reappear — totality ends",
+   why:"3rd contact marks the end of totality as the photosphere reappears; 4th contact is when the Moon finally leaves the Sun's disc."}),
+ ()=>({q:"Which eclipse can be seen from the <b>entire night side</b> of the Earth at once?",
+   opts:shuffle(["A lunar eclipse","A total solar eclipse","An annular solar eclipse","A partial solar eclipse"]),
+   ansText:"A lunar eclipse",
+   why:"A lunar eclipse is the shadow falling on the Moon itself, so anyone who can see the Moon sees it. A solar eclipse is only visible from the narrow track swept by the Moon's shadow."}),
+ ()=>({q:"In a <b>partial</b> eclipse, why are there only two contacts (1st and 4th)?",
+   opts:shuffle(["The discs never fully overlap, so there is no 2nd or 3rd contact",
+     "The eclipse is too fast to see the others",
+     "2nd and 3rd contact happen at the same instant",
+     "Partial eclipses have no contacts"]),
+   ansText:"The discs never fully overlap, so there is no 2nd or 3rd contact",
+   why:"2nd and 3rd contact mark the start and end of total/annular phase. In a partial eclipse that phase never occurs, so only 1st (start) and 4th (end) contact exist."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,i)=>{const b=document.createElement("button");b.className="opt";b.innerHTML=o;
+    b.onclick=()=>ans(i,b);box.appendChild(b);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(i,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  if(i!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(i===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>
