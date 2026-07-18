@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telescope Builder — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);
+  background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:296px minmax(0,1fr) 320px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:13px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+select{width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+  border-radius:7px;padding:7px 8px;font-size:14px;font-family:inherit}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);
+  border-radius:20px;padding:4px 10px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#07101f;font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+canvas{width:100%;display:block;border-radius:9px;background:#050912}
+.tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:6px 13px;font-size:13px;border-radius:7px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:600}
+.hide{display:none!important}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.work{background:#080e1e;border:1px solid var(--line);border-radius:8px;padding:11px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.75;
+  white-space:pre-wrap;overflow-x:auto;color:#cdd7f0;margin:0}
+.work .hl{color:var(--accent)}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.warn{background:rgba(255,201,77,.11);border-left:3px solid var(--accent);
+  padding:8px 11px;border-radius:0 7px 7px 0;font-size:13px;margin-top:10px;color:#e6ddc4}
+.bad{background:rgba(255,123,123,.11);border-left-color:var(--red);color:#f2cccc}
+.good{background:rgba(93,220,154,.11);border-left-color:var(--green);color:#c9eddc}
+.grid4{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid4{grid-template-columns:1fr}}
+.mini{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px}
+.mini h3{margin:0 0 3px;font-size:14px;color:var(--accent2)}
+.mini .sub{font-size:12px;color:var(--dim);margin-bottom:8px}
+.mini ul{margin:8px 0 0;padding-left:17px;font-size:12.5px;color:var(--dim)}
+.mini li{margin-bottom:3px}
+.mini b{color:var(--ink)}
+details{margin-top:8px}
+summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.bar{height:7px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent))}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Telescope Builder</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 11.14 – 11.25 (plus 13.25, 13.26, 13.34) · build a telescope and see what it would actually show you</p>
+</header>
+
+<div class="wrap">
+
+<!-- ================= LEFT: BUILD ================= -->
+<div>
+  <div class="card">
+    <h2>Start from a real instrument</h2>
+    <div class="chips" id="presets"></div>
+  </div>
+
+  <div class="card">
+    <h2>1 · The objective (11.15–11.20)</h2>
+    <label>Design</label>
+    <select id="design">
+      <option value="kep">Keplerian refractor — two convex lenses</option>
+      <option value="gal">Galilean refractor — convex + concave</option>
+      <option value="newt" selected>Newtonian reflector — concave mirror + flat</option>
+      <option value="cass">Cassegrain reflector — concave + convex mirrors</option>
+    </select>
+
+    <label>Aperture, D — diameter of the objective <span class="val" id="dOut">130 mm</span></label>
+    <input type="range" id="dia" min="0" max="1000" value="0">
+
+    <label>Objective focal length, f<sub>o</sub> <span class="val" id="foOut">900 mm</span></label>
+    <input type="range" id="fo" min="0" max="1000" value="0">
+  </div>
+
+  <div class="card">
+    <h2>2 · The eyepiece (11.21, 11.23)</h2>
+    <label>Eyepiece focal length, f<sub>e</sub> <span class="val" id="feOut">10 mm</span></label>
+    <input type="range" id="fe" min="0" max="1000" value="0">
+    <label>Apparent field of view of the eyepiece <span class="val" id="afovOut">52°</span></label>
+    <input type="range" id="afov" min="30" max="100" step="1" value="52">
+    <div class="note">The apparent field is how wide the circle <i>looks</i> to your eye. Divide it by the magnification to get the <b>true field of view</b> — the actual circle of sky you can see (11.21).</div>
+  </div>
+
+  <div class="card">
+    <h2>3 · Observing conditions</h2>
+    <label>Wavelength band (11.22b, 13.25)</label>
+    <select id="band">
+      <option value="550e-9" selected>Visible light — 550 nm</option>
+      <option value="700e-9">Deep red — 700 nm</option>
+      <option value="10e-6">Infrared — 10 μm</option>
+      <option value="0.21">Radio — 21 cm</option>
+    </select>
+    <label>Target to look at (13.34)</label>
+    <select id="target"></select>
+    <div class="chips" style="margin-top:11px">
+      <div class="chip on" data-opt="chrom">Show chromatic aberration</div>
+      <div class="chip on" data-opt="inset">Naked-eye inset</div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= CENTRE: VIEWS ================= -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" data-v="eye">Through the eyepiece</div>
+      <div class="tab" data-v="opt">Optical layout</div>
+      <div class="tab" data-v="cmp">Compare the four designs</div>
+    </div>
+
+    <div id="vEye">
+      <canvas id="cEye"></canvas>
+      <div class="cap" id="eyeCap"></div>
+      <div id="eyeMsg"></div>
+    </div>
+
+    <div id="vOpt" class="hide">
+      <canvas id="cOpt"></canvas>
+      <div class="cap" id="optCap"></div>
+    </div>
+
+    <div id="vCmp" class="hide">
+      <div class="grid4">
+        <div class="mini">
+          <h3>Galilean refractor</h3><div class="sub">Galileo, 1609</div>
+          <canvas class="mc" data-d="gal"></canvas>
+          <ul>
+            <li><b>Key elements:</b> convex objective lens, concave eyepiece lens placed <i>before</i> the focus</li>
+            <li>Gives an upright image</li>
+            <li>Very narrow field of view — hard to find things</li>
+            <li>Strong chromatic aberration</li>
+            <li><b>11.24:</b> even so, Galileo saw lunar mountains, Jupiter's four moons, the phases of Venus and countless stars in the Milky Way — evidence for a Sun-centred model</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Keplerian refractor</h3><div class="sub">Kepler, 1611</div>
+          <canvas class="mc" data-d="kep"></canvas>
+          <ul>
+            <li><b>Key elements:</b> convex objective lens, convex eyepiece lens placed <i>after</i> the focus</li>
+            <li>Much wider field of view than the Galilean</li>
+            <li>Image is inverted — fine for astronomy</li>
+            <li>Still suffers chromatic aberration; large lenses sag under their own weight and must be supported at the edges</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Newtonian reflector</h3><div class="sub">Newton, 1668</div>
+          <canvas class="mc" data-d="newt"></canvas>
+          <ul>
+            <li><b>Key elements:</b> concave primary mirror, flat secondary mirror at 45°, eyepiece in the side of the tube</li>
+            <li>Mirrors reflect all colours identically — <b>no chromatic aberration</b> (11.25a)</li>
+            <li>Mirrors can be supported across the whole back surface, so very large apertures are possible (11.25c)</li>
+            <li>Cheap per centimetre of aperture</li>
+          </ul>
+        </div>
+        <div class="mini">
+          <h3>Cassegrain reflector</h3><div class="sub">Cassegrain, 1672</div>
+          <canvas class="mc" data-d="cass"></canvas>
+          <ul>
+            <li><b>Key elements:</b> concave primary mirror with a central hole, convex secondary mirror, eyepiece behind the primary</li>
+            <li>Folds a very long focal length into a short tube (11.25b)</li>
+            <li>Compact and portable for the aperture</li>
+            <li>The design used by most large professional telescopes, often with <b>multiple or segmented mirrors</b> (11.25d)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Show the working</h2>
+    <pre class="work" id="work"></pre>
+  </div>
+</div>
+
+<!-- ================= RIGHT: NUMBERS ================= -->
+<div>
+  <div class="card">
+    <h2>Your telescope</h2>
+    <table>
+      <tr><td>Magnification (11.23)</td><td id="rM">—</td></tr>
+      <tr><td>True field of view (11.21)</td><td id="rF">—</td></tr>
+      <tr><td>Light grasp vs the eye (11.19)</td><td id="rL">—</td></tr>
+      <tr><td>Faintest star visible</td><td id="rMag">—</td></tr>
+      <tr><td>Resolution (11.22)</td><td id="rR">—</td></tr>
+      <tr><td>Focal ratio</td><td id="rFr">—</td></tr>
+      <tr><td>Exit pupil</td><td id="rE">—</td></tr>
+      <tr><td>Sensible magnification range</td><td id="rRange">—</td></tr>
+    </table>
+    <div class="note">
+      <div>Light grasp compared with a 7 mm dark-adapted pupil (11.14)</div>
+      <div class="bar"><i id="barL" style="width:2%"></i></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Verdict</h2>
+    <div id="verdict"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas</h2>
+    <details><summary>Why aperture beats magnification</summary><p>Light grasp goes with the <b>area</b> of the objective, so doubling the diameter collects four times the light (11.19). Magnification only spreads that light out — it adds no new detail. A big, low-power telescope beats a small, high-power one every time.</p></details>
+    <details><summary>Why the eye is so limited (11.14)</summary><p>A dark-adapted pupil is only about 7 mm across and the retina cannot store light the way a camera sensor can. So the naked eye reaches roughly magnitude 6 and cannot resolve detail finer than about 1 arcminute.</p></details>
+    <details><summary>Resolution and wavelength (11.22)</summary><p>Resolution improves in proportion to the diameter of the objective, and gets <b>worse</b> at longer wavelengths. Switch the band to radio and watch what happens — this is why radio dishes must be enormous (13.25) and why astronomers link them into arrays (13.26).</p></details>
+    <details><summary>Chromatic aberration (11.25a)</summary><p>A lens refracts blue light more strongly than red, so the colours focus at slightly different points and bright objects gain a coloured fringe. A mirror reflects every colour identically, so reflectors avoid the problem entirely.</p></details>
+    <details><summary>Exit pupil</summary><p>The width of the beam of light leaving the eyepiece. Below about 0.5 mm the image is dim and mushy; above about 7 mm the extra light misses your pupil and is wasted. This sets the sensible magnification range.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const ARCSEC=206264.806;
+
+/* ---------- log sliders ---------- */
+const LOG={dia:[5,80000],fo:[30,25000],fe:[2,60]};
+const toLog=(id,t)=>{const[a,b]=LOG[id];return a*Math.pow(b/a,t/1000);};
+const fromLog=(id,v)=>{const[a,b]=LOG[id];return 1000*Math.log(v/a)/Math.log(b/a);};
+
+/* ---------- state ---------- */
+const S={D:130,fo:900,fe:10,afov:52,design:"newt",lam:550e-9,target:0,
+         chrom:1,inset:1,view:"eye"};
+
+/* ---------- presets ---------- */
+const PRESETS=[
+ ["Naked eye",7,17,17,60,"kep"],
+ ["10×50 binoculars",50,200,20,65,"kep"],
+ ["Galileo's telescope, 1609",37,980,50,15,"gal"],
+ ["60 mm starter refractor",60,700,20,45,"kep"],
+ ["130 mm Newtonian",130,900,10,52,"newt"],
+ ["200 mm Dobsonian",203,1200,10,68,"newt"],
+ ["8-inch Schmidt-Cassegrain",203,2032,25,52,"cass"],
+ ["Hubble Space Telescope",2400,57600,25,52,"cass"],
+ ["JWST",6500,131400,25,52,"cass"],
+ ["Lovell radio dish, 76 m",76000,22800,25,52,"cass"]
+];
+
+/* ---------- targets ---------- */
+// size values are in arcsec
+const TARGETS=[
+ {n:"The Moon",              type:"moon",  size:1866, mag:-12.7},
+ {n:"Jupiter and its moons", type:"jup",   size:40,   mag:-2.5},
+ {n:"Saturn",                type:"sat",   size:18,   mag:0.5},
+ {n:"Mizar — a double star (14.4″)", type:"dbl", sep:14.4, m1:2.2, m2:3.9, c1:"#eaf0ff", c2:"#dbe6ff"},
+ {n:"Albireo — a coloured double (35″)", type:"dbl", sep:35, m1:3.1, m2:5.1, c1:"#ffd9a0", c2:"#a8c8ff"},
+ {n:"Epsilon Lyrae — the double double (2.3″)", type:"dbl", sep:2.3, m1:5.0, m2:5.2, c1:"#eaf0ff", c2:"#eaf0ff"},
+ {n:"The Pleiades — open cluster (110′)", type:"open", size:6600},
+ {n:"M13 — globular cluster (20′)",       type:"glob", size:1200},
+ {n:"M42 — the Orion Nebula (65′)",       type:"neb",  size:3900},
+ {n:"M31 — the Andromeda Galaxy (3°)",    type:"gal",  size:10800},
+ {n:"A faint star field",                 type:"field"}
+];
+
+/* ---------- seeded random ---------- */
+function rngSeed(s){let x=s>>>0;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};}
+
+/* ---------- physics ---------- */
+function calc(){
+  const M=S.fo/S.fe;
+  const tfov=S.afov/M;                                  // degrees
+  const grasp=Math.pow(S.D/7,2);
+  const limMag=2.7+5*Math.log10(S.D);
+  const resRad=1.22*S.lam/(S.D/1000);
+  const res=resRad*ARCSEC;                              // arcsec
+  const fr=S.fo/S.D;
+  const exit=S.D/M;
+  return {M,tfov,grasp,limMag,res,fr,exit,
+          minM:S.D/7, maxM:2*S.D};
+}
+
+/* ---------- eyepiece view ---------- */
+function drawEye(){
+  const cv=document.getElementById("cEye"), w=cv.clientWidth, h=Math.round(w*0.72);
+  const dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr; cv.height=h*dpr; cv.style.height=h+"px";
+  const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0);
+  c.clearRect(0,0,w,h);
+
+  const K=calc(), T=TARGETS[S.target];
+  const cx=w/2, cy=h/2, Rr=Math.min(w,h)*0.45;
+  const tfovArc=K.tfov*3600;
+  const ppa=Rr/(tfovArc/2);                       // pixels per arcsec
+
+  // dimming when the exit pupil is too small
+  let dim=1;
+  if(K.exit<0.5) dim=clamp(0.25+K.exit/0.5*0.75,0.2,1);
+  if(K.exit>7)   dim=clamp(1-(K.exit-7)/14,0.45,1);
+
+  // field of view circle
+  c.save();
+  c.beginPath(); c.arc(cx,cy,Rr,0,7); c.clip();
+  c.fillStyle="#050912"; c.fillRect(0,0,w,h);
+
+  const refr=(S.design==="kep"||S.design==="gal");
+  const chrom=S.chrom&&refr?clamp(K.fr<10?(10-K.fr)/9:0.05,0.05,1):0;
+
+  const star=(x,y,mag,col)=>{
+    if(mag>K.limMag) return;
+    let b=clamp((K.limMag-mag)/2.2,0,1); b=0.3+0.7*b; b*=dim;
+    const r=Math.max(0.75, K.res*0.5*ppa)*(1+0.45*clamp((K.limMag-mag)/6,0,1));
+    if(chrom>0.12){
+      const g2=c.createRadialGradient(x,y,0,x,y,r*4.2);
+      g2.addColorStop(0,"rgba(120,140,255,0)");
+      g2.addColorStop(.55,`rgba(110,130,255,${0.20*chrom*b})`);
+      g2.addColorStop(1,`rgba(255,140,90,${0.13*chrom*b})`);
+      c.fillStyle=g2; c.beginPath(); c.arc(x,y,r*4.2,0,7); c.fill();
+    }
+    const g=c.createRadialGradient(x,y,0,x,y,r*2.5);
+    g.addColorStop(0,col?col:`rgba(255,255,255,${b})`);
+    g.addColorStop(.32,`rgba(220,232,255,${b*0.75})`);
+    g.addColorStop(1,"rgba(180,200,255,0)");
+    c.fillStyle=g; c.beginPath(); c.arc(x,y,r*2.5,0,7); c.fill();
+  };
+  const resPx=K.res*ppa;
+  // "softness" of surface detail: features finer than the resolution limit
+  // fade towards the disc colour. Achieved with alpha, NOT a canvas blur
+  // filter — the filter + circular clip combination drops GPU tiles and
+  // leaves straight-edged (trapezium) holes in large discs.
+  const soft=det=>clamp((det-K.res)/(det+1e-6),0,1);   // 0 = unresolved, 1 = crisp
+
+  if(T.type==="moon"){
+    const r=T.size/2*ppa;
+    // disc with gentle limb darkening — the gradient also softens the edge
+    const md=c.createRadialGradient(cx-r*0.15,cy-r*0.15,r*0.1,cx,cy,r);
+    md.addColorStop(0,`rgba(212,210,202,${dim})`);
+    md.addColorStop(0.8,`rgba(198,196,188,${dim})`);
+    md.addColorStop(0.98,`rgba(168,166,158,${dim})`);
+    md.addColorStop(1,`rgba(150,148,140,${dim})`);
+    c.beginPath(); c.arc(cx,cy,r,0,7); c.fillStyle=md; c.fill();
+    // clip subsequent detail to the disc so nothing spills over the limb
+    c.save(); c.beginPath(); c.arc(cx,cy,r,0,7); c.clip();
+    const R2=rngSeed(7);
+    // maria (large — always resolvable)
+    for(let i=0;i<7;i++){
+      const a=R2()*6.28, d=R2()*0.62*r;
+      const rr=r*(0.13+R2()*0.19);
+      c.beginPath(); c.ellipse(cx+Math.cos(a)*d,cy+Math.sin(a)*d,rr,rr*0.8,a,0,7);
+      c.fillStyle=`rgba(120,124,138,${0.5*dim})`; c.fill();
+    }
+    // craters, only if big enough to resolve; contrast fades near the limit
+    const R3=rngSeed(23);
+    for(let i=0;i<230;i++){
+      const a=R3()*6.28, d=Math.sqrt(R3())*0.97*r;
+      const sizeArc=2+R3()*R3()*110;                 // crater size in arcsec
+      if(sizeArc<K.res) continue;                    // unresolved → invisible
+      const f=soft(sizeArc);                         // low contrast when barely resolved
+      const cr=sizeArc/2*ppa;
+      const x=cx+Math.cos(a)*d, y=cy+Math.sin(a)*d;
+      c.beginPath(); c.arc(x,y,cr,0,7);
+      c.fillStyle=`rgba(150,150,146,${0.5*dim*f})`; c.fill();
+      c.beginPath(); c.arc(x-cr*0.22,y-cr*0.22,cr*0.85,0,7);
+      c.fillStyle=`rgba(232,230,222,${0.34*dim*f})`; c.fill();
+    }
+    c.restore();
+  }
+
+  else if(T.type==="jup"){
+    const r=T.size/2*ppa;
+    const jg=c.createRadialGradient(cx-r*0.2,cy-r*0.2,r*0.1,cx,cy,r);
+    jg.addColorStop(0,`rgba(236,214,182,${dim})`);
+    jg.addColorStop(0.85,`rgba(224,200,166,${dim})`);
+    jg.addColorStop(1,`rgba(196,172,140,${dim})`);
+    c.beginPath(); c.ellipse(cx,cy,r,r*0.94,0,0,7); c.fillStyle=jg; c.fill();
+    c.save(); c.beginPath(); c.ellipse(cx,cy,r,r*0.94,0,0,7); c.clip();
+    if(K.res<6){                                     // belts need decent resolution
+      const f=soft(11);
+      [[-0.42,0.13],[-0.12,0.16],[0.22,0.15],[0.55,0.1]].forEach(([o,t])=>{
+        c.beginPath(); c.ellipse(cx,cy+r*o,r*Math.sqrt(Math.max(0,1-o*o)),r*t,0,0,7);
+        c.fillStyle=`rgba(178,142,106,${0.5*dim*f})`; c.fill();
+      });
+    }
+    if(K.res<3){                                     // Great Red Spot
+      c.beginPath(); c.ellipse(cx+r*0.3,cy+r*0.25,r*0.19,r*0.1,0,0,7);
+      c.fillStyle=`rgba(196,110,84,${0.6*dim})`; c.fill();
+    }
+    c.restore();
+    // Galilean moons
+    [[-360,-0.1,5.0,"Io"],[220,0.06,5.3,"Europa"],[-590,0.14,4.6,"Ganymede"],[780,-0.05,5.6,"Callisto"]]
+      .forEach(([sep,dy,mag,nm])=>{
+        const x=cx+sep*ppa, y=cy+dy*T.size*ppa;
+        star(x,y,mag);
+        if(K.M>8&&Math.abs(x-cx)<Rr*0.95){c.fillStyle=`rgba(150,162,196,${0.8*dim})`;
+          c.font="10px system-ui";c.textAlign="center";c.fillText(nm,x,y-8);}
+      });
+  }
+
+  else if(T.type==="sat"){
+    const r=T.size/2*ppa;
+    c.save(); c.translate(cx,cy); c.rotate(-0.35);
+    // rings
+    c.beginPath(); c.ellipse(0,0,r*2.3,r*0.72,0,0,7);
+    c.fillStyle=`rgba(214,196,158,${0.85*dim})`; c.fill();
+    // Cassini division / gap between rings and planet
+    c.beginPath(); c.ellipse(0,0,r*1.35,r*0.42,0,0,7);
+    c.globalCompositeOperation="destination-out"; c.fill();
+    c.globalCompositeOperation="source-over";
+    // planet body
+    const sg=c.createRadialGradient(-r*0.2,-r*0.2,r*0.1,0,0,r);
+    sg.addColorStop(0,`rgba(238,220,182,${dim})`);
+    sg.addColorStop(1,`rgba(210,192,154,${dim})`);
+    c.beginPath(); c.ellipse(0,0,r,r*0.9,0,0,7); c.fillStyle=sg; c.fill();
+    c.restore();
+  }
+
+  else if(T.type==="dbl"){
+    const s=T.sep*ppa;
+    star(cx-s/2,cy,T.m1,T.c1?`rgba(${hexrgb(T.c1)},1)`:null);
+    star(cx+s/2,cy,T.m2,T.c2?`rgba(${hexrgb(T.c2)},1)`:null);
+    // background field
+    const R4=rngSeed(91);
+    for(let i=0;i<180;i++){
+      const x=cx+(R4()-.5)*2*Rr, y=cy+(R4()-.5)*2*Rr;
+      star(x,y,5+R4()*8);
+    }
+    const split=T.sep>K.res;
+    c.fillStyle=split?"rgba(93,220,154,.95)":"rgba(255,123,123,.95)";
+    c.font="600 13px system-ui"; c.textAlign="center";
+    c.fillText(split?`RESOLVED — the pair is separated`:`NOT RESOLVED — the pair blurs into one star`,cx,h-14);
+  }
+
+  else if(T.type==="open"||T.type==="glob"){
+    const R5=rngSeed(T.type==="open"?5:11);
+    const n=T.type==="open"?120:1400;
+    const rad=T.size/2*ppa;
+    if(T.type==="glob"){                              // unresolved core haze
+      const g=c.createRadialGradient(cx,cy,0,cx,cy,rad);
+      g.addColorStop(0,`rgba(220,225,240,${0.30*dim})`);
+      g.addColorStop(1,"rgba(220,225,240,0)");
+      c.fillStyle=g; c.beginPath(); c.arc(cx,cy,rad,0,7); c.fill();
+    }
+    for(let i=0;i<n;i++){
+      let dx,dy;
+      if(T.type==="open"){dx=(R5()-.5)*1.8*rad; dy=(R5()-.5)*1.8*rad;}
+      else{const a=R5()*6.28,d=Math.pow(R5(),1.9)*rad; dx=Math.cos(a)*d; dy=Math.sin(a)*d;}
+      const mag=(T.type==="open"?2.9:11.5)+R5()*(T.type==="open"?5:3.5);
+      star(cx+dx,cy+dy,mag);
+    }
+  }
+
+  else if(T.type==="neb"){
+    const rad=T.size/2*ppa;
+    const g=c.createRadialGradient(cx,cy,0,cx,cy,rad);
+    g.addColorStop(0,`rgba(150,200,215,${0.42*dim*clamp(K.grasp/60,0.25,1)})`);
+    g.addColorStop(.4,`rgba(120,160,190,${0.22*dim*clamp(K.grasp/60,0.25,1)})`);
+    g.addColorStop(1,"rgba(90,120,170,0)");
+    c.fillStyle=g; c.beginPath(); c.arc(cx,cy,rad,0,7); c.fill();
+    const R6=rngSeed(31);
+    for(let i=0;i<70;i++){
+      const a=R6()*6.28,d=Math.pow(R6(),.6)*rad*1.1;
+      const gg=c.createRadialGradient(cx+Math.cos(a)*d,cy+Math.sin(a)*d,0,
+                                      cx+Math.cos(a)*d,cy+Math.sin(a)*d,rad*0.3);
+      gg.addColorStop(0,`rgba(160,205,220,${0.06*dim})`); gg.addColorStop(1,"rgba(0,0,0,0)");
+      c.fillStyle=gg; c.beginPath(); c.arc(cx+Math.cos(a)*d,cy+Math.sin(a)*d,rad*0.3,0,7); c.fill();
+    }
+    // the Trapezium
+    [[-6,-4,5.1],[4,-6,6.7],[7,5,6.4],[-4,7,8.0]].forEach(([x,y,m])=>star(cx+x*ppa,cy+y*ppa,m));
+    const R7=rngSeed(53);
+    for(let i=0;i<120;i++) star(cx+(R7()-.5)*2*Rr,cy+(R7()-.5)*2*Rr,6+R7()*8);
+  }
+
+  else if(T.type==="gal"){
+    const rad=T.size/2*ppa;
+    c.save(); c.translate(cx,cy); c.rotate(-0.6);
+    const g=c.createRadialGradient(0,0,0,0,0,rad);
+    g.addColorStop(0,`rgba(226,222,206,${0.55*dim*clamp(K.grasp/50,0.3,1)})`);
+    g.addColorStop(.18,`rgba(200,196,186,${0.30*dim*clamp(K.grasp/50,0.3,1)})`);
+    g.addColorStop(1,"rgba(150,150,160,0)");
+    c.save(); c.scale(1,0.34); c.fillStyle=g;
+    c.beginPath(); c.arc(0,0,rad,0,7); c.fill(); c.restore();
+    if(K.grasp>2000&&K.res<8){                       // dust lanes need aperture
+      c.save(); c.scale(1,0.34);
+      [0.55,0.78].forEach(k=>{c.beginPath();c.arc(0,0,rad*k,0,7);
+        c.strokeStyle=`rgba(40,44,60,${0.28*dim})`;c.lineWidth=rad*0.05;c.stroke();});
+      c.restore();
+    }
+    c.restore();
+    const R8=rngSeed(67);
+    for(let i=0;i<140;i++) star(cx+(R8()-.5)*2*Rr,cy+(R8()-.5)*2*Rr,5+R8()*8);
+  }
+
+  else { // faint star field — shows off light grasp
+    const R9=rngSeed(101);
+    for(let i=0;i<2600;i++) star(cx+(R9()-.5)*2*Rr,cy+(R9()-.5)*2*Rr,2+R9()*14);
+  }
+
+  c.restore();
+
+  // eyepiece surround
+  c.beginPath(); c.rect(0,0,w,h); c.arc(cx,cy,Rr,0,Math.PI*2,true);
+  c.fillStyle="#0b1020"; c.fill();
+  c.beginPath(); c.arc(cx,cy,Rr,0,7);
+  c.strokeStyle="#3a4a72"; c.lineWidth=2; c.stroke();
+
+  // naked-eye inset — drawn as a framed picture-in-picture panel so it
+  // reads as an overlay, not a hole cut out of the main image
+  if(S.inset){
+    const ir=Math.min(w,h)*0.13;
+    const pad=8, titleH=15;
+    const pw=ir*2+pad*2, ph=ir*2+pad*2+titleH;
+    const px=w-pw-12, py=h-ph-12;                     // panel top-left
+    const ix=px+pad+ir, iy=py+titleH+pad+ir;          // circle centre
+    const rr=(x,y,ww,hh,r)=>{c.beginPath();
+      c.moveTo(x+r,y);c.arcTo(x+ww,y,x+ww,y+hh,r);c.arcTo(x+ww,y+hh,x,y+hh,r);
+      c.arcTo(x,y+hh,x,y,r);c.arcTo(x,y,x+ww,y,r);c.closePath();};
+    // drop shadow + opaque card
+    c.save(); c.shadowColor="rgba(0,0,0,.55)"; c.shadowBlur=12; c.shadowOffsetY=3;
+    rr(px,py,pw,ph,9); c.fillStyle="#0e1526"; c.fill(); c.restore();
+    rr(px,py,pw,ph,9); c.strokeStyle="#3a4a72"; c.lineWidth=1.4; c.stroke();
+    // title
+    c.fillStyle="#96a2c4"; c.font="10px system-ui"; c.textAlign="left"; c.textBaseline="middle";
+    c.fillText("Naked eye  ·  3° field", px+pad, py+titleH*0.75);
+    c.textBaseline="alphabetic";
+    // sky circle
+    c.beginPath(); c.arc(ix,iy,ir,0,7); c.fillStyle="#050912"; c.fill();
+    c.strokeStyle="#2a3556"; c.lineWidth=1; c.stroke();
+    c.save(); c.beginPath(); c.arc(ix,iy,ir,0,7); c.clip();
+    const ppa2=ir/(3*3600/2);                         // a 3° naked-eye field
+    if(T.size){
+      const r2=Math.max(0.6,T.size/2*ppa2);
+      c.beginPath(); c.arc(ix,iy,r2,0,7);
+      c.fillStyle="rgba(220,225,240,.55)"; c.fill();
+    } else {
+      const RA=rngSeed(101);
+      for(let i=0;i<160;i++){
+        const m=2+RA()*14; if(m>6.5) continue;
+        c.beginPath(); c.arc(ix+(RA()-.5)*2*ir, iy+(RA()-.5)*2*ir,1,0,7);
+        c.fillStyle="rgba(232,236,247,.75)"; c.fill();
+      }
+    }
+    c.restore();
+  }
+
+  // scale bar
+  c.fillStyle="rgba(150,162,196,.9)"; c.font="11px system-ui"; c.textAlign="left";
+  c.fillText(`field of view: ${fmtAng(K.tfov*3600)}   ·   ${K.M.toFixed(0)}× magnification`,12,18);
+}
+function hexrgb(h){const n=parseInt(h.slice(1),16);
+  return `${(n>>16)&255},${(n>>8)&255},${n&255}`;}
+function fmtAng(a){  // arcsec in
+  if(a>=3600) return (a/3600).toFixed(2)+"°";
+  if(a>=60)   return (a/60).toFixed(1)+"′";
+  return a.toFixed(1)+"″";
+}
+
+/* ---------- optical layout ---------- */
+function drawLayout(cv,design,big){
+  const w=cv.clientWidth, h=Math.round(w*(big?0.5:0.58));
+  const dpr=window.devicePixelRatio||1;
+  cv.width=w*dpr; cv.height=h*dpr; cv.style.height=h+"px";
+  const c=cv.getContext("2d"); c.setTransform(dpr,0,0,dpr,0,0);
+  c.clearRect(0,0,w,h); c.fillStyle="#050912"; c.fillRect(0,0,w,h);
+
+  const cy=h*0.52, L=w*0.86, x0=w*0.07;
+  const ap=h*(big?0.30:0.26);           // half-aperture on screen
+  const F=big?"12px system-ui":"10px system-ui";
+  c.font=F; c.textAlign="center";
+  const lab=(x,y,t,col)=>{c.fillStyle=col||"#96a2c4";c.fillText(t,x,y);};
+  const ray=(pts,col,wd)=>{c.beginPath();pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));
+    c.strokeStyle=col;c.lineWidth=wd||1.3;c.stroke();};
+
+  // incoming starlight
+  const inc=[-0.62,-0.3,0,0.3,0.62];
+  const RAY="rgba(255,201,77,.75)", RAY2="rgba(79,195,247,.75)";
+
+  if(design==="kep"||design==="gal"){
+    const ox=x0+L*0.12;                                    // objective position
+    const fpFrac=design==="kep"?0.78:0.72;
+    const fx=x0+L*fpFrac;                                  // focal point
+    const ex=design==="kep"?fx+L*0.12:fx-L*0.10;           // eyepiece position
+    // tube
+    c.strokeStyle="#26314f"; c.lineWidth=1.5;
+    c.strokeRect(ox-6,cy-ap-8,(ex+14)-(ox-6),2*(ap+8));
+    // objective lens (convex)
+    c.beginPath(); c.ellipse(ox,cy,7,ap,0,0,7);
+    c.fillStyle="rgba(79,195,247,.30)"; c.fill();
+    c.strokeStyle="#4fc3f7"; c.lineWidth=2; c.stroke();
+    lab(ox,cy-ap-14,"objective lens (convex)","#4fc3f7");
+    lab(ox,cy+ap+18,`D = ${S.D.toFixed(0)} mm`,"#96a2c4");
+    // rays
+    inc.forEach(k=>{
+      const y=cy+k*ap;
+      if(design==="kep"){
+        ray([[x0,y],[ox,y],[fx,cy]],RAY);
+        const t=(ex-fx)/(fx-ox);
+        ray([[fx,cy],[ex,cy-k*ap*t]],RAY);
+        ray([[ex,cy-k*ap*t],[w*0.985,cy-k*ap*t*0.55]],RAY);
+      }else{
+        ray([[x0,y],[ox,y],[ex,y*0.999-(y-cy)*( (ex-ox)/(fx-ox) )*0+ (cy-y)*((ex-ox)/(fx-ox))]],RAY);
+        const yg=cy+(y-cy)*(1-(ex-ox)/(fx-ox));
+        ray([[ox,y],[ex,yg]],RAY);
+        ray([[ex,yg],[w*0.985,yg+(yg-cy)*0.35]],RAY);
+      }
+    });
+    // focal point marker
+    if(design==="kep"){
+      c.beginPath();c.arc(fx,cy,3,0,7);c.fillStyle="#ffc94d";c.fill();
+      lab(fx,cy+22,"focal point","#ffc94d");
+    }
+    // eyepiece
+    c.beginPath();
+    if(design==="kep"){c.ellipse(ex,cy,5,ap*0.45,0,0,7);
+      c.fillStyle="rgba(180,140,255,.32)";c.fill();
+      c.strokeStyle="#b48cff";c.lineWidth=2;c.stroke();
+      lab(ex,cy-ap*0.45-12,"eyepiece (convex)","#b48cff");}
+    else{
+      c.moveTo(ex-5,cy-ap*0.45);c.quadraticCurveTo(ex+2,cy,ex-5,cy+ap*0.45);
+      c.lineTo(ex+5,cy+ap*0.45);c.quadraticCurveTo(ex-2,cy,ex+5,cy-ap*0.45);c.closePath();
+      c.fillStyle="rgba(180,140,255,.32)";c.fill();
+      c.strokeStyle="#b48cff";c.lineWidth=2;c.stroke();
+      lab(ex,cy-ap*0.45-12,"eyepiece (concave)","#b48cff");}
+    lab(ex,cy+ap*0.6+16,`fₑ = ${S.fe.toFixed(0)} mm`,"#96a2c4");
+    // focal length bracket
+    c.strokeStyle="#3a4a72"; c.lineWidth=1; c.setLineDash([4,4]);
+    c.beginPath();c.moveTo(ox,cy+ap+30);c.lineTo(fx,cy+ap+30);c.stroke();c.setLineDash([]);
+    lab((ox+fx)/2,cy+ap+26,`fₒ = ${S.fo.toFixed(0)} mm`,"#96a2c4");
+    lab(x0+L*0.02,cy-ap-20,"light from a distant star","#ffc94d");
+  }
+
+  if(design==="newt"){
+    const px=x0+L*0.90;                     // primary mirror at the back
+    const sx=x0+L*0.22;                     // flat secondary
+    c.strokeStyle="#26314f"; c.lineWidth=1.5;
+    c.strokeRect(x0+L*0.03,cy-ap-8,px-(x0+L*0.03)+10,2*(ap+8));
+    // primary (concave)
+    c.beginPath();c.moveTo(px,cy-ap);c.quadraticCurveTo(px-16,cy,px,cy+ap);
+    c.lineWidth=4;c.strokeStyle="#4fc3f7";c.stroke();
+    lab(px-4,cy+ap+18,"concave primary mirror","#4fc3f7");
+    // secondary flat at 45°
+    c.save();c.translate(sx,cy);c.rotate(-Math.PI/4);
+    c.fillStyle="#b48cff";c.fillRect(-2,-ap*0.30,4,ap*0.60);c.restore();
+    lab(sx,cy-ap*0.5,"flat secondary (45°)","#b48cff");
+    // eyepiece on the side
+    c.beginPath();c.ellipse(sx,cy-ap-16,ap*0.20,5,0,0,7);
+    c.fillStyle="rgba(180,140,255,.32)";c.fill();c.strokeStyle="#b48cff";c.lineWidth=2;c.stroke();
+    lab(sx,cy-ap-30,"eyepiece","#b48cff");
+    inc.forEach(k=>{
+      const y=cy+k*ap;
+      ray([[x0,y],[px-8,y]],RAY);
+      ray([[px-8,y],[sx,cy-k*ap*0.16]],RAY);          // converging back
+      ray([[sx,cy-k*ap*0.16],[sx-k*ap*0.16*0+sx,cy-ap-16]],RAY);
+    });
+    lab(x0+L*0.06,cy-ap-20,"light in","#ffc94d");
+  }
+
+  if(design==="cass"){
+    const px=x0+L*0.86, sx=x0+L*0.20;
+    c.strokeStyle="#26314f"; c.lineWidth=1.5;
+    c.strokeRect(x0+L*0.03,cy-ap-8,px-(x0+L*0.03)+10,2*(ap+8));
+    // primary with a hole
+    c.beginPath();c.moveTo(px,cy-ap);c.quadraticCurveTo(px-16,cy-ap*0.28,px-13,cy-ap*0.13);
+    c.lineWidth=4;c.strokeStyle="#4fc3f7";c.stroke();
+    c.beginPath();c.moveTo(px-13,cy+ap*0.13);c.quadraticCurveTo(px-16,cy+ap*0.28,px,cy+ap);
+    c.stroke();
+    lab(px-10,cy+ap+18,"concave primary (with hole)","#4fc3f7");
+    // convex secondary
+    c.beginPath();c.moveTo(sx,cy-ap*0.26);c.quadraticCurveTo(sx+11,cy,sx,cy+ap*0.26);
+    c.lineWidth=4;c.strokeStyle="#b48cff";c.stroke();
+    lab(sx,cy-ap*0.26-12,"convex secondary","#b48cff");
+    inc.forEach(k=>{
+      const y=cy+k*ap;
+      if(Math.abs(k)<0.31) return;                     // blocked by the secondary
+      ray([[x0,y],[px-8,y]],RAY);
+      ray([[px-8,y],[sx,cy+k*ap*0.24]],RAY);
+      ray([[sx,cy+k*ap*0.24],[px+26,cy]],RAY);
+    });
+    // eyepiece behind
+    c.beginPath();c.ellipse(px+34,cy,5,ap*0.30,0,0,7);
+    c.fillStyle="rgba(255,201,77,.28)";c.fill();c.strokeStyle="#ffc94d";c.lineWidth=2;c.stroke();
+    lab(px+34,cy-ap*0.30-12,"eyepiece","#ffc94d");
+    lab(x0+L*0.06,cy-ap-20,"light in","#ffc94d");
+  }
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  const K=calc();
+  $("dOut").textContent=S.D>=1000?(S.D/1000).toFixed(S.D>=10000?0:2)+" m":S.D.toFixed(0)+" mm";
+  $("foOut").textContent=S.fo>=1000?(S.fo/1000).toFixed(2)+" m":S.fo.toFixed(0)+" mm";
+  $("feOut").textContent=S.fe.toFixed(1)+" mm";
+  $("afovOut").textContent=S.afov+"°";
+
+  $("rM").textContent=K.M.toFixed(K.M<10?1:0)+" ×";
+  $("rF").textContent=fmtAng(K.tfov*3600);
+  $("rL").textContent=K.grasp<1000?K.grasp.toFixed(0)+" ×":K.grasp.toExponential(2).replace("e+"," × 10^")+" ×";
+  $("rMag").textContent="magnitude "+K.limMag.toFixed(1);
+  $("rR").textContent=fmtAng(K.res);
+  $("rFr").textContent="f/"+K.fr.toFixed(1);
+  $("rE").textContent=K.exit.toFixed(2)+" mm";
+  $("rRange").textContent=`${K.minM.toFixed(0)}× to ${K.maxM.toFixed(0)}×`;
+  $("barL").style.width=clamp(Math.log10(Math.max(K.grasp,1))/8*100,1.5,100)+"%";
+
+  verdict(K);
+  workings(K);
+  if(S.view==="eye") drawEye();
+  if(S.view==="opt"){drawLayout($("cOpt"),S.design,true);
+    $("optCap").textContent={
+      kep:"Both lenses are convex. The objective forms a real image at its focal point and the eyepiece, placed beyond that point, magnifies it. The image comes out inverted.",
+      gal:"The concave eyepiece sits before the focal point, so the light never comes to a real focus. The image is upright but the field of view is very narrow.",
+      newt:"The concave primary mirror at the back of the tube reflects light forward onto a small flat mirror set at 45°, which sends it out to an eyepiece in the side of the tube.",
+      cass:"The concave primary reflects light onto a convex secondary, which sends it back through a hole in the primary to an eyepiece behind. A long focal length is folded into a short tube."
+    }[S.design];
+  }
+}
+
+function verdict(K){
+  const out=[]; const T=TARGETS[S.target];
+  if(K.exit<0.4) out.push(`<div class="warn bad"><b>Too much magnification.</b> The exit pupil is only ${K.exit.toFixed(2)} mm, so the image is dim and mushy. A longer focal length eyepiece would work better.</div>`);
+  else if(K.exit>8) out.push(`<div class="warn"><b>Wasted light.</b> The exit pupil is ${K.exit.toFixed(1)} mm — wider than your pupil — so some of the collected light misses your eye entirely.</div>`);
+  if(T.size&&K.tfov*3600<T.size) out.push(`<div class="warn"><b>Field of view too narrow.</b> The target is ${fmtAng(T.size)} across but your field is only ${fmtAng(K.tfov*3600)} — you cannot fit it all in. Use a longer focal length eyepiece to lower the magnification.</div>`);
+  if(T.type==="dbl") out.push(T.sep>K.res
+    ? `<div class="warn good"><b>Resolved.</b> The separation is ${T.sep}″ and your resolution is ${K.res.toFixed(2)}″, so the two stars are seen as separate points.</div>`
+    : `<div class="warn bad"><b>Not resolved.</b> The separation is ${T.sep}″ but your resolution is only ${K.res.toFixed(2)}″. A larger aperture is needed — magnification will not help.</div>`);
+  if(S.lam>1e-3) out.push(`<div class="warn"><b>Radio wavelengths.</b> At 21 cm your resolution is ${fmtAng(K.res)} — far worse than the naked eye, even with a huge dish. This is exactly why radio telescopes need enormous apertures (13.25) and why astronomers combine several dishes into an aperture-synthesis array (13.26).</div>`);
+  if((S.design==="kep"||S.design==="gal")&&K.fr<8&&S.chrom) out.push(`<div class="warn"><b>Chromatic aberration.</b> This is a fast refractor (f/${K.fr.toFixed(1)}), so the colours focus at noticeably different points and bright objects show coloured fringes. A reflector would avoid this completely (11.25a).</div>`);
+  if(S.design==="gal") out.push(`<div class="warn"><b>Galilean design.</b> The image is upright, but the field of view is tiny. Galileo had to sweep the sky patiently to make his discoveries (11.24).</div>`);
+  if(S.fo>3000&&(S.design==="kep"||S.design==="gal")) out.push(`<div class="warn bad"><b>Impractically long.</b> A refractor with a ${(S.fo/1000).toFixed(1)} m focal length needs a tube that long. Folding the light path with mirrors (Cassegrain) solves this (11.25b).</div>`);
+  if(!out.length) out.push(`<div class="warn good">A well-balanced setup for this target.</div>`);
+  $("verdict").innerHTML=out.join("");
+}
+
+function workings(K){
+  const n=x=>x.toFixed(2);
+  $("work").innerHTML=
+`MAGNIFICATION                                (11.23)
+M = fₒ / fₑ
+  = ${S.fo.toFixed(0)} mm / ${S.fe.toFixed(1)} mm
+  = <span class="hl">${K.M.toFixed(1)} ×</span>
+
+TRUE FIELD OF VIEW                           (11.21)
+true FOV = apparent FOV of eyepiece / M
+         = ${S.afov}° / ${K.M.toFixed(1)}
+         = <span class="hl">${(K.tfov).toFixed(4)}°  =  ${fmtAng(K.tfov*3600)}</span>
+
+LIGHT GRASP                                  (11.19)
+light grasp ∝ area of objective ∝ D²
+so, compared with a 7 mm pupil:
+  = (D / 7)²  =  (${S.D.toFixed(0)} / 7)²
+  = <span class="hl">${K.grasp<1e4?K.grasp.toFixed(0):K.grasp.toExponential(2)} times as much light</span>
+  → faintest star ≈ 2.7 + 5 log(D) = <span class="hl">mag ${K.limMag.toFixed(1)}</span>
+
+RESOLUTION                                   (11.22)
+θ = 1.22 λ / D            (θ in radians)
+  = 1.22 × ${S.lam.toExponential(2)} m / ${(S.D/1000).toExponential(2)} m
+  = ${(1.22*S.lam/(S.D/1000)).toExponential(2)} rad
+  = <span class="hl">${fmtAng(K.res)}</span>
+  Resolution improves as D increases, and gets
+  worse as λ increases.
+
+FOCAL RATIO AND EXIT PUPIL
+f-ratio  = fₒ / D = ${S.fo.toFixed(0)} / ${S.D.toFixed(0)} = <span class="hl">f/${K.fr.toFixed(1)}</span>
+exit pupil = D / M = ${S.D.toFixed(0)} / ${K.M.toFixed(1)} = <span class="hl">${K.exit.toFixed(2)} mm</span>`;
+}
+
+/* ---------- wiring ---------- */
+["dia","fo","fe"].forEach(id=>{
+  const key={dia:"D",fo:"fo",fe:"fe"}[id];
+  $(id).value=fromLog(id,S[key]);
+  $(id).oninput=e=>{S[key]=toLog(id,+e.target.value);update();};
+});
+$("afov").oninput=e=>{S.afov=+e.target.value;update();};
+$("design").onchange=e=>{S.design=e.target.value;update();};
+$("band").onchange=e=>{S.lam=+e.target.value;update();};
+
+const tsel=$("target");
+TARGETS.forEach((t,i)=>{const o=document.createElement("option");o.value=i;o.textContent=t.n;tsel.appendChild(o);});
+tsel.onchange=()=>{S.target=+tsel.value;update();};
+
+const pbox=$("presets");
+PRESETS.forEach(([n,D,fo,fe,afov,dz])=>{
+  const d=document.createElement("div");d.className="chip";d.textContent=n;
+  d.onclick=()=>{S.D=D;S.fo=fo;S.fe=fe;S.afov=afov;S.design=dz;
+    $("dia").value=fromLog("dia",D);$("fo").value=fromLog("fo",fo);
+    $("fe").value=fromLog("fe",fe);$("afov").value=afov;$("design").value=dz;
+    [...pbox.children].forEach(x=>x.classList.remove("on"));d.classList.add("on");
+    update();};
+  pbox.appendChild(d);
+});
+pbox.children[4].classList.add("on");
+
+document.querySelectorAll(".chips .chip[data-opt]").forEach(c=>c.onclick=()=>{
+  c.classList.toggle("on"); S[c.dataset.opt]=c.classList.contains("on")?1:0; update();});
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+  t.classList.add("on"); S.view=t.dataset.v;
+  $("vEye").classList.toggle("hide",S.view!=="eye");
+  $("vOpt").classList.toggle("hide",S.view!=="opt");
+  $("vCmp").classList.toggle("hide",S.view!=="cmp");
+  if(S.view==="cmp") document.querySelectorAll(".mc").forEach(cv=>drawLayout(cv,cv.dataset.d,false));
+  update();});
+
+window.addEventListener("resize",()=>{update();
+  if(S.view==="cmp") document.querySelectorAll(".mc").forEach(cv=>drawLayout(cv,cv.dataset.d,false));});
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));
+  [a[i],a[j]]=[a[j],a[i]];}return a;}
+const uniq=a=>shuffle([...new Set(a)]);
+
+const QGEN=[
+ ()=>{const fo=pick([600,750,900,1000,1200,1500]), fe=pick([6,9,10,15,20,25]);
+   const M=fo/fe; return {
+   q:`A telescope has an objective of focal length ${fo} mm and an eyepiece of focal length ${fe} mm. What is its magnification?`,
+   opts:uniq([`${M.toFixed(0)}×`,`${(fe/fo*1000).toFixed(0)}×`,`${(fo+fe).toFixed(0)}×`,`${(fo/1000*fe).toFixed(0)}×`]),
+   ansText:`${M.toFixed(0)}×`,
+   why:`magnification = f₀ / fₑ = ${fo} / ${fe} = ${M.toFixed(0)}×.`};},
+
+ ()=>{const k=pick([2,3,4,5]); return {
+   q:`Telescope B has an objective ${k} times the diameter of telescope A. How much more light does B collect?`,
+   opts:uniq([`${k*k} times as much`,`${k} times as much`,`${2*k} times as much`,`${k*k*k} times as much`]),
+   ansText:`${k*k} times as much`,
+   why:`Light grasp depends on the <b>area</b> of the objective, and area ∝ D². So ${k} times the diameter gives ${k}² = ${k*k} times the light (11.19).`};},
+
+ ()=>{const d=pick([60,100,150,200]); const r=1.22*550e-9/(d/1000)*ARCSEC;
+   return {q:`Estimate the resolution of a ${d} mm telescope in visible light (λ = 550 nm).`,
+   opts:uniq([`about ${r.toFixed(1)}″`,`about ${(r*4).toFixed(1)}″`,`about ${(r/4).toFixed(2)}″`,`about ${(r*10).toFixed(0)}″`]),
+   ansText:`about ${r.toFixed(1)}″`,
+   why:`θ = 1.22λ/D = 1.22 × 550×10⁻⁹ / ${(d/1000).toFixed(3)} = ${(1.22*550e-9/(d/1000)).toExponential(2)} rad, which is about ${r.toFixed(1)} arcseconds.`};},
+
+ ()=>({q:`Which change would allow you to see <b>fainter</b> stars?`,
+   opts:shuffle(["Use an objective with a larger diameter",
+                 "Use an eyepiece with a shorter focal length",
+                 "Use an objective with a longer focal length",
+                 "Use an eyepiece with a wider apparent field"]),
+   ansText:"Use an objective with a larger diameter",
+   why:`Only the aperture determines how much light is collected. A shorter eyepiece raises the magnification but spreads the same light over a larger image, making it dimmer, not brighter.`}),
+
+ ()=>({q:`Why do reflecting telescopes not suffer from chromatic aberration?`,
+   opts:shuffle(["Mirrors reflect all wavelengths through the same angle",
+                 "Mirrors are made of glass rather than plastic",
+                 "Reflectors always have a longer focal length",
+                 "The secondary mirror filters out the coloured light"]),
+   ansText:"Mirrors reflect all wavelengths through the same angle",
+   why:`Refraction depends on wavelength — blue light bends more than red — so a lens focuses the colours at slightly different points. Reflection does not depend on wavelength at all, so a mirror brings every colour to the same focus (11.25a).`}),
+
+ ()=>{const afov=pick([45,52,68,82]), M=pick([30,50,60,100,120]);
+   const t=afov/M; return {
+   q:`An eyepiece with an apparent field of ${afov}° is used at ${M}× magnification. What is the true field of view?`,
+   opts:uniq([`${t.toFixed(2)}°`,`${(afov*M/100).toFixed(2)}°`,`${afov}°`,`${(M/afov).toFixed(2)}°`]),
+   ansText:`${t.toFixed(2)}°`,
+   why:`true field of view = apparent field / magnification = ${afov}° / ${M} = ${t.toFixed(2)}° (11.21).`};},
+
+ ()=>({q:`A radio telescope observing at 21 cm has a much poorer resolution than an optical telescope of the same diameter. Why?`,
+   opts:shuffle(["Resolution gets worse as the wavelength increases",
+                 "Radio waves travel more slowly than light",
+                 "Radio dishes are made of metal mesh rather than glass",
+                 "Radio waves are absorbed by the atmosphere"]),
+   ansText:"Resolution gets worse as the wavelength increases",
+   why:`θ = 1.22λ/D, so a longer wavelength gives a larger (worse) θ for the same dish. At 21 cm you would need a dish hundreds of kilometres across to match an optical telescope — hence aperture synthesis arrays (11.22b, 13.25, 13.26).`}),
+
+ ()=>({q:`Which is a key element of a <b>Newtonian</b> reflector?`,
+   opts:shuffle(["A flat secondary mirror set at 45°",
+                 "A convex secondary mirror and a hole in the primary",
+                 "A concave eyepiece lens placed before the focus",
+                 "Two convex lenses"]),
+   ansText:"A flat secondary mirror set at 45°",
+   why:`The Newtonian uses a concave primary mirror plus a small <b>flat</b> secondary at 45°, which sends the light out to an eyepiece in the side of the tube. The convex secondary with a hole in the primary is the Cassegrain (11.18).`}),
+
+ ()=>({q:`Galileo's telescope was small and had a narrow field of view. Which of his observations best supported a Sun-centred model?`,
+   opts:shuffle(["The phases of Venus",
+                 "The craters on the Moon",
+                 "Stars in the Milky Way",
+                 "The rings of Saturn"]),
+   ansText:"The phases of Venus",
+   why:`Venus shows a full set of phases, including a small gibbous and full phase, which can only happen if Venus orbits the Sun rather than the Earth. The lunar craters and Milky Way stars challenged older ideas but did not settle the geocentric question (11.24).`})
+];
+
+$("newQ").onclick=()=>{
+  cur=pick(QGEN)();
+  if(cur.ansText!==undefined) cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;
+  const box=$("qOpts"); box.innerHTML="";
+  cur.opts.forEach((o,i)=>{const b=document.createElement("button");
+    b.className="opt"; b.innerHTML=o; b.onclick=()=>answer(i,b); box.appendChild(b);});
+  $("qFb").classList.add("hide"); asked++; $("asked").textContent=asked;
+};
+function answer(i,btn){
+  if(btn.disabled) return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true; if(j===cur.ans) b.classList.add("right");});
+  if(i!==cur.ans) btn.classList.add("wrong"); else score++;
+  $("score").textContent=score;
+  $("qFb").innerHTML=(i===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");
+}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  $("qFb").innerHTML=cur.why; $("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>
