@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exoplanet Detection Lab — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;--star:#ffcf4a;--planet:#7fb0e0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:296px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1200px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:4px 10px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#07101f;font-weight:600}
+canvas{width:100%;display:block;border-radius:9px;background:#05080f}
+.sig{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:820px){.sig{grid-template-columns:1fr}}
+.sig h3{margin:0 0 5px;font-size:13px;color:var(--accent2)}
+.sig .mini{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px}
+.verd{font-size:12px;margin-top:7px;padding:5px 8px;border-radius:6px}
+.v-y{background:rgba(93,220,154,.16);color:var(--green)}
+.v-m{background:rgba(255,201,77,.16);color:var(--accent)}
+.v-n{background:rgba(255,123,123,.16);color:var(--red)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Exoplanet Detection Lab</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec point 12.4 · one planetary system, three detection methods: transit, radial velocity and astrometry</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT: CONTROLS ============ -->
+<div>
+  <div class="card">
+    <h2>Real systems</h2>
+    <div class="chips" id="presets"></div>
+  </div>
+  <div class="card">
+    <h2>Build the system</h2>
+    <label>Planet mass <span class="val" id="mpOut">1 M<sub>J</sub></span></label>
+    <input type="range" id="mp" min="0" max="1000" value="600">
+    <label>Planet radius <span class="val" id="rpOut">11 R<sub>⊕</sub></span></label>
+    <input type="range" id="rp" min="0" max="1000" value="640">
+    <label>Orbit radius <span class="val" id="aOut">0.05 AU</span></label>
+    <input type="range" id="a" min="0" max="1000" value="330">
+    <label>Star mass <span class="val" id="msOut">1.0 M<sub>☉</sub></span></label>
+    <input type="range" id="ms" min="8" max="300" value="100">
+    <label>Inclination, i <span class="val" id="incOut">89°</span></label>
+    <input type="range" id="inc" min="0" max="90" step="1" value="89">
+    <div class="cap">90° = edge-on (orbit seen side-on); 0° = face-on (seen from above).</div>
+    <label>Distance to system <span class="val" id="dOut">15 pc</span></label>
+    <input type="range" id="d" min="0" max="1000" value="430">
+  </div>
+  <div class="card">
+    <h2>Orbit</h2>
+    <div class="row">
+      <button id="play" class="primary">▶ Orbit</button>
+      <button id="reset">↺ Reset</button>
+    </div>
+    <label>Speed <span class="val" id="spOut">1×</span></label>
+    <input type="range" id="speed" min="0" max="1000" value="500">
+    <label>Phase <span class="val" id="phOut">0°</span></label>
+    <input type="range" id="phase" min="0" max="1000" value="0">
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <h2>The system (not to scale)</h2>
+    <canvas id="cSys"></canvas>
+    <div class="cap" id="sysCap"></div>
+
+    <div class="sig">
+      <div class="mini">
+        <h3>① Transit</h3>
+        <canvas id="cTr"></canvas>
+        <div class="verd" id="vTr"></div>
+      </div>
+      <div class="mini">
+        <h3>② Radial velocity</h3>
+        <canvas id="cRv"></canvas>
+        <div class="verd" id="vRv"></div>
+      </div>
+      <div class="mini">
+        <h3>③ Astrometry</h3>
+        <canvas id="cAs"></canvas>
+        <div class="verd" id="vAs"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What's happening now</h2>
+    <div id="statusBig"></div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>Measured quantities</h2>
+    <table>
+      <tr><td>Orbital period</td><td id="rP">—</td></tr>
+      <tr><td>Transit depth</td><td id="rDepth">—</td></tr>
+      <tr><td>Transit duration</td><td id="rDur">—</td></tr>
+      <tr><td>Impact parameter, b</td><td id="rB">—</td></tr>
+      <tr><td>RV semi-amplitude, K</td><td id="rK">—</td></tr>
+      <tr><td>Star's orbital speed</td><td id="rV">—</td></tr>
+      <tr><td>Astrometric wobble</td><td id="rAlpha">—</td></tr>
+    </table>
+    <div class="note">The three methods are complementary: change the inclination and orbit radius and watch which signals appear or vanish.</div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>The three methods (12.4)</h2>
+    <details><summary>① Transit method</summary><p>When a planet passes in front of its star, it blocks a little light and the star dims. The depth of the dip = (R<sub>planet</sub>/R<sub>star</sub>)², giving the planet's size; the time between dips gives the period. Only works if the orbit is nearly <b>edge-on</b> so the planet crosses the disc. Most exoplanets were found this way (Kepler, TESS).</p></details>
+    <details><summary>② Radial velocity</summary><p>The planet and star both orbit their common centre of mass, so the star wobbles slightly towards and away from us. This Doppler-shifts its spectral lines — blue as it approaches, red as it recedes. The size of the shift gives the planet's mass (strictly, a minimum mass, M sin i). Works best for <b>massive, close-in</b> planets on edge-on orbits.</p></details>
+    <details><summary>③ Astrometry</summary><p>The star's wobble also moves its position slightly on the sky, tracing a tiny ellipse. Measuring this gives the planet's mass and orbit. The wobble is largest for <b>massive planets in wide orbits around nearby stars</b>, and — unlike RV — works even for face-on orbits. The shifts are tiny (micro-arcseconds), so it needs spacecraft like Gaia.</p></details>
+    <details><summary>Why they complement each other</summary><p>Transit and RV need edge-on orbits and favour close-in planets; astrometry favours wide orbits and works face-on. Combining transit (size) with RV (mass) gives the planet's density — and whether it is rocky or gaseous.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2, D2R=Math.PI/180;
+// constants
+const Mearth_sun=3.0035e-6, Mjup_e=317.8, AUyr_ms=4740.57,
+      Rsun_AU=0.004650, Rearth_Rsun=0.009166;
+
+const LOG={mp:[0.05,6000], rp:[0.3,25], a:[0.02,6], d:[2,200]};   // mp,rp in Earth units, a AU, d pc
+const toLog=(k,t)=>{const[a,b]=LOG[k];return a*Math.pow(b/a,t/1000);};
+const fromLog=(k,v)=>{const[a,b]=LOG[k];return 1000*Math.log(v/a)/Math.log(b/a);};
+
+const S={mp:Mjup_e, rp:11.2, a:0.05, ms:1.0, inc:89, d:15, phase:0, playing:false, speed:1};
+
+/* ---------- presets: name, a, Mp(Mearth), Rp(Rearth), i, Mstar, d ---------- */
+const PRESETS=[
+ ["Hot Jupiter", 0.05, Mjup_e, 12.5, 89, 1.0, 15],
+ ["51 Pegasi b", 0.0527, 0.47*Mjup_e, 13, 82, 1.11, 15.4],
+ ["Jupiter (from afar)", 5.2, Mjup_e, 11.2, 89, 1.0, 15],
+ ["Earth (from afar)", 1.0, 1.0, 1.0, 89.9, 1.0, 12],
+ ["Super-Earth", 0.09, 5, 1.8, 89, 0.6, 12],
+ ["TRAPPIST-1 e", 0.029, 0.69, 0.92, 89.7, 0.09, 12.4],
+ ["Face-on Jupiter", 5.0, Mjup_e, 11.2, 6, 1.0, 10]
+];
+
+/* ---------- physics ---------- */
+function calc(){
+  const i=S.inc*D2R, Mp=S.mp*Mearth_sun, Mtot=S.ms+Mp;
+  const P=Math.sqrt(S.a*S.a*S.a/Mtot);                 // years
+  const aStar=S.a*Mp/Mtot;                             // AU
+  const vStar=2*Math.PI*aStar/P*AUyr_ms;               // m/s
+  const K=vStar*Math.sin(i);                           // m/s
+  const RsAU=S.ms>0? Sradius()*Rsun_AU : Rsun_AU;
+  const rpAU=S.rp*Rearth_Rsun*Rsun_AU;
+  const ratio=rpAU/RsAU;
+  const b=S.a*Math.cos(i)/RsAU;
+  const depth=ratio*ratio;
+  const transits=b<1+ratio;
+  const arg=(RsAU/S.a)*Math.sqrt(Math.max(0,(1+ratio)**2-b*b))/Math.sin(i);
+  const durH=transits? P*8766/Math.PI*Math.asin(Math.min(1,arg)) : 0;
+  const alpha=aStar/S.d*1e6;                           // micro-arcsec
+  return {P,aStar,vStar,K,RsAU,rpAU,ratio,b,depth,transits,durH,alpha,i};
+}
+// simple mass–radius for the star's display size (R_sun)
+function Sradius(){return Math.pow(S.ms,0.8);}
+
+// planet sky/los position (AU) at phase θ; observer along +Z
+function pos(th){const i=S.inc*D2R;
+  return {X:S.a*Math.cos(th), Y:S.a*Math.sin(th)*Math.cos(i), Z:S.a*Math.sin(th)*Math.sin(i)};}
+// flux (transit light curve) at phase θ
+function overlap(d,R,r){if(d>=R+r)return 0;if(d<=Math.abs(R-r))return Math.PI*Math.min(R,r)**2;
+  const x=(d*d+R*R-r*r)/(2*d*R), y=(d*d+r*r-R*R)/(2*d*r);
+  const al=Math.acos(clamp(x,-1,1)), be=Math.acos(clamp(y,-1,1));
+  return R*R*(al-Math.sin(2*al)/2)+r*r*(be-Math.sin(2*be)/2);}
+function flux(th,C){const p=pos(th);
+  if(p.Z<=0) return 1;                                 // planet behind star → no dip
+  const s=Math.hypot(p.X,p.Y);
+  return 1-overlap(s,C.RsAU,C.rpAU)/(Math.PI*C.RsAU*C.RsAU);}
+// transit half-width in phase (radians); transit centred on θ = π/2
+function transitGeom(C){
+  const cosi=Math.cos(S.inc*D2R);
+  const rad=(C.RsAU+C.rpAU)/S.a;
+  const hw2=rad*rad-cosi*cosi;
+  return hw2>0 ? {transit:true,hw:Math.sqrt(hw2)} : {transit:false,hw:0};
+}
+// light curve stretched so even a very brief transit stays visible; real depth & shape kept
+function fluxDisplay(th,C,drawHw){
+  const g=transitGeom(C); if(!g.transit) return 1;
+  let ph=th-Math.PI/2; ph=Math.atan2(Math.sin(ph),Math.cos(ph));
+  if(Math.abs(ph)>drawHw) return 1;
+  return flux(Math.PI/2+ph*(g.hw/drawHw),C);
+}
+
+/* ---------- canvas fit ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+
+/* ---------- system view ---------- */
+function drawSys(){
+  const {c,w,h}=fit(document.getElementById("cSys"),0.52);
+  c.clearRect(0,0,w,h);c.fillStyle="#05080f";c.fillRect(0,0,w,h);
+  const cam=30*D2R, cosC=Math.cos(cam), sinC=Math.sin(cam);
+  const cx=w/2, cy=h*0.40, earthY=h-14;
+  // scale to fit both width and height (orbit vertical half-extent ≈ a·cosC)
+  const upAvail=cy-14, downAvail=earthY-cy-30, wAvail=w*0.46-10;
+  const sc=Math.min(wAvail/S.a, upAvail/(S.a*cosC+1e-6), downAvail/(S.a*cosC+1e-6));
+  const P=(x,y,z)=>({X:cx+x*sc, Y:cy-(y*cosC-z*sinC)*sc});
+  const i=S.inc*D2R;
+
+  // observer's line of sight (vertical): from Earth up through the star
+  c.strokeStyle="rgba(93,220,154,.25)";c.lineWidth=1;c.setLineDash([4,5]);
+  c.beginPath();c.moveTo(cx,cy);c.lineTo(cx,earthY-10);c.stroke();c.setLineDash([]);
+  // viewing cone from star edges down to Earth
+  const St=P(0,0,0), starR=clamp(Sradius()*sc*Rsun_AU*3.2,7,24);
+  c.strokeStyle="rgba(93,220,154,.18)";c.lineWidth=1;
+  c.beginPath();c.moveTo(cx-starR,St.Y);c.lineTo(cx-7,earthY-8);
+  c.moveTo(cx+starR,St.Y);c.lineTo(cx+7,earthY-8);c.stroke();
+
+  // orbit ellipse
+  c.beginPath();
+  for(let t=0;t<=TAU+0.02;t+=0.05){
+    const p=P(S.a*Math.cos(t),S.a*Math.sin(t)*Math.cos(i),S.a*Math.sin(t)*Math.sin(i));
+    t===0?c.moveTo(p.X,p.Y):c.lineTo(p.X,p.Y);}
+  c.strokeStyle="rgba(127,176,224,.55)";c.lineWidth=1.4;c.stroke();
+
+  // star + planet (planet behind star drawn first)
+  const sg=c.createRadialGradient(St.X-starR*0.3,St.Y-starR*0.3,1,St.X,St.Y,starR);
+  sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+  const p=pos(S.phase), behind=p.Z<0;
+  const pp=P(p.X,p.Y,p.Z), plR=clamp(S.rp*Rearth_Rsun*sc*Rsun_AU*3.2,3,starR*0.85);
+  const drawPlanet=()=>{c.beginPath();c.arc(pp.X,pp.Y,plR,0,TAU);
+    c.fillStyle="#7fb0e0";c.fill();c.strokeStyle="#bcd6ef";c.lineWidth=1;c.stroke();};
+  if(behind) drawPlanet();
+  c.beginPath();c.arc(St.X,St.Y,starR,0,TAU);c.fillStyle=sg;c.fill();
+  if(!behind) drawPlanet();
+
+  // Earth / observer — clearly marked
+  const eg=c.createRadialGradient(cx-3,earthY-3,1,cx,earthY,8);
+  eg.addColorStop(0,"#8fd0ff");eg.addColorStop(1,"#1c5fa0");
+  c.beginPath();c.arc(cx,earthY,8,0,TAU);c.fillStyle=eg;c.fill();
+  c.strokeStyle="#bfe3ff";c.lineWidth=1;c.stroke();
+  c.fillStyle="#9fe0b8";c.font="600 12px system-ui";c.textAlign="left";
+  c.fillText("EARTH — we view from here, looking ↑",cx+14,earthY+4);
+
+  // inclination label
+  c.fillStyle="#96a2c4";c.font="11px system-ui";c.textAlign="left";
+  c.fillText("i = "+S.inc+"°  ("+(S.inc>=88?"edge-on":S.inc<=8?"face-on":"tilted")+")",10,16);
+
+  const g=transitGeom(calc());
+  document.getElementById("sysCap").innerHTML=
+    behind?"The planet is <b>behind</b> the star (far side of its orbit)."
+    :(p.Z>0&&Math.hypot(p.X,p.Y)<calc().RsAU?"The planet is <b>crossing the line of sight</b>, in front of the star — a transit is happening now."
+      :(!g.transit&&S.inc>=88?"Even though the orbit is edge-on, it is wide enough that the planet passes <b>above</b> the star from Earth — so there is no transit."
+        :"The planet is on the <b>near</b> side of its orbit."));
+}
+
+/* ---------- transit panel ---------- */
+function drawTr(C){
+  const {c,w,h}=fit(document.getElementById("cTr"),0.85);
+  c.clearRect(0,0,w,h);c.fillStyle="#05080f";c.fillRect(0,0,w,h);
+  const g=transitGeom(C);
+  // top: sky view — star disc + the planet's path (chord) across it
+  const dh=h*0.44, cx=w/2, cy=dh/2+6;
+  const Rpx=Math.min(w*0.26,dh*0.40);
+  const sg=c.createRadialGradient(cx-Rpx*0.3,cy-Rpx*0.3,1,cx,cy,Rpx);
+  sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+  c.beginPath();c.arc(cx,cy,Rpx,0,TAU);c.fillStyle=sg;c.fill();
+  // chord: the planet's track in front of the star, at height b (star radii)
+  const chordY=clamp(cy-C.b*Rpx, 6, dh-6);
+  c.strokeStyle="rgba(127,176,224,.6)";c.lineWidth=1;c.setLineDash([4,4]);
+  c.beginPath();c.moveTo(8,chordY);c.lineTo(w-8,chordY);c.stroke();c.setLineDash([]);
+  // planet on the chord (only while in front)
+  const p=pos(S.phase);
+  if(p.Z>0){const px=clamp(cx+p.X/C.RsAU*Rpx,6,w-6), py=clamp(cy-p.Y/C.RsAU*Rpx,6,dh-6);
+    c.beginPath();c.arc(px,py,Math.max(2,C.ratio*Rpx),0,TAU);c.fillStyle="#0b1220";
+    c.fill();c.strokeStyle="#4a6a90";c.lineWidth=1;c.stroke();}
+  c.fillStyle=C.transits?"#5ddc9a":"#ff7b7b";c.font="10px system-ui";c.textAlign="left";
+  c.fillText(C.transits?"planet crosses the disc":"planet misses the disc (b="+C.b.toFixed(1)+")",8,dh-2);
+
+  // bottom: light curve (stretched so brief transits stay visible)
+  const gy0=dh+10, gy1=h-14, gyH=gy1-gy0, mL=6, gw=w-12;
+  const depth=Math.max(C.depth,0.0002);
+  const drawHw=Math.max(g.hw,0.16);
+  const yF=f=>gy0+((1-f)/(depth*1.35))*gyH;
+  c.strokeStyle="#18233f";c.lineWidth=1;
+  c.beginPath();c.moveTo(mL,yF(1));c.lineTo(w-6,yF(1));c.stroke();
+  c.beginPath();
+  for(let k=0;k<=gw;k++){const th=k/gw*TAU;const f=fluxDisplay(th,C,drawHw);
+    const x=mL+k,y=yF(f);k===0?c.moveTo(x,y):c.lineTo(x,y);}
+  c.strokeStyle="#ffc94d";c.lineWidth=2;c.stroke();
+  const mx=mL+(S.phase%TAU)/TAU*gw, mf=fluxDisplay(S.phase,C,drawHw);
+  c.strokeStyle="rgba(255,255,255,.3)";c.setLineDash([3,3]);
+  c.beginPath();c.moveTo(mx,gy0);c.lineTo(mx,gy1);c.stroke();c.setLineDash([]);
+  c.beginPath();c.arc(mx,yF(mf),3.5,0,TAU);c.fillStyle="#ffc94d";c.fill();
+  c.fillStyle="#5d6b91";c.font="9px system-ui";c.textAlign="left";c.fillText("brightness",mL,gy0+9);
+  if(g.transit&&g.hw<0.16){c.textAlign="right";c.fillText("(width enlarged)",w-6,gy0+9);}
+}
+
+/* ---------- radial velocity panel ---------- */
+function drawRv(C){
+  const {c,w,h}=fit(document.getElementById("cRv"),0.85);
+  c.clearRect(0,0,w,h);c.fillStyle="#05080f";c.fillRect(0,0,w,h);
+  const rv=-C.K*Math.cos(S.phase);               // m/s, star velocity toward observer<0
+  // top: spectral line shifting
+  const sh=h*0.30, cy=sh/2+2;
+  const grd=c.createLinearGradient(0,0,w,0);
+  grd.addColorStop(0,"#3a2a6a");grd.addColorStop(.5,"#2a5a4a");grd.addColorStop(1,"#6a2a2a");
+  c.fillStyle=grd;c.fillRect(6,4,w-12,sh-8);
+  const frac=C.K>0? clamp(-rv/Math.max(C.K,1),-1,1):0;   // + = redshift (receding)
+  const lx=w/2 + frac*(w*0.32);
+  c.fillStyle="#05080f";c.fillRect(lx-2,4,4,sh-8);
+  c.fillStyle="#96a2c4";c.font="9px system-ui";c.textAlign="center";
+  c.fillText("blue",18,sh-1);c.fillText("red",w-18,sh-1);
+  // bottom: velocity curve
+  const gy0=sh+10, gy1=h-14, gyH=gy1-gy0, mid=(gy0+gy1)/2, mL=6, gw=w-12;
+  const amp=Math.max(C.K,1);
+  const yV=v=>mid-(v/(amp*1.25))*(gyH/2);
+  c.strokeStyle="#3a4a72";c.beginPath();c.moveTo(mL,mid);c.lineTo(w-6,mid);c.stroke();
+  c.beginPath();
+  for(let k=0;k<=gw;k++){const th=k/gw*TAU;const v=-C.K*Math.cos(th);
+    const x=mL+k,y=yV(v);k===0?c.moveTo(x,y):c.lineTo(x,y);}
+  c.strokeStyle="#4fc3f7";c.lineWidth=2;c.stroke();
+  const mx=mL+(S.phase%TAU)/TAU*gw;
+  c.strokeStyle="rgba(255,255,255,.3)";c.setLineDash([3,3]);
+  c.beginPath();c.moveTo(mx,gy0);c.lineTo(mx,gy1);c.stroke();c.setLineDash([]);
+  c.beginPath();c.arc(mx,yV(rv),3.5,0,TAU);c.fillStyle="#4fc3f7";c.fill();
+  c.fillStyle="#5d6b91";c.font="9px system-ui";c.textAlign="left";c.fillText("velocity",mL,gy0+9);
+}
+
+/* ---------- astrometry panel ---------- */
+function drawAs(C){
+  const {c,w,h}=fit(document.getElementById("cAs"),0.85);
+  c.clearRect(0,0,w,h);c.fillStyle="#05080f";c.fillRect(0,0,w,h);
+  const cx=w/2, cy=h*0.46, i=S.inc*D2R;
+  const RR=Math.min(w,h)*0.30;
+  // star wobble ellipse (exaggerated): semi-axes aStar, aStar*cos i
+  const ax=RR, ay=RR*Math.cos(i);
+  c.strokeStyle="rgba(180,140,255,.55)";c.lineWidth=1.4;
+  c.beginPath();c.ellipse(cx,cy,Math.max(ax,1.5),Math.max(ay,1.2),0,0,TAU);c.stroke();
+  // barycentre
+  c.fillStyle="#5d6b91";c.beginPath();c.arc(cx,cy,2,0,TAU);c.fill();
+  c.font="9px system-ui";c.textAlign="center";c.fillText("centre of mass",cx,cy+RR+12);
+  // star position: opposite to planet, scaled
+  const sx=cx - Math.cos(S.phase)*ax, sy=cy + Math.sin(S.phase)*ay;
+  const g=c.createRadialGradient(sx,sy,0,sx,sy,10);
+  g.addColorStop(0,"#fff2c0");g.addColorStop(1,"rgba(255,160,40,0)");
+  c.fillStyle=g;c.beginPath();c.arc(sx,sy,10,0,TAU);c.fill();
+  c.beginPath();c.arc(sx,sy,4.5,0,TAU);c.fillStyle="#ffcf4a";c.fill();
+  c.fillStyle="#96a2c4";c.font="10px system-ui";c.textAlign="left";
+  c.fillText("wobble ≈ "+(C.alpha>=1?C.alpha.toFixed(0):C.alpha.toFixed(1))+" µas",8,14);
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function fmtP(P){return P<0.5?(P*365.25).toFixed(1)+" days":P.toFixed(2)+" yr";}
+function update(){
+  $("mpOut").innerHTML=S.mp>=Mjup_e*0.3?(S.mp/Mjup_e).toFixed(S.mp/Mjup_e<10?2:1)+" M<sub>J</sub>":S.mp.toFixed(S.mp<10?1:0)+" M<sub>⊕</sub>";
+  $("rpOut").innerHTML=S.rp>=8?(S.rp/11.21).toFixed(2)+" R<sub>J</sub>":S.rp.toFixed(1)+" R<sub>⊕</sub>";
+  $("aOut").textContent=S.a<0.1?S.a.toFixed(3)+" AU":S.a.toFixed(2)+" AU";
+  $("msOut").innerHTML=S.ms.toFixed(2)+" M<sub>☉</sub>";
+  $("incOut").textContent=S.inc+"°";
+  $("dOut").textContent=S.d.toFixed(S.d<10?1:0)+" pc";
+  $("phOut").textContent=Math.round(S.phase/TAU*360)%360+"°";
+
+  const C=calc();
+  $("rP").textContent=fmtP(C.P);
+  $("rDepth").textContent=C.transits?(C.depth*100).toFixed(C.depth<0.01?3:2)+" %":"no transit";
+  $("rDur").textContent=C.transits?C.durH.toFixed(1)+" hr":"—";
+  $("rB").textContent=C.b.toFixed(2)+(C.transits?"":"  (misses)");
+  $("rK").textContent=C.K.toFixed(C.K<10?2:0)+" m/s";
+  $("rV").textContent=C.vStar.toFixed(C.vStar<10?2:0)+" m/s";
+  $("rAlpha").textContent=(C.alpha>=1?C.alpha.toFixed(0):C.alpha.toFixed(2))+" µas";
+
+  verdicts(C); statusText(C);
+  drawSys(); drawTr(C); drawRv(C); drawAs(C);
+}
+function verdicts(C){
+  // transit
+  let t;
+  if(!C.transits) t=`<span class="verd v-n">✗ No transit — planet passes over/under the star (b = ${C.b.toFixed(1)})</span>`;
+  else if(C.depth>0.002) t=`<span class="verd v-y">✓ Clear dip — depth ${(C.depth*100).toFixed(2)}%</span>`;
+  else t=`<span class="verd v-m">~ Shallow dip — depth ${(C.depth*100).toFixed(3)}%, hard to detect</span>`;
+  $("vTr").innerHTML=t;
+  // RV
+  let r;
+  if(C.K>=10) r=`<span class="verd v-y">✓ Strong wobble — K = ${C.K.toFixed(0)} m/s</span>`;
+  else if(C.K>=1) r=`<span class="verd v-m">~ Small wobble — K = ${C.K.toFixed(1)} m/s (near current limit)</span>`;
+  else r=`<span class="verd v-n">✗ Too weak — K = ${C.K.toFixed(2)} m/s${S.inc<15?" (nearly face-on)":""}</span>`;
+  $("vRv").innerHTML=r;
+  // astrometry
+  let a;
+  if(C.alpha>=30) a=`<span class="verd v-y">✓ Large wobble — ${C.alpha.toFixed(0)} µas</span>`;
+  else if(C.alpha>=5) a=`<span class="verd v-m">~ Detectable by Gaia — ${C.alpha.toFixed(0)} µas</span>`;
+  else a=`<span class="verd v-n">✗ Tiny — ${C.alpha.toFixed(1)} µas</span>`;
+  $("vAs").innerHTML=a;
+}
+function statusText(C){
+  const methods=[];
+  if(C.transits&&C.depth>0.002) methods.push("the <b>transit</b> dip");
+  if(C.K>=1) methods.push("the <b>radial-velocity</b> wobble");
+  if(C.alpha>=5) methods.push("the <b>astrometric</b> wobble");
+  let t=`This planet has a period of <b>${fmtP(C.P)}</b>. `;
+  if(methods.length===0) t+="None of the three methods would detect it easily — it is small, distant or unfavourably aligned.";
+  else if(methods.length===3) t+="All three methods would detect it — an ideal target.";
+  else t+="It would be found by "+methods.join(" and ")+", but not the other method(s). This is why astronomers combine techniques.";
+  if(S.inc<15) t+=" Because the orbit is nearly <b>face-on</b>, there is no transit and almost no radial-velocity signal — only astrometry sees the full wobble.";
+  $("statusBig").innerHTML=t;
+}
+
+/* ---------- controls ---------- */
+["mp","rp","a","d"].forEach(k=>{$(k).value=fromLog(k,S[k]);
+  $(k).oninput=e=>{S[k]=toLog(k,+e.target.value);update();};});
+$("ms").oninput=e=>{S.ms=+e.target.value/100;update();};
+$("inc").oninput=e=>{S.inc=+e.target.value;update();};
+$("phase").oninput=e=>{S.phase=+e.target.value/1000*TAU;update();};
+// speed: 0.1× … 4× (log), 500 → 1×
+$("speed").oninput=e=>{S.speed=Math.pow(10, (+e.target.value/1000-0.5)*2*Math.log10(4));
+  $("spOut").textContent=(S.speed<1?S.speed.toFixed(2):S.speed.toFixed(1))+"×";};
+$("reset").onclick=()=>loadPreset(PRESETS[0]);
+
+function loadPreset(p){const[,a,mp,rp,i,ms,d]=p;
+  S.a=a;S.mp=mp;S.rp=rp;S.inc=i;S.ms=ms;S.d=d;
+  $("mp").value=fromLog("mp",mp);$("rp").value=fromLog("rp",rp);
+  $("a").value=fromLog("a",a);$("d").value=fromLog("d",d);
+  $("ms").value=ms*100;$("inc").value=Math.round(i);
+  [...$("presets").children].forEach(ch=>ch.classList.toggle("on",ch.textContent===p[0]));
+  update();}
+const pb=$("presets");
+PRESETS.forEach(p=>{const d=document.createElement("div");d.className="chip";d.textContent=p[0];
+  d.onclick=()=>loadPreset(p);pb.appendChild(d);});
+
+let anim=null;
+$("play").onclick=()=>{S.playing=!S.playing;$("play").textContent=S.playing?"❚❚ Pause":"▶ Orbit";
+  if(S.playing){let last=performance.now();
+    const step=now=>{if(!S.playing)return;S.phase=(S.phase+(now-last)/1000*1.1*S.speed)%TAU;last=now;
+      $("phase").value=S.phase/TAU*1000;update();anim=requestAnimationFrame(step);};anim=requestAnimationFrame(step);}
+  else cancelAnimationFrame(anim);};
+window.addEventListener("resize",update);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"Which detection method relies on the star's light <b>dimming</b> as a planet passes in front of it?",
+   opts:shuffle(["The transit method","Radial velocity","Astrometry","Parallax"]),
+   ansText:"The transit method",
+   why:"A transit is a small dip in brightness as the planet blocks part of the star's disc. Its depth = (R_planet/R_star)²."}),
+ ()=>({q:"The <b>radial velocity</b> method detects a planet by measuring…",
+   opts:shuffle(["the Doppler shift of the star's spectral lines","the dimming of the star",
+     "the star's parallax","the planet's own light"]),
+   ansText:"the Doppler shift of the star's spectral lines",
+   why:"As the star wobbles towards and away from us, its spectral lines shift blue then red. The size of the shift gives the planet's mass."}),
+ ()=>({q:"Which method can still detect a planet whose orbit is seen almost <b>face-on</b>?",
+   opts:shuffle(["Astrometry","The transit method","Radial velocity","None of them"]),
+   ansText:"Astrometry",
+   why:"Face-on, the planet never crosses the star (no transit) and the star has no motion towards/away from us (no radial velocity). But its position still traces a circle on the sky — astrometry."}),
+ ()=>({q:"A transit is 1% deep. What does this tell you?",
+   opts:shuffle(["The planet's radius is about 1/10 of the star's","The planet's mass is 1% of the star's",
+     "The planet is 1% as bright as the star","The orbit is inclined at 1°"]),
+   ansText:"The planet's radius is about 1/10 of the star's",
+   why:"Depth = (R_planet/R_star)². So (R_p/R_s)² = 0.01 → R_p/R_s = 0.1. Transit gives size, not mass."}),
+ ()=>({q:"Why does the transit method only work for some planetary systems?",
+   opts:shuffle(["The orbit must be nearly edge-on so the planet crosses the star",
+     "The star must be very close to Earth","The planet must be very massive","The star must be cool"]),
+   ansText:"The orbit must be nearly edge-on so the planet crosses the star",
+   why:"If the orbit is tilted too far from edge-on, the planet passes above or below the star's disc from our view and never transits."}),
+ ()=>({q:"Radial velocity gives only a <b>minimum</b> mass for the planet. Why?",
+   opts:shuffle(["We measure only the part of the wobble along our line of sight (M sin i)",
+     "Planets are always heavier than they look","The star's mass is unknown","Doppler shifts are unreliable"]),
+   ansText:"We measure only the part of the wobble along our line of sight (M sin i)",
+   why:"Only the line-of-sight component of the star's velocity shifts the spectrum, so unless we know the inclination i, we get M sin i — a lower limit."}),
+ ()=>({q:"The astrometric wobble is largest for a planet that is…",
+   opts:shuffle(["massive, in a wide orbit, around a nearby star","small, close-in, around a distant star",
+     "massive and very close to its star","exactly Earth-sized"]),
+   ansText:"massive, in a wide orbit, around a nearby star",
+   why:"The wobble = a·(M_planet/M_star)/distance. A large orbit and a heavy planet make the star's swing bigger, and a nearby star makes the angle larger."}),
+ ()=>({q:"Combining the transit and radial-velocity methods for the same planet gives its…",
+   opts:shuffle(["density (from size and mass)","distance","temperature","spectral type"]),
+   ansText:"density (from size and mass)",
+   why:"Transit gives the radius (hence volume) and RV gives the mass. Mass ÷ volume = density, revealing whether the planet is rocky or gaseous."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const b=document.createElement("button");b.className="opt";b.innerHTML=o;
+    b.onclick=()=>ans(idx,b);box.appendChild(b);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+loadPreset(PRESETS[0]);
+</script>
+</body>
+</html>
