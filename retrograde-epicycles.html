@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retrograde Motion &amp; Epicycles — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;--sun:#ffcf4a;--earth:#4fa3e0;--planet:#e07b5a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:290px minmax(0,1fr) 320px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.seg{display:flex;gap:6px}.seg button{flex:1}
+.seg button.on{background:var(--accent);color:#0b1020;border-color:var(--accent);font-weight:700}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:4px 10px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#07101f;font-weight:600}
+canvas{width:100%;display:block;border-radius:9px;background:#05070f}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.b-pro{background:rgba(93,220,154,.16);color:var(--green)}
+.b-ret{background:rgba(255,123,123,.16);color:var(--red)}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Retrograde Motion &amp; Epicycles</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 5.5, 7.3, 7.4 · the same backwards loop, explained by the Sun-centred model and by Ptolemy's epicycles</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>1 · Which model?</h2>
+    <div class="seg" id="modelSeg">
+      <button data-m="helio" class="on">☀ Heliocentric</button>
+      <button data-m="geo">🌍 Geocentric</button>
+    </div>
+    <div class="note" id="modelNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Planet</h2>
+    <div class="chips" id="planets"></div>
+    <div class="cap" id="plNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>3 · Time</h2>
+    <label>Position in the cycle <span class="val" id="tOut">0.00 yr</span></label>
+    <input type="range" id="t" min="-1000" max="1000" value="0">
+    <div class="row" style="margin-top:9px">
+      <button id="play" class="primary">▶ Play</button>
+      <button id="opp">Jump to opposition</button>
+    </div>
+    <label>Speed <span class="val" id="spOut">1×</span></label>
+    <input type="range" id="speed" min="0" max="1000" value="500">
+  </div>
+
+  <div class="card">
+    <h2>Show</h2>
+    <div class="chips" id="opts">
+      <div class="chip on" data-o="orbits">Orbits</div>
+      <div class="chip on" data-o="sight">Line of sight</div>
+      <div class="chip on" data-o="sun">Sun link (7.4)</div>
+      <div class="chip on" data-o="trail">Sky trail</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <h2 id="orbTitle">The heliocentric model</h2>
+    <canvas id="cOrb"></canvas>
+    <div class="legend">
+      <span><i style="background:var(--sun)"></i>Sun</span>
+      <span><i style="background:var(--earth)"></i>Earth</span>
+      <span><i style="background:var(--planet)"></i>planet</span>
+      <span><i style="background:var(--accent2)"></i>line of sight → stars</span>
+    </div>
+    <div class="cap" id="orbCap"></div>
+  </div>
+
+  <div class="card">
+    <h2>The planet's path against the stars — the <span style="color:var(--accent)">same loop</span> either way</h2>
+    <canvas id="cSky"></canvas>
+    <div class="cap">This is what you actually see in the sky: the planet drifts <b>east</b> night after night, then briefly loops <b>west</b> (retrograde), then resumes eastward. Switching model on the left does <b>not</b> change this loop — both models are built to reproduce it.</div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>Right now</h2>
+    <table>
+      <tr><td>Apparent motion</td><td id="rMotion">—</td></tr>
+      <tr><td>Configuration</td><td id="rConfig">—</td></tr>
+      <tr><td>Apparent speed</td><td id="rSpeed">—</td></tr>
+      <tr><td>Synodic period</td><td id="rSyn">—</td></tr>
+      <tr><td>Retrograde lasts</td><td id="rDur">—</td></tr>
+    </table>
+    <div class="note" id="statusBig"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>The two models</h2>
+    <details><summary>What is retrograde motion? (5.5)</summary><p>Usually a planet drifts slowly <b>eastward</b> against the background stars. For a few weeks around opposition it appears to stop, move <b>westward</b> (retrograde), stop again, then resume eastward — tracing a loop or zig-zag.</p></details>
+    <details><summary>The heliocentric explanation</summary><p>Earth and the planet both orbit the Sun. Earth, on a faster inner orbit, <b>overtakes</b> the outer planet near opposition. Just as a fast car overtaking a slower one makes the slower car seem to move backwards, the planet appears to slip westwards. It is an <b>illusion</b> of our own motion.</p></details>
+    <details><summary>Ptolemy's geocentric model (7.3)</summary><p>With the Earth fixed at the centre, a planet moving on a single circle could never go backwards. Ptolemy kept the Earth central but had each planet ride a small circle, the <b>epicycle</b>, whose centre moved around a big circle, the <b>deferent</b>.</p></details>
+    <details><summary>Why the epicycle works (7.4)</summary><p>As the planet loops around its epicycle, it periodically moves backwards against the stars — reproducing retrograde motion while keeping Earth at the centre. It is a genuinely clever fix, and it predicted planetary positions well for 1400 years.</p></details>
+    <details><summary>The hidden clue</summary><p>Turn on the <b>Sun link</b>. In Ptolemy's model the line from the epicycle centre to the planet stays exactly parallel to the Earth–Sun line — an unexplained "coincidence." Copernicus realised it is no coincidence: the epicycle is secretly a copy of <b>Earth's own orbit</b>.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2, D2R=Math.PI/180, R2D=180/Math.PI;
+// name, a(AU), P(yr), inclination(deg)
+const PLANETS=[
+ ["Mars",1.524,1.8808,1.85],
+ ["Jupiter",5.203,11.862,1.30],
+ ["Saturn",9.537,29.447,2.49],
+ ["Venus",0.723,0.6152,3.39],
+ ["Mercury",0.387,0.2408,7.00]
+];
+const S={pi:0, model:"helio", t:0, playing:false, speed:1,
+         opts:{orbits:1,sight:1,sun:1,trail:1}};
+
+/* ---------- positions ---------- */
+function bodies(t){
+  const [,a,P,inc]=PLANETS[S.pi], i=inc*D2R;
+  const thE=TAU*t, thP=TAU*t/P;
+  const E={x:Math.cos(thE),y:Math.sin(thE),z:0};
+  const M={x:a*Math.cos(thP),y:a*Math.sin(thP)*Math.cos(i),z:a*Math.sin(thP)*Math.sin(i)};
+  const g={x:M.x-E.x,y:M.y-E.y,z:M.z-E.z};
+  const sup=a>1;
+  const def=sup?{x:M.x,y:M.y}:{x:-E.x,y:-E.y};
+  const epi=sup?{x:-E.x,y:-E.y}:{x:M.x,y:M.y};
+  return {E,M,g,thE,thP,a,P,sup,def,epi,
+          lam:Math.atan2(g.y,g.x), bet:Math.atan2(g.z,Math.hypot(g.x,g.y))};
+}
+function synodic(){const P=PLANETS[S.pi][2];return 1/Math.abs(1-1/P);}
+function dlam(t){const dt=2e-4;let d=bodies(t+dt).lam-bodies(t-dt).lam;
+  d=Math.atan2(Math.sin(d),Math.cos(d));return d/(2*dt);}       // rad/yr (sign: + = prograde/east)
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+
+/* ---------- orbital diagram ---------- */
+function drawOrb(){
+  const {c,w,h}=fit(document.getElementById("cOrb"),0.66);
+  c.clearRect(0,0,w,h);c.fillStyle="#05070f";c.fillRect(0,0,w,h);
+  const cx=w/2, cy=h/2, b=bodies(S.t), a=b.a;
+  // background zodiac ring
+  const Rr=Math.min(w,h)*0.46;
+  c.strokeStyle="#141f38";c.lineWidth=1;c.beginPath();c.arc(cx,cy,Rr,0,TAU);c.stroke();
+  for(let k=0;k<48;k++){const an=k/48*TAU;c.fillStyle=k%4===0?"rgba(150,162,196,.6)":"rgba(90,100,130,.5)";
+    c.beginPath();c.arc(cx+Math.cos(an)*Rr,cy+Math.sin(an)*Rr,k%4===0?1.6:1,0,TAU);c.fill();}
+  // apparent direction marker on the ring (same λ in both models)
+  const lam=b.lam;
+  const appX=cx+Math.cos(lam)*Rr, appY=cy+Math.sin(lam)*Rr;
+
+  if(S.model==="helio"){
+    const sc=Math.min(w,h)*0.40/a;
+    const Sx=cx, Sy=cy;                                   // Sun at centre
+    if(S.opts.orbits){c.strokeStyle="rgba(79,163,224,.35)";c.beginPath();c.arc(Sx,Sy,1*sc,0,TAU);c.stroke();
+      c.strokeStyle="rgba(224,123,90,.35)";c.beginPath();c.arc(Sx,Sy,a*sc,0,TAU);c.stroke();}
+    const Ex=Sx+b.E.x*sc, Ey=Sy+b.E.y*sc, Px=Sx+b.M.x*sc, Py=Sy+b.M.y*sc;
+    // line of sight Earth → planet → stars
+    if(S.opts.sight){const dx=Math.cos(lam),dy=Math.sin(lam);
+      c.strokeStyle="rgba(79,195,247,.55)";c.lineWidth=1.3;c.setLineDash([5,4]);
+      c.beginPath();c.moveTo(Ex,Ey);c.lineTo(Ex+dx*Rr*2.4,Ey+dy*Rr*2.4);c.stroke();c.setLineDash([]);}
+    body(c,Sx,Sy,10,"var(--sun)","Sun");
+    body(c,Ex,Ey,6,"#4fa3e0","Earth");
+    body(c,Px,Py,7,"#e07b5a",PLANETS[S.pi][0]);
+    dot(c,appX,appY,5,"#ffc94d");
+  } else {
+    const sc=Math.min(w,h)*0.40/(a+1);
+    const Ex=cx, Ey=cy;                                   // Earth at centre
+    const defR=b.sup?a:1, epiR=b.sup?1:a;
+    const Cx=Ex+b.def.x*sc, Cy=Ey+b.def.y*sc;            // epicycle centre
+    const Px=Ex+b.g.x*sc,  Py=Ey+b.g.y*sc;               // planet (= C + epicycle)
+    if(S.opts.orbits){c.strokeStyle="rgba(180,140,255,.35)";c.beginPath();c.arc(Ex,Ey,defR*sc,0,TAU);c.stroke();
+      c.strokeStyle="rgba(224,123,90,.4)";c.beginPath();c.arc(Cx,Cy,epiR*sc,0,TAU);c.stroke();}
+    // deferent arm & epicycle arm
+    c.strokeStyle="rgba(180,140,255,.5)";c.lineWidth=1.2;c.beginPath();c.moveTo(Ex,Ey);c.lineTo(Cx,Cy);c.stroke();
+    c.strokeStyle="rgba(224,123,90,.6)";c.beginPath();c.moveTo(Cx,Cy);c.lineTo(Px,Py);c.stroke();
+    // Sun (geocentric) and the parallel "Sun link"
+    const SunX=Ex-b.E.x*sc, SunY=Ey-b.E.y*sc;            // Sun at -E from Earth
+    if(S.opts.sun){
+      c.strokeStyle="rgba(255,207,74,.7)";c.lineWidth=1.4;c.setLineDash([3,3]);
+      c.beginPath();c.moveTo(Ex,Ey);c.lineTo(SunX,SunY);c.stroke();c.setLineDash([]);
+      body(c,SunX,SunY,7,"var(--sun)","Sun");
+    }
+    if(S.opts.sight){const dx=Math.cos(lam),dy=Math.sin(lam);
+      c.strokeStyle="rgba(79,195,247,.55)";c.lineWidth=1.3;c.setLineDash([5,4]);
+      c.beginPath();c.moveTo(Ex,Ey);c.lineTo(Ex+dx*Rr*2.4,Ey+dy*Rr*2.4);c.stroke();c.setLineDash([]);}
+    dot(c,Cx,Cy,3,"#b48cff");
+    body(c,Ex,Ey,7,"#4fa3e0","Earth");
+    body(c,Px,Py,7,"#e07b5a",PLANETS[S.pi][0]);
+    dot(c,appX,appY,5,"#ffc94d");
+    c.fillStyle="rgba(180,140,255,.9)";c.font="11px system-ui";c.textAlign="left";
+    c.fillText("deferent",Ex+8,Ey-6);
+    c.fillStyle="rgba(224,123,90,.9)";c.fillText("epicycle",Cx+6,Cy-6);
+  }
+  // "to stars" label near apparent marker
+  c.fillStyle="#ffc94d";c.font="11px system-ui";c.textAlign="center";
+  c.fillText("apparent position",appX,appY-(appY<cy?10:-16));
+}
+function body(c,x,y,r,col,lab){
+  const g=c.createRadialGradient(x-r*0.3,y-r*0.3,1,x,y,r);
+  const cc=col.startsWith("var")?getCol(col):col;
+  g.addColorStop(0,"#ffffff");g.addColorStop(.35,cc);g.addColorStop(1,cc);
+  c.beginPath();c.arc(x,y,r,0,TAU);c.fillStyle=cc;c.fill();
+  c.fillStyle="rgba(255,255,255,.85)";c.beginPath();c.arc(x-r*0.3,y-r*0.3,r*0.35,0,TAU);c.fill();
+  c.fillStyle="#c7d2ee";c.font="11px system-ui";c.textAlign="center";c.fillText(lab,x,y-r-4);
+}
+function dot(c,x,y,r,col){c.beginPath();c.arc(x,y,r,0,TAU);c.fillStyle=col;c.fill();}
+function getCol(v){const m={"var(--sun)":"#ffcf4a"};return m[v]||"#fff";}
+
+/* ---------- sky path (the loop) — fixed window, only the marker moves ---------- */
+function drawSky(){
+  const {c,w,h}=fit(document.getElementById("cSky"),0.44);
+  c.clearRect(0,0,w,h);c.fillStyle="#05070f";c.fillRect(0,0,w,h);
+  const lim=synodic()*1.2, N=400;                       // window fixed & centred on opposition (t=0)
+  const pts=[]; let prev=null;
+  for(let k=0;k<=N;k++){const tt=-lim+(2*lim)*k/N;const b=bodies(tt);
+    let lam=b.lam*R2D; if(prev!==null){while(lam-prev>180)lam-=360;while(lam-prev<-180)lam+=360;}
+    prev=lam; pts.push({t:tt,lam,bet:b.bet*R2D,retro:dlam(tt)<0});}
+  let lamMin=1e9,lamMax=-1e9,betMax=0.1;
+  pts.forEach(p=>{lamMin=Math.min(lamMin,p.lam);lamMax=Math.max(lamMax,p.lam);betMax=Math.max(betMax,Math.abs(p.bet));});
+  const mL=14,mR=14,mT=22,mB=26, gw=w-mL-mR, gh=h-mT-mB;
+  const X=l=>mL+(l-lamMin)/(lamMax-lamMin+1e-6)*gw;
+  const Y=bt=>mT+gh/2-(bt/(betMax*1.3))*(gh/2);
+  // faint stars (static)
+  const R=(s=>{let x=s;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};})(99);
+  for(let i=0;i<70;i++){c.fillStyle="rgba(150,162,196,.25)";
+    c.beginPath();c.arc(mL+R()*gw,mT+R()*gh,R()*1.2,0,TAU);c.fill();}
+  c.strokeStyle="#1b2740";c.beginPath();c.moveTo(mL,Y(0));c.lineTo(w-mR,Y(0));c.stroke();
+  c.fillStyle="#7a86a8";c.font="11px system-ui";c.textAlign="left";
+  c.fillText("◀ west",mL,mT-8);c.textAlign="right";c.fillText("east ▶",w-mR,mT-8);
+  c.textAlign="left";c.fillStyle="#5d6b91";c.fillText("(latitude exaggerated)",mL,h-8);
+  // path (static)
+  if(S.opts.trail){
+    for(let k=1;k<pts.length;k++){const a=pts[k-1],bb=pts[k];
+      c.beginPath();c.moveTo(X(a.lam),Y(a.bet));c.lineTo(X(bb.lam),Y(bb.bet));
+      c.strokeStyle=bb.retro?"#ff7b7b":"rgba(255,201,77,.85)";c.lineWidth=bb.retro?2.6:1.8;c.stroke();}
+  }
+  // retrograde label at the segment nearest opposition (static)
+  const rp=pts.filter(p=>p.retro);
+  if(rp.length){let mid=rp[0];rp.forEach(p=>{if(Math.abs(p.t)<Math.abs(mid.t))mid=p;});
+    c.fillStyle="rgba(255,123,123,.9)";c.font="600 11px system-ui";c.textAlign="center";
+    c.fillText("retrograde (westward)",clamp(X(mid.lam),60,w-60),Y(mid.bet)+(mid.bet>0?18:-10));}
+  // current marker — interpolate along the fixed path at time S.t
+  const tc=clamp(S.t,-lim,lim);
+  let f=(tc+lim)/(2*lim)*N, i0=Math.floor(f), i1=Math.min(i0+1,N), fr=f-i0;
+  const lam=pts[i0].lam+(pts[i1].lam-pts[i0].lam)*fr;
+  const bet=pts[i0].bet+(pts[i1].bet-pts[i0].bet)*fr;
+  const mx=X(lam), my=Y(bet);
+  c.beginPath();c.arc(mx,my,6,0,TAU);c.fillStyle=dlam(S.t)<0?"#ff7b7b":"#ffc94d";c.fill();
+  c.strokeStyle="#fff";c.lineWidth=1.4;c.stroke();
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  $("tOut").textContent=S.t.toFixed(2)+" yr";
+  const P=PLANETS[S.pi];
+  $("orbTitle").textContent=S.model==="helio"?"The heliocentric model (Sun-centred)":"Ptolemy's geocentric model (Earth-centred)";
+  $("modelNote").innerHTML=S.model==="helio"
+    ?"Earth and the planet both orbit the Sun. Retrograde happens because Earth <b>overtakes</b> the planet."
+    :"Earth is fixed at the centre. The planet rides an <b>epicycle</b> whose centre moves round a <b>deferent</b>.";
+  const retro=dlam(S.t)<0, spd=dlam(S.t)*R2D/365.25;   // deg/day
+  $("rMotion").innerHTML=retro?'<span class="badge b-ret">retrograde (west)</span>':'<span class="badge b-pro">prograde (east)</span>';
+  // configuration
+  const b=bodies(S.t), sep=Math.abs(Math.atan2(Math.sin(b.thP-b.thE),Math.cos(b.thP-b.thE)));
+  let cfg; if(P[1]>1) cfg=sep<0.15?"opposition":sep>Math.PI-0.15?"conjunction":"—";
+  else cfg=sep<0.15?"inferior conjunction":sep>Math.PI-0.15?"superior conjunction":"—";
+  $("rConfig").textContent=cfg;
+  $("rSpeed").textContent=(spd>=0?"+":"")+spd.toFixed(2)+" °/day";
+  $("rSyn").textContent=synodic().toFixed(2)+" yr";
+  // retrograde duration (numeric, around nearest opposition t=0 reference within a synodic cycle)
+  $("rDur").textContent=retroDuration().toFixed(0)+" days";
+  statusText(retro,cfg);
+  drawOrb(); drawSky();
+}
+function retroDuration(){
+  // scan one synodic cycle centred on the nearest conjunction/opposition (t=0 family)
+  const syn=synodic(); let a=null,b2=null;
+  for(let tt=-syn/2;tt<=syn/2;tt+=syn/2000){if(dlam(tt)<0){if(a===null)a=tt;b2=tt;}}
+  return a===null?0:(b2-a)*365.25;
+}
+function statusText(retro,cfg){
+  const nm=PLANETS[S.pi][0];
+  let t;
+  if(S.model==="helio"){
+    t=retro?`Earth is <b>overtaking</b> ${nm} on the inside track, so ${nm} appears to slip <b>backwards</b> against the stars — even though both planets keep orbiting the Sun the same way.`
+           :`${nm} drifts slowly <b>eastward</b>. Earth has not yet caught up with it, so no illusion of backward motion.`;
+    if(cfg==="opposition") t+=" This is <b>opposition</b> — the planet is opposite the Sun and closest to Earth.";
+  } else {
+    t=retro?`As ${nm} swings around the near side of its <b>epicycle</b>, it moves <b>backwards</b> faster than the deferent carries it forward — producing retrograde motion with Earth still at the centre.`
+           :`The epicycle is carrying ${nm} <b>forwards</b>, matching the deferent, so the planet moves <b>eastward</b>.`;
+    t+=" Turn on the <b>Sun link</b> to see the epicycle arm stay parallel to the Earth–Sun line.";
+  }
+  $("statusBig").innerHTML=t;
+}
+
+/* ---------- controls ---------- */
+const pb=$("planets");
+PLANETS.forEach((p,i)=>{const d=document.createElement("div");d.className="chip"+(i===0?" on":"");
+  d.textContent=p[0];d.onclick=()=>{S.pi=i;[...pb.children].forEach((x,j)=>x.classList.toggle("on",j===i));
+    $("plNote").innerHTML=p[1]>1?"A <b>superior</b> planet (orbit outside Earth's): retrograde happens at opposition.":
+      "An <b>inferior</b> planet (orbit inside Earth's): retrograde happens at inferior conjunction.";
+    update();};
+  pb.appendChild(d);});
+$("plNote").innerHTML="A <b>superior</b> planet (orbit outside Earth's): retrograde happens at opposition.";
+
+$("modelSeg").onclick=e=>{const btn=e.target.closest("button");if(!btn)return;
+  S.model=btn.dataset.m;[...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===btn));update();};
+$("opts").onclick=e=>{const ch=e.target.closest(".chip");if(!ch)return;
+  ch.classList.toggle("on");S.opts[ch.dataset.o]=ch.classList.contains("on")?1:0;update();};
+$("t").oninput=e=>{S.t=+e.target.value/1000*synodic()*1.2;update();};
+$("opp").onclick=()=>{S.t=0;$("t").value=0;update();};
+$("speed").oninput=e=>{S.speed=Math.pow(10,(+e.target.value/1000-0.5)*2*Math.log10(4));
+  $("spOut").textContent=(S.speed<1?S.speed.toFixed(2):S.speed.toFixed(1))+"×";};
+
+let anim=null;
+$("play").onclick=()=>{S.playing=!S.playing;$("play").textContent=S.playing?"❚❚ Pause":"▶ Play";
+  if(S.playing){let last=performance.now();
+    const step=now=>{if(!S.playing)return;S.t+=(now-last)/1000*0.18*S.speed;last=now;
+      const lim=synodic()*1.2; if(S.t>lim)S.t=-lim;
+      $("t").value=S.t/(synodic()*1.2)*1000;update();anim=requestAnimationFrame(step);};
+    anim=requestAnimationFrame(step);}
+  else cancelAnimationFrame(anim);};
+window.addEventListener("resize",update);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"What is <b>retrograde motion</b>?",
+   opts:shuffle(["A planet's temporary apparent westward (backward) motion against the stars",
+     "A planet actually reversing its orbit","The Sun moving backwards","A planet speeding up permanently"]),
+   ansText:"A planet's temporary apparent westward (backward) motion against the stars",
+   why:"Planets normally drift eastward against the stars, but for a few weeks around opposition they appear to move westward — retrograde. The planet does not really reverse; it is an effect of Earth's motion."}),
+ ()=>({q:"In the <b>heliocentric</b> model, what causes a superior planet's retrograde motion?",
+   opts:shuffle(["Earth, on a faster orbit, overtakes the planet","The planet stops in its orbit",
+     "The Sun pulls the planet backwards","The planet's epicycle"]),
+   ansText:"Earth, on a faster orbit, overtakes the planet",
+   why:"Near opposition, Earth catches up and overtakes the slower outer planet, so the planet appears to slip backwards — like a slower car seen from a faster one."}),
+ ()=>({q:"In <b>Ptolemy's</b> model, the small circle a planet moves on is called the…",
+   opts:shuffle(["epicycle","deferent","ellipse","parallax"]),
+   ansText:"epicycle",
+   why:"The planet rides a small circle (the epicycle) whose centre moves round a large circle (the deferent) centred near the Earth."}),
+ ()=>({q:"Why did Ptolemy add epicycles to his geocentric model? (7.4)",
+   opts:shuffle(["To reproduce the observed retrograde motion while keeping Earth central",
+     "To make the planets orbit the Sun","To explain the phases of Venus","To measure star distances"]),
+   ansText:"To reproduce the observed retrograde motion while keeping Earth central",
+   why:"A planet on a single Earth-centred circle can never go backwards. The epicycle lets the planet loop backwards periodically, matching what is seen, without giving up the central Earth."}),
+ ()=>({q:"For a superior planet, retrograde motion happens at…",
+   opts:shuffle(["opposition","conjunction","first quarter","aphelion"]),
+   ansText:"opposition",
+   why:"At opposition the planet is opposite the Sun and Earth passes between it and the Sun — exactly when Earth overtakes it and the planet appears to move backwards."}),
+ ()=>({q:"In Ptolemy's model the epicycle arm always stays parallel to the Earth–Sun line. What did Copernicus realise this meant?",
+   opts:shuffle(["The epicycle is really a reflection of Earth's own orbit round the Sun",
+     "The Sun orbits the epicycle","It was a meaningless coincidence","The planets are all the same distance away"]),
+   ansText:"The epicycle is really a reflection of Earth's own orbit round the Sun",
+   why:"This 'coincidence' is unavoidable in the geocentric model but has no cause. In the Sun-centred model it is automatic: the epicycle is just Earth's orbit seen from a moving Earth."}),
+ ()=>({q:"Both models produce the <b>same</b> apparent loop in the sky. Why did astronomers eventually prefer the heliocentric model?",
+   opts:shuffle(["It explains the motion more simply and predicts other things (like Venus's phases)",
+     "It was easier to draw","Epicycles were banned","It made the Earth move faster"]),
+   ansText:"It explains the motion more simply and predicts other things (like Venus's phases)",
+   why:"Both reproduce retrograde motion, but the heliocentric model explains why the epicycle matches the Sun, and correctly predicts observations such as the full set of phases of Venus."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ans(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>
