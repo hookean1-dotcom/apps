@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GCSE Astronomy Retrieval Practice</title>
+<style>
+  :root{
+    --bg:#eef3fb;
+    --bg2:#ffffff;
+    --panel:#ffffff;
+    --panel2:#f4f8ff;
+    --ink:#1d2540;
+    --muted:#5c6a8c;
+    --accent:#2f6fed;
+    --accent2:#7a4fe0;
+    --gold:#e5972a;
+    --line:#d9e2f2;
+    --front1:#ffffff;
+    --front2:#eaf1ff;
+    --back1:#eafaf1;
+    --back2:#dbf3e5;
+    --good:#1f9d57;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 650px at 85% -8%, rgba(47,111,237,.10), transparent 60%),
+      radial-gradient(900px 600px at -5% 8%, rgba(122,79,224,.09), transparent 55%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:
+      radial-gradient(1px 1px at 22% 28%, rgba(47,111,237,.35), transparent),
+      radial-gradient(1px 1px at 62% 72%, rgba(122,79,224,.30), transparent),
+      radial-gradient(1px 1px at 82% 22%, rgba(47,111,237,.30), transparent),
+      radial-gradient(1px 1px at 35% 82%, rgba(47,111,237,.25), transparent),
+      radial-gradient(1px 1px at 88% 58%, rgba(122,79,224,.25), transparent),
+      radial-gradient(1px 1px at 12% 62%, rgba(47,111,237,.28), transparent);
+    opacity:.5;}
+  .wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:26px 20px 70px;}
+  header.site{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px;}
+  .logo{font-size:30px;line-height:1;filter:drop-shadow(0 2px 5px rgba(47,111,237,.35));}
+  h1{font-size:26px;margin:0;font-weight:700;letter-spacing:.2px;color:var(--ink);}
+  .sub{color:var(--muted);font-size:14px;margin:2px 0 0;}
+  .badge{margin-left:auto;font-size:12px;color:var(--muted);border:1px solid var(--line);
+    padding:6px 12px;border-radius:999px;background:#fff;}
+
+  .panel{background:var(--panel);
+    border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:18px;
+    box-shadow:0 8px 26px rgba(29,37,64,.08);}
+  .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+  .field{display:flex;flex-direction:column;gap:6px;}
+  .field label{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);}
+  select,input[type=number]{appearance:none;width:100%;background:var(--bg2);color:var(--ink);
+    border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:15px;cursor:pointer;}
+  select:focus,input:focus{outline:2px solid var(--accent);outline-offset:0;}
+
+  .row2{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-top:14px;}
+  .count{display:flex;flex-direction:column;gap:6px;}
+  .segs{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .seg{padding:10px 16px;background:var(--bg2);color:var(--muted);border:none;cursor:pointer;font-size:15px;}
+  .seg + .seg{border-left:1px solid var(--line);}
+  .seg.active{background:linear-gradient(180deg,var(--accent),#245fd0);color:#fff;font-weight:700;}
+  .custom{width:92px;}
+  .btns{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap;}
+  button.act{padding:11px 18px;border-radius:10px;border:1px solid var(--line);
+    background:#fff;color:var(--ink);font-size:15px;cursor:pointer;transition:transform .06s ease,background .2s,box-shadow .2s;}
+  button.act:hover{box-shadow:0 3px 10px rgba(29,37,64,.10);}
+  button.act:active{transform:translateY(1px);}
+  button.primary{background:linear-gradient(180deg,var(--accent2),#6a3fd0);border-color:transparent;color:#fff;font-weight:600;}
+  button.gold{background:linear-gradient(180deg,var(--gold),#cf831c);border-color:transparent;color:#fff;font-weight:700;}
+
+  .meta{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:13px;margin:18px 2px 6px;}
+  .meta .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px;}
+  @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}.controls{grid-template-columns:1fr;}}
+  @media(max-width:600px){.grid{grid-template-columns:1fr;}}
+
+  .card{perspective:1400px;min-height:200px;cursor:pointer;}
+  .inner{position:relative;width:100%;height:100%;min-height:200px;transition:transform .6s cubic-bezier(.2,.7,.2,1);
+    transform-style:preserve-3d;}
+  .card.flipped .inner{transform:rotateY(180deg);}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;padding:18px;
+    display:flex;flex-direction:column;border:1px solid var(--line);box-shadow:0 5px 16px rgba(29,37,64,.07);}
+  .face .tag{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px;}
+  .face .txt{font-size:16px;line-height:1.5;flex:1;display:flex;align-items:center;}
+  .face .hint{font-size:12px;color:var(--muted);margin-top:10px;}
+  .front{background:linear-gradient(160deg,var(--front1),var(--front2));}
+  .front .qmark{color:var(--accent);font-weight:700;}
+  .back{background:linear-gradient(160deg,var(--back1),var(--back2));transform:rotateY(180deg);}
+  .back .tag{color:var(--good);}
+  .back .txt{color:#123a26;}
+  .topicpill{align-self:flex-start;font-size:11px;color:var(--accent);border:1px solid var(--line);
+    padding:3px 9px;border-radius:999px;margin-top:10px;background:rgba(47,111,237,.07);}
+
+  .empty{padding:40px;text-align:center;color:var(--muted);grid-column:1/-1;}
+  footer{margin-top:40px;color:var(--muted);font-size:12px;text-align:center;line-height:1.7;}
+  footer a{color:var(--accent);text-decoration:none;}
+  kbd{background:var(--bg2);border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:11px;}
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="wrap">
+  <header class="site">
+    <div class="logo">🔭</div>
+    <div>
+      <h1>GCSE Astronomy — Retrieval Practice</h1>
+      <p class="sub">Pearson Edexcel Level 1/Level 2 GCSE (9–1) Astronomy · all 16 topics</p>
+    </div>
+    <span class="badge" id="bankCount">— cards loaded</span>
+  </header>
+
+  <section class="panel">
+    <div class="controls">
+      <div class="field">
+        <label for="course">Paper</label>
+        <select id="course"></select>
+      </div>
+      <div class="field">
+        <label for="topic">Topic</label>
+        <select id="topic"></select>
+      </div>
+      <div class="field">
+        <label for="subtopic">Sub-topic</label>
+        <select id="subtopic"></select>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="count">
+        <label style="font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)">Cards on screen</label>
+        <div class="segs" id="segs">
+          <button class="seg" data-n="3">3</button>
+          <button class="seg active" data-n="6">6</button>
+          <button class="seg" data-n="9">9</button>
+          <button class="seg" data-n="12">12</button>
+        </div>
+      </div>
+      <div class="count">
+        <label style="font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)">or custom</label>
+        <input class="custom" type="number" id="custom" min="1" max="300" placeholder="#">
+      </div>
+      <div class="btns">
+        <button class="act primary" id="shuffle">🔀 Shuffle</button>
+        <button class="act gold" id="revealAll">👁 Reveal all</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="meta"><span class="dot"></span><span id="statusLine">Showing cards</span></div>
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    Click any card to flip it · <kbd>Shuffle</kbd> draws a fresh random set from your filters · built from the Edexcel Astronomy specification (Issue 3).<br>
+    A retrieval-practice resource for revision. Answers are concise recall prompts — always check against the full specification and mark schemes.
+  </footer>
+</div>
+
+<script>
+/* ---------------- QUESTION BANK ----------------
+   c = paper/course, t = topic, s = sub-topic, q = question, a = answer  */
+const P1 = "Paper 1: Naked-eye Astronomy";
+const P2 = "Paper 2: Telescopic Astronomy";
+const BANK = [
+/* ===== TOPIC 1 – Planet Earth ===== */
+{c:P1,t:"1. Planet Earth",s:"Shape & size",q:"What is the shape of the Earth?",a:"An oblate spheroid — a sphere flattened at the poles and bulging at the equator."},
+{c:P1,t:"1. Planet Earth",s:"Shape & size",q:"State the mean diameter of the Earth.",a:"About 13,000 km (≈12,742 km)."},
+{c:P1,t:"1. Planet Earth",s:"Shape & size",q:"Why is the Earth an oblate spheroid rather than a perfect sphere?",a:"Its rotation makes it bulge at the equator and flatten at the poles."},
+{c:P1,t:"1. Planet Earth",s:"Internal structure",q:"Name the four major internal divisions of the Earth, from outside in.",a:"Crust, mantle, outer core, inner core."},
+{c:P1,t:"1. Planet Earth",s:"Internal structure",q:"Which internal layer is liquid, and which is solid: outer vs inner core?",a:"The outer core is liquid; the inner core is solid."},
+{c:P1,t:"1. Planet Earth",s:"Internal structure",q:"Describe the crust.",a:"The thin, solid, rocky outermost layer of the Earth."},
+{c:P1,t:"1. Planet Earth",s:"Internal structure",q:"Describe the mantle.",a:"The thick, mostly solid rocky layer beneath the crust that can slowly flow over long timescales."},
+{c:P1,t:"1. Planet Earth",s:"Coordinates & reference points",q:"What two angular coordinates locate a position on Earth's surface?",a:"Latitude (angle N/S of the equator) and longitude (angle E/W of the Prime Meridian)."},
+{c:P1,t:"1. Planet Earth",s:"Coordinates & reference points",q:"List the major surface reference lines/points used in astronomy.",a:"Equator, Tropic of Cancer, Tropic of Capricorn, Arctic Circle, Antarctic Circle, Prime Meridian, North Pole, South Pole."},
+{c:P1,t:"1. Planet Earth",s:"Coordinates & reference points",q:"What is latitude measured from, and its range?",a:"Degrees north or south of the equator, from 0° at the equator to 90° at the poles."},
+{c:P1,t:"1. Planet Earth",s:"Coordinates & reference points",q:"At what latitudes are the Tropics of Cancer and Capricorn?",a:"About 23.5° north (Cancer) and 23.5° south (Capricorn)."},
+{c:P1,t:"1. Planet Earth",s:"Atmosphere",q:"Give three effects of the Earth's atmosphere on astronomical observations.",a:"Sky colour (scattering), skyglow / light pollution, and twinkling (seeing) caused by turbulence."},
+{c:P1,t:"1. Planet Earth",s:"Atmosphere",q:"Why do stars 'twinkle' but planets generally do not?",a:"Twinkling (seeing) is turbulence refracting light; planets are extended discs so the effect averages out, while point-like stars flicker."},
+{c:P1,t:"1. Planet Earth",s:"Atmosphere",q:"Why does the sky appear blue?",a:"Shorter (blue) wavelengths of sunlight are scattered more strongly by the atmosphere."},
+{c:P1,t:"1. Planet Earth",s:"Atmosphere",q:"What causes skyglow (light pollution)?",a:"Artificial light scattered by the atmosphere, brightening the night sky and hiding faint objects."},
+
+/* ===== TOPIC 2 – The lunar disc ===== */
+{c:P1,t:"2. The lunar disc",s:"Shape & size",q:"What is the shape of the Moon and its mean diameter?",a:"Approximately spherical; mean diameter about 3,500 km (≈3,474 km)."},
+{c:P1,t:"2. The lunar disc",s:"Surface formations",q:"Name the principal naked-eye lunar surface formations.",a:"Craters, maria, terrae, mountains and valleys."},
+{c:P1,t:"2. The lunar disc",s:"Surface formations",q:"What are maria and how did they form?",a:"Dark, smooth lowland plains formed by ancient basaltic lava flooding large impact basins."},
+{c:P1,t:"2. The lunar disc",s:"Surface formations",q:"What are terrae?",a:"The bright, heavily-cratered lunar highlands (older, higher ground)."},
+{c:P1,t:"2. The lunar disc",s:"Surface formations",q:"How do lunar craters form?",a:"By meteoroid/asteroid impacts excavating the surface."},
+{c:P1,t:"2. The lunar disc",s:"Surface formations",q:"Describe a crater's typical structure.",a:"A circular depression, often with a raised rim and sometimes a central peak, formed on impact."},
+{c:P1,t:"2. The lunar disc",s:"Named features",q:"Name features you should identify on the lunar disc.",a:"Sea of Tranquility, Ocean of Storms, Sea of Crises, Tycho, Copernicus, Kepler, and the Apennine mountain range."},
+{c:P1,t:"2. The lunar disc",s:"Named features",q:"Why is the Sea of Tranquility notable?",a:"It was the site of the first crewed Moon landing (Apollo 11)."},
+{c:P1,t:"2. The lunar disc",s:"Named features",q:"Name three named craters you should identify.",a:"Tycho, Copernicus and Kepler."},
+{c:P1,t:"2. The lunar disc",s:"Rotation & libration",q:"What does 'synchronous rotation' mean for the Moon?",a:"Its rotation period equals its orbital period, so it keeps the same face toward Earth."},
+{c:P1,t:"2. The lunar disc",s:"Rotation & libration",q:"What is libration and its effect?",a:"Slight apparent rocking of the Moon that lets us see slightly more than 50% (about 59%) of its surface over time."},
+{c:P1,t:"2. The lunar disc",s:"Rotation & libration",q:"Distinguish rotation and revolution for the Moon.",a:"Rotation = spin on its axis; revolution = orbit around the Earth."},
+{c:P1,t:"2. The lunar disc",s:"Rotation & libration",q:"Why do we only ever see one side of the Moon?",a:"Because of synchronous rotation — the Moon spins once per orbit, keeping the same face toward Earth."},
+
+/* ===== TOPIC 3 – Earth-Moon-Sun system ===== */
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Scale",q:"State the mean diameter of the Sun.",a:"About 1.4 × 10⁶ km."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Scale",q:"Roughly how do the diameters of Sun, Earth and Moon compare?",a:"Sun ≈ 1.4×10⁶ km, Earth ≈ 13,000 km, Moon ≈ 3,500 km — Sun ~109× Earth, Earth ~3.7× Moon."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Scale",q:"Roughly how much further is the Sun than the Moon from Earth?",a:"About 390 times further."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Historical measurement",q:"What did Eratosthenes and Aristarchus determine from observations of the Sun and Moon?",a:"Successively: Earth's diameter, the Moon's diameter, distance to the Moon, distance to the Sun and the Sun's diameter."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Tides",q:"Explain spring and neap tides.",a:"Spring tides (largest range) at new/full Moon when Sun and Moon align; neap tides (smallest range) at first/third quarter when they act at right angles."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Tides",q:"What causes tides on Earth?",a:"The gravity of the Moon (and Sun) raising tidal bulges in the oceans as the Earth rotates beneath them."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Tides",q:"When do spring tides occur?",a:"At new and full Moon, when the Sun and Moon are aligned."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Precession",q:"What is precession of the Earth's axis and one consequence?",a:"A slow ~26,000-year conical wobble of Earth's axis; it changes which star is the pole star and shifts the apparent positions of Sun, Moon and stars."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Precession",q:"How is precession relevant to archaeoastronomy?",a:"Monument alignments to stars/Sun have shifted over millennia, so ancient alignments differ from today's — helping date structures."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Eclipses",q:"What causes a solar eclipse and a lunar eclipse?",a:"Solar: the Moon passes between Sun and Earth, casting its shadow on Earth. Lunar: the Earth passes between Sun and Moon, casting its shadow on the Moon."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Eclipses",q:"Distinguish partial, total and annular solar eclipses.",a:"Partial: Sun partly covered. Total: Moon fully covers the Sun's disc (corona visible). Annular: Moon too far/small to cover it, leaving a bright ring."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Eclipses",q:"What are the umbral contacts in an eclipse?",a:"First, second, third and fourth umbral contact — the successive moments the disc edges touch as the umbra begins, becomes total, ends totality and finally separates."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Eclipses",q:"Why don't eclipses happen every month?",a:"The Moon's orbit is tilted ~5° to the ecliptic, so alignments only occur when it crosses the nodes."},
+{c:P1,t:"3. Earth-Moon-Sun system",s:"Eclipses",q:"Why do the Sun and Moon appear almost the same size in the sky?",a:"The Sun is ~400× wider but ~400× further away, so both subtend about 0.5° — making total eclipses possible."},
+
+/* ===== TOPIC 4 – Time and cycles ===== */
+{c:P1,t:"4. Time & cycles",s:"Days",q:"Distinguish a sidereal day from a synodic (solar) day.",a:"Sidereal day: one rotation relative to the stars (~23h 56m). Synodic/solar day: relative to the Sun (~24h), longer because Earth also moves along its orbit."},
+{c:P1,t:"4. Time & cycles",s:"Days",q:"Why is a solar day longer than a sidereal day?",a:"Earth must rotate a little extra (~4 min) to bring the Sun back to the meridian because it has moved along its orbit."},
+{c:P1,t:"4. Time & cycles",s:"Solar time",q:"What is Apparent Solar Time (AST)?",a:"Time based on the actual position of the real Sun (e.g. shown by a sundial)."},
+{c:P1,t:"4. Time & cycles",s:"Solar time",q:"What are Mean Solar Time (MST) and Local Mean Time (LMT) based on?",a:"The 'Mean Sun' — a fictitious sun moving at a constant rate — giving a uniform 24-hour clock."},
+{c:P1,t:"4. Time & cycles",s:"Solar time",q:"What is Local Mean Time (LMT)?",a:"Mean solar time for an observer's particular longitude."},
+{c:P1,t:"4. Time & cycles",s:"Equation of Time",q:"State the Equation of Time.",a:"Equation of Time = Apparent Solar Time (AST) − Mean Solar Time (MST)."},
+{c:P1,t:"4. Time & cycles",s:"Equation of Time",q:"What causes the annual variation of the Equation of Time?",a:"The tilt (obliquity) of Earth's axis and the eccentricity of its elliptical orbit."},
+{c:P1,t:"4. Time & cycles",s:"Shadows & sundials",q:"What is a shadow stick (gnomon) used for?",a:"Its shortest shadow marks local noon and points north–south; shadow length and direction track the Sun through the day."},
+{c:P1,t:"4. Time & cycles",s:"Shadows & sundials",q:"How does a sundial work?",a:"A gnomon casts a shadow onto a marked dial; the shadow's position indicates apparent solar time."},
+{c:P1,t:"4. Time & cycles",s:"Months",q:"Distinguish a sidereal month from a synodic month.",a:"Sidereal month (~27.3 d): orbit relative to the stars. Synodic month (~29.5 d): Moon's phase cycle relative to the Sun."},
+{c:P1,t:"4. Time & cycles",s:"Months",q:"How long is the lunar phase cycle?",a:"About 29.5 days — the synodic month."},
+{c:P1,t:"4. Time & cycles",s:"Seasons",q:"What is astronomically significant about equinoxes and solstices?",a:"Equinoxes: Sun crosses the celestial equator, day≈night. Solstices: Sun at greatest declination, giving the longest and shortest days."},
+{c:P1,t:"4. Time & cycles",s:"Time zones",q:"What is GMT/Universal Time?",a:"Mean time along the Prime Meridian (0° longitude) is Greenwich Mean Time, equivalent to Universal Time (UT)."},
+{c:P1,t:"4. Time & cycles",s:"Time zones",q:"Why are time zones needed?",a:"Local mean time varies continuously with longitude, so standard zones give practical, shared clock times."},
+{c:P1,t:"4. Time & cycles",s:"Time zones",q:"How much longitude does one time zone typically span?",a:"About 15°, corresponding to 1 hour of time."},
+{c:P1,t:"4. Time & cycles",s:"Longitude",q:"Name two methods for determining longitude at sea.",a:"The lunar distance (astronomical) method, and the horological method using Harrison's marine chronometer."},
+{c:P1,t:"4. Time & cycles",s:"Longitude",q:"How does a chronometer give longitude?",a:"It keeps home-port time; comparing local noon (from the Sun) with chronometer time gives the time difference, and 15° of longitude = 1 hour."},
+{c:P1,t:"4. Time & cycles",s:"Longitude",q:"How is longitude related to time difference?",a:"15° of longitude = 1 hour; each 1° = 4 minutes of time."},
+
+/* ===== TOPIC 5 – Solar System observation ===== */
+{c:P1,t:"5. Solar System observation",s:"Observing safely",q:"How can the Sun be observed safely with a pinhole?",a:"By pinhole projection — projecting the Sun's image onto a screen rather than looking directly at it."},
+{c:P1,t:"5. Solar System observation",s:"Observing safely",q:"Why must you never look directly at the Sun through a telescope?",a:"Focused sunlight can cause instant, permanent eye damage or blindness."},
+{c:P1,t:"5. Solar System observation",s:"The ecliptic",q:"What is the ecliptic?",a:"The annual apparent path of the Sun across the sky (the plane of Earth's orbit projected onto the celestial sphere)."},
+{c:P1,t:"5. Solar System observation",s:"Planetary motion",q:"What is the Zodiacal Band?",a:"The narrow band of sky, close to the ecliptic, within which the Sun, Moon and planets are always observed to move."},
+{c:P1,t:"5. Solar System observation",s:"Planetary motion",q:"What is retrograde motion of a planet?",a:"An apparent temporary reversal (east-to-west) of a planet's motion against the stars, caused by Earth overtaking it (or being overtaken)."},
+{c:P1,t:"5. Solar System observation",s:"First Points",q:"What is the First Point of Aries?",a:"Where the Sun crosses the celestial equator moving north at the spring equinox — the origin of right ascension."},
+{c:P1,t:"5. Solar System observation",s:"First Points",q:"What is the First Point of Libra?",a:"Where the Sun crosses the celestial equator moving south at the autumn equinox."},
+{c:P1,t:"5. Solar System observation",s:"Meteors",q:"What causes a meteor and a meteor shower, and what is the radiant?",a:"A meteor is the streak from a meteoroid burning up in the atmosphere; a shower occurs when Earth crosses a comet's debris; the radiant is the point they appear to diverge from."},
+{c:P1,t:"5. Solar System observation",s:"Configurations",q:"Define conjunction, opposition and elongation.",a:"Conjunction: body lines up with the Sun (superior/inferior). Opposition: body opposite the Sun in the sky. Elongation: angular separation of a planet from the Sun."},
+{c:P1,t:"5. Solar System observation",s:"Configurations",q:"Define transit and occultation.",a:"Transit: a small body passes across the disc of a larger one (e.g. Venus across the Sun). Occultation: a nearer body hides a more distant one."},
+{c:P1,t:"5. Solar System observation",s:"Configurations",q:"Distinguish superior and inferior conjunction for an inner planet.",a:"Superior conjunction: the planet is on the far side of the Sun. Inferior conjunction: the planet is between the Earth and the Sun."},
+{c:P1,t:"5. Solar System observation",s:"Configurations",q:"Why is opposition ideal for observing an outer planet?",a:"The planet is opposite the Sun, so it is closest to Earth, fully illuminated and visible all night."},
+{c:P1,t:"5. Solar System observation",s:"Configurations",q:"Why is greatest elongation the best time to see an inner planet?",a:"It is then at its largest angular distance from the Sun, so least lost in the Sun's glare."},
+
+/* ===== TOPIC 6 – Celestial observation ===== */
+{c:P1,t:"6. Celestial observation",s:"Naked-eye objects",q:"List naked-eye astronomical phenomena you should recognise.",a:"Sun, Moon, stars (incl. double stars, constellations, asterisms), star clusters, galaxies/nebulae, planets, comets, meteors, aurorae, supernovae — plus artificial satellites and aircraft."},
+{c:P1,t:"6. Celestial observation",s:"Naked-eye objects",q:"What is a double star?",a:"Two stars appearing close together — either a true (binary) pair or a chance line-of-sight alignment."},
+{c:P1,t:"6. Celestial observation",s:"Constellations",q:"Name the constellations/asterisms you should be able to recognise and draw.",a:"Cassiopeia, Cygnus, Orion, the Plough, the Southern Cross, the Summer Triangle and the Square of Pegasus."},
+{c:P1,t:"6. Celestial observation",s:"Constellations",q:"What is the difference between a constellation and an asterism?",a:"A constellation is an official pattern/region of the sky; an asterism is a recognisable star pattern that is not an official constellation (e.g. the Plough)."},
+{c:P1,t:"6. Celestial observation",s:"Constellations",q:"Which stars can you locate using the Plough and using Orion's Belt?",a:"From the Plough: Arcturus and Polaris. From Orion's Belt: Sirius, Aldebaran and the Pleiades."},
+{c:P1,t:"6. Celestial observation",s:"Constellations",q:"How do you find Fomalhaut and the Andromeda Galaxy?",a:"By using the stars of the Square of Pegasus as pointers."},
+{c:P1,t:"6. Celestial observation",s:"Constellations",q:"What is Polaris and why is it useful?",a:"The North (pole) Star, almost directly above the north celestial pole; its altitude gives your latitude."},
+{c:P1,t:"6. Celestial observation",s:"Celestial sphere",q:"Define celestial sphere, celestial poles and celestial equator.",a:"An imaginary sphere around Earth on which objects appear; celestial poles are above Earth's poles; the celestial equator is above Earth's equator."},
+{c:P1,t:"6. Celestial observation",s:"Coordinate systems",q:"What two coordinates make up the equatorial system?",a:"Right ascension (like longitude, in hours/min/s) and declination (like latitude, in degrees N/S of the celestial equator)."},
+{c:P1,t:"6. Celestial observation",s:"Coordinate systems",q:"What two coordinates make up the horizon system?",a:"Altitude (angle above the horizon) and azimuth (angle measured around from north)."},
+{c:P1,t:"6. Celestial observation",s:"Coordinate systems",q:"What does right ascension resemble, and its units?",a:"Like longitude on the sky, measured eastward in hours, minutes and seconds."},
+{c:P1,t:"6. Celestial observation",s:"Coordinate systems",q:"What does declination resemble, and its units?",a:"Like latitude on the sky, measured in degrees north/south of the celestial equator."},
+{c:P1,t:"6. Celestial observation",s:"Coordinate systems",q:"What is altitude in the horizon system?",a:"The angle of an object above the horizon, from 0° to 90°."},
+{c:P1,t:"6. Celestial observation",s:"Coordinate systems",q:"What is azimuth?",a:"The bearing around the horizon, measured from north (0°–360°)."},
+{c:P1,t:"6. Celestial observation",s:"Key terms",q:"Define culmination, meridian and zenith.",a:"Meridian: the N–S line through the zenith. Culmination: when an object crosses the meridian (highest point). Zenith: the point directly overhead."},
+{c:P1,t:"6. Celestial observation",s:"Key terms",q:"What are the cardinal points?",a:"North, South, East and West on the horizon."},
+{c:P1,t:"6. Celestial observation",s:"Key terms",q:"What is an object's hour angle?",a:"The angle (in time) between an object and the observer's meridian — how long since, or until, it crosses the meridian."},
+{c:P1,t:"6. Celestial observation",s:"Circumpolar stars",q:"What is a circumpolar star and how do you test if one is circumpolar?",a:"A star that never sets from a given latitude. It is circumpolar if its declination ≥ (90° − observer's latitude)."},
+{c:P1,t:"6. Celestial observation",s:"Circumpolar stars",q:"How can Polaris be used to find an observer's latitude?",a:"The altitude of Polaris above the horizon equals the observer's latitude."},
+{c:P1,t:"6. Celestial observation",s:"Observing technique",q:"What are dark adaptation and averted vision?",a:"Dark adaptation: letting eyes adjust (~20 min) for greater sensitivity. Averted vision: looking slightly to one side to use more sensitive rod cells for faint objects."},
+{c:P1,t:"6. Celestial observation",s:"Diurnal motion",q:"What causes the diurnal motion of the sky?",a:"The Earth's rotation on its axis, making objects appear to move east to west."},
+{c:P1,t:"6. Celestial observation",s:"Light pollution",q:"Why does light pollution harm observing?",a:"Skyglow raises the sky background brightness, hiding faint stars, galaxies and the Milky Way."},
+{c:P1,t:"6. Celestial observation",s:"The Milky Way",q:"Why does the Milky Way appear as a band to the naked eye?",a:"We see the combined light of billions of distant stars in the disc of our Galaxy viewed edge-on."},
+
+/* ===== TOPIC 7 – Early models ===== */
+{c:P1,t:"7. Early models of the Solar System",s:"Ancient uses",q:"Give ways ancient civilisations used observations of solar/lunar cycles.",a:"For agricultural systems, religious systems, time and calendar systems, and aligning ancient monuments."},
+{c:P1,t:"7. Early models of the Solar System",s:"Ancient uses",q:"Why did calendars depend on astronomy for ancient peoples?",a:"Solar and lunar cycles set the timing of seasons, planting and harvest, and religious festivals."},
+{c:P1,t:"7. Early models of the Solar System",s:"Alignments",q:"Why do ancient monument alignments no longer match the sky?",a:"Because of the precession of the Earth's axis, which has shifted the celestial alignment over millennia."},
+{c:P1,t:"7. Early models of the Solar System",s:"Geocentric model",q:"What is a geocentric model of the Solar System?",a:"An Earth-centred model with the Sun, Moon, planets and stars orbiting a stationary Earth."},
+{c:P1,t:"7. Early models of the Solar System",s:"Geocentric model",q:"What was a key limitation of the geocentric model?",a:"It could not simply explain retrograde motion, needing complex epicycles to fit observations."},
+{c:P1,t:"7. Early models of the Solar System",s:"Epicycles",q:"Why did Ptolemy add epicycles to the geocentric model?",a:"Small circles (epicycles) on the main orbits let the model reproduce retrograde motion and better match observed planetary positions."},
+{c:P1,t:"7. Early models of the Solar System",s:"Heliocentric model",q:"What is a heliocentric model?",a:"A Sun-centred model with the planets, including Earth, orbiting the Sun."},
+{c:P1,t:"7. Early models of the Solar System",s:"Units",q:"Define the AU, light year and parsec.",a:"AU = mean Earth–Sun distance (1.5×10⁸ km); light year = distance light travels in one year; parsec = distance giving a parallax of 1 arcsecond (~3.26 ly)."},
+{c:P1,t:"7. Early models of the Solar System",s:"Units",q:"How large is a parsec compared with a light year?",a:"1 parsec ≈ 3.26 light years."},
+{c:P1,t:"7. Early models of the Solar System",s:"Units",q:"How is 1 AU defined, and its value?",a:"The mean Earth–Sun distance, about 1.5 × 10⁸ km."},
+
+/* ===== TOPIC 8 – Planetary motion & gravity ===== */
+{c:P1,t:"8. Planetary motion & gravity",s:"Key astronomers",q:"What was Tycho Brahe's contribution?",a:"Highly accurate naked-eye observational data on planetary positions, later used to test models."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Key astronomers",q:"What did Copernicus and Kepler contribute?",a:"Copernicus proposed a heliocentric (Sun-centred) model; Kepler used Brahe's data to show orbits are ellipses and derived his three laws."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Orbits",q:"What role does gravity play in orbits?",a:"Gravity provides the centripetal force that holds planets in stable elliptical orbits around the Sun."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Orbits",q:"What provides the centripetal force for a planet's orbit?",a:"The gravitational attraction between the planet and the Sun."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Kepler's laws",q:"State Kepler's three laws.",a:"1) Orbits are ellipses with the Sun at one focus. 2) A line to the Sun sweeps equal areas in equal times. 3) T² ∝ r³."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Kepler's laws",q:"What does Kepler's second law imply about orbital speed?",a:"A planet moves faster near perihelion and slower near aphelion (equal areas in equal times)."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Kepler's laws",q:"What shape are planetary orbits (Kepler's first law)?",a:"Ellipses, with the Sun at one focus."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Kepler's laws",q:"Define aphelion/perihelion and apogee/perigee.",a:"Aphelion/perihelion: farthest/nearest points of a solar orbit. Apogee/perigee: farthest/nearest points of an Earth orbit."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Kepler's third law",q:"State Kepler's third law as a formula.",a:"T²/r³ = constant, where T is the orbital period and r is the mean orbital radius."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Kepler's third law",q:"What does the constant in Kepler's third law depend on?",a:"It depends inversely on the mass of the central body."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Newton",q:"State Newton's law of universal gravitation in words.",a:"The gravitational force between two bodies is proportional to the product of their masses and inversely proportional to the square of their separation."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Newton",q:"What did Newton add to Kepler's laws?",a:"He explained them physically using his law of universal gravitation."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Newton",q:"What happens to the gravitational force if the separation doubles?",a:"It falls to one quarter (inverse-square law)."},
+{c:P1,t:"8. Planetary motion & gravity",s:"Newton",q:"What happens to the gravitational force if one mass doubles?",a:"The force doubles — it is proportional to the product of the masses."},
+
+/* ===== TOPIC 9 – Exploring the Moon ===== */
+{c:P2,t:"9. Exploring the Moon",s:"Interior",q:"How does the Moon's internal structure compare with Earth's?",a:"Similar layering (crust, mantle, small core) but a thicker crust, a largely solid mantle and a much smaller, partly molten core."},
+{c:P2,t:"9. Exploring the Moon",s:"Interior",q:"How does the Moon's core compare with Earth's?",a:"It is much smaller (relatively and absolutely) and only partly molten."},
+{c:P2,t:"9. Exploring the Moon",s:"Near & far sides",q:"How do the Moon's near and far sides differ?",a:"The near side has large dark maria; the far side is heavily cratered highland with almost no maria and a thicker crust."},
+{c:P2,t:"9. Exploring the Moon",s:"Near & far sides",q:"Why does the far side have thicker crust and fewer maria?",a:"Its thicker crust made it harder for lava to reach the surface and flood impact basins."},
+{c:P2,t:"9. Exploring the Moon",s:"Far side",q:"How was information about the Moon's far side obtained?",a:"By spacecraft/probes orbiting the Moon and photographing it (first by Luna 3), since it is never visible from Earth."},
+{c:P2,t:"9. Exploring the Moon",s:"Escape velocity",q:"Why must a Moon-bound spacecraft reach escape velocity, and how?",a:"To break free of Earth's gravity; the huge energy needed can only be supplied by rockets."},
+{c:P2,t:"9. Exploring the Moon",s:"Escape velocity",q:"What is the approximate escape velocity from Earth?",a:"About 11.2 km/s."},
+{c:P2,t:"9. Exploring the Moon",s:"Origin theories",q:"Name three theories of the Moon's origin.",a:"The Giant Impact Hypothesis (favoured), Capture Theory, and Co-accretion Theory."},
+{c:P2,t:"9. Exploring the Moon",s:"Origin theories",q:"Outline the Giant Impact Hypothesis.",a:"A Mars-sized body collided with the early Earth; debris thrown into orbit coalesced to form the Moon."},
+{c:P2,t:"9. Exploring the Moon",s:"Origin theories",q:"Outline the Capture Theory of the Moon's origin.",a:"The Moon formed elsewhere and was later gravitationally captured by the Earth."},
+{c:P2,t:"9. Exploring the Moon",s:"Origin theories",q:"Outline the Co-accretion Theory.",a:"The Earth and Moon formed together at the same time from the same cloud of material."},
+{c:P2,t:"9. Exploring the Moon",s:"Origin theories",q:"Why is the Giant Impact Hypothesis favoured?",a:"It best explains the Moon's composition, small iron core and the Earth–Moon angular momentum."},
+
+/* ===== TOPIC 10 – Solar astronomy ===== */
+{c:P2,t:"10. Solar astronomy",s:"Observing safely",q:"Give two safe methods of observing the Sun telescopically.",a:"Telescopic projection onto a screen, and use of an H-alpha filter."},
+{c:P2,t:"10. Solar astronomy",s:"Structure",q:"Name the Sun's internal divisions from the centre out.",a:"Core, radiative zone, convective zone, photosphere."},
+{c:P2,t:"10. Solar astronomy",s:"Structure",q:"What is the photosphere?",a:"The visible 'surface' of the Sun, the layer that emits the light we see."},
+{c:P2,t:"10. Solar astronomy",s:"Structure",q:"How does energy move through the radiative and convective zones?",a:"By radiation (photons) in the radiative zone and by convection currents in the convective zone."},
+{c:P2,t:"10. Solar astronomy",s:"Energy",q:"What fusion process powers the Sun?",a:"The proton–proton (p–p) cycle, fusing hydrogen into helium in the core."},
+{c:P2,t:"10. Solar astronomy",s:"Energy",q:"Why does fusion occur in the core?",a:"Only there are the temperature and pressure high enough for hydrogen nuclei to fuse."},
+{c:P2,t:"10. Solar astronomy",s:"Atmosphere",q:"Name the two main layers of the solar atmosphere.",a:"The chromosphere and, above it, the corona (very hot, very low density)."},
+{c:P2,t:"10. Solar astronomy",s:"Sunspots",q:"What are sunspots?",a:"Cooler, darker regions of the photosphere caused by intense localised magnetic fields suppressing convection."},
+{c:P2,t:"10. Solar astronomy",s:"Sunspots",q:"Why do sunspots appear dark?",a:"They are cooler than the surrounding photosphere, so they emit less light."},
+{c:P2,t:"10. Solar astronomy",s:"Sunspots",q:"How can sunspot data give the Sun's rotation period?",a:"By tracking how long a sunspot takes to move across the disc and return, giving the mean solar rotation period (~25–27 days)."},
+{c:P2,t:"10. Solar astronomy",s:"Sunspots",q:"What is the solar cycle and its period?",a:"The roughly 11-year cycle in the number and position of sunspots and overall solar activity."},
+{c:P2,t:"10. Solar astronomy",s:"EM appearance",q:"Why does the Sun look different at different EM wavelengths?",a:"Different layers and features (e.g. the corona in X-ray, the chromosphere in H-alpha) emit at different wavelengths."},
+{c:P2,t:"10. Solar astronomy",s:"Solar wind",q:"What is the solar wind and one of its effects?",a:"A stream of charged particles flowing from the corona; effects include aurorae, cometary tails and geomagnetic storms."},
+{c:P2,t:"10. Solar astronomy",s:"Solar wind",q:"What are aurorae?",a:"Glows produced when solar-wind particles excite gases in the upper atmosphere near the magnetic poles."},
+{c:P2,t:"10. Solar astronomy",s:"Solar wind",q:"What is a geomagnetic storm?",a:"A disturbance of Earth's magnetosphere by the solar wind, which can disrupt satellites, power grids and communications."},
+{c:P2,t:"10. Solar astronomy",s:"Magnetosphere",q:"What are the Van Allen Belts?",a:"Regions of the Earth's magnetosphere where charged particles from the solar wind are trapped by the geomagnetic field."},
+
+/* ===== TOPIC 11 – Exploring the Solar System ===== */
+{c:P2,t:"11. Exploring the Solar System",s:"Bodies",q:"Name the main classes of body in the Solar System.",a:"Planets, dwarf planets, and Small Solar System Objects (asteroids, meteoroids and comets)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Bodies",q:"What is a dwarf planet?",a:"A body orbiting the Sun that is round but has not cleared its orbit of other objects (e.g. Pluto)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Comets",q:"Describe the structure of a comet.",a:"A nucleus (ice and dust), a surrounding coma of gas/dust, and tails (a dust tail and an ion/gas tail) pointing away from the Sun."},
+{c:P2,t:"11. Exploring the Solar System",s:"Comets",q:"What is the coma of a comet?",a:"The cloud of gas and dust around the nucleus, formed as ices sublimate near the Sun."},
+{c:P2,t:"11. Exploring the Solar System",s:"Comets",q:"Why do comet tails point away from the Sun?",a:"The solar wind and radiation pressure push the gas and dust away from the Sun."},
+{c:P2,t:"11. Exploring the Solar System",s:"Comets",q:"Where do short-period and long-period comets originate?",a:"Short-period comets from the Kuiper Belt; long-period comets from the Oort Cloud."},
+{c:P2,t:"11. Exploring the Solar System",s:"Solar System regions",q:"What are the Kuiper Belt and Oort Cloud?",a:"The Kuiper Belt is a disc of icy bodies beyond Neptune; the Oort Cloud is a vast spherical shell of icy bodies at the edge of the Sun's influence."},
+{c:P2,t:"11. Exploring the Solar System",s:"Solar System regions",q:"What is the heliosphere?",a:"The bubble of space dominated by the solar wind, bounded by the heliopause."},
+{c:P2,t:"11. Exploring the Solar System",s:"Solar System regions",q:"What is the ecliptic plane?",a:"The plane of Earth's orbit; most Solar System bodies orbit close to it."},
+{c:P2,t:"11. Exploring the Solar System",s:"Planets",q:"List principal characteristics used to compare the planets.",a:"Relative size, relative mass, surface temperature, atmospheric composition, presence of satellites, and presence of ring systems."},
+{c:P2,t:"11. Exploring the Solar System",s:"Transits of Venus",q:"Why were transits of Venus historically important?",a:"Halley proposed using them to measure the AU (the absolute scale of the Solar System) via parallax from different locations on Earth."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"How does a telescope form a magnified image?",a:"The objective (lens or mirror) collects and focuses light to form an image, which the eyepiece then magnifies."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"Name the four basic telescope designs you should know.",a:"Galilean and Keplerian refractors; Newtonian and Cassegrain reflectors."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"How does a Newtonian reflector work?",a:"A concave primary mirror focuses light onto a flat diagonal secondary that reflects it out to a side eyepiece."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"What is a telescope's aperture?",a:"The diameter of its objective (main light-collecting) element."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"What is field of view?",a:"The angular size of the circle of sky visible through the eyepiece (in degrees or arcmin)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"How does light grasp depend on the objective?",a:"Light grasp is proportional to the objective's area, i.e. to the square of its diameter."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"If the objective diameter doubles, how does light grasp change?",a:"It quadruples (proportional to diameter squared)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"State the formula for telescope magnification.",a:"Magnification = fₒ / fₑ (focal length of objective ÷ focal length of eyepiece)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"On what does a telescope's resolution depend?",a:"It improves with a larger objective diameter and is worse at longer wavelengths."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"Give two advantages of reflectors over refractors.",a:"No chromatic aberration, and easier to build with large apertures / very long focal lengths (and can use multiple mirrors)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Telescopes",q:"What is chromatic aberration?",a:"Coloured fringing when a lens focuses different wavelengths at slightly different points — a problem for refractors."},
+{c:P2,t:"11. Exploring the Solar System",s:"Space probes",q:"Name the four types of space probe with an example each.",a:"Fly-by (New Horizons), orbiter (Juno/Dawn), impactor (Deep Impact), lander (Philae on comet 67P)."},
+{c:P2,t:"11. Exploring the Solar System",s:"Space probes",q:"Give a discovery of the New Horizons fly-by.",a:"Detailed images and data of Pluto and other outer Solar System bodies."},
+{c:P2,t:"11. Exploring the Solar System",s:"Space probes",q:"Why must space probes use rockets?",a:"Only rockets can supply the energy to reach Earth's escape velocity."},
+{c:P2,t:"11. Exploring the Solar System",s:"Manned missions",q:"What was the Apollo programme?",a:"NASA's programme that landed astronauts on the Moon (first Apollo 11, 1969), returning samples and data."},
+
+/* ===== TOPIC 12 – Formation of planetary systems ===== */
+{c:P2,t:"12. Formation of planetary systems",s:"Gravitational effects",q:"Give examples of gravity's role in the Solar System.",a:"Regular orbits of planets/moons; tidal forces (rings, asteroid belts, internal heating); multi-body effects (resonances, Lagrangian points); impacts; and the solar wind's effects."},
+{c:P2,t:"12. Formation of planetary systems",s:"Gravitational effects",q:"What is a Lagrangian point?",a:"A location where the gravity of two large bodies and orbital motion balance, so a small body can stay in position."},
+{c:P2,t:"12. Formation of planetary systems",s:"Gravitational effects",q:"What effects do tidal gravitational forces produce?",a:"They can create ring systems, shape asteroid belts and cause internal (tidal) heating of moons."},
+{c:P2,t:"12. Formation of planetary systems",s:"Formation forces",q:"What is the Roche Limit?",a:"The distance within which a body is torn apart by tidal gravitational forces exceeding its own gravity/cohesion (relevant to ring formation)."},
+{c:P2,t:"12. Formation of planetary systems",s:"Formation forces",q:"Why are large bodies spherical but small ones irregular?",a:"In large bodies gravity overcomes internal (elastic) forces and pulls them into a sphere; small bodies' gravity is too weak, so they keep irregular shapes."},
+{c:P2,t:"12. Formation of planetary systems",s:"Exoplanets",q:"Name three methods of detecting exoplanets.",a:"The transit method, astrometry, and radial velocity (Doppler) measurements."},
+{c:P2,t:"12. Formation of planetary systems",s:"Exoplanets",q:"What is the transit method for finding exoplanets?",a:"Detecting the small, regular dip in a star's brightness as a planet passes in front of it."},
+{c:P2,t:"12. Formation of planetary systems",s:"Exoplanets",q:"What is the radial velocity method?",a:"Detecting a star's tiny Doppler wobble as an orbiting planet tugs it to and fro."},
+{c:P2,t:"12. Formation of planetary systems",s:"Life",q:"What is the Goldilocks (Habitable) Zone?",a:"The range of orbital distances where a planet's temperature allows liquid water to exist on its surface."},
+{c:P2,t:"12. Formation of planetary systems",s:"Life",q:"Name Solar System bodies considered possible sites for life.",a:"Titan, Europa and Enceladus (plus locations outside our Solar System)."},
+{c:P2,t:"12. Formation of planetary systems",s:"Life",q:"Why are Europa and Enceladus of interest for life?",a:"They may have subsurface liquid-water oceans beneath icy crusts."},
+{c:P2,t:"12. Formation of planetary systems",s:"Drake & SETI",q:"What does the Drake equation estimate?",a:"The number of detectable/communicating civilisations in our Galaxy, from factors like star formation rate and fraction with habitable planets."},
+{c:P2,t:"12. Formation of planetary systems",s:"Drake & SETI",q:"What is SETI?",a:"The Search for Extra-Terrestrial Intelligence — mainly listening for artificial radio signals from other civilisations."},
+{c:P2,t:"12. Formation of planetary systems",s:"Drake & SETI",q:"Give one benefit and one danger of discovering ET life.",a:"Benefit: a huge scientific and philosophical advance; danger: risk from revealing our location or making contact."},
+
+/* ===== TOPIC 13 – Exploring starlight ===== */
+{c:P2,t:"13. Exploring starlight",s:"Magnitude",q:"What is apparent magnitude?",a:"A measure of how bright a star appears from Earth; smaller (more negative) numbers are brighter."},
+{c:P2,t:"13. Exploring starlight",s:"Magnitude",q:"What is absolute magnitude?",a:"The apparent magnitude a star would have if placed at a standard distance of 10 parsecs — a measure of true luminosity."},
+{c:P2,t:"13. Exploring starlight",s:"Magnitude",q:"How does the apparent magnitude scale work?",a:"A difference of 5 magnitudes equals a factor of 100 in brightness; lower/negative numbers are brighter."},
+{c:P2,t:"13. Exploring starlight",s:"Magnitude",q:"State the distance modulus formula.",a:"M = m + 5 − 5 log d, where d is the distance in parsecs, m apparent and M absolute magnitude."},
+{c:P2,t:"13. Exploring starlight",s:"Spectra",q:"What information can a stellar spectrum provide?",a:"Chemical composition, temperature, and radial velocity (from Doppler shift of spectral lines)."},
+{c:P2,t:"13. Exploring starlight",s:"Spectra",q:"What causes absorption lines in a stellar spectrum?",a:"Cooler gas in the star's atmosphere absorbs specific wavelengths, revealing which elements are present."},
+{c:P2,t:"13. Exploring starlight",s:"Spectra",q:"How are a star's colour and spectral type related to temperature?",a:"Blue stars are hottest, red stars coolest; spectral classes (OBAFGKM) run from hot to cool."},
+{c:P2,t:"13. Exploring starlight",s:"Spectra",q:"List the main spectral classes from hottest to coolest.",a:"O, B, A, F, G, K, M."},
+{c:P2,t:"13. Exploring starlight",s:"H-R diagram",q:"What does a Hertzsprung-Russell diagram plot, and its main regions?",a:"Luminosity/absolute magnitude vs temperature/spectral type; regions: main sequence, red/blue giants, supergiants and white dwarfs."},
+{c:P2,t:"13. Exploring starlight",s:"H-R diagram",q:"Where does the Sun lie on the H-R diagram?",a:"On the main sequence, as a mid-temperature (G-type) yellow star."},
+{c:P2,t:"13. Exploring starlight",s:"Distance",q:"How is heliocentric parallax used to find stellar distances?",a:"Measure a star's tiny angular shift over six months (as Earth orbits); distance (pc) = 1 / parallax angle (arcsec)."},
+{c:P2,t:"13. Exploring starlight",s:"Distance",q:"State the parallax–distance relation.",a:"Distance (parsecs) = 1 / parallax angle (arcseconds)."},
+{c:P2,t:"13. Exploring starlight",s:"Variable stars",q:"Name types of variable star from their light curves.",a:"Short/long-period variables, eclipsing binaries, Cepheids, and novae/supernovae."},
+{c:P2,t:"13. Exploring starlight",s:"Variable stars",q:"Why are Cepheid variables useful?",a:"Their pulsation period is linked to luminosity, so measuring the period gives absolute magnitude and hence distance (standard candles)."},
+{c:P2,t:"13. Exploring starlight",s:"Variable stars",q:"What is an eclipsing binary?",a:"Two orbiting stars whose combined light dips as they periodically pass in front of one another."},
+{c:P2,t:"13. Exploring starlight",s:"Atmospheric windows",q:"Which wavelengths pass through Earth's atmosphere to sea level?",a:"Mainly visible light and radio waves; most other wavelengths are absorbed, so those telescopes sit at sea level."},
+{c:P2,t:"13. Exploring starlight",s:"Atmospheric windows",q:"Why site infrared telescopes at high altitude?",a:"To get above much of the water vapour in the atmosphere that absorbs infrared radiation."},
+{c:P2,t:"13. Exploring starlight",s:"Atmospheric windows",q:"Why must UV, X-ray and gamma telescopes be in space?",a:"The atmosphere absorbs these wavelengths, so telescopes must be above it to detect them."},
+{c:P2,t:"13. Exploring starlight",s:"Radio astronomy",q:"Why do radio telescopes need very large apertures?",a:"Radio wavelengths are long, so a large dish (or array) is needed to achieve useful resolution."},
+{c:P2,t:"13. Exploring starlight",s:"Radio astronomy",q:"How does a radio telescope work?",a:"A large dish reflects radio waves to a receiver at the focus; the signals are amplified, processed and stored."},
+{c:P2,t:"13. Exploring starlight",s:"Radio astronomy",q:"What is aperture synthesis?",a:"Linking multiple radio telescopes as an array so they act like one very large dish, greatly improving resolution."},
+{c:P2,t:"13. Exploring starlight",s:"Space telescopes",q:"Why site some telescopes above the atmosphere?",a:"To avoid atmospheric absorption (of UV, X-ray, gamma, much IR) and blurring (seeing), giving clearer, full-spectrum images."},
+
+/* ===== TOPIC 14 – Stellar evolution ===== */
+{c:P2,t:"14. Stellar evolution",s:"Catalogues",q:"What are the Messier and NGC catalogues, and the Bayer system for?",a:"Messier and New General Catalogue list nebulae, clusters and galaxies; the Bayer system names a constellation's brightest stars using Greek letters (α, β...)."},
+{c:P2,t:"14. Stellar evolution",s:"Catalogues",q:"What does the Bayer system do?",a:"Names stars in a constellation by Greek letter in order of brightness (e.g. Alpha Centauri is the brightest)."},
+{c:P2,t:"14. Stellar evolution",s:"Equilibrium",q:"What keeps a main sequence star stable?",a:"A balance between outward radiation (thermal) pressure from fusion and inward gravitational pull."},
+{c:P2,t:"14. Stellar evolution",s:"Degeneracy pressure",q:"What supports a white dwarf and a neutron star against gravity?",a:"A white dwarf is held up by electron (degeneracy) pressure; a neutron star by neutron (degeneracy) pressure."},
+{c:P2,t:"14. Stellar evolution",s:"Limits",q:"What is the Chandrasekhar Limit?",a:"About 1.4 solar masses — the maximum mass of a white dwarf; above it electron pressure fails and it collapses further."},
+{c:P2,t:"14. Stellar evolution",s:"Sun-like evolution",q:"Give the life-cycle stages of a Sun-like star.",a:"Emission/absorption nebula → main sequence star → red giant → planetary nebula → white dwarf → black dwarf."},
+{c:P2,t:"14. Stellar evolution",s:"Sun-like evolution",q:"What is a planetary nebula?",a:"The glowing shell of gas thrown off by a dying Sun-like star, leaving a hot white dwarf at its centre."},
+{c:P2,t:"14. Stellar evolution",s:"Sun-like evolution",q:"What is a black dwarf?",a:"The cold, dark remnant a white dwarf becomes once it has cooled (none exist yet — the Universe is too young)."},
+{c:P2,t:"14. Stellar evolution",s:"Massive-star evolution",q:"Give the life-cycle stages of a star much more massive than the Sun.",a:"Nebula → main sequence star → red supergiant → supernova → neutron star or black hole."},
+{c:P2,t:"14. Stellar evolution",s:"Massive-star evolution",q:"What is a supernova?",a:"The explosive death of a massive star, briefly outshining an entire galaxy and scattering heavy elements."},
+{c:P2,t:"14. Stellar evolution",s:"Black holes",q:"How do astronomers study and find evidence for black holes?",a:"Indirectly — from the motion of orbiting companions, and radiation (e.g. X-rays) from an accretion disc of infalling matter."},
+
+/* ===== TOPIC 15 – Our place in the Galaxy ===== */
+{c:P2,t:"15. Our place in the Galaxy",s:"The Milky Way",q:"State the size, shape and Sun's location in our Galaxy.",a:"A barred spiral about 100,000 ly across; the Sun lies in a spiral arm roughly two-thirds out from the centre."},
+{c:P2,t:"15. Our place in the Galaxy",s:"The Milky Way",q:"What type of galaxy is the Milky Way?",a:"A barred spiral galaxy (Hubble type SBb)."},
+{c:P2,t:"15. Our place in the Galaxy",s:"The Milky Way",q:"Where are globular clusters found in our Galaxy?",a:"In the halo, distributed roughly spherically around the galactic centre."},
+{c:P2,t:"15. Our place in the Galaxy",s:"The Milky Way",q:"Why are 21 cm radio waves used to map the Galaxy?",a:"They are emitted by neutral hydrogen and pass through interstellar dust that blocks visible light, revealing structure and rotation."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Local Group",q:"What is the Local Group and its main members?",a:"The cluster of galaxies gravitationally bound to the Milky Way; principal members include Andromeda (M31), the Magellanic Clouds (LMC & SMC) and Triangulum (M33)."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Local Group",q:"What are the Magellanic Clouds?",a:"Two small irregular satellite galaxies of the Milky Way — the Large and Small Magellanic Clouds."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Galaxy types",q:"Name the Hubble classification galaxy types.",a:"Spiral, barred spiral, elliptical and irregular — arranged on Hubble's 'tuning fork' diagram."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Active galaxies",q:"What powers an Active Galactic Nucleus (AGN)?",a:"Matter falling onto a super-massive black hole at the galaxy's centre, releasing huge amounts of radiation."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Active galaxies",q:"Name three types of active galaxy.",a:"Seyfert galaxies, quasars, and blazars."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Active galaxies",q:"What is a quasar?",a:"An extremely luminous, very distant active galactic nucleus powered by a super-massive black hole."},
+{c:P2,t:"15. Our place in the Galaxy",s:"Large-scale structure",q:"Why are galaxies grouped in larger clusters and superclusters?",a:"Gravity pulls galaxies together into clusters, which in turn group into larger superclusters — the largest structures in the Universe."},
+
+/* ===== TOPIC 16 – Cosmology ===== */
+{c:P2,t:"16. Cosmology",s:"Redshift",q:"What is redshift and what causes it for distant galaxies?",a:"A shift of light to longer (redder) wavelengths; caused by galaxies receding from us as the Universe expands."},
+{c:P2,t:"16. Cosmology",s:"Redshift",q:"What does a galaxy's redshift tell us?",a:"How fast it is receding — greater redshift means faster recession and greater distance."},
+{c:P2,t:"16. Cosmology",s:"Redshift",q:"State the redshift formula.",a:"(λ − λ₀)/λ₀ = v/c, where λ is observed and λ₀ emitted wavelength, v the radial velocity and c the speed of light."},
+{c:P2,t:"16. Cosmology",s:"Hubble's law",q:"State Hubble's law as a formula.",a:"v = H₀d, where v is recession velocity, H₀ the Hubble constant and d the distance to the galaxy."},
+{c:P2,t:"16. Cosmology",s:"Hubble's law",q:"What does Hubble's law show about the Universe?",a:"More distant galaxies recede faster — evidence that the Universe is expanding."},
+{c:P2,t:"16. Cosmology",s:"Hubble's law",q:"How is the age of the Universe estimated from H₀?",a:"The age is approximately 1/H₀ — the reciprocal of the Hubble constant."},
+{c:P2,t:"16. Cosmology",s:"Big Bang evidence",q:"Give the main observational evidence for the Big Bang.",a:"Redshift showing expansion, cosmic microwave background (CMB) radiation, quasars (QSOs), and the Hubble Deep Field image."},
+{c:P2,t:"16. Cosmology",s:"Big Bang evidence",q:"What is the cosmic microwave background (CMB)?",a:"Faint microwave radiation from all directions — the cooled remnant 'afterglow' of the hot early Universe."},
+{c:P2,t:"16. Cosmology",s:"Big Bang evidence",q:"Why is the CMB significant, and what studied its fluctuations?",a:"Its tiny fluctuations (mapped by WMAP and the Planck mission) seeded galaxy formation and test evolutionary models."},
+{c:P2,t:"16. Cosmology",s:"Big Bang vs Steady State",q:"How does expansion fit the Big Bang and Steady State theories?",a:"Big Bang: everything began in a hot dense state and has expanded/cooled since. Steady State: the Universe expands but new matter is continuously created to keep density constant."},
+{c:P2,t:"16. Cosmology",s:"Big Bang vs Steady State",q:"What is the Big Bang theory?",a:"That the Universe began ~13.8 billion years ago from an extremely hot, dense state and has expanded ever since."},
+{c:P2,t:"16. Cosmology",s:"Dark matter & energy",q:"What are dark matter and dark energy?",a:"Dark matter is unseen mass inferred from gravity (e.g. galaxy rotation); dark energy is the unknown cause of the accelerating expansion of the Universe."},
+{c:P2,t:"16. Cosmology",s:"Dark matter & energy",q:"What is the main evidence for dark matter?",a:"Galaxies rotate too fast to be held together by their visible matter alone, implying extra unseen mass."},
+{c:P2,t:"16. Cosmology",s:"Dark matter & energy",q:"Why is dark matter and dark energy hard to detect?",a:"Neither emits or absorbs light; they are inferred only from their gravitational and expansion effects."},
+{c:P2,t:"16. Cosmology",s:"Fate of the Universe",q:"Why do models predict different fates for the Universe?",a:"The outcome depends on the balance of matter/energy density and dark energy — expansion could continue forever, halt, or reverse."}
+];
+
+/* ---------------- APP LOGIC ---------------- */
+const $ = id => document.getElementById(id);
+const grid = $("grid");
+let count = 6;
+let current = [];
+
+document.getElementById("bankCount").textContent = BANK.length + " cards loaded";
+
+function uniq(arr){return [...new Set(arr)];}
+
+function fillSelect(sel, items, allLabel){
+  sel.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value = "__all__"; optAll.textContent = allLabel;
+  sel.appendChild(optAll);
+  items.forEach(v=>{
+    const o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o);
+  });
+}
+
+function refreshTopicOptions(){
+  const course = $("course").value;
+  let pool = BANK;
+  if(course!=="__all__") pool = pool.filter(x=>x.c===course);
+  fillSelect($("topic"), uniq(pool.map(x=>x.t)), "All topics");
+}
+function refreshSubtopicOptions(){
+  const course=$("course").value, topic=$("topic").value;
+  let pool=BANK;
+  if(course!=="__all__") pool=pool.filter(x=>x.c===course);
+  if(topic!=="__all__") pool=pool.filter(x=>x.t===topic);
+  fillSelect($("subtopic"), uniq(pool.map(x=>x.s)), "All sub-topics");
+}
+
+function filtered(){
+  const course=$("course").value, topic=$("topic").value, sub=$("subtopic").value;
+  return BANK.filter(x=>
+    (course==="__all__"||x.c===course) &&
+    (topic==="__all__"||x.t===topic) &&
+    (sub==="__all__"||x.s===sub));
+}
+
+function shuffleArr(a){
+  a=a.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function render(){
+  const pool = filtered();
+  current = shuffleArr(pool).slice(0, count);
+  grid.innerHTML="";
+  $("revealAll").textContent = "👁 Reveal all";
+  if(current.length===0){
+    grid.innerHTML='<div class="empty">No cards match these filters. Try widening your selection.</div>';
+    $("statusLine").textContent="0 cards";
+    return;
+  }
+  current.forEach(card=>{
+    const el=document.createElement("div");
+    el.className="card";
+    el.innerHTML=`
+      <div class="inner">
+        <div class="face front">
+          <div class="tag"><span class="qmark">Q</span> · ${esc(card.t)}</div>
+          <div class="txt">${esc(card.q)}</div>
+          <div class="hint">Tap to reveal answer</div>
+        </div>
+        <div class="face back">
+          <div class="tag">Answer</div>
+          <div class="txt">${esc(card.a)}</div>
+          <div class="topicpill">${esc(card.s)}</div>
+        </div>
+      </div>`;
+    el.addEventListener("click",()=>el.classList.toggle("flipped"));
+    grid.appendChild(el);
+  });
+  $("statusLine").textContent = `Showing ${current.length} of ${pool.length} matching card${pool.length===1?"":"s"}`;
+}
+
+/* events */
+$("course").addEventListener("change",()=>{refreshTopicOptions();refreshSubtopicOptions();render();});
+$("topic").addEventListener("change",()=>{refreshSubtopicOptions();render();});
+$("subtopic").addEventListener("change",render);
+
+document.querySelectorAll(".seg").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".seg").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    $("custom").value="";
+    count=parseInt(b.dataset.n,10);
+    render();
+  });
+});
+$("custom").addEventListener("input",()=>{
+  const v=parseInt($("custom").value,10);
+  if(v>0){
+    document.querySelectorAll(".seg").forEach(x=>x.classList.remove("active"));
+    count=v;render();
+  }
+});
+$("shuffle").addEventListener("click",render);
+$("revealAll").addEventListener("click",()=>{
+  const cards=[...grid.querySelectorAll(".card")];
+  const anyUnflipped=cards.some(c=>!c.classList.contains("flipped"));
+  cards.forEach(c=>c.classList.toggle("flipped",anyUnflipped));
+  $("revealAll").textContent = anyUnflipped ? "🙈 Hide all" : "👁 Reveal all";
+});
+
+/* init */
+fillSelect($("course"), uniq(BANK.map(x=>x.c)), "All papers");
+refreshTopicOptions();
+refreshSubtopicOptions();
+render();
+</script>
+</body>
+</html>
