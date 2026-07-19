@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Equation of Time &amp; Analemma Builder — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;--ob:#b48cff;--ec:#4fc3f7;--tot:#ffc94d;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:298px minmax(0,1fr) 320px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:9px;
+  border:1px solid var(--line);background:var(--panel2);cursor:pointer;margin-bottom:8px}
+.toggle .sw{width:38px;height:22px;border-radius:20px;background:#33405f;position:relative;transition:.15s;flex:0 0 auto}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;
+  background:#8493b8;transition:.15s}
+.toggle.on .sw::after{left:18px;background:#07101f}
+.toggle.on.ob .sw{background:var(--ob)} .toggle.on.ec .sw{background:var(--ec)}
+.toggle b{font-size:14px} .toggle small{display:block;color:var(--dim);font-size:11.5px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+canvas{width:100%;display:block;border-radius:9px;background:#070c1a}
+.tabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:6px 12px;font-size:13px;border-radius:7px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:600}
+.hide{display:none!important}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--dim);margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.b-a{background:rgba(93,220,154,.16);color:var(--green)}
+.b-b{background:rgba(255,123,123,.16);color:var(--red)}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Equation of Time &amp; Analemma Builder</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 4.4 – 4.6 · build the Equation of Time from its two causes and watch the analemma appear</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT: CONTROLS ============ -->
+<div>
+  <div class="card">
+    <h2>The two causes (4.6)</h2>
+    <div class="toggle on ob" id="tgOb">
+      <div><b>① Axial tilt (obliquity)</b><small>Earth's 23.4° tilt — gives a twice-a-year wave</small></div>
+      <div class="sw"></div>
+    </div>
+    <label>Obliquity, ε <span class="val" id="epsOut">23.4°</span></label>
+    <input type="range" id="eps" min="0" max="45" step="0.5" value="23.4">
+    <div class="toggle on ec" id="tgEc" style="margin-top:14px">
+      <div><b>② Elliptical orbit (eccentricity)</b><small>Earth's off-centre orbit — gives a once-a-year wave</small></div>
+      <div class="sw"></div>
+    </div>
+    <label>Eccentricity, e <span class="val" id="eOut">0.017</span></label>
+    <input type="range" id="e" min="0" max="200" step="1" value="17">
+    <div class="cap">Turn the two effects on and off, or exaggerate them, and watch the yellow total curve change. With both off, sundial and clock would always agree.</div>
+    <button id="reset" style="width:100%;margin-top:12px">↺ Reset to Earth's real values</button>
+  </div>
+
+  <div class="card">
+    <h2>Date</h2>
+    <label>Day of the year <span class="val" id="dateOut">11 Feb</span></label>
+    <input type="range" id="day" min="0" max="365" step="1" value="41">
+    <div class="row" style="margin-top:9px">
+      <button id="play" class="primary">▶ Play the year</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CENTRE: VIEWS ============ -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" data-v="graph">Equation of Time</div>
+      <div class="tab" data-v="ana">The analemma</div>
+      <div class="tab" data-v="clock">Sundial vs clock</div>
+    </div>
+
+    <div id="vGraph">
+      <canvas id="cGraph"></canvas>
+      <div class="legend">
+        <span><i class="dot" style="background:var(--ob)"></i>tilt component</span>
+        <span><i class="dot" style="background:var(--ec)"></i>eccentricity component</span>
+        <span><i class="dot" style="background:var(--tot)"></i>total (Equation of Time)</span>
+      </div>
+      <div class="cap">The y-axis is <b>Equation of Time = apparent solar time − mean solar time</b> (4.4), in minutes. Above the line, the sundial is ahead of the clock. The purple and blue waves <b>add</b> to give the yellow curve.</div>
+    </div>
+
+    <div id="vAna" class="hide">
+      <canvas id="cAna"></canvas>
+      <div class="cap">Photograph the Sun from the same spot at clock-noon all year and it traces this <b>analemma</b>. Sideways = Equation of Time; up–down = the Sun's declination. Tilt alone makes a figure-8; the eccentricity makes the two loops unequal.</div>
+    </div>
+
+    <div id="vClock" class="hide">
+      <canvas id="cClock"></canvas>
+      <div class="cap" id="clockCap"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What's happening now</h2>
+    <div id="statusBig"></div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>On this date</h2>
+    <table>
+      <tr><td>Date</td><td id="rDate">—</td></tr>
+      <tr><td>Tilt component</td><td id="rOb">—</td></tr>
+      <tr><td>Eccentricity component</td><td id="rEc">—</td></tr>
+      <tr><td><b>Equation of Time</b></td><td id="rTot">—</td></tr>
+      <tr><td>Sundial vs clock</td><td id="rSun">—</td></tr>
+      <tr><td>Sun's declination</td><td id="rDec">—</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Across the year (4.5)</h2>
+    <table>
+      <tr><td>Sundial furthest ahead</td><td id="kMax">—</td></tr>
+      <tr><td>Sundial furthest behind</td><td id="kMin">—</td></tr>
+      <tr><td>Times sundial = clock</td><td id="kZero">—</td></tr>
+    </table>
+    <div class="note" id="kNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas</h2>
+    <details><summary>What is the Equation of Time? (4.4)</summary><p>EoT = <b>Apparent Solar Time − Mean Solar Time</b>. Apparent time is what a sundial shows (the real Sun); mean time is what a clock shows (a smoothly-moving "mean Sun"). The two disagree by up to about 16 minutes.</p></details>
+    <details><summary>Cause 1 — axial tilt (4.6)</summary><p>The real Sun moves along the ecliptic, but time is kept by its motion along the celestial equator. Because the ecliptic is tilted 23.4°, projecting one onto the other speeds the Sun up near the solstices and slows it near the equinoxes — a wave that repeats <b>twice</b> a year.</p></details>
+    <details><summary>Cause 2 — elliptical orbit (4.6)</summary><p>Earth moves fastest at perihelion (early January) and slowest at aphelion (early July), so the Sun appears to move unevenly along the ecliptic. This gives a wave that repeats <b>once</b> a year.</p></details>
+    <details><summary>Why the annual variation? (4.5)</summary><p>Adding a twice-yearly wave to a once-yearly wave gives the familiar double-humped curve, crossing zero four times and reaching about +16 min in early November and −14 min in mid-February.</p></details>
+    <details><summary>What is the analemma?</summary><p>Plotting the Sun's declination against the Equation of Time over a year traces a figure-8. It is why the "noon" Sun photographed all year makes a stretched 8 in the sky, and why it appears on some sundials and globes.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const D2R=Math.PI/180,R2D=180/Math.PI,TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const wrapPi=a=>Math.atan2(Math.sin(a),Math.cos(a));
+const W=TAU/365.2422, NPER=3, NEQ=80;
+const MONTH0=[0,31,59,90,120,151,181,212,243,273,304,334];
+const MNAME=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function dayLabel(n){n=Math.round(((n%365)+365)%365);let m=11;while(m>0&&n<MONTH0[m])m--;return (n-MONTH0[m]+1)+" "+MNAME[m];}
+
+const S={eps:23.4,e:0.0167,obOn:true,ecOn:true,day:41,view:"graph",playing:false};
+
+/* ---------- the physics ---------- */
+function comps(day){
+  const eps=(S.obOn?S.eps:0)*D2R;
+  const ecc=S.ecOn?S.e:0;
+  const M=W*(day-NPER), L=W*(day-NEQ);
+  const C=2*ecc*Math.sin(M)+1.25*ecc*ecc*Math.sin(2*M);   // equation of centre
+  const eEcc=-C*R2D*4;                                     // minutes
+  const a=Math.atan2(Math.cos(eps)*Math.sin(L),Math.cos(L));
+  const eOb=wrapPi(L-a)*R2D*4;                             // minutes
+  const dec=Math.asin(Math.sin(eps)*Math.sin(L))*R2D;
+  return {eEcc,eOb,tot:eEcc+eOb,dec};
+}
+// dynamic ranges so exaggerated values still fit
+function ranges(){
+  let mx=6,dmx=1;
+  for(let d=0;d<=365;d+=2){const c=comps(d);
+    mx=Math.max(mx,Math.abs(c.tot),Math.abs(c.eOb),Math.abs(c.eEcc));
+    dmx=Math.max(dmx,Math.abs(c.dec));}
+  return {y:Math.ceil(mx*1.12), dec:Math.ceil(dmx*1.12)};
+}
+function keyDates(){
+  let mx=-1e9,mn=1e9,dmx=0,dmn=0,zeros=0,prev=null;
+  for(let d=0;d<=365;d++){const t=comps(d).tot;
+    if(t>mx){mx=t;dmx=d;} if(t<mn){mn=t;dmn=d;}
+    if(prev!==null&&((prev<0&&t>=0)||(prev>0&&t<=0)))zeros++;
+    prev=t;}
+  return {mx,dmx,mn,dmn,zeros};
+}
+
+/* ---------- canvas fit ---------- */
+function fit(cv,ratio){
+  const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};
+}
+
+/* ---------- EoT graph ---------- */
+function drawGraph(){
+  const {c,w,h}=fit(document.getElementById("cGraph"),0.60);
+  c.clearRect(0,0,w,h);c.fillStyle="#070c1a";c.fillRect(0,0,w,h);
+  const mL=42,mR=12,mT=14,mB=26, gw=w-mL-mR, gh=h-mT-mB;
+  const R=ranges();
+  const X=d=>mL+d/365*gw;
+  const Y=v=>mT+gh/2-(v/R.y)*(gh/2);
+  // grid
+  c.strokeStyle="#18233f";c.lineWidth=1;c.fillStyle="#5d6b91";c.font="10px system-ui";
+  for(let v=-R.y;v<=R.y;v+=Math.ceil(R.y/3)){c.beginPath();c.moveTo(mL,Y(v));c.lineTo(w-mR,Y(v));c.stroke();
+    c.textAlign="right";c.fillText(v>0?"+"+v:v,mL-5,Y(v)+3);}
+  // zero line
+  c.strokeStyle="#3a4a72";c.lineWidth=1.4;c.beginPath();c.moveTo(mL,Y(0));c.lineTo(w-mR,Y(0));c.stroke();
+  c.textAlign="center";c.fillStyle="#7a86a8";
+  MONTH0.forEach((d,i)=>{const x=X(d);c.strokeStyle="#121c33";c.beginPath();c.moveTo(x,mT);c.lineTo(x,mT+gh);c.stroke();
+    c.fillText(MNAME[i][0],x+gw/24,mT+gh+15);});
+  c.fillStyle="#8a96b8";c.textAlign="left";c.font="10px system-ui";
+  c.save();c.translate(12,mT+gh/2);c.rotate(-Math.PI/2);c.textAlign="center";
+  c.fillText("EoT  (minutes)",0,0);c.restore();
+  // curves
+  const plot=(fn,col,wd)=>{c.beginPath();
+    for(let d=0;d<=365;d++){const y=Y(fn(d));d?c.lineTo(X(d),y):c.moveTo(X(d),y);}
+    c.strokeStyle=col;c.lineWidth=wd;c.stroke();};
+  if(S.obOn) plot(d=>comps(d).eOb,"#b48cff",1.6);
+  if(S.ecOn) plot(d=>comps(d).eEcc,"#4fc3f7",1.6);
+  plot(d=>comps(d).tot,"#ffc94d",2.6);
+  // date marker
+  const cx=X(S.day), cc=comps(S.day);
+  c.strokeStyle="rgba(255,255,255,.35)";c.setLineDash([4,4]);
+  c.beginPath();c.moveTo(cx,mT);c.lineTo(cx,mT+gh);c.stroke();c.setLineDash([]);
+  const mk=(v,col)=>{c.beginPath();c.arc(cx,Y(v),4,0,TAU);c.fillStyle=col;c.fill();};
+  if(S.obOn)mk(cc.eOb,"#b48cff"); if(S.ecOn)mk(cc.eEcc,"#4fc3f7"); mk(cc.tot,"#ffc94d");
+}
+
+/* ---------- analemma ---------- */
+function drawAna(){
+  const {c,w,h}=fit(document.getElementById("cAna"),0.74);
+  c.clearRect(0,0,w,h);c.fillStyle="#070c1a";c.fillRect(0,0,w,h);
+  const cx=w/2, mT=16, mB=26, gh=h-mT-mB, cy=mT+gh/2;
+  const R=ranges();
+  const sx=(w*0.5-30)/R.y, sy=(gh/2)/R.dec;
+  const X=v=>cx - v*sx;            // +EoT to the left (as it appears looking south)
+  const Y=d=>cy - d*sy;
+  // axes
+  c.strokeStyle="#3a4a72";c.lineWidth=1.2;
+  c.beginPath();c.moveTo(cx,mT);c.lineTo(cx,mT+gh);c.stroke();
+  c.beginPath();c.moveTo(20,cy);c.lineTo(w-20,cy);c.stroke();
+  c.fillStyle="#5d6b91";c.font="10px system-ui";c.textAlign="center";
+  c.fillText("← sundial ahead        Equation of Time        sundial behind →",cx,mT+gh+16);
+  c.save();c.translate(14,cy);c.rotate(-Math.PI/2);c.fillText("declination →",0,0);c.restore();
+  // curve
+  c.beginPath();
+  for(let d=0;d<=365;d++){const cc=comps(d);const x=X(cc.tot),y=Y(cc.dec);d?c.lineTo(x,y):c.moveTo(x,y);}
+  c.closePath();c.strokeStyle="#ffc94d";c.lineWidth=2.2;c.stroke();
+  // month dots
+  c.fillStyle="#7a86a8";c.font="9px system-ui";
+  MONTH0.forEach((d,i)=>{const cc=comps(d);const x=X(cc.tot),y=Y(cc.dec);
+    c.beginPath();c.arc(x,y,2,0,TAU);c.fillStyle="rgba(150,162,196,.7)";c.fill();
+    c.fillStyle="#7a86a8";c.textAlign=cc.tot>0?"right":"left";c.fillText(MNAME[i],x+(cc.tot>0?-5:5),y+3);});
+  // current Sun
+  const cc=comps(S.day), x=X(cc.tot), y=Y(cc.dec);
+  const g=c.createRadialGradient(x,y,0,x,y,10);
+  g.addColorStop(0,"#fff2c0");g.addColorStop(1,"rgba(255,180,40,0)");
+  c.fillStyle=g;c.beginPath();c.arc(x,y,10,0,TAU);c.fill();
+  c.beginPath();c.arc(x,y,4.5,0,TAU);c.fillStyle="#ffcf4a";c.fill();
+  c.strokeStyle="#fff";c.lineWidth=1;c.stroke();
+}
+
+/* ---------- sundial vs clock ---------- */
+function drawClock(){
+  const {c,w,h}=fit(document.getElementById("cClock"),0.56);
+  c.clearRect(0,0,w,h);c.fillStyle="#070c1a";c.fillRect(0,0,w,h);
+  const cc=comps(S.day), eot=cc.tot;
+  const cx=w/2, cy=h*0.46, R=Math.min(w,h)*0.34;
+  // dial
+  c.beginPath();c.arc(cx,cy,R,0,TAU);c.fillStyle="#0e1526";c.fill();
+  c.strokeStyle="#3a4a72";c.lineWidth=2;c.stroke();
+  c.fillStyle="#5d6b91";c.font="11px system-ui";c.textAlign="center";c.textBaseline="middle";
+  for(let m=0;m<60;m+=5){const a=m/60*TAU-Math.PI/2;
+    const r1=R*0.9,r2=R;c.strokeStyle="#33405f";c.lineWidth=m%15===0?2:1;
+    c.beginPath();c.moveTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);c.lineTo(cx+Math.cos(a)*r2,cy+Math.sin(a)*r2);c.stroke();}
+  c.fillStyle="#8a96b8";c.fillText("12",cx,cy-R*0.78);
+  // mean-time hand (clock) — points to 12 (noon)
+  const hand=(angDeg,col,len,wd,lab)=>{const a=angDeg*D2R-Math.PI/2;
+    c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+Math.cos(a)*R*len,cy+Math.sin(a)*R*len);
+    c.strokeStyle=col;c.lineWidth=wd;c.lineCap="round";c.stroke();};
+  hand(0,"#ff7b7b",0.8,4);                       // clock (mean) at 12
+  hand(eot*6,"#ffcf4a",0.66,4);                  // sundial (apparent): eot min → eot*6°
+  c.beginPath();c.arc(cx,cy,5,0,TAU);c.fillStyle="#e8ecf7";c.fill();
+  // legend
+  c.textAlign="left";c.font="600 13px system-ui";
+  c.fillStyle="#ff7b7b";c.fillText("● clock  (mean Sun) — 12:00:00",16,h-40);
+  const mm=Math.floor(Math.abs(eot)), ss=Math.round((Math.abs(eot)-mm)*60);
+  const sign=eot>=0?1:-1, tot=12*3600+Math.round(eot*60);
+  const hh=Math.floor(tot/3600), mi=Math.floor((tot%3600)/60), se=tot%60;
+  c.fillStyle="#ffcf4a";
+  c.fillText(`● sundial (real Sun) — ${String(hh).padStart(2,"0")}:${String(mi).padStart(2,"0")}:${String(se).padStart(2,"0")}`,16,h-20);
+  const ahead=eot>=0;
+  document.getElementById("clockCap").innerHTML=
+    `On ${dayLabel(S.day)}, the Equation of Time is <b>${eot>=0?"+":""}${eot.toFixed(1)} min</b>. `+
+    (Math.abs(eot)<0.3?"The sundial and the clock agree — one of the four days a year when apparent and mean time match.":
+     `The real Sun (sundial) crosses the meridian <b>${Math.abs(eot).toFixed(1)} minutes ${ahead?"before":"after"}</b> clock-noon, so the sundial is <b>${ahead?"ahead of":"behind"}</b> the clock. This is EoT = apparent − mean = ${eot>=0?"+":""}${eot.toFixed(1)} min (4.4).`);
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  $("epsOut").textContent=S.eps.toFixed(1)+"°";
+  $("eOut").textContent=S.e.toFixed(3);
+  $("dateOut").textContent=dayLabel(S.day);
+  $("tgOb").classList.toggle("on",S.obOn);
+  $("tgEc").classList.toggle("on",S.ecOn);
+
+  const cc=comps(S.day);
+  $("rDate").textContent=dayLabel(S.day);
+  $("rOb").textContent=S.obOn?(cc.eOb>=0?"+":"")+cc.eOb.toFixed(1)+" min":"off";
+  $("rEc").textContent=S.ecOn?(cc.eEcc>=0?"+":"")+cc.eEcc.toFixed(1)+" min":"off";
+  $("rTot").innerHTML="<b>"+(cc.tot>=0?"+":"")+cc.tot.toFixed(1)+" min</b>";
+  $("rSun").innerHTML=Math.abs(cc.tot)<0.3?'<span class="badge">agree</span>':
+    cc.tot>0?'<span class="badge b-a">sundial ahead</span>':'<span class="badge b-b">sundial behind</span>';
+  $("rDec").textContent=(cc.dec>=0?"+":"")+cc.dec.toFixed(1)+"°";
+
+  const k=keyDates();
+  $("kMax").textContent=`${dayLabel(k.dmx)}  (+${k.mx.toFixed(1)})`;
+  $("kMin").textContent=`${dayLabel(k.dmn)}  (${k.mn.toFixed(1)})`;
+  $("kZero").textContent=k.zeros+"× a year";
+  $("kNote").innerHTML=(!S.obOn&&!S.ecOn)?"With both causes off, the Equation of Time is always zero — sundial and clock would agree every day."
+    :(!S.ecOn)?"With only the <b>tilt</b>, the curve is a symmetric wave that repeats <b>twice</b> a year."
+    :(!S.obOn)?"With only the <b>eccentricity</b>, the curve is a single smooth wave that repeats <b>once</b> a year."
+    :"The real curve is the sum of a twice-yearly (tilt) and a once-yearly (eccentricity) wave.";
+
+  statusText(cc);
+  if(S.view==="graph")drawGraph();
+  else if(S.view==="ana")drawAna();
+  else drawClock();
+}
+function statusText(cc){
+  let t;
+  if(!S.obOn&&!S.ecOn) t="Both causes are switched off, so apparent and mean time are identical — the total is a flat line at zero. Switch a cause on to see the sundial and clock drift apart.";
+  else if(S.obOn&&!S.ecOn) t="Only the <b>axial tilt</b> is acting. Notice the curve rises and falls <b>twice</b> each year, peaking near the solstices and equinoxes, with an amplitude of about ±9.9 minutes.";
+  else if(!S.obOn&&S.ecOn) t="Only the <b>orbital eccentricity</b> is acting. This gives a single smooth wave over the year (±7.7 min), driven by Earth moving fastest at perihelion in early January.";
+  else t=`Both causes combine. On ${dayLabel(S.day)} the tilt contributes ${cc.eOb>=0?"+":""}${cc.eOb.toFixed(1)} min and the eccentricity ${cc.eEcc>=0?"+":""}${cc.eEcc.toFixed(1)} min, giving a total Equation of Time of <b>${cc.tot>=0?"+":""}${cc.tot.toFixed(1)} min</b>.`;
+  $("statusBig").innerHTML=t;
+}
+
+/* ---------- controls ---------- */
+$("eps").oninput=e=>{S.eps=+e.target.value;update();};
+$("e").oninput=e=>{S.e=+e.target.value/1000;update();};
+$("day").oninput=e=>{S.day=Math.round(+e.target.value);update();};
+$("tgOb").onclick=()=>{S.obOn=!S.obOn;update();};
+$("tgEc").onclick=()=>{S.ecOn=!S.ecOn;update();};
+$("reset").onclick=()=>{S.eps=23.4;S.e=0.0167;S.obOn=true;S.ecOn=true;
+  $("eps").value=23.4;$("e").value=17;update();};
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  S.view=t.dataset.v;
+  $("vGraph").classList.toggle("hide",S.view!=="graph");
+  $("vAna").classList.toggle("hide",S.view!=="ana");
+  $("vClock").classList.toggle("hide",S.view!=="clock");update();});
+let anim=null, playAcc=0;
+$("play").onclick=()=>{S.playing=!S.playing;$("play").textContent=S.playing?"❚❚ Pause":"▶ Play the year";
+  if(S.playing){let last=performance.now();playAcc=0;
+    const step=now=>{if(!S.playing)return;
+      playAcc+=(now-last)/1000*24; last=now;         // 24 days per second
+      if(playAcc>=1){S.day=Math.round(S.day+Math.floor(playAcc))%365; playAcc%=1;
+        $("day").value=S.day; update();}
+      anim=requestAnimationFrame(step);};anim=requestAnimationFrame(step);}
+  else cancelAnimationFrame(anim);};
+window.addEventListener("resize",update);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"What does the <b>Equation of Time</b> measure? (4.4)",
+   opts:shuffle(["Apparent solar time − mean solar time","Mean solar time − sidereal time",
+     "The length of the day at the equator","The tilt of the Earth's axis"]),
+   ansText:"Apparent solar time − mean solar time",
+   why:"EoT = AST − MST: the difference between sundial (real Sun) time and clock (mean Sun) time, up to about ±16 minutes."}),
+ ()=>({q:"Which cause produces the variation that repeats <b>twice</b> a year?",
+   opts:shuffle(["The tilt of Earth's axis (obliquity)","The eccentricity of Earth's orbit",
+     "The precession of the axis","The Moon's gravity"]),
+   ansText:"The tilt of Earth's axis (obliquity)",
+   why:"The obliquity term peaks near both solstices and both equinoxes, so it repeats twice a year (~±9.9 min). Eccentricity repeats only once a year."}),
+ ()=>({q:"Which cause produces the variation that repeats <b>once</b> a year?",
+   opts:shuffle(["The eccentricity of Earth's orbit","The tilt of Earth's axis",
+     "The rotation of the Earth","The orbit of the Moon"]),
+   ansText:"The eccentricity of Earth's orbit",
+   why:"Earth moves fastest at perihelion (Jan) and slowest at aphelion (Jul), giving a single yearly wave (~±7.7 min)."}),
+ ()=>({q:"If Earth's orbit were a perfect circle but the axis still tilted, would the Equation of Time be zero?",
+   opts:shuffle(["No — the tilt alone still causes a variation","Yes — a circular orbit removes it entirely",
+     "Yes — only eccentricity matters","No — but only near the equator"]),
+   ansText:"No — the tilt alone still causes a variation",
+   why:"Turn off eccentricity in the app: the tilt on its own still gives a ±9.9 min twice-yearly curve. Both causes act independently."}),
+ ()=>({q:"On a date when the Equation of Time is <b>+15 min</b>, the sundial reads noon. What does the clock read?",
+   opts:shuffle(["11:45","12:15","12:00","1:15"]),
+   ansText:"11:45",
+   why:"EoT = apparent − mean = +15, so apparent is ahead: when the sundial (apparent) shows 12:00, the clock (mean) shows 11:45."}),
+ ()=>({q:"How many times a year do a sundial and a clock show the same time?",
+   opts:shuffle(["Four","Once","Twice","Never"]),
+   ansText:"Four",
+   why:"The double-humped EoT curve crosses zero four times a year — around 15 Apr, 13 Jun, 1 Sep and 25 Dec."}),
+ ()=>({q:"The Sun's yearly path plotted as declination against the Equation of Time makes a figure-8. What is this called?",
+   opts:shuffle(["The analemma","The ecliptic","The zodiac","The meridian"]),
+   ansText:"The analemma",
+   why:"The analemma is the figure-8 traced by the Sun photographed at clock-noon through the year; its shape comes from the tilt (the 8) and eccentricity (unequal loops)."}),
+ ()=>({q:"The Equation of Time reaches its largest positive value (~+16 min) in early November. This means the sundial is…",
+   opts:shuffle(["ahead of the clock","behind the clock","exactly right","stopped"]),
+   ansText:"ahead of the clock",
+   why:"A positive EoT means apparent time is ahead of mean time, so the sundial runs ahead of the clock by about 16 minutes."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,i)=>{const b=document.createElement("button");b.className="opt";b.innerHTML=o;
+    b.onclick=()=>ans(i,b);box.appendChild(b);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(i,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  if(i!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(i===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((b,j)=>{b.disabled=true;if(j===cur.ans)b.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>
