@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hubble's Law Grapher — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:294px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:4px 10px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#07101f;font-weight:600}
+canvas{width:100%;display:block;border-radius:9px;background:#070c1a}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.work{background:#080e1e;border:1px solid var(--line);border-radius:8px;padding:11px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;line-height:1.7;
+  white-space:pre-wrap;overflow-x:auto;color:#cdd7f0;margin:0}
+.work .hl{color:var(--accent)}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.hide{display:none!important}
+details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.big{font-size:22px;font-weight:700;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Hubble's Law Grapher</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 16.5 &amp; 16.6 · plot v against d, measure the gradient H₀, and find the age of the Universe from 1/H₀</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>1 · Choose data</h2>
+    <div class="chips" id="datasets"></div>
+    <div class="cap" id="dsNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Fit the line</h2>
+    <label>Your gradient, H₀ <span class="val" id="hOut">70 km/s/Mpc</span></label>
+    <input type="range" id="h" min="0" max="1000" value="466">
+    <div class="cap">Drag the line so it runs through the middle of the points, then read its gradient.</div>
+    <div class="row" style="margin-top:10px">
+      <button id="snap" class="primary">Snap to best fit</button>
+    </div>
+    <div class="chips" style="margin-top:11px">
+      <div class="chip on" data-o="resid">Residuals</div>
+      <div class="chip" data-o="best">Show best fit</div>
+      <div class="chip on" data-o="tri">Gradient triangle</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Selected galaxy</h2>
+    <select id="galSel" style="width:100%;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:7px;padding:7px"></select>
+    <div class="cap">Click a point on the graph, or pick one here, to see how its velocity comes from its redshift.</div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <h2>Hubble diagram — recession velocity against distance</h2>
+    <canvas id="cGraph"></canvas>
+    <div class="cap" id="graphCap"></div>
+  </div>
+
+  <div class="two">
+    <div class="card" style="margin-bottom:0">
+      <h2>Gradient → H₀ → age</h2>
+      <pre class="work" id="work"></pre>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <h2>Where v comes from (16.3)</h2>
+      <canvas id="cSpec"></canvas>
+      <div class="cap" id="specCap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>Results</h2>
+    <table>
+      <tr><td>Your gradient, H₀</td><td id="rH">—</td></tr>
+      <tr><td>Best-fit H₀</td><td id="rBest">—</td></tr>
+      <tr><td>Fit quality (lower = better)</td><td id="rSSR">—</td></tr>
+    </table>
+    <div class="note" style="text-align:center">
+      Age of the Universe ≈ 1/H₀<br>
+      <span class="big" id="rAge">—</span>
+    </div>
+    <table style="margin-top:6px">
+      <tr><td>Hubble radius (c/H₀)</td><td id="rSize">—</td></tr>
+    </table>
+    <div class="note" id="ageNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas</h2>
+    <details><summary>Hubble's law (16.5)</summary><p><b>v = H₀ d</b>: the faster a galaxy recedes (v), the further away it is (d). Plotting v against d gives a straight line through the origin, and its <b>gradient is the Hubble constant H₀</b>.</p></details>
+    <details><summary>Age of the Universe (16.6)</summary><p>If every galaxy has been moving at constant speed since the Big Bang, the time taken to reach distance d is d/v = 1/H₀. So <b>age ≈ 1/H₀</b> — the same for every galaxy, which is why they all lie on one line.</p></details>
+    <details><summary>Units matter</summary><p>H₀ is in km/s per Mpc. To get an age you must convert: 1 Mpc = 3.09×10¹⁹ km, and 1 year = 3.16×10⁷ s. This turns 1/H₀ into a time. A handy shortcut: age ≈ 978/H₀ billion years.</p></details>
+    <details><summary>Why Hubble's first value was wrong</summary><p>In 1929 Hubble measured H₀ ≈ 500, giving an age of only 2 billion years — younger than the rocks on Earth! His galaxy <b>distances</b> were badly underestimated. Better distances later lowered H₀ to about 70, giving ~14 billion years.</p></details>
+    <details><summary>Size of the Universe</summary><p>The Hubble radius c/H₀ (~14 billion light-years) is roughly how far light could travel in the age of the Universe — a rough measure of the size of the observable Universe.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2, C=299792.458;                 // km/s
+const AGE_K=3.0857e19/3.1557e7/1e9;                // 977.8  → age_Gyr = AGE_K/H
+const SIZE_K=C*3.2616/1000;                        // Gly numerator → c/H in Gly
+
+function rng(seed){let x=seed>>>0||1;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};}
+function gauss(r){return (r()+r()+r()+r()-2);}      // ~N(0, .58)
+
+const DSETS={
+  modern:{name:"Modern galaxies",H:70,dmin:15,dmax:430,N:14,sig:900,seed:4102,Hmax:150,
+    blurb:"A modern sample out to ~430 Mpc. The gradient gives H₀ ≈ 70 and an age of ~14 billion years."},
+  hubble:{name:"Hubble 1929 (original)",H:500,dmin:0.08,dmax:2.05,N:20,sig:120,seed:1929,Hmax:900,
+    blurb:"Hubble's original galaxies, all within 2 Mpc. His steep gradient (~500) gave an age younger than the Earth — his distances were wrong."},
+  sne:{name:"Distant supernovae",H:70,dmin:60,dmax:950,N:13,sig:2200,seed:7788,Hmax:150,
+    blurb:"Type Ia supernovae reach much greater distances but follow the same straight line — confirming H₀ ≈ 70."}
+};
+
+function makePoints(ds){const r=rng(ds.seed);const pts=[];
+  for(let i=0;i<ds.N;i++){
+    const frac=(i+0.5+(r()-0.5)*0.6)/ds.N;
+    const d=ds.dmin+(ds.dmax-ds.dmin)*frac;
+    let v=ds.H*d+gauss(r)*ds.sig;
+    pts.push({d:+d.toFixed(ds.dmax<5?3:1), v:Math.round(v), name:"Galaxy "+String.fromCharCode(65+i)});
+  }
+  return pts;
+}
+
+const S={ds:"hubble", H:466, sel:0, opts:{resid:1,best:0,tri:1}, pts:[]};
+function loadDS(key){S.ds=key;S.pts=makePoints(DSETS[key]);S.sel=Math.floor(S.pts.length/2);
+  // set slider to a deliberately-off starting guess so the student has to fit
+  const startH=DSETS[key].H*0.7;
+  S.H=startH; document.getElementById("h").max=1000;
+  document.getElementById("h").value=startH/DSETS[key].Hmax*1000;
+  buildGalSel();}
+
+function bestFit(){let sxy=0,sxx=0;S.pts.forEach(p=>{sxy+=p.d*p.v;sxx+=p.d*p.d;});return sxy/sxx;}
+function ssr(H){let s=0;S.pts.forEach(p=>{const e=p.v-H*p.d;s+=e*e;});return s;}
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+
+let GEO=null;
+function drawGraph(){
+  const {c,w,h}=fit(document.getElementById("cGraph"),0.66);
+  c.clearRect(0,0,w,h);c.fillStyle="#070c1a";c.fillRect(0,0,w,h);
+  const ds=DSETS[S.ds];
+  let vmax=0,vmin=0,dmax=0;
+  S.pts.forEach(p=>{vmax=Math.max(vmax,p.v,S.H*p.d);vmin=Math.min(vmin,p.v);dmax=Math.max(dmax,p.d);});
+  vmax=Math.max(vmax, bestFit()*dmax)*1.08;
+  const xMax=dmax*1.08, yMin=Math.min(0,vmin*1.15), yMax=vmax;
+  const mL=64,mR=14,mT=14,mB=40, gw=w-mL-mR, gh=h-mT-mB;
+  const X=d=>mL+d/xMax*gw, Y=v=>mT+gh-(v-yMin)/(yMax-yMin)*gh;
+  GEO={X,Y,xMax,yMin,yMax,mL,mR,mT,mB,gw,gh};
+  // grid + ticks
+  c.strokeStyle="#18233f";c.lineWidth=1;c.fillStyle="#7a86a8";c.font="10px system-ui";
+  const yStep=niceStep(yMax-yMin,5);
+  for(let v=Math.ceil(yMin/yStep)*yStep; v<=yMax; v+=yStep){const y=Y(v);
+    c.strokeStyle="#141f38";c.beginPath();c.moveTo(mL,y);c.lineTo(w-mR,y);c.stroke();
+    c.fillStyle="#7a86a8";c.textAlign="right";c.fillText(v.toLocaleString(),mL-6,y+3);}
+  const xStep=niceStep(xMax,5);
+  for(let d=0; d<=xMax; d+=xStep){const x=X(d);
+    c.strokeStyle="#141f38";c.beginPath();c.moveTo(x,mT);c.lineTo(x,mT+gh);c.stroke();
+    c.fillStyle="#7a86a8";c.textAlign="center";c.fillText(fmtD(d),x,mT+gh+15);}
+  // zero-v line
+  c.strokeStyle="#3a4a72";c.lineWidth=1.2;c.beginPath();c.moveTo(mL,Y(0));c.lineTo(w-mR,Y(0));c.stroke();
+  // axis labels
+  c.fillStyle="#c7d2ee";c.font="12px system-ui";c.textAlign="center";
+  c.fillText("distance, d  (Mpc)",mL+gw/2,h-8);
+  c.save();c.translate(16,mT+gh/2);c.rotate(-Math.PI/2);c.fillText("recession velocity, v  (km/s)",0,0);c.restore();
+
+  // best-fit line
+  if(S.opts.best){const Hb=bestFit();c.strokeStyle="rgba(93,220,154,.6)";c.lineWidth=1.5;c.setLineDash([5,4]);
+    c.beginPath();c.moveTo(X(0),Y(0));c.lineTo(X(xMax),Y(Hb*xMax));c.stroke();c.setLineDash([]);}
+  // your line
+  c.strokeStyle="#ffc94d";c.lineWidth=2.4;
+  c.beginPath();c.moveTo(X(0),Y(0));c.lineTo(X(xMax),Y(S.H*xMax));c.stroke();
+  // residuals
+  if(S.opts.resid){c.strokeStyle="rgba(255,123,123,.5)";c.lineWidth=1;
+    S.pts.forEach(p=>{c.beginPath();c.moveTo(X(p.d),Y(p.v));c.lineTo(X(p.d),Y(S.H*p.d));c.stroke();});}
+  // gradient triangle
+  if(S.opts.tri){const d1=xMax*0.30, d2=xMax*0.72, v1=S.H*d1, v2=S.H*d2;
+    c.strokeStyle="rgba(79,195,247,.9)";c.lineWidth=1.6;
+    c.beginPath();c.moveTo(X(d1),Y(v1));c.lineTo(X(d2),Y(v1));c.lineTo(X(d2),Y(v2));c.stroke();
+    c.fillStyle="#4fc3f7";c.font="11px system-ui";c.textAlign="center";
+    c.fillText("run Δd = "+fmtD(d2-d1),(X(d1)+X(d2))/2,Y(v1)+14);
+    c.textAlign="left";c.fillText("rise Δv = "+Math.round(v2-v1).toLocaleString()+" km/s",X(d2)+6,(Y(v1)+Y(v2))/2);}
+  // points
+  S.pts.forEach((p,i)=>{const x=X(p.d),y=Y(p.v),r=i===S.sel?6:4.5;
+    c.beginPath();c.arc(x,y,r,0,TAU);c.fillStyle=i===S.sel?"#ffc94d":"#8fd0ff";c.fill();
+    if(i===S.sel){c.strokeStyle="#fff";c.lineWidth=1.5;c.stroke();}});
+  document.getElementById("graphCap").innerHTML=
+    "Each point is a galaxy. A straight line through the origin means <b>v ∝ d</b> (Hubble's law). Its gradient is H₀.";
+}
+function niceStep(range,target){const raw=range/target;const p=Math.pow(10,Math.floor(Math.log10(raw)));
+  const n=raw/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p;}
+function fmtD(d){return DSETS[S.ds].dmax<5? d.toFixed(1): Math.round(d).toString();}
+
+/* ---------- spectrum ---------- */
+const LINES=[[393.4,"Ca K"],[396.8,"Ca H"],[486.1,"Hβ"],[656.3,"Hα"]];
+function drawSpec(){
+  const {c,w,h}=fit(document.getElementById("cSpec"),0.62);
+  c.clearRect(0,0,w,h);c.fillStyle="#070c1a";c.fillRect(0,0,w,h);
+  const p=S.pts[S.sel], z=p.v/C;
+  const l0=380,l1=750, mL=8,mR=8,barY=h*0.30,barH=h*0.26;
+  const X=nm=>mL+(nm-l0)/(l1-l0)*(w-mL-mR);
+  // rainbow bar
+  for(let x=mL;x<w-mR;x++){const nm=l0+(x-mL)/(w-mL-mR)*(l1-l0);
+    c.fillStyle=nmColor(nm);c.fillRect(x,barY,1,barH);}
+  c.strokeStyle="#2a3556";c.strokeRect(mL,barY,w-mL-mR,barH);
+  // rest (dashed) and observed (solid) lines
+  LINES.forEach(([nm,nm2])=>{
+    const xr=X(nm), xo=X(nm*(1+z));
+    c.strokeStyle="rgba(150,162,196,.7)";c.lineWidth=1;c.setLineDash([3,3]);
+    c.beginPath();c.moveTo(xr,barY-8);c.lineTo(xr,barY+barH+4);c.stroke();c.setLineDash([]);
+    if(xo<w-mR){c.strokeStyle="#0b1220";c.lineWidth=2;
+      c.beginPath();c.moveTo(xo,barY);c.lineTo(xo,barY+barH);c.stroke();
+      c.strokeStyle="#ff7b7b";c.lineWidth=1;c.beginPath();c.moveTo(xr,barY-8);c.lineTo(xo,barY-8);c.stroke();}
+    c.fillStyle="#96a2c4";c.font="9px system-ui";c.textAlign="center";c.fillText(nm2,xr,barY-11);
+  });
+  // arrow "redshift"
+  c.fillStyle="#ff7b7b";c.font="11px system-ui";c.textAlign="center";
+  c.fillText("→ redshifted →",w/2,barY+barH+22);
+  c.fillStyle="#7a86a8";c.font="10px system-ui";c.textAlign="left";c.fillText("400 nm",X(400),h-4);
+  c.textAlign="right";c.fillText("700 nm",X(700),h-4);
+  document.getElementById("specCap").innerHTML=
+    `<b>${p.name}</b>: lines shift from rest to <span style="color:var(--red)">redward</span> by z = Δλ/λ₀ = <b>${z.toFixed(4)}</b>, so v = c·z = ${Math.round(C*z).toLocaleString()} km/s at d = ${fmtD(p.d)} Mpc.`;
+}
+function nmColor(nm){let r=0,g=0,b=0;
+  if(nm<440){r=-(nm-440)/(440-380);b=1;}else if(nm<490){g=(nm-440)/(490-440);b=1;}
+  else if(nm<510){g=1;b=-(nm-510)/(510-490);}else if(nm<580){r=(nm-510)/(580-510);g=1;}
+  else if(nm<645){r=1;g=-(nm-645)/(645-580);}else{r=1;}
+  return `rgb(${(r*205+30)|0},${(g*205+30)|0},${(b*205+30)|0})`;
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  const ds=DSETS[S.ds];
+  $("hOut").textContent=Math.round(S.H)+" km/s/Mpc";
+  const Hb=bestFit(), age=AGE_K/S.H, size=SIZE_K/S.H;
+  $("rH").textContent=Math.round(S.H)+" km/s/Mpc";
+  $("rBest").textContent=Math.round(Hb)+" km/s/Mpc";
+  $("rSSR").textContent=(ssr(S.H)/1e6).toFixed(2)+" ×10⁶";
+  $("rAge").textContent=age.toFixed(1)+" billion yr";
+  $("rSize").textContent=size.toFixed(1)+" Gly";
+  $("ageNote").innerHTML= age<4.6
+    ? "⚠ This age is <b>younger than the Earth</b> (4.5 billion yr) — a sign the gradient (and the distances behind it) are wrong. This is exactly the problem with Hubble's 1929 value."
+    : "A larger H₀ means a steeper line and a <b>younger</b> Universe; a smaller H₀ means an older one.";
+  working(Hb,age);
+  drawGraph(); drawSpec();
+}
+function working(Hb,age){
+  const d1=GEO?GEO.xMax*0.30:0, d2=GEO?GEO.xMax*0.72:0;
+  const rise=Math.round(S.H*(d2-d1)), run=(d2-d1);
+  $("work").innerHTML=
+`GRADIENT OF THE LINE                (16.5)
+H₀ = rise / run = Δv / Δd
+   = ${rise.toLocaleString()} km/s ÷ ${fmtD(run)} Mpc
+   = <span class="hl">${Math.round(S.H)} km/s/Mpc</span>
+
+AGE OF THE UNIVERSE                  (16.6)
+age = 1 / H₀
+    = 1 Mpc / ${Math.round(S.H)} km/s
+    = 3.09×10¹⁹ km / ${Math.round(S.H)} km/s
+    = ${(3.0857e19/S.H).toExponential(2)} s
+    = <span class="hl">${age.toFixed(1)} billion years</span>
+    (shortcut:  age ≈ 978 / H₀  Gyr)
+
+SIZE (Hubble radius)
+c / H₀ = ${Math.round(C).toLocaleString()} / ${Math.round(S.H)}
+       = <span class="hl">${(SIZE_K/S.H).toFixed(1)} billion light-years</span>`;
+}
+
+/* ---------- controls ---------- */
+const dsb=$("datasets");
+Object.keys(DSETS).forEach((k,i)=>{const d=document.createElement("div");
+  d.className="chip"+(k==="hubble"?" on":"");d.textContent=DSETS[k].name;
+  d.onclick=()=>{[...dsb.children].forEach(x=>x.classList.remove("on"));d.classList.add("on");
+    loadDS(k);$("dsNote").textContent=DSETS[k].blurb;update();};dsb.appendChild(d);});
+$("dsNote").textContent=DSETS.hubble.blurb;
+
+function buildGalSel(){const s=$("galSel");s.innerHTML="";
+  S.pts.forEach((p,i)=>{const o=document.createElement("option");o.value=i;
+    o.textContent=`${p.name} — d=${fmtD(p.d)} Mpc, v=${p.v.toLocaleString()} km/s`;s.appendChild(o);});
+  s.value=S.sel;}
+$("galSel").onchange=e=>{S.sel=+e.target.value;update();};
+
+$("h").oninput=e=>{S.H=+e.target.value/1000*DSETS[S.ds].Hmax;update();};
+$("snap").onclick=()=>{S.H=bestFit();$("h").value=S.H/DSETS[S.ds].Hmax*1000;update();};
+$("datasets").addEventListener("click",()=>{$("h").value=S.H/DSETS[S.ds].Hmax*1000;});
+document.querySelectorAll('.chip[data-o]').forEach(ch=>ch.onclick=()=>{
+  ch.classList.toggle("on");S.opts[ch.dataset.o]=ch.classList.contains("on")?1:0;update();});
+
+// click a point to select it
+$("cGraph").addEventListener("click",e=>{if(!GEO)return;
+  const r=e.target.getBoundingClientRect();const mx=e.clientX-r.left, my=e.clientY-r.top;
+  let best=-1,bd=1e9;S.pts.forEach((p,i)=>{const dx=GEO.X(p.d)-mx,dy=GEO.Y(p.v)-my;const dd=dx*dx+dy*dy;
+    if(dd<bd){bd=dd;best=i;}});
+  if(bd<400){S.sel=best;$("galSel").value=best;update();}});
+window.addEventListener("resize",update);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function uniq(a){return shuffle([...new Set(a)]);}
+const QGEN=[
+ ()=>({q:"In Hubble's law <b>v = H₀d</b>, plotting v against d gives a straight line. What does its <b>gradient</b> equal?",
+   opts:shuffle(["The Hubble constant, H₀","The age of the Universe","The speed of light","The redshift"]),
+   ansText:"The Hubble constant, H₀",
+   why:"v = H₀d has the form y = (gradient)x, so the gradient of a v–d graph is H₀ itself."}),
+ ()=>{const H=pick([50,68,72,100]);const age=(977.8/H);return{
+   q:`A v–d graph has a gradient of ${H} km/s/Mpc. Estimate the age of the Universe.`,
+   opts:uniq([`about ${age.toFixed(0)} billion years`,`about ${(H/10).toFixed(0)} billion years`,
+     `about ${(age*2).toFixed(0)} billion years`,`about ${(H).toFixed(0)} billion years`]),
+   ansText:`about ${age.toFixed(0)} billion years`,
+   why:`age ≈ 1/H₀ ≈ 978/${H} ≈ ${age.toFixed(0)} billion years.`};},
+ ()=>({q:"A galaxy is measured to recede faster than another. According to Hubble's law it is therefore…",
+   opts:shuffle(["further away","closer","hotter","bluer"]),
+   ansText:"further away",
+   why:"v = H₀d, so a larger recession velocity means a larger distance — the two are directly proportional."}),
+ ()=>({q:"Why did Hubble's 1929 value of H₀ ≈ 500 give an age <b>younger than the Earth</b>?",
+   opts:shuffle(["His galaxy distances were badly underestimated, making the gradient too steep",
+     "The Universe really was that young","He used the wrong value for the speed of light",
+     "Galaxies were moving faster in the past"]),
+   ansText:"His galaxy distances were badly underestimated, making the gradient too steep",
+   why:"Too-small distances make v/d (the gradient) too big, so 1/H₀ comes out far too small. Better distances lowered H₀ to ~70 and raised the age to ~14 billion years."}),
+ ()=>({q:"How do you turn a redshift z into a recession velocity?",
+   opts:shuffle(["v = c × z","v = z / c","v = c / z","v = z²"]),
+   ansText:"v = c × z",
+   why:"For small redshifts z = Δλ/λ₀ = v/c, so v = c·z. This velocity is then plotted against distance."}),
+ ()=>({q:"A larger Hubble constant corresponds to a Universe that is…",
+   opts:shuffle(["younger","older","larger","hotter"]),
+   ansText:"younger",
+   why:"age ≈ 1/H₀, so a bigger H₀ gives a smaller age — a younger Universe."}),
+ ()=>({q:"Why do all the galaxies lie (roughly) on a single straight line through the origin?",
+   opts:shuffle(["They have all been receding for the same time since the Big Bang",
+     "They are all the same distance away","They all have the same mass","They are all in the Local Group"]),
+   ansText:"They have all been receding for the same time since the Big Bang",
+   why:"If everything started together and moved at constant speed, then d/v = 1/H₀ is the same for all — giving one straight line whose gradient is H₀."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ans(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+loadDS("hubble");update();
+</script>
+</body>
+</html>
