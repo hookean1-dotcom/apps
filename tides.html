@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tides — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0a0f1e;--panel:#131a2e;--panel2:#1a2440;--line:#28324f;
+  --ink:#e9edf8;--dim:#94a1c2;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--sea:#3fa9f5;--sea2:#1d6fc4;--moon:#d6d9e2;--sun:#ffcf4a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 700px at 70% -10%,#16213f,#0a0f1e 60%);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#16203c,#0e1730)}
+header h1{margin:0;font-size:20px;letter-spacing:.2px}
+header p{margin:4px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:288px minmax(0,1fr) 326px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#141c33,#111827);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;
+  box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.card h2{margin:0 0 11px;font-size:12.5px;text-transform:uppercase;letter-spacing:1.1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:13px 0 4px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--sea)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+  padding:9px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--sea);color:#04121f;border-color:var(--sea);font-weight:700}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.phaseBtns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px}
+.phaseBtns button{font-size:12.5px;padding:7px 4px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:5px 11px;font-size:12px;cursor:pointer}
+.chip.on{background:var(--sea);border-color:var(--sea);color:#04121f;font-weight:600}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:8px 14px;font-size:14px;border-radius:9px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:700}
+.hide{display:none!important}
+canvas{width:100%;display:block;border-radius:12px;background:#060b18}
+.cap{font-size:12.5px;color:var(--dim);margin-top:9px}
+.stat{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:11px;background:var(--panel2);
+  border:1px solid var(--line);margin-top:12px}
+.stat .big{font-size:15px;font-weight:700}
+.pill{display:inline-block;padding:3px 11px;border-radius:20px;font-size:12.5px;font-weight:700}
+.p-spring{background:rgba(93,220,154,.18);color:var(--green)}
+.p-neap{background:rgba(255,201,77,.18);color:var(--accent)}
+.p-mid{background:rgba(150,162,196,.18);color:var(--dim)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:6px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-weight:600}
+tr:last-child td{border-bottom:none}
+.barrow{display:flex;align-items:center;gap:9px;margin:8px 0}
+.barrow .nm{width:46px;font-size:12.5px}
+.barrow .bar{flex:1;height:12px;border-radius:6px;background:var(--panel2);overflow:hidden}
+.barrow .bar i{display:block;height:100%}
+.barrow .pc{width:40px;text-align:right;font-size:12px;color:var(--dim)}
+.note{font-size:12.5px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.q{background:var(--panel2);border-radius:9px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:8px;background:#080e1e;color:var(--dim)}
+details{margin-top:9px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tides</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec point 3.5 · how the Moon and Sun raise the tides, and why they spring up and fall back through the month</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>The Moon through the month</h2>
+    <label>Moon's position <span class="val" id="phaseOut">New Moon</span></label>
+    <input type="range" id="moon" min="0" max="359" value="0">
+    <div class="phaseBtns">
+      <button data-a="0">🌑 New (spring)</button>
+      <button data-a="90">🌓 1st qtr (neap)</button>
+      <button data-a="180">🌕 Full (spring)</button>
+      <button data-a="270">🌗 3rd qtr (neap)</button>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <button id="playMonth" class="primary">▶ Play the month</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Show on the diagram</h2>
+    <div class="chips" id="opts">
+      <div class="chip on" data-o="moonB">Moon's bulge</div>
+      <div class="chip on" data-o="sunB">Sun's bulge</div>
+      <div class="chip on" data-o="water">Combined water</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Sun vs Moon (3.5)</h2>
+    <div class="barrow"><div class="nm">Moon</div><div class="bar"><i style="width:100%;background:linear-gradient(90deg,#8fb8ff,#d6d9e2)"></i></div><div class="pc">100%</div></div>
+    <div class="barrow"><div class="nm">Sun</div><div class="bar"><i style="width:46%;background:linear-gradient(90deg,#ff9d1c,#ffcf4a)"></i></div><div class="pc">46%</div></div>
+    <div class="note">The Sun is 27 million times more massive than the Moon, yet its tide-raising force is only <b>46%</b> as strong — because the tidal force depends on <b>1 ÷ distance³</b>, and the Sun is about 390× further away. So the <b>Moon dominates</b> the tides.</div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" data-v="sn">Spring &amp; neap tides</div>
+      <div class="tab" data-v="day">Two tides a day</div>
+      <div class="tab" data-v="why">Why two bulges?</div>
+    </div>
+
+    <div id="vSn">
+      <canvas id="cSn"></canvas>
+      <div class="cap" id="snCap"></div>
+    </div>
+    <div id="vDay" class="hide">
+      <canvas id="cDay"></canvas>
+      <canvas id="cGraph" style="margin-top:10px"></canvas>
+      <div class="row" style="margin-top:10px">
+        <button id="playDay" class="primary">▶ Rotate the Earth (one day)</button>
+      </div>
+      <div class="cap" id="dayCap"></div>
+    </div>
+    <div id="vWhy" class="hide">
+      <canvas id="cWhy"></canvas>
+      <div class="cap">The Moon's gravity is <b>strongest on the near side</b>, weaker at the centre, and <b>weakest on the far side</b> (gravity falls off with distance). Compared with the pull on the Earth's centre, the near-side ocean is pulled <b>towards</b> the Moon and the far-side ocean is <b>left behind</b> — so a bulge of water forms on <b>both</b> sides. As the Earth spins under these two bulges, every coast gets <b>two high tides</b> each day.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 id="explainTitle">What's happening</h2>
+    <div id="statusBig" style="font-size:14.5px"></div>
+    <div class="stat">
+      <div>Tide type:</div><div class="big" id="tideType"></div>
+      <div style="margin-left:auto">Tidal range:</div><div class="big" id="tideRange"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>Tide facts</h2>
+    <table>
+      <tr><td>Moon phase</td><td id="rPhase">—</td></tr>
+      <tr><td>Sun–Earth–Moon</td><td id="rAlign">—</td></tr>
+      <tr><td>Tide type</td><td id="rType">—</td></tr>
+      <tr><td>High tides per day</td><td>2</td></tr>
+      <tr><td>Time between highs</td><td>≈ 12 h 25 min</td></tr>
+      <tr><td>Length of a tidal day</td><td>≈ 24 h 50 min</td></tr>
+    </table>
+    <div class="note">The extra 50 minutes is because the Moon moves on in its orbit while the Earth turns, so the Earth must spin a little further to catch up with it.</div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas (3.5)</h2>
+    <details><summary>What causes the tides?</summary><p>The <b>gravitational pull of the Moon</b> (helped by the Sun) on the Earth's oceans. Because gravity is stronger on the side nearest the Moon and weaker on the far side, the water is stretched into <b>two bulges</b> — one facing the Moon, one opposite.</p></details>
+    <details><summary>Why two high tides a day?</summary><p>There are two bulges, on opposite sides of the Earth. As the Earth rotates once, every place passes through <b>both</b> bulges — so it has two high tides and two low tides, about 12 h 25 min apart.</p></details>
+    <details><summary>Spring tides</summary><p>At <b>new Moon and full Moon</b> the Sun, Earth and Moon are in a line, so the Sun's and Moon's tides <b>add together</b>. This gives the highest highs and lowest lows — the <b>largest tidal range</b>. ("Spring" means to leap up — nothing to do with the season.)</p></details>
+    <details><summary>Neap tides</summary><p>At the <b>first and third quarter</b> the Sun and Moon are at <b>right angles</b>, so their tides partly cancel. This gives the <b>smallest tidal range</b> — modest highs and lows.</p></details>
+    <details><summary>Why the Moon beats the Sun</summary><p>Tidal force depends on <b>mass ÷ distance³</b>. The Sun's huge mass is outweighed by its huge distance, so its tidal effect is only about <b>46%</b> of the Moon's. The Moon is the main tide-raiser.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2, D2R=Math.PI/180;
+const A_MOON=1.0, A_SUN=0.46;                          // relative tidal strengths
+
+const S={moon:0, view:"sn", rot:0, opts:{moonB:1,sunB:1,water:1}, playMonth:false, playDay:false};
+
+/* ---------- combined tidal field (quadrupole sum) ---------- */
+function tide(){
+  const tm=S.moon*D2R;                                 // Moon angle from the Sun direction (Sun at 0)
+  const re=A_MOON*Math.cos(2*tm)+A_SUN, im=A_MOON*Math.sin(2*tm);
+  const R=Math.hypot(re,im);                           // 0.54 (neap) … 1.46 (spring)
+  const phi=Math.atan2(im,re)/2;                       // orientation of the combined bulge
+  return {R,phi,tm};
+}
+function phaseName(deg){deg=((deg%360)+360)%360;
+  if(deg<11||deg>349)return "New Moon"; if(deg<79)return "Waxing crescent";
+  if(deg<101)return "First quarter"; if(deg<169)return "Waxing gibbous";
+  if(deg<191)return "Full Moon"; if(deg<259)return "Waning gibbous";
+  if(deg<281)return "Third quarter"; return "Waning crescent";}
+function tideClass(R){return R>1.18?"spring":R<0.82?"neap":"mid";}
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+
+function drawEarthWater(c,cx,cy,rE,T,exagg){
+  // water blob r(α)=rW(1+amp cos2(α-φ))
+  const rW=rE*1.02, amp=exagg*(T.R/1.46);
+  c.beginPath();
+  for(let a=0;a<=TAU+0.02;a+=0.03){const r=rW*(1+amp*Math.cos(2*(a-T.phi)));
+    const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;a===0?c.moveTo(x,y):c.lineTo(x,y);}
+  c.closePath();
+  const wg=c.createRadialGradient(cx,cy,rE*0.5,cx,cy,rW*(1+amp));
+  wg.addColorStop(0,"#2b7fd0");wg.addColorStop(1,"#1a5aa8");
+  c.fillStyle=wg;c.fill();
+  c.strokeStyle="rgba(150,210,255,.5)";c.lineWidth=1;c.stroke();
+  // solid Earth (land)
+  const eg=c.createRadialGradient(cx-rE*0.3,cy-rE*0.3,rE*0.2,cx,cy,rE);
+  eg.addColorStop(0,"#3f7a4e");eg.addColorStop(1,"#26543a");
+  c.beginPath();c.arc(cx,cy,rE,0,TAU);c.fillStyle=eg;c.fill();
+  // a couple of land hints
+  c.fillStyle="rgba(70,120,80,.55)";
+  c.beginPath();c.ellipse(cx-rE*0.3,cy-rE*0.1,rE*0.28,rE*0.4,0.4,0,TAU);c.fill();
+  c.beginPath();c.ellipse(cx+rE*0.35,cy+rE*0.3,rE*0.22,rE*0.3,-0.3,0,TAU);c.fill();
+  return {rW,amp};
+}
+
+/* ---------- TAB 1: spring & neap ---------- */
+function drawSn(){
+  const {c,w,h}=fit(document.getElementById("cSn"),0.66);
+  c.clearRect(0,0,w,h);
+  const cx=w*0.44, cy=h*0.52, rE=Math.min(w,h)*0.15, T=tide();
+  // Sun at right edge
+  const sunX=w-26, sg=c.createRadialGradient(sunX,cy,4,sunX,cy,40);
+  sg.addColorStop(0,"#fff2c0");sg.addColorStop(.5,"#ffcf4a");sg.addColorStop(1,"rgba(255,157,28,0)");
+  c.fillStyle=sg;c.beginPath();c.arc(sunX,cy,40,0,TAU);c.fill();
+  c.fillStyle="#ffcf4a";c.beginPath();c.arc(sunX,cy,16,0,TAU);c.fill();
+  c.fillStyle="#ffd97a";c.font="12px system-ui";c.textAlign="center";c.fillText("to the Sun",sunX-4,cy+44);
+  // sun rays toward Earth
+  c.strokeStyle="rgba(255,207,74,.25)";c.lineWidth=1;
+  for(let k=-2;k<=2;k++){c.beginPath();c.moveTo(sunX-16,cy+k*14);c.lineTo(cx+rE,cy+k*14*0.4);c.stroke();}
+  // Sun bulge axis (horizontal) guide
+  if(S.opts.sunB){c.strokeStyle="rgba(255,207,74,.5)";c.setLineDash([5,4]);c.lineWidth=1.4;
+    c.beginPath();c.moveTo(cx-rE*2.1,cy);c.lineTo(cx+rE*2.1,cy);c.stroke();c.setLineDash([]);
+    c.fillStyle="rgba(255,207,74,.8)";c.font="11px system-ui";c.textAlign="left";
+    c.fillText("Sun's tidal pull",cx-rE*2.1,cy-6);}
+  // Moon orbit + Moon
+  const orb=Math.min(w,h)*0.40;
+  c.strokeStyle="rgba(214,217,226,.18)";c.lineWidth=1;c.beginPath();c.arc(cx,cy,orb,0,TAU);c.stroke();
+  const mx=cx+Math.cos(T.tm)*orb, my=cy+Math.sin(T.tm)*orb;
+  // Moon bulge axis (Earth–Moon line)
+  if(S.opts.moonB){c.strokeStyle="rgba(190,205,255,.55)";c.setLineDash([5,4]);c.lineWidth=1.4;
+    c.beginPath();c.moveTo(cx-Math.cos(T.tm)*rE*2.1,cy-Math.sin(T.tm)*rE*2.1);
+    c.lineTo(cx+Math.cos(T.tm)*rE*2.1,cy+Math.sin(T.tm)*rE*2.1);c.stroke();c.setLineDash([]);}
+  // Earth + water
+  if(S.opts.water) drawEarthWater(c,cx,cy,rE,T,0.34);
+  else {c.beginPath();c.arc(cx,cy,rE,0,TAU);c.fillStyle="#26543a";c.fill();}
+  // high-tide markers along the combined bulge
+  if(S.opts.water){[T.phi,T.phi+Math.PI].forEach(a=>{const rr=rE*1.02*(1+0.34*(T.R/1.46));
+    const x=cx+Math.cos(a)*rr,y=cy+Math.sin(a)*rr;
+    c.fillStyle="#8fd0ff";c.font="11px system-ui";c.textAlign="center";c.fillText("HIGH",x,y-6);});}
+  // Moon disc with phase
+  const mg=c.createRadialGradient(mx-4,my-4,1,mx,my,12);mg.addColorStop(0,"#f2f4fa");mg.addColorStop(1,"#c3c7d4");
+  c.beginPath();c.arc(mx,my,12,0,TAU);c.fillStyle=mg;c.fill();
+  // shade the unlit half (away from Sun)
+  c.save();c.beginPath();c.arc(mx,my,12,0,TAU);c.clip();
+  const toSun=Math.atan2(cy-my,sunX-mx);
+  c.beginPath();c.arc(mx,my,12,toSun+Math.PI/2,toSun-Math.PI/2);c.fillStyle="rgba(20,26,44,.72)";c.fill();c.restore();
+  c.fillStyle="#d6d9e2";c.font="12px system-ui";c.textAlign="center";c.fillText("Moon",mx,my-16);
+  txt(c,cx,cy+rE*0.02,"Earth","#eafff0",11);
+  // caption
+  const cls=tideClass(T.R);
+  document.getElementById("snCap").innerHTML= cls==="spring"
+    ? "<b>Spring tide.</b> The Sun and Moon are lined up, so their bulges point the same way and add together — the water is stretched most, giving the biggest tidal range."
+    : cls==="neap"
+    ? "<b>Neap tide.</b> The Sun and Moon are at right angles, so the Sun's bulge fills in the Moon's low-tide points — the water is stretched least, giving the smallest tidal range."
+    : "Between spring and neap: the Sun's and Moon's bulges are partly aligned. Drag the Moon to new/full for spring tides, or to a quarter for neap tides.";
+}
+
+/* ---------- TAB 2: two tides a day ---------- */
+function drawDay(){
+  const {c,w,h}=fit(document.getElementById("cDay"),0.5);
+  c.clearRect(0,0,w,h);
+  const cx=w*0.5, cy=h*0.55, rE=Math.min(w,h)*0.30, T=tide();
+  // Moon direction indicator
+  const md=T.phi; // bulge axis ~ direction of net pull
+  const info=drawEarthWater(c,cx,cy,rE,T,0.30);
+  // high/low labels
+  [[T.phi,"HIGH"],[T.phi+Math.PI,"HIGH"]].forEach(([a,l])=>{const rr=info.rW*(1+info.amp);
+    txt(c,cx+Math.cos(a)*(rr+12),cy+Math.sin(a)*(rr+12),l,"#8fd0ff",11);});
+  [[T.phi+Math.PI/2,"low"],[T.phi-Math.PI/2,"low"]].forEach(([a,l])=>{const rr=info.rW*(1-info.amp);
+    txt(c,cx+Math.cos(a)*(rr+12),cy+Math.sin(a)*(rr+12),l,"#6f86bd",11);});
+  // observer at rotation angle
+  const b=S.rot;
+  const rObs=info.rW*(1+info.amp*Math.cos(2*(b-T.phi)));
+  const ox=cx+Math.cos(b)*rObs, oy=cy+Math.sin(b)*rObs;
+  c.beginPath();c.arc(ox,oy,5,0,TAU);c.fillStyle="#ffc94d";c.fill();c.strokeStyle="#fff";c.lineWidth=1.4;c.stroke();
+  // spin arrow
+  c.strokeStyle="rgba(255,255,255,.4)";c.lineWidth=1.4;
+  c.beginPath();c.arc(cx,cy,rE*0.5,-0.4,0.9);c.stroke();
+  txt(c,cx,cy-rE*0.5-4,"Earth spins →","rgba(255,255,255,.6)",10);
+  txt(c,ox+10,oy,"you",'#ffe08a',11,"left");
+  document.getElementById("dayCap").innerHTML=
+    "The yellow dot is one coastline. As the Earth turns, it rides up over a bulge (<b>high tide</b>), down to a gap (<b>low tide</b>), up over the second bulge (<b>high tide</b>) and down again — <b>two highs and two lows</b> in a day.";
+  drawGraph(T);
+}
+function drawGraph(T){
+  const {c,w,h}=fit(document.getElementById("cGraph"),0.28);
+  c.clearRect(0,0,w,h);c.fillStyle="#060b18";c.fillRect(0,0,w,h);
+  const mL=34,mR=10,mT=10,mB=22,gw=w-mL-mR,gh=h-mT-mB;
+  const amp=0.30*(T.R/1.46);
+  const Y=v=>mT+gh/2-v/(0.30)*(gh/2*0.9);
+  // grid mid
+  c.strokeStyle="#1b2740";c.beginPath();c.moveTo(mL,Y(0));c.lineTo(w-mR,Y(0));c.stroke();
+  c.fillStyle="#6f86bd";c.font="10px system-ui";c.textAlign="right";
+  c.fillText("high",mL-5,Y(0.26));c.fillText("mean",mL-5,Y(0)+3);c.fillText("low",mL-5,Y(-0.26));
+  // curve: height = amp*cos(2*(β - φ)) over one tidal day (β 0..2π), Earth rotates
+  c.beginPath();
+  for(let x=0;x<=gw;x++){const beta=x/gw*TAU;const v=amp*Math.cos(2*(beta-T.phi));
+    const y=Y(v);x?c.lineTo(mL+x,y):c.moveTo(mL+x,y);}
+  c.strokeStyle="#3fa9f5";c.lineWidth=2.4;c.stroke();
+  // marker at current rotation
+  const bx=mL+((S.rot%TAU)/TAU)*gw, bv=amp*Math.cos(2*(S.rot-T.phi));
+  c.beginPath();c.arc(bx,Y(bv),4,0,TAU);c.fillStyle="#ffc94d";c.fill();
+  c.fillStyle="#7a86a8";c.font="10px system-ui";c.textAlign="center";
+  ["0 h","6 h","12 h","18 h","24 h"].forEach((t,i)=>c.fillText(t,mL+gw*i/4,h-6));
+  c.textAlign="left";c.fillStyle="#5d6b91";c.fillText("tide height over one tidal day (24 h 50 min)",mL+2,mT+9);
+}
+
+/* ---------- TAB 3: why two bulges ---------- */
+function drawWhy(){
+  const {c,w,h}=fit(document.getElementById("cWhy"),0.58);
+  c.clearRect(0,0,w,h);c.fillStyle="#060b18";c.fillRect(0,0,w,h);
+  const cx=w*0.40, cy=h*0.5, rE=Math.min(w,h)*0.26;
+  // Moon on the right
+  const moonX=w-40;
+  const mg=c.createRadialGradient(moonX-4,cy-4,1,moonX,cy,18);mg.addColorStop(0,"#f2f4fa");mg.addColorStop(1,"#c3c7d4");
+  c.beginPath();c.arc(moonX,cy,18,0,TAU);c.fillStyle=mg;c.fill();
+  txt(c,moonX,cy-24,"Moon","#d6d9e2",12);
+  // Earth + water (bulge along x)
+  drawEarthWater(c,cx,cy,rE,{R:1.2,phi:0},0.30);
+  txt(c,cx,cy,"Earth","#eafff0",12);
+  // force arrows: near, centre, far
+  const near={x:cx+rE,y:cy}, cen={x:cx,y:cy}, far={x:cx-rE,y:cy};
+  arrow(c,near.x,near.y,near.x+52,near.y,"#ff7b7b",2.4);
+  arrow(c,cen.x,cen.y,cen.x+36,cen.y,"#ffc94d",2.2);
+  arrow(c,far.x,far.y,far.x+22,far.y,"#5ddc9a",2);
+  txt(c,near.x+30,near.y-10,"strong pull","#ff7b7b",11);
+  txt(c,cen.x+40,cen.y-10,"medium","#ffc94d",11,"left");
+  txt(c,far.x+2,far.y+22,"weak pull","#5ddc9a",11,"left");
+  // explanation boxes
+  txt(c,cx+rE+30,cy+rE+18,"Near-side water pulled TOWARDS the Moon → bulge","#ffb3b3",11,"center");
+  txt(c,cx-rE,cy-rE-14,"Far-side water 'left behind' (pulled less than the Earth) → bulge","#b6f0cf",11,"center");
+  txt(c,w/2,20,"The difference in the Moon's pull across the Earth stretches the oceans into TWO bulges","#c7d2ee",13);
+}
+
+/* ---------- small helpers ---------- */
+function txt(c,x,y,t,col,sz,al){c.fillStyle=col||"#c7d2ee";c.font="600 "+(sz||12)+"px system-ui";
+  c.textAlign=al||"center";c.fillText(t,x,y);c.textAlign="left";}
+function arrow(c,x1,y1,x2,y2,col,wd){c.strokeStyle=col;c.fillStyle=col;c.lineWidth=wd||1.6;
+  c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();const a=Math.atan2(y2-y1,x2-x1),s=7;
+  c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-s*Math.cos(a-0.4),y2-s*Math.sin(a-0.4));
+  c.lineTo(x2-s*Math.cos(a+0.4),y2-s*Math.sin(a+0.4));c.closePath();c.fill();}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  const T=tide(), cls=tideClass(T.R), ph=phaseName(S.moon);
+  $("phaseOut").textContent=ph;
+  $("rPhase").textContent=ph;
+  const elong=((S.moon%180)+180)%180;
+  $("rAlign").textContent=(cls==="spring")?"in a line":(cls==="neap")?"right angle":"in between";
+  const label=cls==="spring"?"SPRING":cls==="neap"?"NEAP":"in between";
+  const pill=cls==="spring"?"p-spring":cls==="neap"?"p-neap":"p-mid";
+  $("rType").innerHTML=`<span class="pill ${pill}">${label}</span>`;
+  $("tideType").innerHTML=`<span class="pill ${pill}">${label}</span>`;
+  // relative range %
+  const rangePc=Math.round((T.R-0.54)/(1.46-0.54)*100);
+  $("tideRange").textContent=cls==="spring"?"largest":cls==="neap"?"smallest":(rangePc+"%");
+  statusText(cls,T);
+  if(S.view==="sn")drawSn(); else if(S.view==="day")drawDay(); else drawWhy();
+}
+function statusText(cls,T){
+  let t;
+  if(cls==="spring") t="The Sun, Earth and Moon are in a straight line (a new or full Moon). The Sun's tidal bulge lines up with the Moon's, so they <b>add together</b> — giving <b>spring tides</b>: the highest high tides and lowest low tides, and the largest tidal range.";
+  else if(cls==="neap") t="The Moon is at a quarter phase, so the Sun and Moon pull at <b>right angles</b>. The Sun's bulge partly fills in the Moon's low points, so they <b>work against each other</b> — giving <b>neap tides</b>: the smallest tidal range.";
+  else t="The Moon is between the aligned and right-angle positions, so the tides are between spring and neap. Slide the Moon to a new/full Moon for spring tides, or a quarter for neap tides.";
+  $("statusBig").innerHTML=t;
+}
+
+/* ---------- controls ---------- */
+$("moon").oninput=e=>{S.moon=+e.target.value;update();};
+document.querySelectorAll(".phaseBtns button").forEach(b=>b.onclick=()=>{S.moon=+b.dataset.a;$("moon").value=S.moon;update();});
+$("opts").onclick=e=>{const ch=e.target.closest(".chip");if(!ch)return;
+  ch.classList.toggle("on");S.opts[ch.dataset.o]=ch.classList.contains("on")?1:0;update();};
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  S.view=t.dataset.v;
+  $("vSn").classList.toggle("hide",S.view!=="sn");
+  $("vDay").classList.toggle("hide",S.view!=="day");
+  $("vWhy").classList.toggle("hide",S.view!=="why");update();});
+
+let animM=null;
+$("playMonth").onclick=()=>{S.playMonth=!S.playMonth;$("playMonth").textContent=S.playMonth?"❚❚ Pause":"▶ Play the month";
+  if(S.playMonth){let last=performance.now();
+    const step=now=>{if(!S.playMonth)return;S.moon=(S.moon+(now-last)/1000*45)%360;last=now;
+      $("moon").value=S.moon;update();animM=requestAnimationFrame(step);};animM=requestAnimationFrame(step);}
+  else cancelAnimationFrame(animM);};
+let animD=null;
+$("playDay").onclick=()=>{S.playDay=!S.playDay;$("playDay").textContent=S.playDay?"❚❚ Pause":"▶ Rotate the Earth (one day)";
+  if(S.playDay){let last=performance.now();
+    const step=now=>{if(!S.playDay)return;S.rot=(S.rot+(now-last)/1000*1.1)%TAU;last=now;
+      if(S.view==="day")drawDay();animD=requestAnimationFrame(step);};animD=requestAnimationFrame(step);}
+  else cancelAnimationFrame(animD);};
+window.addEventListener("resize",update);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"What is the main cause of the tides?",
+   opts:shuffle(["The gravitational pull of the Moon on the oceans","The Earth's rotation alone",
+     "The wind","The Sun's heat"]),ansText:"The gravitational pull of the Moon on the oceans",
+   why:"The Moon's gravity (helped by the Sun) stretches the oceans into two bulges. The Sun adds to this but the Moon is the main tide-raiser."}),
+ ()=>({q:"Why are there <b>two</b> high tides each day?",
+   opts:shuffle(["There are two bulges, and the Earth rotates through both",
+     "The Moon orbits twice a day","The Sun and Moon each make one","The tide bounces off the sea bed"]),
+   ansText:"There are two bulges, and the Earth rotates through both",
+   why:"A bulge forms on the near side and the far side. As the Earth spins once, every coast passes through both bulges — two high tides (and two lows)."}),
+ ()=>({q:"<b>Spring tides</b> (the largest range) happen at which Moon phases?",
+   opts:shuffle(["New Moon and full Moon","First and third quarter only","Full Moon only","New Moon only"]),
+   ansText:"New Moon and full Moon",
+   why:"At new and full Moon the Sun, Earth and Moon are in a line, so the Sun's and Moon's tides add together — the biggest tidal range."}),
+ ()=>({q:"<b>Neap tides</b> (the smallest range) happen when the Moon is at…",
+   opts:shuffle(["first or third quarter","new Moon","full Moon","perigee"]),
+   ansText:"first or third quarter",
+   why:"At the quarters the Sun and Moon pull at right angles, so their tides partly cancel — giving the smallest tidal range."}),
+ ()=>({q:"The Sun is far more massive than the Moon, so why is its tidal effect smaller?",
+   opts:shuffle(["Tidal force depends on 1/distance³, and the Sun is much further away",
+     "The Sun has no gravity","The Sun is not dense enough","The Sun only pulls in summer"]),
+   ansText:"Tidal force depends on 1/distance³, and the Sun is much further away",
+   why:"Tidal (stretching) force falls off as 1/distance³. The Sun's great distance outweighs its mass, so its tidal effect is only about 46% of the Moon's."}),
+ ()=>({q:"What is meant by the <b>tidal range</b>?",
+   opts:shuffle(["The difference in height between high and low water","The distance the tide travels up a beach",
+     "The time between two high tides","The speed of the incoming tide"]),
+   ansText:"The difference in height between high and low water",
+   why:"The tidal range is the vertical difference between high and low tide. It is largest at spring tides and smallest at neap tides."}),
+ ()=>({q:"About how long is it between one high tide and the next?",
+   opts:shuffle(["About 12 hours 25 minutes","Exactly 6 hours","About 24 hours","About 1 hour"]),
+   ansText:"About 12 hours 25 minutes",
+   why:"Two high tides occur in a tidal day of 24 h 50 min, so they are about 12 h 25 min apart. The extra time is because the Moon moves on in its orbit."}),
+ ()=>({q:"Does the word 'spring' in spring tide refer to the season?",
+   opts:shuffle(["No — it means the water 'springs up', and happens all year",
+     "Yes — spring tides only happen in spring","Yes — they need warm water","No — it refers to a mechanical spring"]),
+   ansText:"No — it means the water 'springs up', and happens all year",
+   why:"Spring tides occur twice a month all year round, at every new and full Moon. 'Spring' here means to leap or rise up."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ans(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>
