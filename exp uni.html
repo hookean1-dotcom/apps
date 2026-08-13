@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en" data-level="gcse">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Expanding Universe — Big Bang vs Steady State | Interactive Simulation</title>
+<style>
+  :root{
+    --bg:#0d0d0d;
+    --surface:#1a1a19;
+    --surface-2:#212120;
+    --surface-3:#2a2a28;
+    --line:#2c2c2a;
+    --line-2:#383835;
+    --ink:#ffffff;
+    --ink-2:#c3c2b7;
+    --muted:#898781;
+    --blue:#3987e5;
+    --blue-dim:#1c5cab;
+    --orange:#d95926;
+    --orange-dim:#8f3a19;
+    --aqua:#199e70;
+    --yellow:#c98500;
+    --red:#e66767;
+    --violet:#9085e9;
+    --good:#0ca30c;
+    --warn:#fab219;
+    --crit:#d03b3b;
+    --radius:10px;
+    --sans:system-ui,-apple-system,"Segoe UI",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth; scroll-padding-top:112px}
+  body{
+    margin:0; background:var(--bg); color:var(--ink-2);
+    font-family:var(--sans); font-size:15.5px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{color:var(--ink); line-height:1.25; margin:0 0 .5em; font-weight:640; letter-spacing:-0.01em}
+  h1{font-size:1.72rem}
+  h2{font-size:1.30rem}
+  h3{font-size:1.02rem}
+  h4{font-size:.92rem}
+  p{margin:0 0 .85em}
+  a{color:var(--blue)}
+  strong{color:var(--ink); font-weight:620}
+  em.term{font-style:normal; color:var(--ink); border-bottom:1px dotted var(--muted); cursor:help}
+  code,.num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+  .wrap{max-width:1220px; margin:0 auto; padding:0 22px}
+
+  /* ---------- header ---------- */
+  header.top{
+    position:sticky; top:0; z-index:60;
+    background:rgba(13,13,13,.93); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar{display:flex; align-items:center; gap:18px; padding:11px 0 10px}
+  .brand{display:flex; align-items:baseline; gap:11px; flex:1; min-width:0}
+  .brand .t{font-weight:660; color:var(--ink); font-size:1.02rem; white-space:nowrap}
+  .brand .s{font-size:.79rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  nav.tabs{display:flex; gap:2px; overflow-x:auto; padding:0 0 8px; scrollbar-width:none}
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs a{
+    color:var(--ink-2); text-decoration:none; font-size:.83rem; font-weight:540;
+    padding:6px 11px; border-radius:7px; white-space:nowrap; border:1px solid transparent;
+  }
+  nav.tabs a:hover{background:var(--surface-2); color:var(--ink)}
+  nav.tabs a.active{background:var(--surface-3); color:var(--ink); border-color:var(--line-2)}
+
+  /* ---------- controls ---------- */
+  .seg{display:inline-flex; background:var(--surface-2); border:1px solid var(--line-2); border-radius:8px; padding:2px; gap:2px}
+  .seg button{
+    background:none; border:0; color:var(--ink-2); font:inherit; font-size:.8rem; font-weight:560;
+    padding:5px 11px; border-radius:6px; cursor:pointer; white-space:nowrap;
+  }
+  .seg button:hover{color:var(--ink)}
+  .seg button[aria-pressed="true"]{background:var(--surface-3); color:var(--ink); box-shadow:0 0 0 1px var(--line-2) inset}
+  .seg.bb button[aria-pressed="true"][data-v="bigbang"]{background:var(--blue-dim); color:#fff; box-shadow:none}
+  .seg.bb button[aria-pressed="true"][data-v="steady"]{background:var(--orange-dim); color:#fff; box-shadow:none}
+
+  .btn{
+    background:var(--surface-2); border:1px solid var(--line-2); color:var(--ink);
+    font:inherit; font-size:.8rem; font-weight:560; padding:6px 13px; border-radius:8px; cursor:pointer;
+    display:inline-flex; align-items:center; gap:7px;
+  }
+  .btn:hover{background:var(--surface-3)}
+  .btn.primary{background:var(--blue); border-color:var(--blue); color:#fff}
+  .btn.primary:hover{filter:brightness(1.1)}
+  .btn.ghost{background:transparent}
+  .btn:disabled{opacity:.4; cursor:not-allowed}
+
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:100%; height:22px; background:transparent; cursor:pointer; margin:0;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:4px; background:var(--line-2); border-radius:2px}
+  input[type=range]::-moz-range-track{height:4px; background:var(--line-2); border-radius:2px}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:15px; height:15px; border-radius:50%; background:var(--ink);
+    margin-top:-5.5px; border:0; box-shadow:0 0 0 3px rgba(13,13,13,.9);
+  }
+  input[type=range]::-moz-range-thumb{width:15px; height:15px; border-radius:50%; background:var(--ink); border:0}
+
+  /* ---------- layout blocks ---------- */
+  section.band{padding:44px 0 8px; border-top:1px solid var(--line)}
+  section.band:first-of-type{border-top:0}
+  .eyebrow{
+    font-size:.71rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+    font-weight:660; margin-bottom:9px;
+  }
+  .lead{font-size:1.02rem; color:var(--ink-2); max-width:72ch}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:17px 19px}
+  .card h3{margin-bottom:.35em}
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:repeat(3,1fr)}
+
+  /* ---------- simulator ---------- */
+  .sim{
+    display:grid; grid-template-columns:1fr 292px; gap:14px; align-items:start;
+  }
+  .stage{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  }
+  .stage-head{
+    display:flex; align-items:center; gap:10px; padding:9px 13px; border-bottom:1px solid var(--line);
+    flex-wrap:wrap;
+  }
+  .stage-head .lbl{font-size:.78rem; color:var(--muted); font-weight:560}
+  .canvas-row{display:grid; grid-template-columns:minmax(0,1fr); gap:1px; background:var(--line)}
+  .canvas-row.two{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .cv-hold{position:relative; background:#000; min-width:0; overflow:hidden}
+  .cv-hold canvas{display:block; width:100%; height:auto; touch-action:none}
+  .cv-tag{
+    position:absolute; top:9px; left:10px; font-size:.72rem; font-weight:660; letter-spacing:.06em;
+    text-transform:uppercase; padding:3px 8px; border-radius:5px; pointer-events:none;
+  }
+  .cv-tag.bb{background:rgba(57,135,229,.16); color:#9ec5f4; box-shadow:0 0 0 1px rgba(57,135,229,.35) inset}
+  .cv-tag.ss{background:rgba(217,89,38,.16); color:#f0a883; box-shadow:0 0 0 1px rgba(217,89,38,.4) inset}
+  .cv-note{
+    position:absolute; bottom:8px; left:10px; right:10px; font-size:.73rem; color:var(--muted);
+    pointer-events:none; text-align:center;
+  }
+  .timebar{padding:12px 15px 14px; border-top:1px solid var(--line); background:var(--surface)}
+  .timebar .tt{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:2px}
+  .timebar .tt .k{font-size:.78rem; color:var(--muted); font-weight:560}
+  .timebar .tt .v{font-size:.86rem; color:var(--ink); font-family:var(--mono); font-variant-numeric:tabular-nums}
+  .ticks{display:flex; justify-content:space-between; font-size:.68rem; color:var(--muted); margin-top:-2px}
+
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:14px 15px; margin-bottom:12px}
+  .panel > .ph{font-size:.71rem; letter-spacing:.11em; text-transform:uppercase; color:var(--muted); font-weight:660; margin-bottom:9px}
+  .ctl{margin-bottom:13px}
+  .ctl:last-child{margin-bottom:0}
+  .ctl > label{display:block; font-size:.78rem; color:var(--ink-2); font-weight:560; margin-bottom:5px}
+  .hint{font-size:.75rem; color:var(--muted); line-height:1.45; margin-top:5px}
+
+  .readouts{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  .ro{background:var(--surface-2); padding:8px 10px}
+  .ro .k{font-size:.68rem; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; font-weight:600}
+  .ro .v{font-family:var(--mono); font-size:.98rem; color:var(--ink); font-variant-numeric:tabular-nums; margin-top:1px}
+  .ro .v small{font-size:.7rem; color:var(--muted); font-family:var(--sans)}
+  .ro.wide{grid-column:1/-1}
+
+  .epoch{
+    display:inline-flex; align-items:center; gap:6px; font-size:.75rem; font-weight:600;
+    padding:3px 9px; border-radius:20px; background:var(--surface-3); color:var(--ink-2);
+  }
+  .epoch .dot{width:7px; height:7px; border-radius:50%; background:var(--muted)}
+
+  /* ---------- level gating ---------- */
+  .alevel{display:none}
+  html[data-level="alevel"] .alevel{display:block}
+  html[data-level="alevel"] tr.alevel{display:table-row}
+  html[data-level="alevel"] span.alevel,html[data-level="alevel"] .alevel.inl{display:inline}
+  html[data-level="alevel"] .alevel.gridded{display:grid}
+  html[data-level="alevel"] .alevel.flexed{display:flex}
+  .gcse-only{display:block}
+  html[data-level="alevel"] .gcse-only{display:none}
+  .badge-a{
+    font-size:.63rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+    color:var(--violet); border:1px solid rgba(144,133,233,.4); border-radius:4px; padding:1px 5px;
+    vertical-align:middle; margin-left:7px;
+  }
+
+  .eq{
+    background:var(--surface-2); border:1px solid var(--line-2); border-left:3px solid var(--violet);
+    border-radius:6px; padding:10px 13px; margin:10px 0; font-family:var(--mono); font-size:.88rem;
+    color:var(--ink); overflow-x:auto;
+  }
+  .eq .why{display:block; font-family:var(--sans); font-size:.76rem; color:var(--muted); margin-top:5px}
+
+  .callout{
+    border-left:3px solid var(--blue); background:rgba(57,135,229,.07); border-radius:0 8px 8px 0;
+    padding:11px 15px; margin:14px 0; font-size:.9rem;
+  }
+  .callout.warn{border-color:var(--warn); background:rgba(250,178,25,.07)}
+  .callout.key{border-color:var(--aqua); background:rgba(25,158,112,.08)}
+  .callout .ct{display:block; font-weight:660; color:var(--ink); margin-bottom:3px; font-size:.86rem}
+
+  table.cmp{width:100%; border-collapse:collapse; font-size:.87rem; margin-top:6px}
+  table.cmp th,table.cmp td{text-align:left; padding:9px 11px; border-bottom:1px solid var(--line); vertical-align:top}
+  table.cmp thead th{font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:660; border-bottom-color:var(--line-2)}
+  table.cmp tbody th{font-weight:560; color:var(--ink); width:26%}
+  table.cmp td.bb{color:var(--ink-2); background:rgba(57,135,229,.05)}
+  table.cmp td.ss{color:var(--ink-2); background:rgba(217,89,38,.05)}
+  .verdict{display:inline-flex; align-items:center; gap:5px; font-weight:620; font-size:.8rem}
+  .verdict.ok{color:var(--good)}
+  .verdict.no{color:var(--crit)}
+
+  ul.tight{margin:.2em 0 .9em; padding-left:1.15em}
+  ul.tight li{margin-bottom:.32em}
+  ul.tight li::marker{color:var(--muted)}
+
+  /* ---------- misconception cards ---------- */
+  .mis{border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); overflow:hidden}
+  .mis .wrong{padding:12px 15px 11px; border-bottom:1px solid var(--line); background:rgba(208,59,59,.06)}
+  .mis .wrong .tag{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--crit)}
+  .mis .wrong p{margin:3px 0 0; color:var(--ink); font-weight:560}
+  .mis .right{padding:12px 15px 13px}
+  .mis .right .tag{font-size:.66rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--good)}
+  .mis .right p{margin:3px 0 0; font-size:.88rem}
+
+  /* ---------- spectrum ---------- */
+  .spec-row{display:grid; grid-template-columns:96px 1fr; gap:12px; align-items:center; margin-bottom:9px}
+  .spec-row .sl{font-size:.78rem; color:var(--ink-2); text-align:right; font-weight:560}
+  .spec-row .sl small{display:block; color:var(--muted); font-weight:400; font-size:.72rem}
+
+  /* ---------- tour ---------- */
+  .tour{
+    position:fixed; right:18px; bottom:18px; width:352px; max-width:calc(100vw - 28px); z-index:80;
+    background:var(--surface-2); border:1px solid var(--line-2); border-radius:12px;
+    box-shadow:0 16px 44px rgba(0,0,0,.62); padding:15px 16px 13px; display:none;
+  }
+  .tour.on{display:block}
+  .tour .th{display:flex; align-items:center; justify-content:space-between; margin-bottom:7px}
+  .tour .step{font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--violet); font-weight:700}
+  .tour h4{margin:0 0 5px; font-size:.98rem}
+  .tour p{font-size:.85rem; margin:0 0 11px; color:var(--ink-2)}
+  .tour .tf{display:flex; gap:8px; align-items:center}
+  .tour .prog{flex:1; height:3px; background:var(--line-2); border-radius:2px; overflow:hidden}
+  .tour .prog i{display:block; height:100%; background:var(--violet); transition:width .25s}
+  .x{background:none; border:0; color:var(--muted); cursor:pointer; font-size:1.05rem; line-height:1; padding:2px 4px}
+  .x:hover{color:var(--ink)}
+  .flash{animation:flash 1.5s ease-out 1}
+  @keyframes flash{0%,100%{box-shadow:0 0 0 0 rgba(144,133,233,0)} 25%{box-shadow:0 0 0 3px rgba(144,133,233,.55)}}
+
+  /* ---------- quiz ---------- */
+  .q{border:1px solid var(--line); border-radius:var(--radius); background:var(--surface); padding:14px 16px; margin-bottom:11px}
+  .q .qt{color:var(--ink); font-weight:560; margin-bottom:9px; font-size:.93rem}
+  .opts{display:grid; gap:6px}
+  .opt{
+    text-align:left; background:var(--surface-2); border:1px solid var(--line-2); color:var(--ink-2);
+    font:inherit; font-size:.86rem; padding:8px 12px; border-radius:7px; cursor:pointer;
+  }
+  .opt:hover{background:var(--surface-3); color:var(--ink)}
+  .opt.right{border-color:var(--good); background:rgba(12,163,12,.13); color:var(--ink)}
+  .opt.wrong{border-color:var(--crit); background:rgba(208,59,59,.12)}
+  .expl{font-size:.83rem; color:var(--muted); margin-top:9px; display:none}
+  .expl.on{display:block}
+
+  footer{border-top:1px solid var(--line); margin-top:46px; padding:22px 0 40px; font-size:.79rem; color:var(--muted)}
+  footer p{margin:0 0 .5em}
+
+  .legend-row{display:flex; flex-wrap:wrap; gap:14px; font-size:.75rem; color:var(--muted); margin-top:9px}
+  .lg{display:inline-flex; align-items:center; gap:6px}
+  .lg i{width:10px; height:10px; border-radius:50%; display:inline-block}
+
+  @media (max-width:1040px){
+    .sim{grid-template-columns:1fr}
+    .side{display:grid; grid-template-columns:1fr 1fr; gap:12px; align-items:start}
+    .side .panel{margin-bottom:0}
+  }
+  @media (max-width:760px){
+    .g2,.g3{grid-template-columns:1fr}
+    .side{grid-template-columns:1fr}
+    .canvas-row.two{grid-template-columns:1fr}
+    .tour{right:10px; left:10px; width:auto; bottom:10px}
+    h1{font-size:1.42rem}
+  }
+  @media print{
+    .tour,nav.tabs,.timebar input{display:none}
+  }
+</style>
+</head>
+<body data-palette="#3987e5,#d95926,#199e70">
+<header class="top">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <span class="t">The Expanding Universe</span>
+        <span class="s">Big Bang vs Steady State — an interactive model for GCSE &amp; A-Level</span>
+      </div>
+      <div class="seg" role="group" aria-label="Difficulty level">
+        <button data-level-btn="gcse" aria-pressed="true">GCSE</button>
+        <button data-level-btn="alevel" aria-pressed="false">A-Level</button>
+      </div>
+      <button class="btn primary" id="tourStart">Guided tour</button>
+    </div>
+    <nav class="tabs" id="tabs">
+      <a href="#sim" class="active">1 · The simulator</a>
+      <a href="#nocentre">2 · Where is the centre?</a>
+      <a href="#hubble">3 · Redshift &amp; Hubble's law</a>
+      <a href="#evidence">4 · The deciding evidence</a>
+      <a href="#balloon">5 · Beyond the balloon</a>
+      <a href="#misconceptions">6 · Misconceptions</a>
+      <a href="#compare">7 · Side-by-side summary</a>
+      <a href="#check">8 · Check yourself</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ============================= 1. SIMULATOR ============================= -->
+<section class="band" id="sim">
+  <div class="eyebrow">Part 1 — The model</div>
+  <h1>Two universes, one slider</h1>
+  <p class="lead">
+    Both of these universes are <strong>expanding</strong>. Both obey Hubble's law. Only one of them had a
+    beginning. Drag the time slider and watch what actually changes — and what stubbornly doesn't.
+  </p>
+
+  <div class="sim" style="margin-top:18px">
+    <div class="stage" id="stage">
+      <div class="stage-head">
+        <span class="lbl">Model</span>
+        <div class="seg bb" role="group" aria-label="Cosmological model">
+          <button data-model="bigbang" data-v="bigbang" aria-pressed="true">Big Bang</button>
+          <button data-model="steady" data-v="steady" aria-pressed="false">Steady State</button>
+          <button data-model="compare" aria-pressed="false">Compare both</button>
+        </div>
+        <span style="flex:1"></span>
+        <span class="epoch" id="epochChip"><span class="dot"></span><span id="epochTxt">Galaxies</span></span>
+      </div>
+
+      <div class="canvas-row" id="canvasRow">
+        <div class="cv-hold" id="holdA">
+          <canvas id="cvA" width="1120" height="700" aria-label="Simulation of an expanding universe"></canvas>
+          <div class="cv-tag bb" id="tagA">Big Bang</div>
+          <div class="cv-note" id="noteA">Click any galaxy to move your telescope there</div>
+        </div>
+        <div class="cv-hold" id="holdB" style="display:none">
+          <canvas id="cvB" width="1120" height="700" aria-label="Simulation of a Steady State universe"></canvas>
+          <div class="cv-tag ss">Steady State</div>
+          <div class="cv-note">Density never changes — new matter fills every gap</div>
+        </div>
+      </div>
+
+      <div class="timebar">
+        <div class="tt">
+          <span class="k">Cosmic time</span>
+          <span class="v" id="timeVal">13.80 billion years</span>
+        </div>
+        <input type="range" id="timeSlider" min="0" max="1000" value="1000" step="1" aria-label="Cosmic time">
+        <div class="ticks">
+          <span id="tickL">Big Bang</span><span>380 000 yr</span><span>1 bn</span><span>Now</span><span id="tickR">Future</span>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:11px; flex-wrap:wrap">
+          <button class="btn" id="playBtn">▶ Play</button>
+          <button class="btn ghost" id="nowBtn">Jump to today</button>
+          <button class="btn ghost" id="rewindBtn">Rewind to the start</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="panel">
+        <div class="ph">Your point of view</div>
+        <div class="ctl">
+          <label>Ruler used to draw the picture</label>
+          <div class="seg" style="display:flex" role="group">
+            <button data-frame="proper" aria-pressed="true" style="flex:1">Fixed ruler</button>
+            <button data-frame="comoving" aria-pressed="false" style="flex:1">Ride with space</button>
+          </div>
+          <div class="hint" id="frameHint">
+            <strong>Fixed ruler:</strong> metres stay metres. Galaxies drift apart and fly off the edge.
+          </div>
+        </div>
+        <div class="ctl">
+          <label>Home galaxy (the observer)</label>
+          <button class="btn" id="obsBtn" style="width:100%; justify-content:center">Move to a random galaxy</button>
+          <div class="hint">Every galaxy sees the same thing. There is no special one.</div>
+        </div>
+        <div class="ctl">
+          <label>Show</label>
+          <div style="display:grid; gap:6px">
+            <label style="font-weight:400; font-size:.82rem; display:flex; gap:8px; align-items:center; cursor:pointer">
+              <input type="checkbox" id="chkGrid" checked> Grid of space itself</label>
+            <label style="font-weight:400; font-size:.82rem; display:flex; gap:8px; align-items:center; cursor:pointer">
+              <input type="checkbox" id="chkArrows"> Recession arrows (v ∝ d)</label>
+            <label style="font-weight:400; font-size:.82rem; display:flex; gap:8px; align-items:center; cursor:pointer">
+              <input type="checkbox" id="chkGlow" checked> Background radiation glow</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">Live readings</div>
+        <div class="readouts">
+          <div class="ro"><div class="k">Scale factor a</div><div class="v" id="roA">1.00</div></div>
+          <div class="ro"><div class="k">Redshift z</div><div class="v" id="roZ">0.00</div></div>
+          <div class="ro"><div class="k">Density</div><div class="v" id="roRho">1.0 <small>× today</small></div></div>
+          <div class="ro"><div class="k">Temperature</div><div class="v" id="roT">2.7 <small>K</small></div></div>
+          <div class="ro wide"><div class="k" id="roXk">Galaxies in the box</div><div class="v" id="roX">90</div></div>
+        </div>
+        <div class="hint" id="roNote">
+          Density is quoted relative to today's average. In the Big Bang model it scales as 1/a³.
+        </div>
+      </div>
+
+      <div class="panel alevel">
+        <div class="ph">A-Level detail</div>
+        <div class="eq" id="aEq">a(t) ∝ t<sup>2/3</sup> &nbsp;·&nbsp; ρ ∝ a<sup>−3</sup> &nbsp;·&nbsp; T ∝ a<sup>−1</sup>
+          <span class="why">Flat, matter-dominated universe. Distances scale as a(t); a(now) = 1 by definition.</span></div>
+        <div class="eq">1 + z = a(now) / a(emitted) = λ<sub>obs</sub> / λ<sub>emitted</sub>
+          <span class="why">Cosmological redshift is space stretching the wave in flight — not a Doppler shift through space.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card">
+      <h3>What to notice in the Big Bang model</h3>
+      <ul class="tight">
+        <li>Rewind and everything <strong>converges</strong> — but it converges <em>everywhere at once</em>, not onto one point on the screen.</li>
+        <li>The galaxy count is fixed. They only get further apart, so density falls.</li>
+        <li>Below a ≈ 1/1100 the screen turns to glowing fog: the universe was an opaque plasma.</li>
+        <li>Galaxies age together — the early universe looks blue, small and clumpy.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>What to notice in the Steady State model</h3>
+      <ul class="tight">
+        <li>It expands too — the galaxies still separate, and you still measure Hubble's law.</li>
+        <li>But new matter is <strong>continuously created</strong> in the gaps, so the density readout never moves.</li>
+        <li>There is no first moment. Slide as far back as you like; the picture is unchanged.</li>
+        <li>There is always a mixture of young and old galaxies — the universe never "looked different".</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Why this matters</h3>
+      <p style="font-size:.9rem">
+        Expansion alone <strong>does not prove the Big Bang</strong>. Hoyle, Bondi and Gold accepted Hubble's
+        observations completely and still built a universe with no beginning.
+      </p>
+      <p style="font-size:.9rem; margin-bottom:0">
+        To choose between them you need evidence about the <em>past</em>: the microwave background, the amount of
+        helium, and the fact that distant galaxies genuinely look different from nearby ones.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= 2. NO CENTRE ============================= -->
+<section class="band" id="nocentre">
+  <div class="eyebrow">Part 2 — The hardest idea</div>
+  <h2>There is no centre, and no edge to expand into</h2>
+  <p class="lead">
+    Below, the same universe is drawn twice — once as seen from the blue galaxy, once as seen from the orange one.
+    Drag the time slider. <strong>Both observers see every other galaxy running away from them.</strong>
+    Neither is at the centre, because there isn't one.
+  </p>
+
+  <div class="grid g2" style="margin-top:16px">
+    <div class="stage">
+      <div class="stage-head"><span class="lbl">Observer A — the blue galaxy</span></div>
+      <div class="cv-hold"><canvas id="cvC1" width="820" height="560"></canvas></div>
+    </div>
+    <div class="stage">
+      <div class="stage-head"><span class="lbl">Observer B — the orange galaxy, far away</span></div>
+      <div class="cv-hold"><canvas id="cvC2" width="820" height="560"></canvas></div>
+    </div>
+  </div>
+  <div class="timebar" style="border:1px solid var(--line); border-radius:var(--radius); margin-top:12px">
+    <div class="tt"><span class="k">Expansion</span><span class="v" id="ncVal">a = 1.00</span></div>
+    <input type="range" id="ncSlider" min="30" max="180" value="100" aria-label="Expansion for the two-observer view">
+    <div class="hint" style="margin-top:8px">
+      The two pictures are <em>the same universe</em>. Only the choice of "who is standing still" differs — and that
+      choice is arbitrary. This is what the balloon gets right: on the surface of a balloon, no dot is the centre.
+    </div>
+  </div>
+
+  <div class="callout key" style="margin-top:16px">
+    <span class="ct">The exam sentence</span>
+    Galaxies are not flying <em>through</em> space away from a central explosion. <strong>Space itself is expanding
+    between them</strong>, so every observer, everywhere, sees the same pattern of recession. The Big Bang happened
+    everywhere at once — including where you are sitting right now.
+  </div>
+</section>
+
+<!-- ============================= 3. HUBBLE ============================= -->
+<section class="band" id="hubble">
+  <div class="eyebrow">Part 3 — The measurement</div>
+  <h2>Redshift and Hubble's law</h2>
+  <p class="lead">
+    You cannot see space stretching. What you can see is that light from distant galaxies arrives with its
+    wavelengths <strong>stretched towards the red end</strong> of the spectrum. Click a galaxy to take its spectrum,
+    then watch the graph build itself.
+  </p>
+
+  <div class="grid g2" style="margin-top:16px; align-items:start">
+    <div class="stage">
+      <div class="stage-head">
+        <span class="lbl">Telescope — click a galaxy to measure it</span>
+        <span style="flex:1"></span>
+        <button class="btn ghost" id="hMeasureAll">Measure all</button>
+        <button class="btn ghost" id="hReset">Reset</button>
+      </div>
+      <div class="cv-hold"><canvas id="cvSky" width="820" height="430"></canvas></div>
+      <div style="padding:14px 16px; border-top:1px solid var(--line)">
+        <div id="specWrap">
+          <div class="spec-row">
+            <div class="sl">Lab / rest<small>hydrogen, in a lab on Earth</small></div>
+            <div><canvas id="cvSpecLab" width="900" height="70" style="width:100%; height:auto; border-radius:5px"></canvas></div>
+          </div>
+          <div class="spec-row">
+            <div class="sl">Observed<small id="specGal">— select a galaxy —</small></div>
+            <div><canvas id="cvSpecObs" width="900" height="70" style="width:100%; height:auto; border-radius:5px"></canvas></div>
+          </div>
+        </div>
+        <div class="readouts" style="margin-top:12px">
+          <div class="ro"><div class="k">Distance d</div><div class="v" id="hD">— <small>Mpc</small></div></div>
+          <div class="ro"><div class="k">Shift Δλ (H-α)</div><div class="v" id="hL">— <small>nm</small></div></div>
+          <div class="ro"><div class="k">Redshift z</div><div class="v" id="hZ">—</div></div>
+          <div class="ro"><div class="k">Speed v</div><div class="v" id="hV">— <small>km/s</small></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-head"><span class="lbl">Hubble diagram — recession speed against distance</span></div>
+      <div class="cv-hold" style="background:var(--surface)"><canvas id="cvHub" width="820" height="560"></canvas></div>
+      <div style="padding:13px 16px; border-top:1px solid var(--line)">
+        <div class="eq" style="margin-top:0">v = H<sub>0</sub> d
+          <span class="why">v = recession speed (km/s), d = distance (Mpc), H<sub>0</sub> = Hubble constant = gradient of the line.</span></div>
+        <p style="font-size:.87rem; margin-bottom:.4em">
+          The points fall on a <strong>straight line through the origin</strong>: a galaxy twice as far away recedes
+          twice as fast. That is exactly what uniform stretching of space produces — and it is what both models predict.
+        </p>
+        <div class="alevel">
+          <div class="eq">t ≈ 1/H<sub>0</sub> = 1 / (70 km s⁻¹ Mpc⁻¹) ≈ 4.4 × 10<sup>17</sup> s ≈ 14 billion years
+            <span class="why">Convert Mpc to km first: 1 Mpc = 3.09 × 10<sup>19</sup> km. Running the expansion backwards at a
+            constant rate gives the <em>Hubble time</em> — an upper estimate of the age of the universe.</span></div>
+          <p style="font-size:.87rem">
+            The real value from ΛCDM is 13.8 billion years; the near-agreement with 1/H₀ is a coincidence of
+            deceleration by gravity being roughly cancelled by later acceleration from dark energy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warn" style="margin-top:16px">
+    <span class="ct">Trap — this is where marks are lost</span>
+    Redshift on its own is evidence for <strong>expansion</strong>, not for the Big Bang. A Steady State universe
+    expands as well, and produces an identical Hubble diagram. If a question asks for evidence <em>for the Big Bang
+    specifically</em>, you must reach for the cosmic microwave background.
+  </div>
+</section>
+
+<!-- ============================= 4. EVIDENCE ============================= -->
+<section class="band" id="evidence">
+  <div class="eyebrow">Part 4 — Choosing a winner</div>
+  <h2>The evidence that decided it</h2>
+  <p class="lead">
+    Between about 1948 and 1965 the two models were genuine rivals. Three lines of evidence settled the argument —
+    and all three are about what the universe was like <em>in the past</em>.
+  </p>
+
+  <div class="grid g2" style="margin-top:16px; align-items:start">
+    <div class="stage">
+      <div class="stage-head">
+        <span class="lbl">The cosmic microwave background</span>
+        <span style="flex:1"></span>
+        <div class="seg" role="group">
+          <button data-cmb="bigbang" aria-pressed="true">Big Bang predicts</button>
+          <button data-cmb="steady" aria-pressed="false">Steady State predicts</button>
+        </div>
+      </div>
+      <div class="cv-hold"><canvas id="cvCmb" width="820" height="420"></canvas></div>
+      <div style="padding:14px 16px; border-top:1px solid var(--line)" id="cmbText"></div>
+    </div>
+
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3>1 · Cosmic microwave background radiation (CMBR)</h3>
+        <p style="font-size:.9rem">
+          If the universe began hot and dense, it was an opaque plasma for its first ~380 000 years. When it cooled to
+          about 3000 K, electrons and protons combined into neutral hydrogen and the universe became transparent. The
+          light released then still fills space — stretched by expansion from visible/infrared into
+          <strong>microwaves</strong>.
+        </p>
+        <ul class="tight" style="font-size:.88rem">
+          <li><strong>Predicted</strong> by Alpher and Herman in 1948 (they estimated ~5 K).</li>
+          <li><strong>Found by accident</strong> in 1965 by Penzias and Wilson as unremovable noise in a horn antenna.</li>
+          <li>Measured at <strong>2.725 K</strong>, arriving almost equally from every direction, with a
+              near-perfect black-body spectrum (COBE, 1990).</li>
+          <li>Tiny ripples of about 1 part in 100 000 are the seeds that grew into galaxies (WMAP, Planck).</li>
+        </ul>
+        <p style="font-size:.9rem; margin-bottom:0">
+          The Steady State model has <em>no hot dense phase</em>, so it has nothing to make this radiation.
+          Hoyle proposed that starlight was thermalised by iron "whiskers" in space — but that cannot produce a
+          black-body spectrum this perfect or a glow this smooth.
+        </p>
+      </div>
+
+      <div class="card" style="margin-bottom:14px">
+        <h3>2 · The abundance of light elements</h3>
+        <p style="font-size:.9rem; margin-bottom:0">
+          About <strong>75% hydrogen and 25% helium</strong> by mass is found almost everywhere, even in the oldest,
+          least-processed stars. Big Bang nucleosynthesis produces exactly this in the first few minutes. Stars fusing
+          hydrogen over billions of years cannot account for that much helium — this was the problem Steady State
+          could never solve, and ironically Hoyle himself worked out much of the stellar nucleosynthesis that
+          demonstrated it.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>3 · The distant universe looks different</h3>
+        <p style="font-size:.9rem; margin-bottom:0">
+          Looking far away is looking back in time. Distant regions contain more <strong>quasars</strong>, more
+          radio-loud galaxies and more small, blue, irregular galaxies than the nearby universe. Martin Ryle's radio
+          source counts in the 1950s–60s showed the density of sources was higher in the past. A Steady State universe
+          must look <em>statistically identical at all times and places</em> — the "perfect cosmological principle" —
+          so this observation alone falsifies it.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= 5. BALLOON ============================= -->
+<section class="band" id="balloon">
+  <div class="eyebrow">Part 5 — The analogy, audited</div>
+  <h2>Beyond the balloon</h2>
+  <p class="lead">
+    The balloon is a good first analogy and a bad second one. Here it is running next to the real model, so you can
+    see precisely which features carry over and which ones mislead.
+  </p>
+
+  <div class="grid g2" style="margin-top:16px; align-items:start">
+    <div class="stage">
+      <div class="stage-head"><span class="lbl">The balloon analogy</span></div>
+      <div class="cv-hold" style="background:var(--surface)"><canvas id="cvBal" width="820" height="480"></canvas></div>
+      <div class="timebar">
+        <div class="tt"><span class="k">Inflate</span><span class="v" id="balVal">×1.00</span></div>
+        <input type="range" id="balSlider" min="40" max="170" value="100" aria-label="Inflate the balloon">
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:14px">
+        <h3 style="color:var(--good)">What the balloon gets right</h3>
+        <ul class="tight" style="font-size:.89rem">
+          <li>Every dot moves away from every other dot — <strong>no dot is the centre</strong>.</li>
+          <li>Dots twice as far apart separate twice as fast: <strong>Hubble's law falls out naturally</strong>.</li>
+          <li>The surface has <strong>no edge</strong>, yet it has finite area.</li>
+          <li>The dots do not travel across the rubber — <strong>the rubber between them stretches</strong>.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--crit)">Where the balloon breaks down</h3>
+        <ul class="tight" style="font-size:.89rem">
+          <li><strong>The balloon has a centre</strong> — but it is inside the rubber, in a dimension the "universe"
+              (the surface) does not contain. Students look at the picture and see a centre anyway.</li>
+          <li><strong>It appears to expand into the surrounding room.</strong> Real space needs no outside to expand into;
+              expansion means distances within it grow, not that it invades somewhere else.</li>
+          <li><strong>The universe is 3D, not a 2D surface</strong> — and may be infinite, in which case there is no
+              "whole balloon" to picture from outside at all.</li>
+          <li><strong>Drawn dots stretch as the rubber stretches.</strong> Real galaxies do not: they are held together
+              by gravity and simply do not grow. Use stuck-on sequins or coins, not pen marks.</li>
+          <li>It suggests a rubber sheet is <em>being pulled by something</em>. Nothing pulls space; the expansion rate
+              is set by the energy content of the universe itself.</li>
+          <li>It gives no sense of <strong>time</strong>, temperature or density — the very things that distinguish
+              Big Bang from Steady State.</li>
+        </ul>
+        <div class="callout" style="margin-bottom:0">
+          <span class="ct">Better classroom follow-up</span>
+          Stretch a length of elastic with beads glued on, or use the "raisin bread" loaf: raisins separate as the dough
+          rises, the raisins themselves do not swell, and a raisin twice as far away recedes twice as fast — with no
+          special raisin anywhere.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= 6. MISCONCEPTIONS ============================= -->
+<section class="band" id="misconceptions">
+  <div class="eyebrow">Part 6 — Fixing the wiring</div>
+  <h2>Six misconceptions worth unlearning</h2>
+  <div class="grid g2" style="margin-top:16px">
+
+    <div class="mis">
+      <div class="wrong"><span class="tag">Common answer</span>
+        <p>"The Big Bang was an explosion that threw matter outwards into empty space."</p></div>
+      <div class="right"><span class="tag">What is actually going on</span>
+        <p>An explosion has a centre, an edge and a surrounding space to expand into. The Big Bang had none of these.
+        It was not an event <em>in</em> space — it was the beginning of space and time, happening at every point
+        simultaneously. Matter is not moving outwards; the separations between matter are growing.</p></div>
+    </div>
+
+    <div class="mis">
+      <div class="wrong"><span class="tag">Common answer</span>
+        <p>"Everything is moving away from us, so we must be near the centre."</p></div>
+      <div class="right"><span class="tag">What is actually going on</span>
+        <p>Every observer in the universe sees exactly the same thing — try Part 2 above. Uniform expansion looks
+        identical from every vantage point, so "everything recedes from me" is evidence of <em>homogeneity</em>,
+        not of a special location.</p></div>
+    </div>
+
+    <div class="mis">
+      <div class="wrong"><span class="tag">Common answer</span>
+        <p>"The universe is expanding into the space around it."</p></div>
+      <div class="right"><span class="tag">What is actually going on</span>
+        <p>There is no "around it". Expansion is a statement about the <strong>internal geometry</strong> — the
+        distance between any two widely separated galaxies increases with time. If the universe is infinite it was
+        always infinite; it just has more distance in it now.</p></div>
+    </div>
+
+    <div class="mis">
+      <div class="wrong"><span class="tag">Common answer</span>
+        <p>"If space expands, then I am expanding, and so is the ruler I measure with."</p></div>
+      <div class="right"><span class="tag">What is actually going on</span>
+        <p>Gravitationally and electromagnetically <strong>bound</strong> systems do not expand: atoms, you, the Earth,
+        the Solar System, the Milky Way, even the Local Group. Their internal forces hold them at a fixed size while
+        the space between distant clusters grows. That is precisely why we can measure the expansion at all — our
+        rulers stay the same length.</p></div>
+    </div>
+
+    <div class="mis">
+      <div class="wrong"><span class="tag">Common answer</span>
+        <p>"Redshift proves the Big Bang."</p></div>
+      <div class="right"><span class="tag">What is actually going on</span>
+        <p>Redshift proves <em>expansion</em>. The Steady State model was fully expanding and fully consistent with
+        Hubble's law. The Big Bang wins because of the CMB, the helium abundance, and the observed evolution of
+        galaxies — evidence about the universe's <strong>history</strong>, not just its motion.</p></div>
+    </div>
+
+    <div class="mis">
+      <div class="wrong"><span class="tag">Common answer</span>
+        <p>"Redshift is the Doppler effect — galaxies are rushing away through space."</p></div>
+      <div class="right"><span class="tag">What is actually going on</span>
+        <p>At GCSE, treating it as a Doppler-like shift is accepted and gives the right answer for nearby galaxies.
+        Strictly, <strong>cosmological redshift</strong> is different: the wave is stretched while in flight because
+        the space it is travelling through expands. That is why 1 + z = a<sub>now</sub>/a<sub>emitted</sub>, and why
+        very distant galaxies can have recession speeds greater than c without anything moving through space faster
+        than light.</p></div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================= 7. COMPARE ============================= -->
+<section class="band" id="compare">
+  <div class="eyebrow">Part 7 — Revision table</div>
+  <h2>Big Bang vs Steady State, side by side</h2>
+  <div class="card" style="margin-top:14px; padding:6px 10px 4px">
+    <table class="cmp">
+      <thead><tr><th>Feature</th><th>Big Bang</th><th>Steady State</th></tr></thead>
+      <tbody>
+        <tr><th>Is the universe expanding?</th><td class="bb">Yes</td><td class="ss">Yes</td></tr>
+        <tr><th>Does it obey Hubble's law?</th><td class="bb">Yes</td><td class="ss">Yes — identical prediction</td></tr>
+        <tr><th>A beginning in time?</th><td class="bb">Yes — ≈13.8 billion years ago</td><td class="ss">No — infinitely old, no start</td></tr>
+        <tr><th>Average density over time</th><td class="bb">Falls as the universe expands (ρ ∝ 1/a³)</td><td class="ss">Constant — never changes</td></tr>
+        <tr><th>Where does matter come from?</th><td class="bb">All created at the beginning</td><td class="ss">Continuously created in the gaps (≈1 hydrogen atom per km³ per year)</td></tr>
+        <tr><th>Was there a hot dense phase?</th><td class="bb">Yes — the early universe was a plasma at thousands of K</td><td class="ss">No</td></tr>
+        <tr><th>Cosmic microwave background</th><td class="bb"><span class="verdict ok">✔ Predicted, then found</span></td><td class="ss"><span class="verdict no">✘ No natural explanation</span></td></tr>
+        <tr><th>75% H / 25% He abundance</th><td class="bb"><span class="verdict ok">✔ Predicted by nucleosynthesis</span></td><td class="ss"><span class="verdict no">✘ Stars cannot make that much He</span></td></tr>
+        <tr><th>Distant galaxies look different</th><td class="bb"><span class="verdict ok">✔ Expected — we see the past</span></td><td class="ss"><span class="verdict no">✘ Forbidden by the theory</span></td></tr>
+        <tr><th>Status today</th><td class="bb">Accepted model, supported by all major observations</td><td class="ss">Falsified — abandoned by the late 1960s</td></tr>
+        <tr class="alevel"><th>Cosmological principle used</th><td class="bb">Universe is homogeneous and isotropic <em>in space</em></td><td class="ss">"Perfect" version — homogeneous and isotropic in space <em>and time</em></td></tr>
+        <tr class="alevel"><th>Form of a(t)</th><td class="bb">a ∝ t<sup>2/3</sup> (matter era), later accelerating</td><td class="ss">a ∝ e<sup>H t</sup>, with H constant forever</td></tr>
+        <tr class="alevel"><th>Key figures</th><td class="bb">Friedmann, Lemaître, Gamow, Alpher &amp; Herman, Penzias &amp; Wilson</td><td class="ss">Bondi, Gold and Hoyle (1948) — Hoyle coined "Big Bang" as a dismissal</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout key" style="margin-top:16px">
+    <span class="ct">The one-paragraph answer</span>
+    Distant galaxies are redshifted, and the further away they are the greater the redshift, so the universe is
+    expanding. Running that expansion backwards implies everything was once hot, dense and close together — the Big
+    Bang. The strongest evidence is the cosmic microwave background: radiation released about 380 000 years after
+    the beginning, now stretched to microwaves at 2.7 K and arriving from every direction. The rival Steady State
+    theory also had an expanding universe, but with matter continuously created so that density stayed constant; it
+    was rejected because it predicts no microwave background, cannot explain the helium abundance, and requires the
+    distant universe to look the same as the nearby one, which it does not.
+  </div>
+</section>
+
+<!-- ============================= 8. QUIZ ============================= -->
+<section class="band" id="check">
+  <div class="eyebrow">Part 8 — Check yourself</div>
+  <h2>Four questions</h2>
+  <div id="quiz" style="margin-top:14px"></div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><strong>Modelling notes.</strong> The simulation is a 2-dimensional, deliberately simplified model. The Big Bang
+    panel uses a flat, matter-dominated expansion, a(t) ∝ t<sup>2/3</sup>, scaled so that the present age reads
+    13.8 billion years; the real universe also contains dark energy, which makes the expansion accelerate. The Steady
+    State panel uses exponential expansion, a ∝ e<sup>Ht</sup>, with new galaxies created to hold the number density
+    constant. Number density is shown per unit area rather than per unit volume, so on-screen counts scale as a² rather
+    than a³ — the density readout uses the correct 3D scaling. H<sub>0</sub> is taken as 70 km s⁻¹ Mpc⁻¹.</p>
+    <p>Built as a teaching aid for GCSE and A-Level physics. Everything runs locally in the browser — no data leaves this page.</p>
+  </div>
+</footer>
+
+<div class="tour" id="tour" role="dialog" aria-label="Guided tour">
+  <div class="th">
+    <span class="step" id="tourStep">Step 1 of 10</span>
+    <button class="x" id="tourClose" aria-label="Close tour">✕</button>
+  </div>
+  <h4 id="tourTitle"></h4>
+  <p id="tourBody"></p>
+  <div class="tf">
+    <button class="btn ghost" id="tourPrev">Back</button>
+    <div class="prog"><i id="tourProg" style="width:10%"></i></div>
+    <button class="btn primary" id="tourNext">Next</button>
+  </div>
+</div>
+<script>
+"use strict";
+/* =====================================================================
+   The Expanding Universe — interactive teaching model
+   All physics simplified deliberately; see the modelling notes in the footer.
+   ===================================================================== */
+
+/* ---------- small helpers ---------- */
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
+const lerp  = (a, b, t) => a + (b - a) * t;
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function fmt(n, dp) {
+  if (!isFinite(n)) return '—';
+  if (Math.abs(n) >= 1e5 || (Math.abs(n) < 1e-3 && n !== 0)) {
+    const e = n.toExponential(2).split('e');
+    return e[0] + '×10' + sup(parseInt(e[1], 10));
+  }
+  return n.toFixed(dp === undefined ? 2 : dp);
+}
+function sup(n) {
+  const map = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+  return String(n).split('').map(c => map[c] || c).join('');
+}
+function group(n) { return Math.round(n).toLocaleString('en-GB'); }
+
+function fitCanvas(cv, hCss) {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(220, cv.parentElement.clientWidth);
+  cv.style.width = w + 'px'; cv.style.height = hCss + 'px';
+  cv.width = Math.round(w * dpr); cv.height = Math.round(hCss * dpr);
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cv._w = w; cv._h = hCss;
+  return ctx;
+}
+
+/* ---------- galaxy sprites ---------- */
+const GAL_COLS = ['#9ec5f4', '#cfe4fb', '#ffffff', '#fff0cd', '#ffd398', '#ffb877'];
+const sprites = GAL_COLS.map(col => {
+  const s = document.createElement('canvas'); s.width = s.height = 96;
+  const c = s.getContext('2d'), R = 48;
+  // outer halo
+  let g = c.createRadialGradient(R, R, 0, R, R, R);
+  g.addColorStop(0, col); g.addColorStop(0.30, col.replace(')', ')'));
+  g.addColorStop(0.34, 'rgba(120,150,200,0.16)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.globalAlpha = .55; c.fillStyle = g; c.beginPath(); c.arc(R, R, R, 0, 7); c.fill();
+  // bright compact core
+  g = c.createRadialGradient(R, R, 0, R, R, R * 0.40);
+  g.addColorStop(0, '#ffffff'); g.addColorStop(0.30, col);
+  g.addColorStop(0.72, col); g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.globalAlpha = 1; c.fillStyle = g; c.beginPath(); c.arc(R, R, R * 0.40, 0, 7); c.fill();
+  // faint disc
+  c.globalAlpha = .30; c.strokeStyle = col; c.lineWidth = 2.5;
+  c.beginPath(); c.ellipse(R, R, R * .34, R * .19, 0.6, 0, 7); c.stroke();
+  c.globalAlpha = 1;
+  return s;
+});
+function drawGal(ctx, x, y, r, ci, alpha) {
+  const s = sprites[ci];
+  ctx.globalAlpha = alpha === undefined ? 1 : alpha;
+  ctx.drawImage(s, x - r * 2.2, y - r * 2.2, r * 4.4, r * 4.4);
+  ctx.globalAlpha = 1;
+}
+
+/* =====================================================================
+   COSMOLOGY
+   ===================================================================== */
+const COS = {
+  H0: 70,                 // km/s/Mpc
+  c: 3.0e5,               // km/s
+  ageNow: 13.8,           // Gyr
+  tH: 13.97,              // 1/H0 in Gyr
+  aRec: 1 / 1101,         // recombination
+  aForm: 0.06,            // first galaxies in this model
+  aMin: 10 ** -3.6,
+  aMax: 1.8
+};
+const sliderToA = s => 10 ** (-3.6 + (s / 1000) * (Math.log10(COS.aMax) + 3.6));
+const aToSlider = a => (Math.log10(a) + 3.6) / (Math.log10(COS.aMax) + 3.6) * 1000;
+const tBB = a => COS.ageNow * Math.pow(a, 1.5);                 // Gyr since t=0
+const aFromTBB = t => Math.pow(Math.max(t, 0) / COS.ageNow, 2 / 3);
+const aSSfromT = t => Math.exp((t - COS.ageNow) / COS.tH);      // steady state a(t)
+const tSSfromA = a => COS.ageNow + COS.tH * Math.log(a);
+
+/* ---------- the galaxy field ---------- */
+const XH = 18, YH = 13, DENS = 3.24;
+const N_BB = Math.round(4 * XH * YH * DENS);       // ≈3033
+const POOL = 10000;
+const rnd = mulberry32(20260813);
+const FIELD = [];
+for (let i = 0; i < POOL; i++) {
+  const ab = Math.sqrt((i + 1) / N_BB);            // steady-state birth scale factor
+  FIELD.push({
+    x: (rnd() * 2 - 1) * XH,
+    y: (rnd() * 2 - 1) * YH,
+    ab: ab,
+    tb: tSSfromA(ab),
+    j: rnd()                                        // jitter for size variety
+  });
+}
+// A shuffled index so that the *Big Bang* subset (first N_BB) is spread over the whole
+// region rather than clustered — positions are already random, so nothing more is needed.
+
+const state = {
+  model: 'bigbang',      // bigbang | steady | compare
+  frame: 'proper',       // proper | comoving
+  s: aToSlider(1),
+  obs: 0,                // index into FIELD
+  playing: false,
+  grid: true, arrows: false, glow: true
+};
+
+/* candidate home galaxies: near the middle, so the drawn region never runs out */
+const CENTRAL = [];
+for (let i = 0; i < N_BB; i++) if (Math.abs(FIELD[i].x) < 4 && Math.abs(FIELD[i].y) < 2.5) CENTRAL.push(i);
+function pickObserver() {
+  return CENTRAL[Math.floor(rnd() * CENTRAL.length)];
+}
+state.obs = pickObserver();
+
+/* =====================================================================
+   MAIN SIMULATION CANVAS
+   ===================================================================== */
+const cvA = $('#cvA'), cvB = $('#cvB');
+let ctxA = null, ctxB = null;
+
+function stageHeight() {
+  const w = window.innerWidth;
+  if (w < 700) return 300;
+  return state.model === 'compare' ? 400 : 468;
+}
+function resizeStage() {
+  ctxA = fitCanvas(cvA, stageHeight());
+  if (state.model === 'compare') ctxB = fitCanvas(cvB, stageHeight());
+}
+
+/* blackbody-ish tint for the early universe */
+function plasmaColour(T) {
+  // T in K, only used for T > 1200
+  const u = clamp((T - 1200) / 2600, 0, 1);
+  return `rgb(${Math.round(lerp(190, 255, u))},${Math.round(lerp(70, 205, u))},${Math.round(lerp(20, 120, u))})`;
+}
+
+/* colour index from stellar age (Gyr) — young populations blue, old ones warm.
+   The per-galaxy jitter keeps a realistic spread at any epoch. */
+function colourOf(age, j) {
+  const u = clamp(age / 15, 0, 1);
+  return clamp(Math.round((u * 0.62 + (j - 0.5) * 0.6) * 5), 0, 5);
+}
+
+function epochOf(a) {
+  if (a < COS.aRec) return { k: 'plasma', t: 'Opaque plasma', c: '#ffb877' };
+  if (a < 0.008) return { k: 'dark', t: 'Dark ages', c: '#52514e' };
+  if (a < COS.aForm) return { k: 'proto', t: 'First structures', c: '#3987e5' };
+  if (a < 0.25) return { k: 'young', t: 'Young galaxies', c: '#9ec5f4' };
+  if (a <= 1.02) return { k: 'now', t: 'Galaxies', c: '#ffffff' };
+  return { k: 'future', t: 'Thinning out', c: '#c98500' };
+}
+
+function drawUniverse(ctx, cv, opt) {
+  const w = cv._w, h = cv._h, a = opt.a, model = opt.model;
+  const cx = w / 2, cy = h / 2;
+  const K = w / 6;                                  // px per comoving unit at a = 1
+  const aDraw = Math.max(a, 0.22);
+  const scale = state.frame === 'comoving' ? K : K * aDraw;
+  const mag = state.frame === 'comoving' ? 1 : Math.max(1, 0.22 / a);
+  const obs = FIELD[opt.obs];
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#04060c'; ctx.fillRect(0, 0, w, h);
+
+  const ep = epochOf(a);
+  const isPlasma = model === 'bigbang' && a < COS.aRec;
+  const T = 2.725 / a;
+
+  /* --- background radiation glow (Big Bang only) --- */
+  if (state.glow && model === 'bigbang' && a < 0.02 && !isPlasma) {
+    const gA = clamp((0.02 - a) / 0.02, 0, 1) * 0.35;
+    ctx.globalAlpha = gA;
+    ctx.fillStyle = plasmaColour(clamp(T, 1200, 3800));
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalAlpha = 1;
+  }
+
+  /* --- grid of space --- */
+  if (state.grid && !isPlasma) {
+    let step = 1;
+    while (step * scale < 46) step *= 2;
+    while (step * scale > 190) step /= 2;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(140,170,220,0.16)';
+    ctx.beginPath();
+    const x0 = Math.floor((obs.x - (cx / scale)) / step) * step;
+    for (let gx = x0; gx < obs.x + cx / scale + step; gx += step) {
+      const sx = cx + (gx - obs.x) * scale;
+      ctx.moveTo(sx, 0); ctx.lineTo(sx, h);
+    }
+    const y0 = Math.floor((obs.y - (cy / scale)) / step) * step;
+    for (let gy = y0; gy < obs.y + cy / scale + step; gy += step) {
+      const sy = cy + (gy - obs.y) * scale;
+      ctx.moveTo(0, sy); ctx.lineTo(w, sy);
+    }
+    ctx.stroke();
+  }
+
+  /* --- galaxies --- */
+  let visible = 0;
+  if (!isPlasma) {
+    const count = model === 'steady' ? Math.min(POOL, Math.ceil(N_BB * a * a)) : N_BB;
+    const tNow = model === 'steady' ? tSSfromA(a) : tBB(a);
+    // A galaxy keeps a fixed *physical* size, so its comoving radius = R0c / a.
+    // Growth is capped at the low-a end purely so the picture stays readable.
+    const aSize = state.frame === 'comoving' ? clamp(a, 0.5, 5) : clamp(a, 0.12, 5);
+    const R0c = 0.058;
+    for (let i = 0; i < count; i++) {
+      const g = FIELD[i];
+      const sx = cx + (g.x - obs.x) * scale;
+      if (sx < -30 || sx > w + 30) continue;
+      const sy = cy + (g.y - obs.y) * scale;
+      if (sy < -30 || sy > h + 30) continue;
+      visible++;
+      let r = (R0c / aSize) * scale * (0.7 + g.j * 0.75);
+      r = clamp(r, 0.7, 40);
+
+      let ci, alpha = 1;
+      if (model === 'steady') {
+        const age = COS.tH * Math.log(a / g.ab);
+        ci = colourOf(age, g.j);
+        if (age < 0.35) alpha = clamp(age / 0.35, 0.15, 1);
+      } else {
+        if (a < COS.aForm) {
+          // protogalaxies: small, blue, fading in
+          ci = 0;
+          alpha = clamp((a - 0.006) / 0.05, 0, 1) * 0.75;
+          r = Math.min(r, 2.2 + 2.4 * g.j);
+          if (alpha <= 0.02) { continue; }
+        } else {
+          ci = colourOf(tBB(a) - tBB(COS.aForm), g.j);
+        }
+      }
+      drawGal(ctx, sx, sy, r, ci, alpha);
+    }
+
+    /* recession arrows */
+    if (state.arrows) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.42)'; ctx.fillStyle = 'rgba(255,255,255,0.42)';
+      ctx.lineWidth = 1.4;
+      const step = Math.max(1, Math.round(visible / 110));
+      let drawn = 0;
+      for (let i = 0; i < count; i++) {
+        const g = FIELD[i];
+        const sx = cx + (g.x - obs.x) * scale, sy = cy + (g.y - obs.y) * scale;
+        if (sx < 10 || sx > w - 10 || sy < 10 || sy > h - 10) continue;
+        if ((drawn++) % step) continue;
+        const dx = sx - cx, dy = sy - cy, d = Math.hypot(dx, dy);
+        if (d < 26) continue;
+        const L = clamp(d * 0.16, 6, 46);
+        const ux = dx / d, uy = dy / d;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy); ctx.lineTo(sx + ux * L, sy + uy * L); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(sx + ux * L, sy + uy * L);
+        ctx.lineTo(sx + ux * (L - 5) - uy * 3, sy + uy * (L - 5) + ux * 3);
+        ctx.lineTo(sx + ux * (L - 5) + uy * 3, sy + uy * (L - 5) - ux * 3);
+        ctx.closePath(); ctx.fill();
+      }
+    }
+  }
+
+  /* --- opaque plasma --- */
+  if (isPlasma) {
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(w, h) * .75);
+    const col = plasmaColour(clamp(T, 1200, 3800));
+    g.addColorStop(0, '#fff6e0'); g.addColorStop(0.45, col); g.addColorStop(1, '#5c1c05');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, w, h);
+    const nr = mulberry32(7);
+    ctx.globalAlpha = 0.12;
+    for (let i = 0; i < 260; i++) {
+      ctx.fillStyle = nr() > .5 ? '#fff' : '#7a2c06';
+      const rr = 14 + nr() * 44;
+      ctx.beginPath(); ctx.arc(nr() * w, nr() * h, rr, 0, 7); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = 'rgba(20,6,0,.55)';
+    const bw = Math.min(430, w - 40);
+    ctx.fillRect(cx - bw / 2, cy - 34, bw, 68);
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+    ctx.font = '600 14px system-ui,sans-serif';
+    ctx.fillText('Opaque plasma — light cannot travel freely', cx, cy - 8);
+    ctx.font = '13px system-ui,sans-serif'; ctx.fillStyle = '#ffd9b0';
+    ctx.fillText('T ≈ ' + group(T) + ' K · no atoms, no galaxies yet', cx, cy + 15);
+    ctx.textAlign = 'left';
+  }
+
+  /* --- home galaxy marker --- */
+  if (!isPlasma) {
+    ctx.strokeStyle = '#3987e5'; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(cx, cy, 13, 0, 7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx - 20, cy); ctx.lineTo(cx - 15, cy);
+    ctx.moveTo(cx + 15, cy); ctx.lineTo(cx + 20, cy);
+    ctx.moveTo(cx, cy - 20); ctx.lineTo(cx, cy - 15);
+    ctx.moveTo(cx, cy + 15); ctx.lineTo(cx, cy + 20); ctx.stroke();
+    ctx.fillStyle = '#9ec5f4'; ctx.font = '600 11px system-ui,sans-serif';
+    ctx.fillText('you are here', cx + 25, cy + 4);
+  }
+
+  /* --- magnification note --- */
+  if (mag > 1.02 && !isPlasma) {
+    ctx.fillStyle = 'rgba(0,0,0,.5)';
+    ctx.fillRect(w - 152, 8, 144, 24);
+    ctx.fillStyle = '#c3c2b7'; ctx.font = '11px system-ui,sans-serif';
+    ctx.fillText('view magnified ×' + mag.toFixed(1), w - 143, 24);
+  }
+  return { visible, ep };
+}
+
+/* =====================================================================
+   READOUTS + RENDER LOOP
+   ===================================================================== */
+const el = {
+  timeVal: $('#timeVal'), roA: $('#roA'), roZ: $('#roZ'), roRho: $('#roRho'),
+  roT: $('#roT'), roX: $('#roX'), roXk: $('#roXk'), roNote: $('#roNote'),
+  epochTxt: $('#epochTxt'), epochChip: $('#epochChip'), noteA: $('#noteA'), tagA: $('#tagA')
+};
+
+function currentA() { return sliderToA(state.s); }
+
+function render() {
+  const a = currentA();
+  const primary = state.model === 'steady' ? 'steady' : 'bigbang';
+  const aPrim = a;
+  let t;
+  if (primary === 'steady') t = tSSfromA(a); else t = tBB(a);
+
+  const res = drawUniverse(ctxA, cvA, { a: aPrim, model: primary, obs: state.obs });
+  if (state.model === 'compare') {
+    const aSS = aSSfromT(t);
+    drawUniverse(ctxB, cvB, { a: aSS, model: 'steady', obs: state.obs });
+  }
+
+  /* time */
+  if (primary === 'steady') {
+    const rel = t - COS.ageNow;
+    el.timeVal.textContent = (Math.abs(rel) < 0.05 ? 'today' :
+      (rel < 0 ? fmt(-rel, 1) + ' billion years ago' : fmt(rel, 1) + ' billion years from now'));
+  } else {
+    el.timeVal.textContent = t < 0.001
+      ? group(t * 1e9) + ' years'
+      : (t < 1 ? fmt(t * 1000, 0) + ' million years' : fmt(t, 2) + ' billion years');
+  }
+
+  el.roA.textContent = a < 0.01 ? a.toExponential(2) : a.toFixed(3);
+  el.roZ.textContent = (1 / a - 1) < 100 ? fmt(1 / a - 1, 2) : group(1 / a - 1);
+
+  if (primary === 'steady') {
+    el.roRho.innerHTML = '1.0 <small>× today</small>';
+    el.roT.innerHTML = '— <small>no CMB</small>';
+    el.roXk.textContent = 'Galaxy count · growing';
+    el.roX.textContent = group(Math.min(POOL, Math.ceil(N_BB * a * a)));
+    el.roNote.innerHTML = 'Density never changes: as space expands, <strong>new matter is created</strong> to fill it — about one hydrogen atom per cubic kilometre per year.';
+  } else {
+    const rho = 1 / (a * a * a);
+    el.roRho.innerHTML = (rho > 1e4 ? fmt(rho, 0) : fmt(rho, rho > 100 ? 0 : 2)) + ' <small>× today</small>';
+    el.roT.innerHTML = fmt(2.725 / a, 2.725 / a > 100 ? 0 : 2) + ' <small>K</small>';
+    el.roXk.textContent = 'Galaxy count · fixed';
+    el.roX.textContent = group(N_BB);
+    el.roNote.innerHTML = 'Density is quoted relative to today\'s average and scales as 1/a³. No new matter is ever made.';
+  }
+
+  const ep = state.model === 'steady' ? { t: 'Unchanging', c: '#d95926' } : res.ep;
+  el.epochTxt.textContent = ep.t;
+  el.epochChip.querySelector('.dot').style.background = ep.c;
+
+  el.noteA.textContent =
+    (primary === 'bigbang' && a < COS.aRec) ? ''
+      : (state.frame === 'comoving'
+        ? 'Grid rides with the expansion — the galaxies barely move, but the grid squares are growing'
+        : 'Click any galaxy to move your telescope there · galaxy symbols are not to scale');
+}
+
+/* animation */
+let last = 0, raf = null;
+function tick(ts) {
+  if (!state.playing) { raf = null; return; }
+  const dt = Math.min(64, ts - last); last = ts;
+  state.s += dt * 0.055;
+  if (state.s >= 1000) { state.s = 1000; state.playing = false; $('#playBtn').textContent = '▶ Play'; }
+  $('#timeSlider').value = state.s;
+  render();
+  raf = requestAnimationFrame(tick);
+}
+function play(on) {
+  state.playing = on;
+  $('#playBtn').textContent = on ? '❚❚ Pause' : '▶ Play';
+  if (on) { if (state.s >= 999) state.s = 0; last = performance.now(); raf = requestAnimationFrame(tick); }
+}
+
+/* =====================================================================
+   MAIN SIM CONTROLS
+   ===================================================================== */
+$('#timeSlider').addEventListener('input', e => { state.s = +e.target.value; play(false); render(); });
+$('#playBtn').addEventListener('click', () => play(!state.playing));
+$('#nowBtn').addEventListener('click', () => { play(false); state.s = aToSlider(1); $('#timeSlider').value = state.s; render(); });
+$('#rewindBtn').addEventListener('click', () => { play(false); state.s = 0; $('#timeSlider').value = 0; render(); });
+
+$$('[data-model]').forEach(b => b.addEventListener('click', () => setModel(b.dataset.model)));
+function setModel(m) {
+  state.model = m;
+  $$('[data-model]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.model === m)));
+  $('#holdB').style.display = m === 'compare' ? 'block' : 'none';
+  $('#canvasRow').classList.toggle('two', m === 'compare');
+  el.tagA.textContent = m === 'steady' ? 'Steady State' : 'Big Bang';
+  el.tagA.className = 'cv-tag ' + (m === 'steady' ? 'ss' : 'bb');
+  $('#aEq').style.display = m === 'steady' ? 'none' : 'block';
+  $('.timebar .tt .k').textContent = m === 'steady' ? 'Time (no zero point exists)' : 'Cosmic time';
+  buildTicks();
+  resizeStage(); render();
+}
+
+$$('[data-frame]').forEach(b => b.addEventListener('click', () => setFrame(b.dataset.frame)));
+function setFrame(f) {
+  state.frame = f;
+  $$('[data-frame]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.frame === f)));
+  $('#frameHint').innerHTML = f === 'proper'
+    ? '<strong>Fixed ruler:</strong> metres stay metres. Galaxies drift apart and leave the field of view. (The view magnifies automatically in the very early universe so you can still see it.)'
+    : '<strong>Riding with space:</strong> the grid stretches with the universe. Galaxies stay on their grid squares — proof they are <em>not</em> moving through space. The squares grow; the galaxies do not.';
+  render();
+}
+
+$('#obsBtn').addEventListener('click', () => { state.obs = pickObserver(); render(); });
+$('#chkGrid').addEventListener('change', e => { state.grid = e.target.checked; render(); });
+$('#chkArrows').addEventListener('change', e => { state.arrows = e.target.checked; render(); });
+$('#chkGlow').addEventListener('change', e => { state.glow = e.target.checked; render(); });
+
+/* click a galaxy to become the observer */
+function canvasPick(cv, ev) {
+  const a = currentA();
+  const r = cv.getBoundingClientRect();
+  const px = ev.clientX - r.left, py = ev.clientY - r.top;
+  const w = cv._w, h = cv._h, K = w / 6;
+  const scale = state.frame === 'comoving' ? K : K * Math.max(a, 0.22);
+  const obs = FIELD[state.obs];
+  const gx = obs.x + (px - w / 2) / scale, gy = obs.y + (py - h / 2) / scale;
+  let best = -1, bd = 1e9;
+  const count = state.model === 'steady' ? Math.min(POOL, Math.ceil(N_BB * a * a)) : N_BB;
+  for (let i = 0; i < count; i++) {
+    const g = FIELD[i];
+    if (Math.abs(g.x) > 4.5 || Math.abs(g.y) > 3) continue;
+    const d = (g.x - gx) ** 2 + (g.y - gy) ** 2;
+    if (d < bd) { bd = d; best = i; }
+  }
+  if (best >= 0 && bd < (60 / scale) ** 2) { state.obs = best; render(); }
+}
+cvA.addEventListener('click', e => canvasPick(cvA, e));
+cvA.style.cursor = 'crosshair';
+
+/* =====================================================================
+   PART 2 — TWO OBSERVERS, NO CENTRE
+   ===================================================================== */
+const NC = [];
+{
+  const r = mulberry32(4242);
+  for (let i = 0; i < 340; i++) NC.push({ x: (r() * 2 - 1) * 9, y: (r() * 2 - 1) * 6, j: r() });
+}
+const NC_A = 0, NC_B = (() => {   // pick a galaxy well away from the first
+  let best = 1, bd = 1e9;
+  for (let i = 1; i < NC.length; i++) {
+    const d = (NC[i].x - 2.0) ** 2 + (NC[i].y + 1.0) ** 2;
+    if (d < bd) { bd = d; best = i; }
+  }
+  return best;
+})();
+NC[NC_A].x = -0.4; NC[NC_A].y = 0.2;
+
+function drawNC(cv, ctx, obsIdx, aa, hueSelf, hueOther, otherIdx) {
+  const w = cv._w, h = cv._h, cx = w / 2, cy = h / 2, K = w / 6.4;
+  const scale = K * aa, obs = NC[obsIdx];
+  ctx.clearRect(0, 0, w, h); ctx.fillStyle = '#04060c'; ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(140,170,220,0.14)'; ctx.lineWidth = 1; ctx.beginPath();
+  const step = 1;
+  for (let gx = Math.floor(obs.x - cx / scale); gx < obs.x + cx / scale + 1; gx += step) {
+    const sx = cx + (gx - obs.x) * scale; ctx.moveTo(sx, 0); ctx.lineTo(sx, h);
+  }
+  for (let gy = Math.floor(obs.y - cy / scale); gy < obs.y + cy / scale + 1; gy += step) {
+    const sy = cy + (gy - obs.y) * scale; ctx.moveTo(0, sy); ctx.lineTo(w, sy);
+  }
+  ctx.stroke();
+
+  for (let i = 0; i < NC.length; i++) {
+    const g = NC[i];
+    const sx = cx + (g.x - obs.x) * scale, sy = cy + (g.y - obs.y) * scale;
+    if (sx < -20 || sx > w + 20 || sy < -20 || sy > h + 20) continue;
+    const r = clamp(0.062 * scale * (0.75 + g.j * 0.7), 1.4, 30);
+    drawGal(ctx, sx, sy, r, i === otherIdx ? 4 : 2, i === otherIdx ? 1 : 0.9);
+    // recession arrow
+    const dx = sx - cx, dy = sy - cy, d = Math.hypot(dx, dy);
+    if (d > 30 && d < Math.max(w, h)) {
+      const L = clamp(d * 0.17, 5, 40), ux = dx / d, uy = dy / d;
+      ctx.strokeStyle = 'rgba(255,255,255,0.30)'; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(sx + ux * r * 1.6, sy + uy * r * 1.6);
+      ctx.lineTo(sx + ux * (L + r), sy + uy * (L + r)); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.30)';
+      ctx.beginPath();
+      ctx.moveTo(sx + ux * (L + r), sy + uy * (L + r));
+      ctx.lineTo(sx + ux * (L + r - 5) - uy * 3, sy + uy * (L + r - 5) + ux * 3);
+      ctx.lineTo(sx + ux * (L + r - 5) + uy * 3, sy + uy * (L + r - 5) - ux * 3);
+      ctx.closePath(); ctx.fill();
+    }
+  }
+  // observer marker
+  ctx.strokeStyle = hueSelf; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, 15, 0, 7); ctx.stroke();
+  ctx.fillStyle = hueSelf; ctx.font = '600 12px system-ui,sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('me', cx, cy - 22);
+  // label the other observer
+  const o = NC[otherIdx];
+  const ox = cx + (o.x - obs.x) * scale, oy = cy + (o.y - obs.y) * scale;
+  if (ox > 30 && ox < w - 30 && oy > 26 && oy < h - 12) {
+    ctx.strokeStyle = hueOther; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(ox, oy, 13, 0, 7); ctx.stroke();
+    ctx.fillStyle = hueOther; ctx.fillText('them', ox, oy - 19);
+  }
+  ctx.textAlign = 'left';
+}
+let ncCtx1 = null, ncCtx2 = null;
+function renderNC() {
+  const aa = +$('#ncSlider').value / 100;
+  $('#ncVal').textContent = 'a = ' + aa.toFixed(2);
+  drawNC($('#cvC1'), ncCtx1, NC_A, aa, '#3987e5', '#d95926', NC_B);
+  drawNC($('#cvC2'), ncCtx2, NC_B, aa, '#d95926', '#3987e5', NC_A);
+}
+$('#ncSlider').addEventListener('input', renderNC);
+
+/* =====================================================================
+   PART 3 — REDSHIFT, SPECTRA, HUBBLE DIAGRAM
+   ===================================================================== */
+const LINES = [
+  { l: 393.4, n: 'Ca K' }, { l: 396.8, n: 'Ca H' }, { l: 410.2, n: 'Hδ' },
+  { l: 434.0, n: 'Hγ' }, { l: 486.1, n: 'Hβ' }, { l: 518.4, n: 'Mg b' },
+  { l: 589.3, n: 'Na D' }, { l: 656.3, n: 'Hα' }
+];
+const SKY = (() => {
+  const r = mulberry32(99), out = [];
+  const ds = [24, 62, 95, 140, 178, 215, 262, 305, 348, 402, 455, 510, 570, 640];
+  ds.forEach((d, i) => out.push({ d, x: 0.07 + ((i * 0.371) % 0.86), y: 0.12 + ((i * 0.617) % 0.76), j: r(), measured: false }));
+  return out;
+})();
+let selSky = -1, skyCtx = null, hubCtx = null, specLabCtx = null, specObsCtx = null;
+let hubHover = -1;
+
+function wlColour(l) {
+  let r = 0, g = 0, b = 0;
+  if (l < 380) { r = .2; g = 0; b = .3 }
+  else if (l < 440) { r = -(l - 440) / 60; b = 1 }
+  else if (l < 490) { g = (l - 440) / 50; b = 1 }
+  else if (l < 510) { g = 1; b = -(l - 510) / 20 }
+  else if (l < 580) { r = (l - 510) / 70; g = 1 }
+  else if (l < 645) { r = 1; g = -(l - 645) / 65 }
+  else if (l < 700) { r = 1 }
+  else { r = clamp(1 - (l - 700) / 260, .18, 1) }
+  let f = 1;
+  if (l > 700) f = clamp(1 - (l - 700) / 320, .25, 1);
+  if (l < 420) f = .35 + .65 * (l - 350) / 70;
+  return `rgb(${Math.round(255 * clamp(r * f, 0, 1))},${Math.round(255 * clamp(g * f, 0, 1))},${Math.round(255 * clamp(b * f, 0, 1))})`;
+}
+const WL0 = 380, WL1 = 810;
+function drawSpectrum(ctx, cv, z) {
+  const w = cv._w, h = cv._h;
+  ctx.clearRect(0, 0, w, h);
+  for (let x = 0; x < w; x++) {
+    const l = WL0 + (x / w) * (WL1 - WL0);
+    ctx.fillStyle = wlColour(l);
+    ctx.fillRect(x, 0, 1, h - 15);
+  }
+  ctx.fillStyle = '#000';
+  LINES.forEach(L => {
+    const lo = L.l * (1 + z);
+    if (lo < WL0 || lo > WL1) return;
+    const x = ((lo - WL0) / (WL1 - WL0)) * w;
+    ctx.globalAlpha = .88;
+    ctx.fillRect(x - 1.5, 0, 3, h - 15);
+    ctx.globalAlpha = 1;
+  });
+  // axis
+  ctx.fillStyle = '#898781'; ctx.font = '9.5px system-ui,sans-serif'; ctx.textAlign = 'center';
+  for (let l = 400; l <= 800; l += 100) {
+    const x = ((l - WL0) / (WL1 - WL0)) * w;
+    ctx.fillRect(x, h - 15, 1, 4);
+    ctx.fillText(l + (l === 800 ? ' nm' : ''), x, h - 3);
+  }
+  ctx.textAlign = 'left';
+}
+
+function drawSky() {
+  const cv = $('#cvSky'), ctx = skyCtx, w = cv._w, h = cv._h;
+  ctx.clearRect(0, 0, w, h); ctx.fillStyle = '#04060c'; ctx.fillRect(0, 0, w, h);
+  const r = mulberry32(5);
+  for (let i = 0; i < 220; i++) {
+    ctx.fillStyle = 'rgba(255,255,255,' + (0.12 + r() * 0.45).toFixed(2) + ')';
+    ctx.fillRect(r() * w, r() * h, 1.2, 1.2);
+  }
+  SKY.forEach((g, i) => {
+    const x = g.x * w, y = g.y * h;
+    const rad = clamp(190 / g.d, 3.6, 15);
+    const z = COS.H0 * g.d / COS.c;
+    const ci = clamp(Math.round(2 + z * 22), 2, 5);
+    drawGal(ctx, x, y, rad, ci, 1);
+    if (g.measured) {
+      ctx.strokeStyle = '#3987e5'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(x, y, rad * 2.3 + 5, 0, 7); ctx.stroke();
+    }
+    if (i === selSky) {
+      ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(x, y, rad * 2.3 + 9, 0, 7); ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(195,194,183,.85)'; ctx.font = '10px system-ui,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(g.d + ' Mpc', x, y + rad * 2.3 + 20);
+    ctx.textAlign = 'left';
+  });
+  ctx.fillStyle = 'rgba(137,135,129,.9)'; ctx.font = '11px system-ui,sans-serif';
+  ctx.fillText('Distances found independently (e.g. from Cepheid variables / type Ia supernovae)', 12, h - 10);
+}
+
+function drawHubble() {
+  const cv = $('#cvHub'), ctx = hubCtx, w = cv._w, h = cv._h;
+  const L = 62, R = 16, T = 18, B = 44;
+  const pw = w - L - R, ph = h - T - B;
+  const dMax = 700, vMax = 50000;
+  const X = d => L + (d / dMax) * pw, Y = v => T + ph - (v / vMax) * ph;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#1a1a19'; ctx.fillRect(0, 0, w, h);
+
+  ctx.strokeStyle = '#2c2c2a'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let v = 0; v <= vMax; v += 10000) { ctx.moveTo(L, Y(v)); ctx.lineTo(L + pw, Y(v)); }
+  for (let d = 0; d <= dMax; d += 100) { ctx.moveTo(X(d), T); ctx.lineTo(X(d), T + ph); }
+  ctx.stroke();
+  ctx.strokeStyle = '#383835'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(L, T); ctx.lineTo(L, T + ph); ctx.lineTo(L + pw, T + ph); ctx.stroke();
+
+  ctx.fillStyle = '#898781'; ctx.font = '11px system-ui,sans-serif'; ctx.textAlign = 'right';
+  for (let v = 0; v <= vMax; v += 10000) ctx.fillText(group(v / 1000) + 'k', L - 8, Y(v) + 4);
+  ctx.textAlign = 'center';
+  for (let d = 0; d <= dMax; d += 100) ctx.fillText(String(d), X(d), T + ph + 17);
+  ctx.fillStyle = '#c3c2b7'; ctx.font = '600 11px system-ui,sans-serif';
+  ctx.fillText('distance  d / Mpc', L + pw / 2, h - 8);
+  ctx.save(); ctx.translate(15, T + ph / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('recession speed  v / km s⁻¹', 0, 0); ctx.restore();
+  ctx.textAlign = 'left';
+
+  const pts = SKY.filter(g => g.measured);
+  if (pts.length >= 2) {
+    ctx.strokeStyle = 'rgba(195,194,183,.55)'; ctx.lineWidth = 2; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(X(0), Y(0));
+    ctx.lineTo(X(dMax), Y(COS.H0 * dMax)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#c3c2b7'; ctx.font = '600 11px system-ui,sans-serif';
+    ctx.fillText('gradient = H₀ ≈ 70 km s⁻¹ Mpc⁻¹', X(300), Y(COS.H0 * 300) - 12);
+  }
+  pts.forEach(g => {
+    const x = X(g.d), y = Y(COS.H0 * g.d);
+    ctx.fillStyle = '#1a1a19'; ctx.beginPath(); ctx.arc(x, y, 7, 0, 7); ctx.fill();
+    ctx.fillStyle = '#3987e5'; ctx.beginPath(); ctx.arc(x, y, 5, 0, 7); ctx.fill();
+  });
+  if (hubHover >= 0 && SKY[hubHover] && SKY[hubHover].measured) {
+    const g = SKY[hubHover], x = X(g.d), y = Y(COS.H0 * g.d);
+    const txt = 'd = ' + g.d + ' Mpc   v = ' + group(COS.H0 * g.d) + ' km/s';
+    ctx.font = '11px system-ui,sans-serif';
+    const tw = ctx.measureText(txt).width + 16;
+    const bx = clamp(x - tw / 2, 4, w - tw - 4), by = clamp(y - 34, 4, h - 30);
+    ctx.fillStyle = 'rgba(42,42,40,.97)'; ctx.strokeStyle = '#383835';
+    ctx.beginPath(); ctx.roundRect(bx, by, tw, 24, 6); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.fillText(txt, bx + 8, by + 16);
+  }
+  if (pts.length === 0) {
+    ctx.fillStyle = '#898781'; ctx.font = '12.5px system-ui,sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('Click galaxies in the telescope view to plot them here', L + pw / 2, T + ph / 2);
+    ctx.textAlign = 'left';
+  }
+}
+
+function selectSky(i) {
+  selSky = i;
+  const g = SKY[i]; g.measured = true;
+  const z = COS.H0 * g.d / COS.c, v = COS.H0 * g.d;
+  $('#specGal').textContent = 'galaxy at ' + g.d + ' Mpc';
+  $('#hD').innerHTML = g.d + ' <small>Mpc</small>';
+  $('#hL').innerHTML = fmt(656.3 * z, 1) + ' <small>nm</small>';
+  $('#hZ').textContent = z.toFixed(4);
+  $('#hV').innerHTML = group(v) + ' <small>km/s</small>';
+  drawSpectrum(specObsCtx, $('#cvSpecObs'), z);
+  drawSky(); drawHubble();
+}
+$('#cvSky').addEventListener('click', e => {
+  const cv = $('#cvSky'), r = cv.getBoundingClientRect();
+  const px = (e.clientX - r.left), py = (e.clientY - r.top);
+  let best = -1, bd = 1e9;
+  SKY.forEach((g, i) => {
+    const d = (g.x * cv._w - px) ** 2 + (g.y * cv._h - py) ** 2;
+    if (d < bd) { bd = d; best = i; }
+  });
+  if (best >= 0 && bd < 40 ** 2) selectSky(best);
+});
+$('#cvSky').style.cursor = 'crosshair';
+$('#hMeasureAll').addEventListener('click', () => { SKY.forEach(g => g.measured = true); selectSky(SKY.length - 1); });
+$('#hReset').addEventListener('click', () => {
+  SKY.forEach(g => g.measured = false); selSky = -1;
+  $('#specGal').textContent = '— select a galaxy —';
+  ['#hD', '#hL', '#hZ', '#hV'].forEach(s => $(s).innerHTML = '—');
+  drawSpectrum(specObsCtx, $('#cvSpecObs'), 0);
+  drawSky(); drawHubble();
+});
+$('#cvHub').addEventListener('mousemove', e => {
+  const cv = $('#cvHub'), r = cv.getBoundingClientRect();
+  const px = e.clientX - r.left, py = e.clientY - r.top;
+  const w = cv._w, h = cv._h, L = 62, R = 16, T = 18, B = 44;
+  const pw = w - L - R, ph = h - T - B;
+  let best = -1, bd = 1e9;
+  SKY.forEach((g, i) => {
+    if (!g.measured) return;
+    const x = L + (g.d / 700) * pw, y = T + ph - (COS.H0 * g.d / 50000) * ph;
+    const d = (x - px) ** 2 + (y - py) ** 2;
+    if (d < bd) { bd = d; best = i; }
+  });
+  const nh = (best >= 0 && bd < 18 ** 2) ? best : -1;
+  if (nh !== hubHover) { hubHover = nh; drawHubble(); }
+});
+$('#cvHub').addEventListener('mouseleave', () => { if (hubHover !== -1) { hubHover = -1; drawHubble(); } });
+
+/* =====================================================================
+   PART 4 — CMB
+   ===================================================================== */
+let cmbMode = 'bigbang', cmbCtx = null;
+function drawCMB() {
+  const cv = $('#cvCmb'), ctx = cmbCtx, w = cv._w, h = cv._h;
+  ctx.clearRect(0, 0, w, h);
+  if (cmbMode === 'steady') {
+    ctx.fillStyle = '#08080a'; ctx.fillRect(0, 0, w, h);
+    const r = mulberry32(31);
+    for (let i = 0; i < 320; i++) {
+      ctx.fillStyle = 'rgba(255,255,255,' + (0.1 + r() * 0.4).toFixed(2) + ')';
+      ctx.fillRect(r() * w, r() * h, 1.3, 1.3);
+    }
+    ctx.fillStyle = '#898781'; ctx.font = '600 15px system-ui,sans-serif'; ctx.textAlign = 'center';
+    ctx.fillText('No microwave background is predicted', w / 2, h / 2 - 8);
+    ctx.font = '13px system-ui,sans-serif';
+    ctx.fillText('Without a hot dense beginning there is nothing to have emitted it', w / 2, h / 2 + 14);
+    ctx.textAlign = 'left';
+    return;
+  }
+  // smooth low-frequency noise map
+  const NX = 46, NY = 26;
+  const r = mulberry32(1965), grid = [];
+  for (let j = 0; j < NY; j++) { grid[j] = []; for (let i = 0; i < NX; i++) grid[j][i] = r() * 2 - 1; }
+  const sm = [];
+  for (let j = 0; j < NY; j++) {
+    sm[j] = [];
+    for (let i = 0; i < NX; i++) {
+      let s = 0, n = 0;
+      for (let dj = -2; dj <= 2; dj++) for (let di = -2; di <= 2; di++) {
+        const jj = j + dj, ii = i + di;
+        if (jj < 0 || jj >= NY || ii < 0 || ii >= NX) continue;
+        const wgt = 1 / (1 + di * di + dj * dj); s += grid[jj][ii] * wgt; n += wgt;
+      }
+      sm[j][i] = s / n;
+    }
+  }
+  let mx = 0; sm.forEach(row => row.forEach(v => mx = Math.max(mx, Math.abs(v))));
+  const cw = w / NX, ch = (h - 46) / NY;
+  for (let j = 0; j < NY; j++) for (let i = 0; i < NX; i++) {
+    const u = clamp(sm[j][i] / mx, -1, 1);
+    let col;
+    if (u > 0) col = `rgb(${Math.round(lerp(240, 227, 1 - u))},${Math.round(lerp(239, 59, u))},${Math.round(lerp(236, 59, u))})`;
+    else col = `rgb(${Math.round(lerp(240, 57, -u))},${Math.round(lerp(239, 135, -u))},${Math.round(lerp(236, 229, -u))})`;
+    ctx.fillStyle = col;
+    ctx.fillRect(i * cw, j * ch, cw + 1, ch + 1);
+  }
+  ctx.fillStyle = '#1a1a19'; ctx.fillRect(0, h - 46, w, 46);
+  ctx.fillStyle = '#c3c2b7'; ctx.font = '11.5px system-ui,sans-serif';
+  ctx.fillText('Temperature of the whole sky — mean 2.725 K', 12, h - 29);
+  // legend
+  const lw = 110, lx = 58, ly = h - 8;
+  for (let i = 0; i < lw; i++) {
+    const u = (i / lw) * 2 - 1;
+    ctx.fillStyle = u > 0
+      ? `rgb(${Math.round(lerp(240, 227, 1 - u))},${Math.round(lerp(239, 59, u))},${Math.round(lerp(236, 59, u))})`
+      : `rgb(${Math.round(lerp(240, 57, -u))},${Math.round(lerp(239, 135, -u))},${Math.round(lerp(236, 229, -u))})`;
+    ctx.fillRect(lx + i, ly - 9, 1, 10);
+  }
+  ctx.fillStyle = '#898781'; ctx.font = '10px system-ui,sans-serif';
+  ctx.fillText('cooler', 12, ly - 1);
+  ctx.fillText('hotter', lx + lw + 6, ly - 1);
+  ctx.fillText('colour scale spans only ±0.0002 K', lx + lw + 48, ly - 1);
+}
+const CMB_TEXT = {
+  bigbang: `<p style="font-size:.9rem;margin-bottom:.5em"><strong>Prediction:</strong> a hot, dense beginning must leave behind a
+    uniform bath of radiation, cooled by expansion to a few kelvin, with a perfect black-body spectrum, arriving from
+    every direction.</p>
+    <p style="font-size:.9rem;margin-bottom:0"><strong>Observation:</strong> exactly that — 2.725 K, isotropic to about 1 part in
+    100 000, and the most perfect black-body spectrum ever measured. The tiny ripples shown above are the density
+    variations that later grew into galaxies and clusters.</p>`,
+  steady: `<p style="font-size:.9rem;margin-bottom:.5em"><strong>Prediction:</strong> none. In a universe that was never hot and
+    dense, there is no epoch at which such radiation could have been released.</p>
+    <p style="font-size:.9rem;margin-bottom:0">Hoyle later suggested the glow could be starlight absorbed and re-radiated
+    by iron "whiskers" of interstellar dust. That cannot reproduce a black-body spectrum this precise, nor a glow this
+    smooth across the whole sky. The 1965 discovery is generally taken as the moment the Steady State model lost.</p>`
+};
+$$('[data-cmb]').forEach(b => b.addEventListener('click', () => {
+  cmbMode = b.dataset.cmb;
+  $$('[data-cmb]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.cmb === cmbMode)));
+  $('#cmbText').innerHTML = CMB_TEXT[cmbMode];
+  drawCMB();
+}));
+
+/* =====================================================================
+   PART 5 — BALLOON
+   ===================================================================== */
+let balCtx = null;
+const BAL = (() => {
+  const r = mulberry32(77), out = [];
+  for (let i = 0; i < 46; i++) {
+    const u = r() * 2 - 1, th = Math.acos(u), ph = r() * Math.PI * 2;
+    out.push({ th, ph });
+  }
+  return out;
+})();
+function drawBalloon() {
+  const cv = $('#cvBal'), ctx = balCtx, w = cv._w, h = cv._h;
+  const infl = +$('#balSlider').value / 100;
+  $('#balVal').textContent = '×' + infl.toFixed(2);
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = '#1a1a19'; ctx.fillRect(0, 0, w, h);
+  const cx = w / 2, cy = h / 2 + 8;
+  const R = Math.min(w, h - 40) * 0.44 * infl;
+
+  // rubber
+  const g = ctx.createRadialGradient(cx - R * .3, cy - R * .35, R * .05, cx, cy, R);
+  g.addColorStop(0, 'rgba(217,89,38,.30)'); g.addColorStop(.75, 'rgba(217,89,38,.13)');
+  g.addColorStop(1, 'rgba(217,89,38,.05)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
+  ctx.strokeStyle = 'rgba(217,89,38,.75)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke();
+  // knot
+  ctx.fillStyle = 'rgba(217,89,38,.8)';
+  ctx.beginPath(); ctx.moveTo(cx - 7, cy + R); ctx.lineTo(cx + 7, cy + R); ctx.lineTo(cx, cy + R + 13); ctx.closePath(); ctx.fill();
+
+  // dots (galaxies stuck on the surface — they do NOT grow)
+  const dots = BAL.map(d => ({
+    x: cx + R * Math.sin(d.th) * Math.cos(d.ph),
+    y: cy + R * Math.cos(d.th),
+    z: Math.sin(d.th) * Math.sin(d.ph)
+  }));
+  // separation lines from one chosen dot: they lengthen in proportion as it inflates
+  const home = dots[3];
+  [9, 17, 28].forEach(k => {
+    const o = dots[k]; if (!o) return;
+    ctx.globalAlpha = (home.z > 0 && o.z > 0) ? 0.55 : 0.22;
+    ctx.strokeStyle = '#9ec5f4'; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(home.x, home.y); ctx.lineTo(o.x, o.y); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  });
+  ctx.fillStyle = '#3987e5';
+  ctx.beginPath(); ctx.arc(home.x, home.y, 7, 0, 7); ctx.fill();
+
+  dots.slice().sort((a, b) => a.z - b.z).forEach(d => {
+    const front = d.z > 0;
+    ctx.globalAlpha = front ? 1 : 0.42;
+    ctx.fillStyle = front ? '#ffffff' : '#9ec5f4';
+    ctx.beginPath(); ctx.arc(d.x, d.y, 4.5, 0, 7); ctx.fill();
+    ctx.globalAlpha = 1;
+  });
+
+  // the "centre" that is not part of the universe
+  ctx.textAlign = 'center';
+  ctx.font = '11px system-ui,sans-serif';
+  const lbl = 'this "centre" is not part of the universe';
+  const lw2 = ctx.measureText(lbl).width;
+  ctx.fillStyle = 'rgba(26,26,25,.85)';
+  ctx.fillRect(cx - lw2 / 2 - 6, cy + 12, lw2 + 12, 16);
+  ctx.strokeStyle = '#d03b3b'; ctx.lineWidth = 1.8;
+  ctx.beginPath(); ctx.moveTo(cx - 6, cy - 6); ctx.lineTo(cx + 6, cy + 6);
+  ctx.moveTo(cx + 6, cy - 6); ctx.lineTo(cx - 6, cy + 6); ctx.stroke();
+  ctx.fillStyle = '#e66767';
+  ctx.fillText(lbl, cx, cy + 24);
+
+  ctx.fillStyle = '#c3c2b7'; ctx.font = '12px system-ui,sans-serif';
+  ctx.fillText('The universe is only the rubber surface — the inside and the room outside do not exist', w / 2, 22);
+  ctx.font = '11px system-ui,sans-serif'; ctx.fillStyle = '#898781';
+  ctx.fillText('Dots are stuck on, not drawn on: real galaxies do not stretch as space expands', w / 2, h - 12);
+  ctx.textAlign = 'left';
+}
+$('#balSlider').addEventListener('input', drawBalloon);
+
+/* =====================================================================
+   QUIZ
+   ===================================================================== */
+const QUIZ = [
+  {
+    q: 'A student says: "The Big Bang was an explosion at a point, and galaxies are the debris flying outwards." Which statement is the best correction?',
+    o: ['Galaxies are flying outwards, but from a point we cannot see',
+      'Space itself expands between galaxies, and the expansion happened everywhere at once',
+      'Only the galaxies furthest from the centre are moving',
+      'The galaxies are stationary and only light is stretched'],
+    a: 1,
+    e: 'There is no centre and no debris. Distances between galaxies increase because space expands; every observer sees the same recession, so the "explosion" happened at every point in the universe.'
+  },
+  {
+    q: 'Both the Big Bang and the Steady State model predict which one of the following?',
+    o: ['The cosmic microwave background', 'A universe about 13.8 billion years old',
+      'Redshift increasing with distance (Hubble\'s law)', 'A hot, dense early phase'],
+    a: 2,
+    e: 'Both models are expanding models, so both predict v = H₀d. This is why redshift alone cannot be used as evidence for the Big Bang specifically.'
+  },
+  {
+    q: 'Why is the cosmic microwave background such strong evidence for the Big Bang?',
+    o: ['It shows the universe is expanding',
+      'It proves galaxies are moving away from us',
+      'It is radiation from a hot dense early universe, cooled by expansion to 2.7 K — something the Steady State model cannot produce',
+      'It was discovered before the Steady State model was proposed'],
+    a: 2,
+    e: 'It was predicted in 1948 from a hot beginning and found in 1965 at 2.7 K with a near-perfect black-body spectrum. A universe with no hot dense phase has no source for it.'
+  },
+  {
+    q: 'In the Steady State model, why does the average density of the universe stay constant even though it expands?',
+    o: ['Because galaxies shrink as the universe expands',
+      'Because matter is continuously created in the gaps as space expands',
+      'Because the expansion rate slows to zero',
+      'Because the universe is finite and has an edge'],
+    a: 1,
+    e: 'Continuous creation — roughly one hydrogen atom per cubic kilometre per year — was required to keep density constant. Far too little to ever detect directly, which was one of the criticisms of the theory.'
+  }
+];
+(function buildQuiz() {
+  const box = $('#quiz');
+  QUIZ.forEach((q, qi) => {
+    const d = document.createElement('div'); d.className = 'q';
+    d.innerHTML = '<div class="qt">' + (qi + 1) + '. ' + q.q + '</div><div class="opts"></div><div class="expl"></div>';
+    const opts = $('.opts', d);
+    q.o.forEach((text, oi) => {
+      const b = document.createElement('button');
+      b.className = 'opt'; b.textContent = text;
+      b.addEventListener('click', () => {
+        if (d.dataset.done) return;
+        d.dataset.done = '1';
+        $$('.opt', d).forEach((x, xi) => {
+          if (xi === q.a) x.classList.add('right');
+          else if (xi === oi) x.classList.add('wrong');
+        });
+        const ex = $('.expl', d);
+        ex.innerHTML = (oi === q.a ? '<strong style="color:#0ca30c">Correct.</strong> ' : '<strong style="color:#d03b3b">Not quite.</strong> ') + q.e;
+        ex.classList.add('on');
+      });
+      opts.appendChild(b);
+    });
+    box.appendChild(d);
+  });
+})();
+
+/* =====================================================================
+   LEVEL TOGGLE + NAV
+   ===================================================================== */
+$$('[data-level-btn]').forEach(b => b.addEventListener('click', () => {
+  const lv = b.dataset.levelBtn;
+  document.documentElement.dataset.level = lv;
+  $$('[data-level-btn]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.levelBtn === lv)));
+}));
+
+const secs = $$('main section.band');
+const tabLinks = $$('#tabs a');
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(ents => {
+    ents.forEach(e => {
+      if (!e.isIntersecting) return;
+      tabLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-120px 0px -65% 0px' });
+  secs.forEach(s => io.observe(s));
+}
+
+/* =====================================================================
+   GUIDED TOUR
+   ===================================================================== */
+const TOUR = [
+  {
+    t: 'Two universes that both expand',
+    b: 'On the left is the Big Bang model; on the right, the Steady State model. Both expand. Watch which one actually changes as we move through time.',
+    go: '#sim', act() { setModel('compare'); setFrame('proper'); setS(aToSlider(1)); }
+  },
+  {
+    t: 'Rewind the Big Bang',
+    b: 'The galaxies crowd together and the density reading climbs. Nothing is falling towards a centre — the whole picture simply shrinks. Meanwhile the Steady State panel looks exactly the same as it did.',
+    go: '#sim', act() { setModel('compare'); setS(aToSlider(0.16)); }
+  },
+  {
+    t: 'Far enough back, the lights go out',
+    b: 'Before about 380 000 years the universe was too hot for atoms. It was an opaque plasma — a glowing fog. The light released when that fog cleared is still arriving today as the microwave background.',
+    go: '#sim', act() { setModel('bigbang'); setS(aToSlider(0.0004)); }
+  },
+  {
+    t: 'Galaxies are not moving through space',
+    b: 'Switch the ruler to "ride with space" and press play. The galaxies sit still on their grid squares — it is the squares that grow. This is the single idea the balloon is trying to convey.',
+    go: '#sim', act() { setModel('bigbang'); setFrame('comoving'); setS(aToSlider(0.3)); }
+  },
+  {
+    t: 'Move your telescope',
+    b: 'Press "move to a random galaxy" a few times, or click any galaxy on the canvas. The view from every galaxy is the same: everything recedes. There is no centre to find.',
+    go: '#sim', act() { setFrame('proper'); setS(aToSlider(1)); state.arrows = true; $('#chkArrows').checked = true; state.obs = pickObserver(); render(); }
+  },
+  {
+    t: 'A universe that never changes',
+    b: 'Now the Steady State model on its own. Drag the slider anywhere: the density readout never moves, because new matter is created to fill the growing gaps. There is no first moment at all.',
+    go: '#sim', act() { setModel('steady'); setFrame('proper'); setS(aToSlider(0.3)); }
+  },
+  {
+    t: 'The measurement everyone agrees on',
+    b: 'Click a few galaxies to take their spectra. The dark absorption lines shift towards red, and speed comes out proportional to distance. Both models predict this line — so redshift alone cannot decide between them.',
+    go: '#hubble', act() { SKY.forEach((g, i) => { if (i % 2 === 0) g.measured = true; }); selectSky(8); }
+  },
+  {
+    t: 'The evidence that decided it',
+    b: 'The Big Bang predicts a microwave glow at a few kelvin filling the whole sky; the Steady State model predicts nothing of the kind. Penzias and Wilson found it in 1965 at 2.725 K.',
+    go: '#evidence', act() { }
+  },
+  {
+    t: 'Where the balloon lets you down',
+    b: 'Inflate it. It gets the no-centre idea right, but it also shows a centre inside the rubber and appears to expand into the room — two things the real universe does not do.',
+    go: '#balloon', act() { $('#balSlider').value = 150; drawBalloon(); }
+  },
+  {
+    t: 'Now put it into words',
+    b: 'The revision table sets the two models side by side, and the paragraph underneath is the full exam answer. Then try the four questions at the bottom.',
+    go: '#compare', act() { }
+  }
+];
+let tourI = -1;
+function setS(v) { state.s = v; $('#timeSlider').value = v; play(false); render(); }
+function showTour(i) {
+  tourI = clamp(i, 0, TOUR.length - 1);
+  const s = TOUR[tourI];
+  $('#tour').classList.add('on');
+  $('#tourStep').textContent = 'Step ' + (tourI + 1) + ' of ' + TOUR.length;
+  $('#tourTitle').textContent = s.t;
+  $('#tourBody').textContent = s.b;
+  $('#tourProg').style.width = ((tourI + 1) / TOUR.length * 100) + '%';
+  $('#tourPrev').disabled = tourI === 0;
+  $('#tourNext').textContent = tourI === TOUR.length - 1 ? 'Finish' : 'Next';
+  try { s.act(); } catch (e) { }
+  const target = document.querySelector(s.go);
+  if (target) {
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+  }
+}
+$('#tourStart').addEventListener('click', () => showTour(0));
+$('#tourNext').addEventListener('click', () => {
+  if (tourI === TOUR.length - 1) $('#tour').classList.remove('on');
+  else showTour(tourI + 1);
+});
+$('#tourPrev').addEventListener('click', () => showTour(tourI - 1));
+$('#tourClose').addEventListener('click', () => $('#tour').classList.remove('on'));
+document.addEventListener('keydown', e => {
+  if (!$('#tour').classList.contains('on')) return;
+  if (e.key === 'ArrowRight') $('#tourNext').click();
+  if (e.key === 'ArrowLeft' && tourI > 0) $('#tourPrev').click();
+  if (e.key === 'Escape') $('#tour').classList.remove('on');
+});
+
+/* =====================================================================
+   BOOT
+   ===================================================================== */
+function buildTicks() {
+  const holder = $('.ticks');
+  holder.style.position = 'relative';
+  holder.style.height = '15px';
+  holder.innerHTML = '';
+  const narrow = window.innerWidth < 760;
+  if (state.model === 'steady') {
+    [{ a: COS.aMin, l: 'no beginning — time runs back forever' }, { a: 1, l: 'today' }]
+      .forEach(m => {
+        const sp = document.createElement('span');
+        sp.textContent = m.l;
+        sp.style.position = 'absolute';
+        sp.style.left = clamp(aToSlider(m.a) / 10, 0, 100) + '%';
+        sp.style.transform = m.a === COS.aMin ? 'none' : (m.a === COS.aMax ? 'translateX(-100%)' : 'translateX(-50%)');
+        sp.style.whiteSpace = 'nowrap';
+        if (narrow && m.a === COS.aMax) return;
+        holder.appendChild(sp);
+      });
+    return;
+  }
+  const marks = narrow ? [
+    { a: COS.aMin, l: 'start' },
+    { a: aFromTBB(1), l: '1 bn yr' },
+    { a: 1, l: 'now' }
+  ] : [
+    { a: COS.aMin, l: 'start' },
+    { a: COS.aRec, l: '380 000 yr' },
+    { a: aFromTBB(1), l: '1 bn yr' },
+    { a: 1, l: 'now' }
+  ];
+  marks.forEach(m => {
+    const sp = document.createElement('span');
+    sp.textContent = m.l;
+    sp.style.position = 'absolute';
+    sp.style.left = clamp(aToSlider(m.a) / 10, 0, 100) + '%';
+    sp.style.transform = m.a === COS.aMin ? 'none' : 'translateX(-50%)';
+    sp.style.whiteSpace = 'nowrap';
+    holder.appendChild(sp);
+  });
+}
+
+function boot() {
+  resizeStage();
+  ncCtx1 = fitCanvas($('#cvC1'), window.innerWidth < 700 ? 240 : 300);
+  ncCtx2 = fitCanvas($('#cvC2'), window.innerWidth < 700 ? 240 : 300);
+  skyCtx = fitCanvas($('#cvSky'), window.innerWidth < 700 ? 260 : 330);
+  hubCtx = fitCanvas($('#cvHub'), window.innerWidth < 700 ? 300 : 380);
+  specLabCtx = fitCanvas($('#cvSpecLab'), 62);
+  specObsCtx = fitCanvas($('#cvSpecObs'), 62);
+  cmbCtx = fitCanvas($('#cvCmb'), window.innerWidth < 700 ? 260 : 330);
+  balCtx = fitCanvas($('#cvBal'), window.innerWidth < 700 ? 300 : 380);
+
+  $('#timeSlider').value = state.s;
+  buildTicks();
+  setModel(state.model); setFrame(state.frame);   // preserve the user's choices on resize
+  render(); renderNC();
+  drawSpectrum(specLabCtx, $('#cvSpecLab'), 0);
+  drawSpectrum(specObsCtx, $('#cvSpecObs'), selSky >= 0 ? COS.H0 * SKY[selSky].d / COS.c : 0);
+  drawSky(); drawHubble();
+  $('#cmbText').innerHTML = CMB_TEXT[cmbMode];
+  drawCMB(); drawBalloon();
+}
+let rt = null;
+window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(boot, 160); });
+boot();
+</script>
+</body>
+</html>
