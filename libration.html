@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lunar Libration — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0a0f1e;--panel:#131a2e;--panel2:#1a2440;--line:#28324f;
+  --ink:#e9edf8;--dim:#94a1c2;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--moon:#d6d9e2;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 640px at 72% -8%,#16213f,#0a0f1e 62%);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55}
+header{padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#16203c,#0e1730)}
+header h1{margin:0;font-size:20px}
+header p{margin:4px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:284px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#141c33,#111827);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;
+  box-shadow:0 6px 22px rgba(0,0,0,.22)}
+.card h2{margin:0 0 11px;font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 4px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+  padding:9px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#052034;border-color:var(--accent2);font-weight:700}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.toggle{display:flex;align-items:center;justify-content:space-between;padding:9px 11px;border-radius:9px;
+  border:1px solid var(--line);background:var(--panel2);cursor:pointer;margin-bottom:8px}
+.toggle .sw{width:36px;height:20px;border-radius:20px;background:#33405f;position:relative;transition:.15s;flex:0 0 auto}
+.toggle .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#8493b8;transition:.15s}
+.toggle.on .sw{background:var(--accent2)} .toggle.on .sw::after{left:18px;background:#052034}
+.toggle b{font-size:13.5px}.toggle small{display:block;color:var(--dim);font-size:11px}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:8px 13px;font-size:13.5px;border-radius:9px;background:var(--panel2);border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:700}
+.hide{display:none!important}
+canvas{width:100%;display:block;border-radius:12px;background:#050a16}
+.cap{font-size:13px;color:var(--dim);margin-top:9px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:6px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-weight:600}
+tr:last-child td{border-bottom:none}
+.meter{height:22px;border-radius:11px;background:var(--panel2);overflow:hidden;margin-top:6px;position:relative}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,#3a7,#5ddc9a);transition:width .1s}
+.meter span{position:absolute;left:0;right:0;top:0;line-height:22px;text-align:center;font-size:12px;font-weight:700;color:#04121f}
+.note{font-size:12.5px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.q{background:var(--panel2);border-radius:9px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:8px;background:#080e1e;color:var(--dim)}
+details{margin-top:9px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Lunar Libration</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 2.7 &amp; 2.8 · why the Moon keeps one face towards us, yet lets us peek at 59% of its surface</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>Time</h2>
+    <label>Day of the lunar month <span class="val" id="dayOut">0.0</span></label>
+    <input type="range" id="day" min="0" max="27.3" step="0.05" value="0">
+    <div class="row" style="margin-top:9px">
+      <button id="play" class="primary">▶ Play</button>
+      <button id="fast">⏩ Fast (fill map)</button>
+    </div>
+    <button id="reset" style="width:100%;margin-top:8px">↺ Reset the map</button>
+  </div>
+
+  <div class="card">
+    <h2>Turn each cause on/off</h2>
+    <div class="toggle on" id="tgLon"><div><b>Rock east–west</b><small>libration in longitude (±7.9°) — elliptical orbit</small></div><div class="sw"></div></div>
+    <div class="toggle on" id="tgLat"><div><b>Nod north–south</b><small>libration in latitude (±6.7°) — tilted axis</small></div><div class="sw"></div></div>
+    <div class="cap">Switch one off to see exactly what that cause does to the view.</div>
+  </div>
+
+  <div class="card">
+    <h2>Surface seen so far</h2>
+    <div class="meter"><i id="covBar" style="width:50%"></i><span id="covTxt">50%</span></div>
+    <div class="note">A hemisphere is 50%. Libration lets the total creep up towards <b>about 59%</b> over time — leaving ~41% of the far side never seen from Earth.</div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" data-v="rock">See the Moon rock</div>
+      <div class="tab" data-v="sync">Why one face?</div>
+      <div class="tab" data-v="cause">The two causes</div>
+    </div>
+
+    <div id="vRock">
+      <canvas id="cMoon"></canvas>
+      <canvas id="cInfo" style="margin-top:10px"></canvas>
+      <div class="cap" id="rockCap"></div>
+    </div>
+    <div id="vSync" class="hide">
+      <canvas id="cSync"></canvas>
+      <div class="row" style="margin-top:10px">
+        <button id="syncToggle" class="primary">Rotation: synchronous ✓</button>
+      </div>
+      <div class="cap" id="syncCap"></div>
+    </div>
+    <div id="vCause" class="hide">
+      <canvas id="cCause"></canvas>
+      <div class="cap" id="causeCap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>Right now</h2>
+    <table>
+      <tr><td>East–west libration</td><td id="rLon">—</td></tr>
+      <tr><td>North–south libration</td><td id="rLat">—</td></tr>
+      <tr><td>Rotation period</td><td>27.3 days</td></tr>
+      <tr><td>= orbital period</td><td>27.3 days</td></tr>
+      <tr><td>Surface ever visible</td><td id="rCov">—</td></tr>
+    </table>
+    <div class="note" id="rockNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas (2.7 &amp; 2.8)</h2>
+    <details><summary>Synchronous rotation (2.7)</summary><p>The Moon turns on its axis in exactly the same time it takes to orbit the Earth (27.3 days). So the <b>same face always points towards us</b> — we see the near side and never the far side.</p></details>
+    <details><summary>What is libration?</summary><p>Even though it keeps one face towards us, the Moon appears to slowly <b>rock and nod</b>. This wobble is called <b>libration</b>, and it lets us peek a little way around the edges — so over time we see about <b>59%</b> of the surface, not just 50%.</p></details>
+    <details><summary>Cause 1 — libration in longitude</summary><p>The Moon's orbit is an <b>ellipse</b>, so it speeds up and slows down (fastest at perigee). But its spin is steady. Sometimes the spin gets ahead of the orbit and sometimes behind, so we peek around the <b>east and west</b> edges — up to ±7.9°.</p></details>
+    <details><summary>Cause 2 — libration in latitude</summary><p>The Moon's spin axis is <b>tilted about 6.7°</b> to its orbit. So as it goes round, we sometimes look over its <b>north pole</b> and sometimes over its <b>south pole</b> — up to ±6.7°.</p></details>
+    <details><summary>The effect (2.8)</summary><p>Libration reveals thin zones all around the limb of the Moon. Adding these to the 50% near side brings the total ever visible to about <b>59%</b>.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const D2R=Math.PI/180, TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const A_LON=7.9, A_LAT=6.7, MONTH=27.3;
+
+const S={t:0, view:"rock", opts:{lon:1,lat:1}, playing:false, fast:false, sync:true, syncAng:0};
+
+/* librations (degrees) from time */
+function librations(){
+  const Llon=(S.opts.lon?A_LON:0)*Math.sin(TAU*S.t/27.55);
+  const Llat=(S.opts.lat?A_LAT:0)*Math.sin(TAU*S.t/27.21+1.3);
+  return {Llon,Llat};
+}
+
+/* ---------- sphere projection (orthographic) ---------- */
+// point at selenographic (lon east+, lat north+); libration rotates the sphere
+function project(lon,lat,Llon,Llat){
+  const la=lat*D2R, lo=lon*D2R;
+  let x=Math.cos(la)*Math.sin(lo), y=Math.sin(la), z=Math.cos(la)*Math.cos(lo);
+  const t=Llon*D2R, ct=Math.cos(t), st=Math.sin(t);
+  let x1=x*ct+z*st, z1=-x*st+z*ct, y1=y;
+  const f=Llat*D2R, cf=Math.cos(f), sf=Math.sin(f);
+  let y2=y1*cf-z1*sf, z2=y1*sf+z1*cf, x2=x1;
+  return {x:x2,y:y2,z:z2};
+}
+
+/* ---------- coverage grid ---------- */
+const LONN=90, LATN=45;                                // 4° cells
+const seen=new Uint8Array(LONN*LATN);
+let totW=0; const wLat=[];
+for(let j=0;j<LATN;j++){const lat=-90+ (j+0.5)/LATN*180; wLat[j]=Math.cos(lat*D2R); totW+=wLat[j]*LONN;}
+function accumulate(Llon,Llat){
+  for(let j=0;j<LATN;j++){const lat=-90+(j+0.5)/LATN*180;
+    for(let i=0;i<LONN;i++){const idx=j*LONN+i; if(seen[idx])continue;
+      const lon=-180+(i+0.5)/LONN*360;
+      // include ~1° diurnal libration reach
+      for(const dl of [-1,0,1])for(const db of [-1,0,1]){
+        if(project(lon,lat,Llon+dl,Llat+db).z>0.001){seen[idx]=1;break;}}
+    }}
+}
+function coverage(){let s=0;for(let j=0;j<LATN;j++)for(let i=0;i<LONN;i++)if(seen[j*LONN+i])s+=wLat[j];return s/totW*100;}
+
+/* ---------- maria (lon east+, lat north+, angular radius deg) ---------- */
+const MARIA=[
+ ["Imbrium",-16,35,17],["Serenitatis",18,28,11],["Tranquillitatis",30,9,13],
+ ["Crisium",59,17,8],["Fecunditatis",52,-8,11],["Nectaris",34,-15,7],
+ ["Nubium",-15,-21,10],["Humorum",-39,-24,8],["Procellarum",-57,18,24],
+ ["Frigoris",0,56,20],["Orientale",-93,-19,9],["Smythii",87,2,7]
+];
+const LIMB={Crisium:1,Orientale:1,Smythii:1};
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+function txt(c,x,y,t,col,sz,al){c.fillStyle=col||"#c7d2ee";c.font="600 "+(sz||12)+"px system-ui";
+  c.textAlign=al||"center";c.fillText(t,x,y);c.textAlign="left";}
+
+/* ---------- the Moon disc ---------- */
+function drawMoon(){
+  const {c,w,h}=fit(document.getElementById("cMoon"),0.66);
+  c.clearRect(0,0,w,h);c.fillStyle="#050a16";c.fillRect(0,0,w,h);
+  const cx=w/2, cy=h/2, R=Math.min(w,h)*0.42, {Llon,Llat}=librations();
+  // disc base
+  const g=c.createRadialGradient(cx-R*0.25,cy-R*0.25,R*0.2,cx,cy,R);
+  g.addColorStop(0,"#dfe2ea");g.addColorStop(.75,"#c3c7d3");g.addColorStop(1,"#8f95a6");
+  c.save();c.beginPath();c.arc(cx,cy,R,0,TAU);c.clip();
+  c.fillStyle=g;c.fillRect(0,0,w,h);
+  // maria
+  MARIA.forEach(([n,lo,la,rad])=>{const p=project(lo,la,Llon,Llat);if(p.z<0.04)return;
+    const sx=cx+p.x*R, sy=cy-p.y*R, rr=rad*D2R*R;
+    const ang=Math.atan2(sy-cy,sx-cx);
+    c.save();c.translate(sx,sy);c.rotate(ang);
+    c.beginPath();c.ellipse(0,0,rr*Math.max(p.z,0.12),rr,0,0,TAU);
+    c.fillStyle=`rgba(70,84,110,${0.55*clamp(p.z*1.4,0.3,1)})`;c.fill();c.restore();
+    if(LIMB[n]&&p.z<0.42){txt(c,sx,sy-rr-4,n,"#ffd97a",10);}
+  });
+  // graticule
+  c.strokeStyle="rgba(70,90,130,.35)";c.lineWidth=1;
+  for(let lo=-150;lo<=150;lo+=30){c.beginPath();let started=false;
+    for(let la=-90;la<=90;la+=4){const p=project(lo,la,Llon,Llat);
+      if(p.z<=0){started=false;continue;}const sx=cx+p.x*R,sy=cy-p.y*R;
+      started?c.lineTo(sx,sy):c.moveTo(sx,sy);started=true;}c.stroke();}
+  for(let la=-60;la<=60;la+=30){c.beginPath();let started=false;
+    for(let lo=-180;lo<=180;lo+=4){const p=project(lo,la,Llon,Llat);
+      if(p.z<=0){started=false;continue;}const sx=cx+p.x*R,sy=cy-p.y*R;
+      started?c.lineTo(sx,sy):c.moveTo(sx,sy);started=true;}c.stroke();}
+  // equator (bold) + prime meridian (bold)
+  c.strokeStyle="rgba(255,201,77,.6)";c.lineWidth=1.6;
+  [[0,"lat"],[0,"lon"]].forEach(([v,kind])=>{c.beginPath();let st=false;
+    for(let k=-180;k<=180;k+=3){const p=kind==="lat"?project(k,0,Llon,Llat):project(0,k,Llon,Llat);
+      if(p.z<=0){st=false;continue;}const sx=cx+p.x*R,sy=cy-p.y*R;st?c.lineTo(sx,sy):c.moveTo(sx,sy);st=true;}c.stroke();});
+  c.restore();
+  // limb outline
+  c.beginPath();c.arc(cx,cy,R,0,TAU);c.strokeStyle="rgba(200,215,255,.5)";c.lineWidth=1.5;c.stroke();
+  // sub-Earth centre cross + the (0,0) point marker (shows the rock)
+  const p0=project(0,0,Llon,Llat);
+  if(p0.z>0){const sx=cx+p0.x*R,sy=cy-p0.y*R;
+    c.strokeStyle="#ff7b7b";c.lineWidth=1.6;
+    c.beginPath();c.moveTo(sx-7,sy);c.lineTo(sx+7,sy);c.moveTo(sx,sy-7);c.lineTo(sx,sy+7);c.stroke();
+    txt(c,sx,sy-11,"Moon's centre point","#ff9d9d",10);}
+  c.strokeStyle="rgba(255,255,255,.4)";c.beginPath();c.arc(cx,cy,3,0,TAU);c.stroke();
+  txt(c,cx,cy+R+16,"the same near side always faces us — but it rocks","rgba(200,215,255,.7)",11);
+  drawInfo();
+}
+function drawInfo(){
+  const {c,w,h}=fit(document.getElementById("cInfo"),0.34);
+  c.clearRect(0,0,w,h);c.fillStyle="#050a16";c.fillRect(0,0,w,h);
+  const {Llon,Llat}=librations();
+  // LEFT: libration diagram
+  const dw=h*1.0, dcx=dw/2+6, dcy=h/2, dR=h*0.40;
+  c.strokeStyle="#1b2740";c.strokeRect(dcx-dR,dcy-dR,dR*2,dR*2);
+  // boundary ellipse ±7.9/±6.7
+  c.strokeStyle="rgba(93,220,154,.5)";c.setLineDash([4,3]);
+  c.beginPath();c.ellipse(dcx,dcy,dR*(A_LON/10),dR*(A_LAT/10),0,0,TAU);c.stroke();c.setLineDash([]);
+  c.strokeStyle="#2a3556";c.beginPath();c.moveTo(dcx-dR,dcy);c.lineTo(dcx+dR,dcy);
+  c.moveTo(dcx,dcy-dR);c.lineTo(dcx,dcy+dR);c.stroke();
+  const px=dcx+Llon/10*dR, py=dcy-Llat/10*dR;
+  c.beginPath();c.arc(px,py,4,0,TAU);c.fillStyle="#ffc94d";c.fill();
+  txt(c,dcx,dcy-dR-4,"how the Moon rocks","#94a1c2",10);
+  txt(c,dcx+dR-2,dcy+11,"E–W","#6f86bd",9,"right");txt(c,dcx+9,dcy-dR+9,"N–S","#6f86bd",9,"left");
+  // RIGHT: coverage map (lon-lat)
+  const mL=dw+22, mW=w-mL-10, mH=h-30, mT=16;
+  const X=lon=>mL+(lon+180)/360*mW, Y=lat=>mT+(90-lat)/180*mH;
+  for(let j=0;j<LATN;j++)for(let i=0;i<LONN;i++){const on=seen[j*LONN+i];
+    c.fillStyle=on?"rgba(93,220,154,.75)":"rgba(30,42,70,.9)";
+    c.fillRect(mL+i/LONN*mW, mT+j/LATN*mH, mW/LONN+0.6, mH/LATN+0.6);}
+  c.strokeStyle="#2a3556";c.strokeRect(mL,mT,mW,mH);
+  c.strokeStyle="rgba(255,255,255,.25)";c.setLineDash([3,3]);
+  c.beginPath();c.moveTo(X(0),mT);c.lineTo(X(0),mT+mH);c.stroke();c.setLineDash([]);
+  txt(c,X(0),mT-4,"near side","#c7d2ee",10);
+  txt(c,X(-120),mT-4,"far side","#6f86bd",10);txt(c,X(120),mT-4,"far side","#6f86bd",10);
+  txt(c,mL+mW/2,h-4,"map of the whole Moon — green = seen from Earth","#6f86bd",10);
+}
+
+/* ---------- TAB 2: synchronous rotation ---------- */
+function drawSync(){
+  const {c,w,h}=fit(document.getElementById("cSync"),0.6);
+  c.clearRect(0,0,w,h);c.fillStyle="#050a16";c.fillRect(0,0,w,h);
+  const cx=w/2, cy=h/2, orb=Math.min(w,h)*0.34;
+  // Earth
+  const eg=c.createRadialGradient(cx-6,cy-6,2,cx,cy,16);eg.addColorStop(0,"#8fd0ff");eg.addColorStop(1,"#1c5fa0");
+  c.beginPath();c.arc(cx,cy,16,0,TAU);c.fillStyle=eg;c.fill();txt(c,cx,cy+30,"Earth","#7fb0e0",12);
+  // orbit
+  c.strokeStyle="rgba(120,150,220,.3)";c.beginPath();c.arc(cx,cy,orb,0,TAU);c.stroke();
+  // Moon
+  const a=S.syncAng, mx=cx+Math.cos(a)*orb, my=cy+Math.sin(a)*orb;
+  // Moon spin: synchronous → the marked face points at Earth; non-sync → fixed in space
+  const faceAng=S.sync? a+Math.PI : 0;   // synchronous: near side toward Earth
+  c.beginPath();c.arc(mx,my,15,0,TAU);
+  const mg=c.createRadialGradient(mx-4,my-4,1,mx,my,15);mg.addColorStop(0,"#f0f2f8");mg.addColorStop(1,"#b9bdca");
+  c.fillStyle=mg;c.fill();
+  // mark the near side (a face) as a coloured patch
+  c.save();c.beginPath();c.arc(mx,my,15,0,TAU);c.clip();
+  const fx=mx+Math.cos(faceAng)*8, fy=my+Math.sin(faceAng)*8;
+  c.beginPath();c.arc(fx,fy,10,0,TAU);c.fillStyle="rgba(90,150,220,.6)";c.fill();c.restore();
+  // arrow from Moon showing which way the marked face points
+  c.strokeStyle="#ffc94d";c.lineWidth=2;
+  const ax=mx+Math.cos(faceAng)*22, ay=my+Math.sin(faceAng)*22;
+  c.beginPath();c.moveTo(mx,my);c.lineTo(ax,ay);c.stroke();
+  c.fillStyle="#ffc94d";c.beginPath();c.arc(ax,ay,3,0,TAU);c.fill();
+  txt(c,mx,my-22,"Moon","#d6d9e2",11);
+  // sightline Earth-Moon
+  c.strokeStyle="rgba(255,255,255,.2)";c.setLineDash([4,4]);c.beginPath();c.moveTo(cx,cy);c.lineTo(mx,my);c.stroke();c.setLineDash([]);
+  txt(c,w/2,24,S.sync?"SYNCHRONOUS: the blue face always turns to keep pointing at Earth → we always see it"
+    :"NOT synchronous (spin off): the face points a fixed way in space → we'd see all sides","#c7d2ee",12.5);
+  document.getElementById("syncCap").innerHTML= S.sync
+    ? "Because the Moon spins exactly once per orbit, the same near side (blue) is always turned towards us. Watch the yellow arrow — it always points at the Earth."
+    : "With the spin switched off, the Moon keeps the same orientation in space, so as it orbits we would see its front, side, back and other side in turn. Real synchronous rotation is what keeps one face towards us.";
+}
+
+/* ---------- TAB 3: the two causes ---------- */
+function drawCause(){
+  const {c,w,h}=fit(document.getElementById("cCause"),0.62);
+  c.clearRect(0,0,w,h);c.fillStyle="#050a16";c.fillRect(0,0,w,h);
+  // split: top = longitude (ellipse orbit), bottom = latitude (tilt)
+  const midY=h*0.5;
+  c.strokeStyle="#1b2740";c.beginPath();c.moveTo(0,midY);c.lineTo(w,midY);c.stroke();
+  // --- TOP: longitude libration ---
+  const ecx=w*0.32, ecy=h*0.26, ea=w*0.22, eb=h*0.16;
+  c.strokeStyle="rgba(120,150,220,.4)";c.beginPath();c.ellipse(ecx+ea*0.25,ecy,ea,eb,0,0,TAU);c.stroke();
+  const eg=c.createRadialGradient(ecx,ecy,1,ecx,ecy,10);eg.addColorStop(0,"#8fd0ff");eg.addColorStop(1,"#1c5fa0");
+  c.beginPath();c.arc(ecx,ecy,10,0,TAU);c.fillStyle=eg;c.fill();txt(c,ecx,ecy+22,"Earth","#7fb0e0",11);
+  // Moon at perigee (near, fast) and apogee (far, slow)
+  const per={x:ecx+ea*0.25-ea,y:ecy}, apo={x:ecx+ea*0.25+ea,y:ecy};
+  [[per,"perigee (fast)","→ we peek round one edge"],[apo,"apogee (slow)","→ we peek round the other"]].forEach(([m,l1,l2])=>{
+    c.beginPath();c.arc(m.x,m.y,10,0,TAU);c.fillStyle="#c3c7d3";c.fill();
+    // steady-spin reference arrow vs Earth direction
+    c.strokeStyle="#ffc94d";c.lineWidth=2;c.beginPath();c.moveTo(m.x,m.y);c.lineTo(m.x,m.y-20);c.stroke();
+    c.strokeStyle="#5ddc9a";c.lineWidth=1.4;c.beginPath();c.moveTo(m.x,m.y);c.lineTo(ecx,ecy);c.stroke();
+    txt(c,m.x,m.y+22,l1,"#d6d9e2",10);txt(c,m.x,m.y+34,l2,"#9fe0b8",9.5);});
+  txt(c,w*0.5,h*0.06,"① Libration in LONGITUDE — the elliptical orbit","#ffc94d",13,"center");
+  txt(c,w*0.78,h*0.22,"The spin is steady (yellow) but the orbit","#94a1c2",11,"center");
+  txt(c,w*0.78,h*0.26,"speed changes, so the steady spin gets","#94a1c2",11,"center");
+  txt(c,w*0.78,h*0.30,"ahead or behind — we rock ±7.9° E–W.","#94a1c2",11,"center");
+  // --- BOTTOM: latitude libration ---
+  txt(c,w*0.5,h*0.56,"② Libration in LATITUDE — the tilted axis","#4fc3f7",13,"center");
+  const bcx=w*0.30, bcy=h*0.78, R=h*0.15;
+  // Moon with tilted axis
+  c.beginPath();c.arc(bcx,bcy,R,0,TAU);c.fillStyle="#c3c7d3";c.fill();
+  const tilt=-16*D2R;                                   // exaggerated for the picture
+  c.strokeStyle="#ff7b7b";c.lineWidth=2.4;
+  c.beginPath();c.moveTo(bcx-Math.sin(tilt)*R*1.5,bcy-Math.cos(tilt)*R*1.5);
+  c.lineTo(bcx+Math.sin(tilt)*R*1.5,bcy+Math.cos(tilt)*R*1.5);c.stroke();
+  txt(c,bcx-Math.sin(tilt)*R*1.5,bcy-Math.cos(tilt)*R*1.5-6,"N pole","#ff9d9d",10);
+  txt(c,bcx,bcy,"Moon","#3a4256",11);
+  // Earth to the right, sightline
+  const be={x:w*0.62,y:bcy};
+  const eg2=c.createRadialGradient(be.x,be.y,1,be.x,be.y,10);eg2.addColorStop(0,"#8fd0ff");eg2.addColorStop(1,"#1c5fa0");
+  c.beginPath();c.arc(be.x,be.y,10,0,TAU);c.fillStyle=eg2;c.fill();txt(c,be.x,be.y+22,"Earth","#7fb0e0",11);
+  c.strokeStyle="rgba(255,255,255,.25)";c.setLineDash([4,4]);c.beginPath();c.moveTo(bcx+R,bcy);c.lineTo(be.x,be.y);c.stroke();c.setLineDash([]);
+  txt(c,w*0.84,h*0.74,"The 6.7° tilt means we sometimes","#94a1c2",11,"center");
+  txt(c,w*0.84,h*0.78,"look over the north pole, sometimes","#94a1c2",11,"center");
+  txt(c,w*0.84,h*0.82,"the south — we nod ±6.7° N–S.","#94a1c2",11,"center");
+  document.getElementById("causeCap").innerHTML="Both effects together let us see round all four edges of the Moon at different times, revealing thin zones that add up to the extra ~9% of surface.";
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  const {Llon,Llat}=librations();
+  $("dayOut").textContent=S.t.toFixed(1);
+  $("rLon").innerHTML=(Llon>=0?"+":"")+Llon.toFixed(1)+"° "+(Llon>=0?"(E)":"(W)");
+  $("rLat").innerHTML=(Llat>=0?"+":"")+Llat.toFixed(1)+"° "+(Llat>=0?"(N)":"(S)");
+  const cov=coverage();
+  $("rCov").textContent=cov.toFixed(1)+"%";
+  $("covBar").style.width=cov+"%";$("covTxt").textContent=cov.toFixed(0)+"%";
+  $("rockNote").innerHTML= cov<52?"Press <b>Play</b> or <b>Fast</b> and watch the green map fill as the Moon rocks — it climbs from 50% towards about 59%."
+    : cov>58?"The map has filled to about 59% — the most of the Moon we can ever see from Earth. The dark far-side centre stays hidden forever."
+    : "As the Moon rocks month after month, the thin limb zones fill in and the total creeps up towards 59%.";
+  if(S.view==="rock")drawMoon(); else if(S.view==="sync")drawSync(); else drawCause();
+}
+
+/* ---------- controls ---------- */
+$("day").oninput=e=>{S.t=+e.target.value;const{Llon,Llat}=librations();accumulate(Llon,Llat);update();};
+$("tgLon").onclick=()=>{S.opts.lon=!S.opts.lon;$("tgLon").classList.toggle("on",S.opts.lon);update();};
+$("tgLat").onclick=()=>{S.opts.lat=!S.opts.lat;$("tgLat").classList.toggle("on",S.opts.lat);update();};
+$("reset").onclick=()=>{seen.fill(0);update();};
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  S.view=t.dataset.v;
+  $("vRock").classList.toggle("hide",S.view!=="rock");
+  $("vSync").classList.toggle("hide",S.view!=="sync");
+  $("vCause").classList.toggle("hide",S.view!=="cause");update();});
+$("syncToggle").onclick=()=>{S.sync=!S.sync;$("syncToggle").textContent=S.sync?"Rotation: synchronous ✓":"Rotation: spin OFF ✗";
+  $("syncToggle").classList.toggle("primary",S.sync);update();};
+
+let anim=null;
+function loop(){
+  if(!S.playing&&!S.fast&&!(S.view==="sync"))return;
+  // advance
+  const dt=S.fast?0.55:0.10;
+  if(S.playing||S.fast){S.t=(S.t+dt); if(S.t>MONTH*20)S.t-=MONTH*20;
+    const{Llon,Llat}=librations();accumulate(Llon,Llat);
+    $("day").value=(S.t%MONTH).toFixed(2);}
+  if(S.view==="sync"){S.syncAng=(S.syncAng+0.012)%TAU;}
+  update(); anim=requestAnimationFrame(loop);
+}
+function ensureLoop(){cancelAnimationFrame(anim);anim=requestAnimationFrame(loop);}
+$("play").onclick=()=>{S.playing=!S.playing;S.fast=false;$("play").textContent=S.playing?"❚❚ Pause":"▶ Play";$("fast").textContent="⏩ Fast (fill map)";ensureLoop();};
+$("fast").onclick=()=>{S.fast=!S.fast;S.playing=false;$("fast").textContent=S.fast?"❚❚ Stop":"⏩ Fast (fill map)";$("play").textContent="▶ Play";ensureLoop();};
+window.addEventListener("resize",update);
+// keep sync tab animating
+const _tab=document.querySelectorAll(".tab");_tab.forEach(t=>t.addEventListener("click",()=>{if(S.view==="sync")ensureLoop();}));
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"Why do we always see the same face of the Moon? (2.7)",
+   opts:shuffle(["It spins once for every orbit (synchronous rotation)","It does not spin at all",
+     "It spins very fast","The Earth blocks the other side"]),
+   ansText:"It spins once for every orbit (synchronous rotation)",
+   why:"The Moon's spin period equals its orbital period (27.3 days), so the same near side is always turned towards the Earth."}),
+ ()=>({q:"What is <b>libration</b>?",
+   opts:shuffle(["A slow apparent rocking that lets us see a bit around the Moon's edges",
+     "The Moon's phases","The Moon spinning faster","An eclipse of the Moon"]),
+   ansText:"A slow apparent rocking that lets us see a bit around the Moon's edges",
+   why:"Libration is the gentle apparent wobble of the Moon that reveals thin zones around its limb over time."}),
+ ()=>({q:"Roughly what fraction of the Moon's surface can we see from Earth over time? (2.8)",
+   opts:shuffle(["About 59%","Exactly 50%","About 75%","100%"]),ansText:"About 59%",
+   why:"Libration adds thin edge zones to the 50% near side, so we can see about 59% in total — the far side centre stays hidden."}),
+ ()=>({q:"Libration in <b>longitude</b> (rocking east–west) is caused by…",
+   opts:shuffle(["the Moon's elliptical orbit changing its speed","the tilt of the Moon's axis",
+     "the Earth's rotation","the Sun's gravity"]),
+   ansText:"the Moon's elliptical orbit changing its speed",
+   why:"The orbit speed varies but the spin is steady, so the spin gets ahead or behind and we peek around the east and west edges (±7.9°)."}),
+ ()=>({q:"Libration in <b>latitude</b> (nodding north–south) is caused by…",
+   opts:shuffle(["the tilt of the Moon's axis to its orbit (about 6.7°)","the Moon's elliptical orbit",
+     "the phases of the Moon","tides"]),
+   ansText:"the tilt of the Moon's axis to its orbit (about 6.7°)",
+   why:"Because the spin axis is tilted about 6.7°, we sometimes look over the north pole and sometimes the south (±6.7°)."}),
+ ()=>({q:"About what fraction of the Moon can we <b>never</b> see from Earth?",
+   opts:shuffle(["About 41%","About 10%","Exactly half","None of it"]),ansText:"About 41%",
+   why:"If we see about 59%, then about 41% (the centre of the far side) is never visible from Earth."}),
+ ()=>({q:"The Moon's rotation period is about…",
+   opts:shuffle(["27.3 days — the same as its orbit","24 hours","1 year","12 hours"]),
+   ansText:"27.3 days — the same as its orbit",
+   why:"Its spin period matches its 27.3-day orbit exactly — that is what 'synchronous rotation' means."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ansq(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ansq(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+// seed initial coverage
+accumulate(0,0); update();
+</script>
+</body>
+</html>
