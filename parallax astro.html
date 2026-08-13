@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax &amp; the Distance Ladder — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0a0f1e;--panel:#131a2e;--panel2:#1a2440;--line:#28324f;
+  --ink:#e9edf8;--dim:#94a1c2;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--star:#ffe08a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 640px at 72% -8%,#16213f,#0a0f1e 62%);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55}
+header{padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#16203c,#0e1730)}
+header h1{margin:0;font-size:20px}
+header p{margin:4px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:286px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#141c33,#111827);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;
+  box-shadow:0 6px 22px rgba(0,0,0,.22)}
+.card h2{margin:0 0 11px;font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:13px 0 4px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+  padding:9px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#052034;border-color:var(--accent2);font-weight:700}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:5px 11px;font-size:12px;cursor:pointer}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#052034;font-weight:600}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:8px 13px;font-size:13.5px;border-radius:9px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:700}
+.hide{display:none!important}
+canvas{width:100%;display:block;border-radius:12px;background:#050a16}
+.cap{font-size:13px;color:var(--dim);margin-top:9px}
+.big{font-size:15px;font-weight:700}
+.formula{background:#080e1e;border:1px solid var(--line);border-radius:10px;padding:13px;text-align:center;margin-top:12px}
+.formula .eq{font-size:22px;font-weight:700;color:var(--accent)}
+.formula .sub{font-size:12.5px;color:var(--dim);margin-top:5px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:6px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-weight:600}
+tr:last-child td{border-bottom:none}
+.note{font-size:12.5px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.q{background:var(--panel2);border-radius:9px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:8px;background:#080e1e;color:var(--dim)}
+details{margin-top:9px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Parallax &amp; the Distance Ladder</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 13.10–13.12 · how we measure the distance to the stars using a tiny apparent wobble</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card" id="starCard">
+    <h2>Pick a star</h2>
+    <div class="chips" id="stars"></div>
+    <label>Or set the distance yourself <span class="val" id="dOut">2.6 pc</span></label>
+    <input type="range" id="dist" min="1" max="20" step="0.1" value="2.64">
+    <div class="cap">Move the star nearer or further and watch how much it seems to wobble.</div>
+  </div>
+
+  <div class="card" id="thumbCard" style="display:none">
+    <h2>The thumb experiment</h2>
+    <label>How close is your thumb? <span class="val" id="thumbOut">near</span></label>
+    <input type="range" id="thumb" min="0" max="100" value="30">
+    <div class="cap">Closer thumb = bigger jump. That's the whole idea of parallax.</div>
+  </div>
+
+  <div class="card">
+    <h2>Which eye / month?</h2>
+    <div class="row">
+      <button id="left" class="primary">◀ Left eye / Jan</button>
+      <button id="right">Right eye / Jul ▶</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button id="blink">⟳ Blink between them</button>
+    </div>
+    <div class="cap">Swap between the two viewpoints to see the star (or thumb) jump.</div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab" data-v="thumb">1 · Thumb trick</div>
+      <div class="tab on" data-v="star">2 · Star parallax</div>
+      <div class="tab" data-v="ladder">3 · Distance ladder</div>
+    </div>
+
+    <div id="vThumb" class="hide">
+      <canvas id="cThumb"></canvas>
+      <div class="cap" id="thumbCap"></div>
+    </div>
+    <div id="vStar">
+      <canvas id="cStar"></canvas>
+      <div class="cap">Top view: the Earth is on opposite sides of its orbit in January and July. From these two places, the nearby star lines up with a <b>different</b> part of the faraway background.</div>
+      <canvas id="cSky" style="margin-top:10px"></canvas>
+      <div class="cap" id="skyCap"></div>
+    </div>
+    <div id="vLadder" class="hide">
+      <canvas id="cLadder"></canvas>
+      <div class="cap">Parallax only works for nearby stars — beyond that the wobble is too tiny to measure. So astronomers use a <b>ladder</b> of methods, each one measured using the rung below it, to reach right across the Universe.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Work out the distance (13.12)</h2>
+    <div class="formula">
+      <div class="eq" id="eq">d = 1 ÷ p</div>
+      <div class="sub" id="eqSub">distance in parsecs = 1 ÷ parallax angle in arcseconds</div>
+    </div>
+    <div class="cap" id="workCap"></div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>This star</h2>
+    <table>
+      <tr><td>Parallax angle, p</td><td id="rP">—</td></tr>
+      <tr><td>Distance</td><td id="rD">—</td></tr>
+      <tr><td>Distance in light years</td><td id="rLy">—</td></tr>
+      <tr><td>Can we measure it?</td><td id="rMeas">—</td></tr>
+    </table>
+    <div class="note" id="measNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>How small is an arcsecond? (13.10)</h2>
+    <div class="cap" style="margin-top:0">
+      A full circle is 360°. Each degree splits into 60 <b>arcminutes</b>, and each arcminute into 60 <b>arcseconds</b>. So:
+      <div class="formula" style="margin-top:8px"><div class="eq" style="font-size:16px">1° = 60′ = 3600″</div></div>
+      One arcsecond is <b>tiny</b> — about the width of a £1 coin seen from <b>4.5 km</b> away. Even the nearest star wobbles by less than one arcsecond, which is why measuring parallax is so hard.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas</h2>
+    <details><summary>What is parallax?</summary><p>When you look at a nearby object from two different places, it seems to shift against the faraway background. That apparent shift is <b>parallax</b>. The closer the object, the bigger the shift.</p></details>
+    <details><summary>How we use it for stars (13.12)</summary><p>As the Earth orbits the Sun, we see a nearby star from opposite sides of our orbit (six months apart). The star appears to shift against the distant stars. The <b>parallax angle p</b> is half of that total shift.</p></details>
+    <details><summary>The parsec (13.11)</summary><p>A <b>parsec</b> is the distance at which a star would have a parallax angle of exactly 1 arcsecond. Then distance and angle are simply linked: <b>d (parsec) = 1 ÷ p (arcseconds)</b>. One parsec is about 3.26 light years.</p></details>
+    <details><summary>Why parallax has a limit</summary><p>Far-away stars wobble by less than a tiny fraction of an arcsecond — too small to measure, even from space. Beyond a few thousand parsecs we need other methods.</p></details>
+    <details><summary>The distance ladder</summary><p>Parallax measures nearby stars. Those are used to work out the true brightness of special pulsing stars (<b>Cepheids</b>), which reach nearby galaxies. Those calibrate exploding stars and Hubble's law, which reach the farthest galaxies. Each rung is built on the one below.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2;
+const PC_LY=3.262;
+
+const STARS=[
+ ["Proxima Centauri",1.30],["Alpha Centauri",1.34],["Barnard's Star",1.83],
+ ["Sirius",2.64],["61 Cygni",3.50],["Altair",5.13],["Vega",7.68]
+];
+const S={d:2.64, view:"star", eye:0, thumb:30, blinking:false};
+const p=()=>1/S.d;                                     // parallax angle, arcsec
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+function starfield(c,w,h,seed,n,y0,y1){const r=(s=>{let x=s;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};})(seed);
+  for(let i=0;i<n;i++){const b=0.3+r()*0.6;c.fillStyle=`rgba(200,215,255,${b})`;
+    c.beginPath();c.arc(r()*w,y0+r()*(y1-y0),r()*1.3,0,TAU);c.fill();}}
+function txt(c,x,y,t,col,sz,al){c.fillStyle=col||"#c7d2ee";c.font="600 "+(sz||12)+"px system-ui";
+  c.textAlign=al||"center";c.fillText(t,x,y);c.textAlign="left";}
+
+/* ---------- TAB 1: thumb ---------- */
+function drawThumb(){
+  const {c,w,h}=fit(document.getElementById("cThumb"),0.62);
+  c.clearRect(0,0,w,h);
+  const sky=c.createLinearGradient(0,0,0,h);sky.addColorStop(0,"#0b1836");sky.addColorStop(1,"#132a1a");
+  c.fillStyle=sky;c.fillRect(0,0,w,h);
+  // distant background marks (trees / far stars) along the top
+  const bgY=h*0.20;
+  for(let i=0;i<=10;i++){const x=w*0.06+i*(w*0.88/10);
+    c.fillStyle="rgba(120,150,200,.5)";c.beginPath();c.arc(x,bgY,3,0,TAU);c.fill();
+    txt(c,x,bgY-9,String.fromCharCode(65+i),"rgba(150,170,210,.6)",10);}
+  txt(c,w/2,bgY-24,"faraway background","rgba(150,170,210,.8)",12);
+  // eyes
+  const eyeY=h*0.9, cx=w/2, sep=w*0.16;
+  const eL={x:cx-sep,y:eyeY}, eR={x:cx+sep,y:eyeY};
+  const active=S.eye===0?eL:eR, other=S.eye===0?eR:eL;
+  [[eL,"left eye"],[eR,"right eye"]].forEach(([e,l],i)=>{
+    c.beginPath();c.arc(e.x,e.y,9,0,TAU);c.fillStyle=(i===S.eye)?"#ffc94d":"#3a4668";c.fill();
+    txt(c,e.x,e.y+22,l,(i===S.eye)?"#ffe08a":"#6f86bd",11);});
+  // thumb position (fixed x = centre), height set by "distance" (closer = lower/bigger)
+  const near=S.thumb/100;                              // 0 far .. 1 near
+  const ty=h*0.34+(1-near)*h*0.34;                     // near → lower (closer to eyes)
+  const tx=cx;
+  // where the thumb "appears" on the background for an eye: line eye→thumb→bg
+  const hit=e=>{const t=(bgY-e.y)/(ty-e.y);return e.x+(tx-e.x)*t;};
+  const hA=hit(active), hO=hit(other);
+  // faint sightline for the other eye
+  c.strokeStyle="rgba(120,150,200,.25)";c.setLineDash([4,4]);c.lineWidth=1;
+  c.beginPath();c.moveTo(other.x,other.y);c.lineTo(tx,ty);c.lineTo(hO,bgY);c.stroke();c.setLineDash([]);
+  c.fillStyle="rgba(150,170,210,.5)";c.beginPath();c.arc(hO,bgY,5,0,TAU);c.fill();
+  // active sightline
+  c.strokeStyle="rgba(255,201,77,.7)";c.lineWidth=1.6;
+  c.beginPath();c.moveTo(active.x,active.y);c.lineTo(tx,ty);c.lineTo(hA,bgY);c.stroke();
+  c.fillStyle="#ffc94d";c.beginPath();c.arc(hA,bgY,6,0,TAU);c.fill();
+  txt(c,hA,bgY+18,"thumb looks like","#ffe08a",11);txt(c,hA,bgY+31,"it's here","#ffe08a",11);
+  // thumb
+  const tg=c.createLinearGradient(tx-10,0,tx+10,0);tg.addColorStop(0,"#e8b48a");tg.addColorStop(1,"#c98a5e");
+  c.fillStyle=tg;c.beginPath();c.roundRect(tx-11,ty,22,eyeY-ty-14,10);c.fill();
+  txt(c,tx,ty-8,"your thumb","#ffd9b3",12);
+  // shift bracket
+  c.strokeStyle="#5ddc9a";c.lineWidth=1.6;
+  c.beginPath();c.moveTo(Math.min(hA,hO),bgY+40);c.lineTo(Math.max(hA,hO),bgY+40);c.stroke();
+  txt(c,(hA+hO)/2,bgY+54,"← the jump →","#9fe0b8",12);
+  document.getElementById("thumbCap").innerHTML=
+    "Hold your thumb up and close one eye, then the other. Your thumb seems to <b>jump</b> against the background because each eye sees it from a slightly different place. "+
+    (near>0.6?"Your thumb is <b>close</b>, so the jump is <b>big</b>.":near<0.35?"Your thumb is <b>far</b>, so the jump is <b>small</b>.":"Move the slider to see the jump change.");
+}
+
+/* ---------- TAB 2: star parallax (top-down + sky) ---------- */
+function drawStar(){
+  const {c,w,h}=fit(document.getElementById("cStar"),0.5);
+  c.clearRect(0,0,w,h);c.fillStyle="#050a16";c.fillRect(0,0,w,h);
+  const cx=w*0.5, cy=h*0.82, rOrb=Math.min(w*0.22,h*0.42);
+  // scaled star distance up the canvas: FURTHER star → drawn HIGHER (further from the Sun)
+  const dpx=clamp(h*0.13+h*0.028*S.d, h*0.16, h*0.74);
+  const starX=cx, starY=cy-dpx;
+  // background far stars near top
+  starfield(c,w,h,7,60,4,h*0.16);
+  // Sun
+  const sg=c.createRadialGradient(cx,cy,1,cx,cy,12);sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+  c.beginPath();c.arc(cx,cy,8,0,TAU);c.fillStyle=sg;c.fill();txt(c,cx,cy+22,"Sun","#ffcf4a",11);
+  // orbit
+  c.strokeStyle="rgba(120,150,220,.3)";c.lineWidth=1;c.beginPath();c.ellipse(cx,cy,rOrb,rOrb*0.5,0,0,TAU);c.stroke();
+  // Earth Jan (left) & Jul (right)
+  const eJan={x:cx-rOrb,y:cy}, eJul={x:cx+rOrb,y:cy};
+  const active=S.eye===0?eJan:eJul;
+  [[eJan,"Earth (Jan)",0],[eJul,"Earth (Jul)",1]].forEach(([e,l,i])=>{
+    c.beginPath();c.arc(e.x,e.y,7,0,TAU);c.fillStyle=(i===S.eye)?"#4fc3f7":"#274a74";c.fill();
+    txt(c,e.x,e.y+ (i===S.eye?20:18),l,(i===S.eye)?"#a8e0ff":"#6f86bd",11);});
+  // baseline
+  c.strokeStyle="rgba(255,255,255,.2)";c.setLineDash([4,4]);c.beginPath();c.moveTo(eJan.x,eJan.y);c.lineTo(eJul.x,eJul.y);c.stroke();c.setLineDash([]);
+  // sightlines from both Earths to the star, extended to background
+  const ext=(e)=>{const t=(4-e.y)/(starY-e.y);return e.x+(starX-e.x)*t;};
+  [[eJan,"rgba(120,150,200,.4)",0],[eJul,"rgba(120,150,200,.4)",1]].forEach(([e,col,i])=>{
+    const hx=ext(e);c.strokeStyle=(i===S.eye)?"rgba(255,201,77,.7)":"rgba(120,150,200,.35)";
+    c.lineWidth=(i===S.eye)?1.7:1;c.setLineDash((i===S.eye)?[]:[3,4]);
+    c.beginPath();c.moveTo(e.x,e.y);c.lineTo(starX,starY);c.lineTo(hx,4);c.stroke();c.setLineDash([]);});
+  // the star
+  const st=c.createRadialGradient(starX,starY,0,starX,starY,10);st.addColorStop(0,"#fff");st.addColorStop(.4,"#ffe08a");st.addColorStop(1,"rgba(255,200,80,0)");
+  c.fillStyle=st;c.beginPath();c.arc(starX,starY,10,0,TAU);c.fill();
+  c.beginPath();c.arc(starX,starY,3.5,0,TAU);c.fillStyle="#fff";c.fill();
+  txt(c,starX+14,starY,"nearby star","#ffe08a",11,"left");
+  // sky view
+  drawSky();
+}
+function drawSky(){
+  const {c,w,h}=fit(document.getElementById("cSky"),0.26);
+  c.clearRect(0,0,w,h);c.fillStyle="#04070f";c.fillRect(0,0,w,h);
+  starfield(c,w,h,21,90,4,h);
+  const cx=w/2, cy=h*0.5;
+  const shift=clamp(p()*150,4,w*0.34);                 // exaggerated total Jan–Jul shift (px)
+  const sx=cx+(S.eye===0?-shift/2:shift/2);
+  // ghost of the other position
+  const ox=cx+(S.eye===0?shift/2:-shift/2);
+  c.beginPath();c.arc(ox,cy,4,0,TAU);c.fillStyle="rgba(255,224,138,.28)";c.fill();
+  // the star
+  const st=c.createRadialGradient(sx,cy,0,sx,cy,9);st.addColorStop(0,"#fff");st.addColorStop(.4,"#ffe08a");st.addColorStop(1,"rgba(255,200,80,0)");
+  c.fillStyle=st;c.beginPath();c.arc(sx,cy,9,0,TAU);c.fill();
+  c.beginPath();c.arc(sx,cy,3,0,TAU);c.fillStyle="#fff";c.fill();
+  // shift bracket
+  c.strokeStyle="#5ddc9a";c.lineWidth=1.4;c.beginPath();c.moveTo(Math.min(sx,ox),cy+18);c.lineTo(Math.max(sx,ox),cy+18);c.stroke();
+  txt(c,cx,cy+32,"total wobble = twice the parallax angle","#9fe0b8",11);
+  txt(c,10,16,"What you see in the sky ("+(S.eye===0?"January":"July")+")","#c7d2ee",12,"left");
+  document.getElementById("skyCap").innerHTML=
+    "Against the fixed faraway stars, the nearby star appears to shift. Half of that shift is the <b>parallax angle p</b>. A <b>nearer</b> star (smaller distance) gives a <b>bigger</b> shift.";
+}
+
+/* ---------- TAB 3: distance ladder ---------- */
+function drawLadder(){
+  const {c,w,h}=fit(document.getElementById("cLadder"),0.62);
+  c.clearRect(0,0,w,h);c.fillStyle="#050a16";c.fillRect(0,0,w,h);
+  starfield(c,w,h,5,80,4,h);
+  const rungs=[
+    ["Parallax","nearby stars","up to ~1,000 pc (a few thousand light years)","#5ddc9a"],
+    ["Cepheid variable stars","nearby galaxies","up to ~30 million light years","#4fc3f7"],
+    ["Type Ia supernovae & Hubble's law","distant galaxies","billions of light years","#ffc94d"]
+  ];
+  const bx=w*0.10, bw=w*0.80, y0=h*0.16, gap=h*0.26;
+  rungs.forEach((r,i)=>{const y=y0+i*gap;
+    c.fillStyle="rgba(20,30,55,.85)";c.strokeStyle=r[3];c.lineWidth=1.6;
+    c.beginPath();c.roundRect(bx,y,bw,gap*0.72,10);c.fill();c.stroke();
+    txt(c,bx+14,y+24,(i+1)+". "+r[0],r[3],15,"left");
+    txt(c,bx+14,y+44,"reaches: "+r[1],"#c7d2ee",12,"left");
+    txt(c,bx+14,y+62,r[2],"#94a1c2",11.5,"left");
+    if(i<2){c.strokeStyle="rgba(255,255,255,.3)";c.lineWidth=1.4;
+      const ax=bx+bw*0.5;c.beginPath();c.moveTo(ax,y+gap*0.72);c.lineTo(ax,y+gap);c.stroke();
+      txt(c,ax+70,y+gap*0.9,"calibrates the next rung →","rgba(255,255,255,.45)",10.5,"center");}
+  });
+  txt(c,w/2,h-8,"each method is measured using the one below it — reaching further and further","#6f86bd",11.5);
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  $("dOut").textContent=S.d.toFixed(1)+" pc";
+  const pa=p();
+  $("rP").textContent=pa.toFixed(3)+" arcsec";
+  $("rD").textContent=S.d.toFixed(2)+" pc";
+  $("rLy").textContent=(S.d*PC_LY).toFixed(1)+" ly";
+  const ok=pa>0.001;
+  $("rMeas").innerHTML=pa>0.01?'<span style="color:var(--green)">yes, easily</span>':pa>0.001?'<span style="color:var(--accent)">only from space</span>':'<span style="color:var(--red)">too far — use another method</span>';
+  $("measNote").innerHTML=pa>0.05?"This star is close, so its wobble is relatively large and easy to measure from Earth."
+    :pa>0.005?"The wobble is tiny — this needs a space telescope like Gaia, which measures parallax incredibly precisely."
+    :"Beyond this, parallax is too small to detect and astronomers move to the next rung of the ladder.";
+  $("workCap").innerHTML=`For this star, p = <b>${pa.toFixed(3)} arcsec</b>, so:  d = 1 ÷ ${pa.toFixed(3)} = <b>${S.d.toFixed(2)} parsecs</b>  (about ${(S.d*PC_LY).toFixed(1)} light years).`;
+  if(S.view==="thumb")drawThumb(); else if(S.view==="star")drawStar(); else drawLadder();
+}
+
+/* ---------- controls ---------- */
+const sb=$("stars");
+STARS.forEach(([n,d],i)=>{const el=document.createElement("div");el.className="chip"+(n==="Sirius"?" on":"");
+  el.textContent=n;el.onclick=()=>{[...sb.children].forEach(x=>x.classList.remove("on"));el.classList.add("on");
+    S.d=d;$("dist").value=d;update();};sb.appendChild(el);});
+$("dist").oninput=e=>{S.d=+e.target.value;[...sb.children].forEach(x=>x.classList.remove("on"));update();};
+$("thumb").oninput=e=>{S.thumb=+e.target.value;$("thumbOut").textContent=S.thumb>60?"very near":S.thumb>35?"near":"far";update();};
+$("left").onclick=()=>{S.eye=0;setEye();update();};
+$("right").onclick=()=>{S.eye=1;setEye();update();};
+function setEye(){$("left").classList.toggle("primary",S.eye===0);$("right").classList.toggle("primary",S.eye===1);}
+let blinkT=null;
+$("blink").onclick=()=>{S.blinking=!S.blinking;$("blink").textContent=S.blinking?"⟳ Stop":"⟳ Blink between them";
+  if(S.blinking){blinkT=setInterval(()=>{S.eye=1-S.eye;setEye();update();},900);}else clearInterval(blinkT);};
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  S.view=t.dataset.v;
+  $("vThumb").classList.toggle("hide",S.view!=="thumb");
+  $("vStar").classList.toggle("hide",S.view!=="star");
+  $("vLadder").classList.toggle("hide",S.view!=="ladder");
+  $("starCard").style.display=S.view==="thumb"?"none":"";
+  $("thumbCard").style.display=S.view==="thumb"?"":"none";
+  update();});
+window.addEventListener("resize",update);
+setEye();
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function uniq(a){return shuffle([...new Set(a)]);}
+const QGEN=[
+ ()=>({q:"What is <b>parallax</b>?",
+   opts:shuffle(["The apparent shift of a nearby object against a faraway background when you move",
+     "The brightness of a star","The temperature of a star","How fast a star spins"]),
+   ansText:"The apparent shift of a nearby object against a faraway background when you move",
+   why:"When you view something from two different places, it appears to shift against the distant background. That shift is parallax."}),
+ ()=>({q:"A <b>closer</b> star gives a parallax shift that is…",
+   opts:shuffle(["bigger","smaller","exactly the same","zero"]),ansText:"bigger",
+   why:"The nearer the object, the bigger its parallax shift. Faraway stars barely shift at all."}),
+ ()=>({q:"For measuring a star's parallax, our two viewpoints are…",
+   opts:shuffle(["opposite sides of the Earth's orbit, six months apart","the two poles of the Earth",
+     "morning and evening","two different countries"]),
+   ansText:"opposite sides of the Earth's orbit, six months apart",
+   why:"The Earth moves right across its orbit in six months, giving the widest possible baseline for the two views."}),
+ ()=>({q:"What is a <b>parsec</b>? (13.11)",
+   opts:shuffle(["The distance where a star's parallax angle is 1 arcsecond","One light year",
+     "The distance to the Sun","A unit of time"]),ansText:"The distance where a star's parallax angle is 1 arcsecond",
+   why:"A parsec is defined so that a star at 1 parsec has a parallax of 1 arcsecond. It is about 3.26 light years."}),
+ ()=>{const p=pick([0.5,0.25,0.2,0.1]);return{q:`A star has a parallax angle of ${p} arcseconds. How far away is it?`,
+   opts:uniq([`${(1/p)} pc`,`${p} pc`,`${(p*2)} pc`,`${(10*p).toFixed(1)} pc`]),ansText:`${(1/p)} pc`,
+   why:`Use d = 1 ÷ p = 1 ÷ ${p} = ${(1/p)} parsecs.`};},
+ ()=>({q:"How many arcseconds are there in one degree? (13.10)",
+   opts:shuffle(["3600","60","100","360"]),ansText:"3600",
+   why:"1 degree = 60 arcminutes, and each arcminute = 60 arcseconds, so 1° = 60 × 60 = 3600 arcseconds."}),
+ ()=>({q:"Why can't we use parallax to measure very <b>distant</b> stars?",
+   opts:shuffle(["Their shift is far too small to measure","They are too bright","They move too fast","They have no light"]),
+   ansText:"Their shift is far too small to measure",
+   why:"The further away a star is, the smaller its parallax. Beyond a few thousand parsecs the shift is too tiny to detect, so we use other methods."}),
+ ()=>({q:"On the distance <b>ladder</b>, what comes after parallax to reach further?",
+   opts:shuffle(["Cepheid variable stars and standard candles","A bigger ruler","Radio waves","Guessing"]),
+   ansText:"Cepheid variable stars and standard candles",
+   why:"Parallax measures nearby stars, which calibrate Cepheid variables, which reach nearby galaxies — and so on up the ladder."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ans(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>
