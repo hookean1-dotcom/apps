@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inside the Earth, Moon &amp; Sun — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#eef3fa;--panel:#ffffff;--panel2:#eef3fa;--line:#d5deec;
+  --ink:#1d2740;--dim:#5f6f89;--accent:#d98400;--accent2:#1f7fc4;
+  --green:#1f9d63;--red:#d64545;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1100px 640px at 72% -8%,#dfe9f6,#eef3fa 60%);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55}
+header{padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#ffffff,#eef3fa)}
+header h1{margin:0;font-size:20px}
+header p{margin:4px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:280px minmax(0,1fr) 330px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:#ffffff;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;
+  box-shadow:0 4px 16px rgba(40,70,120,.07)}
+.card h2{margin:0 0 11px;font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+.bodySel{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bodySel button{padding:12px 6px;font-size:14px;font-weight:600;border-radius:11px;background:var(--panel2);
+  border:1px solid var(--line);cursor:pointer;color:var(--ink)}
+.bodySel button.on{border-color:var(--accent);background:rgba(255,201,77,.12);color:var(--accent)}
+.bodySel button .em{font-size:20px;display:block;margin-bottom:2px}
+.layerBtn{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel2);cursor:pointer;margin-bottom:7px}
+.layerBtn:hover{border-color:var(--accent2)}
+.layerBtn.on{border-color:var(--accent)}
+.layerBtn .sw{width:16px;height:16px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(255,255,255,.25)}
+.layerBtn b{font-size:13.5px}.layerBtn small{display:block;color:var(--dim);font-size:11px}
+canvas{width:100%;display:block;border-radius:14px;background:linear-gradient(180deg,#f5f9ff,#e8f0fa)}
+.cap{font-size:13px;color:var(--dim);margin-top:9px}
+.info h3{margin:0 0 2px;font-size:18px}
+.info .role{font-size:13px;color:var(--accent);font-weight:600;margin-bottom:10px}
+.info table{width:100%;border-collapse:collapse;font-size:13.5px}
+.info td{padding:5px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.info td:first-child{color:var(--dim);width:38%}
+.info tr:last-child td{border-bottom:none}
+.tbar{height:12px;border-radius:6px;margin-top:6px;background:linear-gradient(90deg,#3a6bd0,#5ddc9a,#ffd257,#ff9d2e,#ff5a3c,#fff)}
+.tmark{position:relative;height:0}
+.tmark i{position:absolute;top:-16px;width:3px;height:16px;background:#1d2740;border-radius:2px;box-shadow:0 0 0 1px rgba(255,255,255,.7)}
+.fact{font-size:13px;color:var(--dim);margin-top:10px;padding:10px;background:var(--panel2);border-radius:9px;border-left:3px solid var(--accent)}
+.q{background:var(--panel2);border-radius:9px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel);cursor:pointer;color:var(--ink);font-size:14px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:8px;background:#eef3fa;color:var(--dim)}
+.layerBtn.on{border-color:var(--accent);background:rgba(217,132,0,.10)}
+.bodySel button.on{border-color:var(--accent);background:rgba(217,132,0,.12);color:var(--accent)}
+.note{font-size:12.5px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.row{display:flex;gap:8px}.row>*{flex:1}
+button.pri{background:var(--accent2);color:#052034;border:1px solid var(--accent2);font-weight:700;border-radius:8px;padding:8px 12px;cursor:pointer}
+button.sec{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 12px;cursor:pointer}
+details{margin-top:9px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Inside the Earth, Moon &amp; Sun</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 1.3, 9.1 &amp; 10.2–10.5 · explore the layers of the three bodies — click a layer to learn about it</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>Choose a body</h2>
+    <div class="bodySel" id="bodySel">
+      <button data-b="earth" class="on"><span class="em">🌍</span>Earth</button>
+      <button data-b="moon"><span class="em">🌙</span>Moon</button>
+      <button data-b="sun"><span class="em">☀️</span>Sun</button>
+      <button data-b="compare"><span class="em">🌍🌙</span>Compare</button>
+    </div>
+  </div>
+  <div class="card" id="layerCard">
+    <h2>Layers <span style="color:var(--dim);font-weight:400;text-transform:none;letter-spacing:0">(outside → in)</span></h2>
+    <div id="layerList"></div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <canvas id="view"></canvas>
+    <div class="cap" id="viewCap"></div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card info" id="infoCard">
+    <h3 id="iName">—</h3>
+    <div class="role" id="iRole">—</div>
+    <table>
+      <tr><td>Location</td><td id="iLoc">—</td></tr>
+      <tr><td>Temperature</td><td id="iTemp">—</td></tr>
+      <tr><td>State</td><td id="iState">—</td></tr>
+      <tr><td>Made of</td><td id="iComp">—</td></tr>
+    </table>
+    <div class="tbar"></div>
+    <div class="tmark"><i id="tmark" style="left:20%"></i></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--dim);margin-top:2px"><span>cold</span><span>hot →</span><span>15 million°C</span></div>
+    <div class="fact" id="iFact">—</div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="pri" id="newQ">New question</button>
+      <button class="sec" id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas</h2>
+    <details><summary>Earth's layers (1.3)</summary><p>From the outside in: <b>crust</b> (thin solid shell), <b>mantle</b> (thick solid rock that flows slowly), <b>outer core</b> (liquid iron &amp; nickel — makes the magnetic field), <b>inner core</b> (solid iron &amp; nickel, kept solid by pressure).</p></details>
+    <details><summary>The Moon compared (9.1)</summary><p>The Moon has the <b>same kinds</b> of layers (crust, mantle, core with a solid inner and fluid outer part), but its <b>core is much smaller</b> (~20% of its radius vs Earth's ~55%) and its <b>crust is proportionally thicker</b>. Its tiny core means almost no magnetic field.</p></details>
+    <details><summary>The Sun's interior (10.2–10.4)</summary><p><b>Core</b> (~15 million °C): fusion makes energy. <b>Radiative zone</b>: energy carried out by photons. <b>Convective zone</b>: energy carried by convection. <b>Photosphere</b>: the visible surface (~5,500 °C) where light escapes.</p></details>
+    <details><summary>The Sun's atmosphere (10.5)</summary><p>Above the surface: the <b>chromosphere</b> (thin, reddish) and the <b>corona</b> (faint, extremely low density, yet over a million °C — much hotter than the surface). Both are seen during a total solar eclipse.</p></details>
+    <details><summary>How energy moves (10.3)</summary><p>Made by <b>fusion</b> in the core → carried out by <b>radiation</b> → then by <b>convection</b> → finally <b>radiated</b> into space from the photosphere as sunlight.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const TAU=Math.PI*2;
+
+// tScale: 0..1 position on the temperature bar (log-ish, up to 15 million)
+function tPos(maxC){return clamp(Math.log10(clamp(maxC,1,1.5e7))/Math.log10(1.5e7),0.03,1);}
+
+const BODIES={
+ earth:{label:"Earth", R:"6,371 km radius", spec:"1.3",
+  layers:[
+   {k:"crust",n:"Crust",c:"#8a6d5a",rin:0.985,rout:1.0,role:"The thin solid shell we live on",
+    loc:"0–35 km deep (thinnest layer)",temp:"up to ~400 °C",state:"Solid rock",comp:"Silicate rocks (granite, basalt)",tmax:400,
+    fact:"Like the skin on an apple. Thicker under continents (35–70 km), thinner under oceans (5–10 km)."},
+   {k:"mantle",n:"Mantle",c:"#d9772e",rin:0.546,rout:0.985,role:"Thick solid rock that flows very slowly",
+    loc:"35–2,890 km deep",temp:"~500–4,000 °C",state:"Solid, but flows like stiff putty",comp:"Silicates rich in iron & magnesium",tmax:4000,
+    fact:"The thickest layer — about 84% of the Earth's volume. Slow convection here moves the tectonic plates."},
+   {k:"outer",n:"Outer core",c:"#ff9e2c",rin:0.191,rout:0.546,role:"Liquid metal that makes the magnetic field",
+    loc:"2,890–5,150 km deep",temp:"~4,000–5,500 °C",state:"Liquid (molten)",comp:"Iron and nickel",tmax:5500,
+    fact:"The only fully liquid layer. Swirling liquid metal acts like a dynamo, creating Earth's magnetic field."},
+   {k:"inner",n:"Inner core",c:"#ffd76b",rin:0,rout:0.191,role:"The hot, dense heart of the Earth",
+    loc:"5,150–6,371 km deep (centre)",temp:"~5,200–5,700 °C",state:"Solid",comp:"Iron and nickel",tmax:5700,
+    fact:"As hot as the Sun's surface, yet solid — the huge pressure stops it melting. Radius about 1,220 km."}
+  ]},
+ moon:{label:"Moon", R:"1,737 km radius", spec:"9.1",
+  layers:[
+   {k:"crust",n:"Crust",c:"#9a958c",rin:0.971,rout:1.0,role:"Solid outer shell (proportionally thick)",
+    loc:"~50 km thick on average",temp:"cold surface (−150 to +120 °C)",state:"Solid rock",comp:"Anorthosite & basalt",tmax:120,
+    fact:"Proportionally thicker than Earth's crust. The far-side crust is thicker than the near side."},
+   {k:"mantle",n:"Mantle",c:"#6e6a63",rin:0.20,rout:0.971,role:"Thick, mostly solid rocky layer",
+    loc:"down to ~1,400 km deep",temp:"warm, mostly solid",state:"Solid silicate rock",comp:"Silicate rock",tmax:1300,
+    fact:"Makes up most of the Moon's volume — like Earth's mantle but cooler and mostly solid."},
+   {k:"outer",n:"Outer core",c:"#c0642e",rin:0.138,rout:0.20,role:"A small fluid metal layer",
+    loc:"~240–350 km radius",temp:"~1,400 °C",state:"Fluid (molten)",comp:"Iron",tmax:1400,
+    fact:"Very small compared with Earth's. Too small to make a strong magnetic field today."},
+   {k:"inner",n:"Inner core",c:"#e0964a",rin:0,rout:0.138,role:"Small solid metal centre",
+    loc:"~240 km radius (centre)",temp:"hot",state:"Solid",comp:"Iron",tmax:1500,
+    fact:"The Moon's whole core is only ~20% of its radius — tiny next to Earth's ~55%."}
+  ]},
+ sun:{label:"Sun", R:"696,000 km radius", spec:"10.2–10.5", isSun:true,
+  layers:[
+   {k:"corona",n:"Corona",c:"#fff6d0",rin:1.03,rout:1.5,atmos:true,role:"Faint, super-hot outer atmosphere",
+    loc:"outer atmosphere (millions of km)",temp:"~1–2 million °C",state:"Extremely low density gas",comp:"Ionised gas",tmax:2e6,
+    fact:"Mysteriously far hotter than the surface below it. Only seen during a total eclipse or with special telescopes."},
+   {k:"chromo",n:"Chromosphere",c:"#ff6a5a",rin:1.0,rout:1.03,atmos:true,role:"Thin reddish layer of atmosphere",
+    loc:"~2,000 km above the surface",temp:"~4,500 → 20,000 °C",state:"Low-density gas",comp:"Hydrogen (red glow)",tmax:20000,
+    fact:"Seen as a red rim during a total eclipse. The temperature starts rising again here."},
+   {k:"photo",n:"Photosphere",c:"#ffb733",rin:0.985,rout:1.0,role:"The visible surface — light escapes here",
+    loc:"the visible 'surface' (~500 km thick)",temp:"~5,500 °C",state:"Gas/plasma",comp:"Hydrogen & helium",tmax:5500,
+    fact:"Where sunlight finally escapes into space. Sunspots and granulation appear here."},
+   {k:"conv",n:"Convective zone",c:"#ff9d2e",rin:0.7,rout:0.985,role:"Energy carried out by CONVECTION",
+    loc:"70–100% of the radius",temp:"~2,000,000 → 5,500 °C",state:"Plasma",comp:"Hydrogen & helium",tmax:2e6,
+    fact:"Hot plasma rises, cools and sinks — like a boiling pot — carrying energy to the surface."},
+   {k:"rad",n:"Radiative zone",c:"#ffd257",rin:0.25,rout:0.7,role:"Energy carried out by RADIATION (photons)",
+    loc:"25–70% of the radius",temp:"~7,000,000 → 2,000,000 °C",state:"Dense plasma",comp:"Hydrogen & helium",tmax:7e6,
+    fact:"Photons bounce around, absorbed and re-emitted, taking up to 100,000+ years to cross this zone."},
+   {k:"core",n:"Core",c:"#fff2b0",rin:0,rout:0.25,role:"Energy PRODUCED by nuclear fusion",
+    loc:"0–25% of the radius",temp:"~15,000,000 °C",state:"Plasma (150× denser than water)",comp:"Hydrogen → Helium",tmax:1.5e7,
+    fact:"The hottest, densest part. Fusion (the proton–proton chain) joins hydrogen into helium, releasing the Sun's energy."}
+  ]}
+};
+
+const S={body:"earth", layer:"crust", t:0};
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+function txt(c,x,y,t,col,sz,al){c.fillStyle=col||"#c7d2ee";c.font="600 "+(sz||12)+"px system-ui";
+  c.textAlign=al||"center";c.fillText(t,x,y);c.textAlign="left";}
+function rng(seed){let x=seed>>>0||1;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};}
+
+let HIT=null;                                            // {cx,cy,Rpx} for click mapping
+function draw(){
+  const cv=document.getElementById("view");
+  if(S.body==="compare"){drawCompare(cv);return;}
+  const {c,w,h}=fit(cv,0.78);
+  c.clearRect(0,0,w,h);
+  const bg=c.createLinearGradient(0,0,0,h);bg.addColorStop(0,"#f5f9ff");bg.addColorStop(1,"#e8f0fa");
+  c.fillStyle=bg;c.fillRect(0,0,w,h);
+  const B=BODIES[S.body], cx=w/2, cy=h/2, Rpx=Math.min(w,h)*(B.isSun?0.30:0.40);
+  HIT={cx,cy,Rpx};
+  if(B.isSun) drawSun(c,cx,cy,Rpx,B); else drawRocky(c,cx,cy,Rpx,B);
+  highlightSel(c,cx,cy,Rpx,B);
+  document.getElementById("viewCap").innerHTML=
+    "<b>"+B.label+"</b> ("+B.R+"). Click a layer in the diagram or the list to explore it."+
+    (B.isSun?" Watch the energy travel from the core out to the surface.":"");
+}
+
+/* rocky bodies: Earth & Moon */
+function drawRocky(c,cx,cy,Rpx,B){
+  // draw from outer to inner
+  B.layers.forEach(L=>{const rO=L.rout*Rpx, rI=L.rin*Rpx;
+    const g=c.createRadialGradient(cx-rO*0.25,cy-rO*0.25,rI,cx,cy,rO);
+    g.addColorStop(0,shade(L.c,1.15));g.addColorStop(1,shade(L.c,0.85));
+    c.beginPath();c.arc(cx,cy,rO,0,TAU);c.fillStyle=g;c.fill();
+  });
+  // Earth: show the magnetic field only when the outer core (which makes it) is selected
+  if(S.body==="earth" && S.layer==="outer"){
+    c.strokeStyle="rgba(31,127,196,.5)";c.lineWidth=1.4;
+    for(let k=-1;k<=1;k++){c.beginPath();
+      c.ellipse(cx,cy,Rpx*(1.12+k*0.14),Rpx*(1.5+k*0.18),0,-1.1,1.1);c.stroke();
+      c.beginPath();c.ellipse(cx,cy,Rpx*(1.12+k*0.14),Rpx*(1.5+k*0.18),0,Math.PI-1.1,Math.PI+1.1);c.stroke();}
+    txt(c,cx,cy-Rpx*1.62,"magnetic field","#1f7fc4",11);
+  }
+  c.beginPath();c.arc(cx,cy,Rpx,0,TAU);c.strokeStyle="rgba(40,60,90,.35)";c.lineWidth=1.5;c.stroke();
+}
+
+/* the Sun with energy animation */
+function drawSun(c,cx,cy,Rpx,B){
+  // corona glow
+  const cg=c.createRadialGradient(cx,cy,Rpx*0.95,cx,cy,Rpx*1.5);
+  cg.addColorStop(0,"rgba(255,196,110,"+(S.layer==="corona"?0.7:0.5)+")");
+  cg.addColorStop(1,"rgba(255,196,110,0)");
+  c.fillStyle=cg;c.beginPath();c.arc(cx,cy,Rpx*1.5,0,TAU);c.fill();
+  // corona streamers
+  c.strokeStyle="rgba(255,176,80,.45)";c.lineWidth=1;
+  for(let k=0;k<20;k++){const a=k/20*TAU+Math.sin(S.t*0.02+k)*0.05;
+    const r1=Rpx*1.03,r2=Rpx*(1.25+0.2*((k*7)%5)/5);
+    c.beginPath();c.moveTo(cx+Math.cos(a)*r1,cy+Math.sin(a)*r1);c.lineTo(cx+Math.cos(a)*r2,cy+Math.sin(a)*r2);c.stroke();}
+  // chromosphere ring
+  c.beginPath();c.arc(cx,cy,Rpx*1.03,0,TAU);c.fillStyle=S.layer==="chromo"?"rgba(255,106,90,.7)":"rgba(255,106,90,.5)";c.fill();
+  // photosphere disc (the thin bright surface), then interior layers on top
+  const photo=B.layers.find(x=>x.k==="photo");
+  const pg=c.createRadialGradient(cx,cy,0,cx,cy,Rpx);pg.addColorStop(0,shade(photo.c,1.1));pg.addColorStop(1,shade(photo.c,0.85));
+  c.beginPath();c.arc(cx,cy,Rpx,0,TAU);c.fillStyle=pg;c.fill();
+  // interior layers
+  ["conv","rad","core"].forEach(k=>{const L=B.layers.find(x=>x.k===k);const rO=L.rout*Rpx;
+    const g=c.createRadialGradient(cx,cy,0,cx,cy,rO);
+    g.addColorStop(0,shade(L.c,1.1));g.addColorStop(1,shade(L.c,0.8));
+    c.beginPath();c.arc(cx,cy,rO,0,TAU);c.fillStyle=g;c.fill();});
+  // granulation on photosphere edge
+  const gr=rng(99);for(let i=0;i<260;i++){const a=gr()*TAU,rr=Rpx*(0.986+gr()*0.012);
+    c.fillStyle="rgba(255,150,40,"+(0.1+gr()*0.2)+")";c.beginPath();c.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr,1.4,0,TAU);c.fill();}
+  // core fusion sparkles
+  for(let i=0;i<10;i++){const a=Math.random()*TAU,r=Math.random()*0.24*Rpx;
+    c.fillStyle="rgba(255,255,255,"+Math.random()*0.5+")";c.beginPath();c.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,1+Math.random()*1.5,0,TAU);c.fill();}
+  // radiative-zone photons (random-walk dots drifting outward)
+  drawPhotons(c,cx,cy,Rpx);
+  // convection cells (rising/sinking blobs)
+  c.strokeStyle="rgba(255,255,255,.18)";c.lineWidth=1.3;
+  for(let k=0;k<10;k++){const a=k/10*TAU;const rise=0.5+0.5*Math.sin(S.t*0.05+k);
+    const r=(0.72+0.24*rise)*Rpx;c.beginPath();c.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,Rpx*0.05,0,TAU);c.stroke();}
+  // prominence (chromosphere loop)
+  const pa=1.1+Math.sin(S.t*0.03)*0.1;
+  c.strokeStyle="rgba(255,120,90,.6)";c.lineWidth=2.5;
+  c.beginPath();c.arc(cx+Math.cos(pa)*Rpx*1.08,cy+Math.sin(pa)*Rpx*1.08,Rpx*0.09,Math.PI,TAU);c.stroke();
+}
+let PH=[];
+function drawPhotons(c,cx,cy,Rpx){
+  if(PH.length<26)PH.push({a:Math.random()*TAU,r:0.26,ph:Math.random()*TAU});
+  c.fillStyle="rgba(255,255,220,.8)";
+  PH.forEach(p=>{p.r+=0.0009;p.a+=Math.sin(S.t*0.1+p.ph)*0.06;
+    if(p.r>0.69){p.r=0.26;p.a=Math.random()*TAU;}
+    const x=cx+Math.cos(p.a)*p.r*Rpx, y=cy+Math.sin(p.a)*p.r*Rpx;
+    c.beginPath();c.arc(x,y,1.6,0,TAU);c.fill();});
+}
+
+/* ---------- highlight the selected layer clearly ---------- */
+function highlightSel(c,cx,cy,Rpx,B){
+  const L=B.layers.find(x=>x.k===S.layer); if(!L) return;
+  const Rtot=(B.isSun?1.5:1.0)*Rpx, rO=L.rout*Rpx, rI=L.rin*Rpx;
+  // dim everything except the selected band (even-odd punch)
+  c.save();
+  c.beginPath();c.arc(cx,cy,Rtot,0,TAU);c.arc(cx,cy,rO,0,TAU);c.arc(cx,cy,rI,0,TAU);
+  c.fillStyle="rgba(244,248,253,0.62)";c.fill("evenodd");
+  c.restore();
+  // bold pulsing outline on the band edges
+  const pulse=0.5+0.5*Math.sin(S.t*0.12);
+  const ring=(r)=>{c.beginPath();c.arc(cx,cy,r,0,TAU);c.stroke();};
+  c.strokeStyle="#1d2740";c.lineWidth=3.5;ring(rO);if(rI>1)ring(rI);
+  c.strokeStyle="rgba(217,132,0,"+(0.55+0.45*pulse)+")";c.lineWidth=2;ring(rO);if(rI>1)ring(rI);
+  // callout label above the diagram, with a leader line to the band
+  const midR=(rO+(rI||0))/2, ly=cy-midR;
+  const labY=Math.max(cy-Rtot-2,18);
+  c.strokeStyle="#1d2740";c.lineWidth=1.3;c.beginPath();c.moveTo(cx,ly);c.lineTo(cx,labY+3);c.stroke();
+  c.font="700 13px system-ui";c.textAlign="center";
+  const tw=c.measureText(L.n).width+18;
+  c.fillStyle="#1d2740";
+  c.beginPath();c.roundRect?c.roundRect(cx-tw/2,labY-15,tw,21,7):c.rect(cx-tw/2,labY-15,tw,21);c.fill();
+  c.fillStyle="#fff";c.fillText(L.n,cx,labY);c.textAlign="left";
+}
+
+/* ---------- compare Earth vs Moon ---------- */
+function drawCompare(cv){
+  const {c,w,h}=fit(cv,0.62);
+  c.clearRect(0,0,w,h);
+  const R=Math.min(w*0.22,h*0.36);
+  const bodies=[["earth","Earth",w*0.28],["moon","Moon",w*0.72]];
+  bodies.forEach(([bk,lbl,cx])=>{const cy=h*0.48, B=BODIES[bk];
+    B.layers.forEach(L=>{const rO=L.rout*R;
+      const g=c.createRadialGradient(cx-rO*0.25,cy-rO*0.25,L.rin*R,cx,cy,rO);
+      g.addColorStop(0,shade(L.c,1.12));g.addColorStop(1,shade(L.c,0.85));
+      c.beginPath();c.arc(cx,cy,rO,0,TAU);c.fillStyle=g;c.fill();});
+    c.beginPath();c.arc(cx,cy,R,0,TAU);c.strokeStyle="rgba(40,60,90,.4)";c.lineWidth=1.5;c.stroke();
+    // core boundary highlight
+    const core=B.layers[B.layers.length-2];
+    c.beginPath();c.arc(cx,cy,core.rout*R,0,TAU);c.strokeStyle="rgba(29,39,64,.6)";c.setLineDash([4,3]);c.lineWidth=1.6;c.stroke();c.setLineDash([]);
+    txt(c,cx,cy-R-14,lbl,"#1d2740",15);
+    const corePct=Math.round(core.rout*100);
+    txt(c,cx,cy+R+20,"core ≈ "+corePct+"% of radius","#d98400",12);});
+  txt(c,w/2,h-14,"Same kinds of layers — but the Moon's core is far smaller and its crust is proportionally thicker (9.1)","#5f6f89",13);
+  HIT=null;
+  document.getElementById("viewCap").innerHTML="Both bodies are shown the <b>same size</b> here so you can compare the <b>proportions</b>. In reality the Moon is about ¼ of the Earth's diameter.";
+}
+
+function shade(hex,f){const n=parseInt(hex.slice(1),16);let r=(n>>16&255)*f,g=(n>>8&255)*f,b=(n&255)*f;
+  return `rgb(${clamp(r,0,255)|0},${clamp(g,0,255)|0},${clamp(b,0,255)|0})`;}
+
+/* ---------- panels ---------- */
+const $=id=>document.getElementById(id);
+function selectLayer(k){S.layer=k;renderList();renderInfo();}
+function renderList(){
+  const box=$("layerList");
+  if(S.body==="compare"){box.innerHTML='<div class="cap">Comparing the Earth and Moon side by side. Switch to Earth or Moon to click individual layers.</div>';return;}
+  const B=BODIES[S.body];box.innerHTML="";
+  B.layers.forEach(L=>{const d=document.createElement("div");d.className="layerBtn"+(L.k===S.layer?" on":"");
+    d.innerHTML=`<span class="sw" style="background:${L.c}"></span><div><b>${L.n}</b><small>${L.role}</small></div>`;
+    d.onclick=()=>selectLayer(L.k);box.appendChild(d);});
+}
+function renderInfo(){
+  if(S.body==="compare"){$("infoCard").style.opacity=.6;
+    $("iName").textContent="Earth vs Moon";$("iRole").textContent="Compare the proportions";
+    $("iLoc").textContent="—";$("iTemp").textContent="—";$("iState").textContent="—";$("iComp").textContent="—";
+    $("iFact").innerHTML="The Moon has the same <b>types</b> of layers as Earth, but its metal core is only ~20% of its radius (Earth's is ~55%), and its rocky crust is proportionally thicker.";
+    $("tmark").style.left="10%";return;}
+  $("infoCard").style.opacity=1;
+  const L=BODIES[S.body].layers.find(x=>x.k===S.layer);if(!L)return;
+  $("iName").textContent=L.n; $("iRole").textContent=L.role;
+  $("iLoc").textContent=L.loc; $("iTemp").textContent=L.temp; $("iState").textContent=L.state; $("iComp").textContent=L.comp;
+  $("iFact").innerHTML=L.fact; $("tmark").style.left=(tPos(L.tmax)*100)+"%";
+}
+
+/* ---------- controls ---------- */
+$("bodySel").onclick=e=>{const b=e.target.closest("button");if(!b)return;
+  [...e.currentTarget.children].forEach(x=>x.classList.toggle("on",x===b));
+  S.body=b.dataset.b;
+  if(S.body!=="compare"){S.layer=BODIES[S.body].layers[0].k;}
+  renderList();renderInfo();draw();};
+document.getElementById("view").addEventListener("click",e=>{
+  if(!HIT)return;const r=e.target.getBoundingClientRect();
+  const dx=e.clientX-r.left-HIT.cx, dy=e.clientY-r.top-HIT.cy;
+  const frac=Math.hypot(dx,dy)/HIT.Rpx;const B=BODIES[S.body];
+  let hit=null;B.layers.forEach(L=>{if(frac>=L.rin&&frac<=L.rout)hit=L.k;});
+  if(hit)selectLayer(hit);});
+
+let anim=null;
+function loop(){S.t+=1;draw();anim=requestAnimationFrame(loop);}
+window.addEventListener("resize",draw);
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"List the Earth's layers from the <b>outside in</b>. (1.3)",
+   opts:shuffle(["Crust, mantle, outer core, inner core","Mantle, crust, inner core, outer core",
+     "Inner core, outer core, mantle, crust","Crust, outer core, mantle, inner core"]),
+   ansText:"Crust, mantle, outer core, inner core",
+   why:"From the surface downwards: crust (thin solid), mantle (thick solid rock), outer core (liquid metal), inner core (solid metal)."}),
+ ()=>({q:"Which of the Earth's layers is <b>liquid</b>?",
+   opts:shuffle(["The outer core","The inner core","The crust","The mantle"]),ansText:"The outer core",
+   why:"The outer core is molten iron and nickel. Its swirling motion generates Earth's magnetic field."}),
+ ()=>({q:"The Earth's inner core is extremely hot but stays <b>solid</b>. Why?",
+   opts:shuffle(["The enormous pressure stops it melting","It is actually quite cool","It is made of rock",
+     "It is cooled by the ocean"]),ansText:"The enormous pressure stops it melting",
+   why:"Despite being about as hot as the Sun's surface, the immense pressure at the centre keeps the iron solid."}),
+ ()=>({q:"How does the <b>Moon's</b> core compare with the Earth's? (9.1)",
+   opts:shuffle(["Much smaller relative to its size (~20% of radius)","Much bigger","Exactly the same",
+     "The Moon has no core"]),ansText:"Much smaller relative to its size (~20% of radius)",
+   why:"The Moon has the same kinds of layers, but its core is only ~20% of its radius (Earth's is ~55%), and its crust is proportionally thicker."}),
+ ()=>({q:"In which part of the Sun is energy <b>produced</b>? (10.3)",
+   opts:shuffle(["The core, by nuclear fusion","The corona","The photosphere","The convective zone"]),
+   ansText:"The core, by nuclear fusion",
+   why:"Fusion in the core (~15 million °C) joins hydrogen into helium, releasing the energy that powers the Sun."}),
+ ()=>({q:"Put the Sun's interior layers in order from the <b>centre outwards</b>.",
+   opts:shuffle(["Core, radiative zone, convective zone, photosphere","Photosphere, core, radiative, convective",
+     "Core, convective zone, radiative zone, photosphere","Corona, core, mantle, crust"]),
+   ansText:"Core, radiative zone, convective zone, photosphere",
+   why:"Energy is made in the core, carried out by radiation, then by convection, and finally radiated from the photosphere (the surface)."}),
+ ()=>({q:"How is energy carried through the Sun's <b>convective zone</b>?",
+   opts:shuffle(["By convection currents of rising and sinking plasma","By photons bouncing around",
+     "By sound waves","By fusion"]),ansText:"By convection currents of rising and sinking plasma",
+   why:"Hot plasma rises, cools and sinks, carrying energy outward — like a boiling pot. In the radiative zone below, energy travels as photons instead."}),
+ ()=>({q:"The Sun's <b>corona</b> is surprising because it is…",
+   opts:shuffle(["far hotter than the surface (over a million °C) yet very low density",
+     "the coolest part of the Sun","made of solid rock","where fusion happens"]),
+   ansText:"far hotter than the surface (over a million °C) yet very low density",
+   why:"The corona is over a million °C — much hotter than the ~5,500 °C photosphere below it — but so thin it is only visible during a total eclipse."}),
+ ()=>({q:"What is the <b>photosphere</b>?",
+   opts:shuffle(["The visible surface of the Sun, where light escapes","The Sun's core",
+     "The Sun's magnetic field","A layer of the Earth"]),ansText:"The visible surface of the Sun, where light escapes",
+   why:"The photosphere (~5,500 °C) is the layer we see — where light finally leaves the Sun. Sunspots appear here."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ansq(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ansq(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+renderList();renderInfo();loop();
+</script>
+</body>
+</html>
