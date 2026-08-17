@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellar Spectra Lab — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:282px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 3px}
+label:first-of-type{margin-top:0}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:4px 10px;font-size:12px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#07101f;font-weight:600}
+canvas{width:100%;display:block;border-radius:8px;background:#04060d}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.banner{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:10px;
+  background:var(--panel2);border:1px solid var(--line);margin-top:12px}
+.bigtype{font-size:34px;font-weight:800;line-height:1;width:56px;text-align:center;border-radius:8px;padding:8px 0}
+.banner .info{font-size:13px;color:var(--dim)}
+.banner .info b{color:var(--ink)}
+.swatch{width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.3);flex:0 0 auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 0;border-bottom:1px solid var(--line)}
+td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+tr:last-child td{border-bottom:none}
+.comp .sp{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.comp .lab{width:52px;font-size:12.5px;font-weight:600}
+.comp .bar{flex:1;height:9px;background:var(--panel2);border-radius:5px;overflow:hidden}
+.comp .bar i{display:block;height:100%}
+.comp .pct{width:34px;text-align:right;font-size:11.5px;color:var(--dim)}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.hide{display:none!important}
+details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.row{display:flex;gap:8px}.row>*{flex:1}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Stellar Spectra Lab</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 13.4–13.6 · read a star's temperature, spectral type, chemical composition and motion from its spectrum</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>Pick a star</h2>
+    <div class="chips" id="stars"></div>
+  </div>
+  <div class="card">
+    <h2>Adjust the star</h2>
+    <label>Surface temperature <span class="val" id="tOut">5,800 K</span></label>
+    <input type="range" id="temp" min="2500" max="40000" step="100" value="5800">
+    <label>Radial velocity <span class="val" id="vOut">0 km/s</span></label>
+    <input type="range" id="rv" min="-600" max="600" step="5" value="0">
+    <div class="cap">Positive velocity = moving away (redshift); negative = approaching (blueshift).</div>
+  </div>
+  <div class="card">
+    <h2>Show</h2>
+    <div class="chips" id="opts">
+      <div class="chip on" data-o="lines">Absorption lines</div>
+      <div class="chip on" data-o="curve">Blackbody curve</div>
+      <div class="chip on" data-o="labels">Line labels</div>
+    </div>
+    <div class="cap">Click a dark line in the spectrum to identify it.</div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <h2>The star's spectrum (13.4)</h2>
+    <canvas id="rainbow"></canvas>
+    <div class="cap" id="clickCap">A continuous rainbow crossed by dark absorption lines. The pattern of lines reveals the chemical elements; the overall colour reveals the temperature.</div>
+    <canvas id="curve" style="margin-top:12px"></canvas>
+    <div class="cap">Brightness against wavelength (the blackbody curve). Its <b style="color:var(--accent)">peak</b> moves to shorter (bluer) wavelengths as the star gets hotter — Wien's law.</div>
+
+    <div class="banner">
+      <div class="bigtype" id="typeBox">G</div>
+      <div class="swatch" id="swatch"></div>
+      <div class="info" id="typeInfo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card">
+    <h2>What the spectrum tells us</h2>
+    <table>
+      <tr><td>Temperature (13.6)</td><td id="rT">—</td></tr>
+      <tr><td>Spectral type (13.5)</td><td id="rType">—</td></tr>
+      <tr><td>Colour</td><td id="rColour">—</td></tr>
+      <tr><td>Peak wavelength</td><td id="rPeak">—</td></tr>
+      <tr><td>Radial velocity (13.4c)</td><td id="rV">—</td></tr>
+    </table>
+    <div class="note" id="dopNote"></div>
+  </div>
+
+  <div class="card comp">
+    <h2>Lines detected (13.4a)</h2>
+    <div id="compList"></div>
+    <div class="note" id="compNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ" style="background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas</h2>
+    <details><summary>Three things from a spectrum (13.4)</summary><p>A stellar spectrum reveals: <b>chemical composition</b> (from which absorption lines appear), <b>temperature</b> (from the colour and which lines are strongest), and <b>radial velocity</b> (from the Doppler shift of the lines).</p></details>
+    <details><summary>Colour and temperature (13.6)</summary><p>Hot stars glow blue-white and their spectrum peaks at short wavelengths; cool stars glow red and peak at long wavelengths. This is Wien's law — the peak wavelength is inversely proportional to temperature.</p></details>
+    <details><summary>Spectral types (13.5)</summary><p>Stars are sorted O B A F G K M from hottest (blue, ~40,000 K) to coolest (red, ~2,500 K). Remembered as “<b>O</b>h <b>B</b>e <b>A</b> <b>F</b>ine <b>G</b>irl/<b>G</b>uy, <b>K</b>iss <b>M</b>e.” The Sun is a G-type star.</p></details>
+    <details><summary>Why A stars have the strongest H lines</summary><p>All stars are mostly hydrogen, yet hydrogen lines are strongest in A-type stars (~9,500 K). It is about <b>temperature</b>, not amount: only at that temperature are hydrogen atoms in the right state to absorb these visible wavelengths. Hotter stars ionise the hydrogen; cooler stars leave it un-excited.</p></details>
+    <details><summary>Radial velocity (13.4c)</summary><p>If a star moves towards us its lines shift to shorter (blue) wavelengths; moving away, they shift to longer (red) wavelengths. The size of the shift gives the speed: v = c × (Δλ/λ).</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const C=299792.458;                                    // km/s
+const HCK=1.43877e7;                                   // hc/k in nm·K
+
+const SPECIES=[
+ {n:"Hydrogen",sym:"H",lines:[656.3,486.1,434.0,410.2],Tp:9500,Tw:3200,amp:1.0,col:"#8fb8ff",lw:1.6,
+   desc:"Balmer lines of hydrogen — strongest in white A-type stars (~9,500 K)."},
+ {n:"Neutral helium",sym:"He I",lines:[587.6,447.1,471.3,501.6],Tp:19000,Tw:7000,amp:0.85,col:"#c9a0ff",lw:1.5,
+   desc:"Neutral helium — strong in hot blue B-type stars."},
+ {n:"Ionised helium",sym:"He II",lines:[468.6,541.2],Tp:37000,Tw:13000,amp:0.75,col:"#a0c8ff",lw:1.5,
+   desc:"Ionised helium — only the hottest O-type stars show it."},
+ {n:"Ionised calcium",sym:"Ca II",lines:[393.4,396.8],Tp:5200,Tw:2300,amp:0.95,col:"#9dffc4",lw:1.8,
+   desc:"The Ca II H & K lines — very strong in yellow G and orange K stars like the Sun."},
+ {n:"Sodium",sym:"Na I",lines:[589.0,589.6],Tp:4200,Tw:1900,amp:0.6,col:"#ffd070",lw:1.5,
+   desc:"The sodium D lines — seen in cooler yellow-to-red stars."},
+ {n:"Iron & metals",sym:"Fe",lines:[438.4,495.7,516.7,527.0,532.8,438.0],Tp:4500,Tw:1800,amp:0.5,col:"#ffb080",lw:1.3,
+   desc:"A forest of metal lines — strong in cool G, K and M stars."},
+ {n:"Titanium oxide",sym:"TiO",lines:[476,495,516,567,616,705],Tp:3000,Tw:1150,amp:1.0,col:"#ff9090",lw:9,band:true,
+   desc:"Broad molecular bands that dominate cool red M-type stars — molecules only survive at low temperatures."}
+];
+function strength(sp,T){return clamp(sp.amp*Math.exp(-Math.pow((T-sp.Tp)/sp.Tw,2)),0,1);}
+
+const STARS=[
+ ["Sun (G2)",5778,0],["Sirius A (A1)",9940,-5.5],["Vega (A0)",9600,-13.9],["Rigel (B8)",12100,20.7],
+ ["Spica (B1)",22400,1.0],["Bellatrix (B2)",21500,18.2],["Arcturus (K1)",4290,-5.2],
+ ["Aldebaran (K5)",3900,54.3],["Betelgeuse (M2)",3500,21.9],["Antares (M1)",3400,-3.4],
+ ["Alnitak (O9)",29000,18.5],["Procyon (F5)",6530,-3.2]
+];
+
+const S={T:5778, v:0, opts:{lines:1,curve:1,labels:1}, lineHits:[]};
+
+/* ---------- physics ---------- */
+const peakNm=T=>2.898e6/T;                             // Wien's law, nm
+function planck(nm,T){const x=HCK/(nm*T);return Math.pow(nm,-5)/(Math.exp(x)-1);}
+function specType(T){
+  if(T>=30000)return "O"; if(T>=10000)return "B"; if(T>=7500)return "A";
+  if(T>=6000)return "F"; if(T>=5200)return "G"; if(T>=3700)return "K"; return "M";}
+const TYPECOL={O:"#9bb0ff",B:"#aabfff",A:"#dfe6ff",F:"#f8f7ff",G:"#fff4d6",K:"#ffd6a0",M:"#ff9d7a"};
+const TYPERANGE={O:"≥30,000 K",B:"10,000–30,000 K",A:"7,500–10,000 K",F:"6,000–7,500 K",G:"5,200–6,000 K",K:"3,700–5,200 K",M:"<3,700 K"};
+const COLNAME={O:"blue",B:"blue-white",A:"white",F:"yellow-white",G:"yellow",K:"orange",M:"red"};
+function bbRGB(T){T=clamp(T,1500,40000)/100;let r,g,b;
+  r=T<=66?255:329.7*Math.pow(T-60,-0.1332);
+  g=T<=66?99.47*Math.log(T)-161.1:288.1*Math.pow(T-60,-0.0755);
+  b=T>=66?255:(T<=19?0:138.5*Math.log(T-10)-305.0);
+  return [clamp(r,0,255)|0,clamp(g,0,255)|0,clamp(b,0,255)|0];}
+function nmColor(nm){let r=0,g=0,b=0;
+  if(nm<440){r=-(nm-440)/(440-380);b=1;}else if(nm<490){g=(nm-440)/(490-440);b=1;}
+  else if(nm<510){g=1;b=-(nm-510)/(510-490);}else if(nm<580){r=(nm-510)/(580-510);g=1;}
+  else if(nm<645){r=1;g=-(nm-645)/(645-580);}else{r=1;}
+  let f=1; if(nm>700)f=0.3+0.7*(780-nm)/80; if(nm<420)f=0.3+0.7*(nm-360)/60;
+  return [255*r*f,255*g*f,255*b*f];}
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+const zf=()=>1+S.v/C;                                  // observed = rest × (1+z)
+
+/* absorption depth at wavelength nm (rest frame of chart = observed) */
+function absorb(nmObs){
+  let a=0;
+  SPECIES.forEach(sp=>{const st=strength(sp,S.T);if(st<0.02)return;
+    sp.lines.forEach(l0=>{const l=l0*zf();const w=sp.lw;
+      a+=st*(sp.band?0.7:1)*Math.exp(-Math.pow((nmObs-l)/w,2));});});
+  return clamp(a,0,1);
+}
+
+/* ---------- rainbow spectrum ---------- */
+const L0=380,L1=750;
+function drawRainbow(){
+  const cv=document.getElementById("rainbow");const {c,w,h}=fit(cv,0.30);
+  c.clearRect(0,0,w,h);
+  // blackbody envelope normalised across the visible band
+  let pmax=1e-99;for(let nm=L0;nm<=L1;nm+=2)pmax=Math.max(pmax,planck(nm,S.T));
+  const mL=6,mR=6, gw=w-mL-mR;
+  for(let x=0;x<gw;x++){const nm=L0+x/gw*(L1-L0);
+    const env=clamp(planck(nm,S.T)/pmax,0,1);
+    const base=nmColor(nm);
+    const dim=0.25+0.75*env;                            // never fully black so colours show
+    const ab=S.opts.lines?absorb(nm):0;
+    const f=dim*(1-0.92*ab);
+    c.fillStyle=`rgb(${base[0]*f|0},${base[1]*f|0},${base[2]*f|0})`;
+    c.fillRect(mL+x,4,1,h-24);}
+  c.strokeStyle="#2a3556";c.strokeRect(mL,4,gw,h-24);
+  // wavelength ticks
+  c.fillStyle="#7a86a8";c.font="10px system-ui";c.textAlign="center";
+  [400,450,500,550,600,650,700].forEach(nm=>{const x=mL+(nm-L0)/(L1-L0)*gw;
+    c.fillText(nm,x,h-4);});
+  // line labels + store hit boxes
+  S.lineHits=[];
+  if(S.opts.lines){SPECIES.forEach(sp=>{const st=strength(sp,S.T);if(st<0.12)return;
+    sp.lines.forEach(l0=>{const l=l0*zf();if(l<L0||l>L1)return;const x=mL+(l-L0)/(L1-L0)*gw;
+      S.lineHits.push({x,sp});
+      if(S.opts.labels&&st>0.3&&!sp.band){c.strokeStyle=sp.col;c.lineWidth=1;
+        c.beginPath();c.moveTo(x,4);c.lineTo(x,-2+ (sp===S.selSp?0:0));c.stroke();}
+    });});
+    // draw small tick marks with symbol for the strongest few
+    const strong=SPECIES.map(sp=>({sp,st:strength(sp,S.T)})).filter(o=>o.st>0.25).sort((a,b)=>b.st-a.st).slice(0,3);
+    if(S.opts.labels)strong.forEach(o=>{const l=o.sp.lines[0]*zf();if(l<L0||l>L1)return;
+      const x=mL+(l-L0)/(L1-L0)*gw;c.fillStyle=o.sp.col;c.font="600 10px system-ui";c.textAlign="center";
+      c.fillText(o.sp.sym,clamp(x,14,gw-14),13);});
+  }
+}
+
+/* ---------- blackbody curve ---------- */
+const CL0=200,CL1=1200;
+function drawCurve(){
+  const cv=document.getElementById("curve");const {c,w,h}=fit(cv,0.34);
+  c.clearRect(0,0,w,h);c.fillStyle="#04060d";c.fillRect(0,0,w,h);
+  const mL=8,mR=8,mT=8,mB=22, gw=w-mL-mR, gh=h-mT-mB;
+  const X=nm=>mL+(nm-CL0)/(CL1-CL0)*gw;
+  let pmax=1e-99;for(let nm=CL0;nm<=CL1;nm+=4)pmax=Math.max(pmax,planck(nm,S.T));
+  const Y=p=>mT+gh-clamp(p/pmax,0,1)*gh;
+  // visible band shade
+  const gv=c.createLinearGradient(X(L0),0,X(L1),0);
+  for(let k=0;k<=10;k++){const nm=L0+k/10*(L1-L0);const col=nmColor(nm);
+    gv.addColorStop(k/10,`rgba(${col[0]|0},${col[1]|0},${col[2]|0},.14)`);}
+  c.fillStyle=gv;c.fillRect(X(L0),mT,X(L1)-X(L0),gh);
+  c.fillStyle="#5d6b91";c.font="9px system-ui";c.textAlign="center";c.fillText("visible light",X(565),mT+11);
+  // curve with absorption dips
+  if(S.opts.curve){c.beginPath();
+    for(let x=0;x<=gw;x++){const nm=CL0+x/gw*(CL1-CL0);
+      let p=planck(nm,S.T)/pmax; if(S.opts.lines&&nm>=L0&&nm<=L1)p*=(1-0.85*absorb(nm));
+      const y=Y(p*pmax);x?c.lineTo(mL+x,y):c.moveTo(mL+x,y);}
+    c.strokeStyle="#ffc94d";c.lineWidth=2;c.stroke();}
+  // Wien peak marker
+  const pk=peakNm(S.T);
+  if(pk>=CL0&&pk<=CL1){c.strokeStyle="rgba(255,255,255,.35)";c.setLineDash([4,4]);
+    c.beginPath();c.moveTo(X(pk),mT);c.lineTo(X(pk),mT+gh);c.stroke();c.setLineDash([]);
+    c.fillStyle="#e8ecf7";c.font="10px system-ui";c.textAlign="center";
+    c.fillText("peak "+Math.round(pk)+" nm",clamp(X(pk),40,gw-30),mT+gh-4);}
+  // axis
+  c.fillStyle="#7a86a8";c.font="9px system-ui";c.textAlign="center";
+  [200,400,600,800,1000,1200].forEach(nm=>c.fillText(nm,X(nm),h-6));
+  c.textAlign="left";c.fillStyle="#5d6b91";c.fillText("← UV",mL+2,h-6);
+  c.textAlign="right";c.fillText("infrared →",w-mR,h-6);
+}
+
+/* ---------- update ---------- */
+const $=id=>document.getElementById(id);
+function update(){
+  $("tOut").textContent=Math.round(S.T).toLocaleString()+" K";
+  $("vOut").textContent=(S.v>0?"+":"")+S.v+" km/s";
+  const type=specType(S.T);
+  $("rT").textContent=Math.round(S.T).toLocaleString()+" K";
+  $("rType").textContent=type+subclass(S.T);
+  $("rColour").textContent=COLNAME[type];
+  $("rPeak").textContent=Math.round(peakNm(S.T))+" nm"+(peakNm(S.T)<380?" (UV)":peakNm(S.T)>750?" (IR)":"");
+  $("rV").innerHTML=S.v===0?'at rest':(S.v>0?'<span style="color:var(--red)">+'+S.v+' km/s (away)</span>':'<span style="color:var(--accent2)">'+S.v+' km/s (towards)</span>');
+  const z=S.v/C, obs=656.3*(1+z);
+  $("dopNote").innerHTML=S.v===0?"Move the star to see its lines Doppler-shift. v = c × Δλ/λ."
+    :`Hα shifts from 656.3 nm to <b>${obs.toFixed(2)} nm</b> (${S.v>0?"red":"blue"}shift). z = ${z.toFixed(5)}, so v = c·z = ${Math.round(S.v)} km/s.`;
+  // banner
+  $("typeBox").textContent=type; $("typeBox").style.background=TYPECOL[type];
+  $("typeBox").style.color="#0b1020";
+  const rgb=bbRGB(S.T);$("swatch").style.background=`rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+  $("typeInfo").innerHTML=`<b>Type ${type}</b> · ${TYPERANGE[type]} · a <b>${COLNAME[type]}</b> star. Strongest lines: <b>${strongestNames()}</b>.`;
+  composition();
+  drawRainbow(); drawCurve();
+}
+function subclass(T){const type=specType(T);
+  const R={O:[30000,50000],B:[10000,30000],A:[7500,10000],F:[6000,7500],G:[5200,6000],K:[3700,5200],M:[2400,3700]}[type];
+  const s=clamp(Math.round(9-(T-R[0])/(R[1]-R[0])*9),0,9);return s;}
+function strongestNames(){return SPECIES.map(sp=>({sp,st:strength(sp,S.T)})).filter(o=>o.st>0.25)
+  .sort((a,b)=>b.st-a.st).slice(0,3).map(o=>o.sp.sym).join(", ")||"weak, few lines";}
+function composition(){
+  const box=$("compList");box.innerHTML="";
+  SPECIES.map(sp=>({sp,st:strength(sp,S.T)})).sort((a,b)=>b.st-a.st).forEach(o=>{
+    const d=document.createElement("div");d.className="sp";
+    d.innerHTML=`<div class="lab" style="color:${o.sp.col}">${o.sp.sym}</div>
+      <div class="bar"><i style="width:${(o.st*100)|0}%;background:${o.sp.col}"></i></div>
+      <div class="pct">${(o.st*100)|0}%</div>`;
+    box.appendChild(d);});
+  $("compNote").innerHTML="Bars show how <b>strong</b> each line is at this temperature — not how much of the element there is. Every star is mostly hydrogen and helium.";
+}
+
+/* ---------- controls ---------- */
+const sb=$("stars");
+STARS.forEach(([n,T,v],i)=>{const d=document.createElement("div");d.className="chip"+(i===0?" on":"");
+  d.textContent=n;d.onclick=()=>{[...sb.children].forEach(x=>x.classList.remove("on"));d.classList.add("on");
+    S.T=T;S.v=v;$("temp").value=T;$("rv").value=v;update();};sb.appendChild(d);});
+$("temp").oninput=e=>{S.T=+e.target.value;deselectStar();update();};
+$("rv").oninput=e=>{S.v=+e.target.value;update();};
+function deselectStar(){[...sb.children].forEach(x=>x.classList.remove("on"));}
+$("opts").onclick=e=>{const ch=e.target.closest(".chip");if(!ch)return;
+  ch.classList.toggle("on");S.opts[ch.dataset.o]=ch.classList.contains("on")?1:0;update();};
+$("rainbow").addEventListener("click",e=>{
+  const r=e.target.getBoundingClientRect();const mx=e.clientX-r.left;
+  let best=null,bd=1e9;S.lineHits.forEach(o=>{const dd=Math.abs(o.x-mx);if(dd<bd){bd=dd;best=o;}});
+  if(best&&bd<12){$("clickCap").innerHTML=`<b style="color:${best.sp.col}">${best.sp.n} (${best.sp.sym})</b> — ${best.sp.desc}`;}
+});
+window.addEventListener("resize",()=>{drawRainbow();drawCurve();});
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const QGEN=[
+ ()=>({q:"Which <b>three</b> things can be found from a star's spectrum? (13.4)",
+   opts:shuffle(["Composition, temperature and radial velocity","Mass, age and distance",
+     "Colour, brightness and size","Rotation, magnetism and shape"]),
+   ansText:"Composition, temperature and radial velocity",
+   why:"Absorption lines give the chemical composition; the colour and line pattern give the temperature; the Doppler shift of the lines gives the radial velocity."}),
+ ()=>({q:"Put the spectral types in order from <b>hottest to coolest</b>.",
+   opts:shuffle(["O B A F G K M","M K G F A B O","A B C D E F G","G O B A F K M"]),
+   ansText:"O B A F G K M",
+   why:"O B A F G K M runs from hottest blue stars (~40,000 K) to coolest red stars (~2,500 K). The Sun is a G star."}),
+ ()=>({q:"A star glows <b>blue-white</b>. What does this tell you?",
+   opts:shuffle(["It is very hot","It is very cool","It is very old","It is moving away"]),
+   ansText:"It is very hot",
+   why:"Blue-white stars are the hottest; red stars are the coolest. Colour is a direct clue to surface temperature (13.6)."}),
+ ()=>({q:"The Sun is which spectral type?",
+   opts:shuffle(["G","O","M","B"]),ansText:"G",
+   why:"The Sun is a yellow G-type star with a surface temperature of about 5,800 K."}),
+ ()=>({q:"Hydrogen lines are strongest in white <b>A-type</b> stars, not in cooler ones. Why?",
+   opts:shuffle(["The temperature there best excites hydrogen to absorb visible light",
+     "A stars contain far more hydrogen","Cooler stars have no hydrogen","A stars are closer to us"]),
+   ansText:"The temperature there best excites hydrogen to absorb visible light",
+   why:"All stars are mostly hydrogen. The lines are strongest at ~9,500 K because only then are the atoms in the right state to absorb these wavelengths — it is about temperature, not amount."}),
+ ()=>({q:"A star's absorption lines are shifted towards <b>longer (red)</b> wavelengths. The star is…",
+   opts:shuffle(["moving away from us","moving towards us","not moving","getting hotter"]),
+   ansText:"moving away from us",
+   why:"A redshift means the wavelengths are stretched, so the star is receding. A blueshift would mean it is approaching (13.4c)."}),
+ ()=>({q:"As a star gets hotter, the peak of its blackbody curve moves…",
+   opts:shuffle(["to shorter (bluer) wavelengths","to longer (redder) wavelengths","off the scale entirely","it does not move"]),
+   ansText:"to shorter (bluer) wavelengths",
+   why:"Wien's law: the peak wavelength is inversely proportional to temperature, so hotter stars peak further into the blue/UV."}),
+ ()=>({q:"Broad titanium-oxide (TiO) molecular bands are a sign of which stars?",
+   opts:shuffle(["Cool red M-type stars","Hot blue O-type stars","White A-type stars","The Sun"]),
+   ansText:"Cool red M-type stars",
+   why:"Molecules like TiO only survive at low temperatures, so their broad bands mark out the coolest, reddest M-type stars."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ans(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+update();
+</script>
+</body>
+</html>

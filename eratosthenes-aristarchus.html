@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sizing the Solar System — Eratosthenes &amp; Aristarchus</title>
+<style>
+:root{
+  --bg:#0b1020;--panel:#141b31;--panel2:#1b2440;--line:#2a3556;
+  --ink:#e8ecf7;--dim:#96a2c4;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;--sun:#ffcf4a;--earth:#4fa3e0;--moon:#c9ccd6;
+  --angA:#ffc94d;--angB:#5ddc9a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5}
+header{padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#141c36,#0e1428)}
+header h1{margin:0;font-size:19px}
+header p{margin:3px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:270px minmax(0,1fr) 322px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 10px;font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+.steps{display:flex;flex-direction:column;gap:7px}
+.step{display:flex;gap:10px;align-items:center;padding:9px 11px;border-radius:9px;border:1px solid var(--line);
+  background:var(--panel2);cursor:pointer}
+.step:hover{border-color:var(--accent2)}
+.step.on{border-color:var(--accent);background:rgba(255,201,77,.08)}
+.step .n{flex:0 0 24px;height:24px;border-radius:50%;background:#33405f;color:#0b1020;font-weight:700;
+  display:flex;align-items:center;justify-content:center;font-size:13px}
+.step.on .n{background:var(--accent)}
+.step.done .n{background:var(--green)}
+.step small{display:block;color:var(--dim);font-size:11.5px}
+.step b{font-size:13.5px}
+label{display:block;font-size:13px;color:var(--dim);margin:12px 0 4px}
+input[type=range]{width:100%;accent-color:var(--accent2)}
+.val{float:right;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:8px;
+  padding:8px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#07101f;border-color:var(--accent2);font-weight:600}
+.row{display:flex;gap:8px}.row>*{flex:1}
+canvas{width:100%;display:block;border-radius:9px;background:#04060d}
+.cap{font-size:12.5px;color:var(--dim);margin-top:8px}
+.work{background:#080e1e;border:1px solid var(--line);border-radius:8px;padding:12px;
+  font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.85;
+  white-space:pre-wrap;overflow-x:auto;color:#cdd7f0;margin:0}
+.work .hl{color:var(--accent);font-weight:600}
+.work .cf{color:var(--accent2)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+td{padding:6px 0;border-bottom:1px solid var(--line)}
+td:nth-child(2),td:nth-child(3){text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--dim);text-align:right;font-weight:600;padding-bottom:4px}
+th:first-child{text-align:left}
+.res .yours{color:var(--accent);font-weight:600}
+.res .acc{color:var(--dim)}
+.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;margin-left:5px}
+.callout{background:rgba(93,220,154,.10);border-left:3px solid var(--green);padding:9px 12px;
+  border-radius:0 8px 8px 0;font-size:13px;margin-top:10px;color:#cdeddd}
+.note{font-size:12.5px;color:var(--dim);margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+.q{background:var(--panel2);border-radius:8px;padding:11px;font-size:14px;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{text-align:left;padding:8px 11px}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.fb{font-size:13px;margin-top:9px;padding:9px;border-radius:7px;background:#080e1e;color:var(--dim)}
+.hide{display:none!important}
+details{margin-top:8px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.mark{display:flex;gap:6px;margin-top:8px}
+.mark button{flex:1;font-size:12px;padding:6px 4px}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sizing the Solar System</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec point 3.3 · how Eratosthenes and Aristarchus measured the Earth, Moon and Sun — step by step</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card">
+    <h2>The five measurements</h2>
+    <div class="steps" id="stepList"></div>
+  </div>
+  <div class="card">
+    <h2 id="ctrlTitle">Your measurement</h2>
+    <div id="ctrlBox"></div>
+    <div class="row" style="margin-top:12px">
+      <button id="back">‹ Back</button>
+      <button id="next" class="primary">Next ›</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <h2 id="diagTitle">Step 1</h2>
+    <canvas id="diag"></canvas>
+    <div class="cap" id="diagCap"></div>
+    <div class="callout" id="callout"></div>
+  </div>
+  <div class="card">
+    <h2>The calculation</h2>
+    <pre class="work" id="work"></pre>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card res">
+    <h2>Results so far</h2>
+    <table>
+      <tr><th>Quantity</th><th>Your value</th><th>Accepted</th></tr>
+      <tbody id="resBody"></tbody>
+    </table>
+    <div class="note" id="resNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Challenge</h2>
+    <div class="q" id="qText">Press <b>New question</b> to start.</div>
+    <div class="opts" id="qOpts"></div>
+    <div class="fb hide" id="qFb"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="primary" id="newQ">New question</button>
+      <button id="showQ">Show me</button>
+    </div>
+    <div class="note">Score: <b id="score">0</b> / <b id="asked">0</b></div>
+  </div>
+
+  <div class="card">
+    <h2>Key ideas (3.3)</h2>
+    <details><summary>Eratosthenes &amp; the Earth</summary><p>At noon on the solstice the Sun is overhead at Syene (no shadow) but casts a 7.2° shadow at Alexandria. Because the Sun's rays are <b>parallel</b>, that shadow angle equals the angle at the Earth's centre between the two cities. 7.2° is 1/50 of a circle, so the whole circumference is 50 × the 800 km between them = 40,000 km.</p></details>
+    <details><summary>Aristarchus &amp; the Moon</summary><p>A lunar eclipse shows the Moon is roughly a quarter of the Earth's width. Its angular size (½°) then gives its distance, since a small object of known size at a known angle sits at a fixed distance.</p></details>
+    <details><summary>Aristarchus &amp; the Sun</summary><p>At exactly half-Moon the Sun–Moon–Earth angle is 90°. Measuring the Earth's angle between the Moon and Sun gives the Sun's distance. Because the true angle (89.85°) is so close to 90°, Aristarchus's estimate of 87° made the Sun come out ~20× too close — but his <b>method</b> was correct.</p></details>
+    <details><summary>Why it matters</summary><p>These measurements, made over 2000 years ago with shadows and geometry, first revealed the true scale of the Solar System — that the Sun is far larger than the Earth, which supported the later idea that the Earth orbits the Sun.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const D2R=Math.PI/180, TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const D_CITIES=800;                         // km, Alexandria–Syene
+
+const STEPS=[
+ {t:"Earth's diameter",s:"Eratosthenes' shadows"},
+ {t:"The Moon's diameter",s:"the eclipse shadow"},
+ {t:"Distance to the Moon",s:"its angular size"},
+ {t:"Distance to the Sun",s:"the half-Moon angle"},
+ {t:"The Sun's diameter",s:"the eclipse coincidence"}
+];
+const ACC={De:12742,Dm:3474,Lm:384400,Ls:1.496e8,Ds:1.391e6};
+
+const S={step:0, theta:7.2, ratio:0.273, alpha:0.52, phi:89.85};
+
+/* ---------- the chain ---------- */
+function calc(){
+  const De=(D_CITIES*360/S.theta)/Math.PI;
+  const Dm=S.ratio*De;
+  const Lm=Dm/(2*Math.tan(S.alpha/2*D2R));
+  const Ls=Lm/Math.cos(S.phi*D2R);
+  const Ds=Dm*Ls/Lm;
+  return {De,Dm,Lm,Ls,Ds, C:D_CITIES*360/S.theta};
+}
+function fmt(v){return v>=1e6?(v/1e6).toFixed(2)+"M km":Math.round(v).toLocaleString()+" km";}
+
+/* ---------- canvas ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+function arrow(c,x1,y1,x2,y2,col,wd){c.strokeStyle=col;c.fillStyle=col;c.lineWidth=wd||1.5;
+  c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+  const a=Math.atan2(y2-y1,x2-x1),s=6;
+  c.beginPath();c.moveTo(x2,y2);c.lineTo(x2-s*Math.cos(a-0.4),y2-s*Math.sin(a-0.4));
+  c.lineTo(x2-s*Math.cos(a+0.4),y2-s*Math.sin(a+0.4));c.closePath();c.fill();}
+function angArc(c,cx,cy,r,a1,a2,col,lab){c.strokeStyle=col;c.lineWidth=2;
+  c.beginPath();c.arc(cx,cy,r,a1,a2);c.stroke();
+  if(lab){const am=(a1+a2)/2;c.fillStyle=col;c.font="600 12px system-ui";c.textAlign="center";c.textBaseline="middle";
+    c.fillText(lab,cx+Math.cos(am)*(r+13),cy+Math.sin(am)*(r+13));c.textBaseline="alphabetic";}}
+function txt(c,x,y,t,col,sz,al){c.fillStyle=col||"#c7d2ee";c.font=(sz||12)+"px system-ui";
+  c.textAlign=al||"center";c.fillText(t,x,y);c.textAlign="left";}
+
+/* ---------- STEP 1: Earth ---------- */
+function drawEarth(){
+  const {c,w,h}=fit(document.getElementById("diag"),0.66);
+  c.clearRect(0,0,w,h);c.fillStyle="#04060d";c.fillRect(0,0,w,h);
+  const cx=w*0.42, cy=h*0.60, R=Math.min(w,h)*0.34, th=S.theta;
+  // parallel sun rays (vertical, coming down)
+  c.save();
+  for(let i=0;i<7;i++){const x=cx-R*1.1+i*(R*2.2/6);
+    arrow(c,x,6,x,cy-R-6,"rgba(255,201,77,.5)",1.2);}
+  txt(c,cx,16,"parallel rays from the Sun","#ffcf4a",12);
+  c.restore();
+  // Earth
+  const g=c.createRadialGradient(cx-R*0.3,cy-R*0.3,R*0.2,cx,cy,R);
+  g.addColorStop(0,"#2f6fae");g.addColorStop(1,"#183a63");
+  c.beginPath();c.arc(cx,cy,R,0,TAU);c.fillStyle=g;c.fill();
+  c.strokeStyle="#4fa3e0";c.lineWidth=1;c.stroke();
+  // Syene at top (sub-solar), Alexandria at angle th to the left
+  const aS=-Math.PI/2, aA=-Math.PI/2-th*D2R;
+  const Sy={x:cx+Math.cos(aS)*R,y:cy+Math.sin(aS)*R};
+  const Al={x:cx+Math.cos(aA)*R,y:cy+Math.sin(aA)*R};
+  // radii
+  c.strokeStyle="rgba(200,210,235,.5)";c.lineWidth=1;c.setLineDash([4,4]);
+  c.beginPath();c.moveTo(cx,cy);c.lineTo(Sy.x,Sy.y);c.stroke();
+  c.beginPath();c.moveTo(cx,cy);c.lineTo(Al.x,Al.y);c.stroke();c.setLineDash([]);
+  // central angle
+  angArc(c,cx,cy,R*0.42,aA,aS,"var(--angA)",th.toFixed(1)+"°");
+  c.fillStyle="#ffc94d";txt(c,cx,cy+R*0.42+22,"angle at centre","#ffc94d",11);
+  // Syene: sun overhead, no shadow
+  arrow(c,Sy.x,Sy.y-26,Sy.x,Sy.y-4,"#ffcf4a",1.5);
+  txt(c,Sy.x+4,Sy.y-30,"Syene: Sun overhead, no shadow","#ffe08a",11,"left");
+  c.beginPath();c.arc(Sy.x,Sy.y,3,0,TAU);c.fillStyle="#fff";c.fill();
+  // Alexandria: gnomon + shadow + local angle
+  const out={x:Math.cos(aA),y:Math.sin(aA)};           // radial (local vertical)
+  const gL=34;                                          // gnomon length
+  const gx=Al.x+out.x*gL, gy=Al.y+out.y*gL;            // top of gnomon
+  c.strokeStyle="#e8ecf7";c.lineWidth=2.5;c.beginPath();c.moveTo(Al.x,Al.y);c.lineTo(gx,gy);c.stroke();
+  // sun ray hitting top of gnomon (vertical)
+  arrow(c,gx,gy-30,gx,gy,"#ffcf4a",1.5);
+  // shadow: from base along the tangent; length so that angle = th
+  const tang={x:-out.y,y:out.x};                        // tangent direction (leftish)
+  const sh=gL*Math.tan(th*D2R)*3.2;                     // exaggerated for visibility
+  const shx=Al.x+tang.x*sh, shy=Al.y+tang.y*sh;
+  c.strokeStyle="rgba(90,110,150,.9)";c.lineWidth=4;c.beginPath();c.moveTo(Al.x,Al.y);c.lineTo(shx,shy);c.stroke();
+  // local angle between gnomon(vertical) and sun ray
+  const aVert=Math.atan2(gy-Al.y,gx-Al.x);
+  angArc(c,gx,gy,16,Math.PI/2+aVert-th*D2R*0+Math.atan2(-1,0), Math.atan2(-1,0),"var(--angA)","");
+  txt(c,gx+18,gy-8,"shadow angle "+th.toFixed(1)+"°","#ffc94d",11,"left");
+  txt(c,Al.x-tang.x*sh-6,Al.y+tang.y*sh+14,"Alexandria","#c7d2ee",11,"center");
+  // arc distance label
+  txt(c,(Sy.x+Al.x)/2-14,(Sy.y+Al.y)/2-6,D_CITIES+" km","#9fe0b8",11,"center");
+}
+
+/* ---------- STEP 2: Moon diameter ---------- */
+function drawMoonD(){
+  const {c,w,h}=fit(document.getElementById("diag"),0.66);
+  c.clearRect(0,0,w,h);c.fillStyle="#04060d";c.fillRect(0,0,w,h);
+  // top: schematic Sun–Earth–shadow–Moon
+  const cy=h*0.30;
+  const sun={x:w*0.08,y:cy}, earth={x:w*0.42,y:cy}, moon={x:w*0.86,y:cy};
+  const Re=26;
+  const sg=c.createRadialGradient(sun.x,sun.y,2,sun.x,sun.y,20);
+  sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+  c.beginPath();c.arc(sun.x,sun.y,18,0,TAU);c.fillStyle=sg;c.fill();txt(c,sun.x,sun.y-24,"Sun","#ffcf4a",11);
+  // shadow cone
+  c.fillStyle="rgba(20,26,44,.85)";
+  c.beginPath();c.moveTo(earth.x,earth.y-Re);c.lineTo(moon.x+40,earth.y);c.lineTo(earth.x,earth.y+Re);c.closePath();c.fill();
+  c.beginPath();c.arc(earth.x,earth.y,Re,0,TAU);c.fillStyle="#2f6fae";c.fill();
+  c.strokeStyle="#4fa3e0";c.stroke();txt(c,earth.x,earth.y-Re-8,"Earth","#7fb0e0",11);
+  const rm=Re*S.ratio;
+  c.beginPath();c.arc(moon.x,moon.y,rm,0,TAU);c.fillStyle="#c9ccd6";c.fill();txt(c,moon.x,moon.y-rm-8,"Moon","#c9ccd6",11);
+  txt(c,w/2,h*0.30+70,"The Moon passes through the Earth's shadow (a lunar eclipse)","#96a2c4",12);
+  // bottom: the umbra cross-section with the Moon inside, to compare widths
+  const by=h*0.74, Rs=Math.min(w,h)*0.19;
+  c.beginPath();c.arc(w*0.5,by,Rs,0,TAU);
+  c.fillStyle="rgba(120,40,26,.30)";c.fill();c.strokeStyle="rgba(255,120,90,.8)";c.lineWidth=1.6;c.stroke();
+  const rmoon=Rs*S.ratio/0.73;                          // shadow ≈ 0.73 Earth; show Moon vs shadow
+  c.beginPath();c.arc(w*0.5,by,Math.min(rmoon,Rs*0.95),0,TAU);c.fillStyle="#c9ccd6";c.fill();
+  txt(c,w*0.5,by-Rs-8,"Earth's shadow at the Moon","#ff8a66",12);
+  // width markers
+  c.strokeStyle="#ffc94d";c.lineWidth=1.4;
+  c.beginPath();c.moveTo(w*0.5-rmoon,by+Rs+14);c.lineTo(w*0.5+rmoon,by+Rs+14);c.stroke();
+  txt(c,w*0.5,by+Rs+30,"Moon ≈ "+(S.ratio).toFixed(2)+" × Earth's diameter","#ffc94d",12);
+}
+
+/* ---------- STEP 3: Moon distance ---------- */
+function drawMoonL(){
+  const {c,w,h}=fit(document.getElementById("diag"),0.6);
+  c.clearRect(0,0,w,h);c.fillStyle="#04060d";c.fillRect(0,0,w,h);
+  const eye={x:w*0.10,y:h*0.55}, moon={x:w*0.86,y:h*0.42};
+  const al=S.alpha, spread=Math.min(h*0.30, w*0.5*Math.tan(al*8*D2R));  // visual half-height (exaggerated)
+  // rays from eye to top & bottom of Moon
+  c.strokeStyle="rgba(255,201,77,.7)";c.lineWidth=1.4;
+  c.beginPath();c.moveTo(eye.x,eye.y);c.lineTo(moon.x,moon.y-spread);c.stroke();
+  c.beginPath();c.moveTo(eye.x,eye.y);c.lineTo(moon.x,moon.y+spread);c.stroke();
+  // angle at eye
+  angArc(c,eye.x,eye.y,42,Math.atan2(moon.y-spread-eye.y,moon.x-eye.x),Math.atan2(moon.y+spread-eye.y,moon.x-eye.x),"var(--angA)","α="+al.toFixed(2)+"°");
+  // Moon disc
+  c.beginPath();c.arc(moon.x,moon.y,spread,0,TAU);c.fillStyle="#c9ccd6";c.fill();
+  c.strokeStyle="#e8ecf7";c.beginPath();c.moveTo(moon.x+spread+6,moon.y-spread);c.lineTo(moon.x+spread+6,moon.y+spread);c.lineWidth=1.4;c.stroke();
+  txt(c,moon.x+spread+30,moon.y,"diameter","#c9ccd6",11,"left");
+  // eye
+  c.beginPath();c.arc(eye.x,eye.y,7,0,TAU);c.fillStyle="#4fa3e0";c.fill();txt(c,eye.x,eye.y+22,"observer","#7fb0e0",11);
+  // thumb (similar small triangle)
+  const tx=eye.x+70;const ts=spread*70/(moon.x-eye.x);
+  c.strokeStyle="rgba(200,210,235,.5)";c.setLineDash([3,3]);
+  c.beginPath();c.moveTo(tx,eye.y-ts);c.lineTo(tx,eye.y+ts);c.stroke();c.setLineDash([]);
+  txt(c,tx,eye.y-ts-6,"thumb","#96a2c4",10);
+  // distance bracket
+  c.strokeStyle="#5ddc9a";c.lineWidth=1.2;
+  c.beginPath();c.moveTo(eye.x,h*0.9);c.lineTo(moon.x,h*0.9);c.stroke();
+  txt(c,(eye.x+moon.x)/2,h*0.9-6,"distance to the Moon = ?","#9fe0b8",12);
+  txt(c,w/2,20,"A small object of known size, seen at a known angle, sits at a fixed distance","#96a2c4",12);
+}
+
+/* ---------- STEP 4: Sun distance ---------- */
+function drawSunL(){
+  const {c,w,h}=fit(document.getElementById("diag"),0.62);
+  c.clearRect(0,0,w,h);c.fillStyle="#04060d";c.fillRect(0,0,w,h);
+  const earth={x:w*0.10,y:h*0.80}, moon={x:w*0.44,y:h*0.24}, sun={x:w*0.92,y:h*0.80};
+  // triangle
+  c.strokeStyle="rgba(200,210,235,.55)";c.lineWidth=1.5;
+  c.beginPath();c.moveTo(earth.x,earth.y);c.lineTo(moon.x,moon.y);c.lineTo(sun.x,sun.y);c.stroke();
+  c.strokeStyle="rgba(120,160,230,.4)";c.setLineDash([4,4]);
+  c.beginPath();c.moveTo(earth.x,earth.y);c.lineTo(sun.x,sun.y);c.stroke();c.setLineDash([]);
+  // right angle at Moon
+  const s=12,a1={x:earth.x-moon.x,y:earth.y-moon.y},a2={x:sun.x-moon.x,y:sun.y-moon.y};
+  const n1=Math.hypot(a1.x,a1.y),n2=Math.hypot(a2.x,a2.y);
+  const p1={x:moon.x+a1.x/n1*s,y:moon.y+a1.y/n1*s},p2={x:moon.x+a2.x/n2*s,y:moon.y+a2.y/n2*s};
+  c.strokeStyle="#ff7b7b";c.lineWidth=1.4;c.beginPath();c.moveTo(p1.x,p1.y);
+  c.lineTo(p1.x+a2.x/n2*s,p1.y+a2.y/n2*s);c.lineTo(p2.x,p2.y);c.stroke();
+  txt(c,moon.x+16,moon.y-4,"90°","#ff7b7b",12,"left");
+  // angle at Earth
+  angArc(c,earth.x,earth.y,46,Math.atan2(sun.y-earth.y,sun.x-earth.x),Math.atan2(moon.y-earth.y,moon.x-earth.x),"var(--angA)","φ="+S.phi.toFixed(2)+"°");
+  // bodies
+  const eg=c.createRadialGradient(earth.x,earth.y,1,earth.x,earth.y,9);eg.addColorStop(0,"#8fd0ff");eg.addColorStop(1,"#1c5fa0");
+  c.beginPath();c.arc(earth.x,earth.y,9,0,TAU);c.fillStyle=eg;c.fill();txt(c,earth.x,earth.y+24,"Earth","#7fb0e0",11);
+  // half-lit moon
+  c.save();c.beginPath();c.arc(moon.x,moon.y,11,0,TAU);c.fillStyle="#3a4256";c.fill();
+  c.beginPath();c.arc(moon.x,moon.y,11,-Math.PI/2,Math.PI/2);c.fillStyle="#e8ecf7";c.fill();c.restore();
+  txt(c,moon.x,moon.y-16,"half-lit Moon","#c9ccd6",11);
+  const sg2=c.createRadialGradient(sun.x,sun.y,2,sun.x,sun.y,14);sg2.addColorStop(0,"#fff2c0");sg2.addColorStop(1,"#ff9d1c");
+  c.beginPath();c.arc(sun.x,sun.y,13,0,TAU);c.fillStyle=sg2;c.fill();txt(c,sun.x,sun.y+26,"Sun","#ffcf4a",11);
+  txt(c,w/2,18,"At exactly half-Moon the angle at the Moon is 90°. Measure φ at the Earth.","#96a2c4",12);
+  txt(c,w/2,h-6,"(distances not to scale — the Sun is really ~390× further than the Moon)","#5d6b91",11);
+}
+
+/* ---------- STEP 5: Sun diameter ---------- */
+function drawSunD(){
+  const {c,w,h}=fit(document.getElementById("diag"),0.6);
+  c.clearRect(0,0,w,h);c.fillStyle="#04060d";c.fillRect(0,0,w,h);
+  const eye={x:w*0.08,y:h*0.5};
+  const moonX=w*0.42, sunX=w*0.9;
+  const half=h*0.30;                                   // same opening angle → same half-height on screen edge
+  const mHalf=half*(moonX-eye.x)/(sunX-eye.x);
+  c.strokeStyle="rgba(255,201,77,.7)";c.lineWidth=1.4;
+  c.beginPath();c.moveTo(eye.x,eye.y);c.lineTo(sunX,eye.y-half);c.stroke();
+  c.beginPath();c.moveTo(eye.x,eye.y);c.lineTo(sunX,eye.y+half);c.stroke();
+  angArc(c,eye.x,eye.y,40,Math.atan2(-half,sunX-eye.x),Math.atan2(half,sunX-eye.x),"var(--angA)","same angle");
+  // Moon (near, small) exactly filling the cone
+  c.beginPath();c.arc(moonX,eye.y,mHalf,0,TAU);c.fillStyle="#c9ccd6";c.fill();txt(c,moonX,eye.y-mHalf-8,"Moon","#c9ccd6",11);
+  // Sun (far, big) filling the same cone
+  const sg=c.createRadialGradient(sunX,eye.y,4,sunX,eye.y,half);sg.addColorStop(0,"#fff2c0");sg.addColorStop(1,"#ff9d1c");
+  c.beginPath();c.arc(sunX,eye.y,half,0,TAU);c.fillStyle=sg;c.fill();txt(c,sunX,eye.y-half-8,"Sun","#ffcf4a",11);
+  c.beginPath();c.arc(eye.x,eye.y,7,0,TAU);c.fillStyle="#4fa3e0";c.fill();txt(c,eye.x,eye.y+22,"observer","#7fb0e0",11);
+  txt(c,w/2,18,"The Moon and Sun look the same size — that's why the Moon can just cover the Sun","#96a2c4",12);
+  txt(c,w/2,h-8,"so  D_Sun / distance_Sun  =  D_Moon / distance_Moon","#ffc94d",13);
+}
+
+/* ---------- render ---------- */
+const $=id=>document.getElementById(id);
+const DRAW=[drawEarth,drawMoonD,drawMoonL,drawSunL,drawSunD];
+function render(){
+  // step list
+  $("stepList").innerHTML="";
+  STEPS.forEach((st,i)=>{const d=document.createElement("div");
+    d.className="step"+(i===S.step?" on":"")+(i<S.step?" done":"");
+    d.innerHTML=`<div class="n">${i<S.step?"✓":i+1}</div><div><b>${st.t}</b><small>${st.s}</small></div>`;
+    d.onclick=()=>{S.step=i;render();};$("stepList").appendChild(d);});
+  $("diagTitle").textContent="Step "+(S.step+1)+" · "+STEPS[S.step].t;
+  buildControl(); DRAW[S.step](); working(); results();
+  $("back").disabled=S.step===0; $("next").disabled=S.step===4;
+  $("next").textContent=S.step===4?"Done":"Next ›";
+}
+function buildControl(){
+  const box=$("ctrlBox"); const C=calc();
+  if(S.step===0){box.innerHTML=
+    `<label>Shadow angle at Alexandria <span class="val">${S.theta.toFixed(1)}°</span></label>
+     <input type="range" id="sl" min="3" max="15" step="0.1" value="${S.theta}">
+     <div class="mark"><button data-v="7.2">Real value 7.2°</button></div>`;}
+  else if(S.step===1){box.innerHTML=
+    `<label>Moon's diameter ÷ Earth's diameter <span class="val">${S.ratio.toFixed(2)}</span></label>
+     <input type="range" id="sl" min="0.15" max="0.45" step="0.005" value="${S.ratio}">
+     <div class="mark"><button data-v="0.273">Eclipse value 0.27</button></div>`;}
+  else if(S.step===2){box.innerHTML=
+    `<label>Moon's angular diameter <span class="val">${S.alpha.toFixed(2)}°</span></label>
+     <input type="range" id="sl" min="0.3" max="0.8" step="0.01" value="${S.alpha}">
+     <div class="mark"><button data-v="0.52">Real value 0.52°</button></div>`;}
+  else if(S.step===3){box.innerHTML=
+    `<label>Angle at Earth, φ <span class="val">${S.phi.toFixed(2)}°</span></label>
+     <input type="range" id="sl" min="80" max="89.95" step="0.05" value="${S.phi}">
+     <div class="mark"><button data-v="87">Aristarchus 87°</button><button data-v="89.85">Modern 89.85°</button></div>`;}
+  else {box.innerHTML=`<div class="cap">No new measurement here — the Sun's diameter follows from everything you have already found, using the fact that the Sun and Moon share the same angular size.</div>`;}
+  const sl=$("sl");
+  if(sl){sl.oninput=e=>{const v=+e.target.value;
+    if(S.step===0)S.theta=v; else if(S.step===1)S.ratio=v; else if(S.step===2)S.alpha=v; else if(S.step===3)S.phi=v;
+    render();};}
+  box.querySelectorAll("button[data-v]").forEach(b=>b.onclick=()=>{const v=+b.dataset.v;
+    if(S.step===0)S.theta=v;else if(S.step===1)S.ratio=v;else if(S.step===2)S.alpha=v;else if(S.step===3)S.phi=v;render();});
+}
+function working(){
+  const C=calc(); let t="";
+  if(S.step===0) t=
+`The Sun's rays are parallel, so:
+  shadow angle  =  angle at Earth's centre  =  <span class="hl">${S.theta.toFixed(1)}°</span>
+
+That angle is this fraction of a full circle:
+  ${S.theta.toFixed(1)}° ÷ 360°  =  1/${(360/S.theta).toFixed(1)}
+
+So the whole circumference is that many times
+the ${D_CITIES} km between the cities:
+  C = ${D_CITIES} km × 360 ÷ ${S.theta.toFixed(1)}
+    = <span class="hl">${Math.round(C.C).toLocaleString()} km</span>
+
+  diameter = C ÷ π
+           = <span class="hl">${Math.round(C.De).toLocaleString()} km</span>`;
+  else if(S.step===1) t=
+`A lunar eclipse shows the Moon is about
+${S.ratio.toFixed(2)} of the Earth's diameter.
+
+  D_Moon = ${S.ratio.toFixed(2)} × <span class="cf">${Math.round(C.De).toLocaleString()} km</span>  (Earth, step 1)
+         = <span class="hl">${Math.round(C.Dm).toLocaleString()} km</span>`;
+  else if(S.step===2) t=
+`The Moon's angular diameter is <span class="hl">${S.alpha.toFixed(2)}°</span>.
+Using the known Moon size from step 2:
+
+  distance = D_Moon ÷ ( 2 × tan(α/2) )
+           = <span class="cf">${Math.round(C.Dm).toLocaleString()}</span> ÷ ( 2 × tan(${(S.alpha/2).toFixed(3)}°) )
+           = <span class="hl">${Math.round(C.Lm).toLocaleString()} km</span>`;
+  else if(S.step===3) t=
+`At half-Moon the angle at the Moon is 90°, so:
+
+  distance to Sun = distance to Moon ÷ cos(φ)
+     = <span class="cf">${Math.round(C.Lm).toLocaleString()}</span> ÷ cos(${S.phi.toFixed(2)}°)
+     = <span class="hl">${(C.Ls/1e6).toFixed(1)} million km</span>
+
+Notice how sensitive this is: a tiny change in φ
+near 90° changes the answer enormously — which is
+why Aristarchus's 87° gave a Sun ~20× too close.`;
+  else t=
+`The Sun and Moon have the same angular size, so
+their diameters are in the same ratio as their distances:
+
+  D_Sun = D_Moon × ( distance_Sun ÷ distance_Moon )
+        = <span class="cf">${Math.round(C.Dm).toLocaleString()}</span> × ( ${(C.Ls/1e6).toFixed(1)}M ÷ ${(C.Lm/1e3).toFixed(0)}k )
+        = <span class="hl">${(C.Ds/1e6).toFixed(2)} million km</span>
+
+The Sun is about ${(C.Ds/C.De).toFixed(0)}× wider than the Earth.`;
+  $("work").innerHTML=t;
+  // caption + callout per step
+  const caps=[
+   "Drag the shadow angle. The key idea: the shadow angle at Alexandria equals the angle at the Earth's centre, because the Sun's rays are parallel.",
+   "During a lunar eclipse the Moon slides through the Earth's round shadow, showing it is only about a quarter of the Earth's width.",
+   "Hold up a thumb and it can cover the Moon: the same angle, a nearer object. Knowing the Moon's real size turns its angular size into a distance.",
+   "Catch the Moon exactly half-lit and the Sun–Moon line makes a right angle. The angle you then measure at the Earth reveals how far the Sun is.",
+   "A total eclipse works because the Moon and Sun look the same size. That single fact gives the Sun's true diameter."];
+  $("diagCap").textContent=caps[S.step];
+  const co=["<b>Alternate angles.</b> The dashed radius at Alexandria points to the Earth's centre; the Sun's ray is parallel to the one at Syene. The shadow angle and the central angle are therefore equal — that is the whole trick.",
+   "<b>Each step uses the last.</b> The Moon's diameter is found from the Earth's diameter you measured in step 1.",
+   "<b>Carrying it forward.</b> This uses the Moon's diameter from step 2 to turn an angle into a real distance.",
+   "<b>Method vs measurement.</b> Aristarchus's geometry was perfect, but measuring 89.85° as 87° made his Sun far too close. Try both buttons and watch the result.",
+   "<b>The finishing step.</b> No new observation is needed — the equal angular sizes of the Sun and Moon complete the chain."];
+  $("callout").innerHTML=co[S.step];
+}
+function results(){
+  const C=calc();
+  const rows=[
+    ["Earth's diameter",C.De,ACC.De,0],
+    ["Moon's diameter",C.Dm,ACC.Dm,1],
+    ["Distance to Moon",C.Lm,ACC.Lm,2],
+    ["Distance to Sun",C.Ls,ACC.Ls,3],
+    ["Sun's diameter",C.Ds,ACC.Ds,4]];
+  $("resBody").innerHTML=rows.map(([n,y,a,st])=>{
+    if(st>S.step) return `<tr><td>${n}</td><td class="acc">—</td><td class="acc">${fmt(a)}</td></tr>`;
+    return `<tr><td>${n}</td><td class="yours">${fmt(y)}</td><td class="acc">${fmt(a)}</td></tr>`;
+  }).join("");
+  const cur=rows[S.step], err=Math.abs(cur[1]-cur[2])/cur[2]*100;
+  $("resNote").innerHTML=`Your ${cur[0].toLowerCase()} is within <b>${err.toFixed(0)}%</b> of the modern value.`;
+}
+$("next").onclick=()=>{if(S.step<4){S.step++;render();}};
+$("back").onclick=()=>{if(S.step>0){S.step--;render();}};
+window.addEventListener("resize",()=>DRAW[S.step]());
+
+/* ---------- challenge ---------- */
+let score=0,asked=0,cur=null;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function uniq(a){return shuffle([...new Set(a)]);}
+const QGEN=[
+ ()=>({q:"Why does the shadow angle at Alexandria equal the angle at the Earth's centre?",
+   opts:shuffle(["The Sun's rays are parallel","The Earth is flat","Alexandria is on the equator","The Sun is very close"]),
+   ansText:"The Sun's rays are parallel",
+   why:"Because the Sun is so far away its rays arrive parallel. The shadow angle and the central angle are then equal 'alternate angles'."}),
+ ()=>({q:"Eratosthenes found the shadow angle was 7.2°, which is 1/50 of a circle. The cities were 800 km apart. What is the Earth's circumference?",
+   opts:uniq(["40,000 km","5,760 km","800 km","360,000 km"]),ansText:"40,000 km",
+   why:"7.2° is 1/50 of 360°, so the circumference is 50 × 800 km = 40,000 km."}),
+ ()=>({q:"How did Aristarchus estimate the Moon's diameter?",
+   opts:shuffle(["From the size of the Earth's shadow on the Moon during an eclipse",
+     "By flying to the Moon","From the Moon's brightness","From its colour"]),ansText:"From the size of the Earth's shadow on the Moon during an eclipse",
+   why:"During a lunar eclipse the Moon crosses the Earth's shadow, which shows the Moon is about a quarter of the Earth's diameter."}),
+ ()=>({q:"To turn the Moon's angular size into an actual distance, what else must you already know?",
+   opts:shuffle(["The Moon's real diameter","The Moon's mass","The Moon's temperature","The Sun's diameter"]),
+   ansText:"The Moon's real diameter",
+   why:"Distance = real size ÷ angular size, so you need the Moon's true diameter (found in the previous step)."}),
+ ()=>({q:"Aristarchus measured the half-Moon angle as 87° instead of the true 89.85°. What was the effect on his Sun distance?",
+   opts:shuffle(["It came out about 20 times too small","It was exactly right","It came out too large","It made no difference"]),
+   ansText:"It came out about 20 times too small",
+   why:"cos(87°) is about 20× bigger than cos(89.85°), so his Sun distance was ~20× too small. The method was right; the measurement was too imprecise."}),
+ ()=>({q:"How can you find the Sun's diameter once you know its distance?",
+   opts:shuffle(["The Sun has the same angular size as the Moon, so its diameter scales with distance",
+     "The Sun is always 100× the Earth","By measuring its temperature","From its mass"]),
+   ansText:"The Sun has the same angular size as the Moon, so its diameter scales with distance",
+   why:"Sun and Moon look the same size in the sky, so D_Sun/dist_Sun = D_Moon/dist_Moon — giving the Sun's diameter."}),
+ ()=>({q:"What is the correct order of these measurements?",
+   opts:shuffle(["Earth → Moon size → Moon distance → Sun distance → Sun size",
+     "Sun size → Sun distance → Moon distance → Moon size → Earth",
+     "Moon distance → Earth → Sun size → Moon size → Sun distance",
+     "Earth → Sun distance → Sun size → Moon size → Moon distance"]),
+   ansText:"Earth → Moon size → Moon distance → Sun distance → Sun size",
+   why:"Each step feeds the next: the Earth's size gives the Moon's size, which gives the Moon's distance, then the Sun's distance, then the Sun's size."})
+];
+$("newQ").onclick=()=>{cur=pick(QGEN)();cur.ans=cur.opts.indexOf(cur.ansText);
+  $("qText").innerHTML=cur.q;const box=$("qOpts");box.innerHTML="";
+  cur.opts.forEach((o,idx)=>{const bt=document.createElement("button");bt.className="opt";bt.innerHTML=o;
+    bt.onclick=()=>ans(idx,bt);box.appendChild(bt);});
+  $("qFb").classList.add("hide");asked++;$("asked").textContent=asked;};
+function ans(idx,btn){if(btn.disabled)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  if(idx!==cur.ans)btn.classList.add("wrong");else score++;$("score").textContent=score;
+  $("qFb").innerHTML=(idx===cur.ans?"<b style='color:var(--green)'>Correct.</b> ":"<b style='color:var(--red)'>Not quite.</b> ")+cur.why;
+  $("qFb").classList.remove("hide");}
+$("showQ").onclick=()=>{if(!cur)return;
+  [...$("qOpts").children].forEach((bb,j)=>{bb.disabled=true;if(j===cur.ans)bb.classList.add("right");});
+  $("qFb").innerHTML=cur.why;$("qFb").classList.remove("hide");};
+
+render();
+</script>
+</body>
+</html>
