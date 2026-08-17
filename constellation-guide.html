@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Constellations &amp; Signposts — GCSE Astronomy</title>
+<style>
+:root{
+  --bg:#070b17;--panel:#0f1524;--panel2:#161d31;--line:#26304b;
+  --ink:#e9edf8;--dim:#93a0bd;--accent:#ffc94d;--accent2:#4fc3f7;
+  --green:#5ddc9a;--red:#ff7b7b;--purple:#b48cff;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1200px 700px at 70% -12%,#111a33,#070b17 62%);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.55}
+header{padding:15px 20px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#0f1830,#0a1122)}
+header h1{margin:0;font-size:20px}
+header p{margin:4px 0 0;color:var(--dim);font-size:13px}
+.wrap{display:grid;grid-template-columns:266px minmax(0,1fr) 330px;gap:14px;padding:14px;align-items:start}
+@media(max-width:1180px){.wrap{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,#101728,#0d1322);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:14px;
+  box-shadow:0 6px 22px rgba(0,0,0,.3)}
+.card h2{margin:0 0 11px;font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:20px;
+  padding:6px 12px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--accent2);color:var(--ink)}
+.chip.on{background:var(--accent2);border-color:var(--accent2);color:#052034;font-weight:600}
+.chip.sm{padding:4px 9px;font-size:12px}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab{padding:8px 14px;font-size:14px;border-radius:9px;background:var(--panel2);border:1px solid var(--line);cursor:pointer;color:var(--dim)}
+.tab.on{background:var(--accent);border-color:var(--accent);color:#0b1020;font-weight:700}
+canvas{width:100%;display:block;border-radius:12px;background:radial-gradient(circle at 50% 42%,#0a1122,#05080f);cursor:pointer}
+.cap{font-size:13px;color:var(--dim);margin-top:9px}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 12px;font-size:14px;cursor:pointer;font-family:inherit}
+button:hover{border-color:var(--accent2)}
+button.primary{background:var(--accent2);color:#052034;border-color:var(--accent2);font-weight:700}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.opts{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.opt{text-align:left;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel2);cursor:pointer;color:var(--ink);font-size:14px}
+.opt:hover{border-color:var(--accent2)}
+.opt.right{background:rgba(93,220,154,.18);border-color:var(--green)}
+.opt.wrong{background:rgba(255,123,123,.18);border-color:var(--red)}
+.prog{height:8px;background:var(--panel2);border-radius:4px;overflow:hidden;margin-top:9px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--green))}
+.coach h3{margin:0 0 6px;font-size:15px}
+.tip{font-size:13.5px;color:var(--ink);background:var(--panel2);border-left:3px solid var(--accent);border-radius:0 9px 9px 0;padding:9px 11px;margin-bottom:8px}
+.tip b{color:var(--accent)}
+.steps{font-size:13.5px;color:var(--dim);margin:6px 0 0;padding-left:18px}
+.steps li{margin-bottom:5px}
+.fb{font-size:13.5px;margin-top:10px;padding:10px;border-radius:9px;background:#0a1122;color:var(--dim)}
+.note{font-size:12.5px;color:var(--dim);margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:700;background:rgba(255,201,77,.16);color:var(--accent)}
+details{margin-top:9px}summary{cursor:pointer;font-size:13px;color:var(--accent2)}
+details p{font-size:13px;color:var(--dim);margin:7px 0}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Constellations &amp; Signposts</h1>
+  <p>Edexcel GCSE Astronomy 1AS0 · spec points 6.2 &amp; 6.3 · recognise and draw the key patterns, and use them to find other objects</p>
+</header>
+
+<div class="wrap">
+
+<!-- ============ LEFT ============ -->
+<div>
+  <div class="card" id="pickCard">
+    <h2>Constellation</h2>
+    <div class="chips" id="consChips"></div>
+    <div class="chips" style="margin-top:10px" id="showChips">
+      <div class="chip sm on" data-o="names">Star names</div>
+      <div class="chip sm on" data-o="lines">Lines</div>
+    </div>
+  </div>
+  <div class="card" id="modeInfoCard">
+    <h2>How this mode works</h2>
+    <div class="cap" id="modeInfo"></div>
+  </div>
+</div>
+
+<!-- ============ CENTRE ============ -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" data-m="learn">Learn</div>
+      <div class="tab" data-m="draw">Draw it</div>
+      <div class="tab" data-m="spot">Spot it</div>
+      <div class="tab" data-m="signpost">Signposts</div>
+    </div>
+    <canvas id="sky"></canvas>
+    <div class="cap" id="skyCap"></div>
+
+    <div id="drawCtrls" class="hide">
+      <div class="row" style="margin-top:10px">
+        <button id="revealBtn">Show answer</button>
+        <button id="resetBtn" class="primary">Start over</button>
+      </div>
+      <div class="prog"><i id="progBar" style="width:0%"></i></div>
+      <div class="cap" id="drawStat"></div>
+    </div>
+
+    <div id="spotCtrls" class="hide">
+      <div class="opts" id="spotOpts"></div>
+      <div class="fb hide" id="spotFb"></div>
+      <div class="row" style="margin-top:10px">
+        <button id="spotNext" class="primary">New pattern</button>
+      </div>
+    </div>
+
+    <div id="signCtrls" class="hide">
+      <div class="tip" id="signPrompt"></div>
+      <div class="fb hide" id="signFb"></div>
+      <div class="row" style="margin-top:10px">
+        <button id="signNext" class="primary">Next signpost</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RIGHT ============ -->
+<div>
+  <div class="card coach">
+    <h2 id="coachHead">Recognition tips</h2>
+    <div id="coachBody"></div>
+  </div>
+
+  <div class="card">
+    <h2>The seven &amp; the signposts</h2>
+    <details><summary>6.2 — the seven to know</summary><p>Cassiopeia, Cygnus, Orion, the Plough, the Southern Cross, the Summer Triangle and the Square of Pegasus. Learn each shape and its brightest stars, then practise <b>drawing</b> them from memory.</p></details>
+    <details><summary>6.3 — the signposts</summary><p><b>Plough →</b> Polaris (the two Pointer stars) and Arcturus (arc off the handle). <b>Orion's Belt →</b> Sirius (down-left), Aldebaran and the Pleiades (up-right). <b>Square of Pegasus →</b> Fomalhaut (south) and the Andromeda Galaxy (from Alpheratz).</p></details>
+    <details><summary>Why signposts help</summary><p>The bright patterns are easy to find, so once you know them you can 'hop' from a familiar shape to a fainter star, cluster or galaxy nearby — exactly how astronomers star-hop.</p></details>
+    <details><summary>Different names, same stars (6.4)</summary><p>The Plough is also the Big Dipper or part of the Great Bear — different cultures named the same patterns in different ways.</p></details>
+  </div>
+</div>
+</div>
+
+<script>
+"use strict";
+const D2R=Math.PI/180, TAU=Math.PI*2;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+// name:[RA h, Dec deg, mag]
+const STAR={
+ Dubhe:[11.062,61.75,1.8],Merak:[11.031,56.38,2.4],Phecda:[11.897,53.69,2.4],Megrez:[12.257,57.03,3.3],
+ Alioth:[12.900,55.96,1.8],Mizar:[13.399,54.92,2.2],Alkaid:[13.792,49.31,1.9],
+ Caph:[0.153,59.15,2.3],Schedar:[0.675,56.54,2.2],GammaCas:[0.945,60.72,2.2],Ruchbah:[1.430,60.24,2.7],Segin:[1.906,63.67,3.4],
+ Deneb:[20.690,45.28,1.3],Sadr:[20.370,40.26,2.2],Gienah:[20.770,33.97,2.5],DeltaCyg:[19.749,45.13,2.9],Albireo:[19.512,27.96,3.1],
+ Betelgeuse:[5.919,7.41,0.5],Bellatrix:[5.418,6.35,1.6],Meissa:[5.585,9.93,3.5],Alnitak:[5.679,-1.94,1.7],Alnilam:[5.604,-1.20,1.7],
+ Mintaka:[5.533,-0.30,2.2],Saiph:[5.796,-9.67,2.1],Rigel:[5.242,-8.20,0.1],
+ Acrux:[12.443,-63.10,0.8],Mimosa:[12.795,-59.69,1.3],Gacrux:[12.519,-57.11,1.6],DeltaCrucis:[12.252,-58.75,2.8],
+ Vega:[18.615,38.78,0.0],Altair:[19.846,8.87,0.8],
+ Alpheratz:[0.140,29.09,2.1],Scheat:[23.063,28.08,2.4],Markab:[23.079,15.21,2.5],Algenib:[0.221,15.18,2.8],
+ Polaris:[2.530,89.26,2.0],Arcturus:[14.261,19.18,-0.05],Sirius:[6.752,-16.72,-1.5],Aldebaran:[4.599,16.51,0.9],
+ Pleiades:[3.790,24.11,1.6],Fomalhaut:[22.961,-29.62,1.2],Andromeda:[0.712,41.27,3.4],
+ Capella:[5.278,46.00,0.1],Regulus:[10.140,11.97,1.4],Procyon:[7.655,5.22,0.4]
+};
+const LABEL={GammaCas:"γ Cas",DeltaCyg:"δ Cyg",DeltaCrucis:"δ Cru",Andromeda:"Andromeda Gal.",Pleiades:"Pleiades"};
+const nm=n=>LABEL[n]||n;
+
+const CONS={
+ plough:{name:"The Plough",stars:["Dubhe","Merak","Phecda","Megrez","Alioth","Mizar","Alkaid"],
+   lines:[["Alkaid","Mizar"],["Mizar","Alioth"],["Alioth","Megrez"],["Megrez","Phecda"],["Phecda","Merak"],["Merak","Dubhe"],["Dubhe","Megrez"]],
+   recognise:["A saucepan / 'Big Dipper': a <b>bowl of 4</b> stars and a <b>handle of 3</b>.","Part of Ursa Major, the Great Bear.","Circumpolar from the UK — up all year, swinging around Polaris."],
+   draw:["Draw the four-star bowl (a slightly slanted box).","Add the three-star handle curving off a top corner."],
+   when:"All year from the UK; highest on spring evenings."},
+ cassiopeia:{name:"Cassiopeia",stars:["Caph","Schedar","GammaCas","Ruchbah","Segin"],
+   lines:[["Caph","Schedar"],["Schedar","GammaCas"],["GammaCas","Ruchbah"],["Ruchbah","Segin"]],
+   recognise:["A bright <b>'W'</b> (or 'M') of five stars.","On the <b>opposite side of Polaris</b> to the Plough — when one is high, the other is low.","Sits in the Milky Way; circumpolar."],
+   draw:["Five dots in a zig-zag that spells a W."],
+   when:"All year (circumpolar); highest on autumn evenings."},
+ cygnus:{name:"Cygnus (the Swan)",stars:["Deneb","Sadr","Gienah","DeltaCyg","Albireo"],
+   lines:[["Deneb","Sadr"],["Sadr","Albireo"],["DeltaCyg","Sadr"],["Sadr","Gienah"]],
+   recognise:["A large cross — the <b>'Northern Cross'</b> — lying along the Milky Way.","Bright <b>Deneb</b> marks the tail and a Summer-Triangle corner.","Looks like a swan flying with wings outstretched."],
+   draw:["Draw the long upright: Deneb – Sadr – Albireo.","Add the crossbar through the middle star, Sadr."],
+   when:"Summer and autumn, high overhead."},
+ orion:{name:"Orion (the Hunter)",stars:["Betelgeuse","Bellatrix","Meissa","Alnitak","Alnilam","Mintaka","Saiph","Rigel"],
+   lines:[["Betelgeuse","Bellatrix"],["Betelgeuse","Meissa"],["Bellatrix","Meissa"],["Betelgeuse","Alnitak"],["Bellatrix","Mintaka"],["Alnitak","Alnilam"],["Alnilam","Mintaka"],["Alnitak","Saiph"],["Mintaka","Rigel"]],
+   recognise:["<b>Three equal, evenly-spaced Belt stars</b> in a short straight row — unmistakable.","Two bright shoulders above (orange <b>Betelgeuse</b>) and two feet below (blue-white <b>Rigel</b>).","The easiest winter constellation, facing south."],
+   draw:["Draw the three Belt stars first — your anchor.","Add two shoulders above and two feet below, then join into an hourglass."],
+   when:"Winter evenings, due south."},
+ crux:{name:"Southern Cross (Crux)",stars:["Acrux","Mimosa","Gacrux","DeltaCrucis"],
+   lines:[["Acrux","Gacrux"],["Mimosa","DeltaCrucis"]],
+   recognise:["A <b>small, compact cross</b> (kite-shaped) of four stars.","Much smaller than the Northern Cross.","Only from the southern hemisphere; its long axis points to the south pole of the sky."],
+   draw:["Draw the long axis (two stars), then the shorter crossbar."],
+   when:"Southern-hemisphere skies (not visible from the UK)."},
+ triangle:{name:"Summer Triangle",stars:["Vega","Deneb","Altair"],
+   lines:[["Vega","Deneb"],["Deneb","Altair"],["Altair","Vega"]],
+   recognise:["Three <b>brilliant</b> stars — Vega, Deneb, Altair — in a big triangle.","Each belongs to a different constellation (Lyra, Cygnus, Aquila).","High overhead on summer evenings."],
+   draw:["Join the three bright stars into one large triangle."],
+   when:"Summer evenings, overhead."},
+ pegasus:{name:"Square of Pegasus",stars:["Alpheratz","Scheat","Markab","Algenib"],
+   lines:[["Alpheratz","Scheat"],["Scheat","Markab"],["Markab","Algenib"],["Algenib","Alpheratz"]],
+   recognise:["A big, almost <b>empty square</b> of four medium stars.","The <b>emptiness inside</b> is the giveaway — very few stars within it.","One corner, Alpheratz, is shared with Andromeda."],
+   draw:["Mark the four corners, then join them into a large square."],
+   when:"Autumn evenings, high in the south."}
+};
+const ORDER=["plough","cassiopeia","cygnus","orion","crux","triangle","pegasus"];
+
+const SIGNPOSTS=[
+ {base:"plough",point:["Merak","Dubhe"],target:"Polaris",distract:["Arcturus","Capella"],
+  prompt:"The two end-of-bowl stars (the <b>Pointers</b>) show the way north. Click the <b>Pole Star</b>.",
+  tip:"Follow the line from <b>Merak through Dubhe</b> about five times the gap between them — you land on <b>Polaris</b>, which marks north."},
+ {base:"plough",point:["Alioth","Alkaid"],target:"Arcturus",distract:["Polaris","Regulus"],
+  prompt:"Follow the <b>curve of the handle</b> onward. Click the bright orange star you reach.",
+  tip:"“<b>Arc to Arcturus</b>” — sweep the curve of the Plough's handle onward to reach Arcturus, a bright orange star in Boötes."},
+ {base:"orion",point:["Mintaka","Alnitak"],target:"Sirius",distract:["Aldebaran","Procyon"],
+  prompt:"Extend the <b>Belt down and to the left</b> to the brightest star in the sky. Click it.",
+  tip:"Extend Orion's three Belt stars <b>down-left</b> to reach <b>Sirius</b>, the brightest star in the whole night sky."},
+ {base:"orion",point:["Alnitak","Mintaka"],target:"Aldebaran",distract:["Sirius","Capella"],
+  prompt:"Extend the <b>Belt up and to the right</b> to an orange star. Click it.",
+  tip:"Extend the Belt <b>up-right</b> to reach orange <b>Aldebaran</b>, the eye of Taurus the bull."},
+ {base:"orion",point:["Alnitak","Mintaka"],target:"Pleiades",distract:["Aldebaran","Capella"],
+  prompt:"Keep going <b>past Aldebaran</b> in the same direction to a little star cluster. Click it.",
+  tip:"Carry on past Aldebaran to the <b>Pleiades</b> — a pretty cluster (the Seven Sisters)."},
+ {base:"pegasus",point:["Scheat","Markab"],target:"Fomalhaut",distract:["Alpheratz","Andromeda"],
+  prompt:"Drop <b>south</b> from the western side of the Square to a lone bright star. Click it.",
+  tip:"Run the western side of the Square (Scheat to Markab) <b>southward</b> to reach lonely <b>Fomalhaut</b>."},
+ {base:"pegasus",point:["Alpheratz"],target:"Andromeda",distract:["Fomalhaut","Markab"],
+  prompt:"From the corner <b>Alpheratz</b>, hop along the chain to a faint fuzzy patch. Click the <b>Andromeda Galaxy</b>.",
+  tip:"From <b>Alpheratz</b>, hop along Andromeda's star chain to the <b>Andromeda Galaxy (M31)</b> — the most distant thing visible to the naked eye."}
+];
+
+const S={cons:"plough", mode:"learn", opts:{names:1,lines:1},
+  drawn:new Set(), pickA:null, revealed:false, screen:[],
+  spot:null, sign:0, signDone:false, signScreen:[]};
+
+/* ---------- projection ---------- */
+function vec(n){const[ra,dec]=STAR[n];const a=ra*15*D2R,d=dec*D2R;return[Math.cos(d)*Math.cos(a),Math.cos(d)*Math.sin(a),Math.sin(d)];}
+function centre(names){let s=[0,0,0];names.forEach(n=>{const v=vec(n);s[0]+=v[0];s[1]+=v[1];s[2]+=v[2];});const m=Math.hypot(s[0],s[1],s[2]);return[s[0]/m,s[1]/m,s[2]/m];}
+function stereo(ra,dec,a0,d0){const a=ra*15*D2R,d=dec*D2R;
+  const k=2/(1+Math.sin(d0)*Math.sin(d)+Math.cos(d0)*Math.cos(d)*Math.cos(a-a0));
+  return[k*Math.cos(d)*Math.sin(a-a0),k*(Math.cos(d0)*Math.sin(d)-Math.sin(d0)*Math.cos(d)*Math.cos(a-a0))];}
+function buildProject(names,w,h,pad){
+  const cv=centre(names),d0=Math.asin(cv[2]),a0=Math.atan2(cv[1],cv[0]);
+  const pts=names.map(n=>stereo(STAR[n][0],STAR[n][1],a0,d0));
+  let xmin=1e9,xmax=-1e9,ymin=1e9,ymax=-1e9;
+  pts.forEach(p=>{xmin=Math.min(xmin,p[0]);xmax=Math.max(xmax,p[0]);ymin=Math.min(ymin,p[1]);ymax=Math.max(ymax,p[1]);});
+  const xr=xmax-xmin||1,yr=ymax-ymin||1,sc=Math.min((w-2*pad)/xr,(h-2*pad)/yr),cxD=(xmin+xmax)/2,cyD=(ymin+ymax)/2;
+  return (ra,dec)=>{const[xi,eta]=stereo(ra,dec,a0,d0);return{x:w/2-(xi-cxD)*sc,y:h/2-(eta-cyD)*sc};};
+}
+
+/* ---------- draw ---------- */
+function fit(cv,ratio){const w=cv.clientWidth,dpr=window.devicePixelRatio||1,h=Math.round(w*ratio);
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const c=cv.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);return{c,w,h};}
+function starR(mag){return clamp(4.8-mag*0.62,1.4,5.8);}
+function bgStars(c,w,h,seed){const r=(s=>{let x=s;return()=>{x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0;return x/4294967296;};})(seed);
+  for(let i=0;i<130;i++){c.fillStyle="rgba(180,195,230,"+(0.10+r()*0.28)+")";c.beginPath();c.arc(r()*w,r()*h,r()*1.3,0,TAU);c.fill();}}
+function glyph(c,x,y,r,col){const g=c.createRadialGradient(x,y,0,x,y,r*2.4);
+  g.addColorStop(0,"#fff");g.addColorStop(.4,"rgba(220,232,255,.8)");g.addColorStop(1,"rgba(180,200,255,0)");
+  c.fillStyle=g;c.beginPath();c.arc(x,y,r*2.4,0,TAU);c.fill();
+  c.fillStyle=col||"#fff";c.beginPath();c.arc(x,y,r,0,TAU);c.fill();}
+function txt(c,x,y,t,col,sz,al){c.fillStyle=col||"#c7d2ee";c.font="600 "+(sz||11)+"px system-ui";c.textAlign=al||"left";c.fillText(t,x,y);c.textAlign="left";}
+function edge(a,b){return[a,b].sort().join("|");}
+
+function draw(){
+  if(S.mode==="learn"||S.mode==="draw") drawCons();
+  else if(S.mode==="spot") drawSpot();
+  else drawSignpost();
+}
+
+function drawCons(){
+  const {c,w,h}=fit(document.getElementById("sky"),0.7);
+  c.clearRect(0,0,w,h);bgStars(c,w,h,9);
+  const con=CONS[S.cons], P=buildProject(con.stars,w,h,56);
+  // lines
+  if(S.mode==="learn"&&S.opts.lines){c.strokeStyle="rgba(120,160,230,.6)";c.lineWidth=1.8;
+    con.lines.forEach(([a,b])=>{const pa=P(...STAR[a]),pb=P(...STAR[b]);c.beginPath();c.moveTo(pa.x,pa.y);c.lineTo(pb.x,pb.y);c.stroke();});}
+  if(S.mode==="draw"){con.lines.forEach(([a,b])=>{const key=edge(a,b);
+    if(S.drawn.has(key)||S.revealed){const pa=P(...STAR[a]),pb=P(...STAR[b]);
+      c.strokeStyle=S.drawn.has(key)?"#5ddc9a":"rgba(120,160,230,.5)";c.lineWidth=2.2;
+      c.beginPath();c.moveTo(pa.x,pa.y);c.lineTo(pb.x,pb.y);c.stroke();}});
+    if(S.pickA){const pa=P(...STAR[S.pickA]);c.strokeStyle="rgba(255,201,77,.6)";c.lineWidth=1.4;c.setLineDash([4,4]);
+      c.beginPath();c.arc(pa.x,pa.y,12,0,TAU);c.stroke();c.setLineDash([]);}}
+  // stars
+  S.screen=[];
+  con.stars.forEach(n=>{const p=P(...STAR[n]);S.screen.push({n,x:p.x,y:p.y});glyph(c,p.x,p.y,starR(STAR[n][2]));
+    const showN=(S.mode==="learn"&&S.opts.names)||(S.mode==="draw"&&(S.opts.names||S.revealed));
+    if(showN)txt(c,p.x+8,p.y+3,nm(n),"rgba(205,215,240,.85)",11);});
+  document.getElementById("skyCap").innerHTML= S.mode==="learn"
+    ? "Study the shape and the bright stars, then use the tips on the right. Switch to <b>Draw it</b> to test yourself."
+    : "Click one star, then another, to join them. Correct joins turn <b style='color:var(--green)'>green</b>. Decide which stars belong together!";
+}
+
+function drawSpot(){
+  const {c,w,h}=fit(document.getElementById("sky"),0.7);
+  c.clearRect(0,0,w,h);bgStars(c,w,h,S.spot?S.spot.seed:1);
+  if(!S.spot) return;
+  const con=CONS[S.spot.key], P=buildProject(con.stars,w,h,60);
+  c.strokeStyle="rgba(120,160,230,.65)";c.lineWidth=2;
+  con.lines.forEach(([a,b])=>{const pa=P(...STAR[a]),pb=P(...STAR[b]);c.beginPath();c.moveTo(pa.x,pa.y);c.lineTo(pb.x,pb.y);c.stroke();});
+  con.stars.forEach(n=>{const p=P(...STAR[n]);glyph(c,p.x,p.y,starR(STAR[n][2]));});
+  txt(c,14,24,"Which constellation is this?","#c7d2ee",13);
+  document.getElementById("skyCap").innerHTML="Use the shape and the brightest stars to decide. Pick your answer below.";
+}
+
+function drawSignpost(){
+  const {c,w,h}=fit(document.getElementById("sky"),0.7);
+  c.clearRect(0,0,w,h);bgStars(c,w,h,3);
+  const sp=SIGNPOSTS[S.sign], con=CONS[sp.base];
+  const scene=[...con.stars]; [sp.target,...sp.distract].forEach(n=>{if(!scene.includes(n))scene.push(n);});
+  const P=buildProject(scene,w,h,60);
+  // base constellation lines + stars (context)
+  c.strokeStyle="rgba(120,160,230,.4)";c.lineWidth=1.5;
+  con.lines.forEach(([a,b])=>{const pa=P(...STAR[a]),pb=P(...STAR[b]);c.beginPath();c.moveTo(pa.x,pa.y);c.lineTo(pb.x,pb.y);c.stroke();});
+  con.stars.forEach(n=>{const p=P(...STAR[n]);glyph(c,p.x,p.y,starR(STAR[n][2])*0.85);});
+  // highlight the pointer stars
+  sp.point.forEach(n=>{const p=P(...STAR[n]);c.strokeStyle="rgba(255,201,77,.85)";c.lineWidth=1.8;
+    c.beginPath();c.arc(p.x,p.y,10,0,TAU);c.stroke();});
+  txt(c,P(...STAR[con.stars[0]]).x,20,con.name,"rgba(150,170,210,.7)",11);
+  // candidate stars (target + distractors) — clickable
+  S.signScreen=[];
+  const cands=[sp.target,...sp.distract];
+  cands.forEach(n=>{const p=P(...STAR[n]);S.signScreen.push({n,x:p.x,y:p.y});
+    const done=S.signDone&&n===sp.target;
+    if(n==="Pleiades"||n==="Andromeda"){ // clusters/galaxy: fuzzy blob
+      c.fillStyle=done?"rgba(93,220,154,.6)":"rgba(200,215,255,.5)";c.beginPath();c.arc(p.x,p.y,7,0,TAU);c.fill();}
+    else glyph(c,p.x,p.y,starR(STAR[n][2])+(done?1.5:0.5),done?"#5ddc9a":"#fff");
+    if(S.signDone) txt(c,p.x+9,p.y+3,nm(n),n===sp.target?"#9fe0b8":"rgba(200,215,240,.7)",11);});
+  // after correct, draw the pointer line
+  if(S.signDone){const a=P(...STAR[sp.point[sp.point.length-1]]),b=P(...STAR[sp.target]);
+    c.strokeStyle="rgba(93,220,154,.8)";c.lineWidth=2;c.setLineDash([6,5]);
+    c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();c.setLineDash([]);}
+  document.getElementById("skyCap").innerHTML= S.signDone
+    ? "Nice — the green line shows the star-hop. Read the tip, then try the next signpost."
+    : "The yellow rings mark your starting stars. Follow the direction in the prompt and <b>click the star you reach</b>.";
+}
+
+/* ---------- coach panel ---------- */
+const $=id=>document.getElementById(id);
+function coach(){
+  const head=$("coachHead"), body=$("coachBody");
+  if(S.mode==="learn"){const con=CONS[S.cons];head.textContent="How to recognise "+con.name;
+    body.innerHTML=con.recognise.map(t=>`<div class="tip">${t}</div>`).join("")+
+      `<div class="note"><b>Best seen:</b> ${con.when}</div>`;}
+  else if(S.mode==="draw"){const con=CONS[S.cons];head.textContent="How to draw "+con.name;
+    body.innerHTML=`<div class="tip">Draw it in this order:</div><ol class="steps">${con.draw.map(s=>`<li>${s}</li>`).join("")}</ol>`+
+      `<div class="note">Tip: find one clear anchor (a belt, a bowl, a bright star) first, then build outwards.</div>`;}
+  else if(S.mode==="spot"){head.textContent="Spot it — decide";
+    body.innerHTML=`<div class="tip">Look for the <b>tell-tale shape</b>: a W, a saucepan, three belt stars in a row, a big empty square, a cross, or a big bright triangle.</div>
+      <div class="note">Score: <b id="spotScore">0</b> / <b id="spotAsked">0</b></div>`;}
+  else {const sp=SIGNPOSTS[S.sign];head.textContent="Signpost";
+    body.innerHTML=`<div class="tip">${sp.tip}</div><div class="note">These star-hops are exactly what spec point 6.3 asks you to know. Score: <b id="signScore">0</b> / <b id="signAsked">0</b></div>`;}
+}
+
+/* ---------- controls ---------- */
+const cc=$("consChips");
+ORDER.forEach((k,i)=>{const d=document.createElement("div");d.className="chip"+(i===0?" on":"");d.textContent=CONS[k].name;
+  d.onclick=()=>{[...cc.children].forEach(x=>x.classList.remove("on"));d.classList.add("on");
+    S.cons=k;S.drawn=new Set();S.pickA=null;S.revealed=false;refresh();};cc.appendChild(d);});
+$("showChips").onclick=e=>{const ch=e.target.closest(".chip");if(!ch)return;ch.classList.toggle("on");S.opts[ch.dataset.o]=ch.classList.contains("on")?1:0;draw();};
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+  S.mode=t.dataset.m;S.pickA=null;refresh();});
+
+$("revealBtn").onclick=()=>{S.revealed=!S.revealed;$("revealBtn").textContent=S.revealed?"Hide answer":"Show answer";draw();};
+$("resetBtn").onclick=()=>{S.drawn=new Set();S.pickA=null;S.revealed=false;$("revealBtn").textContent="Show answer";prog();draw();};
+function prog(){const total=CONS[S.cons].lines.length,done=[...S.drawn].filter(k=>CONS[S.cons].lines.some(([a,b])=>edge(a,b)===k)).length;
+  $("progBar").style.width=(done/total*100)+"%";
+  $("drawStat").innerHTML=done>=total?"<b style='color:var(--green)'>Complete — well drawn!</b>":`${done} of ${total} lines joined.`;}
+
+let spotScore=0,spotAsked=0;
+function newSpot(){const key=ORDER[Math.floor(Math.random()*ORDER.length)];
+  const opts=[key];while(opts.length<4){const o=ORDER[Math.floor(Math.random()*ORDER.length)];if(!opts.includes(o))opts.push(o);}
+  for(let i=opts.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[opts[i],opts[j]]=[opts[j],opts[i]];}
+  S.spot={key,opts,seed:(Math.random()*1e5)|0,answered:false};spotAsked++;draw();
+  const box=$("spotOpts");box.innerHTML="";
+  opts.forEach(k=>{const b=document.createElement("button");b.className="opt";b.textContent=CONS[k].name;
+    b.onclick=()=>spotAnswer(k,b);box.appendChild(b);});
+  $("spotFb").classList.add("hide");updScores();}
+function spotAnswer(k,btn){if(S.spot.answered)return;S.spot.answered=true;
+  const correct=k===S.spot.key;
+  [...$("spotOpts").children].forEach(b=>{b.disabled=true;if(b.textContent===CONS[S.spot.key].name)b.classList.add("right");});
+  if(!correct)btn.classList.add("wrong");else spotScore++;
+  $("spotFb").innerHTML=(correct?"<b style='color:var(--green)'>Yes!</b> ":"<b style='color:var(--red)'>It was "+CONS[S.spot.key].name+".</b> ")+CONS[S.spot.key].recognise[0];
+  $("spotFb").classList.remove("hide");updScores();}
+$("spotNext").onclick=newSpot;
+
+let signScore=0,signAsked=0;
+function newSign(){S.sign=(S.sign+1)%SIGNPOSTS.length;startSign();}
+function startSign(){S.signDone=false;signAsked++;$("signFb").classList.add("hide");
+  $("signPrompt").innerHTML=SIGNPOSTS[S.sign].prompt;coach();draw();updScores();}
+$("signNext").onclick=newSign;
+
+function updScores(){const a=$("spotScore");if(a){a.textContent=spotScore;$("spotAsked").textContent=spotAsked;}
+  const b=$("signScore");if(b){b.textContent=signScore;$("signAsked").textContent=signAsked;}}
+
+/* ---------- canvas clicks ---------- */
+$("sky").addEventListener("click",e=>{
+  const r=e.target.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+  if(S.mode==="draw"){
+    let best=null,bd=1e9;S.screen.forEach(s=>{const dd=(s.x-mx)**2+(s.y-my)**2;if(dd<bd){bd=dd;best=s;}});
+    if(bd>340)return;
+    if(!S.pickA)S.pickA=best.n; else if(S.pickA===best.n)S.pickA=null;
+    else{const key=edge(S.pickA,best.n);if(CONS[S.cons].lines.some(([a,b])=>edge(a,b)===key))S.drawn.add(key);S.pickA=null;prog();}
+    draw();
+  } else if(S.mode==="signpost"&&!S.signDone){
+    let best=null,bd=1e9;S.signScreen.forEach(s=>{const dd=(s.x-mx)**2+(s.y-my)**2;if(dd<bd){bd=dd;best=s;}});
+    if(bd>420)return;const sp=SIGNPOSTS[S.sign];
+    if(best.n===sp.target){S.signDone=true;signScore++;
+      $("signFb").innerHTML="<b style='color:var(--green)'>Found it!</b> "+sp.tip;$("signFb").classList.remove("hide");}
+    else{$("signFb").innerHTML="<b style='color:var(--red)'>Not quite — that's "+nm(best.n)+".</b> Re-read the direction and try again.";$("signFb").classList.remove("hide");}
+    draw();updScores();
+  }
+});
+window.addEventListener("resize",draw);
+
+/* ---------- mode switching ---------- */
+function refresh(){
+  $("pickCard").style.display=(S.mode==="learn"||S.mode==="draw")?"":"none";
+  $("drawCtrls").classList.toggle("hide",S.mode!=="draw");
+  $("spotCtrls").classList.toggle("hide",S.mode!=="spot");
+  $("signCtrls").classList.toggle("hide",S.mode!=="signpost");
+  const MI={learn:"Pick a constellation and read the recognition tips on the right. Toggle the star names and lines to test your memory.",
+    draw:"Join the stars from memory by clicking them in pairs. Use the drawing tips on the right, and 'Show answer' if you get stuck.",
+    spot:"You'll be shown a pattern with no name. Decide which constellation it is from its shape and bright stars.",
+    signpost:"Learn to 'star-hop': follow a pointer from a bright pattern to a fainter object, then click the star you reach."};
+  $("modeInfo").innerHTML=MI[S.mode];
+  if(S.mode==="draw"){S.revealed=false;$("revealBtn").textContent="Show answer";prog();}
+  if(S.mode==="spot"&&(!S.spot)){newSpot();}
+  if(S.mode==="signpost"){startSign();}
+  coach();draw();
+}
+refresh();
+</script>
+</body>
+</html>
