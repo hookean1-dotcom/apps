@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hexolith</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+  :root{
+    --paper:#FFFFFF; --panel:#F6F8FA; --ink:#11151B; --muted:#5D6875; --rule:#E2E7EC;
+    --stone:#E1E6EC; --stoneHi:#F8FAFB; --stoneLo:#B2BBC5;
+    --cracked:#CCD3DA; --crackedHi:#DEE3E9; --crackInk:#59636F;
+    --void:#0F141A;
+    --ochre:#B87309; --indigo:#3A3EA4; --accent:#3A3EA4;
+    --scrim:rgba(17,21,27,.42); --cast:rgba(17,21,27,.09);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0D1116; --panel:#151A21; --ink:#E9EDF2; --muted:#8C97A4; --rule:#222933;
+      --stone:#CCD2D9; --stoneHi:#EAEEF2; --stoneLo:#89919B;
+      --cracked:#A7AFB9; --crackedHi:#BEC5CD; --crackInk:#2B323B;
+      --void:#05080B;
+      --ochre:#E0A43A; --indigo:#828AF2; --accent:#828AF2;
+      --scrim:rgba(3,5,8,.66); --cast:rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0D1116; --panel:#151A21; --ink:#E9EDF2; --muted:#8C97A4; --rule:#222933;
+    --stone:#CCD2D9; --stoneHi:#EAEEF2; --stoneLo:#89919B;
+    --cracked:#A7AFB9; --crackedHi:#BEC5CD; --crackInk:#2B323B;
+    --void:#05080B;
+    --ochre:#E0A43A; --indigo:#828AF2; --accent:#828AF2;
+    --scrim:rgba(3,5,8,.66); --cast:rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Newsreader",Georgia,"Times New Roman",serif;
+    font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+  .shell{max-width:1000px; margin:0 auto; padding:40px 24px 72px}
+
+  .masthead{
+    display:flex; align-items:baseline; gap:8px 22px; flex-wrap:wrap;
+    border-bottom:1px solid var(--ink); padding-bottom:14px;
+  }
+  h1{
+    font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:700;
+    font-size:clamp(34px,6.4vw,50px); line-height:1; letter-spacing:-.025em; margin:0;
+  }
+  .tag{
+    font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:600; font-size:11px;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--muted); margin-left:auto;
+  }
+  .lede{margin:16px 0 0; max-width:60ch; color:var(--muted); font-size:17.5px}
+  .lede em{color:var(--ink); font-style:italic}
+
+  .game{display:grid; grid-template-columns:minmax(0,1fr) 258px; gap:38px; align-items:start; margin-top:30px}
+  @media (max-width:880px){ .game{grid-template-columns:1fr; gap:30px} }
+
+  .setup{display:flex; flex-wrap:wrap; gap:16px 24px; align-items:flex-end; padding-bottom:18px; border-bottom:1px solid var(--rule)}
+  .setup .field:last-child{margin-left:auto}
+  @media (max-width:520px){ .setup .field:last-child{margin-left:0} }
+  .field{display:flex; flex-direction:column; gap:7px}
+  .field > span{
+    font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:600; font-size:10px;
+    letter-spacing:.19em; text-transform:uppercase; color:var(--muted);
+  }
+  .seg{display:flex; gap:0}
+  .seg button{
+    appearance:none; background:transparent; color:var(--muted); cursor:pointer;
+    font:500 14px/1 "Familjen Grotesk",system-ui,sans-serif; padding:8px 13px;
+    border:1px solid var(--rule); border-right-width:0; transition:color .15s, background .15s, border-color .15s;
+  }
+  .seg button:first-child{border-radius:3px 0 0 3px}
+  .seg button:last-child{border-right-width:1px; border-radius:0 3px 3px 0}
+  .seg button:hover{color:var(--ink)}
+  .seg button[aria-pressed="true"]{
+    background:var(--ink); border-color:var(--ink); color:var(--paper); font-weight:600;
+  }
+  .seg button[aria-pressed="true"] + button{border-left-color:var(--ink)}
+  select{
+    appearance:none; font:500 14px/1 "Familjen Grotesk",system-ui,sans-serif; color:var(--ink);
+    background:transparent; border:1px solid var(--rule); border-radius:3px; padding:8px 30px 8px 11px; cursor:pointer;
+    background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
+    background-position:calc(100% - 16px) 52%,calc(100% - 11px) 52%;
+    background-size:5px 5px,5px 5px; background-repeat:no-repeat;
+  }
+  .plain{
+    appearance:none; font:600 14px/1 "Familjen Grotesk",system-ui,sans-serif; color:var(--ink);
+    background:transparent; border:1px solid var(--ink); border-radius:3px; padding:8px 15px; cursor:pointer;
+    transition:background .15s,color .15s;
+  }
+  .plain:hover{background:var(--ink); color:var(--paper)}
+  button:focus-visible, select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .cell:focus-visible{outline:none}
+  .cell:focus-visible .stone{box-shadow:0 0 0 3px var(--accent)}
+
+  .status{
+    display:flex; align-items:center; gap:11px; margin:22px 0 0; min-height:30px;
+    font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:600; font-size:19px; letter-spacing:-.01em;
+  }
+  .status .hint{color:var(--muted); font-weight:400; font-size:16px}
+  .dot{width:13px; height:15px; flex:0 0 auto; clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)}
+  .dot.a{background:var(--ochre)} .dot.b{background:var(--indigo)}
+
+  .leaprow{display:flex; flex-wrap:wrap; align-items:center; gap:10px 18px; margin-top:14px; min-height:36px}
+  .leapbtn{
+    appearance:none; font:600 13px/1 "Familjen Grotesk",system-ui,sans-serif; color:var(--accent);
+    background:transparent; border:1px solid var(--accent); border-radius:3px; padding:8px 13px; cursor:pointer;
+    transition:background .15s,color .15s,opacity .15s;
+  }
+  .leapbtn:hover:not(:disabled), .leapbtn[aria-pressed="true"]{background:var(--accent); color:var(--paper)}
+  .leapbtn:disabled{opacity:.3; cursor:default}
+  .tokens{display:flex; gap:14px; font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:500;
+    font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted)}
+  .tok{display:flex; align-items:center; gap:6px}
+  .tok .pip{width:8px; height:9px; background:currentColor; clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)}
+  .tok.a{color:var(--ochre)} .tok.b{color:var(--indigo)}
+  .tok.spent{color:var(--muted)} .tok.spent .pip{opacity:.4}
+
+  .boardwrap{display:flex; justify-content:center; padding:22px 0 8px}
+  .board{position:relative; transition:filter .35s ease, opacity .35s ease}
+  .board::before{
+    content:""; position:absolute; left:50%; top:52%; transform:translate(-50%,-50%);
+    width:106%; height:106%; border-radius:50%; pointer-events:none;
+    background:radial-gradient(ellipse at 50% 55%, var(--cast), transparent 70%);
+  }
+  .board.finished{filter:saturate(.5) blur(1.5px); opacity:.62}
+  .cell{
+    appearance:none; padding:0; border:0; margin:0; position:absolute; background:transparent;
+    cursor:default; -webkit-tap-highlight-color:transparent;
+  }
+  .socket{
+    position:absolute; inset:0; background:var(--void);
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .stone{
+    position:absolute; inset:2px;
+    background:linear-gradient(166deg, var(--stoneHi), var(--stone) 60%, var(--stoneLo) 132%);
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    filter:drop-shadow(0 2px 2px rgba(17,21,27,.28));
+    transition:filter .18s, transform .18s;
+  }
+  .crk{position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity .22s}
+  .crk path{fill:none; stroke:var(--crackInk); stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round}
+  .cell.w1 .stone{
+    background:linear-gradient(166deg, var(--crackedHi), var(--cracked) 64%, var(--stoneLo) 134%);
+    filter:drop-shadow(0 1px 1px rgba(17,21,27,.3)); transform:translateY(1px);
+  }
+  .cell.w1 .crk{opacity:.5}
+  .cell.w2 .stone, .cell.w2 .crk{display:none}
+  .cell.cracking .stone{animation:shake .17s linear}
+  @keyframes shake{
+    0%,100%{transform:translate(0,0)} 25%{transform:translate(-1.5px,1px)}
+    50%{transform:translate(1.5px,-1px)} 75%{transform:translate(-1px,-1px)}
+  }
+  .cell.home .stone::after{
+    content:""; position:absolute; inset:17%; border:2px solid currentColor; opacity:.32;
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .cell.home-a{color:var(--ochre)} .cell.home-b{color:var(--indigo)}
+  .cell.legal{cursor:pointer}
+  .cell.legal .stone::before{
+    content:""; position:absolute; left:50%; top:50%; width:32%; height:36%;
+    transform:translate(-50%,-50%); background:currentColor; opacity:.8;
+    clip-path:polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .cell.legal:hover .stone{filter:drop-shadow(0 5px 4px rgba(17,21,27,.32)) brightness(1.04); transform:translateY(-2px)}
+  .cell.legal.for-a{color:var(--ochre)} .cell.legal.for-b{color:var(--indigo)}
+  .cell.legal.w1 .stone::before{opacity:.45; transform:translate(-50%,-50%) scale(.8)}
+  .cell.legal.w1:hover .stone{transform:translateY(0)}
+  .cell.takeable{cursor:crosshair}
+  .cell.takeable:hover .stone{transform:translateY(2px) scale(.96); filter:brightness(.9)}
+  .cell.w1.takeable:hover .stone{transform:translateY(3px) scale(.93)}
+  .cell.leap{cursor:pointer}
+  .cell.leap .stone::before{
+    content:""; position:absolute; left:50%; top:50%; width:46%; height:46%;
+    transform:translate(-50%,-50%) rotate(45deg); border:2px dashed var(--accent); border-radius:3px;
+  }
+  .cell.leap:hover .stone{filter:drop-shadow(0 6px 5px rgba(17,21,27,.34)) brightness(1.05); transform:translateY(-3px)}
+
+  .shards{position:absolute; pointer-events:none}
+  .shards span{position:absolute; inset:0; animation:shard .68s cubic-bezier(.25,.6,.5,1) forwards}
+  .shards.big span{background:linear-gradient(166deg, var(--crackedHi), var(--cracked) 62%, var(--stoneLo) 134%)}
+  .shards.chips span{background:var(--stoneLo); animation-duration:.5s}
+  @keyframes shard{
+    0%{transform:translate(0,0) rotate(0deg) scale(1); opacity:1}
+    18%{transform:translate(calc(var(--tx)*.22), calc(var(--ty)*.1)) rotate(calc(var(--rot)*.15)) scale(.98); opacity:1}
+    100%{transform:translate(var(--tx), calc(var(--ty) + 26px)) rotate(var(--rot)) scale(.42); opacity:0}
+  }
+
+  .piece{position:absolute; left:0; top:0; display:grid; place-items:center; pointer-events:none;
+    transition:transform .32s cubic-bezier(.34,.9,.32,1)}
+  .piece i{
+    display:block; width:54%; height:54%; border-radius:50%;
+    box-shadow:0 2px 0 rgba(17,21,27,.32), 0 5px 9px rgba(17,21,27,.38), inset 0 3px 6px rgba(255,255,255,.3);
+  }
+  .piece.a i{background:radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--ochre) 68%, white), var(--ochre))}
+  .piece.b i{background:radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--indigo) 68%, white), var(--indigo))}
+  .piece.trapped i{animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{50%{transform:scale(.76); filter:brightness(.7)}}
+  .piece.hopping i{animation:hop .36s ease-in-out}
+  @keyframes hop{50%{transform:translateY(-16px) scale(1.12)}}
+
+  aside{font-size:15.5px}
+  aside h2{
+    font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:600; font-size:10px;
+    letter-spacing:.19em; text-transform:uppercase; color:var(--muted); margin:34px 0 13px;
+    padding-bottom:10px; border-bottom:1px solid var(--rule);
+  }
+  aside h2:first-child{margin-top:0}
+  aside ol{margin:0; padding:0 0 0 1.1em; color:var(--muted)}
+  aside li{margin-bottom:11px}
+  aside li b, aside p b{color:var(--ink); font-weight:500}
+  aside p{margin:0 0 11px; color:var(--muted)}
+  .states{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:9px; color:var(--muted)}
+  .states li{display:flex; align-items:center; gap:10px}
+  .chip{width:19px; height:22px; flex:0 0 auto; clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%)}
+  .chip.intact{background:linear-gradient(166deg,var(--stoneHi),var(--stone))}
+  .chip.crackedc{background:linear-gradient(166deg,var(--crackedHi),var(--cracked))}
+  .chip.voidc{background:var(--void)}
+
+  .overlay{
+    position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:20px;
+    background:var(--scrim); animation:fade .22s ease forwards;
+  }
+  .overlay[hidden]{display:none}
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  .wincard{
+    position:relative; width:min(420px,100%); background:var(--paper); border:1px solid var(--rule);
+    border-radius:4px; padding:34px 32px 26px; text-align:center;
+    box-shadow:0 24px 60px rgba(17,21,27,.28);
+    animation:pop .46s cubic-bezier(.2,1.25,.35,1) .05s both;
+  }
+  @keyframes pop{from{opacity:0; transform:translateY(20px) scale(.9)} to{opacity:1; transform:none}}
+  .wincard .bar{position:absolute; left:0; right:0; top:0; height:5px; border-radius:4px 4px 0 0}
+  .winmark{position:relative; width:66px; height:66px; margin:6px auto 18px}
+  .winmark i{
+    position:absolute; inset:14px; border-radius:50%; display:block;
+    box-shadow:0 3px 0 rgba(17,21,27,.3), inset 0 4px 8px rgba(255,255,255,.32);
+    animation:markIn .5s cubic-bezier(.2,1.3,.35,1) .18s both;
+  }
+  .winmark s{
+    position:absolute; inset:0; border:2px solid currentColor; border-radius:50%; opacity:0;
+    animation:ring 1.1s ease-out .3s infinite;
+  }
+  .winmark s.two{animation-delay:.75s}
+  @keyframes markIn{from{transform:scale(.2); opacity:0} to{transform:none; opacity:1}}
+  @keyframes ring{0%{transform:scale(.6); opacity:.7} 100%{transform:scale(1.35); opacity:0}}
+  .wincard h2{
+    font-family:"Familjen Grotesk",system-ui,sans-serif; font-weight:700; font-size:30px;
+    letter-spacing:-.02em; margin:0 0 8px; line-height:1.05;
+  }
+  .wincard p{margin:0 0 22px; color:var(--muted); font-style:italic}
+  .winbtns{display:flex; gap:10px; justify-content:center; flex-wrap:wrap}
+
+  @media (prefers-reduced-motion: reduce){
+    .stone,.piece,.crk,.board{transition:none}
+    .piece.trapped i,.piece.hopping i,.cell.cracking .stone,.shards span,
+    .wincard,.overlay,.winmark i,.winmark s{animation:none}
+    .shards{display:none}
+    .wincard{opacity:1; transform:none}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="masthead">
+    <h1>Hexolith</h1>
+    <span class="tag">Step · then strike</span>
+  </header>
+  <p class="lede">A game for two on a honeycomb that gives way beneath you. Step to a neighbouring hex, then strike one anywhere on the board: whole hexes <em>fracture</em>, fractured hexes <em>fall</em>. Whoever runs out of footing loses.</p>
+
+  <div class="game">
+    <div>
+      <div class="setup">
+        <label class="field">
+          <span>Opponent</span>
+          <div class="seg" id="mode">
+            <button type="button" data-mode="2p">2 players</button>
+            <button type="button" data-mode="basic" aria-pressed="true">Basic</button>
+            <button type="button" data-mode="medium">Medium</button>
+            <button type="button" data-mode="expert">Expert</button>
+          </div>
+        </label>
+        <label class="field">
+          <span>Board</span>
+          <select id="size">
+            <option value="2">Small · 19 hexes</option>
+            <option value="3" selected>Standard · 37 hexes</option>
+            <option value="4">Large · 61 hexes</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>&nbsp;</span>
+          <button type="button" class="plain" id="newgame">New game</button>
+        </label>
+      </div>
+
+      <p class="status" id="status" aria-live="polite"><span class="dot a"></span><span id="statusText">Ochre to move</span></p>
+
+      <div class="leaprow">
+        <button type="button" class="leapbtn" id="leap" aria-pressed="false" disabled>Vault a gap</button>
+        <div class="tokens" id="tokens"></div>
+      </div>
+
+      <div class="boardwrap"><div class="board" id="board"></div></div>
+    </div>
+
+    <aside>
+      <h2>How it goes</h2>
+      <ol>
+        <li>Step your piece to one of the six neighbouring hexes — any hex that hasn't fallen will take you.</li>
+        <li>Then strike a hex anywhere on the board. A whole one fractures; a fractured one gives way.</li>
+        <li>Neither piece's own hex can be struck.</li>
+        <li>Run out of hexes to step to and you lose.</li>
+      </ol>
+
+      <h2>The three states</h2>
+      <ul class="states">
+        <li><span class="chip intact"></span><span><b>Whole</b> — safe footing</span></li>
+        <li><span class="chip crackedc"></span><span><b>Fractured</b> — holds you once, then goes</span></li>
+        <li><span class="chip voidc"></span><span><b>Fallen</b> — nothing left to stand on</span></li>
+      </ul>
+
+      <h2>Fine print</h2>
+      <p>Standing on a fractured hex is borrowed time: it carries you for exactly one turn and gives way the moment you leave.</p>
+      <p>Once per game each player may <b>vault a gap</b> — hop in a straight line over exactly one fallen hex and land beyond it. You still strike afterwards.</p>
+      <p><b>Ochre</b> starts bottom-right and plays for you. <b>Indigo</b> starts top-left.</p>
+    </aside>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="wincard" role="dialog" aria-modal="true" aria-labelledby="winTitle">
+    <span class="bar" id="winBar"></span>
+    <div class="winmark" id="winMark"><s></s><s class="two"></s><i></i></div>
+    <h2 id="winTitle">Indigo wins</h2>
+    <p id="winWhy">Ochre had nowhere left to step.</p>
+    <div class="winbtns">
+      <button type="button" class="plain" id="again">Play again</button>
+      <button type="button" class="leapbtn" id="dismiss">See the board</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/*ENGINE_START*/
+var WINV = 1000000;
+var HEXDIRS = [[1,0],[1,-1],[0,-1],[-1,0],[-1,1],[0,1]];
+var INTACT = 0, CRACKED = 1, VOID = 2;
+
+/* Hexagonal board of the given radius, axial coordinates, pointy-top cells. */
+function makeGeo(radius){
+  var cells = [], index = {}, q, r, lo, hi;
+  for(q = -radius; q <= radius; q++){
+    lo = Math.max(-radius, -q - radius);
+    hi = Math.min(radius, -q + radius);
+    for(r = lo; r <= hi; r++){ index[q + ',' + r] = cells.length; cells.push({q:q, r:r}); }
+  }
+  var nbr = [], dirn = [];
+  cells.forEach(function(c){
+    var a = [], d = [], i, k;
+    for(i = 0; i < 6; i++){
+      k = (c.q + HEXDIRS[i][0]) + ',' + (c.r + HEXDIRS[i][1]);
+      if(index.hasOwnProperty(k)){ d.push(index[k]); a.push(index[k]); } else d.push(-1);
+    }
+    nbr.push(a); dirn.push(d);
+  });
+  return {radius:radius, N:cells.length, cells:cells, index:index, nbr:nbr, dirn:dirn};
+}
+
+function newState(geo){
+  var R = geo.radius;
+  return {
+    wear: new Uint8Array(geo.N),
+    pieces: [geo.index['0,' + R], geo.index['0,' + (-R)]],
+    leaps: [1, 1],
+    turn: 0
+  };
+}
+
+function legalMoves(geo, st, p){
+  var list = geo.nbr[st.pieces[p]], other = st.pieces[1 - p], out = [], i, n;
+  for(i = 0; i < list.length; i++){
+    n = list[i];
+    if(st.wear[n] < VOID && n !== other) out.push(n);
+  }
+  return out;
+}
+
+function mobility(geo, st, p){
+  var list = geo.nbr[st.pieces[p]], other = st.pieces[1 - p], k = 0, i;
+  for(i = 0; i < list.length; i++){ if(st.wear[list[i]] < VOID && list[i] !== other) k++; }
+  return k;
+}
+
+/* The once-per-game leap: hop straight over exactly one void hex and land beyond it. */
+function leapMoves(geo, st, p){
+  if(st.leaps[p] <= 0) return [];
+  var from = st.pieces[p], other = st.pieces[1 - p], out = [], k, mid, far;
+  for(k = 0; k < 6; k++){
+    mid = geo.dirn[from][k];
+    if(mid < 0 || st.wear[mid] !== VOID) continue;
+    far = geo.dirn[mid][k];
+    if(far < 0 || st.wear[far] === VOID || far === other) continue;
+    out.push(far);
+  }
+  return out;
+}
+
+function hasMove(geo, st, p){
+  if(mobility(geo, st, p) > 0) return true;
+  return leapMoves(geo, st, p).length > 0;
+}
+
+/* Hexes that may be struck: not void, not under a piece. */
+function strikeTargets(geo, st){
+  var out = [], i;
+  for(i = 0; i < geo.N; i++){
+    if(st.wear[i] < VOID && i !== st.pieces[0] && i !== st.pieces[1]) out.push(i);
+  }
+  return out;
+}
+
+/* Applying a turn: stepping off a cracked hex voids it, then the struck hex decays one stage. */
+function doTurn(st, p, dest, target, leap){
+  var from = st.pieces[p], undo = {from:from, wf:st.wear[from], target:target, wt:-1, leap:!!leap};
+  if(st.wear[from] === CRACKED) st.wear[from] = VOID;
+  st.pieces[p] = dest;
+  if(leap) st.leaps[p]--;
+  if(target >= 0){ undo.wt = st.wear[target]; st.wear[target] = undo.wt + 1; }
+  return undo;
+}
+function undoTurn(st, p, undo){
+  if(undo.target >= 0) st.wear[undo.target] = undo.wt;
+  if(undo.leap) st.leaps[p]++;
+  st.pieces[p] = undo.from;
+  st.wear[undo.from] = undo.wf;
+}
+
+function bfs(geo, st, start, blocked, d){
+  var q = [start], h, cur, list, i, n;
+  d.fill(-1); d[start] = 0;
+  for(h = 0; h < q.length; h++){
+    cur = q[h]; list = geo.nbr[cur];
+    for(i = 0; i < list.length; i++){
+      n = list[i];
+      if(d[n] !== -1 || st.wear[n] === VOID || n === blocked) continue;
+      d[n] = d[cur] + 1; q.push(n);
+    }
+  }
+  return d;
+}
+
+/* Territory: who reaches each surviving hex first, with cracked hexes worth half
+   (they carry a piece once and then vanish). Plus a mobility term. */
+function evaluate(geo, st, me, buf, kind){
+  var opp = 1 - me;
+  if(kind === 'mob'){
+    /* The shallower judgement: keep your own options open, close theirs down.
+       No sense of territory, so it walks into pockets a stronger player avoids. */
+    return 5 * (mobility(geo, st, me) - mobility(geo, st, opp))
+      + (st.wear[st.pieces[me]] === INTACT ? 2 : 0)
+      - (st.wear[st.pieces[opp]] === INTACT ? 2 : 0);
+  }
+  var dm = bfs(geo, st, st.pieces[me], st.pieces[opp], buf.a);
+  var doo = bfs(geo, st, st.pieces[opp], st.pieces[me], buf.b);
+  var mine = 0, theirs = 0, reachMe = 0, reachOpp = 0, touch = false, i, x, y, v;
+  for(i = 0; i < geo.N; i++){
+    if(st.wear[i] === VOID) continue;
+    v = st.wear[i] === INTACT ? 2 : 1;
+    x = dm[i]; y = doo[i];
+    if(x >= 0) reachMe += v;
+    if(y >= 0) reachOpp += v;
+    if(x >= 0 && y >= 0){ touch = true; if(x < y) mine += v; else if(y < x) theirs += v; }
+    else if(x >= 0) mine += v;
+    else if(y >= 0) theirs += v;
+  }
+  var mob = mobility(geo, st, me) - mobility(geo, st, opp);
+  if(!touch) return 150 * (reachMe - reachOpp) + mob;
+  return 3 * (mine - theirs) + 3 * mob;
+}
+
+/* A turn is [destination, hexToStrike]. Strike candidates are restricted to the hexes
+   that actually matter: those ringing the opponent, plus (for expert) the next ring out. */
+/* Hexes on the frontier between the pieces -- the wall-building strikes that decide
+   who ends up with the larger pocket. Computed once per search, from the root. */
+function frontierCells(geo, st, p, buf, limit){
+  var dm = bfs(geo, st, st.pieces[p], st.pieces[1 - p], buf.a);
+  var doo = bfs(geo, st, st.pieces[1 - p], st.pieces[p], buf.b);
+  var out = [], i, x, y;
+  for(i = 0; i < geo.N; i++){
+    if(st.wear[i] === VOID || i === st.pieces[0] || i === st.pieces[1]) continue;
+    x = dm[i]; y = doo[i];
+    if(x < 0 || y < 0 || Math.abs(x - y) > 1) continue;
+    out.push([i, x + y]);
+  }
+  out.sort(function(a, b){ return a[1] - b[1]; });
+  return out.slice(0, limit).map(function(e){ return e[0]; });
+}
+
+function genTurns(geo, st, p, width, wide, extra){
+  var turns = [], moves = legalMoves(geo, st, p).map(function(m){ return [m, 0]; });
+  leapMoves(geo, st, p).forEach(function(m){ moves.push([m, 1]); });
+  if(moves.length === 0) return turns;
+  var opp = st.pieces[1 - p], base = [], i, j, n, list = geo.nbr[opp];
+  for(i = 0; i < list.length; i++){ if(st.wear[list[i]] < VOID) base.push(list[i]); }
+  var cands = base.slice();
+  if(wide){
+    var seen = {}, l2;
+    for(i = 0; i < base.length; i++) seen[base[i]] = 1;
+    seen[opp] = 1; seen[st.pieces[p]] = 1;
+    if(extra){
+      for(i = 0; i < extra.length; i++){
+        n = extra[i];
+        if(seen[n] || st.wear[n] === VOID) continue;
+        seen[n] = 1; cands.push(n);
+      }
+    }
+    for(i = 0; i < base.length; i++){
+      l2 = geo.nbr[base[i]];
+      for(j = 0; j < l2.length; j++){
+        n = l2[j];
+        if(seen[n] || st.wear[n] === VOID) continue;
+        seen[n] = 1; cands.push(n);
+      }
+    }
+  }
+  if(cands.length === 0) cands = strikeTargets(geo, st);
+  if(cands.length > width) cands = cands.slice(0, width);
+
+  var m, lp, c, undo, sc;
+  for(i = 0; i < moves.length; i++){
+    m = moves[i][0]; lp = moves[i][1];
+    for(j = 0; j < cands.length; j++){
+      c = cands[j];
+      if(c === m || c === opp) continue;
+      undo = doTurn(st, p, m, -1, lp);
+      if(st.wear[c] === VOID){ undoTurn(st, p, undo); continue; }
+      st.wear[c]++;
+      sc = mobility(geo, st, p) - 3 * mobility(geo, st, 1 - p) - (lp ? 2 : 0);
+      st.wear[c]--;
+      undoTurn(st, p, undo);
+      turns.push([m, c, sc, lp]);
+    }
+  }
+  turns.sort(function(x, y){ return y[2] - x[2]; });
+  return turns;
+}
+
+function negamax(geo, st, p, depth, alpha, beta, ctx){
+  if(!hasMove(geo, st, p)) return -(WINV + depth);
+  if(depth === 0) return evaluate(geo, st, p, ctx.buf, ctx.evalKind);
+  if(ctx.nodes > ctx.maxNodes || (ctx.deadline && Date.now() > ctx.deadline)){
+    ctx.aborted = true;
+    return evaluate(geo, st, p, ctx.buf, ctx.evalKind);
+  }
+  var turns = genTurns(geo, st, p, ctx.width, ctx.wide, ctx.extra);
+  if(turns.length === 0) return evaluate(geo, st, p, ctx.buf, ctx.evalKind);
+  var root = depth === ctx.rootDepth;
+  if(root) shuffleTies(turns, ctx.rnd);
+  var best = -Infinity, i, t, undo, v;
+  for(i = 0; i < turns.length; i++){
+    t = turns[i];
+    undo = doTurn(st, p, t[0], t[1], t[3]);
+    ctx.nodes++;
+    v = -negamax(geo, st, 1 - p, depth - 1, -beta, -alpha, ctx);
+    undoTurn(st, p, undo);
+    if(v > best){
+      best = v;
+      if(root) ctx.bestList = [[t[0], t[1], t[3]]];
+    } else if(root && v === best && ctx.bestList){
+      ctx.bestList.push([t[0], t[1], t[3]]);
+    }
+    if(best > alpha) alpha = best;
+    if(alpha >= beta) break;
+    if(ctx.aborted) break;
+  }
+  return best;
+}
+
+/* Equally-ranked candidates are shuffled so the engine does not replay one fixed game. */
+function shuffleTies(turns, rnd){
+  var i = 0, j, k, tmp;
+  while(i < turns.length){
+    j = i;
+    while(j + 1 < turns.length && turns[j + 1][2] === turns[i][2]) j++;
+    for(k = j; k > i; k--){
+      var q = i + Math.floor(rnd() * (k - i + 1));
+      tmp = turns[k]; turns[k] = turns[q]; turns[q] = tmp;
+    }
+    i = j + 1;
+  }
+}
+
+function searchTurn(geo, st, p, opts, rnd){
+  var ctx = {
+    nodes:0, maxNodes:opts.maxNodes, deadline: opts.timeMs ? Date.now() + opts.timeMs : 0,
+    aborted:false, bestList:null, rootDepth:0, width:opts.width, wide:!!opts.wide,
+    rnd: rnd || Math.random, extra:null, evalKind: opts.evalKind || 'terr',
+    buf:{a:new Int32Array(geo.N), b:new Int32Array(geo.N)}
+  };
+  if(opts.wide) ctx.extra = frontierCells(geo, st, p, ctx.buf, 5);
+  var best = null, d, pick;
+  for(d = opts.minDepth; d <= opts.maxDepth; d++){
+    ctx.rootDepth = d; ctx.bestList = []; ctx.aborted = false;
+    negamax(geo, st, p, d, -Infinity, Infinity, ctx);
+    pick = ctx.bestList && ctx.bestList.length
+      ? ctx.bestList[Math.floor(ctx.rnd() * ctx.bestList.length)] : null;
+    if(pick && (!ctx.aborted || !best)) best = pick;
+    if(ctx.aborted || ctx.nodes > ctx.maxNodes) break;
+    if(ctx.deadline && Date.now() > ctx.deadline) break;
+  }
+  if(!best){
+    var m = legalMoves(geo, st, p), lp = 0;
+    if(m.length === 0){ m = leapMoves(geo, st, p); lp = 1; }
+    if(m.length === 0) return null;
+    var free = strikeTargets(geo, st).filter(function(c){ return c !== m[0]; });
+    best = [m[0], free.length ? free[0] : -1, lp];
+  }
+  return best;
+}
+
+function basicTurn(geo, st, p, rnd){
+  var moves = legalMoves(geo, st, p), leap = 0;
+  if(moves.length === 0){ moves = leapMoves(geo, st, p); leap = 1; }
+  if(moves.length === 0) return null;
+  var safe = [], i, undo;
+  for(i = 0; i < moves.length; i++){
+    undo = doTurn(st, p, moves[i], -1, leap);
+    if(mobility(geo, st, p) > 0) safe.push(moves[i]);
+    undoTurn(st, p, undo);
+  }
+  var pool = safe.length ? safe : moves;
+  var m = pool[Math.floor(rnd() * pool.length)];
+  var opp = st.pieces[1 - p], near = [], list = geo.nbr[opp];
+  for(i = 0; i < list.length; i++){
+    if(st.wear[list[i]] < VOID && list[i] !== m) near.push(list[i]);
+  }
+  var all = strikeTargets(geo, st).filter(function(c){ return c !== m; });
+  var cell = -1;
+  if(near.length && rnd() < 0.5) cell = near[Math.floor(rnd() * near.length)];
+  else if(all.length) cell = all[Math.floor(rnd() * all.length)];
+  return [m, cell, leap];
+}
+
+var AI_LEVELS = {
+  basic:  {kind:'basic'},
+  medium: {kind:'search', minDepth:3, maxDepth:3, width:5, wide:false, evalKind:'mob',  maxNodes:60000,  timeMs:700},
+  expert: {kind:'search', minDepth:3, maxDepth:6, width:6, wide:false, evalKind:'terr', maxNodes:300000, timeMs:1500}
+};
+
+function chooseTurn(geo, st, p, level, rnd){
+  var cfg = AI_LEVELS[level];
+  if(!cfg) return null;
+  if(cfg.kind === 'basic') return basicTurn(geo, st, p, rnd || Math.random);
+  return searchTurn(geo, st, p, cfg, rnd || Math.random);
+}
+/*ENGINE_END*/
+
+(function(){
+  var boardEl = document.getElementById('board');
+  var statusEl = document.getElementById('status');
+  var statusText = document.getElementById('statusText');
+  var sizeEl = document.getElementById('size');
+  var modeEl = document.getElementById('mode');
+  var leapBtn = document.getElementById('leap');
+  var tokensEl = document.getElementById('tokens');
+  var overlay = document.getElementById('overlay');
+  var winBar = document.getElementById('winBar');
+  var winMark = document.getElementById('winMark');
+  var winTitle = document.getElementById('winTitle');
+  var winWhy = document.getElementById('winWhy');
+  var boardWrap = document.querySelector('.boardwrap');
+  var SQ3 = Math.sqrt(3);
+  var HUMAN = 0, NAMES = ['Ochre', 'Indigo'], SIDE = ['a', 'b'];
+  var CRACK_SVG = '<svg class="crk" viewBox="0 0 100 115" preserveAspectRatio="none" aria-hidden="true">'
+    + '<path d="M50 3 L44 27 L57 42 L48 59 L61 79 L50 112"/>'
+    + '<path d="M4 41 L27 48 L44 45 L48 59"/>'
+    + '<path d="M96 67 L76 61 L61 79"/></svg>';
+
+  var geo, st, cells = [], pieceEls = [], shardLayer;
+  var phase = 'move', mode = 'basic', over = false, busy = false, size = 0, leapArmed = false;
+
+  function hexSize(){
+    var avail = Math.min(boardWrap.clientWidth - 4, 520);
+    return Math.max(14, Math.min(40, avail / (SQ3 * (2 * geo.radius + 1))));
+  }
+
+  function layout(){
+    size = hexSize();
+    var w = SQ3 * size, h = 2 * size, R = geo.radius;
+    var offX = SQ3 * size * R, offY = 1.5 * size * R;
+    boardEl.style.width = Math.ceil(SQ3 * size * (2 * R + 1)) + 'px';
+    boardEl.style.height = Math.ceil(size * (3 * R + 2)) + 'px';
+    for(var i = 0; i < geo.N; i++){
+      var c = geo.cells[i];
+      var x = SQ3 * size * (c.q + c.r / 2) + offX - w / 2;
+      var y = 1.5 * size * c.r + offY + size / 2 - h / 2;
+      cells[i].style.cssText = 'width:' + w + 'px;height:' + h + 'px;left:' + x + 'px;top:' + y + 'px';
+      cells[i]._x = x; cells[i]._y = y; cells[i]._w = w; cells[i]._h = h;
+    }
+    for(var p = 0; p < 2; p++){
+      pieceEls[p].style.width = w + 'px';
+      pieceEls[p].style.height = h + 'px';
+      placePiece(p);
+    }
+  }
+
+  function placePiece(p){
+    var c = cells[st.pieces[p]];
+    pieceEls[p].style.transform = 'translate(' + c._x + 'px,' + c._y + 'px)';
+  }
+
+  function build(){
+    geo = makeGeo(parseInt(sizeEl.value, 10));
+    st = newState(geo);
+    phase = 'move'; over = false; busy = false; leapArmed = false;
+    overlay.hidden = true;
+    boardEl.classList.remove('finished');
+    boardEl.textContent = '';
+    cells = [];
+    for(var i = 0; i < geo.N; i++){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'cell';
+      b.setAttribute('aria-label', 'hex ' + geo.cells[i].q + ' ' + geo.cells[i].r);
+      b.innerHTML = '<span class="socket"></span><span class="stone">' + CRACK_SVG + '</span>';
+      b.addEventListener('click', onCell.bind(null, i));
+      boardEl.appendChild(b);
+      cells.push(b);
+    }
+    cells[st.pieces[0]].classList.add('home', 'home-a');
+    cells[st.pieces[1]].classList.add('home', 'home-b');
+    shardLayer = document.createElement('div');
+    shardLayer.style.cssText = 'position:absolute;inset:0;pointer-events:none';
+    boardEl.appendChild(shardLayer);
+    pieceEls = [];
+    SIDE.forEach(function(k){
+      var el = document.createElement('div');
+      el.className = 'piece ' + k;
+      el.innerHTML = '<i></i>';
+      boardEl.appendChild(el);
+      pieceEls.push(el);
+    });
+    layout();
+    render();
+  }
+
+  var WEDGES = [[50,0],[100,25],[100,75],[50,100],[0,75],[0,25]];
+  function reduced(){ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+  function burst(i, kind){
+    if(reduced()) return;
+    var cell = cells[i];
+    var box = document.createElement('div');
+    box.className = 'shards ' + kind;
+    box.style.cssText = 'left:' + cell._x + 'px;top:' + cell._y + 'px;width:' + cell._w + 'px;height:' + cell._h + 'px';
+    var count = kind === 'chips' ? 3 : 6;
+    for(var k = 0; k < count; k++){
+      var a = WEDGES[k % 6], b = WEDGES[(k + 1) % 6];
+      var sh = document.createElement('span');
+      var ang = ((kind === 'chips' ? k * 120 + 40 : k * 60) + 30) * Math.PI / 180;
+      var dist = kind === 'chips' ? 6 + Math.random() * 8 : 10 + Math.random() * 16;
+      sh.style.clipPath = kind === 'chips'
+        ? 'polygon(50% 42%, 62% 50%, 52% 62%, 42% 52%)'
+        : 'polygon(50% 50%, ' + a[0] + '% ' + a[1] + '%, ' + b[0] + '% ' + b[1] + '%)';
+      sh.style.setProperty('--tx', (Math.sin(ang) * dist).toFixed(1) + 'px');
+      sh.style.setProperty('--ty', (-Math.cos(ang) * dist).toFixed(1) + 'px');
+      sh.style.setProperty('--rot', ((Math.random() * 120 - 60) | 0) + 'deg');
+      sh.style.animationDelay = (Math.random() * 60 | 0) + 'ms';
+      box.appendChild(sh);
+    }
+    shardLayer.appendChild(box);
+    setTimeout(function(){ box.remove(); }, 900);
+  }
+
+  function decayFx(i, done){
+    var cell = cells[i];
+    if(reduced()){ render(); if(done) done(); return; }
+    cell.classList.add('cracking');
+    setTimeout(function(){
+      cell.classList.remove('cracking');
+      render();
+      burst(i, st.wear[i] === VOID ? 'big' : 'chips');
+      if(done) done();
+    }, 170);
+  }
+
+  function aiControls(p){ return mode !== '2p' && p !== HUMAN; }
+
+  function render(){
+    var i, p = st.turn, legal, hops;
+    for(i = 0; i < geo.N; i++){
+      var cl = cells[i].classList;
+      cl.toggle('w1', st.wear[i] === CRACKED);
+      cl.toggle('w2', st.wear[i] === VOID);
+      cl.remove('legal', 'takeable', 'leap', 'for-a', 'for-b');
+      cells[i].disabled = st.wear[i] === VOID;
+    }
+    placePiece(0); placePiece(1);
+    if(!over && !busy && !aiControls(p)){
+      if(phase === 'move'){
+        if(leapArmed){
+          hops = leapMoves(geo, st, p);
+          for(i = 0; i < hops.length; i++) cells[hops[i]].classList.add('leap');
+        } else {
+          legal = legalMoves(geo, st, p);
+          for(i = 0; i < legal.length; i++) cells[legal[i]].classList.add('legal', 'for-' + SIDE[p]);
+        }
+      } else {
+        var t = strikeTargets(geo, st);
+        for(i = 0; i < t.length; i++) cells[t[i]].classList.add('takeable');
+      }
+    }
+    renderLeapUI();
+    setStatus();
+  }
+
+  function renderLeapUI(){
+    var p = st.turn;
+    var yours = !over && !busy && !aiControls(p) && phase === 'move';
+    var available = yours && st.leaps[p] > 0 && leapMoves(geo, st, p).length > 0;
+    leapBtn.disabled = !available;
+    leapBtn.setAttribute('aria-pressed', leapArmed ? 'true' : 'false');
+    leapBtn.textContent = leapArmed ? 'Pick a landing hex' : 'Vault a gap';
+    if(!available && leapArmed) leapArmed = false;
+    tokensEl.innerHTML = [0, 1].map(function(k){
+      var spent = st.leaps[k] === 0;
+      return '<span class="tok ' + SIDE[k] + (spent ? ' spent' : '') + '">'
+        + '<span class="pip"></span>' + NAMES[k] + ' vault ' + (spent ? 'spent' : 'ready') + '</span>';
+    }).join('');
+  }
+
+  function setStatus(){
+    var p = st.turn;
+    if(over){
+      var w = 1 - p;
+      statusEl.firstElementChild.className = 'dot ' + SIDE[w];
+      statusText.textContent = NAMES[w] + ' wins — ' + NAMES[p] + ' had nowhere left to step.';
+      return;
+    }
+    statusEl.firstElementChild.className = 'dot ' + SIDE[p];
+    var who = (mode !== '2p' && p === HUMAN) ? 'You' : (aiControls(p) ? NAMES[p] + ' (' + mode + ')' : NAMES[p]);
+    if(busy && aiControls(p)){ statusText.textContent = who + ' is thinking…'; return; }
+    if(phase === 'move' && leapArmed){
+      statusText.innerHTML = who + ' to vault <span class="hint">— land beyond a single gap, or press the button again to cancel</span>';
+      return;
+    }
+    statusText.innerHTML = phase === 'move'
+      ? who + ' to move <span class="hint">— pick a marked hex</span>'
+      : who + ' to strike <span class="hint">— fracture a whole hex, or break a fractured one</span>';
+  }
+
+  function stepPiece(p, dest, isLeap, done){
+    var from = st.pieces[p], collapses = st.wear[from] === CRACKED;
+    if(collapses) st.wear[from] = VOID;
+    st.pieces[p] = dest;
+    if(isLeap && !reduced()){
+      pieceEls[p].classList.add('hopping');
+      setTimeout(function(){ pieceEls[p].classList.remove('hopping'); }, 380);
+    }
+    render();
+    if(collapses && !reduced()){
+      setTimeout(function(){ burst(from, 'big'); if(done) done(); }, 150);
+    } else if(done) done();
+  }
+
+  function onCell(i){
+    if(over || busy || aiControls(st.turn)) return;
+    if(phase === 'move'){
+      var isLeap = leapArmed && cells[i].classList.contains('leap');
+      if(!isLeap && !cells[i].classList.contains('legal')) return;
+      busy = true;
+      if(isLeap) st.leaps[st.turn]--;
+      leapArmed = false;
+      stepPiece(st.turn, i, isLeap, function(){
+        busy = false; phase = 'remove'; render();
+      });
+    } else {
+      if(!cells[i].classList.contains('takeable')) return;
+      st.wear[i]++;
+      busy = true; render();
+      decayFx(i, function(){ busy = false; endTurn(); });
+    }
+  }
+
+  function endTurn(){
+    st.turn = 1 - st.turn;
+    phase = 'move';
+    if(!hasMove(geo, st, st.turn)){
+      over = true;
+      pieceEls[st.turn].classList.add('trapped');
+      render();
+      setTimeout(showWin, 480);
+      return;
+    }
+    render();
+    if(aiControls(st.turn)) runAI();
+  }
+
+  function showWin(){
+    var loser = st.turn, winner = 1 - loser;
+    var colour = winner === 0 ? 'var(--ochre)' : 'var(--indigo)';
+    winBar.style.background = colour;
+    winMark.style.color = colour;
+    winMark.querySelector('i').style.background =
+      'radial-gradient(circle at 34% 28%, color-mix(in srgb, ' + colour + ' 68%, white), ' + colour + ')';
+    var human = mode !== '2p' && winner === HUMAN;
+    var lost = mode !== '2p' && loser === HUMAN;
+    winTitle.textContent = human ? 'You win' : (lost ? NAMES[winner] + ' wins' : NAMES[winner] + ' wins');
+    winWhy.textContent = (lost ? 'You ran out of footing' : NAMES[loser] + ' ran out of footing')
+      + ' — no hex left to step to.';
+    boardEl.classList.add('finished');
+    overlay.hidden = false;
+    document.getElementById('again').focus();
+  }
+
+  function hideWin(){
+    overlay.hidden = true;
+    boardEl.classList.remove('finished');
+  }
+
+  function runAI(){
+    busy = true; render();
+    var level = mode, p = st.turn;
+    setTimeout(function(){
+      var turn = chooseTurn(geo, st, p, level, Math.random);
+      if(!turn){ busy = false; over = true; render(); return; }
+      if(turn[2]) st.leaps[p]--;
+      stepPiece(p, turn[0], !!turn[2], function(){
+        phase = 'remove'; render();
+        setTimeout(function(){
+          if(turn[1] >= 0 && st.wear[turn[1]] < VOID){
+            st.wear[turn[1]]++;
+            decayFx(turn[1], function(){ busy = false; endTurn(); });
+          } else { busy = false; endTurn(); }
+        }, 380);
+      });
+    }, 60);
+  }
+
+  modeEl.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-mode]');
+    if(!b) return;
+    Array.prototype.forEach.call(modeEl.children, function(x){
+      x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
+    });
+    mode = b.dataset.mode;
+    build();
+  });
+  leapBtn.addEventListener('click', function(){
+    if(leapBtn.disabled) return;
+    leapArmed = !leapArmed;
+    render();
+  });
+  sizeEl.addEventListener('change', build);
+  document.getElementById('newgame').addEventListener('click', build);
+  document.getElementById('again').addEventListener('click', build);
+  document.getElementById('dismiss').addEventListener('click', hideWin);
+  overlay.addEventListener('click', function(e){ if(e.target === overlay) hideWin(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !overlay.hidden) hideWin(); });
+  window.addEventListener('resize', function(){ if(geo) layout(); });
+
+  build();
+})();
+</script>
+
+</body>
+</html>
