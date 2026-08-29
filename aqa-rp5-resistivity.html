@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AQA Required Practical 5 — Resistivity of a Wire</title>
+<style>
+#rp5-root{
+  --ink:#14212b; --ink-2:#41576a; --ink-3:#7189a0;
+  --paper:#eef2f3; --card:#ffffff; --rule:#d3dde2;
+  --brand:#0b6a63; --brand-dk:#064a45; --brand-lt:#e2f1ef;
+  --signal:#c2410c; --signal-lt:#fdeee5;
+  --gold:#a8730a; --gold-lt:#fbf1dc;
+  --good:#1c7a4b; --good-lt:#e3f4ea;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  all:initial;
+  display:block; width:100%; min-height:600px;
+  box-sizing:border-box;
+  font-family:var(--sans); color:var(--ink);
+  background:var(--paper); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+#rp5-root *,#rp5-root *::before,#rp5-root *::after{box-sizing:border-box; margin:0; padding:0; font-family:inherit;}
+#rp5-root .wrap{max-width:1080px; margin:0 auto; padding:20px 18px 56px;}
+
+#rp5-root .masthead{display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; justify-content:space-between;
+  border-bottom:3px solid var(--brand); padding-bottom:12px; margin-bottom:18px;}
+#rp5-root .mast-l .tag{font:600 11px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--brand); display:block; margin-bottom:6px;}
+#rp5-root h1{font-size:26px; line-height:1.15; font-weight:700; letter-spacing:-.015em;}
+#rp5-root .mast-r{font:500 12px/1.5 var(--mono); color:var(--ink-3); text-align:right;}
+
+#rp5-root .steps{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px;}
+#rp5-root .step{flex:1 1 130px; border:1px solid var(--rule); background:var(--card); border-radius:6px;
+  padding:8px 10px; cursor:pointer; text-align:left; transition:.15s;}
+#rp5-root .step .n{font:700 10px/1 var(--mono); color:var(--ink-3); letter-spacing:.1em;}
+#rp5-root .step .t{font-size:13px; font-weight:600; margin-top:3px; display:block;}
+#rp5-root .step[aria-current="true"]{background:var(--brand); border-color:var(--brand); color:#fff;}
+#rp5-root .step[aria-current="true"] .n{color:#9fd3ce;}
+#rp5-root .step[data-done="1"]:not([aria-current="true"]){border-color:var(--brand); background:var(--brand-lt);}
+#rp5-root .step:hover:not([aria-current="true"]){border-color:var(--brand);}
+
+#rp5-root .card{background:var(--card); border:1px solid var(--rule); border-radius:8px; padding:18px; margin-bottom:16px;}
+#rp5-root .card > h2{font-size:17px; font-weight:700; margin-bottom:4px; letter-spacing:-.01em;}
+#rp5-root .card > .lede{color:var(--ink-2); font-size:14px; margin-bottom:14px; max-width:62ch;}
+#rp5-root h3{font-size:14px; font-weight:700; margin:16px 0 8px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);}
+#rp5-root p{margin-bottom:10px; max-width:70ch;}
+#rp5-root p:last-child{margin-bottom:0;}
+#rp5-root .muted{color:var(--ink-3); font-size:13px;}
+#rp5-root strong{font-weight:700;}
+#rp5-root em{font-style:italic;}
+
+#rp5-root .panel{display:none;}
+#rp5-root .panel.on{display:block;}
+
+#rp5-root button{font-family:inherit; font-size:14px; cursor:pointer; border-radius:6px; border:1px solid transparent;}
+#rp5-root .btn{background:var(--brand); color:#fff; padding:9px 16px; font-weight:600; transition:.15s;}
+#rp5-root .btn:hover{background:var(--brand-dk);}
+#rp5-root .btn:disabled{background:#adbcc4; cursor:not-allowed;}
+#rp5-root .btn-2{background:var(--card); color:var(--ink); border-color:var(--rule); padding:8px 14px; font-weight:600;}
+#rp5-root .btn-2:hover{border-color:var(--brand); color:var(--brand);}
+#rp5-root .btn-row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:16px;}
+
+#rp5-root input[type=text],#rp5-root input[type=number],#rp5-root select{
+  font-family:var(--mono); font-size:14px; padding:6px 8px; border:1px solid var(--rule);
+  border-radius:5px; background:#fbfdfd; color:var(--ink); width:100%;}
+#rp5-root input:focus,#rp5-root select:focus{outline:2px solid var(--brand); outline-offset:-1px; border-color:var(--brand);}
+#rp5-root input.ok{border-color:var(--good); background:var(--good-lt);}
+#rp5-root input.bad{border-color:var(--signal); background:var(--signal-lt);}
+#rp5-root label{display:block; font-size:12px; font-weight:600; color:var(--ink-2); margin-bottom:4px;}
+
+#rp5-root table{border-collapse:collapse; width:100%; font-family:var(--mono); font-size:13px;}
+#rp5-root th,#rp5-root td{border:1px solid var(--rule); padding:5px 7px; text-align:center;}
+#rp5-root thead th{background:var(--brand-lt); font-weight:700; font-size:12px; line-height:1.3;}
+#rp5-root td input{padding:4px 5px; text-align:center; border-radius:3px;}
+#rp5-root .tscroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+
+#rp5-root .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;}
+#rp5-root .grid4{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px;}
+
+#rp5-root .readout{background:#101c22; border-radius:6px; padding:10px 12px; color:#7ef0d8;
+  font-family:var(--mono); text-align:center; border:2px solid #2b3d47;}
+#rp5-root .readout .lab{font-size:10px; letter-spacing:.12em; color:#7d97a3; text-transform:uppercase; display:block;}
+#rp5-root .readout .val{font-size:22px; font-weight:700; letter-spacing:.02em; display:block; margin-top:2px;}
+#rp5-root .readout.amber .val{color:#ffc94d;}
+
+#rp5-root .note{border-left:3px solid var(--gold); background:var(--gold-lt); padding:10px 12px; border-radius:0 5px 5px 0; font-size:13.5px; margin:12px 0;}
+#rp5-root .note.warn{border-color:var(--signal); background:var(--signal-lt);}
+#rp5-root .note.good{border-color:var(--good); background:var(--good-lt);}
+
+#rp5-root .slab{display:flex; align-items:center; gap:12px; margin:10px 0;}
+#rp5-root .slab span{font:600 12px/1 var(--mono); color:var(--ink-2); white-space:nowrap;}
+#rp5-root input[type=range]{-webkit-appearance:none; appearance:none; height:6px; background:var(--rule); border-radius:3px; flex:1 1 auto; min-width:120px;}
+#rp5-root input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--brand); border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); cursor:pointer;}
+#rp5-root input[type=range]::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:var(--brand); border:2px solid #fff; cursor:pointer;}
+
+#rp5-root .canvas-box{position:relative; width:100%; border:1px solid var(--rule); border-radius:6px; background:#fff; overflow:hidden;}
+#rp5-root canvas{display:block; width:100%; touch-action:none;}
+
+#rp5-root .toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+#rp5-root .tool{padding:7px 12px; font-size:13px; font-weight:600; border:1px solid var(--rule); background:var(--card); border-radius:6px; color:var(--ink-2);}
+#rp5-root .tool[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+#rp5-root .mark-row{display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--rule); align-items:flex-start;}
+#rp5-root .mark-row:last-child{border-bottom:none;}
+#rp5-root .pip{flex:0 0 auto; width:26px; height:22px; border-radius:4px; font:700 11px/22px var(--mono); text-align:center; color:#fff;}
+#rp5-root .pip.y{background:var(--good);} #rp5-root .pip.n{background:var(--signal);} #rp5-root .pip.p{background:var(--gold);}
+#rp5-root .mark-txt{flex:1 1 auto; font-size:13.5px;}
+#rp5-root .mark-txt b{display:block; font-weight:600;}
+#rp5-root .mark-txt i{display:block; font-style:normal; color:var(--ink-2); font-size:12.5px; margin-top:2px;}
+
+#rp5-root .score{display:flex; align-items:baseline; gap:10px; background:var(--ink); color:#fff; border-radius:8px; padding:14px 18px; margin-bottom:14px; flex-wrap:wrap;}
+#rp5-root .score .big{font:700 34px/1 var(--mono); color:#7ef0d8;}
+#rp5-root .score .pct{font:600 14px/1 var(--mono); color:#9fb3bd;}
+
+#rp5-root .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+#rp5-root .chip{font:600 11px/1 var(--mono); padding:5px 8px; border-radius:20px; background:var(--brand-lt); color:var(--brand-dk); letter-spacing:.03em;}
+
+#rp5-root .code-out{font-family:var(--mono); font-size:13px; word-break:break-all; background:var(--paper); border:1px dashed var(--rule); padding:10px; border-radius:5px;}
+#rp5-root .opts{border:1px solid var(--rule); border-radius:6px; padding:12px 14px; background:var(--brand-lt); margin:14px 0;}
+#rp5-root .check{display:flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:var(--ink); cursor:pointer; margin:0;}
+#rp5-root .check input{width:18px; height:18px; accent-color:var(--brand); cursor:pointer; flex:0 0 auto;}
+#rp5-root .opts .muted{margin:7px 0 0;}
+#rp5-root .hidden{display:none;}
+#rp5-root .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
+@media (max-width:640px){
+  #rp5-root h1{font-size:21px;}
+  #rp5-root .wrap{padding:14px 12px 40px;}
+  #rp5-root .card{padding:14px;}
+}
+</style>
+</head>
+<body style="margin:0">
+<div id="rp5-root">
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="mast-l">
+      <span class="tag">AQA A-level Physics &middot; Required Practical 5</span>
+      <h1>Determination of the resistivity of a wire</h1>
+    </div>
+    <div class="mast-r">Marked automatically<br>Apparatus is unique to you</div>
+  </div>
+
+  <div class="steps" role="tablist">
+    <button class="step" data-goto="0" aria-current="true"><span class="n">STEP 1</span><span class="t">Your apparatus</span></button>
+    <button class="step" data-goto="1"><span class="n">STEP 2</span><span class="t">Micrometer</span></button>
+    <button class="step" data-goto="2"><span class="n">STEP 3</span><span class="t">Circuit readings</span></button>
+    <button class="step" data-goto="3"><span class="n">STEP 4</span><span class="t">Graph</span></button>
+    <button class="step" data-goto="4"><span class="n">STEP 5</span><span class="t">Analysis</span></button>
+    <button class="step" data-goto="5"><span class="n">STEP 6</span><span class="t">Your marks</span></button>
+  </div>
+
+  <!-- ============ STEP 1 : SETUP ============ -->
+  <section class="panel on" data-panel="0">
+    <div class="card">
+      <h2>Your apparatus</h2>
+      <p class="lede">Every time you open this page &mdash; or press the button below &mdash; you are handed a different wire and a different micrometer. The physics is the same; the numbers are yours.</p>
+      <div class="opts">
+        <label class="check"><input type="checkbox" id="rp5-unc" checked> <span>Include uncertainties</span></label>
+        <p class="muted">Leave this ticked for the full A-level treatment: error bars, a worst acceptable line and percentage uncertainties. Untick it to work through the measurement and the graph on their own.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn-2" id="rp5-new">New apparatus</button>
+        <span class="muted" id="rp5-seedmsg"></span>
+      </div>
+
+      <div id="rp5-brief">
+        <h3>Method you are following</h3>
+        <p>A length of bare resistance wire is taped alongside a metre rule. A flying lead makes contact at length <em>L</em> from the fixed terminal. The pd across the wire and the current through it are measured, so the resistance of that length is <em>R</em>&nbsp;=&nbsp;<em>V</em>/<em>I</em>.</p>
+        <p>Since <em>R</em>&nbsp;=&nbsp;<em>&rho;L</em>/<em>A</em>, a graph of <em>R</em> against <em>L</em> has gradient <em>&rho;</em>/<em>A</em>, and the resistivity follows from the cross-sectional area found with the micrometer.</p>
+        <div class="note">
+          <strong>Why the graph and not a single reading?</strong> The contacts at each end add a small unwanted resistance. That offset shifts the whole line up but leaves the gradient untouched, so taking the gradient removes a systematic error that a single measurement of <em>R</em>/<em>L</em> would carry straight into your answer.
+        </div>
+        <div class="btn-row"><button class="btn" data-goto="1">Go to the micrometer</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 2 : MICROMETER ============ -->
+  <section class="panel" data-panel="1">
+    <div class="card">
+      <h2>Measuring the diameter</h2>
+      <p class="lede">Read the micrometer at each position and type what you see. Read it as it is &mdash; do not correct anything yet.</p>
+      <div class="canvas-box"><canvas id="rp5-mic" height="220"></canvas></div>
+      <div class="toolbar" id="rp5-micbar" style="margin-top:10px"></div>
+      <div class="grid2" style="margin-top:4px">
+        <div>
+          <label id="rp5-miclab" for="rp5-micin">Reading with the jaws closed / mm</label>
+          <input type="number" step="0.01" id="rp5-micin" placeholder="0.00">
+        </div>
+        <div style="align-self:end">
+          <button class="btn-2" id="rp5-micsave">Record this reading</button>
+        </div>
+      </div>
+      <div id="rp5-mictip" class="note hidden"></div>
+
+      <h3>Your diameter readings</h3>
+      <div class="tscroll">
+        <table id="rp5-mictab">
+          <thead><tr><th style="width:34%">Position</th><th>Micrometer reading / mm</th><th>Corrected diameter <em>d</em> / mm</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted" style="margin-top:8px">The corrected column fills in only once you have recorded the zero reading and all five positions.</p>
+      <div class="btn-row"><button class="btn" data-goto="2" id="rp5-tocircuit" disabled>Go to the circuit</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3 : CIRCUIT ============ -->
+  <section class="panel" data-panel="2">
+    <div class="card">
+      <h2>Taking the circuit readings</h2>
+      <p class="lede">Slide the flying lead along the rule, let the meters settle, then record the length. You need <strong>six</strong> lengths, well spread along the wire.</p>
+      <div class="canvas-box"><canvas id="rp5-cir" height="300"></canvas></div>
+      <div class="slab" style="margin-top:12px">
+        <span>Length <em>L</em></span>
+        <input type="range" id="rp5-len" min="0.050" max="1.000" step="0.005" value="0.500">
+        <span id="rp5-lenval" style="min-width:8ch; text-align:right">0.500 m</span>
+      </div>
+      <div class="grid4" style="margin-top:6px">
+        <div class="readout"><span class="lab">Voltmeter</span><span class="val" id="rp5-vm">0.000 V</span></div>
+        <div class="readout amber"><span class="lab">Ammeter</span><span class="val" id="rp5-am">0.000 A</span></div>
+        <div style="display:flex; align-items:center"><button class="btn" id="rp5-record" style="width:100%">Record this length</button></div>
+        <div style="display:flex; align-items:center"><button class="btn-2" id="rp5-clear" style="width:100%">Clear table</button></div>
+      </div>
+      <div class="note" style="margin-top:14px">The supply is switched on only while you take a reading. Left running, the wire warms up, its resistance creeps and your points drift off the line.</div>
+
+      <h3>Your results table</h3>
+      <div class="tscroll">
+        <table id="rp5-restab">
+          <thead><tr><th><em>L</em> / m</th><th><em>V</em> / V</th><th><em>I</em> / A</th><th><em>R</em> / &Omega;<br><span class="muted" style="font-weight:400">you calculate</span></th><th class="u-only">&plusmn;&Delta;<em>R</em> / &Omega;<br><span class="muted" style="font-weight:400">from resolution</span></th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-row"><button class="btn" data-goto="3" id="rp5-tograph" disabled>Go to the graph</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4 : GRAPH ============ -->
+  <section class="panel" data-panel="3">
+    <div class="card">
+      <h2>Plotting <em>R</em> against <em>L</em></h2>
+      <p class="lede">Choose your own scales, plot your six points, then draw the line of best fit and the steepest or shallowest line that still passes through every error bar.</p>
+
+      <div class="grid4" style="margin-bottom:12px">
+        <div><label for="rp5-xmin">x from / m</label><input type="number" step="0.05" id="rp5-xmin" value="0"></div>
+        <div><label for="rp5-xmax">x to / m</label><input type="number" step="0.05" id="rp5-xmax" value="1"></div>
+        <div><label for="rp5-ymin">y from / &Omega;</label><input type="number" step="0.5" id="rp5-ymin" value="0"></div>
+        <div><label for="rp5-ymax">y to / &Omega;</label><input type="number" step="0.5" id="rp5-ymax" value="10"></div>
+      </div>
+
+      <div class="toolbar">
+        <button class="tool" data-tool="plot" aria-pressed="true">Plot points</button>
+        <button class="tool" data-tool="best" aria-pressed="false">Line of best fit</button>
+        <button class="tool u-only" data-tool="worst" aria-pressed="false">Worst acceptable line</button>
+        <button class="btn-2" id="rp5-undo">Remove last point</button>
+        <button class="btn-2" id="rp5-autoscale">Suggest sensible scales</button>
+      </div>
+
+      <div class="canvas-box"><canvas id="rp5-graph" height="560"></canvas></div>
+      <div class="note u-only" style="margin-top:10px"><strong>The error bars are small, and that is the point.</strong> Digital meters reading to three figures give an uncertainty in <em>R</em> of only a percent or so, which is why the worst acceptable line sits so close to the best one. Draw it as steep or as shallow as the bars genuinely allow — no further.</div>
+      <p class="muted" id="rp5-graphmsg" style="margin-top:8px">Click on the grid to place each point in turn. Error bars appear automatically from the uncertainty in your resistance values.</p>
+      <div class="btn-row"><button class="btn" data-goto="4">Go to the analysis</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 5 : ANALYSIS ============ -->
+  <section class="panel" data-panel="4">
+    <div class="card">
+      <h2>Analysis</h2>
+      <p class="lede">Work these out yourself from your own readings and your own lines. Give answers to a sensible number of significant figures.</p>
+
+      <h3>Cross-sectional area</h3>
+      <div class="grid4">
+        <div><label for="rp5-dmean">Mean corrected <em>d</em> / mm</label><input type="number" step="0.001" id="rp5-dmean"></div>
+        <div class="u-only"><label for="rp5-dunc">Uncertainty in <em>d</em> / mm</label><input type="number" step="0.001" id="rp5-dunc"></div>
+        <div><label for="rp5-area">Area <em>A</em> / m<sup>2</sup></label><input type="text" id="rp5-area" placeholder="e.g. 8.0e-8"></div>
+        <div class="u-only"><label for="rp5-dpct">% uncertainty in <em>d</em></label><input type="number" step="0.1" id="rp5-dpct"></div>
+      </div>
+
+      <h3 id="rp5-ghead">Gradients</h3>
+      <div class="grid4">
+        <div><label for="rp5-gbest">Gradient of best line / &Omega; m<sup>&minus;1</sup></label><input type="number" step="0.001" id="rp5-gbest"></div>
+        <div class="u-only"><label for="rp5-gworst">Gradient of worst line / &Omega; m<sup>&minus;1</sup></label><input type="number" step="0.001" id="rp5-gworst"></div>
+        <div class="u-only"><label for="rp5-gunc">Uncertainty in gradient</label><input type="number" step="0.001" id="rp5-gunc"></div>
+        <div class="u-only"><label for="rp5-gpct">% uncertainty in gradient</label><input type="number" step="0.1" id="rp5-gpct"></div>
+      </div>
+
+      <h3>Resistivity</h3>
+      <div class="grid4">
+        <div><label for="rp5-rho">&rho; / &Omega; m</label><input type="text" id="rp5-rho" placeholder="e.g. 4.9e-7"></div>
+        <div class="u-only"><label for="rp5-rhopct">% uncertainty in &rho;</label><input type="number" step="0.1" id="rp5-rhopct"></div>
+        <div class="u-only"><label for="rp5-rhoabs">Absolute uncertainty in &rho; / &Omega; m</label><input type="text" id="rp5-rhoabs" placeholder="e.g. 0.3e-7"></div>
+        <div><label for="rp5-mat">Which wire were you given?</label>
+          <select id="rp5-mat">
+            <option value="">select&hellip;</option>
+            <option value="copper">Copper &mdash; 1.7 &times; 10&#8315;&#8312; &Omega; m</option>
+            <option value="tungsten">Tungsten &mdash; 5.6 &times; 10&#8315;&#8312; &Omega; m</option>
+            <option value="constantan">Constantan &mdash; 4.9 &times; 10&#8315;&#8311; &Omega; m</option>
+            <option value="nichrome">Nichrome &mdash; 1.1 &times; 10&#8315;&#8310; &Omega; m</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="note u-only" style="margin-top:16px"><strong>Reminder.</strong> Percentage uncertainties add when quantities are multiplied or divided, and a quantity that is squared contributes twice its percentage uncertainty.</div>
+
+      <div class="btn-row"><button class="btn" id="rp5-mark">Mark my work</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 6 : MARKS ============ -->
+  <section class="panel" data-panel="5">
+    <div class="card">
+      <div class="score">
+        <span class="big" id="rp5-total">&mdash;</span>
+        <span class="pct" id="rp5-pct"></span>
+        <span class="pct" id="rp5-grade" style="margin-left:auto"></span>
+      </div>
+      <div id="rp5-marks"></div>
+      <div class="btn-row">
+        <button class="btn-2" data-goto="3">Back to the graph</button>
+        <button class="btn" id="rp5-retry">Try again with new apparatus</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+</div>
+<script>
+(function(){
+"use strict";
+var root = document.getElementById('rp5-root');
+var $  = function(id){ return document.getElementById(id); };
+var $$ = function(sel){ return Array.prototype.slice.call(root.querySelectorAll(sel)); };
+
+/* ---------- constants ---------- */
+var MATERIALS = {
+  copper:    {name:'copper',     rho:1.68e-8},
+  tungsten:  {name:'tungsten',   rho:5.60e-8},
+  constantan:{name:'constantan', rho:4.90e-7},
+  nichrome:  {name:'nichrome',   rho:1.10e-6}
+};
+var POOL = ['constantan','nichrome'];
+var DNOM = [0.27,0.30,0.32,0.35,0.38,0.41,0.45,0.56,0.61];
+var ZERR = [-0.02,-0.01,0.00,0.00,0.01,0.02];
+var EMF = 2.000, RPROT = 3.30, DV = 0.01, DI = 0.001;
+
+/* ---------- seeded prng ---------- */
+function hashStr(s){ var h=2166136261>>>0; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h>>>0; }
+function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- state ---------- */
+var S = {
+  seed:0, name:'', cls:'', rng:null, app:null,
+  mic:{zero:null, pos:[null,null,null,null,null]},
+  micStage:0, rows:[],
+  g:{pts:[], best:null, worst:null, tool:'plot'},
+  marks:null
+};
+
+function buildApparatus(seed){
+  var r = mulberry(seed);
+  var mat = POOL[Math.floor(r()*POOL.length)];
+  var dnom = DNOM[Math.floor(r()*DNOM.length)];
+  var zerr = ZERR[Math.floor(r()*ZERR.length)];
+  var jit = [];
+  for(var i=0;i<5;i++){ jit.push((Math.floor(r()*3)-1)*0.01); }
+  // the wire is not perfectly uniform, but the mean is the nominal value
+  var reads = jit.map(function(j){ return Math.round((dnom + j + zerr)*100)/100; });
+  var dmm = reads.reduce(function(a,b){return a+b;},0)/5 - zerr;   // true mean corrected, mm
+  var d = dmm/1000;
+  var A = Math.PI*d*d/4;
+  return {
+    material:mat, rho:MATERIALS[mat].rho, dnom:dnom, zeroErr:zerr,
+    micReads:reads, dTrueMm:dmm, area:A,
+    gradTrue: MATERIALS[mat].rho/A,
+    contact: 0.05 + r()*0.12,
+    nseed: Math.floor(r()*1e9)
+  };
+}
+
+/* deterministic per-length meter noise, so re-reading the same L is stable */
+function meters(L){
+  var a = S.app, r = mulberry(a.nseed ^ Math.round(L*1000)*2654435761);
+  var R = a.gradTrue*L + a.contact;
+  var I = EMF/(RPROT + R);
+  var V = I*R;
+  V += (r()-0.5)*0.004; I += (r()-0.5)*0.0008;
+  return { V: Math.max(0,Math.round(V*100)/100), I: Math.max(0,Math.round(I*1000)/1000) };
+}
+function dR(V,I){ return (V/I)*(DV/V + DI/I); }
+
+/* ---------- navigation ---------- */
+function go(n){
+  $$('.panel').forEach(function(p){ p.classList.toggle('on', +p.dataset.panel===n); });
+  $$('.step').forEach(function(b){
+    var i=+b.dataset.goto;
+    b.setAttribute('aria-current', i===n ? 'true':'false');
+    if(i<n) b.dataset.done='1';
+  });
+  if(n===1) drawMic();
+  if(n===2) drawCircuit();
+  if(n===3) drawGraph();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$$('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ go(+b.dataset.goto); }); });
+
+/* ---------- canvas helper ---------- */
+function fit(cv, hCss){
+  var dpr = window.devicePixelRatio||1;
+  var w = cv.parentNode.clientWidth||640;
+  cv.style.height = hCss+'px';
+  cv.width = Math.round(w*dpr); cv.height = Math.round(hCss*dpr);
+  var c = cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  return {c:c, w:w, h:hCss};
+}
+
+/* ================= MICROMETER ================= */
+var micCv = $('rp5-mic');
+function micTargetValue(){
+  if(!S.app) return 0;
+  return S.micStage===0 ? S.app.zeroErr : S.app.micReads[S.micStage-1];
+}
+function drawMic(){
+  if(!S.app) return;
+  var f = fit(micCv, 250), c=f.c, W=f.w, H=250;
+  var v = micTargetValue();
+  c.clearRect(0,0,W,H); c.fillStyle='#f7fafa'; c.fillRect(0,0,W,H);
+
+  var yd=128, xa=70, xs=142, x0=240, pxmm=150;
+  var edge = x0 + v*pxmm;
+  var tLen = Math.min(300, W-16-edge);
+  var gap = Math.max(0,(v - S.app.zeroErr))*80;
+
+  /* C-frame */
+  c.fillStyle='#495760';
+  c.beginPath(); c.moveTo(xa-18,yd-38); c.lineTo(xa,yd-38); c.lineTo(xa,yd+38); c.lineTo(xa-18,yd+38);
+  c.quadraticCurveTo(xa-62,yd+38,xa-62,yd-4); c.quadraticCurveTo(xa-62,yd-38,xa-18,yd-38); c.closePath(); c.fill();
+  c.fillStyle='#aab7be'; c.fillRect(xa-9,yd-18,9,36);
+  /* spindle */
+  c.fillStyle='#c3ced4'; c.fillRect(xa+gap, yd-14, xs-(xa+gap)+10, 28);
+  c.strokeStyle='#8b9aa3'; c.lineWidth=1; c.strokeRect(xa+gap, yd-14, xs-(xa+gap)+10, 28);
+  if(S.micStage>0 && gap>0.5){
+    c.fillStyle='#b3702f'; c.beginPath(); c.arc(xa+gap/2, yd, gap/2, 0, Math.PI*2); c.fill();
+    c.strokeStyle='#7d4c1d'; c.lineWidth=1; c.stroke();
+  }
+
+  /* sleeve barrel, up to the thimble */
+  var sg=c.createLinearGradient(0,yd-30,0,yd+30);
+  sg.addColorStop(0,'#c4d1d7'); sg.addColorStop(0.5,'#f1f6f8'); sg.addColorStop(1,'#bccad1');
+  c.fillStyle=sg; c.fillRect(xs,yd-30,Math.max(0,edge-xs)+2,60);
+  c.strokeStyle='#a3b3bb'; c.lineWidth=1; c.strokeRect(xs,yd-30,Math.max(0,edge-xs)+2,60);
+
+  c.save(); c.beginPath(); c.rect(xs,yd-30,Math.max(0,edge-xs),60); c.clip();
+  c.strokeStyle='#16242c'; c.lineWidth=2.2;
+  c.beginPath(); c.moveTo(xs+6,yd); c.lineTo(edge,yd); c.stroke();
+  c.font='700 14px ui-monospace,Menlo,monospace'; c.fillStyle='#16242c'; c.textAlign='center'; c.textBaseline='alphabetic';
+  for(var m=0;m<=3;m++){
+    var xm=x0+m*pxmm;
+    c.beginPath(); c.moveTo(xm,yd); c.lineTo(xm,yd-16); c.stroke();
+    c.fillText(String(m), xm, yd-21);
+    var xh=xm+pxmm/2;
+    c.beginPath(); c.moveTo(xh,yd); c.lineTo(xh,yd+14); c.stroke();
+  }
+  c.restore();
+
+  /* thimble */
+  var th=58;
+  var tg=c.createLinearGradient(0,yd-th,0,yd+th);
+  tg.addColorStop(0,'#77888f'); tg.addColorStop(0.4,'#f4f9fa'); tg.addColorStop(0.6,'#e8f0f2'); tg.addColorStop(1,'#6f8087');
+  c.fillStyle=tg; c.beginPath();
+  c.moveTo(edge,yd-th); c.lineTo(edge+tLen-18,yd-th); c.quadraticCurveTo(edge+tLen,yd-th,edge+tLen,yd-th+18);
+  c.lineTo(edge+tLen,yd+th-18); c.quadraticCurveTo(edge+tLen,yd+th,edge+tLen-18,yd+th); c.lineTo(edge,yd+th);
+  c.closePath(); c.fill();
+  c.strokeStyle='#6d7f88'; c.lineWidth=1; c.stroke();
+  c.fillStyle='#66787f'; c.fillRect(edge,yd-th,8,2*th);
+  /* reading band */
+  c.fillStyle='rgba(194,65,12,0.07)'; c.fillRect(edge+8,yd-9,tLen-8,18);
+
+  var frac=v-Math.floor(v/0.5)*0.5, divNow=frac/0.01, sp=16;
+  c.save(); c.beginPath(); c.rect(edge,yd-th,tLen,2*th); c.clip();
+  c.textAlign='left'; c.textBaseline='middle';
+  for(var k=-3;k<=3;k++){
+    var dv=Math.round(divNow)+k, y=yd-(dv-divNow)*sp, lab=((dv%50)+50)%50, major=(lab%5===0);
+    c.strokeStyle='#16242c'; c.lineWidth=major?2.4:1.6;
+    c.beginPath(); c.moveTo(edge+12,y); c.lineTo(edge+(major?46:30),y); c.stroke();
+    if(major){ c.fillStyle='#16242c'; c.font='700 14px ui-monospace,Menlo,monospace';
+      c.fillText(lab<10?'0'+lab:''+lab, edge+52, y); }
+  }
+  c.restore();
+
+  c.strokeStyle='#c2410c'; c.lineWidth=2.5;
+  c.beginPath(); c.moveTo(xs-20,yd); c.lineTo(xs+2,yd); c.stroke();
+  c.fillStyle='#c2410c'; c.beginPath(); c.moveTo(xs+10,yd); c.lineTo(xs,yd-5); c.lineTo(xs,yd+5); c.closePath(); c.fill();
+  c.font='600 10px ui-monospace,Menlo,monospace'; c.textAlign='left'; c.textBaseline='alphabetic';
+  c.fillText('datum', xs-22, yd-12);
+
+  c.fillStyle='#41576a'; c.font='600 13px ui-monospace,Menlo,monospace'; c.textAlign='left';
+  c.fillText(S.micStage===0 ? 'jaws closed on nothing — this is your zero reading'
+                            : 'jaws closed on the wire at position '+S.micStage, 18, 28);
+  c.fillStyle='#7189a0'; c.font='400 11.5px ui-monospace,Menlo,monospace';
+  c.fillText('sleeve: whole mm above the datum line, half mm below   ·   thimble: 1 division = 0.01 mm', 18, 234);
+}
+
+function micBar(){
+  var bar = $('rp5-micbar'); bar.innerHTML='';
+  var labels=['Jaws closed','Position 1','Position 2','Position 3','Position 4','Position 5'];
+  labels.forEach(function(t,i){
+    var b=document.createElement('button'); b.className='tool'; b.textContent=t;
+    b.setAttribute('aria-pressed', i===S.micStage?'true':'false');
+    var done = i===0 ? S.mic.zero!==null : S.mic.pos[i-1]!==null;
+    if(done && i!==S.micStage){ b.style.borderColor='#1c7a4b'; b.style.color='#1c7a4b'; }
+    b.addEventListener('click',function(){ S.micStage=i; micBar(); drawMic(); micLabel(); });
+    bar.appendChild(b);
+  });
+}
+function micLabel(){
+  $('rp5-miclab').innerHTML = S.micStage===0 ? 'Reading with the jaws closed / mm' : ('Reading at position '+S.micStage+' / mm');
+  var cur = S.micStage===0 ? S.mic.zero : S.mic.pos[S.micStage-1];
+  $('rp5-micin').value = cur===null||cur===undefined ? '' : cur;
+  $('rp5-micin').classList.remove('ok','bad');
+}
+function micTable(){
+  var tb = $('rp5-mictab').querySelector('tbody'); tb.innerHTML='';
+  var names=['Jaws closed (zero)','Position 1','Position 2','Position 3','Position 4','Position 5'];
+  var all = [S.mic.zero].concat(S.mic.pos);
+  var ready = all.every(function(v){ return v!==null && v!==undefined; });
+  names.forEach(function(n,i){
+    var tr=document.createElement('tr');
+    var v = all[i];
+    var corr = (ready && i>0) ? (v - S.mic.zero) : null;
+    tr.innerHTML = '<td style="text-align:left">'+n+'</td><td>'+(v===null||v===undefined?'&mdash;':v.toFixed(2))+'</td><td>'+(corr===null?'&mdash;':corr.toFixed(2))+'</td>';
+    tb.appendChild(tr);
+  });
+  $('rp5-tocircuit').disabled = !ready;
+  if(ready){ $('rp5-mictip').className='note good'; $('rp5-mictip').innerHTML='<strong>All five positions recorded.</strong> The corrected column has the zero reading subtracted from every measurement. Carry the mean of that column forward.'; }
+}
+$('rp5-micsave').addEventListener('click', function(){
+  var raw = $('rp5-micin').value.trim();
+  if(raw===''){ return; }
+  var v = parseFloat(raw);
+  if(isNaN(v)) return;
+  v = Math.round(v*100)/100;
+  if(S.micStage===0) S.mic.zero=v; else S.mic.pos[S.micStage-1]=v;
+  var tip=$('rp5-mictip'); tip.classList.remove('hidden');
+  var truth = micTargetValue();
+  if(Math.abs(v-truth)<0.0051){ tip.className='note good'; tip.textContent='Recorded.'; }
+  else if(Math.abs(Math.abs(v)-Math.abs(truth))<0.0051){ tip.className='note warn'; tip.innerHTML='<strong>Recorded, but check the sign.</strong> If the thimble has not yet reached the zero mark on the sleeve, the reading is negative.'; }
+  else if(Math.abs(v-truth-0.5)<0.0051 || Math.abs(v-truth+0.5)<0.0051){ tip.className='note warn'; tip.innerHTML='<strong>Recorded, but that looks half a millimetre out.</strong> Check whether a half-millimetre mark below the datum line is showing.'; }
+  else { tip.className='note'; tip.innerHTML='Recorded. Read the sleeve first, then add the thimble division that lines up with the datum line.'; }
+  if(S.micStage<5){ S.micStage++; }
+  micBar(); micLabel(); drawMic(); micTable();
+});
+$('rp5-micin').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); $('rp5-micsave').click(); } });
+
+/* ================= CIRCUIT ================= */
+var cirCv = $('rp5-cir');
+function curLen(){ return parseFloat($('rp5-len').value); }
+function drawCircuit(){
+  if(!S.app) return;
+  var f = fit(cirCv, 300), c=f.c, W=f.w;
+  c.clearRect(0,0,W,300); c.fillStyle='#fbfdfd'; c.fillRect(0,0,W,300);
+  var L=curLen(), x0=70, x1=W-70, xc=x0+L*(x1-x0);
+  var yTop=52, yWire=196, yV=262;
+  c.lineCap='round'; c.lineJoin='round';
+  c.strokeStyle='#22323b'; c.lineWidth=2;
+
+  function seg(ax,ay,bx,by){ c.beginPath(); c.moveTo(ax,ay); c.lineTo(bx,by); c.stroke(); }
+  /* top rail with gaps for components */
+  var cx1=x0+70, cx2=x0+200, cx3=x0+330;
+  seg(x0,yTop,cx1-16,yTop);
+  /* cell */
+  c.lineWidth=3; seg(cx1-16,yTop-16,cx1-16,yTop+16);
+  c.lineWidth=2; seg(cx1-4,yTop-9,cx1-4,yTop+9);
+  var sw=(cx1+cx2)/2-18;
+  seg(cx1-4,yTop,sw-14,yTop);
+  c.beginPath(); c.arc(sw-14,yTop,3,0,Math.PI*2); c.stroke();
+  seg(sw-12,yTop-2,sw+18,yTop-14);
+  c.beginPath(); c.arc(sw+20,yTop,3,0,Math.PI*2); c.stroke();
+  seg(sw+22,yTop,cx2-30,yTop);
+  /* rheostat / protective resistor */
+  c.strokeRect(cx2-30,yTop-12,60,24);
+  seg(cx2+30,yTop,cx3-18,yTop);
+  /* ammeter */
+  c.beginPath(); c.arc(cx3,yTop,18,0,Math.PI*2); c.stroke();
+  c.fillStyle='#22323b'; c.font='700 15px var(--sans),sans-serif'; c.textAlign='center'; c.textBaseline='middle';
+  c.fillText('A',cx3,yTop+1);
+  seg(cx3+18,yTop,x1,yTop);
+  /* verticals */
+  seg(x0,yTop,x0,yWire);
+  seg(x1,yTop,x1,yWire-40); seg(x1,yWire-40,xc,yWire-40); seg(xc,yWire-40,xc,yWire);
+
+  /* metre rule */
+  c.fillStyle='#f0e2c0'; c.fillRect(x0-8,yWire+10,x1-x0+16,34);
+  c.strokeStyle='#c9b98d'; c.lineWidth=1; c.strokeRect(x0-8,yWire+10,x1-x0+16,34);
+  c.strokeStyle='#5c5340'; c.fillStyle='#5c5340'; c.font='600 9px ui-monospace,Menlo,monospace'; c.textAlign='center'; c.textBaseline='alphabetic';
+  for(var t=0;t<=100;t+=2){
+    var xt=x0+(t/100)*(x1-x0), big=(t%10===0), mid=(t%10===5);
+    c.lineWidth=big?1.4:1;
+    c.beginPath(); c.moveTo(xt,yWire+10); c.lineTo(xt,yWire+10+(big?13:(mid?9:6))); c.stroke();
+    if(big) c.fillText((t/100).toFixed(1), xt, yWire+34);
+  }
+  /* the wire under test */
+  c.strokeStyle='#a9662a'; c.lineWidth=4; seg(x0,yWire,x1,yWire);
+  c.strokeStyle='#0b6a63'; c.lineWidth=5; seg(x0,yWire,xc,yWire);
+  /* crocodile clip */
+  c.fillStyle='#3d4a52'; c.beginPath();
+  c.moveTo(xc-9,yWire-12); c.lineTo(xc+9,yWire-12); c.lineTo(xc+4,yWire+7); c.lineTo(xc-4,yWire+7); c.closePath(); c.fill();
+  /* voltmeter */
+  c.strokeStyle='#22323b'; c.lineWidth=2;
+  seg(x0,yWire,x0,yV); seg(x0,yV,(x0+xc)/2-18,yV);
+  c.beginPath(); c.arc((x0+xc)/2,yV,18,0,Math.PI*2); c.stroke();
+  c.fillStyle='#22323b'; c.font='700 15px var(--sans),sans-serif'; c.fillText('V',(x0+xc)/2,yV+1);
+  seg((x0+xc)/2+18,yV,xc,yV); seg(xc,yV,xc,yWire);
+
+  c.fillStyle='#41576a'; c.font='600 12px ui-monospace,Menlo,monospace'; c.textAlign='left'; c.textBaseline='alphabetic';
+  c.fillText('L = '+L.toFixed(3)+' m', x0-8, 24);
+  c.textAlign='right'; c.fillStyle='#7189a0';
+  c.fillText('resistance wire on a metre rule', x1+8, 24);
+}
+function updateMeters(){
+  var L=curLen(), m=meters(L);
+  $('rp5-lenval').textContent = L.toFixed(3)+' m';
+  $('rp5-vm').textContent = m.V.toFixed(2)+' V';
+  $('rp5-am').textContent = m.I.toFixed(3)+' A';
+  drawCircuit();
+}
+$('rp5-len').addEventListener('input', updateMeters);
+
+function resTable(){
+  var tb=$('rp5-restab').querySelector('tbody'); tb.innerHTML='';
+  S.rows.forEach(function(r,i){
+    var tr=document.createElement('tr');
+    var d = r.I>0 ? dR(r.V,r.I) : 0;
+    tr.innerHTML='<td>'+r.L.toFixed(3)+'</td><td>'+r.V.toFixed(2)+'</td><td>'+r.I.toFixed(3)+
+      '</td><td><input type="number" step="0.001" data-row="'+i+'" value="'+(r.R===null?'':r.R)+'" placeholder="V/I"></td>'+
+      '<td class="u-only'+(UNC?'':' hidden')+'">'+d.toFixed(3)+'</td><td><button class="btn-2" data-del="'+i+'" style="padding:2px 8px">&times;</button></td>';
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('input[data-row]').forEach(function(inp){
+    inp.addEventListener('input', function(){
+      var i=+inp.dataset.row, v=parseFloat(inp.value);
+      S.rows[i].R = isNaN(v)?null:v; S.rows[i].Rstr = inp.value.trim();
+      var ok = !isNaN(v) && Math.abs(v - S.rows[i].V/S.rows[i].I) < 0.02*(S.rows[i].V/S.rows[i].I)+0.005;
+      inp.classList.toggle('ok', !isNaN(v)&&ok); inp.classList.toggle('bad', !isNaN(v)&&!ok);
+      checkRows();
+    });
+  });
+  tb.querySelectorAll('button[data-del]').forEach(function(b){
+    b.addEventListener('click',function(){ S.rows.splice(+b.dataset.del,1); resTable(); });
+  });
+  checkRows();
+}
+function checkRows(){
+  var enough = S.rows.length>=6 && S.rows.every(function(r){ return r.R!==null && !isNaN(r.R); });
+  $('rp5-tograph').disabled = !enough;
+}
+$('rp5-record').addEventListener('click', function(){
+  var L=curLen(), m=meters(L);
+  if(S.rows.some(function(r){ return Math.abs(r.L-L)<1e-9; })) return;
+  S.rows.push({L:L, V:m.V, I:m.I, R:null, Rstr:''});
+  S.rows.sort(function(a,b){ return a.L-b.L; });
+  resTable();
+});
+$('rp5-clear').addEventListener('click', function(){ S.rows=[]; resTable(); });
+
+/* ================= GRAPH ================= */
+var gCv = $('rp5-graph');
+var GEO = {l:74, r:22, t:20, b:56};
+function axes(){
+  return { xmin:parseFloat($('rp5-xmin').value), xmax:parseFloat($('rp5-xmax').value),
+           ymin:parseFloat($('rp5-ymin').value), ymax:parseFloat($('rp5-ymax').value) };
+}
+function plotBox(W,H){ return {x:GEO.l, y:GEO.t, w:W-GEO.l-GEO.r, h:H-GEO.t-GEO.b}; }
+function toPx(dx,dy,ax,bx){
+  return { x: bx.x + (dx-ax.xmin)/(ax.xmax-ax.xmin)*bx.w,
+           y: bx.y + bx.h - (dy-ax.ymin)/(ax.ymax-ax.ymin)*bx.h };
+}
+function toData(px,py,ax,bx){
+  return { x: ax.xmin + (px-bx.x)/bx.w*(ax.xmax-ax.xmin),
+           y: ax.ymin + (bx.y+bx.h-py)/bx.h*(ax.ymax-ax.ymin) };
+}
+function dataPoints(){
+  return S.rows.filter(function(r){ return r.R!==null && !isNaN(r.R); })
+    .map(function(r){ return {x:r.L, y:r.R, e:dR(r.V,r.I)}; });
+}
+function drawGraph(){
+  var f = fit(gCv, 560), c=f.c, W=f.w, H=560;
+  var ax=axes(), bx=plotBox(W,H);
+  c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  if(!(ax.xmax>ax.xmin) || !(ax.ymax>ax.ymin)){
+    c.fillStyle='#c2410c'; c.font='600 14px sans-serif'; c.textAlign='center';
+    c.fillText('Set a scale where the second value is larger than the first.', W/2, H/2); return;
+  }
+  /* grid: 10 large squares each way, 5 small in each */
+  c.save(); c.translate(0.5,0.5);
+  for(var i=0;i<=50;i++){
+    var maj = (i%5===0);
+    c.strokeStyle = maj ? '#b9cbd2' : '#e6eef1'; c.lineWidth = maj?1:1;
+    var xg = Math.round(bx.x + i/50*bx.w), yg = Math.round(bx.y + i/50*bx.h);
+    c.beginPath(); c.moveTo(xg,bx.y); c.lineTo(xg,bx.y+bx.h); c.stroke();
+    c.beginPath(); c.moveTo(bx.x,yg); c.lineTo(bx.x+bx.w,yg); c.stroke();
+  }
+  c.restore();
+  c.strokeStyle='#22323b'; c.lineWidth=1.5; c.strokeRect(bx.x,bx.y,bx.w,bx.h);
+  /* labels */
+  c.fillStyle='#41576a'; c.font='500 11px ui-monospace,Menlo,monospace';
+  c.textAlign='center'; c.textBaseline='top';
+  for(var k=0;k<=10;k++){
+    var xv = ax.xmin + k/10*(ax.xmax-ax.xmin);
+    c.fillText(fmtTick(xv), bx.x+k/10*bx.w, bx.y+bx.h+7);
+  }
+  c.textAlign='right'; c.textBaseline='middle';
+  for(var k2=0;k2<=10;k2++){
+    var yv = ax.ymin + k2/10*(ax.ymax-ax.ymin);
+    c.fillText(fmtTick(yv), bx.x-8, bx.y+bx.h-k2/10*bx.h);
+  }
+  c.fillStyle='#14212b'; c.font='600 13px sans-serif'; c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillText('L / m', bx.x+bx.w/2, H-14);
+  c.save(); c.translate(16, bx.y+bx.h/2); c.rotate(-Math.PI/2); c.textAlign='center';
+  c.fillText('R / Ω', 0, 0); c.restore();
+
+  /* plotted points + error bars */
+  var pts = dataPoints();
+  S.g.pts.forEach(function(p,i){
+    if(!UNC){
+      var qq=toPx(p.x,p.y,ax,bx);
+      c.strokeStyle='#14212b'; c.lineWidth=2;
+      c.beginPath(); c.moveTo(qq.x-7,qq.y-7); c.lineTo(qq.x+7,qq.y+7);
+      c.moveTo(qq.x-7,qq.y+7); c.lineTo(qq.x+7,qq.y-7); c.stroke(); return;
+    }
+    var q = toPx(p.x,p.y,ax,bx);
+    var e = pts[i] ? pts[i].e : 0;
+    var eh = e/(ax.ymax-ax.ymin)*bx.h;
+    c.strokeStyle='#14212b'; c.lineWidth=1.8;
+    c.beginPath(); c.moveTo(q.x-5,q.y-5); c.lineTo(q.x+5,q.y+5); c.moveTo(q.x-5,q.y+5); c.lineTo(q.x+5,q.y-5); c.stroke();
+    c.strokeStyle='#c2410c'; c.lineWidth=2.2;
+    c.beginPath(); c.moveTo(q.x,q.y-eh); c.lineTo(q.x,q.y+eh); c.stroke();
+    c.beginPath(); c.moveTo(q.x-8,q.y-eh); c.lineTo(q.x+8,q.y-eh); c.stroke();
+    c.beginPath(); c.moveTo(q.x-8,q.y+eh); c.lineTo(q.x+8,q.y+eh); c.stroke();
+  });
+  /* the two lines */
+  drawLine(c,S.g.best,'#0b6a63',ax,bx,'best');
+  drawLine(c,S.g.worst,'#7c3aed',ax,bx,'worst');
+
+  /* next-point prompt */
+  var n = S.g.pts.length;
+  if(S.g.tool==='plot' && n<pts.length){
+    c.fillStyle='#c2410c'; c.font='600 12px ui-monospace,Menlo,monospace'; c.textAlign='left'; c.textBaseline='top';
+    c.fillText('next: ('+pts[n].x.toFixed(3)+', '+pts[n].y.toFixed(3)+')', bx.x+8, bx.y+8);
+  }
+}
+function fmtTick(v){
+  var a=Math.abs(v);
+  if(a>=1000||(a<0.01&&a>0)) return v.toExponential(1);
+  return (Math.round(v*1000)/1000).toString();
+}
+function drawLine(c,ln,col,ax,bx,kind){
+  if(!ln) return;
+  var a=toPx(ln.x1,ln.y1,ax,bx), b=toPx(ln.x2,ln.y2,ax,bx);
+  var m=(b.y-a.y)/((b.x-a.x)||1e-9), ex1={x:bx.x,y:a.y+m*(bx.x-a.x)}, ex2={x:bx.x+bx.w,y:a.y+m*(bx.x+bx.w-a.x)};
+  c.save(); c.beginPath(); c.rect(bx.x,bx.y,bx.w,bx.h); c.clip();
+  c.strokeStyle=col; c.lineWidth=2; if(kind==='worst') c.setLineDash([8,5]);
+  c.beginPath(); c.moveTo(ex1.x,ex1.y); c.lineTo(ex2.x,ex2.y); c.stroke(); c.setLineDash([]);
+  c.restore();
+  [a,b].forEach(function(h){ c.fillStyle=col; c.beginPath(); c.arc(h.x,h.y,6,0,Math.PI*2); c.fill();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(h.x,h.y,2.4,0,Math.PI*2); c.fill(); });
+}
+
+/* pointer interaction */
+var drag=null;
+function evPos(e){ var r=gCv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+gCv.addEventListener('pointerdown', function(e){
+  var W=gCv.clientWidth, H=560, ax=axes(), bx=plotBox(W,H), p=evPos(e);
+  if(S.g.tool==='plot'){
+    var pts=dataPoints();
+    if(S.g.pts.length>=pts.length) return;
+    var d=toData(p.x,p.y,ax,bx); S.g.pts.push(d); drawGraph(); msg(); return;
+  }
+  var ln = S.g.tool==='best' ? S.g.best : S.g.worst;
+  if(!ln){ seedLine(S.g.tool); ln = S.g.tool==='best'?S.g.best:S.g.worst; }
+  var a=toPx(ln.x1,ln.y1,ax,bx), b=toPx(ln.x2,ln.y2,ax,bx);
+  var da=Math.hypot(a.x-p.x,a.y-p.y), db=Math.hypot(b.x-p.x,b.y-p.y);
+  drag = {which:S.g.tool, end: da<db?1:2};
+  gCv.setPointerCapture(e.pointerId);
+  movePt(p);
+});
+gCv.addEventListener('pointermove', function(e){ if(drag) movePt(evPos(e)); });
+gCv.addEventListener('pointerup', function(){ drag=null; });
+gCv.addEventListener('pointercancel', function(){ drag=null; });
+function movePt(p){
+  if(!drag) return;
+  var W=gCv.clientWidth, ax=axes(), bx=plotBox(W,560), d=toData(p.x,p.y,ax,bx);
+  var ln = drag.which==='best'?S.g.best:S.g.worst;
+  if(drag.end===1){ ln.x1=d.x; ln.y1=d.y; } else { ln.x2=d.x; ln.y2=d.y; }
+  drawGraph(); msg();
+}
+function seedLine(kind){
+  var ax=axes(), pts=dataPoints();
+  var fit0 = pts.length>1 ? lsq(pts) : {m:1,c:0};
+  var x1=ax.xmin+(ax.xmax-ax.xmin)*0.15, x2=ax.xmin+(ax.xmax-ax.xmin)*0.85;
+  var ln={x1:x1,y1:fit0.m*x1+fit0.c, x2:x2,y2:fit0.m*x2+fit0.c};
+  if(kind==='best') S.g.best=ln; else S.g.worst={x1:x1,y1:ln.y1*0.97,x2:x2,y2:ln.y2*1.03};
+}
+function lsq(pts){
+  var n=pts.length,sx=0,sy=0,sxx=0,sxy=0;
+  pts.forEach(function(p){ sx+=p.x; sy+=p.y; sxx+=p.x*p.x; sxy+=p.x*p.y; });
+  var m=(n*sxy-sx*sy)/(n*sxx-sx*sx);
+  return {m:m, c:(sy-m*sx)/n};
+}
+function grad(ln){ return (ln.y2-ln.y1)/((ln.x2-ln.x1)||1e-12); }
+
+/* threading: extreme gradients of lines passing through every error bar */
+function threads(pts){
+  var best={max:null,min:null};
+  function ok(m,c){
+    return pts.every(function(p){ var y=m*p.x+c; return y>=p.y-p.e-1e-9 && y<=p.y+p.e+1e-9; });
+  }
+  for(var i=0;i<pts.length;i++) for(var j=0;j<pts.length;j++){
+    if(i===j) continue;
+    for(var a=-1;a<=1;a+=2) for(var b=-1;b<=1;b+=2){
+      var y1=pts[i].y+a*pts[i].e, y2=pts[j].y+b*pts[j].e;
+      var m=(y2-y1)/((pts[j].x-pts[i].x)||1e-12), c=y1-m*pts[i].x;
+      if(!ok(m,c)) continue;
+      if(best.max===null||m>best.max) best.max=m;
+      if(best.min===null||m<best.min) best.min=m;
+    }
+  }
+  return best;
+}
+function msg(){
+  var pts=dataPoints(), n=S.g.pts.length, t=[];
+  t.push(n+' of '+pts.length+' points plotted');
+  if(S.g.best) t.push('best-fit gradient '+grad(S.g.best).toFixed(3)+' Ω m⁻¹');
+  if(S.g.worst) t.push('worst-line gradient '+grad(S.g.worst).toFixed(3)+' Ω m⁻¹');
+  $('rp5-graphmsg').textContent = t.join('  ·  ');
+}
+$$('.tool[data-tool]').forEach(function(b){
+  b.addEventListener('click', function(){
+    S.g.tool=b.dataset.tool;
+    $$('.tool[data-tool]').forEach(function(o){ o.setAttribute('aria-pressed', o===b?'true':'false'); });
+    if(S.g.tool!=='plot' && !(S.g.tool==='best'?S.g.best:S.g.worst)) seedLine(S.g.tool);
+    drawGraph(); msg();
+  });
+});
+$('rp5-undo').addEventListener('click', function(){ S.g.pts.pop(); drawGraph(); msg(); });
+$('rp5-autoscale').addEventListener('click', function(){
+  var pts=dataPoints(); if(!pts.length) return;
+  var xs=pts.map(function(p){return p.x;}), ys=pts.map(function(p){return p.y;});
+  var x1=Math.min.apply(null,xs), x2=Math.max.apply(null,xs);
+  var y1=Math.min.apply(null,ys), y2=Math.max.apply(null,ys);
+  function nice(lo,hi){
+    var sp=(hi-lo)||1, want=sp*(1-1e-9)/10, p=Math.pow(10,Math.floor(Math.log10(want))), step=10*p;
+    [1,2,2.5,5,10].some(function(k){ if(p*k>=want){ step=p*k; return true; } return false; });
+    var start=Math.floor(lo/step - 0.2)*step;
+    while(start+10*step < hi) start+=step;
+    if(lo>=0 && start<0) start=0;
+    return {lo:+(start).toPrecision(12), hi:+(start+10*step).toPrecision(12)};
+  }
+  var nx=nice(x1,x2), ny=nice(y1,y2);
+  $('rp5-xmin').value=nx.lo; $('rp5-xmax').value=nx.hi;
+  $('rp5-ymin').value=ny.lo; $('rp5-ymax').value=ny.hi;
+  S.g.pts=[]; S.g.best=null; S.g.worst=null; drawGraph(); msg();
+});
+['rp5-xmin','rp5-xmax','rp5-ymin','rp5-ymax'].forEach(function(id){
+  $(id).addEventListener('change', function(){ S.g.pts=[]; S.g.best=null; S.g.worst=null; drawGraph(); msg(); });
+});
+
+/* ================= MARKING ================= */
+function num(id){ var v=parseFloat($(id).value); return isNaN(v)?null:v; }
+function near(a,b,frac,floorAbs){
+  if(a===null||b===null||!isFinite(a)||!isFinite(b)) return false;
+  return Math.abs(a-b) <= Math.abs(b)*frac + (floorAbs||0);
+}
+function sigFigs(str){
+  if(!str) return 0;
+  var t=String(str).trim().replace(/^[-+]/,'').replace(/[eE].*$/,'');
+  t=t.replace(/^0+(?=[0-9])/,'');
+  if(t.indexOf('.')>=0){ t=t.replace('.',''); t=t.replace(/^0+/,''); return t.length; }
+  return t.replace(/0+$/,'').length||1;
+}
+function mean(a){ return a.reduce(function(x,y){return x+y;},0)/a.length; }
+
+function markWork(){
+  var a=S.app, M=[];
+  function add(max, got, title, note){ M.push({max:max, got:got, title:title, note:note||''}); }
+  function addU(max, got, title, note){ if(UNC) add(max, got, title, note); }
+
+  /* --- micrometer & area --- */
+  var zOK = S.mic.zero!==null && Math.abs(S.mic.zero-a.zeroErr)<0.0051;
+  add(1, zOK?1:0, 'Zero reading of the micrometer recorded correctly',
+      zOK ? 'The instrument read '+a.zeroErr.toFixed(2)+' mm with the jaws closed and you had it.'
+          : 'The jaws-closed reading was '+a.zeroErr.toFixed(2)+' mm. Every diameter you measured carries this error until you subtract it.');
+  var nGood = S.mic.pos.filter(function(v,i){ return v!==null && Math.abs(v-a.micReads[i])<0.0051; }).length;
+  add(2, nGood===5?2:(nGood>=3?1:0), 'Five diameter readings read correctly from the scale',
+      nGood===5 ? 'All five read correctly.' : (5-nGood)+' of the five were misread. Read the largest sleeve mark still showing, remembering the half-millimetre marks below the datum line, then add the thimble division.');
+
+  var raw = S.mic.pos.filter(function(v){ return v!==null; });
+  var corrected = raw.map(function(v){ return v - (S.mic.zero||0); });
+  var dmeanExp = corrected.length ? mean(corrected) : null;
+  var dmean = num('rp5-dmean');
+  var m3 = near(dmean, dmeanExp, 0, 0.0051);
+  var usedRaw = !m3 && raw.length && near(dmean, mean(raw), 0, 0.0051);
+  add(1, m3?1:0, 'Mean diameter found, with the zero error applied',
+      m3 ? 'Correct from your own readings.' :
+      usedRaw ? 'You averaged the raw readings and never subtracted the zero error. The mean should be '+dmeanExp.toFixed(3)+' mm.'
+              : 'From your readings the mean corrected diameter is '+(dmeanExp===null?'—':dmeanExp.toFixed(3))+' mm.');
+
+  var halfRange = raw.length ? (Math.max.apply(null,raw)-Math.min.apply(null,raw))/2 : null;
+  var dunc = num('rp5-dunc');
+  var m4 = near(dunc, halfRange, 0, 0.0031) || (halfRange===0 && near(dunc,0.005,0,0.0011));
+  addU(1, m4?1:0, 'Uncertainty in the diameter taken as half the range',
+      m4 ? 'Correct.' : 'Half the range of your readings is '+(halfRange===null?'—':halfRange.toFixed(3))+' mm. Where every reading is identical, quote half the resolution, 0.005 mm.');
+
+  var areaExp = dmean!==null ? Math.PI*Math.pow(dmean/1000,2)/4 : null;
+  var area = parseFloat($('rp5-area').value);
+  if(isNaN(area)) area=null;
+  var m5 = near(area, areaExp, 0.03, 0);
+  var wrongBy4 = !m5 && near(area, areaExp*4, 0.03, 0);
+  var wrongUnit = !m5 && near(area, areaExp*1e6, 0.03, 0);
+  add(1, m5?1:0, 'Cross-sectional area calculated from A = πd²/4 in m²',
+      m5 ? 'Correct from your own mean diameter.' :
+      wrongBy4 ? 'You have used πd² rather than πd²/4 — that is the area for a radius of d, four times too large.' :
+      wrongUnit ? 'Your area is in mm². Convert the diameter to metres before squaring: dividing by 1000 divides the area by 10⁶.'
+                : 'From your mean diameter, A = '+(areaExp===null?'—':areaExp.toExponential(2))+' m².');
+
+  var dpctExp = (dmean&&dunc!==null) ? dunc/dmean*100 : null;
+  var dpct = num('rp5-dpct');
+  var m6 = near(dpct, dpctExp, 0.08, 0.15);
+  addU(1, m6?1:0, 'Percentage uncertainty in the diameter',
+      m6 ? 'Correct.' : 'From your own figures this is '+(dpctExp===null?'—':dpctExp.toFixed(1))+' %.');
+
+  /* --- readings --- */
+  var rows=S.rows;
+  add(1, rows.length>=6?1:0, 'Six sets of readings taken',
+      rows.length>=6 ? rows.length+' lengths recorded.' : 'Only '+rows.length+' lengths were recorded. Six is the minimum for a graph you can draw a line through with any confidence.');
+  var Ls=rows.map(function(r){return r.L;});
+  var span = Ls.length ? Math.max.apply(null,Ls)-Math.min.apply(null,Ls) : 0;
+  add(1, span>=0.50?1:0, 'Lengths spread over a wide enough range',
+      span>=0.50 ? 'Your lengths span '+span.toFixed(2)+' m.' : 'Your lengths span only '+span.toFixed(2)+' m. Bunched points make the gradient far more sensitive to a single misread value — use at least half the wire.');
+  var rGood = rows.filter(function(r){ return r.R!==null && Math.abs(r.R - r.V/r.I) <= 0.015*(r.V/r.I)+0.003; }).length;
+  add(2, (rows.length>=6&&rGood>=6)?2:(rGood>=4?1:0), 'Resistance calculated correctly as R = V / I',
+      rGood>=6 ? 'All values correct.' : (rows.length-rGood)+' of your resistance values do not match V/I for that row.');
+  var sfGood = rows.filter(function(r){ return sigFigs(r.Rstr)>=3; }).length;
+  add(1, sfGood>=Math.max(4,rows.length-1)?1:0, 'Resistances given to a sensible number of significant figures',
+      sfGood>=Math.max(4,rows.length-1) ? 'Three significant figures throughout.' : 'The meters read to three significant figures, so your resistances should too. Rounding to 1 decimal place throws away data the graph needs.');
+
+  /* --- graph --- */
+  var ax=axes(), pts=dataPoints();
+  var xsp = ax.xmax-ax.xmin, ysp = ax.ymax-ax.ymin;
+  var xUse = pts.length ? (Math.max.apply(null,pts.map(function(p){return p.x;}))-Math.min.apply(null,pts.map(function(p){return p.x;})))/xsp : 0;
+  var yUse = pts.length ? (Math.max.apply(null,pts.map(function(p){return p.y;}))-Math.min.apply(null,pts.map(function(p){return p.y;})))/ysp : 0;
+  var scaleScore = (xUse>=0.5?1:0)+(yUse>=0.5?1:0);
+  add(2, scaleScore, 'Scales chosen so the points fill more than half the grid',
+      scaleScore===2 ? 'Both axes well used.' : 'Your points cover '+Math.round(xUse*100)+' % of the x-axis and '+Math.round(yUse*100)+' % of the y-axis. Anything under half the grid loses the mark, and squashes the gradient you are trying to measure.');
+
+  var tolX = xsp/100, tolY = ysp/100;
+  var pGood = 0;
+  S.g.pts.forEach(function(p,i){
+    if(!pts[i]) return;
+    if(Math.abs(p.x-pts[i].x)<=tolX && Math.abs(p.y-pts[i].y)<=tolY) pGood++;
+  });
+  add(2, (S.g.pts.length>=pts.length&&pGood>=pts.length)?2:(pGood>=4?1:0), 'Points plotted to within half a small square',
+      pGood>=pts.length ? 'Every point accurate.' : (pts.length-pGood)+' points are outside half a small square of where they belong.');
+
+  var lsqm = pts.length>1 ? lsq(pts).m : null;
+  var mBest = S.g.best ? grad(S.g.best) : null;
+  var m13 = mBest!==null && near(mBest, lsqm, 0.05, 0);
+  add(1, m13?1:0, 'Line of best fit drawn through the points',
+      m13 ? 'Your line has gradient '+mBest.toFixed(3)+' Ω m⁻¹, consistent with the data.' :
+      (mBest===null ? 'No line of best fit was drawn.' : 'Your line has gradient '+mBest.toFixed(3)+' Ω m⁻¹ where the data support about '+lsqm.toFixed(3)+'. Aim for a balance of points either side along the whole length of the line.'));
+
+  var th = pts.length>1 ? threads(pts) : {max:null,min:null};
+  var mWorst = S.g.worst ? grad(S.g.worst) : null;
+  var cWorst = S.g.worst ? S.g.worst.y1 - mWorst*S.g.worst.x1 : null;
+  var threadsOK = mWorst!==null && pts.every(function(p){ var y=mWorst*p.x+cWorst; return y>=p.y-p.e-1e-9 && y<=p.y+p.e+1e-9; });
+  addU(1, threadsOK?1:0, 'Worst acceptable line passes through every error bar',
+      threadsOK ? 'It threads all six.' : 'Your worst line misses at least one error bar. It must still be a line the data allow, not simply a steep one.');
+  var extreme = null;
+  if(mWorst!==null && th.max!==null){ extreme = Math.abs(mWorst-th.max)<Math.abs(mWorst-th.min) ? th.max : th.min; }
+  var m15 = threadsOK && extreme!==null && Math.abs(mWorst-extreme) <= 0.3*Math.abs(extreme-(lsqm||0)) + 1e-9;
+  addU(1, m15?1:0, 'Worst line is the steepest or shallowest line the error bars allow',
+      m15 ? 'As steep (or shallow) as the bars permit.' :
+      (th.max===null ? 'Not enough data to judge.' : 'The extreme gradients your error bars allow are '+th.min.toFixed(3)+' and '+th.max.toFixed(3)+' Ω m⁻¹. A worst line drawn short of those understates your uncertainty.'));
+
+  /* --- analysis --- */
+  var gbest=num('rp5-gbest'), gworst=num('rp5-gworst'), gunc=num('rp5-gunc'), gpct=num('rp5-gpct');
+  var m16 = near(gbest, mBest, 0.03, 0);
+  add(1, m16?1:0, 'Gradient of the best line read off correctly',
+      m16 ? 'Matches the line you drew.' : 'The line you drew has gradient '+(mBest===null?'—':mBest.toFixed(3))+' Ω m⁻¹. Use a triangle spanning most of the line, not two adjacent points.');
+  var m17 = near(gworst, mWorst, 0.03, 0);
+  addU(1, m17?1:0, 'Gradient of the worst line read off correctly',
+      m17 ? 'Matches the line you drew.' : 'Your worst line has gradient '+(mWorst===null?'—':mWorst.toFixed(3))+' Ω m⁻¹.');
+  var guncExp = (gbest!==null&&gworst!==null) ? Math.abs(gbest-gworst) : null;
+  var m18 = near(gunc, guncExp, 0.06, 0.002);
+  addU(1, m18?1:0, 'Uncertainty in the gradient taken as the difference between the two lines',
+      m18 ? 'Correct.' : 'From your own gradients this is '+(guncExp===null?'—':guncExp.toFixed(3))+' Ω m⁻¹.');
+  var gpctExp = (gunc!==null&&gbest) ? gunc/gbest*100 : null;
+  var m19 = near(gpct, gpctExp, 0.08, 0.15);
+  addU(1, m19?1:0, 'Percentage uncertainty in the gradient',
+      m19 ? 'Correct.' : 'From your own figures this is '+(gpctExp===null?'—':gpctExp.toFixed(1))+' %.');
+
+  var rho = parseFloat($('rp5-rho').value); if(isNaN(rho)) rho=null;
+  var rhoExp = (gbest!==null&&area!==null) ? gbest*area : null;
+  var m20 = near(rho, rhoExp, 0.04, 0);
+  add(1, m20?1:0, 'Resistivity found from ρ = gradient × A',
+      m20 ? 'Correct from your own gradient and area.' :
+      (rhoExp===null ? 'Missing gradient or area.' : 'From your own values ρ = '+rhoExp.toExponential(2)+' Ω m. Check you have not divided by the area instead of multiplying.'));
+  var rhopct=num('rp5-rhopct');
+  var rhopctExp = (gpct!==null&&dpct!==null) ? gpct+2*dpct : null;
+  var m21 = near(rhopct, rhopctExp, 0.08, 0.2);
+  var forgotTwo = !m21 && near(rhopct, (gpct||0)+(dpct||0), 0.05, 0.2);
+  addU(1, m21?1:0, 'Percentage uncertainties combined, with the diameter counted twice',
+      m21 ? 'Correct.' : forgotTwo ? 'You have added the percentage uncertainty in d once. The area depends on d², so it contributes twice: %ρ = %gradient + 2 × %d.'
+            : 'From your own figures %ρ = '+(rhopctExp===null?'—':rhopctExp.toFixed(1))+' %.');
+  var rhoabs = parseFloat($('rp5-rhoabs').value); if(isNaN(rhoabs)) rhoabs=null;
+  var rhoabsExp = (rhopct!==null&&rho!==null) ? rhopct/100*rho : null;
+  var m22 = near(rhoabs, rhoabsExp, 0.08, 0);
+  addU(1, m22?1:0, 'Absolute uncertainty in the resistivity',
+      m22 ? 'Correct.' : 'From your own figures this is '+(rhoabsExp===null?'—':rhoabsExp.toExponential(2))+' Ω m.');
+
+  var sel=$('rp5-mat').value, nearestKey=null, bestD=Infinity;
+  if(rho!==null){ Object.keys(MATERIALS).forEach(function(k){ var d=Math.abs(Math.log(MATERIALS[k].rho/rho)); if(d<bestD){bestD=d; nearestKey=k;} }); }
+  var m23 = sel && sel===nearestKey;
+  add(1, m23?1:0, 'Material identified consistently with the calculated resistivity',
+      m23 ? 'Your value is closest to '+MATERIALS[nearestKey].name+', and that is what you chose.' :
+      (rho===null ? 'No resistivity value to compare.' : 'Your value of '+rho.toExponential(2)+' Ω m sits closest to '+(nearestKey?MATERIALS[nearestKey].name:'—')+' in the data table.'));
+
+  S.marks = M;
+  renderMarks(M, rho);
+}
+
+function renderMarks(M, rho){
+  var got=M.reduce(function(s,m){return s+m.got;},0), max=M.reduce(function(s,m){return s+m.max;},0);
+  $('rp5-total').textContent = got+' / '+max;
+  $('rp5-pct').textContent = Math.round(got/max*100)+' %';
+  var a=S.app;
+  var acc = rho!==null ? Math.abs(rho-a.rho)/a.rho*100 : null;
+  $('rp5-grade').textContent = acc===null ? '' : ('your ρ is '+acc.toFixed(1)+' % from the true value for this wire');
+  var box=$('rp5-marks'); box.innerHTML='';
+  M.forEach(function(m){
+    var cls = m.got===m.max ? 'y' : (m.got>0 ? 'p' : 'n');
+    var d=document.createElement('div'); d.className='mark-row';
+    d.innerHTML='<span class="pip '+cls+'">'+m.got+'/'+m.max+'</span><span class="mark-txt"><b>'+m.title+'</b><i>'+m.note+'</i></span>';
+    box.appendChild(d);
+  });
+  go(5);
+}
+$('rp5-mark').addEventListener('click', markWork);
+
+/* ---------- uncertainties on or off ---------- */
+var UNC = true;
+function applyUnc(){
+  UNC = $('rp5-unc').checked;
+  $$('.u-only').forEach(function(el){ el.classList.toggle('hidden', !UNC); });
+  if(!UNC){
+    S.g.worst=null;
+    if(S.g.tool==='worst'){ S.g.tool='plot';
+      $$('.tool[data-tool]').forEach(function(o){ o.setAttribute('aria-pressed', o.dataset.tool==='plot'?'true':'false'); }); }
+  }
+  resTable();
+  $('rp5-ghead').textContent = UNC ? 'Gradients' : 'Gradient';
+  drawGraph();
+}
+$('rp5-unc').addEventListener('change', applyUnc);
+
+/* ---------- init ---------- */
+function newApparatus(){
+  S.seed = (Math.random()*4294967296)>>>0;
+  S.app = buildApparatus(S.seed);
+  S.mic={zero:null,pos:[null,null,null,null,null]}; S.micStage=0;
+  S.rows=[]; S.g={pts:[],best:null,worst:null,tool:'plot'}; S.marks=null;
+  $$('.tool[data-tool]').forEach(function(o){ o.setAttribute('aria-pressed', o.dataset.tool==='plot'?'true':'false'); });
+  ['rp5-dmean','rp5-dunc','rp5-area','rp5-dpct','rp5-gbest','rp5-gworst','rp5-gunc','rp5-gpct','rp5-rho','rp5-rhopct','rp5-rhoabs']
+    .forEach(function(id){ $(id).value=''; });
+  $('rp5-mat').value='';
+  $('rp5-mictip').classList.add('hidden');
+  $('rp5-seedmsg').textContent='Apparatus '+S.seed.toString(36).toUpperCase().slice(0,6);
+  micBar(); micLabel(); micTable(); resTable(); updateMeters();
+}
+$('rp5-new').addEventListener('click', function(){ newApparatus(); go(0); });
+$('rp5-retry').addEventListener('click', function(){ newApparatus(); go(0); });
+newApparatus();
+applyUnc();
+
+if(window.ResizeObserver){
+  new ResizeObserver(function(){
+    if(root.querySelector('.panel.on').dataset.panel==='1') drawMic();
+    if(root.querySelector('.panel.on').dataset.panel==='2') drawCircuit();
+    if(root.querySelector('.panel.on').dataset.panel==='3') drawGraph();
+  }).observe(root);
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AQA Required Practical 6 — EMF and Internal Resistance</title>
+<style>
+#rp6-root{
+  --ink:#14212b; --ink-2:#41576a; --ink-3:#7189a0;
+  --paper:#eef2f3; --card:#ffffff; --rule:#d3dde2;
+  --brand:#0b6a63; --brand-dk:#064a45; --brand-lt:#e2f1ef;
+  --signal:#c2410c; --signal-lt:#fdeee5;
+  --gold:#a8730a; --gold-lt:#fbf1dc;
+  --good:#1c7a4b; --good-lt:#e3f4ea;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:"Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  all:initial;
+  display:block; width:100%; min-height:600px;
+  box-sizing:border-box;
+  font-family:var(--sans); color:var(--ink);
+  background:var(--paper); font-size:15px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+#rp6-root *,#rp6-root *::before,#rp6-root *::after{box-sizing:border-box; margin:0; padding:0; font-family:inherit;}
+#rp6-root .wrap{max-width:1080px; margin:0 auto; padding:20px 18px 56px;}
+
+#rp6-root .masthead{display:flex; flex-wrap:wrap; gap:14px; align-items:flex-end; justify-content:space-between;
+  border-bottom:3px solid var(--brand); padding-bottom:12px; margin-bottom:18px;}
+#rp6-root .mast-l .tag{font:600 11px/1 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--brand); display:block; margin-bottom:6px;}
+#rp6-root h1{font-size:26px; line-height:1.15; font-weight:700; letter-spacing:-.015em;}
+#rp6-root .mast-r{font:500 12px/1.5 var(--mono); color:var(--ink-3); text-align:right;}
+
+#rp6-root .steps{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px;}
+#rp6-root .step{flex:1 1 130px; border:1px solid var(--rule); background:var(--card); border-radius:6px;
+  padding:8px 10px; cursor:pointer; text-align:left; transition:.15s;}
+#rp6-root .step .n{font:700 10px/1 var(--mono); color:var(--ink-3); letter-spacing:.1em;}
+#rp6-root .step .t{font-size:13px; font-weight:600; margin-top:3px; display:block;}
+#rp6-root .step[aria-current="true"]{background:var(--brand); border-color:var(--brand); color:#fff;}
+#rp6-root .step[aria-current="true"] .n{color:#9fd3ce;}
+#rp6-root .step[data-done="1"]:not([aria-current="true"]){border-color:var(--brand); background:var(--brand-lt);}
+#rp6-root .step:hover:not([aria-current="true"]){border-color:var(--brand);}
+
+#rp6-root .card{background:var(--card); border:1px solid var(--rule); border-radius:8px; padding:18px; margin-bottom:16px;}
+#rp6-root .card > h2{font-size:17px; font-weight:700; margin-bottom:4px; letter-spacing:-.01em;}
+#rp6-root .card > .lede{color:var(--ink-2); font-size:14px; margin-bottom:14px; max-width:62ch;}
+#rp6-root h3{font-size:14px; font-weight:700; margin:16px 0 8px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-2);}
+#rp6-root p{margin-bottom:10px; max-width:70ch;}
+#rp6-root p:last-child{margin-bottom:0;}
+#rp6-root .muted{color:var(--ink-3); font-size:13px;}
+#rp6-root strong{font-weight:700;}
+#rp6-root em{font-style:italic;}
+
+#rp6-root .panel{display:none;}
+#rp6-root .panel.on{display:block;}
+
+#rp6-root button{font-family:inherit; font-size:14px; cursor:pointer; border-radius:6px; border:1px solid transparent;}
+#rp6-root .btn{background:var(--brand); color:#fff; padding:9px 16px; font-weight:600; transition:.15s;}
+#rp6-root .btn:hover{background:var(--brand-dk);}
+#rp6-root .btn:disabled{background:#adbcc4; cursor:not-allowed;}
+#rp6-root .btn-2{background:var(--card); color:var(--ink); border-color:var(--rule); padding:8px 14px; font-weight:600;}
+#rp6-root .btn-2:hover{border-color:var(--brand); color:var(--brand);}
+#rp6-root .btn-row{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-top:16px;}
+
+#rp6-root input[type=text],#rp6-root input[type=number],#rp6-root select{
+  font-family:var(--mono); font-size:14px; padding:6px 8px; border:1px solid var(--rule);
+  border-radius:5px; background:#fbfdfd; color:var(--ink); width:100%;}
+#rp6-root input:focus,#rp6-root select:focus{outline:2px solid var(--brand); outline-offset:-1px; border-color:var(--brand);}
+#rp6-root input.ok{border-color:var(--good); background:var(--good-lt);}
+#rp6-root input.bad{border-color:var(--signal); background:var(--signal-lt);}
+#rp6-root label{display:block; font-size:12px; font-weight:600; color:var(--ink-2); margin-bottom:4px;}
+
+#rp6-root table{border-collapse:collapse; width:100%; font-family:var(--mono); font-size:13px;}
+#rp6-root th,#rp6-root td{border:1px solid var(--rule); padding:5px 7px; text-align:center;}
+#rp6-root thead th{background:var(--brand-lt); font-weight:700; font-size:12px; line-height:1.3;}
+#rp6-root td input{padding:4px 5px; text-align:center; border-radius:3px;}
+#rp6-root .tscroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+
+#rp6-root .grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px;}
+#rp6-root .grid4{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px;}
+
+#rp6-root .readout{background:#101c22; border-radius:6px; padding:10px 12px; color:#7ef0d8;
+  font-family:var(--mono); text-align:center; border:2px solid #2b3d47;}
+#rp6-root .readout .lab{font-size:10px; letter-spacing:.12em; color:#7d97a3; text-transform:uppercase; display:block;}
+#rp6-root .readout .val{font-size:22px; font-weight:700; letter-spacing:.02em; display:block; margin-top:2px;}
+#rp6-root .readout.amber .val{color:#ffc94d;}
+
+#rp6-root .note{border-left:3px solid var(--gold); background:var(--gold-lt); padding:10px 12px; border-radius:0 5px 5px 0; font-size:13.5px; margin:12px 0;}
+#rp6-root .note.warn{border-color:var(--signal); background:var(--signal-lt);}
+#rp6-root .note.good{border-color:var(--good); background:var(--good-lt);}
+
+#rp6-root .slab{display:flex; align-items:center; gap:12px; margin:10px 0;}
+#rp6-root .slab span{font:600 12px/1 var(--mono); color:var(--ink-2); white-space:nowrap;}
+#rp6-root input[type=range]{-webkit-appearance:none; appearance:none; height:6px; background:var(--rule); border-radius:3px; flex:1 1 auto; min-width:120px;}
+#rp6-root input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:20px; height:20px; border-radius:50%; background:var(--brand); border:2px solid #fff; box-shadow:0 1px 3px rgba(0,0,0,.3); cursor:pointer;}
+#rp6-root input[type=range]::-moz-range-thumb{width:18px; height:18px; border-radius:50%; background:var(--brand); border:2px solid #fff; cursor:pointer;}
+
+#rp6-root .canvas-box{position:relative; width:100%; border:1px solid var(--rule); border-radius:6px; background:#fff; overflow:hidden;}
+#rp6-root canvas{display:block; width:100%; touch-action:none;}
+
+#rp6-root .toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+#rp6-root .tool{padding:7px 12px; font-size:13px; font-weight:600; border:1px solid var(--rule); background:var(--card); border-radius:6px; color:var(--ink-2);}
+#rp6-root .tool[aria-pressed="true"]{background:var(--ink); color:#fff; border-color:var(--ink);}
+
+#rp6-root .mark-row{display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--rule); align-items:flex-start;}
+#rp6-root .mark-row:last-child{border-bottom:none;}
+#rp6-root .pip{flex:0 0 auto; width:26px; height:22px; border-radius:4px; font:700 11px/22px var(--mono); text-align:center; color:#fff;}
+#rp6-root .pip.y{background:var(--good);} #rp6-root .pip.n{background:var(--signal);} #rp6-root .pip.p{background:var(--gold);}
+#rp6-root .mark-txt{flex:1 1 auto; font-size:13.5px;}
+#rp6-root .mark-txt b{display:block; font-weight:600;}
+#rp6-root .mark-txt i{display:block; font-style:normal; color:var(--ink-2); font-size:12.5px; margin-top:2px;}
+
+#rp6-root .score{display:flex; align-items:baseline; gap:10px; background:var(--ink); color:#fff; border-radius:8px; padding:14px 18px; margin-bottom:14px; flex-wrap:wrap;}
+#rp6-root .score .big{font:700 34px/1 var(--mono); color:#7ef0d8;}
+#rp6-root .score .pct{font:600 14px/1 var(--mono); color:#9fb3bd;}
+
+#rp6-root .chips{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+#rp6-root .chip{font:600 11px/1 var(--mono); padding:5px 8px; border-radius:20px; background:var(--brand-lt); color:var(--brand-dk); letter-spacing:.03em;}
+
+#rp6-root .code-out{font-family:var(--mono); font-size:13px; word-break:break-all; background:var(--paper); border:1px dashed var(--rule); padding:10px; border-radius:5px;}
+#rp6-root .opts{border:1px solid var(--rule); border-radius:6px; padding:12px 14px; background:var(--brand-lt); margin:14px 0;}
+#rp6-root .check{display:flex; align-items:center; gap:9px; font-size:15px; font-weight:600; color:var(--ink); cursor:pointer; margin:0;}
+#rp6-root .check input{width:18px; height:18px; accent-color:var(--brand); cursor:pointer; flex:0 0 auto;}
+#rp6-root .opts .muted{margin:7px 0 0;}
+#rp6-root .hidden{display:none;}
+#rp6-root .sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);}
+@media (max-width:640px){
+  #rp6-root h1{font-size:21px;}
+  #rp6-root .wrap{padding:14px 12px 40px;}
+  #rp6-root .card{padding:14px;}
+}
+</style>
+</head>
+<body style="margin:0">
+<div id="rp6-root">
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="mast-l">
+      <span class="tag">AQA A-level Physics &middot; Required Practical 6</span>
+      <h1>EMF and internal resistance of a cell</h1>
+    </div>
+    <div class="mast-r">Marked automatically<br>Apparatus is unique to you</div>
+  </div>
+
+  <div class="steps" role="tablist">
+    <button class="step" data-goto="0" aria-current="true"><span class="n">STEP 1</span><span class="t">Your apparatus</span></button>
+    <button class="step" data-goto="1"><span class="n">STEP 2</span><span class="t">Taking readings</span></button>
+    <button class="step" data-goto="2"><span class="n">STEP 3</span><span class="t">Graph</span></button>
+    <button class="step" data-goto="3"><span class="n">STEP 4</span><span class="t">Analysis</span></button>
+    <button class="step" data-goto="4"><span class="n">STEP 5</span><span class="t">Understanding</span></button>
+    <button class="step" data-goto="5"><span class="n">STEP 6</span><span class="t">Your marks</span></button>
+  </div>
+
+  <!-- ============ STEP 1 : SETUP ============ -->
+  <section class="panel on" data-panel="0">
+    <div class="card">
+      <h2>Your apparatus</h2>
+      <p class="lede">Every time you open this page &mdash; or press the button below &mdash; you are handed a different cell, with a different emf and a different internal resistance. The physics is the same; the numbers are yours.</p>
+      <div class="opts">
+        <label class="check"><input type="checkbox" id="rp6-unc" checked> <span>Include uncertainties</span></label>
+        <p class="muted">Leave this ticked for the full A-level treatment: error boxes, a worst acceptable line and an uncertainty in both the emf and the internal resistance. Untick it to work through the readings and the graph on their own.</p>
+      </div>
+      <div class="btn-row">
+        <button class="btn-2" id="rp6-new">New apparatus</button>
+        <span class="muted" id="rp6-seedmsg"></span>
+      </div>
+
+      <div id="rp6-brief">
+        <h3>Method you are following</h3>
+        <p>A cell drives a current through a rheostat. A moving-coil ammeter in series reads the current, and a moving-coil voltmeter across the cell reads the terminal pd. Changing the rheostat changes both.</p>
+        <p>A cell of emf <em>&epsilon;</em> and internal resistance <em>r</em> gives a terminal pd of <em>V</em>&nbsp;=&nbsp;<em>&epsilon;</em>&nbsp;&minus;&nbsp;<em>Ir</em>. A graph of <em>V</em> against <em>I</em> is therefore a straight line falling with gradient <strong>&minus;<em>r</em></strong> and intercept <strong><em>&epsilon;</em></strong> on the <em>V</em> axis.</p>
+        <div class="note">
+          <strong>This one is different from the practicals you have done before.</strong> The quantity you are really after &mdash; the emf &mdash; is not the gradient. It is where the line crosses <em>I</em>&nbsp;=&nbsp;0, which is a current you never actually pass. You have to extend the line back to get it, and both of your lines have to be extended, not just the best one.
+        </div>
+        <div class="note warn u-only">
+          <strong>Reading the meters.</strong> Both are analogue and both needles drift by roughly a division while you watch them, so take the uncertainty as <strong>one whole division</strong> on each: &plusmn;0.02 A on the ammeter and &plusmn;0.02 V on the voltmeter. That gives every point an uncertainty in <em>both</em> directions, so your points get error boxes rather than plain bars.
+        </div>
+        <div class="btn-row"><button class="btn" data-goto="1">Go to the circuit</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 2 : READINGS ============ -->
+  <section class="panel" data-panel="1">
+    <div class="card">
+      <h2>Taking the readings</h2>
+      <p class="lede">Move the rheostat, let the needles settle, then read both meters and record them. You need at least <strong>six</strong> settings, spread across the whole range the rheostat gives you.</p>
+      <div class="canvas-box"><canvas id="rp6-cir" height="250"></canvas></div>
+      <div class="canvas-box" style="margin-top:12px"><canvas id="rp6-met" height="300"></canvas></div>
+
+      <div class="slab" style="margin-top:12px">
+        <span>Rheostat</span>
+        <input type="range" id="rp6-rheo" min="0" max="11" step="1" value="6">
+        <span id="rp6-rheoval" style="min-width:9ch; text-align:right">&mdash;</span>
+      </div>
+      <div class="grid4" style="margin-top:6px">
+        <div><label for="rp6-ain">Ammeter reading / A</label><input type="number" step="0.02" id="rp6-ain" placeholder="0.00"></div>
+        <div><label for="rp6-vin">Voltmeter reading / V</label><input type="number" step="0.02" id="rp6-vin" placeholder="0.00"></div>
+        <div style="display:flex; align-items:end"><button class="btn" id="rp6-record" style="width:100%">Record</button></div>
+        <div style="display:flex; align-items:end"><button class="btn-2" id="rp6-clear" style="width:100%">Clear table</button></div>
+      </div>
+      <div id="rp6-tip" class="note hidden"></div>
+      <div class="note">Take the reading where the needle sits, to the nearest division. On the ammeter one division is 0.02 A; on the voltmeter one division is 0.02 V. Look straight on &mdash; the mirror strip under the scale is there so you can line the needle up with its own reflection and kill the parallax.</div>
+
+      <h3>Your results table</h3>
+      <div class="tscroll">
+        <table id="rp6-restab">
+          <thead><tr><th>Setting</th><th><em>I</em> / A</th><th class="u-only">&plusmn;&Delta;<em>I</em> / A</th><th><em>V</em> / V</th><th class="u-only">&plusmn;&Delta;<em>V</em> / V</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="btn-row"><button class="btn" data-goto="2" id="rp6-tograph" disabled>Go to the graph</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 3 : GRAPH ============ -->
+  <section class="panel" data-panel="2">
+    <div class="card">
+      <h2>Plotting <em>V</em> against <em>I</em></h2>
+      <p class="lede">Plot your points, then draw the line of best fit and the worst acceptable line. Both must be extended back to the <em>V</em> axis.</p>
+      <div class="grid4" style="margin-bottom:12px">
+        <div><label for="rp6-xmin">x from / A</label><input type="number" step="0.05" id="rp6-xmin" value="0"></div>
+        <div><label for="rp6-xmax">x to / A</label><input type="number" step="0.05" id="rp6-xmax" value="0.8"></div>
+        <div><label for="rp6-ymin">y from / V</label><input type="number" step="0.05" id="rp6-ymin" value="0"></div>
+        <div><label for="rp6-ymax">y to / V</label><input type="number" step="0.05" id="rp6-ymax" value="2"></div>
+      </div>
+      <div class="toolbar">
+        <button class="tool" data-tool="plot" aria-pressed="true">Plot points</button>
+        <button class="tool" data-tool="best" aria-pressed="false">Line of best fit</button>
+        <button class="tool u-only" data-tool="worst" aria-pressed="false">Worst acceptable line</button>
+        <button class="btn-2" id="rp6-undo">Remove last point</button>
+        <button class="btn-2" id="rp6-autoscale">Suggest sensible scales</button>
+      </div>
+      <div class="canvas-box"><canvas id="rp6-graph" height="560"></canvas></div>
+      <div class="note" style="margin-top:10px"><strong>Your <em>x</em> axis has to start at <em>I</em> = 0.</strong> The emf is the intercept there. Start the axis at your smallest current instead and the line has nowhere to be extended to, and the emf cannot be read off at all.</div>
+      <p class="muted" id="rp6-graphmsg" style="margin-top:8px">Click on the grid to place each point in turn.</p>
+      <div class="btn-row"><button class="btn" data-goto="3">Go to the analysis</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 4 : ANALYSIS ============ -->
+  <section class="panel" data-panel="3">
+    <div class="card">
+      <h2>Analysis</h2>
+      <p class="lede">Read both quantities off both lines. The gradient gives you the internal resistance; the intercept gives you the emf.</p>
+
+      <h3>From the line of best fit</h3>
+      <div class="grid4">
+        <div><label for="rp6-gbest">Gradient / V A<sup>&minus;1</sup></label><input type="number" step="0.001" id="rp6-gbest"></div>
+        <div><label for="rp6-rbest">Internal resistance <em>r</em> / &Omega;</label><input type="number" step="0.001" id="rp6-rbest"></div>
+        <div><label for="rp6-ebest">Intercept, emf <em>&epsilon;</em> / V</label><input type="number" step="0.001" id="rp6-ebest"></div>
+        <div></div>
+      </div>
+
+      <div class="u-only">
+      <h3>From the worst acceptable line</h3>
+      <div class="grid4">
+        <div><label for="rp6-gworst">Gradient / V A<sup>&minus;1</sup></label><input type="number" step="0.001" id="rp6-gworst"></div>
+        <div><label for="rp6-eworst">Intercept / V</label><input type="number" step="0.001" id="rp6-eworst"></div>
+        <div><label for="rp6-runc">Uncertainty in <em>r</em> / &Omega;</label><input type="number" step="0.001" id="rp6-runc"></div>
+        <div><label for="rp6-eunc">Uncertainty in <em>&epsilon;</em> / V</label><input type="number" step="0.001" id="rp6-eunc"></div>
+      </div>
+      </div>
+
+      <div class="u-only">
+      <h3>Percentage uncertainties</h3>
+      <div class="grid4">
+        <div class="u-only"><label for="rp6-rpct">% uncertainty in <em>r</em></label><input type="number" step="0.1" id="rp6-rpct"></div>
+        <div class="u-only"><label for="rp6-epct">% uncertainty in <em>&epsilon;</em></label><input type="number" step="0.1" id="rp6-epct"></div>
+        <div class="u-only"><label for="rp6-equote">Quote your emf as&hellip; / V</label><input type="text" id="rp6-equote" placeholder="e.g. 1.48"></div>
+        <div class="u-only"><label for="rp6-euquote">&hellip;&plusmn; / V</label><input type="text" id="rp6-euquote" placeholder="e.g. 0.03"></div>
+      </div>
+      </div>
+      <h3>Identifying the cell</h3>
+      <div class="grid4">
+        <div><label for="rp6-cell">Which cell were you given?</label>
+          <select id="rp6-cell">
+            <option value="">select&hellip;</option>
+            <option value="nimh">Rechargeable NiMH &mdash; 1.20 V</option>
+            <option value="alkaline">Alkaline dry cell &mdash; 1.50 V</option>
+            <option value="lead">Lead-acid cell &mdash; 2.00 V</option>
+            <option value="lithium">Lithium cell &mdash; 3.00 V</option>
+          </select>
+        </div>
+      </div>
+      <div class="note u-only" style="margin-top:16px"><strong>Quoting convention.</strong> Give the uncertainty to one significant figure, then round your value to the same decimal place. Writing 1.4834 &plusmn; 0.03 V claims a precision the second half of the statement has already denied.</div>
+      <div class="btn-row"><button class="btn" data-goto="4">Two last questions</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 5 : UNDERSTANDING ============ -->
+  <section class="panel" data-panel="4">
+    <div class="card">
+      <h2>Understanding</h2>
+      <p class="lede">Two marks for the physics behind what you have just done.</p>
+      <h3>1. Why the voltmeter never reads the emf</h3>
+      <p>While current flows, the voltmeter across the cell always reads less than the cell&rsquo;s emf. Why?</p>
+      <select id="rp6-q1">
+        <option value="">select&hellip;</option>
+        <option value="a">The voltmeter has a finite resistance, so it draws current away from the rest of the circuit</option>
+        <option value="b">Part of the emf is used driving the current through the cell&rsquo;s own resistance</option>
+        <option value="c">The emf of the cell falls as more current is drawn from it</option>
+        <option value="d">The chemical energy stored in the cell is used up as current flows</option>
+      </select>
+
+      <h3>2. Why the line must be extended</h3>
+      <p>Why does the emf have to be read from the intercept at <em>I</em>&nbsp;=&nbsp;0, rather than from your largest voltmeter reading?</p>
+      <select id="rp6-q2">
+        <option value="">select&hellip;</option>
+        <option value="a">Because the graph is only straight close to the origin</option>
+        <option value="b">Because the ammeter reads zero once the cell is disconnected</option>
+        <option value="c">Because the emf is the terminal pd when no current flows, so no pd is lost inside the cell</option>
+        <option value="d">Because the internal resistance falls to zero when the current is zero</option>
+      </select>
+      <div class="btn-row"><button class="btn" id="rp6-mark">Mark my work</button></div>
+    </div>
+  </section>
+
+  <!-- ============ STEP 6 : MARKS ============ -->
+  <section class="panel" data-panel="5">
+    <div class="card">
+      <div class="score">
+        <span class="big" id="rp6-total">&mdash;</span>
+        <span class="pct" id="rp6-pct"></span>
+        <span class="pct" id="rp6-grade" style="margin-left:auto"></span>
+      </div>
+      <div id="rp6-marks"></div>
+      <div class="btn-row">
+        <button class="btn-2" data-goto="2">Back to the graph</button>
+        <button class="btn" id="rp6-retry">Try again with new apparatus</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+</div>
+<script>
+(function(){
+"use strict";
+var root = document.getElementById('rp6-root');
+var $  = function(id){ return document.getElementById(id); };
+var $$ = function(sel){ return Array.prototype.slice.call(root.querySelectorAll(sel)); };
+
+/* ---------- constants ---------- */
+var CELLS = {
+  nimh:     {name:'rechargeable NiMH', emf:1.20},
+  alkaline: {name:'alkaline dry cell', emf:1.50},
+  lead:     {name:'lead-acid cell',    emf:2.00},
+  lithium:  {name:'lithium cell',      emf:3.00}
+};
+var POOL = ['nimh','alkaline'];
+var RPOOL = [0.8,1.0,1.2,1.4,1.6];
+var NSET = 12;
+var DI = 0.02, DV = 0.02;        /* one division on each analogue meter */
+var AFS = 0.80, VFS = 1.60;      /* full-scale deflections */
+var AMIN = 0.02, VMIN = 0.02;    /* smallest division on each scale */
+
+/* ---------- seeded prng ---------- */
+function hashStr(s){ var h=2166136261>>>0; for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h>>>0; }
+function mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; var t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ---------- state ---------- */
+var S = {
+  seed:0, name:'', cls:'', app:null, rows:[],
+  g:{pts:[], best:null, worst:null, tool:'plot'},
+  marks:null
+};
+
+function buildApparatus(seed){
+  var r = mulberry(seed);
+  var cell = POOL[Math.floor(r()*POOL.length)];
+  var emf = CELLS[cell].emf;
+  /* keep only internal resistances that still let the rheostat reach a healthy current,
+     so every pupil's points span enough of the axis to be plotted sensibly */
+  var ok = RPOOL.filter(function(v){ return emf/(0.5+v) >= 0.62; });
+  var rint = ok[Math.floor(r()*ok.length)];
+  var Imax = Math.min(0.70, emf/(0.5+rint));
+  var Rmin = emf/Imax - rint, Rmax = emf/0.10 - rint;
+  var Rs=[];
+  for(var i=0;i<NSET;i++){ Rs.push(Rmin*Math.pow(Rmax/Rmin, i/(NSET-1))); }
+  return { cell:cell, emf:emf, rint:rint, Rs:Rs, nseed:Math.floor(r()*1e9) };
+}
+
+/* what the needles actually sit on, quantised to the nearest division */
+function trueReading(k){
+  var a=S.app, R=a.Rs[k];
+  var I = a.emf/(R + a.rint), V = a.emf - I*a.rint;
+  var rr = mulberry(a.nseed ^ ((k+1)*2654435761));
+  I += (rr()-0.5)*0.008; V += (rr()-0.5)*0.008;
+  return { I: Math.round(I/AMIN)*AMIN, V: Math.round(V/VMIN)*VMIN };
+}
+
+/* ---------- navigation ---------- */
+function go(n){
+  $$('.panel').forEach(function(p){ p.classList.toggle('on', +p.dataset.panel===n); });
+  $$('.step').forEach(function(b){
+    var i=+b.dataset.goto;
+    b.setAttribute('aria-current', i===n ? 'true':'false');
+    if(i<n) b.dataset.done='1';
+  });
+  if(n===1){ drawCircuit(); drawMeters(); }
+  if(n===2) drawGraph();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+$$('[data-goto]').forEach(function(b){ b.addEventListener('click',function(){ go(+b.dataset.goto); }); });
+
+/* ---------- canvas helper ---------- */
+function fit(cv, hCss){
+  var dpr = window.devicePixelRatio||1;
+  var w = cv.parentNode.clientWidth||640;
+  cv.style.height = hCss+'px';
+  cv.width = Math.round(w*dpr); cv.height = Math.round(hCss*dpr);
+  var c = cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+  return {c:c, w:w, h:hCss};
+}
+
+
+/* ================= CIRCUIT ================= */
+var cirCv = $('rp6-cir');
+function setIdx(){ return parseInt($('rp6-rheo').value,10)||0; }
+
+function drawCircuit(){
+  if(!S.app) return;
+  var f=fit(cirCv,250), c=f.c, W=f.w;
+  c.clearRect(0,0,W,250); c.fillStyle='#fbfdfd'; c.fillRect(0,0,W,250);
+  var xL=86, xR=W-86, yT=74, yB=196;
+  c.lineCap='round'; c.lineJoin='round'; c.strokeStyle='#22323b'; c.lineWidth=2;
+  function seg(a,b,d,e){ c.beginPath(); c.moveTo(a,b); c.lineTo(d,e); c.stroke(); }
+
+  var xCell=xL+90, xSw=xL+215, xAm=xL+340;
+  /* cell inside a dashed boundary, so the internal resistance has somewhere to live */
+  seg(xL,yT,xCell-30,yT);
+  c.lineWidth=3.4; seg(xCell-16,yT-17,xCell-16,yT+17);
+  c.lineWidth=2;   seg(xCell-4,yT-9,xCell-4,yT+9);
+  seg(xCell-4,yT,xSw-16,yT);
+  c.save(); c.setLineDash([5,4]); c.strokeStyle='#7189a0'; c.lineWidth=1.4;
+  c.strokeRect(xCell-42,yT-32,66,64); c.restore();
+  c.fillStyle='#7189a0'; c.font='600 10px ui-monospace,Menlo,monospace'; c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillText('cell: ε and r', xCell-9, yT+48);
+  /* switch */
+  c.strokeStyle='#22323b';
+  c.beginPath(); c.arc(xSw-14,yT,3,0,Math.PI*2); c.stroke();
+  seg(xSw-12,yT-2,xSw+16,yT-14);
+  c.beginPath(); c.arc(xSw+18,yT,3,0,Math.PI*2); c.stroke();
+  seg(xSw+20,yT,xAm-18,yT);
+  /* ammeter */
+  c.beginPath(); c.arc(xAm,yT,18,0,Math.PI*2); c.stroke();
+  c.fillStyle='#22323b'; c.font='700 15px sans-serif'; c.textAlign='center'; c.textBaseline='middle';
+  c.fillText('A',xAm,yT+1);
+  seg(xAm+18,yT,xR,yT);
+  seg(xR,yT,xR,yB); seg(xL,yT,xL,yB);
+  /* rheostat on the bottom rail */
+  var xRh=(xL+xR)/2;
+  seg(xR,yB,xRh+34,yB); seg(xRh-34,yB,xL,yB);
+  c.strokeRect(xRh-34,yB-13,68,26);
+  seg(xRh-30,yB+18,xRh+26,yB-24);
+  c.save(); c.translate(xRh+30,yB-27); c.rotate(-Math.atan2(42,56));
+  c.beginPath(); c.moveTo(0,0); c.lineTo(-11,-5); c.lineTo(-11,5); c.closePath();
+  c.fillStyle='#22323b'; c.fill(); c.restore();
+  /* voltmeter across the cell */
+  var vA=xCell-58, vB=xCell+40, yV=yT+92;
+  seg(vA,yT,vA,yV); seg(vA,yV,(vA+vB)/2-18,yV);
+  c.beginPath(); c.arc((vA+vB)/2,yV,18,0,Math.PI*2); c.stroke();
+  c.fillStyle='#22323b'; c.font='700 15px sans-serif'; c.fillText('V',(vA+vB)/2,yV+1);
+  seg((vA+vB)/2+18,yV,vB,yV); seg(vB,yV,vB,yT);
+
+  c.fillStyle='#41576a'; c.font='600 12px ui-monospace,Menlo,monospace'; c.textAlign='left'; c.textBaseline='alphabetic';
+  c.fillText('rheostat setting '+(setIdx()+1)+' of '+NSET, xL, 22);
+  c.fillStyle='#7189a0'; c.textAlign='right';
+  c.fillText('the dashed box is the cell: emf and internal resistance together', xR, 22);
+}
+
+/* ================= ANALOGUE METERS ================= */
+var metCv = $('rp6-met');
+function drawMeter(c, cx, cy, R, fs, minor, majorEvery, labelEvery, value, label, unit, tint){
+  /* face */
+  c.fillStyle='#fdfaf1'; c.strokeStyle='#b9c4c9'; c.lineWidth=1.5;
+  var top=cy-R-30, h=R+86;
+  c.beginPath();
+  c.moveTo(cx-R*0.98, top); c.lineTo(cx+R*0.98, top);
+  c.lineTo(cx+R*0.98, top+h); c.lineTo(cx-R*0.98, top+h); c.closePath();
+  c.fill(); c.stroke();
+
+  function ang(f){ return (-150 + 120*f)*Math.PI/180; }
+  function pt(f,rad){ var a=ang(f); return {x:cx+rad*Math.cos(a), y:cy+rad*Math.sin(a)}; }
+
+  /* mirror strip */
+  c.save(); c.strokeStyle='#dfe7ea'; c.lineWidth=13;
+  c.beginPath(); c.arc(cx,cy,R-26,ang(0),ang(1)); c.stroke(); c.restore();
+
+  /* scale arc */
+  c.strokeStyle='#22323b'; c.lineWidth=1.6;
+  c.beginPath(); c.arc(cx,cy,R,ang(0),ang(1)); c.stroke();
+
+  var n=Math.round(fs/minor);
+  for(var i=0;i<=n;i++){
+    var v=i*minor, f=v/fs;
+    var maj = Math.abs(v/majorEvery - Math.round(v/majorEvery)) < 1e-9;
+    var a=pt(f,R), b=pt(f,R-(maj?17:9));
+    c.strokeStyle='#22323b'; c.lineWidth=maj?2:1;
+    c.beginPath(); c.moveTo(a.x,a.y); c.lineTo(b.x,b.y); c.stroke();
+    var lab = Math.abs(v/labelEvery - Math.round(v/labelEvery)) < 1e-9;
+    if(lab){
+      var t=pt(f,R-36), s2=v.toFixed(1);
+      c.font='700 11px ui-monospace,Menlo,monospace';
+      c.textAlign='center'; c.textBaseline='middle';
+      var w=c.measureText(s2).width;
+      c.fillStyle='#fdfaf1'; c.fillRect(t.x-w/2-2, t.y-7, w+4, 14);
+      c.fillStyle='#22323b'; c.fillText(s2, t.x, t.y);
+    }
+  }
+  /* needle */
+  var fv=Math.max(0,Math.min(1,value/fs));
+  var tipp=pt(fv,R-6);
+  c.strokeStyle='#b3261e'; c.lineWidth=2.4; c.lineCap='round';
+  c.beginPath(); c.moveTo(cx,cy); c.lineTo(tipp.x,tipp.y); c.stroke();
+  c.fillStyle='#3d4a52'; c.beginPath(); c.arc(cx,cy,7,0,Math.PI*2); c.fill();
+
+  c.fillStyle=tint; c.font='700 15px sans-serif'; c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillText(label, cx, cy+26);
+  c.fillStyle='#7189a0'; c.font='600 11px ui-monospace,Menlo,monospace';
+  c.fillText('0 – '+fs.toFixed(2)+' '+unit+'   ·   1 division = '+minor.toFixed(2)+' '+unit, cx, cy+44);
+}
+function drawMeters(){
+  if(!S.app) return;
+  var f=fit(metCv,300), c=f.c, W=f.w;
+  c.clearRect(0,0,W,300); c.fillStyle='#f7fafa'; c.fillRect(0,0,W,300);
+  var t=trueReading(setIdx());
+  var R=Math.min(190,(W/2-40)/0.92);
+  var cy=232;
+  drawMeter(c, W*0.25, cy, R, AFS, AMIN, 0.1, 0.2, t.I, 'AMMETER', 'A', '#0b6a63');
+  drawMeter(c, W*0.75, cy, R, VFS, VMIN, 0.2, 0.4, t.V, 'VOLTMETER', 'V', '#0b6a63');
+}
+function updateSetting(){
+  if(!S.app) return;
+  $('rp6-rheoval').textContent = (setIdx()+1)+' of '+NSET;
+  $('rp6-ain').value=''; $('rp6-vin').value=''; $('rp6-tip').classList.add('hidden');
+  drawCircuit(); drawMeters();
+}
+$('rp6-rheo').addEventListener('input', updateSetting);
+
+function resTable(){
+  var tb=$('rp6-restab').querySelector('tbody'); tb.innerHTML='';
+  S.rows.forEach(function(r,idx){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+(r.k+1)+'</td><td>'+r.I.toFixed(2)+'</td><td class="u-only'+(UNC?'':' hidden')+'">'+DI.toFixed(2)+
+      '</td><td>'+r.V.toFixed(2)+'</td><td class="u-only'+(UNC?'':' hidden')+'">'+DV.toFixed(2)+
+      '</td><td><button class="btn-2" data-del="'+idx+'" style="padding:2px 8px">&times;</button></td>';
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('button[data-del]').forEach(function(b){
+    b.addEventListener('click',function(){ S.rows.splice(+b.dataset.del,1); resTable(); });
+  });
+  $('rp6-tograph').disabled = S.rows.length<6;
+}
+$('rp6-record').addEventListener('click', function(){
+  if(!S.app) return;
+  var ra=$('rp6-ain').value.trim(), rv=$('rp6-vin').value.trim();
+  if(ra===''||rv==='') return;
+  var I=parseFloat(ra), V=parseFloat(rv);
+  if(isNaN(I)||isNaN(V)) return;
+  I=Math.round(I/AMIN)*AMIN; V=Math.round(V/VMIN)*VMIN;
+  var k=setIdx(), t=trueReading(k), tip=$('rp6-tip');
+  tip.classList.remove('hidden');
+  var dI=Math.abs(I-t.I), dV=Math.abs(V-t.V);
+  if(dI<0.011 && dV<0.011){ tip.className='note good'; tip.textContent='Recorded.'; }
+  else if(dI>=0.011 && dV>=0.011){ tip.className='note warn';
+    tip.innerHTML='<strong>Recorded, but both needles look misread.</strong> Count divisions on from the nearest numbered mark rather than guessing between them.'; }
+  else { tip.className='note';
+    tip.innerHTML='Recorded. Check the '+(dI>=0.011?'ammeter':'voltmeter')+' again — read to the nearest division, using the mirror strip to line the needle up with its reflection.'; }
+  S.rows = S.rows.filter(function(r){ return r.k!==k; });
+  S.rows.push({k:k, I:I, V:V});
+  S.rows.sort(function(a,b){ return a.I-b.I; });
+  resTable();
+});
+$('rp6-clear').addEventListener('click', function(){ S.rows=[]; resTable(); });
+/* ================= GRAPH ================= */
+var gCv = $('rp6-graph');
+var GEO = {l:74, r:22, t:20, b:56};
+function axes(){
+  return { xmin:parseFloat($('rp6-xmin').value), xmax:parseFloat($('rp6-xmax').value),
+           ymin:parseFloat($('rp6-ymin').value), ymax:parseFloat($('rp6-ymax').value) };
+}
+function plotBox(W,H){ return {x:GEO.l, y:GEO.t, w:W-GEO.l-GEO.r, h:H-GEO.t-GEO.b}; }
+function toPx(dx,dy,ax,bx){
+  return { x: bx.x + (dx-ax.xmin)/(ax.xmax-ax.xmin)*bx.w,
+           y: bx.y + bx.h - (dy-ax.ymin)/(ax.ymax-ax.ymin)*bx.h };
+}
+function toData(px,py,ax,bx){
+  return { x: ax.xmin + (px-bx.x)/bx.w*(ax.xmax-ax.xmin),
+           y: ax.ymin + (bx.y+bx.h-py)/bx.h*(ax.ymax-ax.ymin) };
+}
+function dataPoints(){
+  return S.rows.filter(function(r){ return r.I!==null && r.V!==null; })
+    .map(function(r){ return {x:r.I, y:r.V, e:DV, ex:DI}; });
+}
+function drawGraph(){
+  var f = fit(gCv, 560), c=f.c, W=f.w, H=560;
+  var ax=axes(), bx=plotBox(W,H);
+  c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  if(!(ax.xmax>ax.xmin) || !(ax.ymax>ax.ymin)){
+    c.fillStyle='#c2410c'; c.font='600 14px sans-serif'; c.textAlign='center';
+    c.fillText('Set a scale where the second value is larger than the first.', W/2, H/2); return;
+  }
+  /* grid: 10 large squares each way, 5 small in each */
+  c.save(); c.translate(0.5,0.5);
+  for(var i=0;i<=50;i++){
+    var maj = (i%5===0);
+    c.strokeStyle = maj ? '#b9cbd2' : '#e6eef1'; c.lineWidth = maj?1:1;
+    var xg = Math.round(bx.x + i/50*bx.w), yg = Math.round(bx.y + i/50*bx.h);
+    c.beginPath(); c.moveTo(xg,bx.y); c.lineTo(xg,bx.y+bx.h); c.stroke();
+    c.beginPath(); c.moveTo(bx.x,yg); c.lineTo(bx.x+bx.w,yg); c.stroke();
+  }
+  c.restore();
+  c.strokeStyle='#22323b'; c.lineWidth=1.5; c.strokeRect(bx.x,bx.y,bx.w,bx.h);
+  /* labels */
+  c.fillStyle='#41576a'; c.font='500 11px ui-monospace,Menlo,monospace';
+  c.textAlign='center'; c.textBaseline='top';
+  for(var k=0;k<=10;k++){
+    var xv = ax.xmin + k/10*(ax.xmax-ax.xmin);
+    c.fillText(fmtTick(xv), bx.x+k/10*bx.w, bx.y+bx.h+7);
+  }
+  c.textAlign='right'; c.textBaseline='middle';
+  for(var k2=0;k2<=10;k2++){
+    var yv = ax.ymin + k2/10*(ax.ymax-ax.ymin);
+    c.fillText(fmtTick(yv), bx.x-8, bx.y+bx.h-k2/10*bx.h);
+  }
+  c.fillStyle='#14212b'; c.font='600 13px sans-serif'; c.textAlign='center'; c.textBaseline='alphabetic';
+  c.fillText('I / A', bx.x+bx.w/2, H-14);
+  c.save(); c.translate(16, bx.y+bx.h/2); c.rotate(-Math.PI/2); c.textAlign='center';
+  c.fillText('V / V', 0, 0); c.restore();
+
+  /* plotted points + error bars */
+  var pts = dataPoints();
+  S.g.pts.forEach(function(p,i){
+    if(!UNC){
+      var qq=toPx(p.x,p.y,ax,bx);
+      c.strokeStyle='#14212b'; c.lineWidth=2;
+      c.beginPath(); c.moveTo(qq.x-7,qq.y-7); c.lineTo(qq.x+7,qq.y+7);
+      c.moveTo(qq.x-7,qq.y+7); c.lineTo(qq.x+7,qq.y-7); c.stroke(); return;
+    }
+    var q = toPx(p.x,p.y,ax,bx);
+    var e = pts[i] ? pts[i].e : 0;
+    var eh = e/(ax.ymax-ax.ymin)*bx.h;
+    var ex = pts[i] ? pts[i].ex : 0;
+    var ew = ex/(ax.xmax-ax.xmin)*bx.w;
+    c.strokeStyle='rgba(194,65,12,0.22)'; c.lineWidth=1;
+    c.strokeRect(q.x-ew,q.y-eh,2*ew,2*eh);
+    c.strokeStyle='#14212b'; c.lineWidth=1.8;
+    c.beginPath(); c.moveTo(q.x-5,q.y-5); c.lineTo(q.x+5,q.y+5); c.moveTo(q.x-5,q.y+5); c.lineTo(q.x+5,q.y-5); c.stroke();
+    c.strokeStyle='#c2410c'; c.lineWidth=2.2;
+    c.beginPath(); c.moveTo(q.x,q.y-eh); c.lineTo(q.x,q.y+eh); c.stroke();
+    c.beginPath(); c.moveTo(q.x-7,q.y-eh); c.lineTo(q.x+7,q.y-eh); c.stroke();
+    c.beginPath(); c.moveTo(q.x-7,q.y+eh); c.lineTo(q.x+7,q.y+eh); c.stroke();
+    c.beginPath(); c.moveTo(q.x-ew,q.y); c.lineTo(q.x+ew,q.y); c.stroke();
+    c.beginPath(); c.moveTo(q.x-ew,q.y-7); c.lineTo(q.x-ew,q.y+7); c.stroke();
+    c.beginPath(); c.moveTo(q.x+ew,q.y-7); c.lineTo(q.x+ew,q.y+7); c.stroke();
+  });
+  /* the two lines */
+  drawLine(c,S.g.best,'#0b6a63',ax,bx,'best');
+  drawLine(c,S.g.worst,'#7c3aed',ax,bx,'worst');
+
+  /* next-point prompt */
+  var n = S.g.pts.length;
+  if(S.g.tool==='plot' && n<pts.length){
+    c.fillStyle='#c2410c'; c.font='600 12px ui-monospace,Menlo,monospace'; c.textAlign='left'; c.textBaseline='top';
+    c.fillText('next: ('+pts[n].x.toFixed(2)+' A, '+pts[n].y.toFixed(2)+' V)', bx.x+8, bx.y+8);
+  }
+}
+function fmtTick(v){
+  var a=Math.abs(v);
+  if(a>=1000||(a<0.01&&a>0)) return v.toExponential(1);
+  return (Math.round(v*1000)/1000).toString();
+}
+function drawLine(c,ln,col,ax,bx,kind){
+  if(!ln) return;
+  var a=toPx(ln.x1,ln.y1,ax,bx), b=toPx(ln.x2,ln.y2,ax,bx);
+  var m=(b.y-a.y)/((b.x-a.x)||1e-9), ex1={x:bx.x,y:a.y+m*(bx.x-a.x)}, ex2={x:bx.x+bx.w,y:a.y+m*(bx.x+bx.w-a.x)};
+  c.save(); c.beginPath(); c.rect(bx.x,bx.y,bx.w,bx.h); c.clip();
+  c.strokeStyle=col; c.lineWidth=2; if(kind==='worst') c.setLineDash([8,5]);
+  c.beginPath(); c.moveTo(ex1.x,ex1.y); c.lineTo(ex2.x,ex2.y); c.stroke(); c.setLineDash([]);
+  c.restore();
+  [a,b].forEach(function(h){ c.fillStyle=col; c.beginPath(); c.arc(h.x,h.y,6,0,Math.PI*2); c.fill();
+    c.fillStyle='#fff'; c.beginPath(); c.arc(h.x,h.y,2.4,0,Math.PI*2); c.fill(); });
+}
+
+/* pointer interaction */
+var drag=null;
+function evPos(e){ var r=gCv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+gCv.addEventListener('pointerdown', function(e){
+  var W=gCv.clientWidth, H=560, ax=axes(), bx=plotBox(W,H), p=evPos(e);
+  if(S.g.tool==='plot'){
+    var pts=dataPoints();
+    if(S.g.pts.length>=pts.length) return;
+    var d=toData(p.x,p.y,ax,bx); S.g.pts.push(d); drawGraph(); msg(); return;
+  }
+  var ln = S.g.tool==='best' ? S.g.best : S.g.worst;
+  if(!ln){ seedLine(S.g.tool); ln = S.g.tool==='best'?S.g.best:S.g.worst; }
+  var a=toPx(ln.x1,ln.y1,ax,bx), b=toPx(ln.x2,ln.y2,ax,bx);
+  var da=Math.hypot(a.x-p.x,a.y-p.y), db=Math.hypot(b.x-p.x,b.y-p.y);
+  drag = {which:S.g.tool, end: da<db?1:2};
+  gCv.setPointerCapture(e.pointerId);
+  movePt(p);
+});
+gCv.addEventListener('pointermove', function(e){ if(drag) movePt(evPos(e)); });
+gCv.addEventListener('pointerup', function(){ drag=null; });
+gCv.addEventListener('pointercancel', function(){ drag=null; });
+function movePt(p){
+  if(!drag) return;
+  var W=gCv.clientWidth, ax=axes(), bx=plotBox(W,560), d=toData(p.x,p.y,ax,bx);
+  var ln = drag.which==='best'?S.g.best:S.g.worst;
+  if(drag.end===1){ ln.x1=d.x; ln.y1=d.y; } else { ln.x2=d.x; ln.y2=d.y; }
+  drawGraph(); msg();
+}
+function seedLine(kind){
+  var ax=axes(), pts=dataPoints();
+  var fit0 = pts.length>1 ? lsq(pts) : {m:1,c:0};
+  var x1=ax.xmin+(ax.xmax-ax.xmin)*0.15, x2=ax.xmin+(ax.xmax-ax.xmin)*0.85;
+  var ln={x1:x1,y1:fit0.m*x1+fit0.c, x2:x2,y2:fit0.m*x2+fit0.c};
+  if(kind==='best'){ S.g.best=ln; } else { var mid=(ln.y1+ln.y2)/2; S.g.worst={x1:x1,y1:mid+(ln.y1-mid)*1.15,x2:x2,y2:mid+(ln.y2-mid)*1.15}; }
+}
+function lsq(pts){
+  var n=pts.length,sx=0,sy=0,sxx=0,sxy=0;
+  pts.forEach(function(p){ sx+=p.x; sy+=p.y; sxx+=p.x*p.x; sxy+=p.x*p.y; });
+  var m=(n*sxy-sx*sy)/(n*sxx-sx*sx);
+  return {m:m, c:(sy-m*sx)/n};
+}
+function grad(ln){ return (ln.y2-ln.y1)/((ln.x2-ln.x1)||1e-12); }
+function intercept(ln){ return ln.y1 - grad(ln)*ln.x1; }
+
+/* threading: extreme gradients of lines passing through every error bar */
+function hitsBox(m,c,p){
+  var y1=m*(p.x-p.ex)+c, y2=m*(p.x+p.ex)+c;
+  var lo=Math.min(y1,y2), hi=Math.max(y1,y2);
+  return hi >= p.y-p.e-1e-12 && lo <= p.y+p.e+1e-12;
+}
+function threadsAll(m,c,pts){
+  for(var i=0;i<pts.length;i++){ if(!hitsBox(m,c,pts[i])) return false; }
+  return true;
+}
+/* extreme gradients of straight lines passing through every error box */
+function threads(pts){
+  var best={max:null,min:null,maxC:null,minC:null};
+  var sx=[-1,1], sy=[-1,1];
+  for(var i=0;i<pts.length;i++) for(var j=0;j<pts.length;j++){
+    if(i===j) continue;
+    for(var a=0;a<2;a++) for(var b=0;b<2;b++) for(var u=0;u<2;u++) for(var v=0;v<2;v++){
+      var x1=pts[i].x+sx[a]*pts[i].ex, y1=pts[i].y+sy[b]*pts[i].e;
+      var x2=pts[j].x+sx[u]*pts[j].ex, y2=pts[j].y+sy[v]*pts[j].e;
+      if(Math.abs(x2-x1)<1e-12) continue;
+      var m=(y2-y1)/(x2-x1), c=y1-m*x1;
+      if(!threadsAll(m,c,pts)) continue;
+      if(best.max===null||m>best.max){ best.max=m; best.maxC=c; }
+      if(best.min===null||m<best.min){ best.min=m; best.minC=c; }
+    }
+  }
+  return best;
+}
+function msg(){
+  var pts=dataPoints(), n=S.g.pts.length, t=[];
+  t.push(n+' of '+pts.length+' points plotted');
+  if(S.g.best) t.push('best-fit gradient '+grad(S.g.best).toFixed(3)+' V A⁻¹, intercept '+intercept(S.g.best).toFixed(3)+' V');
+  if(S.g.worst) t.push('worst-line gradient '+grad(S.g.worst).toFixed(3)+' V A⁻¹, intercept '+intercept(S.g.worst).toFixed(3)+' V');
+  $('rp6-graphmsg').textContent = t.join('  ·  ');
+}
+$$('.tool[data-tool]').forEach(function(b){
+  b.addEventListener('click', function(){
+    S.g.tool=b.dataset.tool;
+    $$('.tool[data-tool]').forEach(function(o){ o.setAttribute('aria-pressed', o===b?'true':'false'); });
+    if(S.g.tool!=='plot' && !(S.g.tool==='best'?S.g.best:S.g.worst)) seedLine(S.g.tool);
+    drawGraph(); msg();
+  });
+});
+$('rp6-undo').addEventListener('click', function(){ S.g.pts.pop(); drawGraph(); msg(); });
+$('rp6-autoscale').addEventListener('click', function(){
+  var pts=dataPoints(); if(!pts.length) return;
+  var xs=pts.map(function(p){return p.x;}), ys=pts.map(function(p){return p.y;});
+  var x1=Math.min.apply(null,xs), x2=Math.max.apply(null,xs);
+  var y1=Math.min.apply(null,ys), y2=Math.max.apply(null,ys);
+  function nice(lo,hi){
+    var sp=(hi-lo)||1, want=sp*(1-1e-9)/10, p=Math.pow(10,Math.floor(Math.log10(want))), step=10*p;
+    [1,2,2.5,5,10].some(function(k){ if(p*k>=want){ step=p*k; return true; } return false; });
+    var start=Math.floor(lo/step - 0.2)*step;
+    while(start+10*step < hi) start+=step;
+    if(lo>=0 && start<0) start=0;
+    return {lo:+(start).toPrecision(12), hi:+(start+10*step).toPrecision(12)};
+  }
+  var nx=nice(0,x2), ny=nice(y1,y2);   /* the emf is the intercept, so x must reach zero */
+  $('rp6-xmin').value=nx.lo; $('rp6-xmax').value=nx.hi;
+  $('rp6-ymin').value=ny.lo; $('rp6-ymax').value=ny.hi;
+  S.g.pts=[]; S.g.best=null; S.g.worst=null; drawGraph(); msg();
+});
+['rp6-xmin','rp6-xmax','rp6-ymin','rp6-ymax'].forEach(function(id){
+  $(id).addEventListener('change', function(){ S.g.pts=[]; S.g.best=null; S.g.worst=null; drawGraph(); msg(); });
+});
+
+
+
+/* ================= MARKING ================= */
+function num(id){ var v=parseFloat($(id).value); return isNaN(v)?null:v; }
+function near(a,b,frac,floorAbs){
+  if(a===null||b===null||!isFinite(a)||!isFinite(b)) return false;
+  return Math.abs(a-b) <= Math.abs(b)*frac + (floorAbs||0);
+}
+function sigFigs(str){
+  if(!str) return 0;
+  var t=String(str).trim().replace(/^[-+]/,'').replace(/[eE].*$/,'');
+  t=t.replace(/^0+(?=[0-9])/,'');
+  if(t.indexOf('.')>=0){ t=t.replace('.',''); t=t.replace(/^0+/,''); return t.length; }
+  return t.replace(/0+$/,'').length||1;
+}
+function mean(a){ return a.reduce(function(x,y){return x+y;},0)/a.length; }
+
+function decimals(str){ var t=String(str||'').trim(); var i=t.indexOf('.'); return i<0?0:(t.length-i-1); }
+
+function markWork(){
+  var a=S.app, M=[];
+  function add(max, got, title, note){ M.push({max:max, got:got, title:title, note:note||''}); }
+  function addU(max, got, title, note){ if(UNC) add(max, got, title, note); }
+
+  /* ---- readings ---- */
+  var rows=S.rows;
+  add(1, rows.length>=6?1:0, 'At least six rheostat settings recorded',
+      rows.length>=6 ? rows.length+' settings recorded.' : 'Only '+rows.length+' settings were recorded. Six is the minimum for a line you can trust, and this graph is extrapolated well beyond the points.');
+  var Is=rows.map(function(r){ return r.I; });
+  var span = Is.length ? Math.max.apply(null,Is)-Math.min.apply(null,Is) : 0;
+  add(1, span>=0.35?1:0, 'Currents spread across the range the rheostat allows',
+      span>=0.35 ? 'Your currents span '+span.toFixed(2)+' A.' : 'Your currents span only '+span.toFixed(2)+' A. Bunched points give the line almost no leverage, and the intercept you extrapolate to is then little better than a guess.');
+  var aGood = rows.filter(function(r){ return Math.abs(r.I - trueReading(r.k).I) < 0.011; }).length;
+  add(2, (rows.length&&aGood===rows.length)?2:(aGood>=rows.length-2?1:0), 'Ammeter read correctly at each setting',
+      aGood===rows.length ? 'Every current correct.' : (rows.length-aGood)+' of your currents do not match the needle. One division is 0.02 A — count on from the nearest numbered mark.');
+  var vGood = rows.filter(function(r){ return Math.abs(r.V - trueReading(r.k).V) < 0.011; }).length;
+  add(2, (rows.length&&vGood===rows.length)?2:(vGood>=rows.length-2?1:0), 'Voltmeter read correctly at each setting',
+      vGood===rows.length ? 'Every pd correct.' : (rows.length-vGood)+' of your pd values do not match the needle. One division is 0.02 V.');
+
+  /* ---- graph ---- */
+  var ax=axes(), pts=dataPoints();
+  var xsp=ax.xmax-ax.xmin, ysp=ax.ymax-ax.ymin;
+  add(1, Math.abs(ax.xmin)<1e-9?1:0, 'Current axis started at zero so the intercept can be read',
+      Math.abs(ax.xmin)<1e-9 ? 'Your x axis starts at I = 0, so the emf can be read straight off.'
+        : 'Your x axis starts at '+ax.xmin+' A. The emf is the pd at zero current, so an axis that never reaches zero has nothing for the line to be extended to.');
+  var xUse = pts.length ? (Math.max.apply(null,pts.map(function(p){return p.x;}))-Math.min.apply(null,pts.map(function(p){return p.x;})))/xsp : 0;
+  var yUse = pts.length ? (Math.max.apply(null,pts.map(function(p){return p.y;}))-Math.min.apply(null,pts.map(function(p){return p.y;})))/ysp : 0;
+  var scaleScore=(xUse>=0.5?1:0)+(yUse>=0.5?1:0);
+  add(2, scaleScore, 'Scales chosen so the points fill more than half the grid',
+      scaleScore===2 ? 'Both axes well used.' : 'Your points cover '+Math.round(xUse*100)+' % of the x-axis and '+Math.round(yUse*100)+' % of the y-axis. On this graph the x-axis has to reach zero, so it is the y-axis you have room to tighten.');
+
+  var tolX=xsp/100, tolY=ysp/100, pGood=0;
+  S.g.pts.forEach(function(p,i){
+    if(!pts[i]) return;
+    if(Math.abs(p.x-pts[i].x)<=tolX && Math.abs(p.y-pts[i].y)<=tolY) pGood++;
+  });
+  add(2, (S.g.pts.length>=pts.length&&pGood>=pts.length)?2:(pGood>=pts.length-2?1:0), 'Points plotted to within half a small square',
+      pGood>=pts.length ? 'Every point accurate.' : (pts.length-pGood)+' points are outside half a small square of where they belong.');
+
+  var lsqm = pts.length>1 ? lsq(pts).m : null;
+  var lsqc = pts.length>1 ? lsq(pts).c : null;
+  var mBest = S.g.best ? grad(S.g.best) : null;
+  var cBest = S.g.best ? intercept(S.g.best) : null;
+  var m8 = mBest!==null && near(mBest, lsqm, 0.06, 0) && near(cBest, lsqc, 0.03, 0);
+  add(1, m8?1:0, 'Line of best fit drawn through the points',
+      m8 ? 'Gradient '+mBest.toFixed(3)+' V A⁻¹, intercept '+cBest.toFixed(3)+' V — both consistent with the data.' :
+      (mBest===null ? 'No line of best fit was drawn.' : 'Your line gives '+mBest.toFixed(3)+' V A⁻¹ and '+cBest.toFixed(3)+' V where the data support about '+lsqm.toFixed(3)+' and '+lsqc.toFixed(3)+'.'));
+
+  var th = pts.length>1 ? threads(pts) : {max:null,min:null};
+  var mWorst = S.g.worst ? grad(S.g.worst) : null;
+  var cWorst = S.g.worst ? intercept(S.g.worst) : null;
+  var boxOK = mWorst!==null && threadsAll(mWorst, cWorst, pts);
+  addU(1, boxOK?1:0, 'Worst acceptable line passes through every error box',
+      boxOK ? 'It passes through all of them.' : 'Your worst line misses at least one error box. Because each point has an uncertainty in the current as well as the pd, the line has to pass through the box, not merely near the point.');
+  var extreme=null;
+  if(mWorst!==null && th.max!==null){ extreme = Math.abs(mWorst-th.max)<Math.abs(mWorst-th.min) ? th.max : th.min; }
+  var m10 = boxOK && extreme!==null && Math.abs(mWorst-extreme) <= 0.3*Math.abs(extreme-(lsqm||0)) + 1e-12;
+  addU(1, m10?1:0, 'Worst line is the steepest or shallowest the error boxes allow',
+      m10 ? 'As steep (or shallow) as the boxes permit.' :
+      (th.max===null ? 'Not enough data to judge.' : 'The extreme gradients your boxes allow are '+th.min.toFixed(3)+' and '+th.max.toFixed(3)+' V A⁻¹. A worst line drawn short of those understates both of your uncertainties.'));
+
+  /* ---- analysis ---- */
+  var gbest=num('rp6-gbest'), rbest=num('rp6-rbest'), ebest=num('rp6-ebest');
+  var gworst=num('rp6-gworst'), eworst=num('rp6-eworst');
+  var runc=num('rp6-runc'), eunc=num('rp6-eunc'), rpct=num('rp6-rpct'), epct=num('rp6-epct');
+
+  var m11 = near(gbest, mBest, 0.04, 0);
+  add(1, m11?1:0, 'Gradient of the best line read off correctly',
+      m11 ? 'Matches the line you drew.' : 'The line you drew has gradient '+(mBest===null?'—':mBest.toFixed(3))+' V A⁻¹. It is negative — a falling line has a negative gradient, and the minus sign is part of the answer.');
+  var m12 = near(rbest, gbest===null?null:Math.abs(gbest), 0.03, 0.005);
+  var signSlip = !m12 && gbest!==null && near(rbest, gbest, 0.03, 0.005) && gbest<0;
+  add(1, m12?1:0, 'Internal resistance taken as the magnitude of the gradient',
+      m12 ? 'Correct: r = '+Math.abs(gbest).toFixed(3)+' Ω.' :
+      signSlip ? 'You have carried the minus sign through into r. The gradient is −r, so a resistance of −'+Math.abs(gbest).toFixed(2)+' Ω is not a physical answer.'
+        : 'From your own gradient, r = '+(gbest===null?'—':Math.abs(gbest).toFixed(3))+' Ω.');
+  var m13 = near(ebest, cBest, 0.02, 0.005);
+  add(1, m13?1:0, 'EMF read from the intercept of the best line',
+      m13 ? 'Correct: ε = '+cBest.toFixed(3)+' V.' : 'Your best line meets I = 0 at '+(cBest===null?'—':cBest.toFixed(3))+' V.');
+  var m14 = near(gworst, mWorst, 0.04, 0);
+  addU(1, m14?1:0, 'Gradient of the worst line read off correctly',
+      m14 ? 'Matches the line you drew.' : 'Your worst line has gradient '+(mWorst===null?'—':mWorst.toFixed(3))+' V A⁻¹.');
+  var m15 = near(eworst, cWorst, 0.02, 0.005);
+  addU(1, m15?1:0, 'Intercept of the worst line read off correctly',
+      m15 ? 'Matches the line you drew.' : 'Your worst line meets I = 0 at '+(cWorst===null?'—':cWorst.toFixed(3))+' V. Both lines have to be extended back, not just the best one.');
+
+  var runcExp = (gbest!==null&&gworst!==null) ? Math.abs(Math.abs(gbest)-Math.abs(gworst)) : null;
+  var m16 = near(runc, runcExp, 0.08, 0.004);
+  addU(1, m16?1:0, 'Uncertainty in r from the difference between the two gradients',
+      m16 ? 'Correct.' : 'From your own gradients this is '+(runcExp===null?'—':runcExp.toFixed(3))+' Ω.');
+  var euncExp = (ebest!==null&&eworst!==null) ? Math.abs(ebest-eworst) : null;
+  var m17 = near(eunc, euncExp, 0.08, 0.004);
+  addU(1, m17?1:0, 'Uncertainty in the emf from the difference between the two intercepts',
+      m17 ? 'Correct.' : 'From your own intercepts this is '+(euncExp===null?'—':euncExp.toFixed(3))+' V.');
+  var rpctExp = (runc!==null&&rbest) ? runc/Math.abs(rbest)*100 : null;
+  var m18 = near(rpct, rpctExp, 0.08, 0.3);
+  addU(1, m18?1:0, 'Percentage uncertainty in r',
+      m18 ? 'Correct.' : 'From your own figures this is '+(rpctExp===null?'—':rpctExp.toFixed(1))+' %.');
+  var epctExp = (eunc!==null&&ebest) ? eunc/ebest*100 : null;
+  var m19 = near(epct, epctExp, 0.08, 0.15);
+  addU(1, m19?1:0, 'Percentage uncertainty in the emf',
+      m19 ? 'Correct — and notice how much smaller it is than the uncertainty in r. The intercept is far better constrained by these points than the gradient is.' : 'From your own figures this is '+(epctExp===null?'—':epctExp.toFixed(1))+' %.');
+
+  var eq=$('rp6-equote').value.trim(), euq=$('rp6-euquote').value.trim();
+  var eqv=parseFloat(eq), euqv=parseFloat(euq);
+  var sfOK = euq!=='' && sigFigs(euq)<=2;
+  var dpOK = eq!=='' && euq!=='' && decimals(eq)===decimals(euq);
+  var valOK = !isNaN(eqv) && ebest!==null && Math.abs(eqv-ebest) <= 0.5*Math.pow(10,-decimals(eq))+1e-9;
+  var m20 = sfOK && dpOK && valOK;
+  addU(1, m20?1:0, 'EMF and its uncertainty quoted to a consistent precision',
+      m20 ? 'Correctly quoted.' :
+      (!sfOK ? 'Give the uncertainty to one significant figure.' :
+       !dpOK ? 'Your value and your uncertainty are quoted to different decimal places. Round the value to match the uncertainty.' :
+       'Your quoted value does not round from the emf you read off the graph.'));
+
+  var sel=$('rp6-cell').value, nearestKey=null, bestD=Infinity;
+  if(ebest!==null && ebest>0){ Object.keys(CELLS).forEach(function(k){ var d=Math.abs(CELLS[k].emf-ebest); if(d<bestD){bestD=d; nearestKey=k;} }); }
+  var m21 = sel && sel===nearestKey;
+  add(1, m21?1:0, 'Cell identified consistently with the emf found',
+      m21 ? 'Your intercept is closest to the '+CELLS[nearestKey].name+', and that is what you chose.' :
+      (ebest===null ? 'No emf to compare.' : 'Your intercept of '+ebest.toFixed(2)+' V sits closest to the '+(nearestKey?CELLS[nearestKey].name:'—')+'.'));
+
+  /* ---- understanding ---- */
+  var q1=$('rp6-q1').value, q2=$('rp6-q2').value;
+  add(1, q1==='b'?1:0, 'Explains why the terminal pd is less than the emf',
+      q1==='b' ? 'Right: the current has to be driven through the cell itself, and the pd lost doing that is Ir.' :
+      q1==='' ? 'Not answered.' :
+      q1==='a' ? 'A real voltmeter does draw a little current, but that is not why V falls as the load changes — V falls because of the pd lost inside the cell.' :
+      q1==='c' ? 'The emf is a property of the cell chemistry and does not depend on the current. What changes is how much pd is lost inside the cell.' :
+      'Energy is used up over hours of use, not over the seconds of one reading. The pd is lost inside the cell, to its own resistance.');
+  add(1, q2==='c'?1:0, 'Explains why the emf must be read at zero current',
+      q2==='c' ? 'Right: with no current there is no pd lost across the internal resistance, so the terminal pd equals the emf.' :
+      q2==='' ? 'Not answered.' :
+      q2==='a' ? 'The line is straight across the whole range — that is what makes the extrapolation safe in the first place.' :
+      q2==='b' ? 'True but beside the point: the reason is that no current means no pd lost inside the cell.' :
+      'The internal resistance is a property of the cell and does not vanish at zero current — it simply has no current through it to drop a pd across.');
+
+  S.marks=M;
+  renderMarks(M, ebest, rbest);
+}
+
+function renderMarks(M, ebest, rbest){
+  var got=M.reduce(function(s,m){return s+m.got;},0), max=M.reduce(function(s,m){return s+m.max;},0);
+  $('rp6-total').textContent = got+' / '+max;
+  $('rp6-pct').textContent = Math.round(got/max*100)+' %';
+  var a=S.app, bits=[];
+  if(ebest!==null&&ebest>0) bits.push('ε out by '+(Math.abs(ebest-a.emf)/a.emf*100).toFixed(1)+' %');
+  if(rbest!==null&&rbest>0) bits.push('r out by '+(Math.abs(Math.abs(rbest)-a.rint)/a.rint*100).toFixed(1)+' %');
+  $('rp6-grade').textContent = bits.join('   ·   ');
+  var box=$('rp6-marks'); box.innerHTML='';
+  M.forEach(function(m){
+    var cls = m.got===m.max ? 'y' : (m.got>0 ? 'p' : 'n');
+    var d=document.createElement('div'); d.className='mark-row';
+    d.innerHTML='<span class="pip '+cls+'">'+m.got+'/'+m.max+'</span><span class="mark-txt"><b>'+m.title+'</b><i>'+m.note+'</i></span>';
+    box.appendChild(d);
+  });
+  go(5);
+}
+$('rp6-mark').addEventListener('click', markWork);
+
+/* ---------- uncertainties on or off ---------- */
+var UNC = true;
+function applyUnc(){
+  UNC = $('rp6-unc').checked;
+  $$('.u-only').forEach(function(el){ el.classList.toggle('hidden', !UNC); });
+  if(!UNC){
+    S.g.worst=null;
+    if(S.g.tool==='worst'){ S.g.tool='plot';
+      $$('.tool[data-tool]').forEach(function(o){ o.setAttribute('aria-pressed', o.dataset.tool==='plot'?'true':'false'); }); }
+  }
+  resTable();
+  drawGraph();
+}
+$('rp6-unc').addEventListener('change', applyUnc);
+
+/* ---------- init ---------- */
+function newApparatus(){
+  S.seed = (Math.random()*4294967296)>>>0;
+  S.app = buildApparatus(S.seed);
+  S.rows=[]; S.g={pts:[],best:null,worst:null,tool:'plot'}; S.marks=null;
+  $$('.tool[data-tool]').forEach(function(o){ o.setAttribute('aria-pressed', o.dataset.tool==='plot'?'true':'false'); });
+  ['rp6-gbest','rp6-rbest','rp6-ebest','rp6-gworst','rp6-eworst','rp6-runc','rp6-eunc',
+   'rp6-rpct','rp6-epct','rp6-equote','rp6-euquote'].forEach(function(id){ $(id).value=''; });
+  $('rp6-cell').value=''; $('rp6-q1').value=''; $('rp6-q2').value='';
+  $('rp6-tip').classList.add('hidden');
+  $('rp6-seedmsg').textContent='Apparatus '+S.seed.toString(36).toUpperCase().slice(0,6);
+  $('rp6-rheo').max=NSET-1; $('rp6-rheo').value=Math.floor(NSET/2);
+  resTable(); updateSetting();
+}
+$('rp6-new').addEventListener('click', function(){ newApparatus(); go(0); });
+$('rp6-retry').addEventListener('click', function(){ newApparatus(); go(0); });
+newApparatus();
+applyUnc();
+
+if(window.ResizeObserver){
+  new ResizeObserver(function(){
+    var p=root.querySelector('.panel.on').dataset.panel;
+    if(p==='1'){ drawCircuit(); drawMeters(); }
+    if(p==='2') drawGraph();
+  }).observe(root);
+}
+})();
+</script>
+</body>
+</html>
