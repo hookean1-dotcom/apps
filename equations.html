@@ -1,0 +1,712 @@
+<div id="gcse-equation-app" data-version="2026-09-01-v12"></div>
+<script>
+(function(){
+  const root=document.getElementById('gcse-equation-app');
+  if(!root) return;
+  const css=`
+  #gcse-equation-app{--ink:#16192b;--mut:#525c78;--ln:#d5dbec;--ln2:#eef1f8;--acc:#3a4fd6;--accs:#eaedfc;--bg:#eef1f8;--sf:#ffffff;--gd:#0b6d55;--gdb:#e2f4ee;--bd:#a81f34;--bdb:#fdeaee;--wk:#f6f8ff;
+    font:400 16px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--ink);background:var(--bg);max-width:1020px;margin:0 auto;padding:16px;border-radius:18px;box-sizing:border-box;min-height:340px;-webkit-text-size-adjust:100%}
+  #gcse-equation-app *{box-sizing:border-box}
+  #gcse-equation-app h2,#gcse-equation-app h3,#gcse-equation-app h4,#gcse-equation-app p,#gcse-equation-app ul{margin:0 0 10px}
+  #gcse-equation-app ul{padding-left:20px}
+  #gcse-equation-app .eq-card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:16px 18px;margin:0 0 12px}
+  #gcse-equation-app .eq-title{font-size:26px;font-weight:700;letter-spacing:-.4px;margin:0 0 6px}
+  #gcse-equation-app .eq-lead{color:var(--mut);margin:0 0 14px}
+  #gcse-equation-app .eq-sm{font-size:13.5px}
+  #gcse-equation-app .eq-mut{color:var(--mut)}
+  #gcse-equation-app .eq-hd{display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:space-between}
+  #gcse-equation-app .eq-btn{font:inherit;font-weight:600;background:var(--sf);color:var(--ink);border:1.5px solid var(--ln);border-radius:10px;padding:11px 14px;cursor:pointer;text-align:left;transition:border-color .12s,background .12s}
+  #gcse-equation-app .eq-btn:hover{border-color:var(--acc);background:var(--accs)}
+  #gcse-equation-app .eq-btn:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+  #gcse-equation-app .eq-btn.eq-go{background:var(--acc);color:#fff;border-color:var(--acc)}
+  #gcse-equation-app .eq-btn.eq-go:hover{background:#2f40b8;border-color:#2f40b8}
+  #gcse-equation-app .eq-btn.eq-quiet{border-style:dashed;font-weight:500}
+  #gcse-equation-app .eq-btn[disabled]{cursor:not-allowed;color:var(--mut);background:var(--ln2);border-color:var(--ln);border-style:dashed;text-decoration:line-through;text-decoration-color:var(--bd);opacity:.75}
+  #gcse-equation-app .eq-btn[disabled]:hover{background:var(--ln2);border-color:var(--ln)}
+  #gcse-equation-app .eq-btn.eq-tiny{padding:6px 10px;font-size:13.5px;border-radius:8px}
+  #gcse-equation-app .eq-opts{display:grid;gap:8px;margin:10px 0 0}
+  #gcse-equation-app .eq-opts .eq-btn{width:100%}
+  #gcse-equation-app .eq-badge{display:inline-block;border:1px solid var(--ln);border-radius:999px;padding:3px 10px;margin:0 6px 6px 0;font-size:12.5px;color:var(--mut);background:var(--ln2)}
+  #gcse-equation-app .eq-eqn{font-family:Cambria,"Palatino Linotype",Georgia,serif;font-size:30px;font-weight:600;line-height:1.25;margin:6px 0 12px;word-wrap:break-word}
+  #gcse-equation-app .eq-eqn sub{font-size:.62em}
+  #gcse-equation-app .eq-work{font-family:Cambria,"Palatino Linotype",Georgia,serif;font-size:19px;background:var(--wk);border-left:4px solid var(--acc);border-radius:0 8px 8px 0;padding:8px 12px;margin:0 0 7px;word-wrap:break-word}
+  #gcse-equation-app .eq-work.eq-bal{border-left-color:var(--ln);color:var(--mut);font-size:17px}
+  #gcse-equation-app .eq-known{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px;margin:10px 0}
+  #gcse-equation-app .eq-known div{border:1px solid var(--ln);border-radius:10px;padding:8px 10px;background:var(--ln2)}
+  #gcse-equation-app .eq-known b{font-family:Cambria,"Palatino Linotype",Georgia,serif;font-size:18px}
+  #gcse-equation-app .eq-two{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:12px}
+  #gcse-equation-app .eq-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  #gcse-equation-app .eq-methods .eq-card{display:flex;flex-direction:column;margin:0}
+  #gcse-equation-app .eq-methods .eq-card .eq-btn{margin-top:auto;align-self:flex-start}
+  #gcse-equation-app .eq-methods h3{font-size:17px;margin:0 0 6px}
+  #gcse-equation-app .eq-bar{height:8px;border-radius:99px;background:var(--ln2);overflow:hidden;border:1px solid var(--ln)}
+  #gcse-equation-app .eq-bar i{display:block;height:100%;background:var(--acc);width:0}
+  #gcse-equation-app .eq-fb{border-radius:10px;padding:10px 12px;margin:10px 0 0;font-size:14.5px}
+  #gcse-equation-app .eq-fb.eq-no{background:var(--bdb);border:1px solid #f1c3cd;color:var(--bd)}
+  #gcse-equation-app .eq-fb.eq-yes{background:var(--gdb);border:1px solid #bce0d4;color:var(--gd)}
+  #gcse-equation-app .eq-in{font:inherit;font-family:Cambria,"Palatino Linotype",Georgia,serif;font-size:19px;border:1.5px solid var(--ln);border-radius:10px;padding:10px 12px;width:100%;max-width:230px;background:var(--sf);color:var(--ink)}
+  #gcse-equation-app .eq-in:focus-visible{outline:3px solid var(--acc);outline-offset:1px;border-color:var(--acc)}
+  #gcse-equation-app .eq-ansrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:10px 0 0}
+  #gcse-equation-app .eq-unit{font-family:Cambria,"Palatino Linotype",Georgia,serif;font-size:19px;color:var(--mut)}
+  #gcse-equation-app .eq-calc{border:1px solid var(--ln);border-radius:12px;padding:12px;max-width:330px;margin:10px 0 0;background:var(--ln2)}
+  #gcse-equation-app .eq-disp{border:1px solid var(--ln);border-radius:8px;padding:9px 10px;margin:0 0 8px;min-height:40px;font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:17px;background:var(--sf);word-break:break-all}
+  #gcse-equation-app .eq-pad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  #gcse-equation-app .eq-key{font:inherit;font-weight:700;padding:11px 0;border:1px solid var(--ln);background:var(--sf);border-radius:8px;cursor:pointer}
+  #gcse-equation-app .eq-key:hover{background:var(--accs);border-color:var(--acc)}
+  #gcse-equation-app .eq-key:focus-visible{outline:3px solid var(--acc);outline-offset:1px}
+  #gcse-equation-app .eq-tbl{width:100%;border-collapse:collapse;font-size:14.5px}
+  #gcse-equation-app .eq-tbl th,#gcse-equation-app .eq-tbl td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--ln)}
+  #gcse-equation-app .eq-tbl th{color:var(--mut);font-weight:600}
+  #gcse-equation-app .eq-scroll{overflow-x:auto}
+  #gcse-equation-app .eq-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0}
+  #gcse-equation-app .eq-big{font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1.1}
+  #gcse-equation-app .eq-seg{display:inline-flex;flex-wrap:wrap;gap:6px}
+  #gcse-equation-app [hidden]{display:none}
+  @media(max-width:780px){
+    #gcse-equation-app .eq-two{grid-template-columns:1fr}
+    #gcse-equation-app .eq-methods{grid-template-columns:1fr}
+    #gcse-equation-app{padding:12px}
+    #gcse-equation-app .eq-title{font-size:22px}
+    #gcse-equation-app .eq-eqn{font-size:25px}
+    #gcse-equation-app .eq-big{font-size:32px}
+  }
+  `;
+  const st=document.createElement('style');st.textContent=css;document.head.appendChild(st);
+
+  /* ---------- data ---------------------------------------------------- */
+  function pv(c,d){return {c:c,d:d};}
+  function K(id,tp,nm,f,tg,lb,un,ex,sets,pl,nf){return {id:id,tp:tp,nm:nm,f:f,tg:tg,lb:lb,un:un,ex:ex,sets:sets,pl:pl,nf:!!nf};}
+
+  const TASKS=[
+  K('Fma_a','Forces','Resultant force','F = m × a','a',{F:'force',m:'mass',a:'acceleration'},{F:'N',m:'kg',a:'m/s²'},'F/m',[[20,5],[18,3],[48,6]],[['÷','m','a = F ÷ m']]),
+  K('Fma_m','Forces','Resultant force','F = m × a','m',{F:'force',m:'mass',a:'acceleration'},{F:'N',m:'kg',a:'m/s²'},'F/a',[[24,6],[30,5],[56,7]],[['÷','a','m = F ÷ a']]),
+  K('Wmg_m','Forces','Weight','W = m × g','m',{W:'weight',m:'mass',g:'gravitational field strength'},{W:'N',m:'kg',g:'N/kg'},'W/g',[[50,10],[120,10],[98,9.8]],[['÷','g','m = W ÷ g']]),
+  K('p_mv_v','Forces','Momentum','p = m × v','v',{p:'momentum',m:'mass',v:'velocity'},{p:'kg m/s',m:'kg',v:'m/s'},'p/m',[[40,5],[63,9],[120,12]],[['÷','m','v = p ÷ m']]),
+  K('rho_mV_m','Matter','Density','ρ = m ÷ V','m',{ρ:'density',m:'mass',V:'volume'},{ρ:'kg/m³',m:'kg',V:'m³'},'ρ*V',[[2,8],[5,7],[1000,0.25]],[['×','V','m = ρ × V']]),
+  K('rho_mV_V','Matter','Density','ρ = m ÷ V','V',{ρ:'density',m:'mass',V:'volume'},{ρ:'kg/m³',m:'kg',V:'m³'},'m/ρ',[[2,16],[4,28],[1000,2]],[['×','V','ρ × V = m'],['÷','ρ','V = m ÷ ρ']]),
+  K('svt_v','Motion','Speed','s = v × t','v',{s:'distance',v:'speed',t:'time'},{s:'m',v:'m/s',t:'s'},'s/t',[[30,5],[84,7],[150,10]],[['÷','t','v = s ÷ t']]),
+  K('svt_t','Motion','Time taken','s = v × t','t',{s:'distance',v:'speed',t:'time'},{s:'m',v:'m/s',t:'s'},'s/v',[[30,6],[84,7],[150,10]],[['÷','v','t = s ÷ v']]),
+  K('a_vut_t','Motion','Acceleration','a = (v − u) ÷ t','t',{a:'acceleration',v:'final velocity',u:'initial velocity',t:'time'},{a:'m/s²',v:'m/s',u:'m/s',t:'s'},'(v-u)/a',[[2,14,4],[3,24,6],[5,45,10]],[['×','t','a × t = v − u'],['÷','a','t = (v − u) ÷ a']]),
+  K('a_vut_v','Motion','Final velocity','a = (v − u) ÷ t','v',{a:'acceleration',v:'final velocity',u:'initial velocity',t:'time'},{a:'m/s²',v:'m/s',u:'m/s',t:'s'},'u+a*t',[[2,4,5],[3,6,4],[1.5,2,10]],[['×','t','a × t = v − u'],['+','u','v = u + a × t']]),
+  K('a_vut_u','Motion','Initial velocity','a = (v − u) ÷ t','u',{a:'acceleration',v:'final velocity',u:'initial velocity',t:'time'},{a:'m/s²',v:'m/s',u:'m/s',t:'s'},'v-a*t',[[2,14,5],[3,21,4],[1.5,20,8]],[['×','t','a × t = v − u'],['+','u','a × t + u = v'],['−','a × t','u = v − a × t']]),
+  K('work_Fd_F','Energy','Work done','E = F × d','F',{E:'work done',F:'force',d:'distance'},{E:'J',F:'N',d:'m'},'E/d',[[40,8],[72,9],[150,15]],[['÷','d','F = E ÷ d']]),
+  K('gpe_h','Energy','Gravitational potential energy','Ep = m × g × h','h',{Ep:'gravitational potential energy',m:'mass',g:'gravitational field strength',h:'height'},{Ep:'J',m:'kg',g:'N/kg',h:'m'},'Ep/(m*g)',[[200,5,10],[360,6,10],[147,3,9.8]],[['÷','m','Ep ÷ m = g × h'],['÷','g','h = Ep ÷ (m × g)']]),
+  K('gpe_m','Energy','Gravitational potential energy','Ep = m × g × h','m',{Ep:'gravitational potential energy',m:'mass',g:'gravitational field strength',h:'height'},{Ep:'J',m:'kg',g:'N/kg',h:'m'},'Ep/(g*h)',[[300,10,5],[480,10,6],[196,9.8,4]],[['÷','g','Ep ÷ g = m × h'],['÷','h','m = Ep ÷ (g × h)']]),
+  K('ke_v','Energy','Kinetic energy','Ek = 1/2 × m × v²','v',{Ek:'kinetic energy',m:'mass',v:'speed'},{Ek:'J',m:'kg',v:'m/s'},'Math.sqrt(2*Ek/m)',[[50,4],[18,4],[200,16]],[['×','2','2 × Ek = m × v²'],['÷','m','(2 × Ek) ÷ m = v²'],['√','','v = √(2 × Ek ÷ m)']],1),
+  K('ke_m','Energy','Kinetic energy','Ek = 1/2 × m × v²','m',{Ek:'kinetic energy',m:'mass',v:'speed'},{Ek:'J',m:'kg',v:'m/s'},'(2*Ek)/(v*v)',[[50,5],[72,4],[250,10]],[['×','2','2 × Ek = m × v²'],['÷','v²','m = 2 × Ek ÷ v²']],1),
+  K('shc_c','Thermal','Specific heat capacity','ΔE = m × c × Δθ','c',{'ΔE':'change in thermal energy',m:'mass',c:'specific heat capacity','Δθ':'temperature change'},{'ΔE':'J',m:'kg',c:'J/kg°C','Δθ':'°C'},'ΔE/(m*Δθ)',[[2000,2,5],[4200,1,10],[8400,4,10]],[['÷','m','ΔE ÷ m = c × Δθ'],['÷','Δθ','c = ΔE ÷ (m × Δθ)']]),
+  K('shc_m','Thermal','Specific heat capacity','ΔE = m × c × Δθ','m',{'ΔE':'change in thermal energy',m:'mass',c:'specific heat capacity','Δθ':'temperature change'},{'ΔE':'J',m:'kg',c:'J/kg°C','Δθ':'°C'},'ΔE/(c*Δθ)',[[8000,500,4],[4200,420,2],[9000,450,20]],[['÷','c','ΔE ÷ c = m × Δθ'],['÷','Δθ','m = ΔE ÷ (c × Δθ)']]),
+  K('latent_L','Thermal','Specific latent heat','E = m × L','L',{E:'energy transferred',m:'mass',L:'specific latent heat'},{E:'J',m:'kg',L:'J/kg'},'E/m',[[167000,0.5],[113000,0.05],[21800,0.2]],[['÷','m','L = E ÷ m']]),
+  K('power_t','Energy','Power','P = E ÷ t','t',{P:'power',E:'energy transferred',t:'time'},{P:'W',E:'J',t:'s'},'E/P',[[10,50],[25,100],[60,600]],[['×','t','P × t = E'],['÷','P','t = E ÷ P']]),
+  K('power_E','Energy','Power','P = E ÷ t','E',{P:'power',E:'energy transferred',t:'time'},{P:'W',E:'J',t:'s'},'P*t',[[10,6],[25,4],[80,5]],[['×','t','E = P × t']]),
+  K('charge_t','Electricity','Charge flow','Q = I × t','t',{Q:'charge flow',I:'current',t:'time'},{Q:'C',I:'A',t:'s'},'Q/I',[[20,4],[45,5],[120,2]],[['÷','I','t = Q ÷ I']]),
+  K('ohm_R','Electricity','Potential difference','V = I × R','R',{V:'potential difference',I:'current',R:'resistance'},{V:'V',I:'A',R:'Ω'},'V/I',[[12,3],[24,4],[230,10]],[['÷','I','R = V ÷ I']]),
+  K('PIV_I','Electricity','Electrical power','P = I × V','I',{P:'power',I:'current',V:'potential difference'},{P:'W',I:'A',V:'V'},'P/V',[[60,12],[100,25],[230,230]],[['÷','V','I = P ÷ V']]),
+  K('PI2R_I','Electricity','Power in a resistor','P = I² × R','I',{P:'power',I:'current',R:'resistance'},{P:'W',I:'A',R:'Ω'},'Math.sqrt(P/R)',[[16,4],[144,4],[45,5]],[['÷','R','P ÷ R = I²'],['√','','I = √(P ÷ R)']]),
+  K('QV_Q','Electricity','Energy transferred by charge','E = Q × V','Q',{E:'energy transferred',Q:'charge',V:'potential difference'},{E:'J',Q:'C',V:'V'},'E/V',[[60,12],[120,6],[230,23]],[['÷','V','Q = E ÷ V']]),
+  K('wave_f','Waves','Wave speed','v = f × λ','f',{v:'wave speed',f:'frequency',λ:'wavelength'},{v:'m/s',f:'Hz',λ:'m'},'v/λ',[[20,5],[340,2],[300000000,1500]],[['÷','λ','f = v ÷ λ']]),
+  K('wave_lambda','Waves','Wave speed','v = f × λ','λ',{v:'wave speed',f:'frequency',λ:'wavelength'},{v:'m/s',f:'Hz',λ:'m'},'v/f',[[20,4],[340,170],[300000000,500000000]],[['÷','f','λ = v ÷ f']]),
+  K('hooke_k','Forces','Hooke’s law','F = k × e','k',{F:'force',k:'spring constant',e:'extension'},{F:'N',k:'N/m',e:'m'},'F/e',[[20,0.5],[15,0.3],[50,0.25]],[['÷','e','k = F ÷ e']]),
+  K('spring_e','Energy','Elastic potential energy','Ee = 1/2 × k × e²','e',{Ee:'elastic potential energy',k:'spring constant',e:'extension'},{Ee:'J',k:'N/m',e:'m'},'Math.sqrt(2*Ee/k)',[[8,4],[18,4],[2,100]],[['×','2','2 × Ee = k × e²'],['÷','k','(2 × Ee) ÷ k = e²'],['√','','e = √(2 × Ee ÷ k)']],1),
+  K('pressure_A','Matter','Pressure','p = F ÷ A','A',{p:'pressure',F:'force',A:'area'},{p:'Pa',F:'N',A:'m²'},'F/p',[[5,20],[10,80],[200,1000]],[['×','A','p × A = F'],['÷','p','A = F ÷ p']]),
+  K('fluid_h','Matter','Pressure in a liquid','p = ρ × g × h','h',{p:'pressure',ρ:'density',g:'gravitational field strength',h:'depth'},{p:'Pa',ρ:'kg/m³',g:'N/kg',h:'m'},'p/(ρ*g)',[[20000,1000,10],[50000,1000,10],[19600,1000,9.8]],[['÷','ρ','p ÷ ρ = g × h'],['÷','g','h = p ÷ (ρ × g)']]),
+  K('moment_d','Forces','Moment of a force','M = F × d','d',{M:'moment',F:'force',d:'perpendicular distance'},{M:'Nm',F:'N',d:'m'},'M/F',[[20,5],[60,12],[7.5,3]],[['÷','F','d = M ÷ F']]),
+  K('eff_useful','Energy','Efficiency','efficiency = useful ÷ total','useful',{efficiency:'efficiency as a decimal',useful:'useful energy output',total:'total energy input'},{efficiency:'',useful:'J',total:'J'},'efficiency*total',[[0.8,100],[0.6,250],[0.25,400]],[['×','total','useful = efficiency × total']]),
+  K('eff_total','Energy','Efficiency','efficiency = useful ÷ total','total',{efficiency:'efficiency as a decimal',useful:'useful energy output',total:'total energy input'},{efficiency:'',useful:'J',total:'J'},'useful/efficiency',[[0.8,80],[0.5,150],[0.25,200]],[['×','total','efficiency × total = useful'],['÷','efficiency','total = useful ÷ efficiency']]),
+  K('transformer_Vs','Electricity','Transformer turns ratio','Vp ÷ Vs = Np ÷ Ns','Vs',{Vp:'primary voltage',Vs:'secondary voltage',Np:'primary turns',Ns:'secondary turns'},{Vp:'V',Vs:'V',Np:'turns',Ns:'turns'},'Vp*Ns/Np',[[230,100,20],[12,50,200],[240,1200,60]],[['cross','','Vp × Ns = Np × Vs'],['÷','Np','Vs = Vp × Ns ÷ Np']]),
+  K('transformer_Ns','Electricity','Transformer turns ratio','Vp ÷ Vs = Np ÷ Ns','Ns',{Vp:'primary voltage',Vs:'secondary voltage',Np:'primary turns',Ns:'secondary turns'},{Vp:'V',Vs:'V',Np:'turns',Ns:'turns'},'Np*Vs/Vp',[[230,46,500],[12,240,50],[240,12,1200]],[['cross','','Vp × Ns = Np × Vs'],['÷','Vp','Ns = Np × Vs ÷ Vp']]),
+  K('transformer_Is','Electricity','Transformer power','Vp × Ip = Vs × Is','Is',{Vp:'primary voltage',Ip:'primary current',Vs:'secondary voltage',Is:'secondary current'},{Vp:'V',Ip:'A',Vs:'V',Is:'A'},'Vp*Ip/Vs',[[230,2,46],[12,5,15],[240,1,120]],[['÷','Vs','Is = Vp × Ip ÷ Vs']]),
+  K('mag_actual','Waves','Magnification','magnification = image ÷ object','object',{magnification:'magnification',image:'image height',object:'object height'},{magnification:'',image:'cm',object:'cm'},'image/magnification',[[4,20],[2,7],[0.5,3]],[['×','object','magnification × object = image'],['÷','magnification','object = image ÷ magnification']]),
+  K('mag_image','Waves','Magnification','magnification = image ÷ object','image',{magnification:'magnification',image:'image height',object:'object height'},{magnification:'',image:'cm',object:'cm'},'magnification*object',[[4,5],[2,3.5],[0.5,8]],[['×','object','image = magnification × object']]),
+  K('suvat_s','Motion','Equation of motion','v² − u² = 2 × a × s','s',{v:'final velocity',u:'initial velocity',a:'acceleration',s:'distance'},{v:'m/s',u:'m/s',a:'m/s²',s:'m'},'(v*v-u*u)/(2*a)',[[10,0,2],[12,4,4],[20,10,5]],[['÷','2','(v² − u²) ÷ 2 = a × s'],['÷','a','s = (v² − u²) ÷ (2 × a)']],1),
+  K('suvat_a','Motion','Equation of motion','v² − u² = 2 × a × s','a',{v:'final velocity',u:'initial velocity',a:'acceleration',s:'distance'},{v:'m/s',u:'m/s',a:'m/s²',s:'m'},'(v*v-u*u)/(2*s)',[[10,0,25],[12,4,16],[20,10,30]],[['÷','2','(v² − u²) ÷ 2 = a × s'],['÷','s','a = (v² − u²) ÷ (2 × s)']],1),
+  K('suvat2_a','Motion','Equation of motion','s = u × t + 1/2 × a × t²','a',{s:'distance',u:'initial velocity',t:'time',a:'acceleration'},{s:'m',u:'m/s',t:'s',a:'m/s²'},'2*(s-u*t)/(t*t)',[[40,5,4],[30,2,5],[54,3,6]],[['−','u × t','s − u × t = 1/2 × a × t²'],['×','2','2 × (s − u × t) = a × t²'],['÷','t²','a = 2 × (s − u × t) ÷ t²']],1),
+  K('suvat2_u','Motion','Equation of motion','s = u × t + 1/2 × a × t²','u',{s:'distance',u:'initial velocity',t:'time',a:'acceleration'},{s:'m',u:'m/s',t:'s',a:'m/s²'},'(s-0.5*a*t*t)/t',[[40,4,2],[30,5,2],[54,6,2]],[['−','1/2 × a × t²','s − 1/2 × a × t² = u × t'],['÷','t','u = (s − 1/2 × a × t²) ÷ t']]),
+  K('resistance_total','Electricity','Resistors in series','Rtotal = R1 + R2','R2',{Rtotal:'total resistance',R1:'resistance of first resistor',R2:'resistance of second resistor'},{Rtotal:'Ω',R1:'Ω',R2:'Ω'},'Rtotal-R1',[[10,4],[25,10],[100,68]],[['−','R1','R2 = Rtotal − R1']]),
+  K('cp_energy','Resources','Cost of electricity','cost = units × price','price',{cost:'total cost',units:'units used',price:'price per unit'},{cost:'p',units:'kWh',price:'p/kWh'},'cost/units',[[60,3],[120,4],[350,10]],[['÷','units','price = cost ÷ units']]),
+  K('ohm_R_prefix','Electricity','Potential difference with prefixes','V = I × R','R',{V:'potential difference',I:'current',R:'resistance'},{V:'V',I:'A',R:'Ω'},'V/I',[[12,pv(0.005,'5 mA')],[6,pv(0.002,'2 mA')],[24,pv(0.003,'3 mA')]],[['÷','I','R = V ÷ I']]),
+  K('PIV_I_prefix','Electricity','Electrical power with prefixes','P = I × V','I',{P:'power',I:'current',V:'potential difference'},{P:'W',I:'A',V:'V'},'P/V',[[pv(2000,'2 kW'),250],[pv(1200,'1.2 kW'),240],[pv(5000000,'5 MW'),25000]],[['÷','V','I = P ÷ V']]),
+  K('charge_t_prefix','Electricity','Charge flow with prefixes','Q = I × t','t',{Q:'charge flow',I:'current',t:'time'},{Q:'C',I:'A',t:'s'},'Q/I',[[pv(2000,'2 kC'),pv(0.5,'500 mA')],[pv(1800,'1.8 kC'),pv(0.9,'900 mA')],[pv(1200000,'1.2 MC'),pv(2000,'2 kA')]],[['÷','I','t = Q ÷ I']]),
+  K('work_Fd_F_prefix','Energy','Work done with prefixes','E = F × d','F',{E:'work done',F:'force',d:'distance'},{E:'J',F:'N',d:'m'},'E/d',[[pv(2000,'2 kJ'),4],[pv(5000,'5 kJ'),20],[pv(1200000,'1.2 MJ'),400]],[['÷','d','F = E ÷ d']]),
+  K('hooke_k_prefix','Forces','Hooke’s law with prefixes','F = k × e','k',{F:'force',k:'spring constant',e:'extension'},{F:'N',k:'N/m',e:'m'},'F/e',[[pv(0.5,'500 mN'),pv(0.01,'10 mm')],[pv(2,'2 N'),pv(0.004,'4 mm')],[pv(1.2,'1.2 N'),pv(0.006,'6 mm')]],[['÷','e','k = F ÷ e']]),
+  K('wave_f_prefix','Waves','Wave speed with prefixes','v = f × λ','f',{v:'wave speed',f:'frequency',λ:'wavelength'},{v:'m/s',f:'Hz',λ:'m'},'v/λ',[[pv(300000000,'300 Mm/s'),pv(0.6,'600 mm')],[pv(340,'340 m/s'),pv(0.17,'170 mm')],[pv(1500,'1.5 km/s'),pv(0.75,'750 mm')]],[['÷','λ','f = v ÷ λ']]),
+  K('power_t_prefix','Energy','Power with prefixes','P = E ÷ t','t',{P:'power',E:'energy transferred',t:'time'},{P:'W',E:'J',t:'s'},'E/P',[[300,pv(2400,'2.4 kJ')],[pv(2000,'2 kW'),pv(10000,'10 kJ')],[pv(5000000,'5 MW'),pv(20000000,'20 MJ')]],[['×','t','P × t = E'],['÷','P','t = E ÷ P']]),
+  K('pressure_A_prefix','Matter','Pressure with prefixes','p = F ÷ A','A',{p:'pressure',F:'force',A:'area'},{p:'Pa',F:'N',A:'m²'},'F/p',[[500,pv(2000,'2 kN')],[pv(4000,'4 kPa'),pv(8000,'8 kN')],[pv(1000000,'1 MPa'),pv(2000,'2 kN')]],[['×','A','p × A = F'],['÷','p','A = F ÷ p']]),
+  K('rho_V_prefix','Matter','Density with prefixes','ρ = m ÷ V','V',{ρ:'density',m:'mass',V:'volume'},{ρ:'kg/m³',m:'kg',V:'m³'},'m/ρ',[[1000,pv(0.5,'500 g')],[800,pv(2,'2 kg')],[2500,pv(0.25,'250 g')]],[['×','V','ρ × V = m'],['÷','ρ','V = m ÷ ρ']]),
+  K('gpe_h_prefix','Energy','Gravitational potential energy with prefixes','Ep = m × g × h','h',{Ep:'gravitational potential energy',m:'mass',g:'gravitational field strength',h:'height'},{Ep:'J',m:'kg',g:'N/kg',h:'m'},'Ep/(m*g)',[[pv(2000,'2 kJ'),5,10],[pv(3600,'3.6 kJ'),6,10],[pv(1470,'1.47 kJ'),3,9.8]],[['÷','m','Ep ÷ m = g × h'],['÷','g','h = Ep ÷ (m × g)']],1),
+  K('ke_v_prefix','Energy','Kinetic energy with prefixes','Ek = 1/2 × m × v²','v',{Ek:'kinetic energy',m:'mass',v:'speed'},{Ek:'J',m:'kg',v:'m/s'},'Math.sqrt(2*Ek/m)',[[pv(0.05,'50 mJ'),0.004],[pv(0.2,'200 mJ'),0.016],[pv(2000,'2 kJ'),10]],[['×','2','2 × Ek = m × v²'],['÷','m','(2 × Ek) ÷ m = v²'],['√','','v = √(2 × Ek ÷ m)']],1),
+  K('spring_e_prefix','Energy','Elastic potential energy with prefixes','Ee = 1/2 × k × e²','e',{Ee:'elastic potential energy',k:'spring constant',e:'extension'},{Ee:'J',k:'N/m',e:'m'},'Math.sqrt(2*Ee/k)',[[pv(0.5,'500 mJ'),100],[pv(0.18,'180 mJ'),100],[pv(2,'2 J'),100]],[['×','2','2 × Ee = k × e²'],['÷','k','(2 × Ee) ÷ k = e²'],['√','','e = √(2 × Ee ÷ k)']],1),
+  K('fluid_h_prefix','Matter','Pressure in a liquid with prefixes','p = ρ × g × h','h',{p:'pressure',ρ:'density',g:'gravitational field strength',h:'depth'},{p:'Pa',ρ:'kg/m³',g:'N/kg',h:'m'},'p/(ρ*g)',[[pv(20000,'20 kPa'),1000,10],[pv(50000,'50 kPa'),1000,10],[pv(19600,'19.6 kPa'),1000,9.8]],[['÷','ρ','p ÷ ρ = g × h'],['÷','g','h = p ÷ (ρ × g)']],1),
+  K('shc_c_prefix','Thermal','Specific heat capacity with prefixes','ΔE = m × c × Δθ','c',{'ΔE':'change in thermal energy',m:'mass',c:'specific heat capacity','Δθ':'temperature change'},{'ΔE':'J',m:'kg',c:'J/kg°C','Δθ':'°C'},'ΔE/(m*Δθ)',[[pv(4200,'4.2 kJ'),pv(0.5,'500 g'),2],[pv(4500,'4.5 kJ'),pv(0.5,'500 g'),10],[pv(1540,'1.54 kJ'),pv(0.2,'200 g'),20]],[['÷','m','ΔE ÷ m = c × Δθ'],['÷','Δθ','c = ΔE ÷ (m × Δθ)']],1)
+  ];
+
+  const METHODS={
+    balance:{n:'Balance method',s:'Do the same operation to both sides, written out in full, until the target is on its own.',x:'F = m × a → F ÷ a = (m × a) ÷ a → m = F ÷ a',d:'Every step is written on both sides of the equals sign before it is tidied up, so you can see the equation stay balanced.'},
+    undo:{n:'Inverse operations',s:'Undo one operation at a time, in reverse order, writing only the tidied line each time.',x:'Ek = 1/2 × m × v² → multiply by 2 → divide by m → square root',d:'Shorter working than the balance method. Use it once you trust yourself to do the same thing to both sides without writing it out.'},
+    fraction:{n:'Fraction / cross-multiply',s:'Only for equations that already contain a fraction, divide sign or ratio. Clear that first, then one operation per step.',x:'ρ = m ÷ V → ρ × V = m → V = m ÷ ρ',d:'Locked to equations with a divide sign or ratio to clear. It never uses simple product equations such as F = ma.'},
+    numbers:{n:'Substitute numbers first',s:'Put the numbers in before rearranging, so awkward constants such as 1/2 and 2 collapse into one number.',x:'Ek = 1/2 × m × v², Ek = 50 J, m = 4 kg → 50 = 2 × v² → v = 5 m/s',d:'Locked to multi-step equations where substituting first genuinely simplifies the algebra. Never used for F = ma, W = mg, V = IR or s = vt.'}
+  };
+
+  /* ---------- helpers -------------------------------------------------- */
+  const SUBS=['Ep','Ek','Ee','Vp','Vs','Np','Ns','Ip','Is','Rtotal','R1','R2'];
+  const SUBRE=new RegExp('(^|[^A-Za-z0-9_])('+SUBS.join('|')+')(?![A-Za-z0-9_])','g');
+  function fmt(s){return String(s).replace(SUBRE,function(m,a,b){
+    var i=b==='Rtotal'?1:1;return a+b.slice(0,i)+'<sub>'+b.slice(i)+'</sub>';});}
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function sg(x,d){return String(Number(Number(x).toPrecision(d)));}
+  function nP(x){
+    if(x===null||x===undefined||!isFinite(x))return '—';
+    if(x===0)return '0';
+    return sg(x,4);
+  }
+  function n(x){
+    if(x===null||x===undefined||!isFinite(x))return '—';
+    if(x===0)return '0';
+    var a=Math.abs(x);
+    if(a>=1e5||a<1e-3){var e=Math.floor(Math.log10(a));return sg(x/Math.pow(10,e),3)+' × 10<sup>'+e+'</sup>';}
+    return sg(x,4);
+  }
+  function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+  function subst(str,map){
+    var keys=Object.keys(map).sort(function(a,b){return b.length-a.length;})
+      .map(function(k){return k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');});
+    if(!keys.length)return str;
+    var re=new RegExp('(^|[^A-Za-z0-9_])('+keys.join('|')+')(?![A-Za-z0-9_])','g');
+    return String(str).replace(re,function(m,a,b){return a+map[b];});
+  }
+  function evalTask(task,vals){
+    var names=Object.keys(vals);
+    try{
+      var fn=new Function(names,'return ('+task.ex+');');
+      return fn.apply(null,names.map(function(k){return vals[k];}));
+    }catch(e){return NaN;}
+  }
+  function parseNum(s){
+    s=String(s).trim().toLowerCase();
+    if(!s)return NaN;
+    var sup={'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-'};
+    s=s.replace(/[⁰¹²³⁴-⁹⁻]/g,function(c){return sup[c];});
+    s=s.replace(/,/g,'').replace(/\s+/g,'').replace(/[−–]/g,'-');
+    s=s.replace(/(?:x|×|\*)10\^?/g,'e').replace(/\^/g,'e');
+    var m=s.match(/^-?\d*\.?\d+(?:e-?\d+)?$/);
+    return m?Number(s):NaN;
+  }
+
+  /* ---------- step wording, plans and options -------------------------- */
+  function sayFor(op){
+    switch(op.k){
+      case '÷': return 'Divide both sides by '+op.by;
+      case '×': return 'Multiply both sides by '+op.by;
+      case '+': return 'Add '+op.by+' to both sides';
+      case '−': return 'Subtract '+op.by+' from both sides';
+      case '√': return 'Take the square root of both sides';
+      case 'sq': return 'Square both sides';
+      case 'cross': return 'Cross-multiply to clear both fractions';
+      case 'sub': return state.method==='numbers'
+        ? 'Substitute the numbers into the original equation'
+        : 'Substitute the numbers into the rearranged equation';
+      case 'simp': return 'Simplify the number part';
+      case 'calc': return 'Work out the answer';
+    }
+    return '';
+  }
+  function wrapSide(s,k){
+    if(k!=='÷'&&k!=='×')return s;
+    if(!/\s/.test(s))return s;
+    if(/^\(.*\)$/.test(s))return s;
+    return '('+s+')';
+  }
+  function bothSides(prev,op){
+    var i=String(prev).indexOf('=');
+    if(i<0)return null;
+    var L=prev.slice(0,i).trim(),R=prev.slice(i+1).trim();
+    if(op.k==='√')return '√('+L+') = √('+R+')';
+    if(op.k==='cross')return null;
+    if(op.k==='×')return op.by+' × '+wrapSide(L,op.k)+' = '+op.by+' × '+wrapSide(R,op.k);
+    if(op.k==='÷')return wrapSide(L,op.k)+' ÷ '+op.by+' = '+wrapSide(R,op.k)+' ÷ '+op.by;
+    return L+' '+op.k+' '+op.by+' = '+R+' '+op.k+' '+op.by;
+  }
+  function symbolsIn(task){
+    return Object.keys(task.lb);
+  }
+  function optionsFor(task,step){
+    var op=step.op, tg=task.tg, correct=sayFor(op), wrong=[];
+    var others=symbolsIn(task).filter(function(s){return s!==tg&&s!==op.by;});
+    function add(txt,why){
+      if(!txt||txt===correct)return;
+      for(var i=0;i<wrong.length;i++){if(wrong[i].t===txt)return;}
+      wrong.push({t:txt,w:why});
+    }
+    if(op.k==='÷'||op.k==='×'){
+      var opp=op.k==='÷'?'×':'÷';
+      add(sayFor({k:opp,by:op.by}), op.by+' is '+(op.k==='÷'?'multiplying':'dividing')+' here, so you undo it with the opposite operation, not the same one.');
+      add(sayFor({k:op.k,by:tg}), 'Never '+(op.k==='÷'?'divide':'multiply')+' by '+tg+'. That is the quantity you are trying to leave on its own.');
+      if(others.length) add(sayFor({k:'−',by:others[0]}), others[0]+' is not added or subtracted in this equation, so subtracting it will not remove anything.');
+      add((op.k==='÷'?'Divide':'Multiply')+' only the left-hand side by '+op.by, 'Whatever you do to one side you must do to the other, or the two sides stop being equal.');
+      if(/²/.test(task.f)) add('Divide both sides by 2', 'Dividing by 2 halves the quantity. It does not undo a square — that needs a square root.');
+    } else if(op.k==='+'||op.k==='−'){
+      var opp2=op.k==='+'?'−':'+';
+      add(sayFor({k:opp2,by:op.by}), op.by+' is currently '+(op.k==='+'?'subtracted':'added')+', so you undo it the other way round.');
+      add(sayFor({k:'÷',by:op.by}), op.by+' is added or subtracted here, not multiplied, so dividing will not remove it cleanly.');
+      add(sayFor({k:'×',by:tg}), 'Multiplying by '+tg+' puts the unknown on both sides and makes the equation harder, not easier.');
+      add((op.k==='+'?'Add ':'Subtract ')+op.by+(op.k==='+'?' to the left-hand side only':' from the left-hand side only'), 'Whatever you do to one side you must do to the other, or the two sides stop being equal.');
+    } else if(op.k==='√'){
+      add('Divide both sides by 2', 'Dividing by 2 halves the quantity. To undo a square you take the square root.');
+      add('Square both sides', 'The unknown is already squared. Squaring again makes it a fourth power.');
+      add('Multiply both sides by 2', 'Multiplying by 2 doubles the quantity. It has no effect on the square.');
+      add('Take the square root of the left-hand side only', 'Whatever you do to one side you must do to the other, or the two sides stop being equal.');
+    } else if(op.k==='cross'){
+      add('Multiply the two top numbers together and the two bottom numbers together', 'That is not cross-multiplying. The top of one side multiplies the bottom of the other.');
+      add('Add the two fractions together', 'The two sides are already equal to each other. There is nothing to add.');
+      add('Cancel '+symbolsIn(task)[0]+' from both fractions', 'You can only cancel a quantity that appears as a factor on both sides in the same place.');
+      add('Turn both sides upside down and stop there', 'Inverting both sides is allowed, but it does not clear the fractions or isolate '+tg+'.');
+    }
+    shuffle(wrong);
+    var picked=wrong.slice(0,3);
+    var all=picked.map(function(w){return {t:w.t,w:w.w,ok:false};});
+    all.push({t:correct,w:'',ok:true});
+    return shuffle(all);
+  }
+  function parseStep(txt,op){
+    var raw=String(txt),s=raw.toLowerCase();
+    var pats=[['√',/(square\s*root|√|\bsqrt\b|\broot\b)/],
+              ['cross',/cross[\s-]*multipl/],
+              ['÷',/(divid|÷|\/|\bover\b)/],
+              ['×',/(multipl|times|×|\*)/],
+              ['−',/(subtract|minus|take\s*away)/],
+              ['+',/(\badd\b|plus)/]];
+    var k=null,bi=1e9;
+    pats.forEach(function(pp){var i=s.search(pp[1]);if(i>=0&&i<bi){bi=i;k=pp[0];}});
+    var by=null;
+    if(op.by){
+      var e=String(op.by).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      if(new RegExp('(^|[^A-Za-z0-9_])'+e+'(?![A-Za-z0-9_])').test(raw))by=op.by;
+    }
+    return {k:k,by:by};
+  }
+
+
+  /* ---------- per-task simplification lines ---------------------------- */
+  const SIMP={
+    a_vut_t:function(v){return 't = '+n(v.v-v.u)+' ÷ '+n(v.a);},
+    a_vut_v:function(v){return 'v = '+n(v.u)+' + '+n(v.a*v.t);},
+    a_vut_u:function(v){return 'u = '+n(v.v)+' − '+n(v.a*v.t);},
+    gpe_h:function(v){return 'h = '+n(v.Ep)+' ÷ '+n(v.m*v.g);},
+    gpe_m:function(v){return 'm = '+n(v.Ep)+' ÷ '+n(v.g*v.h);},
+    ke_v:function(v){return 'v = √'+n(2*v.Ek/v.m);},
+    ke_m:function(v){return 'm = '+n(2*v.Ek)+' ÷ '+n(v.v*v.v);},
+    shc_c:function(v){return 'c = '+n(v['ΔE'])+' ÷ '+n(v.m*v['Δθ']);},
+    shc_m:function(v){return 'm = '+n(v['ΔE'])+' ÷ '+n(v.c*v['Δθ']);},
+    PI2R_I:function(v){return 'I = √'+n(v.P/v.R);},
+    spring_e:function(v){return 'e = √'+n(2*v.Ee/v.k);},
+    fluid_h:function(v){return 'h = '+n(v.p)+' ÷ '+n(v['ρ']*v.g);},
+    transformer_Vs:function(v){return 'Vs = '+n(v.Vp*v.Ns)+' ÷ '+n(v.Np);},
+    transformer_Ns:function(v){return 'Ns = '+n(v.Np*v.Vs)+' ÷ '+n(v.Vp);},
+    transformer_Is:function(v){return 'Is = '+n(v.Vp*v.Ip)+' ÷ '+n(v.Vs);},
+    eff_total:function(v){return 'total = '+n(v.useful)+' ÷ '+n(v.efficiency);},
+    suvat_s:function(v){return 's = '+n(v.v*v.v-v.u*v.u)+' ÷ '+n(2*v.a);},
+    suvat_a:function(v){return 'a = '+n(v.v*v.v-v.u*v.u)+' ÷ '+n(2*v.s);},
+    suvat2_a:function(v){return 'a = '+n(2*(v.s-v.u*v.t))+' ÷ '+n(v.t*v.t);},
+    suvat2_u:function(v){return 'u = '+n(v.s-0.5*v.a*v.t*v.t)+' ÷ '+n(v.t);},
+    ohm_R_prefix:function(v){return 'R = '+n(v.V)+' ÷ '+n(v.I);},
+    PIV_I_prefix:function(v){return 'I = '+n(v.P)+' ÷ '+n(v.V);},
+    charge_t_prefix:function(v){return 't = '+n(v.Q)+' ÷ '+n(v.I);},
+    work_Fd_F_prefix:function(v){return 'F = '+n(v.E)+' ÷ '+n(v.d);},
+    hooke_k_prefix:function(v){return 'k = '+n(v.F)+' ÷ '+n(v.e);},
+    wave_f_prefix:function(v){return 'f = '+n(v.v)+' ÷ '+n(v['λ']);},
+    power_t_prefix:function(v){return 't = '+n(v.E)+' ÷ '+n(v.P);},
+    pressure_A_prefix:function(v){return 'A = '+n(v.F)+' ÷ '+n(v.p);},
+    rho_V_prefix:function(v){return 'V = '+n(v.m)+' ÷ '+n(v['ρ']);},
+    gpe_h_prefix:function(v){return 'h = '+n(v.Ep)+' ÷ '+n(v.m*v.g);},
+    ke_v_prefix:function(v){return 'v = √'+n(2*v.Ek/v.m);},
+    spring_e_prefix:function(v){return 'e = √'+n(2*v.Ee/v.k);},
+    fluid_h_prefix:function(v){return 'h = '+n(v.p)+' ÷ '+n(v['ρ']*v.g);},
+    shc_c_prefix:function(v){return 'c = '+n(v['ΔE'])+' ÷ '+n(v.m*v['Δθ']);}
+  };
+  /* numbers-first: collapse to A = C × target (or C × target²) */
+  const NF={
+    ke_v:function(v){return {A:v.Ek,C:0.5*v.m,sq:1};},
+    ke_m:function(v){return {A:v.Ek,C:0.5*v.v*v.v,sq:0};},
+    spring_e:function(v){return {A:v.Ee,C:0.5*v.k,sq:1};},
+    spring_e_prefix:function(v){return {A:v.Ee,C:0.5*v.k,sq:1};},
+    ke_v_prefix:function(v){return {A:v.Ek,C:0.5*v.m,sq:1};},
+    gpe_h_prefix:function(v){return {A:v.Ep,C:v.m*v.g,sq:0};},
+    fluid_h_prefix:function(v){return {A:v.p,C:v['ρ']*v.g,sq:0};},
+    shc_c_prefix:function(v){return {A:v['ΔE'],C:v.m*v['Δθ'],sq:0};},
+    suvat_s:function(v){return {A:v.v*v.v-v.u*v.u,C:2*v.a,sq:0};},
+    suvat_a:function(v){return {A:v.v*v.v-v.u*v.u,C:2*v.s,sq:0};},
+    suvat2_a:function(v){return {A:v.s-v.u*v.t,C:0.5*v.t*v.t,sq:0};}
+  };
+
+  /* ---------- state and session ---------------------------------------- */
+  var state={};
+  function blank(){
+    return {view:'home',method:null,len:10,session:[],idx:0,step:0,vals:{},disp:{},
+            opts:null,fb:null,ansText:'',freeText:'',calcOpen:false,calcText:'',
+            recs:[],level:0,streak:0,revealed:0,used:[]};
+  }
+  function isFrac(t){return t.f.indexOf('÷')>=0 && (t.pl[0][0]==='×'||t.pl[0][0]==='cross');}
+  function eligible(mk){
+    return TASKS.filter(function(t){
+      if(mk==='numbers')return !!NF[t.id];
+      if(mk==='fraction')return isFrac(t);
+      return true;
+    });
+  }
+  const STARTERS=['Fma_a','Fma_m','svt_v','svt_t','ohm_R','PIV_I','wave_lambda','charge_t','moment_d','latent_L','work_Fd_F','QV_Q'];
+  function buildSession(mk,len){
+    var pool=eligible(mk);
+    var pre=shuffle(pool.filter(function(t){return t.id.indexOf('_prefix')>=0;}));
+    var core=shuffle(pool.filter(function(t){return t.id.indexOf('_prefix')<0;}));
+    var want=Math.min(len,pool.length);
+    var open=[];
+    if(mk==='balance'||mk==='undo'){
+      open=shuffle(core.filter(function(t){return STARTERS.indexOf(t.id)>=0;})).slice(0,Math.min(3,Math.max(1,Math.floor(want/4))));
+    }
+    var used={};open.forEach(function(t){used[t.id]=1;});
+    var nPre=Math.min(Math.max(1,Math.round(want*0.25)),pre.length,Math.max(0,want-open.length-1));
+    var mid=core.filter(function(t){return !used[t.id];}).slice(0,Math.max(0,want-open.length-nPre));
+    nPre=Math.min(pre.length,Math.max(nPre,want-open.length-mid.length));
+    return open.concat(mid,pre.slice(0,nPre));
+  }
+  function chooseValues(task){
+    var raw=task.sets[Math.floor(Math.random()*task.sets.length)];
+    var keys=Object.keys(task.lb).filter(function(k){return k!==task.tg;});
+    var vals={},disp={};
+    keys.forEach(function(k,i){
+      var it=raw[i];
+      if(it&&typeof it==='object'&&'c' in it){vals[k]=it.c;disp[k]=it.d;}
+      else {vals[k]=it;disp[k]=nP(it)+(task.un[k]?' '+task.un[k]:'');}
+    });
+    state.disp=disp;
+    return vals;
+  }
+  function valueMap(task){
+    var m={},pre=task.id.indexOf('_prefix')>=0;
+    Object.keys(state.vals).forEach(function(k){
+      m[k]=pre?state.disp[k]:nP(state.vals[k]);
+    });
+    return m;
+  }
+  function currentTask(){return state.session[state.idx];}
+  function currentRec(){return state.recs[state.idx];}
+
+  function buildSteps(task){
+    var v=state.vals,out=[],prev;
+    if(state.method==='numbers'){
+      var f=NF[task.id](v),tgs=task.tg+(f.sq?'²':'');
+      out.push({op:{k:'sub'},out:subst(task.f,valueMap(task)),auto:1});
+      out.push({op:{k:'simp'},out:n(f.A)+' = '+n(f.C)+' × '+tgs,auto:1});
+      prev=nP(f.A)+' = '+nP(f.C)+' × '+tgs;
+      out.push({op:{k:'÷',by:nP(f.C)},out:n(f.A/f.C)+' = '+tgs,prev:prev});
+      if(f.sq)out.push({op:{k:'√',by:''},out:task.tg+' = '+n(Math.sqrt(f.A/f.C)),prev:nP(f.A/f.C)+' = '+task.tg+'²'});
+    } else {
+      prev=task.f;
+      task.pl.forEach(function(p){
+        out.push({op:{k:p[0],by:p[1]},out:p[2],prev:prev});
+        prev=p[2];
+      });
+      out.push({op:{k:'sub'},out:subst(task.pl[task.pl.length-1][2],valueMap(task)),auto:1});
+      if(SIMP[task.id])out.push({op:{k:'simp'},out:SIMP[task.id](v),auto:1});
+    }
+    out.push({op:{k:'calc'},out:task.tg+' = '+n(evalTask(task,v))+(task.un[task.tg]?' '+task.un[task.tg]:''),ans:1});
+    return out;
+  }
+
+  /* ---------- flow ------------------------------------------------------ */
+  function hist(add){
+    try{
+      var k='eqApp12',h=JSON.parse(localStorage.getItem(k)||'[]');
+      if(add){h.unshift(add);h=h.slice(0,5);localStorage.setItem(k,JSON.stringify(h));}
+      return h;
+    }catch(e){return [];}
+  }
+  function startSession(mk){
+    var len=state.len;
+    state=blank();state.len=len;state.method=mk;state.view='quiz';
+    state.session=buildSession(mk,len);
+    state.recs=state.session.map(function(t){return {id:t.id,nm:t.nm,tg:t.tg,f:t.f,errs:0,hints:0,ok:0};});
+    newQuestion();
+  }
+  function newQuestion(){
+    var t=currentTask();
+    state.step=0;state.opts=null;state.used=[];state.fb=null;state.ansText='';
+    state.freeText='';state.calcOpen=false;state.calcText='';state.revealed=0;state.focus='step';
+    state.vals=chooseValues(t);
+    render();
+  }
+  function levelFor(){return state.level;}
+  function advance(){
+    var steps=buildSteps(currentTask());
+    state.step++;state.opts=null;state.used=[];state.fb=null;state.focus='step';
+    if(state.step>=steps.length){
+      var r=currentRec();
+      r.ok=(r.errs===0&&r.hints===0)?1:0;
+      if(r.errs===0&&r.hints===0){state.streak++;if(state.streak>=2&&state.level<2){state.level++;state.streak=0;}}
+      else if(r.errs>=2){state.level=Math.max(0,state.level-1);state.streak=0;}
+      else {state.streak=0;}
+    }
+    render();
+  }
+  function nextQuestion(){
+    if(state.idx<state.session.length-1){state.idx++;newQuestion();}
+    else{
+      state.view='done';
+      var got=state.recs.filter(function(r){return r.ok;}).length;
+      hist({d:new Date().toISOString().slice(0,10),m:METHODS[state.method].n,s:got,t:state.recs.length});
+      render();
+    }
+  }
+  function pickOption(i){
+    var o=state.opts[i];
+    if(!o||state.used.indexOf(i)>=0)return;
+    if(o.ok){advance();return;}
+    state.used.push(i);currentRec().errs++;
+    state.fb={t:'no',m:o.w};
+    render();
+  }
+  function revealStep(){
+    currentRec().hints++;state.revealed=1;
+    var steps=buildSteps(currentTask());
+    state.fb={t:'yes',m:'The step is: '+sayFor(steps[state.step].op)+'.'};
+    render();
+  }
+  function checkFree(){
+    var steps=buildSteps(currentTask()),op=steps[state.step].op;
+    var got=parseStep(state.freeText,op);
+    if(!got.k){
+      currentRec().errs++;
+      state.fb={t:'no',m:'I could not find an operation in that. Start with a word such as divide, multiply, add, subtract or square root.'};
+      state.focus='free';render();return;
+    }
+    if(got.k===op.k&&(!op.by||got.by===op.by)){advance();return;}
+    currentRec().errs++;
+    var msg;
+    if(got.k===op.k&&op.by)msg='Right operation, wrong quantity. Look at what is attached to '+currentTask().tg+' and remove that one.';
+    else if((got.k==='÷'&&op.k==='×')||(got.k==='×'&&op.k==='÷'))msg='That is the opposite of what is needed. Check whether '+(op.by||'the term')+' is multiplying or dividing at the moment.';
+    else if(got.k==='÷'&&op.k==='√')msg='Dividing will not undo a square. Use a square root.';
+    else msg='That operation will not remove anything from this side. Look at how the terms are joined: multiplied, divided, added or subtracted.';
+    state.fb={t:'no',m:msg};state.focus='free';render();
+  }
+  function checkAnswer(){
+    var t=currentTask(),exp=evalTask(t,state.vals),got=parseNum(state.ansText),r=currentRec();
+    if(isNaN(got)){
+      state.fb={t:'no',m:'Type a number. A power of ten can be written 5e14 or 5 × 10^14.'};
+      state.focus='ans';render();return;
+    }
+    if(Math.abs(got-exp)<=Math.max(Math.abs(exp)*0.006,1e-9)){advance();return;}
+    r.errs++;
+    var msg='Not quite. ',ra=exp!==0?got/exp:0;
+    if(Math.abs(ra-1000)<1||Math.abs(ra-0.001)<1e-6||Math.abs(ra-1e6)<10||Math.abs(ra-1e-6)<1e-9)
+      msg+='You are out by a factor of a thousand or a million, so check the prefix conversion before you calculate.';
+    else if(exp!==0&&Math.abs(got-1/exp)<=Math.abs(1/exp)*0.01)
+      msg+='You have divided the wrong way round.';
+    else if(Math.abs(got-exp*exp)<=Math.abs(exp*exp)*0.01)
+      msg+='That is the square of the answer, so you still need the square root.';
+    else if(exp>0&&Math.abs(got-Math.sqrt(exp))<=Math.sqrt(exp)*0.01)
+      msg+='You have taken a square root that was not needed.';
+    else msg+='Check the calculation against the line above, keying it in one part at a time.';
+    if(r.errs>=3&&!state.revealed){
+      state.revealed=1;
+      msg+=' The answer is '+n(exp)+(t.un[t.tg]?' '+t.un[t.tg]:'')+'.';
+    }
+    state.fb={t:'no',m:msg};state.focus='ans';render();
+  }
+  function pressCalc(b){
+    if(b==='C')state.calcText='';
+    else if(b==='⌫')state.calcText=state.calcText.slice(0,-1);
+    else if(b==='='){
+      try{
+        var e=state.calcText.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√/g,'Math.sqrt');
+        if(/[^0-9+\-*/().eMathsqrt ]/.test(e))throw 0;
+        var r=Function('"use strict";return ('+e+')')();
+        state.calcText=isFinite(r)?nP(r):'Error';
+      }catch(err){state.calcText='Error';}
+    }
+    else if(b==='x²')state.calcText+='**2';
+    else state.calcText+=b;
+    state.focus='calc';render();
+  }
+
+  /* ---------- rendering ------------------------------------------------- */
+  function h(s){return s;}
+  function methodCard(k){
+    var m=METHODS[k];
+    return '<div class="eq-card"><h3>'+m.n+'</h3><p class="eq-sm">'+m.s+'</p>'+
+      '<p class="eq-sm eq-mut"><b>Example:</b> '+fmt(m.x)+'</p>'+
+      '<p class="eq-sm eq-mut">'+m.d+'</p>'+
+      '<button class="eq-btn eq-go" data-method="'+k+'">Use this method</button></div>';
+  }
+  function renderHome(){
+    var hs=hist(),hh='';
+    if(hs.length){
+      hh='<div class="eq-card"><h3>Your last sessions</h3><div class="eq-scroll"><table class="eq-tbl">'+
+        '<tr><th>Date</th><th>Method</th><th>First time right</th></tr>'+
+        hs.map(function(r){return '<tr><td>'+esc(r.d)+'</td><td>'+esc(r.m)+'</td><td>'+r.s+' of '+r.t+'</td></tr>';}).join('')+
+        '</table></div></div>';
+    }
+    root.innerHTML=
+      '<div class="eq-card"><div class="eq-title">Rearranging equations in GCSE physics</div>'+
+      '<p class="eq-lead">Four methods your department accepts, and no formula triangles. '+
+      'You choose the step, you do the algebra, and you work out the answer yourself. '+
+      'The support fades as you get them right, and comes back if you slip.</p>'+
+      '<p class="eq-sm"><b>Questions in this session:</b></p>'+
+      '<div class="eq-seg" role="group" aria-label="Session length">'+
+      [8,12,20].map(function(v){return '<button class="eq-btn eq-tiny'+(state.len===v?' eq-go':'')+'" data-len="'+v+'">'+v+'</button>';}).join('')+
+      '</div></div>'+
+      '<div class="eq-methods">'+Object.keys(METHODS).map(methodCard).join('')+'</div>'+hh;
+  }
+  function workingHTML(steps){
+    var out='',i;
+    for(i=0;i<state.step&&i<steps.length;i++){
+      var s=steps[i];
+      if(state.method==='balance'&&s.prev&&'÷×+−√'.indexOf(s.op.k)>=0){
+        var b=bothSides(s.prev,s.op);
+        if(b)out+='<div class="eq-work eq-bal">'+fmt(b)+'</div>';
+      }
+      out+='<div class="eq-work">'+fmt(s.out)+'</div>';
+    }
+    return out||'<p class="eq-mut eq-sm">Your working will appear here, one line at a time.</p>';
+  }
+  function stepControls(steps){
+    if(state.step>=steps.length){
+      return '<p><b>Question complete.</b> The full working is on the right.</p>'+
+        '<button class="eq-btn eq-go" id="eq-focus" data-act="next">'+
+        (state.idx===state.session.length-1?'Finish and see my summary':'Next equation')+'</button>';
+    }
+    var s=steps[state.step],op=s.op,lev=levelFor(),o='';
+    if(op.k==='calc'){
+      var t=currentTask();
+      o='<p>Work out the answer from the line above and type it in. Round sensibly and check the unit.</p>'+
+        '<div class="eq-ansrow"><label class="eq-eqn" style="margin:0" for="eq-ans">'+fmt(t.tg)+' =</label>'+
+        '<input class="eq-in" id="eq-ans" inputmode="decimal" autocomplete="off" value="'+esc(state.ansText)+'" placeholder="number">'+
+        '<span class="eq-unit">'+(t.un[t.tg]||'')+'</span>'+
+        '<button class="eq-btn eq-go" data-act="ans">Check my answer</button></div>';
+      return o;
+    }
+    if(op.k==='sub'||op.k==='simp'){
+      return '<p>'+(op.k==='sub'
+          ?'Now put the numbers in. Convert any prefixes as you go.'
+          :'Tidy the numbers up before you reach for the calculator.')+'</p>'+
+        '<button class="eq-btn eq-go" id="eq-focus" data-act="step">'+sayFor(op)+'</button>';
+    }
+    if(lev===0){
+      return '<p class="eq-mut eq-sm">Worked example — read the step, then press it.</p>'+
+        '<button class="eq-btn eq-go" id="eq-focus" data-act="step">'+fmt(sayFor(op))+'</button>';
+    }
+    if(lev===1){
+      if(!state.opts)state.opts=optionsFor(currentTask(),s);
+      return '<p>Which step keeps the equation balanced and gets you closer to '+fmt(currentTask().tg)+'?</p>'+
+        '<div class="eq-opts" id="eq-focus" tabindex="-1">'+
+        state.opts.map(function(o2,i){
+          var used=state.used.indexOf(i)>=0;
+          return '<button class="eq-btn" data-o="'+i+'"'+(used?' disabled':'')+'>'+fmt(o2.t)+'</button>';
+        }).join('')+'</div>'+
+        '<div class="eq-row"><button class="eq-btn eq-quiet eq-tiny" data-act="reveal">Show me this step</button></div>';
+    }
+    return '<p>Type the next step in your own words, for example <i>divide both sides by m</i>.</p>'+
+      '<div class="eq-ansrow"><input class="eq-in" id="eq-free" style="max-width:340px" autocomplete="off" value="'+esc(state.freeText)+'" placeholder="divide both sides by ...">'+
+      '<button class="eq-btn eq-go" data-act="free">Check my step</button>'+
+      '<button class="eq-btn eq-quiet" data-act="reveal">Show me this step</button></div>';
+  }
+  function calcHTML(){
+    if(!state.calcOpen)return '';
+    var keys=['7','8','9','÷','4','5','6','×','1','2','3','−','0','.','(',')'];
+    var t=currentTask();
+    if(t.ex.indexOf('+')>=0)keys.push('+');
+    if(t.ex.indexOf('Math.sqrt')>=0)keys.push('√');
+    if(/v\*v|t\*t|u\*u/.test(t.ex))keys.push('x²');
+    keys.push('C','⌫','=');
+    return '<div class="eq-calc"><div class="eq-disp" aria-live="off">'+esc(state.calcText||'0')+'</div>'+
+      '<div class="eq-pad">'+keys.map(function(k){return '<button class="eq-key" data-key="'+esc(k)+'">'+esc(k)+'</button>';}).join('')+'</div></div>';
+  }
+  function renderQuiz(){
+    var t=currentTask(),steps=buildSteps(t),pct=Math.round((state.idx/state.session.length)*100);
+    var levName=['worked example','choose the step','write the step'][levelFor()];
+    var fb=state.fb?'<div class="eq-fb eq-'+(state.fb.t==='no'?'no':'yes')+'">'+fmt(state.fb.m)+'</div>':'';
+    root.innerHTML=
+      '<div class="eq-card"><div class="eq-hd"><div><div class="eq-title" style="font-size:20px;margin:0">'+METHODS[state.method].n+'</div>'+
+      '<p class="eq-sm eq-mut" style="margin:2px 0 0">Question '+(state.idx+1)+' of '+state.session.length+' · support level: '+levName+'</p></div>'+
+      '<button class="eq-btn eq-tiny" data-act="home">Change method</button></div>'+
+      '<div class="eq-bar" style="margin-top:10px"><i style="width:'+pct+'%"></i></div></div>'+
+      '<div class="eq-two"><div class="eq-card">'+
+      '<span class="eq-badge">'+t.tp+'</span><span class="eq-badge">'+t.nm+'</span>'+
+      '<div class="eq-eqn">'+fmt(t.f)+'</div>'+
+      '<p>Find <b>'+fmt(t.tg)+'</b> — '+t.lb[t.tg]+'.</p>'+
+      '<div class="eq-known">'+Object.keys(state.vals).map(function(k){
+        return '<div><b>'+fmt(k)+'</b> = '+esc(state.disp[k])+'<br><span class="eq-sm eq-mut">'+t.lb[k]+'</span></div>';}).join('')+'</div>'+
+      '<div class="eq-row"><button class="eq-btn eq-quiet eq-tiny" data-act="calc">'+(state.calcOpen?'Hide':'Show')+' calculator</button></div>'+calcHTML()+
+      '</div><div class="eq-card"><h3>Your working</h3>'+workingHTML(steps)+'</div></div>'+
+      '<div class="eq-card"><h3 tabindex="-1"'+(state.step>=steps.length?'':' id="eq-head"')+'>Step '+Math.min(state.step+1,steps.length)+' of '+steps.length+'</h3>'+
+      stepControls(steps)+'<div aria-live="polite">'+fb+'</div></div>';
+  }
+  function renderDone(){
+    var got=state.recs.filter(function(r){return r.ok;}).length;
+    var slips=state.recs.filter(function(r){return !r.ok;});
+    root.innerHTML=
+      '<div class="eq-card"><div class="eq-title">Session summary</div>'+
+      '<p class="eq-big">'+got+' <span class="eq-mut" style="font-size:20px">of '+state.recs.length+' right first time</span></p>'+
+      '<p class="eq-sm eq-mut">Method: '+METHODS[state.method].n+'. First time right means no wrong steps, no wrong answers and no hints used.</p></div>'+
+      (slips.length?'<div class="eq-card"><h3>Worth another look</h3><div class="eq-scroll"><table class="eq-tbl">'+
+        '<tr><th>Equation</th><th>Finding</th><th>Wrong steps</th><th>Hints</th></tr>'+
+        slips.map(function(r){return '<tr><td>'+fmt(r.f)+'</td><td>'+fmt(r.tg)+'</td><td>'+r.errs+'</td><td>'+r.hints+'</td></tr>';}).join('')+
+        '</table></div></div>'
+        :'<div class="eq-card"><h3>Clean sweep</h3><p>Every equation right first time. Try a longer session or a different method.</p></div>')+
+      '<div class="eq-card"><div class="eq-row">'+
+      (slips.length?'<button class="eq-btn eq-go" data-act="redo">Practise the ones I missed</button>':'')+
+      '<button class="eq-btn" data-act="again">New session, same method</button>'+
+      '<button class="eq-btn" data-act="home">Choose another method</button></div></div>';
+  }
+  function redo(){
+    var ids={};state.recs.forEach(function(r){if(!r.ok)ids[r.id]=1;});
+    var list=TASKS.filter(function(t){return ids[t.id];});
+    if(!list.length){startSession(state.method);return;}
+    var mk=state.method,len=state.len;
+    state=blank();state.len=len;state.method=mk;state.view='quiz';
+    state.session=shuffle(list);
+    state.recs=state.session.map(function(t){return {id:t.id,nm:t.nm,tg:t.tg,f:t.f,errs:0,hints:0,ok:0};});
+    newQuestion();
+  }
+  function render(){
+    if(state.view==='home')renderHome();
+    else if(state.view==='done')renderDone();
+    else renderQuiz();
+    bind();
+    var el=null;
+    if(state.focus==='free')el=root.querySelector('#eq-free');
+    else if(state.focus==='ans')el=root.querySelector('#eq-ans');
+    else if(state.view==='quiz')el=root.querySelector('#eq-head')||root.querySelector('#eq-focus');
+    if(el){
+      try{el.focus({preventScroll:true});}catch(e){try{el.focus();}catch(e2){}}
+      if(el.tagName==='INPUT'){try{var v=el.value;el.value='';el.value=v;}catch(e3){}}
+    }
+  }
+  function bind(){
+    root.querySelectorAll('[data-method]').forEach(function(b){b.onclick=function(){startSession(b.getAttribute('data-method'));};});
+    root.querySelectorAll('[data-len]').forEach(function(b){b.onclick=function(){state.len=Number(b.getAttribute('data-len'));render();};});
+    root.querySelectorAll('[data-o]').forEach(function(b){b.onclick=function(){pickOption(Number(b.getAttribute('data-o')));};});
+    root.querySelectorAll('[data-key]').forEach(function(b){b.onclick=function(){pressCalc(b.getAttribute('data-key'));};});
+    root.querySelectorAll('[data-act]').forEach(function(b){
+      b.onclick=function(){
+        var a=b.getAttribute('data-act');
+        if(a==='home'){var l=state.len;state=blank();state.len=l;render();}
+        else if(a==='step')advance();
+        else if(a==='next')nextQuestion();
+        else if(a==='reveal')revealStep();
+        else if(a==='free'){var f=root.querySelector('#eq-free');state.freeText=f?f.value:'';checkFree();}
+        else if(a==='ans'){var i=root.querySelector('#eq-ans');state.ansText=i?i.value:'';checkAnswer();}
+        else if(a==='calc'){state.calcOpen=!state.calcOpen;state.focus='none';render();}
+        else if(a==='again')startSession(state.method);
+        else if(a==='redo')redo();
+      };
+    });
+    var fi=root.querySelector('#eq-free');
+    if(fi)fi.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();state.freeText=fi.value;checkFree();}};
+    var ai=root.querySelector('#eq-ans');
+    if(ai)ai.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();state.ansText=ai.value;checkAnswer();}};
+  }
+
+  state=blank();
+  render();
+})();
+</script>
