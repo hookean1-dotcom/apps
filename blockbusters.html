@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Physics Blockbusters</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@400;500;600;700&display=swap">
+<style>
+/* A studio set, deliberately single-theme: painted explicitly so it holds
+   on any host background, light or dark. */
+:root{
+  --studio:#071233;
+  --studio-2:#0d1e4a;
+  --panel:#12234f;
+  --panel-2:#0a1739;
+  --edge:#25407e;
+  --edge-soft:#1a2f60;
+  --ink:#eef3ff;
+  --ink-2:#a8bce4;
+  --ink-3:#6f87b8;
+  --gold:#f5b32b;
+  --gold-deep:#3a2405;
+  --white-team:#f4f7fd;
+  --blue-team:#3d8fdd;
+  --good:#46c48a;
+  --bad:#e0604f;
+  --hex-open:#172c63;
+  --hex-line:#3556a3;
+  --hex-block:#0b1430;
+  --shadow:0 2px 0 rgba(0,0,0,.35), 0 18px 44px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:
+    radial-gradient(1200px 700px at 50% -8%, var(--studio-2) 0%, var(--studio) 62%),
+    var(--studio);
+  color:var(--ink);
+  font-family:"Archivo","Segoe UI",Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+svg .hx:focus,
+svg .hx:focus-visible{outline:none}
+svg .hx:focus-visible .hxf{stroke:var(--gold);stroke-width:3}
+h1,h2,h3{font-family:"Archivo Black","Archivo",Helvetica,sans-serif;font-weight:400;margin:0;letter-spacing:-.01em}
+
+.wrap{max-width:1100px;margin:0 auto;padding:26px 22px 60px}
+
+/* ---------------- masthead ---------------- */
+.mast{display:flex;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.mast .logo{width:44px;height:50px;flex:none}
+.mast h1{font-size:29px;line-height:1}
+.mast .sub{color:var(--ink-3);font-size:13px;margin-top:3px}
+.mast .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ---------------- buttons ---------------- */
+.btn{
+  border:2px solid var(--edge);background:var(--panel);color:var(--ink);
+  padding:9px 16px;border-radius:9px;font-weight:600;font-size:14px;
+  transition:background .13s,border-color .13s,transform .06s;
+}
+.btn:hover{background:var(--edge-soft);border-color:var(--gold)}
+.btn:active{transform:translateY(1px)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--gold-deep)}
+.btn.gold:hover{filter:brightness(1.08)}
+.btn.small{padding:6px 11px;font-size:13px;border-width:1px}
+.btn.ghost{background:transparent;border-color:var(--edge-soft);color:var(--ink-2)}
+.btn.ghost:hover{color:var(--ink)}
+.btn.wht{background:var(--white-team);border-color:var(--white-team);color:#0a1738}
+.btn.blu{background:var(--blue-team);border-color:var(--blue-team);color:#04122e}
+.btn.no{background:transparent;border-color:var(--ink-3);color:var(--ink-2)}
+.btn.ok{background:var(--good);border-color:var(--good);color:#04231a}
+.btn.bad{background:var(--bad);border-color:var(--bad);color:#2c0b06}
+
+/* ---------------- setup ---------------- */
+.card{
+  background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);
+  border:2px solid var(--edge);border-radius:16px;padding:24px;box-shadow:var(--shadow);
+}
+.step{margin-bottom:26px}
+.step:last-child{margin-bottom:0}
+.step > .lab{
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:9px;
+}
+.step > .lab .n{
+  width:20px;height:20px;border-radius:50%;background:var(--edge);color:var(--ink);
+  display:grid;place-items:center;font-size:11px;letter-spacing:0;
+}
+.seg{display:flex;gap:8px;flex-wrap:wrap}
+.seg .btn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--gold-deep)}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px}
+.cat{
+  text-align:left;border:2px solid var(--edge);background:var(--panel-2);
+  border-radius:12px;padding:13px 15px;transition:border-color .13s,background .13s;
+}
+.cat:hover{border-color:var(--gold);background:var(--edge-soft)}
+.cat[aria-pressed="true"]{border-color:var(--gold);background:var(--edge-soft)}
+.cat .nm{font-family:"Archivo Black",sans-serif;font-size:15px;line-height:1.2}
+.cat .rf{font-size:11.5px;color:var(--ink-3);margin-top:5px;font-variant-numeric:tabular-nums}
+.cat .ct{font-size:11.5px;color:var(--ink-3);margin-top:2px}
+.startrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:22px}
+.note{font-size:12.5px;color:var(--ink-3);line-height:1.5}
+.note b{color:var(--ink-2);font-weight:600}
+
+/* ---------------- scoreboard ---------------- */
+.scores{display:flex;gap:10px;align-items:stretch;margin-bottom:16px;flex-wrap:wrap}
+.team{
+  flex:1;min-width:190px;border:2px solid var(--edge);border-radius:12px;
+  padding:11px 14px;background:var(--panel-2);display:flex;align-items:center;gap:12px;
+}
+.team .chip{width:26px;height:29px;flex:none}
+.team .nm{font-family:"Archivo Black",sans-serif;font-size:15px}
+.team .go{font-size:11.5px;color:var(--ink-3);margin-top:1px}
+.team .ct{margin-left:auto;font-family:"Archivo Black",sans-serif;font-size:22px;font-variant-numeric:tabular-nums}
+.team.on{border-color:var(--gold);background:var(--edge-soft);box-shadow:0 0 0 3px rgba(245,179,43,.16)}
+.clock{
+  border:2px solid var(--gold);border-radius:12px;padding:11px 18px;background:var(--panel-2);
+  display:flex;flex-direction:column;justify-content:center;min-width:118px;
+}
+.clock .t{font-family:"Archivo Black",sans-serif;font-size:28px;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1}
+.clock .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-top:3px}
+.clock.low .t{color:var(--bad)}
+
+/* ---------------- board ---------------- */
+.boardwrap{display:flex;justify-content:center;margin-bottom:18px}
+.boardwrap svg{width:100%;max-width:860px;height:auto;display:block}
+svg .hx{cursor:pointer}
+svg .hx.dead{cursor:default}
+svg .hxf{fill:var(--hex-open);stroke:var(--hex-line);stroke-width:1.1;transition:fill .18s}
+svg .hx:not(.dead):hover .hxf{fill:#223f88;stroke:var(--gold);stroke-width:2}
+svg .hxt{
+  font-family:"Archivo Black","Archivo",sans-serif;fill:#c3d3f2;
+  text-anchor:middle;dominant-baseline:central;pointer-events:none;
+}
+svg .hx.w .hxf,
+svg .hx.s .hxf{fill:var(--white-team);stroke:#c9d6ee}
+svg .hx.w .hxt,
+svg .hx.s .hxt{fill:#0a1738}
+svg .hx.b .hxf{fill:var(--blue-team);stroke:#7fb6ea}
+svg .hx.b .hxt{fill:#04122e}
+svg .hx.g .hxf{fill:var(--gold);stroke:#ffd873}
+svg .hx.g .hxt{fill:var(--gold-deep)}
+svg .hx.x .hxf{fill:var(--hex-block);stroke:#182a56}
+svg .hx.x .hxt{fill:#31457c}
+svg .hx.sel .hxf{stroke:var(--gold);stroke-width:3}
+
+/* ---------------- question ---------------- */
+.qpanel{
+  border:2px solid var(--edge);border-radius:14px;background:linear-gradient(180deg,var(--panel) 0%,var(--panel-2) 100%);
+  padding:20px 22px;box-shadow:var(--shadow);
+}
+.qpanel .ask{
+  font-size:13px;color:var(--gold);letter-spacing:.05em;text-transform:uppercase;
+  font-weight:700;margin-bottom:9px;
+}
+.qpanel .q{font-family:"Archivo Black",sans-serif;font-size:21px;line-height:1.32}
+.qpanel .a{
+  margin-top:14px;padding:12px 16px;border-radius:10px;background:rgba(245,179,43,.13);
+  border:1px solid rgba(245,179,43,.4);font-family:"Archivo Black",sans-serif;
+  font-size:20px;color:var(--gold);
+}
+.qpanel .acts{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.qpanel .acts .who{font-size:12.5px;color:var(--ink-3);margin-right:2px}
+.idle{color:var(--ink-3);font-size:14.5px;text-align:center;padding:8px 0}
+
+/* ---------------- result ---------------- */
+.result{text-align:center;padding:34px 24px}
+.result .big{font-family:"Archivo Black",sans-serif;font-size:40px;line-height:1.1;margin-bottom:10px}
+.result .big.gold{color:var(--gold)}
+.result p{color:var(--ink-2);max-width:52ch;margin:0 auto 20px}
+.result .acts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.confetti{font-size:34px;letter-spacing:6px;margin-bottom:8px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (max-width:640px){
+  .mast h1{font-size:23px}
+  .qpanel .q{font-size:18px}
+  .result .big{font-size:29px}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="mast">
+    <svg class="logo" viewBox="0 0 44 50" aria-hidden="true">
+      <polygon points="22,2 41,13 41,37 22,48 3,37 3,13" fill="none" stroke="#f5b32b" stroke-width="3"/>
+      <polygon points="22,13 32,19 32,31 22,37 12,31 12,19" fill="#f5b32b"/>
+    </svg>
+    <div>
+      <h1 id="mastTitle">Physics Blockbusters</h1>
+      <div class="sub" id="mastSub">WJEC A-level Physics</div>
+    </div>
+    <div class="right" id="mastRight"></div>
+  </header>
+  <div id="root"></div>
+</div>
+
+<script>
+var CATS = [
+  { id:"motion", en:"Motion & Energy", cy:"Mudiant ac Egni", ref:"1.1–1.4" },
+  { id:"solids", en:"Solids & Materials", cy:"Solidau a Deunyddiau", ref:"1.5" },
+  { id:"electricity", en:"Electricity & Circuits", cy:"Trydan a Chylchedau", ref:"2.1–2.3" },
+  { id:"waves", en:"Waves & Refraction", cy:"Tonnau a Phlygiant", ref:"2.4–2.6" },
+  { id:"photons", en:"Photons & Lasers", cy:"Ffotonau a Laserau", ref:"2.7–2.8" },
+  { id:"thermal", en:"Oscillations & Thermal", cy:"Osgiliadau a Ffiseg Thermol", ref:"3.1–3.4" },
+  { id:"nuclear", en:"Nuclear & Particles", cy:"Niwclear a Gronynnau", ref:"1.7, 3.5–3.6" },
+  { id:"fields", en:"Fields & the Universe", cy:"Meysydd a'r Bydysawd", ref:"1.6, 4.1–4.5" },
+];
+var QBANK = [
+  { c:"motion", e:["A","is the rate of change of velocity?","Acceleration"], w:["C","yw cyfradd newid cyflymder?","Cyflymiad"] },
+  { c:"motion", e:["C","is one of the two perpendicular parts a vector is resolved into?","Component"], w:["C","yw un o ddwy ran berpendicwlar fector?","Cydran"] },
+  { c:"motion", e:["C","is a pair of equal, opposite, parallel forces giving only a turning effect?","Couple"], w:["C","yw pâr o rymoedd hafal a dirgroes sy’n rhoi effaith droi yn unig?","Cwpl"] },
+  { c:"motion", e:["D","is the vector version of distance?","Displacement"], w:["D","yw fersiwn fector o bellter?","Dadleoliad"] },
+  { c:"motion", e:["E","is the capacity to do work?","Energy"], w:["E","yw’r gallu i wneud gwaith?","Egni"] },
+  { c:"motion", e:["E","is the state when resultant force and resultant moment are both zero?","Equilibrium"], w:["E","yw’r cyflwr pan fo’r grym cydeffaith a’r moment cydeffaith yn sero?","Ecwilibriwm"] },
+  { c:"motion", e:["F","opposes relative motion between two surfaces?","Friction"], w:["FF","sy’n gwrthwynebu mudiant rhwng dau arwyneb?","Ffrithiant"] },
+  { c:"motion", e:["F","is the vector measured in newtons that changes an object’s motion?","Force"], w:["G","yw’r fector a fesurir mewn newtonau sy’n newid mudiant?","Grym"] },
+  { c:"motion", e:["G","is the attraction that gives every mass its weight?","Gravity"], w:["D","yw’r atyniad sy’n rhoi pwysau i bob màs?","Disgyrchiant"] },
+  { c:"motion", e:["I","is force multiplied by the time for which it acts?","Impulse"], w:["E","yw grym wedi ei luosi â’r amser mae’n gweithredu?","Ergyd"] },
+  { c:"motion", e:["I","describes a collision in which kinetic energy is not conserved?","Inelastic"], w:["A","sy’n disgrifio gwrthdrawiad lle nad yw egni cinetig yn cael ei gadw?","Anelastig"] },
+  { c:"motion", e:["J","is the SI unit of work and of energy?","Joule"], w:["J","yw uned SI gwaith ac egni?","Joule"] },
+  { c:"motion", e:["K","is the energy an object has because it is moving?","Kinetic energy"], w:["E","yw’r egni sydd gan wrthrych am ei fod yn symud?","Egni cinetig"] },
+  { c:"motion", e:["M","is mass multiplied by velocity?","Momentum"], w:["M","yw màs wedi ei luosi â chyflymder?","Momentwm"] },
+  { c:"motion", e:["M","is the turning effect of a force about a point?","Moment"], w:["M","yw effaith droi grym o amgylch pwynt?","Moment"] },
+  { c:"motion", e:["M","is the scalar measured in kilograms?","Mass"], w:["M","yw’r sgalar a fesurir mewn cilogramau?","Màs"] },
+  { c:"motion", e:["N","has the unit equal to one kilogram metre per second squared?","Newton"], w:["N","yw’r uned sy’n hafal i un cilogram metr yr eiliad sgwâr?","Newton"] },
+  { c:"motion", e:["P","is the rate of doing work?","Power"], w:["P","yw cyfradd gwneud gwaith?","Pŵer"] },
+  { c:"motion", e:["P","is a body moving freely under gravity alone after being launched?","Projectile"], w:["T","yw corff sy’n symud yn rhydd o dan ddisgyrchiant yn unig?","Taflegryn"] },
+  { c:"motion", e:["R","is the single force with the same effect as several forces?","Resultant"], w:["C","yw’r un grym sy’n cael yr un effaith â sawl grym?","Cydeffaith"] },
+  { c:"motion", e:["S","is a quantity with magnitude only?","Scalar"], w:["S","yw maint sydd â maintioli yn unig?","Sgalar"] },
+  { c:"motion", e:["S","is distance travelled per unit time?","Speed"], w:["B","yw pellter a deithir bob uned amser?","Buanedd"] },
+  { c:"motion", e:["T","is the steady speed reached when drag balances weight?","Terminal velocity"], w:["C","yw’r buanedd cyson pan fo llusgiad yn cydbwyso pwysau?","Cyflymder terfynol"] },
+  { c:"motion", e:["V","is a quantity with both magnitude and direction?","Vector"], w:["F","yw maint sydd â maintioli a chyfeiriad?","Fector"] },
+  { c:"motion", e:["V","is speed in a stated direction?","Velocity"], w:["C","yw buanedd i gyfeiriad penodol?","Cyflymder"] },
+  { c:"motion", e:["W","is force multiplied by distance moved in the direction of the force?","Work"], w:["G","yw grym wedi ei luosi â’r pellter a symudir i gyfeiriad y grym?","Gwaith"] },
+  { c:"motion", e:["W","is the force on a mass due to a gravitational field?","Weight"], w:["P","yw’r grym ar fàs oherwydd maes disgyrchiant?","Pwysau"] },
+  { c:"solids", e:["A","describes a solid with no long-range order, such as glass?","Amorphous"], w:["A","sy’n disgrifio solid heb drefn pell, fel gwydr?","Amorffaidd"] },
+  { c:"solids", e:["B","describes a material that breaks with almost no plastic deformation?","Brittle"], w:["B","sy’n disgrifio deunydd sy’n torri heb fawr o anffurfiad plastig?","Brau"] },
+  { c:"solids", e:["C","describes a solid with a regular repeating lattice?","Crystalline"], w:["C","sy’n disgrifio solid â dellt rheolaidd?","Crisialog"] },
+  { c:"solids", e:["C","is the squashing force in a strut?","Compression"], w:["C","yw’r grym gwasgu mewn colofn?","Cywasgiad"] },
+  { c:"solids", e:["D","describes a material that can be drawn into a wire?","Ductile"], w:["H","sy’n disgrifio deunydd y gellir ei dynnu’n wifren?","Hydwyth"] },
+  { c:"solids", e:["D","is the line defect that lets crystal planes slip past each other?","Dislocation"], w:["D","yw’r diffyg llinell sy’n gadael i blanau grisial lithro?","Dadleoliad"] },
+  { c:"solids", e:["D","is mass per unit volume?","Density"], w:["D","yw màs fesul uned cyfaint?","Dwysedd"] },
+  { c:"solids", e:["E","is the increase in length when a wire is stretched?","Extension"], w:["E","yw’r cynnydd mewn hyd wrth ymestyn gwifren?","Estyniad"] },
+  { c:"solids", e:["E","describes deformation that is fully reversed when the load is removed?","Elastic"], w:["E","sy’n disgrifio anffurfiad sy’n dychwelyd yn llwyr wrth dynnu’r llwyth?","Elastig"] },
+  { c:"solids", e:["F","is the point at which a material finally breaks?","Fracture"], w:["T","yw’r pwynt lle mae deunydd yn torri o’r diwedd?","Toriad"] },
+  { c:"solids", e:["H","gave the law that extension is proportional to load?","Hooke"], w:["H","a roddodd y ddeddf fod estyniad mewn cyfrannedd â’r llwyth?","Hooke"] },
+  { c:"solids", e:["L","is the point beyond which Hooke’s law no longer holds?","Limit of proportionality"], w:["T","yw’r pwynt lle mae deddf Hooke yn methu?","Terfan cyfrannedd"] },
+  { c:"solids", e:["N","is the SI unit in which tension is measured?","Newton"], w:["N","yw uned SI tyniant?","Newton"] },
+  { c:"solids", e:["P","describes deformation that stays after the load is removed?","Plastic"], w:["P","sy’n disgrifio anffurfiad sy’n aros ar ôl tynnu’r llwyth?","Plastig"] },
+  { c:"solids", e:["P","describes a long-chain molecule material such as rubber?","Polymeric"], w:["P","sy’n disgrifio deunydd moleciwl cadwyn hir fel rwber?","Polymerig"] },
+  { c:"solids", e:["P","is the SI unit of stress?","Pascal"], w:["P","yw uned SI diriant?","Pascal"] },
+  { c:"solids", e:["R","is the polymeric material that stretches to several times its length?","Rubber"], w:["R","yw’r deunydd polymerig sy’n ymestyn sawl gwaith ei hyd?","Rwber"] },
+  { c:"solids", e:["S","is force per unit area applied to a material?","Stress"], w:["D","yw grym fesul uned arwynebedd ar ddeunydd?","Diriant"] },
+  { c:"solids", e:["S","is extension divided by original length?","Strain"], w:["S","yw estyniad wedi ei rannu â’r hyd gwreiddiol?","Straen"] },
+  { c:"solids", e:["S","is the energy stored, equal to the area under a force-extension graph?","Strain energy"], w:["E","yw’r egni a storir, sef yr arwynebedd o dan graff grym-estyniad?","Egni straen"] },
+  { c:"solids", e:["T","is the stretching force in a wire?","Tension"], w:["T","yw’r grym ymestyn mewn gwifren?","Tyniant"] },
+  { c:"solids", e:["Y","is the ratio of stress to strain for a material?","Young modulus"], w:["M","yw cymhareb diriant i straen deunydd?","Modwlws Young"] },
+  { c:"electricity", e:["A","is the SI unit of current?","Ampere"], w:["A","yw uned SI cerrynt?","Amper"] },
+  { c:"electricity", e:["B","provides the emf in a simple circuit?","Battery"], w:["B","sy’n rhoi g.e.m. mewn cylched syml?","Batri"] },
+  { c:"electricity", e:["C","is the rate of flow of charge?","Current"], w:["C","yw cyfradd llif gwefr?","Cerrynt"] },
+  { c:"electricity", e:["C","is the SI unit of charge?","Coulomb"], w:["C","yw uned SI gwefr?","Coulomb"] },
+  { c:"electricity", e:["C","is the complete path around which charge flows?","Circuit"], w:["C","yw’r llwybr cyflawn y mae gwefr yn llifo o’i amgylch?","Cylched"] },
+  { c:"electricity", e:["D","lets current pass in one direction only?","Diode"], w:["D","sy’n gadael i gerrynt lifo un ffordd yn unig?","Deuod"] },
+  { c:"electricity", e:["D","is the very slow average speed of electrons along a wire?","Drift velocity"], w:["C","yw buanedd cyfartalog araf iawn electronau ar hyd gwifren?","Cyflymder drifft"] },
+  { c:"electricity", e:["E","is the energy transferred per unit charge by a source?","Emf"], w:["G","yw’r egni a drosglwyddir fesul uned gwefr gan ffynhonnell?","Grym electromotif"] },
+  { c:"electricity", e:["E","is the negatively charged carrier that flows in a metal?","Electron"], w:["E","yw’r cludwr negatif sy’n llifo mewn metel?","Electron"] },
+  { c:"electricity", e:["F","is the coiled wire in a lamp whose resistance rises as it heats?","Filament"], w:["FF","yw’r wifren dorchog mewn lamp?","Ffilament"] },
+  { c:"electricity", e:["I","has a very high resistivity and almost no free electrons?","Insulator"], w:["Y","sydd â gwrthedd uchel iawn a phrin ddim electronau rhydd?","Ynysydd"] },
+  { c:"electricity", e:["I","is the resistance inside a cell that causes lost volts?","Internal resistance"], w:["G","yw’r gwrthiant y tu mewn i gell sy’n achosi foltiau coll?","Gwrthiant mewnol"] },
+  { c:"electricity", e:["K","gave the circuit laws for conservation of charge and of energy?","Kirchhoff"], w:["K","a roddodd ddeddfau cylched cadwraeth gwefr ac egni?","Kirchhoff"] },
+  { c:"electricity", e:["L","is the component whose resistance falls as light gets brighter?","LDR"], w:["G","yw’r gydran y mae ei gwrthiant yn gostwng wrth i olau gryfhau?","Gwrthydd dibynnol ar olau"] },
+  { c:"electricity", e:["O","is the SI unit of resistance?","Ohm"], w:["O","yw uned SI gwrthiant?","Ohm"] },
+  { c:"electricity", e:["P","is the arrangement in which components share the same pd?","Parallel"], w:["P","yw’r trefniant lle mae cydrannau’n rhannu’r un g.p.?","Paralel"] },
+  { c:"electricity", e:["P","is the rate of energy transfer, measured in watts?","Power"], w:["P","yw cyfradd trosglwyddo egni, mewn watiau?","Pŵer"] },
+  { c:"electricity", e:["R","is the opposition to current, measured in ohms?","Resistance"], w:["G","yw’r gwrthwynebiad i gerrynt, mewn ohmau?","Gwrthiant"] },
+  { c:"electricity", e:["R","is the material property measured in ohm metres?","Resistivity"], w:["G","yw priodwedd y deunydd a fesurir mewn ohm-metrau?","Gwrthedd"] },
+  { c:"electricity", e:["S","is the arrangement in which the current is the same throughout?","Series"], w:["C","yw’r trefniant lle mae’r cerrynt yr un fath drwyddo?","Cyfres"] },
+  { c:"electricity", e:["S","has a resistivity between that of a metal and an insulator?","Semiconductor"], w:["LL","sydd â gwrthedd rhwng un metel ac un ynysydd?","Lled-ddargludydd"] },
+  { c:"electricity", e:["T","is the component whose resistance falls sharply as it gets hotter?","Thermistor"], w:["TH","yw’r gydran y mae ei gwrthiant yn gostwng yn siarp wrth gynhesu?","Thermistor"] },
+  { c:"electricity", e:["V","is the SI unit of potential difference?","Volt"], w:["F","yw uned SI gwahaniaeth potensial?","Folt"] },
+  { c:"electricity", e:["W","is the SI unit of power?","Watt"], w:["W","yw uned SI pŵer?","Wat"] },
+  { c:"electricity", e:["S","has zero resistivity below a critical temperature?","Superconductor"], w:["U","sydd â gwrthedd sero o dan dymheredd critigol?","Uwchddargludydd"] },
+  { c:"waves", e:["A","is the maximum displacement from the equilibrium position?","Amplitude"], w:["O","yw’r dadleoliad mwyaf o’r safle ecwilibriwm?","Osgled"] },
+  { c:"waves", e:["A","is the point of maximum amplitude on a stationary wave?","Antinode"], w:["G","yw’r pwynt osgled mwyaf ar don unfan?","Gwrthnod"] },
+  { c:"waves", e:["C","describes two sources with a constant phase difference?","Coherent"], w:["C","sy’n disgrifio dwy ffynhonnell â gwahaniaeth gwedd cyson?","Cydlynol"] },
+  { c:"waves", e:["C","is the angle of incidence that gives an angle of refraction of ninety degrees?","Critical angle"], w:["O","yw’r ongl drawiad sy’n rhoi ongl blygiant o naw deg gradd?","Ongl gritigol"] },
+  { c:"waves", e:["D","is the spreading of a wave as it passes through a gap?","Diffraction"], w:["D","yw lledaeniad ton wrth iddi fynd trwy fwlch?","Diffreithiant"] },
+  { c:"waves", e:["D","is the splitting of white light into colours by a prism?","Dispersion"], w:["G","yw gwahanu golau gwyn yn lliwiau gan brism?","Gwasgariad"] },
+  { c:"waves", e:["F","is the number of complete waves passing a point each second?","Frequency"], w:["A","yw nifer y tonnau cyflawn sy’n pasio pwynt bob eiliad?","Amledd"] },
+  { c:"waves", e:["G","is the many-slit device used to measure wavelength accurately?","Grating"], w:["G","yw’r ddyfais aml-hollt a ddefnyddir i fesur tonfedd?","Gratin"] },
+  { c:"waves", e:["H","is the SI unit of frequency?","Hertz"], w:["H","yw uned SI amledd?","Hertz"] },
+  { c:"waves", e:["I","is the effect when two coherent waves overlap?","Interference"], w:["Y","yw’r effaith pan fo dwy don gydlynol yn gorgyffwrdd?","Ymyriant"] },
+  { c:"waves", e:["L","describes a wave whose oscillations are along the direction of travel?","Longitudinal"], w:["A","sy’n disgrifio ton lle mae’r osgiliadau ar hyd cyfeiriad teithio?","Arhydol"] },
+  { c:"waves", e:["N","is the point of zero amplitude on a stationary wave?","Node"], w:["N","yw’r pwynt osgled sero ar don unfan?","Nod"] },
+  { c:"waves", e:["N","is the line drawn at right angles to a surface at the point of incidence?","Normal"], w:["N","yw’r llinell a dynnir ar ongl sgwâr i arwyneb?","Normal"] },
+  { c:"waves", e:["P","is the restriction of oscillations to a single plane?","Polarisation"], w:["P","yw cyfyngu osgiliadau i un plân?","Polareiddiad"] },
+  { c:"waves", e:["P","is the time for one complete oscillation?","Period"], w:["C","yw’r amser ar gyfer un osgiliad cyflawn?","Cyfnod"] },
+  { c:"waves", e:["R","is the bending of light as it changes speed between media?","Refraction"], w:["P","yw plygu golau wrth iddo newid buanedd rhwng cyfryngau?","Plygiant"] },
+  { c:"waves", e:["R","is the bouncing of a wave from a surface?","Reflection"], w:["A","yw adlamu ton oddi ar arwyneb?","Adlewyrchiad"] },
+  { c:"waves", e:["R","is the ratio of the speed of light in vacuum to its speed in a medium?","Refractive index"], w:["I","yw cymhareb buanedd golau mewn gwactod i’w fuanedd mewn cyfrwng?","Indecs plygiant"] },
+  { c:"waves", e:["S","is the principle that displacements of overlapping waves add?","Superposition"], w:["A","yw’r egwyddor fod dadleoliadau tonnau’n adio?","Arosodiad"] },
+  { c:"waves", e:["S","is the wave pattern formed by two identical waves travelling in opposite directions?","Stationary wave"], w:["T","yw’r patrwm a ffurfir gan ddwy don unfath i gyfeiriadau dirgroes?","Ton unfan"] },
+  { c:"waves", e:["T","describes a wave whose oscillations are at right angles to the direction of travel?","Transverse"], w:["A","sy’n disgrifio ton lle mae’r osgiliadau ar ongl sgwâr i’r cyfeiriad teithio?","Ardraws"] },
+  { c:"waves", e:["T","happens when light strikes a boundary beyond the critical angle?","Total internal reflection"], w:["A","sy’n digwydd pan fo golau’n taro ffin y tu hwnt i’r ongl gritigol?","Adlewyrchiad mewnol cyflawn"] },
+  { c:"waves", e:["W","is the distance between two adjacent points in phase?","Wavelength"], w:["T","yw’r pellter rhwng dau bwynt cyfagos mewn gwedd?","Tonfedd"] },
+  { c:"waves", e:["Y","ran the double-slit experiment that showed light is a wave?","Young"], w:["Y","a wnaeth yr arbrawf dwy hollt a ddangosodd fod golau’n don?","Young"] },
+  { c:"photons", e:["A","happens when a photon of exactly the right energy raises an electron to a higher level?","Absorption"], w:["A","sy’n digwydd pan fo ffoton o’r union egni’n codi electron i lefel uwch?","Amsugniad"] },
+  { c:"photons", e:["C","describes laser light in which all the waves keep a constant phase relationship?","Coherent"], w:["C","sy’n disgrifio golau laser lle mae’r tonnau’n cadw gwedd gyson?","Cydlynol"] },
+  { c:"photons", e:["D","is the semiconductor device that emits light when current passes through it?","Diode (LED)"], w:["D","yw’r ddyfais lled-ddargludol sy’n allyrru golau wrth i gerrynt fynd trwyddi?","Deuod (LED)"] },
+  { c:"photons", e:["E","is the energy gained by an electron accelerated through one volt?","Electronvolt"], w:["E","yw’r egni a enillir gan electron wedi ei gyflymu drwy un folt?","Electronfolt"] },
+  { c:"photons", e:["E","is the process of lifting an electron to a higher energy level?","Excitation"], w:["C","yw’r broses o godi electron i lefel egni uwch?","Cynhyrfiad"] },
+  { c:"photons", e:["G","is the lowest energy level an electron can occupy in an atom?","Ground state"], w:["C","yw’r lefel egni isaf y gall electron ei meddiannu mewn atom?","Cyflwr sylfaenol"] },
+  { c:"photons", e:["H","is the symbol for the constant that links photon energy to frequency?","h (Planck constant)"], w:["C","yw’r cysonyn sy’n cysylltu egni ffoton ag amledd?","Cysonyn Planck"] },
+  { c:"photons", e:["I","is the complete removal of an electron from an atom?","Ionisation"], w:["I","yw tynnu electron yn llwyr o atom?","Ïoneiddiad"] },
+  { c:"photons", e:["L","produces an intense, coherent, monochromatic beam by stimulated emission?","Laser"], w:["L","sy’n cynhyrchu pelydryn dwys, cydlynol, unlliw drwy allyriad ysgogedig?","Laser"] },
+  { c:"photons", e:["L","is one of the discrete energies an electron in an atom may have?","Level (energy level)"], w:["L","yw un o’r egnïon arwahanol y gall electron mewn atom eu cael?","Lefel egni"] },
+  { c:"photons", e:["M","describes a long-lived excited state needed for population inversion?","Metastable"], w:["M","sy’n disgrifio cyflwr cynhyrfol hirhoedlog sydd ei angen ar gyfer gwrthdroad poblogaeth?","Metasefydlog"] },
+  { c:"photons", e:["M","describes light of a single wavelength?","Monochromatic"], w:["U","sy’n disgrifio golau ag un donfedd?","Unlliw"] },
+  { c:"photons", e:["P","is a quantum, or packet, of electromagnetic energy?","Photon"], w:["FF","yw cwantwm, neu becyn, o egni electromagnetig?","Ffoton"] },
+  { c:"photons", e:["P","is the emission of electrons from a metal surface when light shines on it?","Photoelectric effect"], w:["E","yw allyrru electronau o arwyneb metel pan fo golau’n disgleirio arno?","Effaith ffotodrydanol"] },
+  { c:"photons", e:["P","is the condition in which more atoms are in the excited state than the ground state?","Population inversion"], w:["G","yw’r cyflwr lle mae mwy o atomau yn y cyflwr cynhyrfol nag yn y cyflwr sylfaenol?","Gwrthdroad poblogaeth"] },
+  { c:"photons", e:["P","is the process of supplying energy to achieve population inversion?","Pumping"], w:["P","yw’r broses o gyflenwi egni i gyrraedd gwrthdroad poblogaeth?","Pwmpio"] },
+  { c:"photons", e:["Q","is the smallest discrete packet in which energy can be carried?","Quantum"], w:["C","yw’r pecyn arwahanol lleiaf y gellir cario egni ynddo?","Cwantwm"] },
+  { c:"photons", e:["S","is the emission triggered by a passing photon, giving an identical photon?","Stimulated emission"], w:["A","yw’r allyriad a sbardunir gan ffoton, gan roi ffoton unfath?","Allyriad ysgogedig"] },
+  { c:"photons", e:["S","is the random emission that happens without any trigger?","Spontaneous emission"], w:["A","yw’r allyriad ar hap sy’n digwydd heb unrhyw sbardun?","Allyriad digymell"] },
+  { c:"photons", e:["S","is the set of discrete bright lines produced by an excited gas?","Spectrum (line)"], w:["S","yw’r llinellau llachar arwahanol a gynhyrchir gan nwy cynhyrfol?","Sbectrwm llinell"] },
+  { c:"photons", e:["T","is the lowest frequency of light that will free an electron from a metal?","Threshold frequency"], w:["A","yw amledd isaf y golau a fydd yn rhyddhau electron o fetel?","Amledd trothwy"] },
+  { c:"photons", e:["W","is the minimum energy needed to remove an electron from a metal surface?","Work function"], w:["FF","yw’r egni lleiaf sydd ei angen i dynnu electron o arwyneb metel?","Ffwythiant gwaith"] },
+  { c:"thermal", e:["A","is the maximum displacement of an oscillator from its rest position?","Amplitude"], w:["O","yw dadleoliad mwyaf osgiliadur o’i safle gorffwys?","Osgled"] },
+  { c:"thermal", e:["A","is the angle turned through per unit time, measured in radians per second?","Angular velocity"], w:["C","yw’r ongl a droir bob uned amser, mewn radianau yr eiliad?","Cyflymder onglaidd"] },
+  { c:"thermal", e:["B","is the constant that links mean kinetic energy of a molecule to temperature?","Boltzmann constant"], w:["C","yw’r cysonyn sy’n cysylltu egni cinetig cymedrig moleciwl â thymheredd?","Cysonyn Boltzmann"] },
+  { c:"thermal", e:["B","is the random jiggling of smoke particles that gives evidence for moving molecules?","Brownian motion"], w:["M","yw symudiad ar hap gronynnau mwg sy’n dystiolaeth dros foleciwlau symudol?","Mudiant Brownaidd"] },
+  { c:"thermal", e:["C","describes the force that acts towards the centre in circular motion?","Centripetal"], w:["M","sy’n disgrifio’r grym sy’n gweithredu tuag at y canol mewn mudiant cylchol?","Mewngyrchol"] },
+  { c:"thermal", e:["C","is the transfer of thermal energy through a solid without the material moving?","Conduction"], w:["D","yw trosglwyddo egni thermol drwy solid heb i’r deunydd symud?","Dargludiad"] },
+  { c:"thermal", e:["D","reduces the amplitude of an oscillation by removing energy?","Damping"], w:["G","sy’n lleihau osgled osgiliad drwy dynnu egni?","Gwanychiad"] },
+  { c:"thermal", e:["F","describes an oscillation driven by an external periodic force?","Forced oscillation"], w:["O","sy’n disgrifio osgiliad a yrrir gan rym cyfnodol allanol?","Osgiliad gorfodol"] },
+  { c:"thermal", e:["F","describes an oscillation at the system’s own natural frequency?","Free oscillation"], w:["O","sy’n disgrifio osgiliad ar amledd naturiol y system ei hun?","Osgiliad rhydd"] },
+  { c:"thermal", e:["G","is the model with point molecules, no forces between them and perfectly elastic collisions?","Gas (ideal)"], w:["N","yw’r model â moleciwlau pwynt a dim grymoedd rhyngddynt?","Nwy delfrydol"] },
+  { c:"thermal", e:["H","is the energy needed to raise one kilogram by one kelvin?","Heat capacity (specific)"], w:["C","yw’r egni sydd ei angen i godi un cilogram un kelvin?","Cynhwysedd gwres sbesiffig"] },
+  { c:"thermal", e:["I","is the sum of the random kinetic and potential energies of the molecules?","Internal energy"], w:["E","yw swm egnïon cinetig a photensial ar hap y moleciwlau?","Egni mewnol"] },
+  { c:"thermal", e:["K","is the SI base unit of temperature?","Kelvin"], w:["K","yw uned sylfaenol SI tymheredd?","Kelvin"] },
+  { c:"thermal", e:["L","is the energy transferred during a change of state with no temperature change?","Latent heat"], w:["G","yw’r egni a drosglwyddir wrth newid cyflwr heb newid tymheredd?","Gwres cudd"] },
+  { c:"thermal", e:["M","is the smallest particle of a gas that moves randomly and collides with the walls?","Molecule"], w:["M","yw gronyn lleiaf nwy sy’n symud ar hap ac yn taro’r waliau?","Moleciwl"] },
+  { c:"thermal", e:["P","is the simple oscillator whose period depends on length and g?","Pendulum"], w:["P","yw’r osgiliadur syml y mae ei gyfnod yn dibynnu ar hyd a g?","Pendil"] },
+  { c:"thermal", e:["P","is the time taken for one complete oscillation?","Period"], w:["C","yw’r amser ar gyfer un osgiliad cyflawn?","Cyfnod"] },
+  { c:"thermal", e:["P","is force per unit area exerted by gas molecules on the walls?","Pressure"], w:["P","yw grym fesul uned arwynebedd gan foleciwlau nwy ar y waliau?","Pwysedd"] },
+  { c:"thermal", e:["R","is the angle for which arc length equals radius?","Radian"], w:["R","yw’r ongl lle mae hyd arc yn hafal i’r radiws?","Radian"] },
+  { c:"thermal", e:["R","is the large-amplitude response when driving frequency matches natural frequency?","Resonance"], w:["C","yw’r ymateb osgled mawr pan fo’r amledd gyrru’n cyfateb i’r amledd naturiol?","Cyseiniant"] },
+  { c:"thermal", e:["S","is the motion in which acceleration is proportional to, and opposite to, displacement?","Simple harmonic motion"], w:["M","yw’r mudiant lle mae cyflymiad mewn cyfrannedd â dadleoliad ac i’r cyfeiriad dirgroes?","Mudiant harmonig syml"] },
+  { c:"thermal", e:["T","is the quantity that decides the direction of net thermal energy flow?","Temperature"], w:["T","yw’r maint sy’n penderfynu cyfeiriad llif net egni thermol?","Tymheredd"] },
+  { c:"thermal", e:["Z","is the temperature at which molecules have minimum internal energy?","Zero (absolute)"], w:["S","yw’r tymheredd lle mae gan foleciwlau egni mewnol lleiaf?","Sero absoliwt"] },
+  { c:"nuclear", e:["A","is the helium nucleus emitted in one type of radioactive decay?","Alpha particle"], w:["A","yw’r niwclews heliwm a allyrrir mewn un math o ddadfeiliad?","Alffa"] },
+  { c:"nuclear", e:["A","is the number of nuclei decaying per second, measured in becquerels?","Activity"], w:["G","yw nifer y niwclysau sy’n dadfeilio bob eiliad?","Gweithgaredd"] },
+  { c:"nuclear", e:["A","has the same mass but opposite charge to its partner?","Antiparticle"], w:["G","sydd â’r un màs ond gwefr ddirgroes i’w bartner?","Gwrthronyn"] },
+  { c:"nuclear", e:["B","is the fast electron emitted from a nucleus when a neutron becomes a proton?","Beta particle"], w:["B","yw’r electron cyflym a allyrrir pan ddaw niwtron yn broton?","Beta"] },
+  { c:"nuclear", e:["B","is the class of particle made from three quarks?","Baryon"], w:["B","yw’r dosbarth o ronyn a wneir o dri chwarc?","Baryon"] },
+  { c:"nuclear", e:["B","is the SI unit of activity, equal to one decay per second?","Becquerel"], w:["B","yw uned SI gweithgaredd, sef un dadfeiliad yr eiliad?","Becquerel"] },
+  { c:"nuclear", e:["B","is the energy released when separate nucleons come together to form a nucleus?","Binding energy"], w:["E","yw’r egni a ryddheir wrth i niwcleonau ddod at ei gilydd i ffurfio niwclews?","Egni rhwymo"] },
+  { c:"nuclear", e:["D","is the probability per unit time that a given nucleus will decay?","Decay constant"], w:["C","yw’r tebygolrwydd bob uned amser y bydd niwclews yn dadfeilio?","Cysonyn dadfeiliad"] },
+  { c:"nuclear", e:["E","is the lepton found orbiting the nucleus?","Electron"], w:["E","yw’r lepton a geir yn cylchdroi’r niwclews?","Electron"] },
+  { c:"nuclear", e:["F","is the splitting of a heavy nucleus into two lighter ones?","Fission"], w:["Y","yw hollti niwclews trwm yn ddau ysgafnach?","Ymholltiad"] },
+  { c:"nuclear", e:["F","is the joining of two light nuclei, the process that powers the Sun?","Fusion"], w:["Y","yw uno dau niwclews ysgafn, y broses sy’n pweru’r Haul?","Ymasiad"] },
+  { c:"nuclear", e:["G","is the uncharged electromagnetic radiation emitted by an excited nucleus?","Gamma ray"], w:["G","yw’r pelydriad electromagnetig di-wefr a allyrrir gan niwclews cynhyrfol?","Gama"] },
+  { c:"nuclear", e:["H","is the time for the activity of a sample to fall to half its value?","Half-life"], w:["H","yw’r amser i weithgaredd sampl ostwng i hanner ei werth?","Hanner oes"] },
+  { c:"nuclear", e:["I","has the same proton number but a different neutron number?","Isotope"], w:["I","sydd â’r un rhif proton ond rhif niwtron gwahanol?","Isotop"] },
+  { c:"nuclear", e:["L","is the class of fundamental particle that includes the electron and the neutrino?","Lepton"], w:["L","yw’r dosbarth o ronyn sylfaenol sy’n cynnwys yr electron a’r niwtrino?","Lepton"] },
+  { c:"nuclear", e:["M","is the class of particle made from a quark and an antiquark?","Meson"], w:["M","yw’r dosbarth o ronyn a wneir o gwarc a gwrthgwarc?","Meson"] },
+  { c:"nuclear", e:["M","is the difference between the mass of a nucleus and the total mass of its nucleons?","Mass defect"], w:["D","yw’r gwahaniaeth rhwng màs niwclews a chyfanswm màs ei niwcleonau?","Diffyg màs"] },
+  { c:"nuclear", e:["N","is the general name for a proton or a neutron?","Nucleon"], w:["N","yw’r enw cyffredinol am broton neu niwtron?","Niwcleon"] },
+  { c:"nuclear", e:["N","is the almost massless, uncharged lepton emitted in beta decay?","Neutrino"], w:["N","yw’r lepton di-wefr, bron heb fàs, a allyrrir mewn dadfeiliad beta?","Niwtrino"] },
+  { c:"nuclear", e:["N","is the tiny dense core of the atom revealed by alpha scattering?","Nucleus"], w:["N","yw craidd bach dwys yr atom a ddatgelwyd gan wasgariad alffa?","Niwclews"] },
+  { c:"nuclear", e:["P","is the positively charged nucleon?","Proton"], w:["P","yw’r niwcleon â gwefr bositif?","Proton"] },
+  { c:"nuclear", e:["P","is the antiparticle of the electron?","Positron"], w:["P","yw gwrthronyn yr electron?","Positron"] },
+  { c:"nuclear", e:["Q","is the fundamental particle that combines in threes to make a proton?","Quark"], w:["C","yw’r gronyn sylfaenol sy’n cyfuno mewn tri i wneud proton?","Cwarc"] },
+  { c:"nuclear", e:["S","is the fundamental interaction that binds quarks inside a nucleon?","Strong force"], w:["G","yw’r rhyngweithiad sylfaenol sy’n rhwymo cwarciau y tu mewn i niwcleon?","Grym cryf"] },
+  { c:"nuclear", e:["W","is the fundamental interaction responsible for beta decay?","Weak force"], w:["G","yw’r rhyngweithiad sylfaenol sy’n gyfrifol am ddadfeiliad beta?","Grym gwan"] },
+  { c:"fields", e:["B","is the ideal absorber and emitter whose spectrum depends only on temperature?","Black body"], w:["C","yw’r amsugnydd ac allyrrydd delfrydol y mae ei sbectrwm yn dibynnu ar dymheredd yn unig?","Corff du"] },
+  { c:"fields", e:["C","is charge stored per unit potential difference?","Capacitance"], w:["C","yw gwefr a storir fesul uned gwahaniaeth potensial?","Cynhwysiant"] },
+  { c:"fields", e:["C","is the component made of two plates separated by an insulator?","Capacitor"], w:["C","yw’r gydran a wneir o ddwy blât wedi eu gwahanu gan ynysydd?","Cynhwysydd"] },
+  { c:"fields", e:["D","is the insulating material between capacitor plates that increases capacitance?","Dielectric"], w:["D","yw’r deunydd ynysu rhwng platiau cynhwysydd sy’n cynyddu cynhwysiant?","Deuelectrig"] },
+  { c:"fields", e:["E","is a surface along which no work is done in moving a charge or mass?","Equipotential"], w:["C","yw arwyneb lle na wneir gwaith wrth symud gwefr neu fàs ar hyd-ddo?","Cydbotensial"] },
+  { c:"fields", e:["E","is the minimum speed needed to leave a planet’s gravitational field entirely?","Escape velocity"], w:["C","yw’r buanedd lleiaf i adael maes disgyrchiant planed yn llwyr?","Cyflymder dianc"] },
+  { c:"fields", e:["F","is the SI unit of capacitance?","Farad"], w:["F","yw uned SI cynhwysiant?","Farad"] },
+  { c:"fields", e:["F","is the quantity, measured in webers, equal to flux density times area?","Flux"], w:["FF","yw’r maint, mewn weberau, sy’n hafal i ddwysedd fflwcs wedi ei luosi ag arwynebedd?","Fflwcs"] },
+  { c:"fields", e:["F","gave the law that induced emf equals the rate of change of flux linkage?","Faraday"], w:["F","a roddodd y ddeddf fod g.e.m. anwythol yn hafal i gyfradd newid cydiad fflwcs?","Faraday"] },
+  { c:"fields", e:["G","is the region in which a mass experiences a force of attraction?","Gravitational field"], w:["M","yw’r rhanbarth lle mae màs yn profi grym atynnol?","Maes disgyrchiant"] },
+  { c:"fields", e:["H","found that recession speed is proportional to distance for distant galaxies?","Hubble"], w:["H","a ddarganfu fod buanedd enciliad mewn cyfrannedd â phellter ar gyfer galaethau pell?","Hubble"] },
+  { c:"fields", e:["I","is the production of an emf by a changing magnetic flux?","Induction"], w:["A","yw cynhyrchu g.e.m. gan fflwcs magnetig sy’n newid?","Anwythiad"] },
+  { c:"fields", e:["K","gave the third law linking orbital period squared to radius cubed?","Kepler"], w:["K","a roddodd y drydedd ddeddf sy’n cysylltu cyfnod orbit sgwâr â radiws ciwb?","Kepler"] },
+  { c:"fields", e:["L","gave the law that an induced current opposes the change producing it?","Lenz"], w:["L","a roddodd y ddeddf fod cerrynt anwythol yn gwrthwynebu’r newid sy’n ei gynhyrchu?","Lenz"] },
+  { c:"fields", e:["L","is the total power radiated by a star in all directions?","Luminosity"], w:["D","yw cyfanswm y pŵer a belydrir gan seren i bob cyfeiriad?","Disgleirdeb"] },
+  { c:"fields", e:["M","is the quantity measured in tesla, symbol B?","Magnetic flux density"], w:["D","yw’r maint a fesurir mewn tesla, symbol B?","Dwysedd fflwcs magnetig"] },
+  { c:"fields", e:["O","is the closed path a satellite follows around a planet?","Orbit"], w:["O","yw’r llwybr caeedig y mae lloeren yn ei ddilyn o amgylch planed?","Orbit"] },
+  { c:"fields", e:["P","is the distance unit equal to about 3.26 light years?","Parsec"], w:["P","yw’r uned pellter sy’n hafal i tua 3.26 blwyddyn golau?","Parsec"] },
+  { c:"fields", e:["P","is the constant of a medium, symbol epsilon, in the electric field equations?","Permittivity"], w:["P","yw cysonyn cyfrwng, symbol epsilon, yn hafaliadau’r maes trydanol?","Permitifedd"] },
+  { c:"fields", e:["R","is the shift of spectral lines to longer wavelengths from a receding galaxy?","Redshift"], w:["RH","yw symudiad llinellau sbectrol i donfeddi hirach o alaeth sy’n encilio?","Rhuddiad"] },
+  { c:"fields", e:["S","is a body held in orbit around a planet by gravity?","Satellite"], w:["LL","yw corff a ddelir mewn orbit o amgylch planed gan ddisgyrchiant?","Lloeren"] },
+  { c:"fields", e:["S","is the long coil that produces a uniform magnetic field along its axis?","Solenoid"], w:["S","yw’r coil hir sy’n cynhyrchu maes magnetig unffurf ar hyd ei echel?","Solenoid"] },
+  { c:"fields", e:["S","gave the law that total power radiated depends on the fourth power of temperature?","Stefan"], w:["S","a roddodd y ddeddf fod y pŵer a belydrir yn dibynnu ar bedwerydd pŵer tymheredd?","Stefan"] },
+  { c:"fields", e:["T","is the SI unit of magnetic flux density?","Tesla"], w:["T","yw uned SI dwysedd fflwcs magnetig?","Tesla"] },
+  { c:"fields", e:["W","gave the displacement law linking peak wavelength to temperature?","Wien"], w:["W","a roddodd y ddeddf sy’n cysylltu’r donfedd frig â thymheredd?","Wien"] },
+];
+var GBANK = [
+  { c:"motion", e:["KE","the energy of a moving object","Kinetic Energy"], w:["EC","egni gwrthrych sy’n symud","Egni Cinetig"] },
+  { c:"motion", e:["GPE","the store that increases as you climb a hill","Gravitational Potential Energy"], w:["EPD","y storfa sy’n cynyddu wrth ddringo bryn","Egni Potensial Disgyrchiant"] },
+  { c:"motion", e:["CM","the single point where all the weight appears to act","Centre of Mass"], w:["CM","yr un pwynt lle mae’r holl bwysau i’w weld yn gweithredu","Canol Màs"] },
+  { c:"motion", e:["TV","the constant speed of a skydiver once drag balances weight","Terminal Velocity"], w:["CT","buanedd cyson plymiwr awyr pan fo llusgiad yn cydbwyso pwysau","Cyflymder Terfynol"] },
+  { c:"motion", e:["WD","force multiplied by distance moved along the force","Work Done"], w:["GW","grym wedi ei luosi â phellter a symudir","Gwaith a Wnaed"] },
+  { c:"motion", e:["RF","the single force equivalent to all the forces acting","Resultant Force"], w:["GC","yr un grym sy’n cyfateb i’r holl rymoedd","Grym Cydeffaith"] },
+  { c:"motion", e:["FBD","the sketch showing every force on one object and nothing else","Free Body Diagram"], w:["DCR","y braslun sy’n dangos pob grym ar un corff","Diagram Corff Rhydd"] },
+  { c:"motion", e:["CE","the principle that energy is never created or destroyed","Conservation of Energy"], w:["CE","yr egwyddor nad yw egni byth yn cael ei greu na’i ddinistrio","Cadwraeth Egni"] },
+  { c:"motion", e:["CM","the principle that total momentum before equals total momentum after","Conservation of Momentum"], w:["CM","yr egwyddor fod cyfanswm momentwm yn aros yr un fath","Cadwraeth Momentwm"] },
+  { c:"motion", e:["AV","total displacement divided by total time","Average Velocity"], w:["CC","cyfanswm dadleoliad wedi ei rannu â chyfanswm amser","Cyflymder Cyfartalog"] },
+  { c:"motion", e:["PE","the store an object has because of its position","Potential Energy"], w:["EP","y storfa sydd gan wrthrych oherwydd ei safle","Egni Potensial"] },
+  { c:"motion", e:["SI","the international system in which the metre and kilogram are base units","SI units"], w:["US","y system ryngwladol lle mae’r metr a’r cilogram yn unedau sylfaen","Unedau SI"] },
+  { c:"solids", e:["YM","stress divided by strain for a material","Young Modulus"], w:["MY","diriant wedi ei rannu â straen","Modwlws Young"] },
+  { c:"solids", e:["LP","the point beyond which extension stops being proportional to load","Limit of Proportionality"], w:["TC","y pwynt lle mae estyniad yn peidio â bod mewn cyfrannedd â llwyth","Terfan Cyfrannedd"] },
+  { c:"solids", e:["SE","the area under a force-extension graph","Strain Energy"], w:["ES","yr arwynebedd o dan graff grym-estyniad","Egni Straen"] },
+  { c:"solids", e:["HL","the rule that extension is proportional to load","Hooke Law"], w:["DH","y rheol fod estyniad mewn cyfrannedd â llwyth","Deddf Hooke"] },
+  { c:"solids", e:["EL","the greatest load from which a wire still returns to its original length","Elastic Limit"], w:["TE","y llwyth mwyaf y bydd gwifren yn dychwelyd i’w hyd gwreiddiol ohono","Terfan Elastig"] },
+  { c:"solids", e:["PD","a change of shape that stays after the load is removed","Plastic Deformation"], w:["AP","newid siâp sy’n aros ar ôl tynnu’r llwyth","Anffurfiad Plastig"] },
+  { c:"solids", e:["ED","a change of shape that reverses completely on unloading","Elastic Deformation"], w:["AE","newid siâp sy’n dychwelyd yn llwyr wrth ddadlwytho","Anffurfiad Elastig"] },
+  { c:"solids", e:["BM","a material such as glass that snaps with almost no warning","Brittle Material"], w:["DB","deunydd fel gwydr sy’n torri heb rybudd","Deunydd Brau"] },
+  { c:"solids", e:["DM","a material such as copper that can be drawn into a wire","Ductile Material"], w:["DHy","deunydd fel copr y gellir ei dynnu’n wifren","Deunydd Hydwyth"] },
+  { c:"solids", e:["CL","the regular repeating arrangement of atoms in a metal","Crystalline Lattice"], w:["DG","trefniant rheolaidd atomau mewn metel","Dellt Grisialog"] },
+  { c:"solids", e:["SS","the graph whose gradient gives the Young modulus","Stress Strain graph"], w:["DS","y graff y mae ei raddiant yn rhoi modwlws Young","Diriant Straen"] },
+  { c:"solids", e:["FE","the graph whose area gives the energy stored in a wire","Force Extension graph"], w:["GE","y graff y mae ei arwynebedd yn rhoi’r egni a storir","Grym Estyniad"] },
+  { c:"electricity", e:["EMF","the energy a cell gives to each coulomb of charge","Electromotive Force"], w:["GEM","yr egni y mae cell yn ei roi i bob coulomb o wefr","Grym ElectroMotif"] },
+  { c:"electricity", e:["PD","the energy transferred per coulomb between two points","Potential Difference"], w:["GP","yr egni a drosglwyddir fesul coulomb rhwng dau bwynt","Gwahaniaeth Potensial"] },
+  { c:"electricity", e:["LDR","the component you would use in a light-sensing circuit","Light Dependent Resistor"], w:["GDG","y gydran ar gyfer cylched synhwyro golau","Gwrthydd Dibynnol ar Olau"] },
+  { c:"electricity", e:["IR","the resistance inside a cell that causes lost volts","Internal Resistance"], w:["GM","y gwrthiant y tu mewn i gell sy’n achosi foltiau coll","Gwrthiant Mewnol"] },
+  { c:"electricity", e:["DC","the current from a battery, always in the same direction","Direct Current"], w:["CU","y cerrynt o fatri, bob amser i’r un cyfeiriad","Cerrynt Union"] },
+  { c:"electricity", e:["AC","the current from the mains, reversing many times a second","Alternating Current"], w:["CE","y cerrynt o’r prif gyflenwad, sy’n gwrthdroi lawer gwaith yr eiliad","Cerrynt Eiledol"] },
+  { c:"electricity", e:["NTC","the type of thermistor whose resistance drops as it warms","Negative Temperature Coefficient"], w:["CTN","y math o thermistor y mae ei wrthiant yn gostwng wrth gynhesu","Cyfernod Tymheredd Negatif"] },
+  { c:"electricity", e:["DV","the very slow average speed of electrons along a wire","Drift Velocity"], w:["CD","buanedd cyfartalog araf iawn electronau ar hyd gwifren","Cyflymder Drifft"] },
+  { c:"electricity", e:["PD","two resistors used to give a fraction of the supply voltage","Potential Divider"], w:["RhP","dau wrthydd i roi ffracsiwn o foltedd y cyflenwad","Rhannwr Potensial"] },
+  { c:"electricity", e:["KFL","the circuit rule that follows from conservation of charge","Kirchhoff First Law"], w:["DGK","y rheol cylched sy’n dilyn o gadwraeth gwefr","Deddf Gyntaf Kirchhoff"] },
+  { c:"electricity", e:["SC","a material with no resistivity at all below a critical temperature","Super Conductor"], w:["U","deunydd heb wrthedd o gwbl o dan dymheredd critigol","Uwchddargludydd"] },
+  { c:"electricity", e:["VI","the graph used to show whether a component is ohmic","Voltage Current graph"], w:["FC","y graff i ddangos a yw cydran yn ohmig","Foltedd Cerrynt"] },
+  { c:"waves", e:["TIR","the fate of light meeting a boundary beyond the critical angle","Total Internal Reflection"], w:["AMC","tynged golau y tu hwnt i’r ongl gritigol","Adlewyrchiad Mewnol Cyflawn"] },
+  { c:"waves", e:["RI","the ratio of the speed of light in vacuum to that in a medium","Refractive Index"], w:["IP","cymhareb buanedd golau mewn gwactod i’w fuanedd mewn cyfrwng","Indecs Plygiant"] },
+  { c:"waves", e:["PD","the extra distance travelled by one of two interfering waves","Path Difference"], w:["GLl","y pellter ychwanegol a deithir gan un o ddwy don","Gwahaniaeth Llwybr"] },
+  { c:"waves", e:["SW","the pattern of nodes and antinodes on a fixed string","Stationary Wave"], w:["TU","patrwm nodau a gwrthnodau ar linyn sefydlog","Ton Unfan"] },
+  { c:"waves", e:["DG","the many-slit device used to measure wavelength precisely","Diffraction Grating"], w:["GD","y ddyfais aml-hollt i fesur tonfedd yn fanwl","Gratin Diffreithiant"] },
+  { c:"waves", e:["CA","the angle of incidence giving refraction along the boundary","Critical Angle"], w:["OG","yr ongl drawiad sy’n rhoi plygiant ar hyd y ffin","Ongl Gritigol"] },
+  { c:"waves", e:["YDS","the classic experiment that showed light behaves as a wave","Young Double Slit"], w:["DHY","yr arbrawf clasurol a ddangosodd fod golau’n ymddwyn fel ton","Dwy Hollt Young"] },
+  { c:"waves", e:["EM","the family of waves that travel at c through a vacuum","ElectroMagnetic waves"], w:["TE","y teulu o donnau sy’n teithio ar c drwy wactod","Tonnau Electromagnetig"] },
+  { c:"waves", e:["LW","a wave whose oscillations lie along the direction of travel","Longitudinal Wave"], w:["TA","ton lle mae’r osgiliadau ar hyd cyfeiriad teithio","Ton Arhydol"] },
+  { c:"waves", e:["WF","the surface joining all points of a wave that are in phase","Wave Front"], w:["BD","yr arwyneb sy’n uno pwyntiau ton sydd mewn gwedd","Blaen Don"] },
+  { c:"waves", e:["SP","the principle that overlapping displacements add","SuperPosition"], w:["EA","yr egwyddor fod dadleoliadau’n adio","Egwyddor Arosodiad"] },
+  { c:"waves", e:["UV","the radiation just beyond violet that causes sunburn","UltraViolet"], w:["UF","y pelydriad y tu hwnt i fioled sy’n achosi llosg haul","UwchFioled"] },
+  { c:"photons", e:["PE","the emission of electrons from a metal struck by light","PhotoElectric effect"], w:["EFf","allyrru electronau o fetel a drawyd gan olau","Effaith Ffotodrydanol"] },
+  { c:"photons", e:["WF","the least energy needed to free an electron from a metal","Work Function"], w:["FfG","yr egni lleiaf i ryddhau electron o fetel","Ffwythiant Gwaith"] },
+  { c:"photons", e:["TF","the lowest frequency that will free any electron at all","Threshold Frequency"], w:["AT","yr amledd isaf a fydd yn rhyddhau electron o gwbl","Amledd Trothwy"] },
+  { c:"photons", e:["PI","the state with more atoms excited than in the ground state","Population Inversion"], w:["GP","y cyflwr â mwy o atomau cynhyrfol nag yn y cyflwr sylfaenol","Gwrthdroad Poblogaeth"] },
+  { c:"photons", e:["SE","emission triggered by a passing photon, giving an identical one","Stimulated Emission"], w:["AY","allyriad a sbardunir gan ffoton, gan roi un unfath","Allyriad Ysgogedig"] },
+  { c:"photons", e:["GS","the lowest energy level available to an electron","Ground State"], w:["CS","y lefel egni isaf sydd ar gael i electron","Cyflwr Sylfaenol"] },
+  { c:"photons", e:["LED","the semiconductor component that glows when current passes","Light Emitting Diode"], w:["DAG","y gydran lled-ddargludol sy’n goleuo wrth i gerrynt fynd trwyddi","Deuod Allyrru Golau"] },
+  { c:"photons", e:["PC","the constant of proportionality between photon energy and frequency","Planck Constant"], w:["CP","y cysonyn rhwng egni ffoton ac amledd","Cysonyn Planck"] },
+  { c:"photons", e:["EL","one of the discrete energies an electron in an atom may occupy","Energy Level"], w:["LE","un o’r egnïon arwahanol y gall electron eu meddiannu","Lefel Egni"] },
+  { c:"photons", e:["MS","the long-lived excited state a laser depends on","MetaStable state"], w:["CM","y cyflwr cynhyrfol hirhoedlog y mae laser yn dibynnu arno","Cyflwr Metasefydlog"] },
+  { c:"photons", e:["LS","the pattern of bright lines from an excited gas","Line Spectrum"], w:["SLl","patrwm llinellau llachar o nwy cynhyrfol","Sbectrwm Llinell"] },
+  { c:"photons", e:["SE","the random emission that needs no trigger at all","Spontaneous Emission"], w:["AD","yr allyriad ar hap nad oes angen sbardun arno","Allyriad Digymell"] },
+  { c:"thermal", e:["SHM","motion where acceleration is proportional and opposite to displacement","Simple Harmonic Motion"], w:["MHS","mudiant lle mae cyflymiad mewn cyfrannedd ac yn ddirgroes i ddadleoliad","Mudiant Harmonig Syml"] },
+  { c:"thermal", e:["SHC","the energy to raise one kilogram of a substance by one kelvin","Specific Heat Capacity"], w:["CGS","yr egni i godi un cilogram un kelvin","Cynhwysedd Gwres Sbesiffig"] },
+  { c:"thermal", e:["SLH","the energy per kilogram to change state with no temperature change","Specific Latent Heat"], w:["GCS","yr egni fesul cilogram i newid cyflwr heb newid tymheredd","Gwres Cudd Sbesiffig"] },
+  { c:"thermal", e:["IG","the model with point molecules and no forces between them","Ideal Gas"], w:["ND","y model â moleciwlau pwynt a dim grymoedd rhyngddynt","Nwy Delfrydol"] },
+  { c:"thermal", e:["AZ","the temperature at which molecular internal energy is least","Absolute Zero"], w:["SA","y tymheredd lle mae egni mewnol moleciwlaidd ar ei leiaf","Sero Absoliwt"] },
+  { c:"thermal", e:["IE","the sum of random kinetic and potential energies of the molecules","Internal Energy"], w:["EM","swm egnïon cinetig a photensial ar hap y moleciwlau","Egni Mewnol"] },
+  { c:"thermal", e:["CM","motion at constant speed along a circular path","Circular Motion"], w:["MC","mudiant ar fuanedd cyson ar hyd llwybr crwn","Mudiant Cylchol"] },
+  { c:"thermal", e:["CF","the resultant force that always points towards the centre","Centripetal Force"], w:["GM","y grym cydeffaith sy’n pwyntio tuag at y canol bob amser","Grym Mewngyrchol"] },
+  { c:"thermal", e:["BM","the jiggling of smoke particles seen under a microscope","Brownian Motion"], w:["MB","symudiad gronynnau mwg o dan ficrosgop","Mudiant Brownaidd"] },
+  { c:"thermal", e:["KT","the model explaining gas pressure by molecular collisions","Kinetic Theory"], w:["DG","y model sy’n esbonio pwysedd nwy drwy wrthdrawiadau","Damcaniaeth Ginetig"] },
+  { c:"thermal", e:["AV","the angle turned per second, measured in radians","Angular Velocity"], w:["CO","yr ongl a droir bob eiliad, mewn radianau","Cyflymder Onglaidd"] },
+  { c:"thermal", e:["RF","the driving frequency at which amplitude peaks","Resonant Frequency"], w:["AC","yr amledd gyrru lle mae’r osgled ar ei uchaf","Amledd Cyseiniant"] },
+  { c:"nuclear", e:["BE","the energy released as separate nucleons come together","Binding Energy"], w:["ER","yr egni a ryddheir wrth i niwcleonau ddod ynghyd","Egni Rhwymo"] },
+  { c:"nuclear", e:["HL","the time for the activity of a sample to fall by half","Half Life"], w:["HO","yr amser i weithgaredd sampl ostwng i’w hanner","Hanner Oes"] },
+  { c:"nuclear", e:["MD","the difference between nuclear mass and the sum of its nucleons","Mass Defect"], w:["DM","y gwahaniaeth rhwng màs niwclews a swm ei niwcleonau","Diffyg Màs"] },
+  { c:"nuclear", e:["DC","the probability per second that one nucleus decays","Decay Constant"], w:["CD","y tebygolrwydd bob eiliad y bydd un niwclews yn dadfeilio","Cysonyn Dadfeiliad"] },
+  { c:"nuclear", e:["NF","the splitting of a heavy nucleus in a reactor","Nuclear Fission"], w:["YN","hollti niwclews trwm mewn adweithydd","Ymholltiad Niwclear"] },
+  { c:"nuclear", e:["BEN","the quantity that peaks near iron on the stability curve","Binding Energy per Nucleon"], w:["ERN","y maint sy’n brigo ger haearn ar y gromlin sefydlogrwydd","Egni Rhwymo fesul Niwcleon"] },
+  { c:"nuclear", e:["AP","a particle with the same mass but opposite charge","AntiParticle"], w:["GR","gronyn â’r un màs ond gwefr ddirgroes","GwrthRonyn"] },
+  { c:"nuclear", e:["SF","the interaction that binds quarks inside a nucleon","Strong Force"], w:["GC","y rhyngweithiad sy’n rhwymo cwarciau mewn niwcleon","Grym Cryf"] },
+  { c:"nuclear", e:["WF","the interaction responsible for beta decay","Weak Force"], w:["GG","y rhyngweithiad sy’n gyfrifol am ddadfeiliad beta","Grym Gwan"] },
+  { c:"nuclear", e:["AN","the number of protons, which fixes the element","Atomic Number"], w:["RA","nifer y protonau, sy’n pennu’r elfen","Rhif Atomig"] },
+  { c:"nuclear", e:["MN","the total number of protons and neutrons","Mass Number"], w:["RM","cyfanswm y protonau a’r niwtronau","Rhif Màs"] },
+  { c:"nuclear", e:["BR","the natural radiation always present, mostly from radon and rocks","Background Radiation"], w:["PC","y pelydriad naturiol sydd bob amser yn bresennol","Pelydriad Cefndir"] },
+  { c:"fields", e:["EMI","the production of an emf by a changing flux linkage","ElectroMagnetic Induction"], w:["AE","cynhyrchu g.e.m. gan gydiad fflwcs sy’n newid","Anwythiad Electromagnetig"] },
+  { c:"fields", e:["MFD","the quantity measured in tesla, symbol B","Magnetic Flux Density"], w:["DFM","y maint a fesurir mewn tesla, symbol B","Dwysedd Fflwcs Magnetig"] },
+  { c:"fields", e:["GFS","force per unit mass at a point in a field","Gravitational Field Strength"], w:["CMD","grym fesul uned màs mewn maes","Cryfder Maes Disgyrchiant"] },
+  { c:"fields", e:["EFS","force per unit charge at a point in a field","Electric Field Strength"], w:["CME","grym fesul uned gwefr mewn maes","Cryfder Maes Electrig"] },
+  { c:"fields", e:["EV","the least speed needed to leave a planet for good","Escape Velocity"], w:["CD","y buanedd lleiaf i adael planed am byth","Cyflymder Dianc"] },
+  { c:"fields", e:["FL","flux multiplied by the number of turns on a coil","Flux Linkage"], w:["CF","fflwcs wedi ei luosi â nifer y troeon ar goil","Cydiad Fflwcs"] },
+  { c:"fields", e:["HL","the finding that recession speed is proportional to distance","Hubble Law"], w:["DH","y canfyddiad fod buanedd enciliad mewn cyfrannedd â phellter","Deddf Hubble"] },
+  { c:"fields", e:["WDL","the rule linking a star peak wavelength to its temperature","Wien Displacement Law"], w:["DW","y rheol sy’n cysylltu tonfedd frig seren â’i thymheredd","Deddf Wien"] },
+  { c:"fields", e:["SBL","the rule that radiated power depends on the fourth power of temperature","Stefan Boltzmann Law"], w:["DSB","y rheol fod pŵer wedi ei belydru’n dibynnu ar bedwerydd pŵer tymheredd","Deddf Stefan Boltzmann"] },
+  { c:"fields", e:["BB","the ideal radiator whose spectrum depends only on temperature","Black Body"], w:["CD","y pelydrydd delfrydol y mae ei sbectrwm yn dibynnu ar dymheredd yn unig","Corff Du"] },
+  { c:"fields", e:["RC","the product that gives the time constant of a discharging capacitor","RC time constant"], w:["RC","y lluoswm sy’n rhoi cysonyn amser cynhwysydd","RC"] },
+  { c:"fields", e:["AU","the mean Earth-Sun distance, used across the solar system","Astronomical Unit"], w:["US","pellter cymedrig Haul-Ddaear","Uned Seryddol"] },
+];
+</script>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================================================
+   Interface strings
+   ============================================================ */
+var T = {
+  title:      { en:'Physics Blockbusters',           cy:'Blocbwsters Ffiseg' },
+  sub:        { en:'WJEC A-level Physics',           cy:'Ffiseg Safon Uwch CBAC' },
+  s1:         { en:'Language',                       cy:'Iaith' },
+  s2:         { en:'How are you playing?',           cy:'Sut ydych chi’n chwarae?' },
+  s3:         { en:'Choose a category',              cy:'Dewiswch gategori' },
+  english:    { en:'English',                        cy:'Saesneg' },
+  welsh:      { en:'Cymraeg',                        cy:'Cymraeg' },
+  teams:      { en:'Two teams',                      cy:'Dau dîm' },
+  solo:       { en:'On your own',                    cy:'Ar eich pen eich hun' },
+  teamsNote:  { en:'White must join the left edge to the right, across five hexagons. Blue must join the top to the bottom, down four. Blue has the shorter route, so give it to the side that needs the head start.',
+                cy:'Rhaid i Wyn gysylltu’r ymyl chwith â’r dde, ar draws pum hecsagon. Rhaid i Las gysylltu’r brig â’r gwaelod, i lawr pedwar. Mae gan Las y llwybr byrraf, felly rhowch ef i’r tîm sydd angen y fantais.' },
+  soloNote:   { en:'Cross from left to right in five hexagons. A wrong answer blocks that hexagon for good, so a careless route can strand you.',
+                cy:'Croeswch o’r chwith i’r dde mewn pum hecsagon. Mae ateb anghywir yn cau’r hecsagon am byth, felly gall llwybr diofal eich gadael yn sownd.' },
+  start:      { en:'Start the game',                 cy:'Dechrau’r gêm' },
+  questions:  { en:'questions',                      cy:'cwestiynau' },
+  white:      { en:'White',                          cy:'Gwyn' },
+  blue:       { en:'Blue',                           cy:'Glas' },
+  you:        { en:'You',                            cy:'Chi' },
+  across:     { en:'left to right',                  cy:'chwith i’r dde' },
+  down:       { en:'top to bottom',                  cy:'brig i’r gwaelod' },
+  pick:       { en:'Pick a hexagon to take a question.', cy:'Dewiswch hecsagon i gael cwestiwn.' },
+  pickTurn:   { en:'{X} to choose a hexagon.',       cy:'{X} i ddewis hecsagon.' },
+  canIhave:   { en:'Can I have a {L} please?',       cy:'Ga i {L} os gwelwch yn dda?' },
+  whatIs:     { en:'What {L} {S}',                   cy:'Pa {L} {S}' },
+  whatIsGold: { en:'What {L} is {S}?',               cy:'Beth yw {L}, {S}?' },
+  goldTag:    { en:'Gold Run',                       cy:'Rhediad Aur' },
+  reveal:     { en:'Reveal the answer',              cy:'Dangos yr ateb' },
+  whoGetsIt:  { en:'Who takes it?',                  cy:'Pwy sy’n ei gael?' },
+  nobody:     { en:'Nobody',                         cy:'Neb' },
+  correct:    { en:'Correct',                        cy:'Cywir' },
+  wrong:      { en:'Wrong',                          cy:'Anghywir' },
+  timeLbl:    { en:'Time',                           cy:'Amser' },
+  hexes:      { en:'hexagons',                       cy:'hecsagonau' },
+  newGame:    { en:'New game',                       cy:'Gêm newydd' },
+  goldRun:    { en:'Gold Run',                       cy:'Rhediad Aur' },
+  goldIntro:  { en:'Sixty seconds. Cross from left to right. Every hexagon holds a set of initials — say what they stand for.',
+                cy:'Chwe deg eiliad. Croeswch o’r chwith i’r dde. Mae gan bob hecsagon lythrennau blaen — dywedwch beth ydynt.' },
+  goldStart:  { en:'Start the Gold Run',             cy:'Dechrau’r Rhediad Aur' },
+  goldWin:    { en:'Gold Run complete',              cy:'Rhediad Aur wedi’i gwblhau' },
+  goldLose:   { en:'Out of time',                    cy:'Amser ar ben' },
+  wins:       { en:'{X} wins the board',             cy:'{X} sy’n ennill y bwrdd' },
+  youWin:     { en:'Board complete',                 cy:'Bwrdd wedi’i gwblhau' },
+  stranded:   { en:'No way through',                 cy:'Dim ffordd drwodd' },
+  strandedP:  { en:'Every remaining route is blocked. That is the risk of a careless line.',
+                cy:'Mae pob llwybr sy’n weddill wedi’i gau. Dyna berygl llinell ddiofal.' },
+  toGold:     { en:'On to the Gold Run',             cy:'Ymlaen i’r Rhediad Aur' },
+  goldWinP:   { en:'Across the board with {N} to spare.',
+                cy:'Ar draws y bwrdd gyda {N} yn weddill.' },
+  goldLoseP:  { en:'The clock beat you. The route was still open.',
+                cy:'Curodd y cloc chi. Roedd y llwybr yn dal ar agor.' },
+  playAgain:  { en:'Play again',                     cy:'Chwarae eto' },
+  backSetup:  { en:'Change category',                cy:'Newid categori' },
+  inSeconds:  { en:'{N}s',                           cy:'{N}e' },
+  boardNote:  { en:'A letter may appear twice — each hexagon carries its own question.',
+                cy:'Gall llythyren ymddangos ddwywaith — mae gan bob hecsagon ei chwestiwn ei hun.' }
+};
+function t(k, subs){
+  var s = (T[k] && T[k][S.lang]) || k;
+  if (subs) Object.keys(subs).forEach(function(p){ s = s.replace('{' + p + '}', subs[p]); });
+  return s;
+}
+
+/* ============================================================
+   Board geometry — pointy-top hexes, odd-r offset, 5 wide x 4 deep
+   ============================================================ */
+var COLS = 5, ROWS = 4, N = COLS * ROWS, SQ3 = Math.sqrt(3);
+
+function neighbours(i){
+  var c = i % COLS, r = (i - c) / COLS, odd = r & 1, out = [];
+  var d = odd ? [[1,0],[-1,0],[0,-1],[1,-1],[0,1],[1,1]]
+              : [[1,0],[-1,0],[0,-1],[-1,-1],[0,1],[-1,1]];
+  for (var k = 0; k < 6; k++){
+    var nc = c + d[k][0], nr = r + d[k][1];
+    if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) out.push(nr * COLS + nc);
+  }
+  return out;
+}
+var colOf = function(i){ return i % COLS; };
+var rowOf = function(i){ return Math.floor(i / COLS); };
+
+/* Is there a chain of cells passing `test`, from one edge to the other? */
+function connects(test, dir){
+  var startOK = dir === 'across' ? function(i){ return colOf(i) === 0; }
+                                 : function(i){ return rowOf(i) === 0; };
+  var endOK   = dir === 'across' ? function(i){ return colOf(i) === COLS - 1; }
+                                 : function(i){ return rowOf(i) === ROWS - 1; };
+  var seen = new Uint8Array(N), stack = [];
+  for (var i = 0; i < N; i++) if (startOK(i) && test(i)){ seen[i] = 1; stack.push(i); }
+  while (stack.length){
+    var cur = stack.pop();
+    if (endOK(cur)) return true;
+    var nb = neighbours(cur);
+    for (var k = 0; k < nb.length; k++){
+      if (!seen[nb[k]] && test(nb[k])){ seen[nb[k]] = 1; stack.push(nb[k]); }
+    }
+  }
+  return false;
+}
+
+/* ============================================================
+   State
+   ============================================================ */
+var S = {
+  lang:'en', mode:'teams', cat:null,
+  screen:'setup',
+  cells:[], turn:'w', sel:null, revealed:false,
+  msg:null,
+  winner:null,
+  gold:{ running:false, left:60, id:null, started:0 },
+  goldResult:null,
+  soloStart:0, soloElapsed:0
+};
+
+function rnd(a){ return a[Math.floor(Math.random() * a.length)]; }
+function shuffle(a){
+  a = a.slice();
+  for (var i = a.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i + 1)), t2 = a[i]; a[i] = a[j]; a[j] = t2;
+  }
+  return a;
+}
+var L = function(o){ return S.lang === 'en' ? o.e : o.w; };
+
+/* ============================================================
+   Filling the board
+   ============================================================ */
+function buildBoard(){
+  var pool = shuffle(QBANK.filter(function(q){ return q.c === S.cat; }));
+  /* one question per letter first, so as many hexes as possible show a
+     different letter; only then start a second pass */
+  var byLetter = {}, order = [];
+  pool.forEach(function(q){
+    var l = L(q)[0];
+    if (!byLetter[l]){ byLetter[l] = []; order.push(l); }
+    byLetter[l].push(q);
+  });
+  order = shuffle(order);
+  var picked = [], pass = 0;
+  while (picked.length < N && pass < 6){
+    for (var i = 0; i < order.length && picked.length < N; i++){
+      var arr = byLetter[order[i]];
+      if (arr.length > pass) picked.push(arr[pass]);
+    }
+    pass++;
+  }
+  while (picked.length < N) picked.push(rnd(pool));   /* tiny bank fallback */
+  picked = shuffle(picked).slice(0, N);
+  S.cells = picked.map(function(q){
+    return { q:q, letter:L(q)[0], owner:null };
+  });
+}
+
+function buildGold(){
+  var pool = shuffle(GBANK.filter(function(g){ return g.c === S.cat; }));
+  var picked = [];
+  while (picked.length < N) picked = picked.concat(shuffle(pool));
+  picked = picked.slice(0, N);
+  S.cells = picked.map(function(g){
+    return { q:g, letter:L(g)[0], owner:null, gold:true };
+  });
+}
+
+/* ============================================================
+   Win logic
+   ============================================================ */
+var DIR = { w:'across', b:'down', s:'across' };
+function ownerWins(o){
+  return connects(function(i){ return S.cells[i].owner === o; }, DIR[o]);
+}
+function stillPossible(o){
+  return connects(function(i){
+    var v = S.cells[i].owner;
+    return v === o || v === null;
+  }, DIR[o]);
+}
+
+/* ============================================================
+   Rendering
+   ============================================================ */
+var $ = function(id){ return document.getElementById(id); };
+function esc(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function el(html){
+  var d = document.createElement('div'); d.innerHTML = html; return d.firstElementChild;
+}
+
+function boardSVG(){
+  var s = 44, w = SQ3 * s;
+  var W = w * (COLS + 0.5), H = 1.5 * s * (ROWS - 1) + 2 * s;
+  var out = '<svg viewBox="0 0 ' + W.toFixed(1) + ' ' + H.toFixed(1) + '" role="group" aria-label="board">';
+  for (var i = 0; i < N; i++){
+    var c = i % COLS, r = (i - c) / COLS;
+    var cx = w * (c + 0.5 * (r & 1)) + w / 2, cy = s + 1.5 * s * r;
+    var pts = [];
+    for (var k = 0; k < 6; k++){
+      var a = Math.PI / 180 * (60 * k - 90);
+      pts.push((cx + s * Math.cos(a)).toFixed(1) + ',' + (cy + s * Math.sin(a)).toFixed(1));
+    }
+    var cell = S.cells[i];
+    var cls = 'hx' + (cell.owner ? ' ' + cell.owner : '') +
+              (cell.owner ? ' dead' : '') + (S.sel === i ? ' sel' : '');
+    var focusable = cell.owner ? '' : ' tabindex="0"';
+    var txt = cell.letter;
+    var fs = txt.length >= 3 ? s * 0.42 : txt.length === 2 ? s * 0.56 : s * 0.78;
+    out += '<g class="' + cls + '" data-i="' + i + '"' + focusable + ' role="button" aria-label="' + esc(txt) + '">' +
+           '<polygon class="hxf" points="' + pts.join(' ') + '"/>' +
+           '<text class="hxt" x="' + cx.toFixed(1) + '" y="' + cy.toFixed(1) +
+           '" font-size="' + fs.toFixed(1) + '">' + esc(txt) + '</text></g>';
+  }
+  return out + '</svg>';
+}
+
+function teamChip(colour){
+  var fill = colour === 'w' ? '#f4f7fd' : colour === 'b' ? '#3d8fdd' : '#f5b32b';
+  return '<svg class="chip" viewBox="0 0 26 29" aria-hidden="true">' +
+         '<polygon points="13,1 25,8 25,21 13,28 1,21 1,8" fill="' + fill + '"/></svg>';
+}
+function count(o){
+  return S.cells.filter(function(c){ return c.owner === o; }).length;
+}
+
+/* ---------------- setup ---------------- */
+function renderSetup(){
+  var langSeg = ['en','cy'].map(function(k){
+    return '<button class="btn" data-lang="' + k + '" aria-pressed="' + (S.lang === k) + '">' +
+           (k === 'en' ? t('english') : t('welsh')) + '</button>';
+  }).join('');
+  var modeSeg = ['teams','solo'].map(function(k){
+    return '<button class="btn" data-mode="' + k + '" aria-pressed="' + (S.mode === k) + '">' +
+           t(k === 'teams' ? 'teams' : 'solo') + '</button>';
+  }).join('');
+  var cats = CATS.map(function(cat){
+    var n = QBANK.filter(function(q){ return q.c === cat.id; }).length;
+    return '<button class="cat" data-cat="' + cat.id + '" aria-pressed="' + (S.cat === cat.id) + '">' +
+           '<div class="nm">' + esc(cat[S.lang]) + '</div>' +
+           '<div class="rf">WJEC ' + esc(cat.ref) + '</div>' +
+           '<div class="ct">' + n + ' ' + t('questions') + '</div></button>';
+  }).join('');
+
+  $('root').innerHTML =
+    '<div class="card">' +
+      '<div class="step"><div class="lab"><span class="n">1</span>' + t('s1') + '</div>' +
+        '<div class="seg">' + langSeg + '</div></div>' +
+      '<div class="step"><div class="lab"><span class="n">2</span>' + t('s2') + '</div>' +
+        '<div class="seg">' + modeSeg + '</div>' +
+        '<p class="note" style="margin:11px 0 0">' + t(S.mode === 'teams' ? 'teamsNote' : 'soloNote') + '</p></div>' +
+      '<div class="step"><div class="lab"><span class="n">3</span>' + t('s3') + '</div>' +
+        '<div class="cats">' + cats + '</div></div>' +
+      '<div class="startrow">' +
+        '<button class="btn gold" id="go"' + (S.cat ? '' : ' disabled style="opacity:.45;cursor:not-allowed"') + '>' +
+        t('start') + '</button>' +
+        '<span class="note">' + t('boardNote') + '</span>' +
+      '</div>' +
+    '</div>';
+
+  $('root').querySelectorAll('[data-lang]').forEach(function(b){
+    b.onclick = function(){ S.lang = b.getAttribute('data-lang'); render(); };
+  });
+  $('root').querySelectorAll('[data-mode]').forEach(function(b){
+    b.onclick = function(){ S.mode = b.getAttribute('data-mode'); render(); };
+  });
+  $('root').querySelectorAll('[data-cat]').forEach(function(b){
+    b.onclick = function(){ S.cat = b.getAttribute('data-cat'); render(); };
+  });
+  var go = $('go');
+  if (go && S.cat) go.onclick = startGame;
+}
+
+/* ---------------- game ---------------- */
+function renderGame(){
+  var head;
+  if (S.mode === 'teams'){
+    head =
+      '<div class="team' + (S.turn === 'w' ? ' on' : '') + '">' + teamChip('w') +
+        '<div><div class="nm">' + t('white') + '</div><div class="go">' + t('across') + '</div></div>' +
+        '<div class="ct">' + count('w') + '</div></div>' +
+      '<div class="team' + (S.turn === 'b' ? ' on' : '') + '">' + teamChip('b') +
+        '<div><div class="nm">' + t('blue') + '</div><div class="go">' + t('down') + '</div></div>' +
+        '<div class="ct">' + count('b') + '</div></div>';
+  } else {
+    head =
+      '<div class="team on">' + teamChip('w') +
+        '<div><div class="nm">' + t('you') + '</div><div class="go">' + t('across') + '</div></div>' +
+        '<div class="ct">' + count('s') + '</div></div>' +
+      '<div class="clock"><div class="t" id="clk">' + fmt(S.soloElapsed) + '</div>' +
+        '<div class="l">' + t('timeLbl') + '</div></div>';
+  }
+
+  $('root').innerHTML =
+    '<div class="scores">' + head + '</div>' +
+    '<div class="boardwrap">' + boardSVG() + '</div>' +
+    '<div class="qpanel" id="qp"></div>';
+  wireBoard();
+  renderQ();
+}
+
+function renderQ(){
+  var qp = $('qp');
+  if (!qp) return;
+  if (S.sel === null){
+    var who = S.mode === 'teams' ? t(S.turn === 'w' ? 'white' : 'blue') : null;
+    qp.innerHTML = '<div class="idle">' +
+      (who ? t('pickTurn', { X:who }) : t('pick')) + '</div>';
+    return;
+  }
+  var cell = S.cells[S.sel], q = L(cell.q);
+  var h = '<div class="ask">' +
+    (cell.gold ? t('goldTag') + ' · ' + esc(cell.letter)
+               : t('canIhave', { L:cell.letter })) + '</div>';
+  h += '<div class="q">' + esc(cell.gold
+        ? t('whatIsGold', { L:cell.letter, S:q[1] })
+        : t('whatIs',     { L:cell.letter, S:q[1] })) + '</div>';
+  if (S.revealed) h += '<div class="a">' + esc(q[2]) + '</div>';
+  h += '<div class="acts">';
+  if (!S.revealed){
+    h += '<button class="btn gold" id="rev">' + t('reveal') + '</button>';
+  } else if (S.mode === 'teams' && !cell.gold){
+    h += '<span class="who">' + t('whoGetsIt') + '</span>' +
+         '<button class="btn wht" data-award="w">' + t('white') + '</button>' +
+         '<button class="btn blu" data-award="b">' + t('blue') + '</button>' +
+         '<button class="btn no" data-award="">' + t('nobody') + '</button>';
+  } else {
+    h += '<button class="btn ok" data-award="' + (cell.gold ? 'g' : 's') + '">' + t('correct') + '</button>' +
+         '<button class="btn bad" data-award="x">' + t('wrong') + '</button>';
+  }
+  h += '</div>';
+  qp.innerHTML = h;
+
+  var rev = $('rev');
+  if (rev) rev.onclick = function(){ S.revealed = true; renderQ(); };
+  qp.querySelectorAll('[data-award]').forEach(function(b){
+    b.onclick = function(){ award(b.getAttribute('data-award')); };
+  });
+}
+
+function wireBoard(){
+  $('root').querySelectorAll('.hx').forEach(function(g){
+    var i = +g.getAttribute('data-i');
+    if (S.cells[i].owner) return;
+    var pick = function(){ if (S.sel === null){ S.sel = i; S.revealed = false; render(); } };
+    g.onclick = pick;
+    g.onkeydown = function(e){ if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); pick(); } };
+  });
+}
+
+function award(who){
+  var cell = S.cells[S.sel];
+  if (who === '') {                       /* nobody — hex stays open, turn passes */
+    S.turn = S.turn === 'w' ? 'b' : 'w';
+  } else {
+    cell.owner = who;
+    if (who === 'w' || who === 'b') S.turn = who;
+  }
+  S.sel = null; S.revealed = false;
+
+  if (S.screen === 'gold'){
+    if (connects(function(i){ return S.cells[i].owner === 'g'; }, 'across')) return endGold(true);
+    if (!connects(function(i){ return S.cells[i].owner !== 'x'; }, 'across')) return endGold(false);
+    render(); return;
+  }
+  if (S.mode === 'teams'){
+    if (ownerWins('w')) return endBoard('w');
+    if (ownerWins('b')) return endBoard('b');
+  } else {
+    if (ownerWins('s')) return endBoard('s');
+    if (!stillPossible('s')) return endBoard(null);
+  }
+  render();
+}
+
+/* ---------------- results ---------------- */
+function endBoard(winner){
+  S.winner = winner;
+  S.screen = 'boardover';
+  stopSoloClock();
+  render();
+}
+function renderBoardOver(){
+  var ok = S.winner !== null;
+  var name = S.winner === 'w' ? t('white') : S.winner === 'b' ? t('blue') : null;
+  $('root').innerHTML =
+    '<div class="card result">' +
+      (ok ? '<div class="confetti">⬢ ⬢ ⬢</div>' : '') +
+      '<div class="big">' + (ok
+        ? (S.mode === 'teams' ? t('wins', { X:name }) : t('youWin'))
+        : t('stranded')) + '</div>' +
+      '<p>' + (ok ? t('goldIntro') : t('strandedP')) + '</p>' +
+      '<div class="acts">' +
+        (ok ? '<button class="btn gold" id="gogold">' + t('goldStart') + '</button>' : '') +
+        '<button class="btn" id="again">' + t('playAgain') + '</button>' +
+        '<button class="btn ghost" id="back">' + t('backSetup') + '</button>' +
+      '</div>' +
+    '</div>';
+  if (ok) $('gogold').onclick = startGold;
+  $('again').onclick = startGame;
+  $('back').onclick = function(){ S.screen = 'setup'; render(); };
+}
+
+/* ---------------- gold run ---------------- */
+function startGold(){
+  S.screen = 'gold';
+  S.sel = null; S.revealed = false;
+  buildGold();
+  S.gold.left = 60;
+  S.gold.running = true;
+  S.gold.started = Date.now();
+  clearInterval(S.gold.id);
+  S.gold.id = setInterval(tickGold, 250);
+  render();
+}
+function tickGold(){
+  if (!S.gold.running) return;
+  var left = 60 - Math.floor((Date.now() - S.gold.started) / 1000);
+  if (left !== S.gold.left){
+    S.gold.left = left;
+    var c = $('clk');
+    if (c){
+      c.textContent = Math.max(0, left);
+      c.parentNode.classList.toggle('low', left <= 10);
+    }
+  }
+  if (left <= 0) endGold(false);
+}
+function renderGold(){
+  $('root').innerHTML =
+    '<div class="scores">' +
+      '<div class="team on">' + teamChip('g') +
+        '<div><div class="nm">' + t('goldRun') + '</div><div class="go">' + t('across') + '</div></div>' +
+        '<div class="ct">' + count('g') + '</div></div>' +
+      '<div class="clock' + (S.gold.left <= 10 ? ' low' : '') + '">' +
+        '<div class="t" id="clk">' + Math.max(0, S.gold.left) + '</div>' +
+        '<div class="l">' + t('timeLbl') + '</div></div>' +
+    '</div>' +
+    '<div class="boardwrap">' + boardSVG() + '</div>' +
+    '<div class="qpanel" id="qp"></div>';
+  wireBoard();
+  renderQ();
+}
+function endGold(won){
+  S.gold.running = false;
+  clearInterval(S.gold.id);
+  var used = Math.min(60, Math.round((Date.now() - S.gold.started) / 1000));
+  S.goldResult = { won:won, used:used, left:Math.max(0, 60 - used) };
+  S.screen = 'goldover';
+  render();
+}
+function renderGoldOver(){
+  var g = S.goldResult;
+  $('root').innerHTML =
+    '<div class="card result">' +
+      (g.won ? '<div class="confetti">★ ★ ★</div>' : '') +
+      '<div class="big' + (g.won ? ' gold' : '') + '">' + t(g.won ? 'goldWin' : 'goldLose') + '</div>' +
+      '<p>' + (g.won ? t('goldWinP', { N:t('inSeconds', { N:g.left }) }) : t('goldLoseP')) + '</p>' +
+      '<div class="acts">' +
+        '<button class="btn gold" id="again">' + t('playAgain') + '</button>' +
+        '<button class="btn ghost" id="back">' + t('backSetup') + '</button>' +
+      '</div>' +
+    '</div>';
+  $('again').onclick = startGame;
+  $('back').onclick = function(){ S.screen = 'setup'; render(); };
+}
+
+/* ---------------- solo clock ---------------- */
+var soloId = null;
+function startSoloClock(){
+  stopSoloClock();
+  S.soloStart = Date.now();
+  soloId = setInterval(function(){
+    S.soloElapsed = Math.floor((Date.now() - S.soloStart) / 1000);
+    var c = $('clk'); if (c) c.textContent = fmt(S.soloElapsed);
+  }, 500);
+}
+function stopSoloClock(){ clearInterval(soloId); soloId = null; }
+function fmt(sec){
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+/* ---------------- flow ---------------- */
+function startGame(){
+  stopSoloClock();
+  clearInterval(S.gold.id);
+  S.gold.running = false;
+  S.screen = 'game';
+  S.sel = null; S.revealed = false; S.winner = null; S.goldResult = null;
+  S.turn = 'w'; S.soloElapsed = 0;
+  buildBoard();
+  render();
+  if (S.mode === 'solo') startSoloClock();
+}
+
+function render(){
+  $('mastTitle').textContent = t('title');
+  $('mastSub').textContent = t('sub');
+  var right = $('mastRight');
+  if (S.screen === 'setup'){
+    right.innerHTML = '';
+  } else {
+    var cat = CATS.filter(function(x){ return x.id === S.cat; })[0];
+    right.innerHTML =
+      '<span class="note"><b>' + esc(cat ? cat[S.lang] : '') + '</b></span>' +
+      '<button class="btn small ghost" id="quit">' + t('newGame') + '</button>';
+    $('quit').onclick = function(){
+      stopSoloClock(); clearInterval(S.gold.id); S.gold.running = false;
+      S.screen = 'setup'; render();
+    };
+  }
+  if (S.screen === 'setup') renderSetup();
+  else if (S.screen === 'game') renderGame();
+  else if (S.screen === 'boardover') renderBoardOver();
+  else if (S.screen === 'gold') renderGold();
+  else if (S.screen === 'goldover') renderGoldOver();
+}
+
+render();
+window.__bb = { S:S, connects:connects, neighbours:neighbours, award:award,
+                startGame:startGame, startGold:startGold, endGold:endGold,
+                CATS:CATS, QBANK:QBANK, GBANK:GBANK };
+})();
+</script>
+
+</body>
+</html>
