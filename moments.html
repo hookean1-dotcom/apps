@@ -1,0 +1,2681 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="description" content="Moments Lab - an interactive turning-effects simulator for GCSE and A-Level Physics. Balance beams, angled forces, reaction forces, couples and a full moment-by-moment working generator.">
+<title>Moments Lab &mdash; Interactive Turning Effects Simulator</title>
+<style>
+/* ============================================================
+   MOMENTS LAB  -  design tokens
+   ============================================================ */
+:root{
+  color-scheme: light;
+  --bg:#eef1f6;
+  --bg-2:#e2e7ef;
+  --stage:#f7f9fc;
+  --stage-2:#e9eef6;
+  --panel:#ffffff;
+  --panel-2:#f4f6fa;
+  --panel-3:#eaeef5;
+  --ink:#111826;
+  --ink-2:#39445a;
+  --muted:#6b7689;
+  --line:#d3dae6;
+  --line-2:#c0c9d9;
+  --accent:#2563eb;
+  --accent-ink:#ffffff;
+  --accent-soft:#dbe6ff;
+  --acw:#1d74d6;          /* anticlockwise */
+  --acw-soft:#d6e8fb;
+  --cw:#d63a2f;           /* clockwise */
+  --cw-soft:#fbdedb;
+  --weight:#c2610a;       /* weight arrows */
+  --force:#0d9488;        /* applied forces */
+  --react:#7c3aed;        /* reactions */
+  --ok:#16a34a;
+  --warn:#d97706;
+  --bad:#dc2626;
+  --grid:#ccd6e6;
+  --grid-2:#dee6f1;
+  --beam-a:#c3ccda;
+  --beam-b:#8e9bb0;
+  --beam-edge:#5d687c;
+  --ground:#c9d2e0;
+  --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.08);
+  --shadow-sm: 0 1px 2px rgba(16,24,40,.08);
+  --radius:12px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+html[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0b0f17;
+  --bg-2:#111827;
+  --stage:#0e1420;
+  --stage-2:#151d2c;
+  --panel:#131a26;
+  --panel-2:#1a2231;
+  --panel-3:#212b3d;
+  --ink:#e9eef7;
+  --ink-2:#c2cbdb;
+  --muted:#8b97ac;
+  --line:#27324a;
+  --line-2:#35415c;
+  --accent:#5b8dff;
+  --accent-ink:#08111f;
+  --accent-soft:#1b2b4d;
+  --acw:#59a5f5;
+  --acw-soft:#12304f;
+  --cw:#f5776b;
+  --cw-soft:#4a1f1b;
+  --weight:#f0a23c;
+  --force:#2dd4bf;
+  --react:#a78bfa;
+  --ok:#4ade80;
+  --warn:#fbbf24;
+  --bad:#f87171;
+  --grid:#22304a;
+  --grid-2:#1a2536;
+  --beam-a:#7c879b;
+  --beam-b:#4a5468;
+  --beam-edge:#2b3346;
+  --ground:#1c2637;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.45);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:14px; line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  overflow:hidden;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------- app frame ---------- */
+#app{display:flex;flex-direction:column;height:100dvh;min-height:0}
+
+header.topbar{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:8px 14px; background:var(--panel); border-bottom:1px solid var(--line);
+  flex:0 0 auto; z-index:30; box-shadow:var(--shadow-sm);
+}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand .mark{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;
+  background:linear-gradient(145deg,var(--accent),#7c3aed);
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow-sm)
+}
+.brand h1{font-size:16px;margin:0;letter-spacing:-.02em;font-weight:700;white-space:nowrap}
+.brand .sub{font-size:11.5px;color:var(--muted);margin-top:-2px;white-space:nowrap}
+.brand .txt{min-width:0}
+
+.seg{display:flex;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{
+  border:0;background:transparent;padding:6px 11px;border-radius:7px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.14s
+}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:var(--panel);color:var(--ink);box-shadow:var(--shadow-sm)}
+html[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--panel-3)}
+
+.spacer{flex:1 1 auto}
+.iconbtn{
+  border:1px solid var(--line);background:var(--panel-2);color:var(--ink-2);
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;cursor:pointer;transition:.14s;flex:0 0 auto
+}
+.iconbtn:hover{background:var(--panel-3);color:var(--ink)}
+.iconbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn{
+  border:1px solid var(--line);background:var(--panel-2);color:var(--ink);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;transition:.14s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap
+}
+.btn:hover{background:var(--panel-3)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:4px 9px;font-size:11.5px;border-radius:7px}
+.btn.danger{color:var(--bad)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- main split ---------- */
+main{display:flex;flex:1 1 auto;min-height:0;min-width:0}
+.stagewrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;background:var(--stage);overflow:hidden}
+#scene{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#scene.dragging{cursor:grabbing}
+
+.stage-tools{
+  position:absolute;left:12px;top:12px;display:flex;gap:6px;align-items:center;
+  background:color-mix(in srgb,var(--panel) 88%, transparent);
+  border:1px solid var(--line);border-radius:11px;padding:5px;backdrop-filter:blur(8px);box-shadow:var(--shadow-sm);
+  flex-wrap:wrap;max-width:calc(100% - 24px)
+}
+.stage-tools .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+
+.hud{
+  position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:8px;align-items:flex-end;
+  pointer-events:none
+}
+.chip{
+  background:color-mix(in srgb,var(--panel) 90%, transparent);
+  border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
+  box-shadow:var(--shadow-sm);backdrop-filter:blur(8px);font-variant-numeric:tabular-nums
+}
+.chip b{font-family:var(--mono);font-size:12.5px}
+
+/* balance bar */
+.balancebar{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:12px;
+  width:min(620px,calc(100% - 24px));
+  background:color-mix(in srgb,var(--panel) 92%, transparent);
+  border:1px solid var(--line);border-radius:14px;padding:9px 12px 10px;
+  box-shadow:var(--shadow);backdrop-filter:blur(10px)
+}
+.balancebar .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+.balancebar .status{font-weight:700;font-size:13px;letter-spacing:-.01em}
+.balancebar .net{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.bbar{height:16px;border-radius:8px;background:var(--panel-3);position:relative;overflow:hidden;display:flex}
+.bbar .seg-acw{background:var(--acw);height:100%;transition:width .12s linear}
+.bbar .seg-cw{background:var(--cw);height:100%;transition:width .12s linear;margin-left:auto}
+.bbar .mid{position:absolute;left:50%;top:0;bottom:0;width:2px;background:var(--panel);opacity:.9}
+.bbar-legend{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--mono)}
+
+/* ---------- panel ---------- */
+aside.panel{
+  flex:0 0 400px;max-width:400px;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0
+}
+.tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel-2);flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{
+  flex:1 1 auto;border:0;background:transparent;padding:10px 6px 9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:.14s;white-space:nowrap
+}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--panel)}
+.tabbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:14px}
+.tabbody::-webkit-scrollbar{width:10px}
+.tabbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--panel)}
+[role="tabpanel"][hidden]{display:none}
+
+.group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;background:var(--panel);overflow:hidden}
+.group>h3{
+  margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  padding:9px 12px;background:var(--panel-2);border-bottom:1px solid var(--line);font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+.group .body{padding:11px 12px}
+.group.tight .body{padding:8px}
+
+.field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{flex:0 0 96px;font-size:12.5px;color:var(--ink-2);font-weight:600}
+.field .val{flex:0 0 74px;text-align:right;font-family:var(--mono);font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+.field input[type=range]{flex:1 1 auto;min-width:0}
+.field.col{flex-direction:column;align-items:stretch;gap:6px}
+
+input[type=range]{
+  -webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer
+}
+input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel-3);border:1px solid var(--line)}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);
+  border:2px solid var(--accent);margin-top:-7px;box-shadow:var(--shadow-sm);transition:.12s
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel-3);border:1px solid var(--line)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--shadow-sm)}
+
+input[type=number],input[type=text],select{
+  background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+  font-size:12.5px;min-width:0;width:100%;font-family:var(--mono)
+}
+select{font-family:var(--sans);cursor:pointer}
+input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer}
+
+.check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2);cursor:pointer;padding:3px 0}
+.check input{flex:0 0 auto}
+.checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+
+.hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+.hint.warn{color:var(--warn)}
+.hint.bad{color:var(--bad)}
+
+/* object list */
+.objlist{display:flex;flex-direction:column;gap:7px}
+.obj{
+  border:1px solid var(--line);border-radius:10px;background:var(--panel-2);padding:8px;transition:.14s
+}
+.obj.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.obj .head{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.obj .dot{width:12px;height:12px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(0,0,0,.15)}
+.obj .name{font-size:12.5px;font-weight:700;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.obj .tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:5px;background:var(--panel-3);color:var(--muted)}
+.obj .grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:5px 7px;align-items:center}
+.obj .grid span{font-size:11px;color:var(--muted);font-weight:600}
+.obj .acts{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+.qbtn{
+  border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 7px;font-size:11px;
+  cursor:pointer;font-weight:700;color:var(--muted)
+}
+.qbtn[aria-pressed="true"]{background:var(--warn);border-color:var(--warn);color:#fff}
+
+/* table */
+table.moments{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+table.moments th{
+  text-align:right;font-size:11px;letter-spacing:.01em;color:var(--muted);
+  padding:5px 6px;border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap
+}
+table.moments th:first-child,table.moments td:first-child{text-align:left}
+table.moments td{padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);text-align:right;white-space:nowrap}
+table.moments tbody tr{cursor:pointer}
+table.moments tbody tr:hover{background:var(--panel-2)}
+table.moments tbody tr.hi{background:var(--accent-soft)}
+table.moments tr.total td{font-weight:700;border-top:2px solid var(--line-2);border-bottom:0}
+table.moments .nm{font-family:var(--sans);font-weight:600;max-width:110px;overflow:hidden;text-overflow:ellipsis}
+.sense-acw{color:var(--acw);font-weight:700}
+.sense-cw{color:var(--cw);font-weight:700}
+
+.kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+.kv:last-child{border-bottom:0}
+.kv .k{color:var(--muted);font-weight:600}
+.kv .v{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+.statusbig{
+  display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;font-weight:700;font-size:13.5px;
+  background:var(--panel-2);border:1px solid var(--line);margin-bottom:12px
+}
+.statusbig.ok{background:color-mix(in srgb,var(--ok) 14%,var(--panel));border-color:color-mix(in srgb,var(--ok) 40%,var(--line));color:var(--ok)}
+.statusbig.acw{background:var(--acw-soft);border-color:color-mix(in srgb,var(--acw) 40%,var(--line));color:var(--acw)}
+.statusbig.cw{background:var(--cw-soft);border-color:color-mix(in srgb,var(--cw) 40%,var(--line));color:var(--cw)}
+.statusbig .ic{font-size:18px;line-height:1}
+
+/* working output */
+.working{
+  font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--panel-2);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;
+  overflow-x:auto;color:var(--ink);min-height:60px
+}
+.working .step{display:block;padding:1px 0}
+.working .lbl{color:var(--muted)}
+.working .hi{background:var(--accent-soft);border-radius:3px;padding:0 2px}
+.working em{font-style:normal;color:var(--accent);font-weight:700}
+
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel-3);color:var(--muted)}
+.pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+
+#graph{width:100%;height:300px;display:block;border:1px solid var(--line);border-radius:10px;background:var(--panel-2)}
+
+/* dialog */
+dialog{
+  border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--ink);
+  padding:0;max-width:min(760px,94vw);max-height:88vh;box-shadow:var(--shadow);overflow:hidden
+}
+dialog::backdrop{background:rgba(8,12,20,.55);backdrop-filter:blur(3px)}
+dialog .dhead{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+dialog .dhead h2{margin:0;font-size:16px}
+dialog .dbody{padding:16px;overflow-y:auto;max-height:calc(88vh - 60px)}
+dialog h4{margin:16px 0 6px;font-size:13px;color:var(--accent)}
+dialog h4:first-child{margin-top:0}
+dialog p,dialog li{font-size:13px;color:var(--ink-2);line-height:1.6}
+dialog ul{margin:6px 0;padding-left:20px}
+kbd{
+  font-family:var(--mono);font-size:11px;background:var(--panel-3);border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink)
+}
+.legendgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:8px}
+.legendgrid div{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.swatch{width:22px;height:4px;border-radius:2px;flex:0 0 auto}
+
+.toast{
+  position:fixed;left:50%;bottom:100px;top:auto;transform:translate(-50%,14px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;
+  transition:.22s;z-index:100;box-shadow:var(--shadow)
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* responsive */
+@media (max-width: 980px){
+  main{flex-direction:column}
+  aside.panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:47%}
+  .stagewrap{flex:1 1 auto;min-height:240px}
+  .balancebar{bottom:8px;padding:7px 10px}
+  .brand .sub{display:none}
+}
+@media (max-width: 780px){
+  .seg{order:5;width:100%;justify-content:stretch}
+  .seg button{flex:1 1 0;padding:7px 4px}
+}
+@media (max-width: 620px){
+  header.topbar{gap:8px;padding:7px 10px}
+  .brand .txt{display:none}
+  .hud{display:none}
+  .stage-tools{left:8px;top:8px;padding:4px;gap:4px}
+  .iconbtn{width:30px;height:30px}
+  #btnPresets{padding:6px 8px}
+  #btnPresets span,#btnPresets{font-size:0}
+  #btnPresets svg{width:16px;height:16px}
+}
+@media print{
+  aside.panel,.stage-tools,header.topbar{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mark" aria-hidden="true">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
+        <path d="M3 9h18"/><path d="M12 9V4"/><path d="M8 20l4-9 4 9z"/><circle cx="5" cy="9" r="0"/>
+        <path d="M5 9v3"/><path d="M19 9v6"/>
+      </svg>
+    </div>
+    <div class="txt">
+      <h1>Moments Lab</h1>
+      <div class="sub">Turning effects &middot; GCSE &amp; A&#8209;Level Physics</div>
+    </div>
+  </div>
+
+  <div class="seg" role="group" aria-label="Support arrangement">
+    <button id="modePivot" aria-pressed="true" title="One pivot: the beam is free to rotate (1)">Single pivot</button>
+    <button id="modeSupports" aria-pressed="false" title="Two supports: calculate the reaction forces (2)">Two supports</button>
+    <button id="modeFree" aria-pressed="false" title="No support: couples and moments about any point (3)">Free body</button>
+  </div>
+
+  <div class="spacer"></div>
+
+  <button class="btn sm" id="btnPresets" title="Load a ready-made arrangement">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    Presets
+  </button>
+  <button class="iconbtn" id="btnShare" title="Copy a link that restores this exact setup" aria-label="Copy share link">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"/></svg>
+  </button>
+  <button class="iconbtn" id="btnPng" title="Save the diagram as a PNG image" aria-label="Save diagram as image">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 20h16"/></svg>
+  </button>
+  <button class="iconbtn" id="btnTheme" title="Switch between light and dark (T)" aria-label="Toggle theme">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+  <button class="iconbtn" id="btnHelp" title="Help, keyboard shortcuts and the physics (?)" aria-label="Help">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"/><path d="M12 17.6h.01"/></svg>
+  </button>
+</header>
+
+<main>
+  <!-- ============ STAGE ============ -->
+  <div class="stagewrap" id="stagewrap">
+    <canvas id="scene" tabindex="0" aria-label="Moments simulation diagram. Use the panel on the right to change values."></canvas>
+
+    <div class="stage-tools">
+      <button class="iconbtn" id="btnPlay" title="Let the beam swing (Space)" aria-pressed="false" aria-label="Toggle beam rotation">
+        <svg id="playIcon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"/></svg>
+      </button>
+      <button class="iconbtn" id="btnLevel" title="Return the beam to level (L)" aria-label="Level the beam">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12h18"/><path d="M8 8l-4 4 4 4"/><path d="M16 8l4 4-4 4"/></svg>
+      </button>
+      <div class="divider"></div>
+      <button class="iconbtn" id="btnAddMass" title="Add a mass on the beam (M)" aria-label="Add mass">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="9" width="12" height="10" rx="1.5"/><path d="M18 5v6M15 8h6"/></svg>
+      </button>
+      <button class="iconbtn" id="btnAddForce" title="Add an applied force (F)" aria-label="Add force">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19L15 9"/><path d="M9 8h7v7"/><path d="M19 5v6M22 8h-6" opacity=".55"/></svg>
+      </button>
+      <button class="iconbtn" id="btnDelete" title="Delete the selected object (Del)" aria-label="Delete selected">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M6 7l1 13h10l1-13"/></svg>
+      </button>
+      <div class="divider"></div>
+      <button class="iconbtn" id="btnProbe" title="Moment probe: measure moments about any point (P)" aria-pressed="false" aria-label="Toggle moment probe">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>
+      </button>
+      <button class="iconbtn" id="btnFbd" title="Free-body diagram view (D)" aria-pressed="false" aria-label="Toggle free-body diagram">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="2.2"/><path d="M12 9.8V4M12 14.2V20M9.8 12H4M14.2 12H20"/></svg>
+      </button>
+      <button class="iconbtn" id="btnValues" title="Hide every number so students work them out (V)" aria-pressed="false" aria-label="Hide values">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/><path d="M3 3l18 18"/></svg>
+      </button>
+      <button class="iconbtn" id="btnUndo" title="Undo (Ctrl+Z)" aria-label="Undo">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12H8"/></svg>
+      </button>
+    </div>
+
+    <div class="hud" id="hud">
+      <div class="chip">Resultant moment <b id="hudNet">0.00</b> N m</div>
+      <div class="chip" id="hudTiltChip">Tilt <b id="hudTilt">0.0</b>&deg;</div>
+      <div class="chip" id="hudReact">Pivot reaction <b id="hudR">0.00</b> N</div>
+    </div>
+
+    <div class="balancebar">
+      <div class="row1">
+        <span class="status" id="balStatus">Balanced</span>
+        <span class="net" id="balNet">&Sigma;M = 0.00 N m</span>
+      </div>
+      <div class="bbar" aria-hidden="true">
+        <div class="seg-acw" id="barAcw" style="width:50%"></div>
+        <div class="mid"></div>
+        <div class="seg-cw" id="barCw" style="width:50%"></div>
+      </div>
+      <div class="bbar-legend">
+        <span id="legAcw">anticlockwise 0.00 N m</span>
+        <span id="legCw">0.00 N m clockwise</span>
+      </div>
+    </div>
+    <p class="sr" id="live" aria-live="polite"></p>
+  </div>
+
+  <!-- ============ PANEL ============ -->
+  <aside class="panel">
+    <div class="tabs" role="tablist" aria-label="Control panels">
+      <button role="tab" id="tab-build"  aria-selected="true"  aria-controls="p-build">Build</button>
+      <button role="tab" id="tab-analyse" aria-selected="false" aria-controls="p-analyse">Analyse</button>
+      <button role="tab" id="tab-solve"  aria-selected="false" aria-controls="p-solve">Solve</button>
+      <button role="tab" id="tab-graph"  aria-selected="false" aria-controls="p-graph">Graph</button>
+      <button role="tab" id="tab-options" aria-selected="false" aria-controls="p-options">Display</button>
+    </div>
+    <div class="tabbody">
+
+      <!-- ---------- BUILD ---------- -->
+      <section role="tabpanel" id="p-build" aria-labelledby="tab-build">
+        <div class="group">
+          <h3>The beam</h3>
+          <div class="body">
+            <div class="field">
+              <label for="inLen">Length</label>
+              <input type="range" id="inLen" min="0.4" max="4" step="0.05" value="2">
+              <span class="val" id="vLen">2.00 m</span>
+            </div>
+            <div class="field">
+              <label for="inBeamMass">Beam mass</label>
+              <input type="range" id="inBeamMass" min="0" max="10" step="0.05" value="0">
+              <span class="val" id="vBeamMass">0.00 kg</span>
+            </div>
+            <div class="field">
+              <label for="inCom">Centre of mass</label>
+              <input type="range" id="inCom" min="0" max="1" step="0.005" value="0.5">
+              <span class="val" id="vCom">50.0 %</span>
+            </div>
+            <p class="hint">Set the beam mass to 0&nbsp;kg for the usual &ldquo;light rod&rdquo; question. Move the centre of mass away from the middle to make the beam non&#8209;uniform &mdash; a classic A&#8209;Level twist.</p>
+          </div>
+        </div>
+
+        <div class="group" id="grpPivot">
+          <h3>Support</h3>
+          <div class="body">
+            <div class="field" id="fPivot">
+              <label for="inPivot">Pivot at</label>
+              <input type="range" id="inPivot" min="0" max="1" step="0.005" value="0.5">
+              <span class="val" id="vPivot">1.00 m</span>
+            </div>
+            <div class="field" id="fSupA" hidden>
+              <label for="inSupA">Support A</label>
+              <input type="range" id="inSupA" min="0" max="1" step="0.005" value="0.1">
+              <span class="val" id="vSupA">0.20 m</span>
+            </div>
+            <div class="field" id="fSupB" hidden>
+              <label for="inSupB">Support B</label>
+              <input type="range" id="inSupB" min="0" max="1" step="0.005" value="0.9">
+              <span class="val" id="vSupB">1.80 m</span>
+            </div>
+            <p class="hint" id="supportHint">Distances are measured from the left&#8209;hand end of the beam. Drag the pivot straight on the diagram too.</p>
+            <div class="field col" style="margin-top:11px">
+              <label for="selMount" style="flex:none">How the loads are drawn</label>
+              <select id="selMount">
+                <option value="hang">Hanging below the rod</option>
+                <option value="axis">Straddling the rod&rsquo;s axis</option>
+                <option value="top">Sitting on top of the rod</option>
+              </select>
+            </div>
+            <p class="hint" id="mountHint"></p>
+          </div>
+        </div>
+
+        <div class="group tight">
+          <h3>Objects <span class="pill" id="objCount">0</span></h3>
+          <div class="body">
+            <div class="objlist" id="objList"></div>
+            <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+              <button class="btn sm" id="btnAddMass2">+ Mass</button>
+              <button class="btn sm" id="btnAddForce2">+ Force</button>
+              <button class="btn sm" id="btnAddCouple">+ Couple</button>
+              <button class="btn sm ghost danger" id="btnClear">Clear all</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- ANALYSE ---------- -->
+      <section role="tabpanel" id="p-analyse" aria-labelledby="tab-analyse" hidden>
+        <div class="statusbig" id="anStatus"><span class="ic">&#9878;</span><span id="anStatusText">Balanced</span></div>
+
+        <div class="group">
+          <h3>Moments about <span id="aboutLabel" style="text-transform:none;letter-spacing:0;color:var(--accent)">the pivot</span></h3>
+          <div class="body" style="padding:6px 8px 10px">
+            <table class="moments" id="momTable">
+              <thead><tr>
+                <th>Force</th><th>F&nbsp;/&thinsp;N</th><th>d&#8869;&nbsp;/&thinsp;m</th><th>M&nbsp;/&thinsp;N&nbsp;m</th><th>Sense</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+            <p class="hint" id="tableHint">d&#8869; is the <em>perpendicular</em> distance from the turning point to the line of action of the force.</p>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>Equilibrium check</h3>
+          <div class="body" id="eqBody"></div>
+        </div>
+
+        <div class="group" id="grpProbe">
+          <h3>Moment probe</h3>
+          <div class="body">
+            <label class="check"><input type="checkbox" id="chkProbe"> Take moments about another point</label>
+            <div class="field" style="margin-top:8px">
+              <label for="inProbe">Probe at</label>
+              <input type="range" id="inProbe" min="-0.4" max="1.4" step="0.005" value="0.25">
+              <span class="val" id="vProbe">0.50 m</span>
+            </div>
+            <div id="probeOut"></div>
+            <p class="hint">If a body is in equilibrium the resultant moment is zero about <em>every</em> point &mdash; not just the pivot. Drag the probe and watch the total stay at zero.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- SOLVE ---------- -->
+      <section role="tabpanel" id="p-solve" aria-labelledby="tab-solve" hidden>
+        <div class="group">
+          <h3>Find the unknown</h3>
+          <div class="body">
+            <p class="hint" style="margin-top:0">Press the <span class="pill">?</span> button on any object in the <b>Build</b> tab to mark one quantity as unknown. Moments Lab then works out the value that balances the beam and writes out the full solution.</p>
+            <div id="unknownState" style="margin-top:10px"></div>
+            <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+              <button class="btn sm primary" id="btnSolve">Solve &amp; apply</button>
+              <button class="btn sm" id="btnCopyWork">Copy working</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>Working <span class="pill" id="workTag">live</span></h3>
+          <div class="body">
+            <div class="working" id="workOut"></div>
+            <div style="display:flex;gap:6px;margin-top:9px;align-items:center;flex-wrap:wrap">
+              <button class="btn sm" id="btnWalk">&#9654; Walk through it</button>
+              <button class="btn sm" id="btnWalkPrev" disabled>&#8592;</button>
+              <button class="btn sm" id="btnWalkNext" disabled>&#8594;</button>
+              <span class="hint" id="walkStatus" style="margin:0"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- GRAPH ---------- -->
+      <section role="tabpanel" id="p-graph" aria-labelledby="tab-graph" hidden>
+        <div class="group">
+          <h3>Resultant moment against&hellip;</h3>
+          <div class="body">
+            <div class="field col">
+              <select id="graphVar"></select>
+            </div>
+            <canvas id="graph" width="700" height="460"></canvas>
+            <div id="graphRead" style="margin-top:8px"></div>
+            <p class="hint">The graph is recalculated live. Where the curve crosses zero the beam balances &mdash; that crossing point <em>is</em> the answer to the question.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---------- DISPLAY ---------- -->
+      <section role="tabpanel" id="p-options" aria-labelledby="tab-options" hidden>
+        <div class="group">
+          <h3>Physics settings</h3>
+          <div class="body">
+            <div class="field">
+              <label for="inG">g</label>
+              <input type="range" id="inG" min="1.6" max="11" step="0.01" value="9.81">
+              <span class="val" id="vG">9.81</span>
+            </div>
+            <div class="field">
+              <label for="selG">Preset g</label>
+              <select id="selG">
+                <option value="9.81">9.81 N/kg (Earth, exact)</option>
+                <option value="9.8">9.8 N/kg (most mark schemes)</option>
+                <option value="10">10 N/kg (GCSE rounding)</option>
+                <option value="1.62">1.62 N/kg (Moon)</option>
+                <option value="3.72">3.72 N/kg (Mars)</option>
+              </select>
+            </div>
+            <label class="check"><input type="checkbox" id="chkDyn" checked> <span>Tilt the beam to show the imbalance</span></label>
+            <label class="check"><input type="checkbox" id="chkTiltM"> <span>Moments change as the beam tilts (A&#8209;Level: <em>d</em>&thinsp;cos&thinsp;&theta;)</span></label>
+            <p class="hint" id="tiltMHint" style="margin-top:6px"></p>
+            <div class="field" style="margin-top:10px">
+              <label for="inDamp">Settling</label>
+              <input type="range" id="inDamp" min="0" max="1" step="0.01" value="0.35">
+              <span class="val" id="vDamp">0.35</span>
+            </div>
+            <div class="field">
+              <label for="inDec">Decimals</label>
+              <input type="range" id="inDec" min="0" max="4" step="1" value="2">
+              <span class="val" id="vDec">2</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>What to draw</h3>
+          <div class="body">
+            <div class="checkgrid">
+              <label class="check"><input type="checkbox" id="cShowGrid" checked> Grid</label>
+              <label class="check"><input type="checkbox" id="cShowRuler" checked> Ruler</label>
+              <label class="check"><input type="checkbox" id="cShowValues" checked> Values</label>
+              <label class="check"><input type="checkbox" id="cShowPerp" checked> Perp. distances</label>
+              <label class="check"><input type="checkbox" id="cShowLoA" checked> Lines of action</label>
+              <label class="check"><input type="checkbox" id="cShowComp"> Components</label>
+              <label class="check"><input type="checkbox" id="cShowArc" checked> Moment arcs</label>
+              <label class="check"><input type="checkbox" id="cShowCom" checked> Centre of mass</label>
+              <label class="check"><input type="checkbox" id="cShowAngle" checked> Angle marks</label>
+              <label class="check"><input type="checkbox" id="cSnap" checked> Snap to 5 cm</label>
+              <label class="check"><input type="checkbox" id="cScaleArrows" checked> Scale arrows to F</label>
+              <label class="check"><input type="checkbox" id="cShowTrace"> Tilt trace</label>
+            </div>
+            <p class="hint">Hold <kbd>Shift</kbd> while dragging to ignore snapping and place an object anywhere.</p>
+          </div>
+        </div>
+
+        <div class="group">
+          <h3>Save &amp; share</h3>
+          <div class="body">
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button class="btn sm" id="btnCopyState">Copy setup code</button>
+              <button class="btn sm" id="btnPasteState">Paste setup code</button>
+              <button class="btn sm" id="btnPng2">Save PNG</button>
+              <button class="btn sm ghost danger" id="btnReset">Reset everything</button>
+            </div>
+            <p class="hint">A setup code is a short piece of text holding the whole arrangement. Paste one into a worksheet or a lesson plan and students can rebuild the exact question in one click.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </aside>
+</main>
+</div>
+
+<dialog id="dlgHelp">
+  <div class="dhead"><h2>Moments Lab &mdash; how it works</h2><button class="iconbtn" id="closeHelp" aria-label="Close">&times;</button></div>
+  <div class="dbody" id="helpBody"></div>
+</dialog>
+
+<dialog id="dlgPresets">
+  <div class="dhead"><h2>Presets</h2><button class="iconbtn" id="closePresets" aria-label="Close">&times;</button></div>
+  <div class="dbody"><div id="presetList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px"></div></div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+/* ==========================================================================
+   MOMENTS LAB
+   A single-file interactive turning-effects laboratory.
+   Sign convention used throughout: anticlockwise moments are POSITIVE.
+   Physics coordinates have y pointing UP; the renderer flips to screen space.
+   ========================================================================== */
+
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const clamp = (v,a,b) => v<a?a:(v>b?b:v);
+const RAD = d => d*Math.PI/180;
+const DEG = r => r*180/Math.PI;
+const near = (a,b,e) => Math.abs(a-b) < (e===undefined?1e-9:e);
+
+const PALETTE = ['#e11d48','#2563eb','#059669','#d97706','#7c3aed','#0891b2','#be185d','#65a30d','#ea580c','#4f46e5'];
+const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+/* ------------------------------ state ---------------------------------- */
+function defaults(){
+  return {
+    mode:'pivot',              // pivot | supports | free
+    L:2.0,                     // beam length /m
+    beamMass:0,                // /kg  (0 = "light rod")
+    comF:0.5,                  // centre of mass, fraction of length from left end
+    pivotF:0.5, supAF:0.10, supBF:0.90,
+    g:9.81,
+    theta:0, omega:0,          // tilt /rad, angular velocity /rad s^-1
+    mount:'hang',              // where a load's centre of gravity sits: hang | axis | top
+    tiltMoments:false,         // A-Level extension: let the tilt change the moments (d cos theta)
+    dyn:true, damp:0.35,
+    items:[],
+    probe:{on:false, f:0.25},
+    sel:null,
+    dec:2,
+    fbd:false,
+    show:{grid:1,ruler:1,values:1,perp:1,loa:1,comp:0,arc:0,com:1,angle:1,snap:1,scaleArrows:1,trace:0},
+    nextId:1, nextMass:0, nextForce:0
+  };
+}
+let S = defaults();
+const MAXTILT = RAD(30);
+let undoStack = [], redoStack = [];
+
+/* ------------------------------ numbers -------------------------------- */
+function fmt(v, dp){
+  if(v===null||v===undefined||!isFinite(v)) return '–';
+  dp = (dp===undefined)? S.dec : dp;
+  let s = Math.abs(v) < 5e-13 ? 0 : v;
+  let out = s.toFixed(dp);
+  if(parseFloat(out)===0) out = (0).toFixed(dp);   // kill "-0.00"
+  return out;
+}
+function fmtSig(v,n){
+  if(!isFinite(v)) return '–';
+  if(v===0) return '0';
+  const r = parseFloat(v.toPrecision(n||3));
+  return String(r);
+}
+
+/* ------------------------------ items ---------------------------------- */
+function nextColour(){ return PALETTE[(S.nextId-1) % PALETTE.length]; }
+
+function addMass(x, m){
+  const id = S.nextId++;
+  S.nextMass++;
+  const it = { id, kind:'mass', x: (x===undefined? S.L*0.25 : x), m:(m===undefined?0.5:m),
+               label:'Mass '+LETTERS[(S.nextMass-1)%26], colour:nextColour(), unknown:null, locked:false };
+  S.items.push(it); return it;
+}
+function addForce(x, F, ang){
+  const id = S.nextId++;
+  S.nextForce++;
+  const it = { id, kind:'force', x:(x===undefined? S.L*0.75 : x), F:(F===undefined?5:F),
+               ang:(ang===undefined? 90 : ang),   // degrees, measured from the beam (anticlockwise)
+               label:'Force '+(S.nextForce), colour:nextColour(), unknown:null, locked:false };
+  S.items.push(it); return it;
+}
+function addCouple(C){
+  const id = S.nextId++;
+  const it = { id, kind:'couple', x:S.L*0.5, C:(C===undefined?2:C), sepF:0.6,
+               label:'Couple', colour:'#7c3aed', unknown:null, locked:false };
+  S.items.push(it); return it;
+}
+function itemById(id){ return S.items.find(i=>i.id===id); }
+
+/* --- where a load's centre of gravity sits relative to the rod's axis ----
+   A weight whose line of action passes through the rod's axis produces no
+   restoring moment, so the beam sits in NEUTRAL equilibrium and stays at
+   whatever angle you leave it. Clamp the loads below the axis and the beam
+   becomes a real balance: it swings back to the horizontal. Put them on top
+   and it is unstable. Offsets are taken from the drawn geometry so the
+   picture and the physics always agree.                                    */
+const HANGER_PX = 16;
+/* The angle the MOMENTS are worked out at. By default the sums are always
+   done for the level beam - that is the question a moments problem actually
+   asks - and the tilt on screen is purely a picture of the imbalance, so
+   "balanced" and "horizontal" always mean the same thing. Turn on
+   tiltMoments for the A-Level treatment where every moment carries cos(theta). */
+function thetaM(){ return S.tiltMoments ? S.theta : 0; }
+function massSize(it){
+  const sc = VIEW ? VIEW.scale : 120;
+  const w = clamp(0.09*sc, 30, 62);
+  const h = clamp(19 + 30*Math.cbrt(Math.max(it.m,0.001)), 26, 76);
+  return {w,h};
+}
+/* perpendicular offset of the load's centre of gravity, in metres, +ve above */
+function mountH(it){
+  if(S.mount==='axis') return 0;
+  const sc = Math.max(VIEW? VIEW.scale : 120, 1);
+  const bh = VIEW? VIEW.beamH : 16;
+  const off = (bh/2 + massSize(it).h/2 + (S.mount==='hang'? HANGER_PX : 0)) / sc;
+  return S.mount==='hang' ? -off : off;
+}
+
+/* --------------------------- key beam positions ------------------------- */
+const pivotS   = () => S.pivotF * S.L;
+const supAS    = () => S.supAF  * S.L;
+const supBS    = () => S.supBF  * S.L;
+const comS     = () => S.comF   * S.L;
+
+/* Which point does the body actually turn about? */
+function turnS(){
+  if(S.mode==='pivot')  return pivotS();
+  if(S.mode==='free')   return systemComS();
+  const t = tipping();
+  if(t==='A') return supAS();
+  if(t==='B') return supBS();
+  return supAS();
+}
+function aboutS(){ return S.probe.on ? S.probe.f*S.L : turnS(); }
+
+/* centre of mass of beam + all masses (applied forces are not masses) */
+function systemComS(){
+  let m=0, ms=0;
+  if(S.beamMass>0){ m+=S.beamMass; ms+=S.beamMass*comS(); }
+  for(const it of S.items) if(it.kind==='mass'){ m+=it.m; ms+=it.m*it.x; }
+  return m>0 ? ms/m : S.L/2;
+}
+
+/* ============================== PHYSICS =================================
+   Every force is applied at a point on the beam. With the beam's unit
+   vector u = (cos t, sin t), a force applied at beam coordinate s, taken
+   about beam coordinate p, has moment
+
+        tau = (s - p) * (u x F)          [z-component, anticlockwise +ve]
+
+   For a vertical weight W this reduces to  tau = -(s-p) W cos(t)
+   For a force F at angle a to the beam    tau =  (s-p) F sin(a)
+   ======================================================================== */
+
+function forceRows(about){
+  const t = thetaM(), ct = Math.cos(t), st = Math.sin(t);
+  const rows = [];
+  let Fx=0, Fy=0, tau=0;
+
+  const push = r => { rows.push(r); tau += r.tau; Fx += r.Fx; Fy += r.Fy; };
+
+  if(S.beamMass > 0){
+    const W = S.beamMass * S.g, d = comS() - about;
+    push({ id:'beam', name:'Weight of beam', kind:'weight', colour:'var(--weight)', hex:'#c2610a',
+           F:W, s:comS(), d, tau:-d*W*ct, Fx:0, Fy:-W,
+           angToBeam: 90 - DEG(t)*0, angDisp: 90, isVert:true });
+  }
+  for(const it of S.items){
+    if(it.kind==='mass'){
+      const W = it.m*S.g, d = it.x - about, hh = mountH(it);
+      const arm = d*ct - hh*st;      // horizontal distance from the point to the line of action
+      push({ id:it.id, name:it.label, kind:'weight', colour:it.colour, hex:it.colour,
+             F:W, s:it.x, d, tau:-arm*W, Fx:0, Fy:-W, angDisp:90, isVert:true, m:it.m, hh });
+    } else if(it.kind==='force'){
+      const a = RAD(it.ang), d = it.x - about;
+      const wa = t + a;                       // world direction of the force
+      push({ id:it.id, name:it.label, kind:'force', colour:it.colour, hex:it.colour,
+             F:it.F, s:it.x, d, tau:d*it.F*Math.sin(a),
+             Fx: it.F*Math.cos(wa), Fy: it.F*Math.sin(wa),
+             angDisp: it.ang, isVert:false });
+    } else if(it.kind==='couple'){
+      push({ id:it.id, name:it.label, kind:'couple', colour:it.colour, hex:it.colour,
+             F:null, s:it.x, d:null, tau:it.C, Fx:0, Fy:0, angDisp:null, isVert:false, C:it.C });
+    }
+  }
+  for(const r of rows){
+    r.dperp = (r.F && r.F>1e-12) ? Math.abs(r.tau)/r.F : null;
+    r.sense = r.tau > 1e-9 ? 'acw' : (r.tau < -1e-9 ? 'cw' : 'none');
+  }
+  const acw = rows.reduce((a,r)=> a + (r.tau>0?r.tau:0), 0);
+  const cw  = rows.reduce((a,r)=> a + (r.tau<0?-r.tau:0), 0);
+  return { rows, tau, acw, cw, Fx, Fy, about };
+}
+
+/* ---- two-support reactions (beam held level) --------------------------- */
+function reactions(){
+  const a = supAS(), b = supBS();
+  if(Math.abs(b-a) < 1e-6) return null;
+  const A = forceRows(a);
+  const RB = -A.tau / (b - a);
+  const RA = -A.Fy - RB;
+  return { RA, RB, a, b, H: A.Fx };
+}
+function tipping(){
+  if(S.mode!=='supports') return null;
+  const r = reactions(); if(!r) return null;
+  if(r.RA < -1e-9) return 'B';       // A would have to pull down -> pivots about B
+  if(r.RB < -1e-9) return 'A';
+  return null;
+}
+
+/* ---- resultant / equilibrium summary ----------------------------------- */
+function summary(){
+  const about = aboutS();
+  const A = forceRows(about);
+  const T = forceRows(turnS());
+  const out = { about, A, T, mode:S.mode };
+
+  if(S.mode==='supports'){
+    out.react = reactions();
+    out.tip = tipping();
+    // include the reactions in the "about" totals so the probe shows zero
+    if(out.react && !out.tip){
+      const { RA, RB, a, b } = out.react;
+      out.reactRows = [
+        { id:'RA', name:'Reaction at A', kind:'react', hex:'#7c3aed', F:Math.abs(RA), s:a, d:a-about,
+          tau:(a-about)*RA*Math.cos(thetaM()), Fx:0, Fy:RA, dperp:Math.abs(a-about)*Math.cos(thetaM()), angDisp:90, isVert:true },
+        { id:'RB', name:'Reaction at B', kind:'react', hex:'#7c3aed', F:Math.abs(RB), s:b, d:b-about,
+          tau:(b-about)*RB*Math.cos(thetaM()), Fx:0, Fy:RB, dperp:Math.abs(b-about)*Math.cos(thetaM()), angDisp:90, isVert:true }
+      ];
+      for(const r of out.reactRows) r.sense = r.tau>1e-9?'acw':(r.tau<-1e-9?'cw':'none');
+    }
+  } else if(S.mode==='pivot'){
+    out.react = { R: Math.hypot(A.Fx, A.Fy), Rx:-A.Fx, Ry:-A.Fy };
+    out.reactRows = [];
+  } else {
+    out.react = null; out.reactRows = [];
+  }
+  const extra = (out.reactRows||[]).reduce((a,r)=>a+r.tau,0);
+  out.totalTau = A.tau + extra;
+  out.totalAcw = A.acw + (out.reactRows||[]).reduce((a,r)=>a+(r.tau>0?r.tau:0),0);
+  out.totalCw  = A.cw  + (out.reactRows||[]).reduce((a,r)=>a+(r.tau<0?-r.tau:0),0);
+  out.turnTau  = (S.mode==='supports' && !out.tip) ? 0 : T.tau;
+  out.balanced = Math.abs(out.turnTau) < 5e-4;
+  return out;
+}
+
+/* ---- stable, neutral or unstable? -------------------------------------- */
+function stability(){
+  const p = turnS(), th = S.theta, eps = 0.012;
+  S.theta = th + eps; const t1 = forceRows(p).tau;
+  S.theta = th - eps; const t2 = forceRows(p).tau;
+  S.theta = th;
+  const slope = (t1 - t2)/(2*eps);          // d(torque)/d(angle)
+  if(slope < -2e-3) return 'stable';
+  if(slope >  2e-3) return 'unstable';
+  return 'neutral';
+}
+
+/* ---- moment of inertia about the turning point ------------------------- */
+function inertia(p){
+  let I = 0;
+  if(S.beamMass>0){
+    const d = comS()-p;
+    I += S.beamMass*S.L*S.L/12 + S.beamMass*d*d;
+  }
+  for(const it of S.items) if(it.kind==='mass'){
+    const d = it.x - p, hh = mountH(it);
+    I += it.m*(d*d + hh*hh) + it.m*0.0008;
+  }
+  return Math.max(I, 0.02);
+}
+
+/* ============================== RENDERER ================================ */
+const cv = $('#scene'), ctx = cv.getContext('2d');
+let VIEW = { w:0, h:0, dpr:1, scale:120, ax:0, ay:0, groundY:0, beamH:16 };
+let trace = [];
+let hoverId = null, walkHi = null;
+
+function css(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); }
+let C = {};
+function refreshColours(){
+  C = {
+    stage:css('--stage'), stage2:css('--stage-2'), grid:css('--grid'), grid2:css('--grid-2'),
+    ink:css('--ink'), ink2:css('--ink-2'), muted:css('--muted'), line:css('--line'),
+    acw:css('--acw'), cw:css('--cw'), weight:css('--weight'), force:css('--force'),
+    react:css('--react'), accent:css('--accent'), ok:css('--ok'), bad:css('--bad'),
+    beamA:css('--beam-a'), beamB:css('--beam-b'), beamEdge:css('--beam-edge'),
+    ground:css('--ground'), panel:css('--panel')
+  };
+}
+
+function resize(){
+  const r = cv.parentElement.getBoundingClientRect();
+  const dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  VIEW.w = r.width; VIEW.h = r.height; VIEW.dpr = dpr;
+  cv.width = Math.max(1,Math.round(r.width*dpr));
+  cv.height = Math.max(1,Math.round(r.height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  layout();
+}
+function layout(){
+  const padX = Math.min(120, VIEW.w*0.13);
+  let sc = (VIEW.w - 2*padX) / Math.max(S.L, 0.2);
+  sc = clamp(sc, 26, 420);
+  VIEW.scale = sc;
+  VIEW.beamH = clamp(sc*0.045, 11, 20);
+  VIEW.ay = VIEW.h*0.43;
+  VIEW.groundY = Math.min(VIEW.h - 120, VIEW.ay + 76);
+  const tp = turnS();
+  VIEW.ax = VIEW.w/2 + (tp - S.L/2)*sc;
+}
+/* beam coordinate -> screen point */
+function P(s){
+  const t = S.theta, d = (s - turnS())*VIEW.scale;
+  return { x: VIEW.ax + d*Math.cos(t), y: VIEW.ay - d*Math.sin(t) };
+}
+/* screen point -> nearest beam coordinate (projection onto the beam line) */
+function invP(px,py){
+  const t = S.theta;
+  const dx = px - VIEW.ax, dy = -(py - VIEW.ay);
+  return turnS() + (dx*Math.cos(t) + dy*Math.sin(t))/VIEW.scale;
+}
+
+/* ------------------------- drawing primitives --------------------------- */
+function line(x1,y1,x2,y2,col,w,dash){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=w||1;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,col,w,head){
+  const a = Math.atan2(y2-y1,x2-x1); const hs = head||9;
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=w||2.4; ctx.lineCap='round';
+  const bx = x2 - Math.cos(a)*hs*0.82, by = y2 - Math.sin(a)*hs*0.82;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(bx,by); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.42)*hs, y2-Math.sin(a-0.42)*hs);
+  ctx.lineTo(x2-Math.cos(a)*hs*0.68, y2-Math.sin(a)*hs*0.68);
+  ctx.lineTo(x2-Math.cos(a+0.42)*hs, y2-Math.sin(a+0.42)*hs);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function label(text,x,y,col,opt){
+  opt = opt||{};
+  ctx.save();
+  ctx.font = (opt.bold?'700 ':'600 ') + (opt.size||11.5) + 'px ' + (opt.mono? 'ui-monospace,Menlo,Consolas,monospace':'system-ui,-apple-system,Segoe UI,sans-serif');
+  const m = ctx.measureText(text);
+  const pad = 4, w = m.width + pad*2, h = (opt.size||11.5) + 7;
+  let bx = x - (opt.anchor==='l'?0:(opt.anchor==='r'? w : w/2));
+  let by = y - h/2;
+  if(opt.box!==false){
+    ctx.fillStyle = opt.bg || C.stage;
+    ctx.globalAlpha = opt.alpha===undefined?0.92:opt.alpha;
+    roundRect(bx,by,w,h,5); ctx.fill();
+    ctx.globalAlpha = 1;
+    if(opt.border){ ctx.strokeStyle=opt.border; ctx.lineWidth=1; roundRect(bx,by,w,h,5); ctx.stroke(); }
+  }
+  ctx.fillStyle = col || C.ink;
+  ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(text, bx+pad, by+h/2+0.5);
+  ctx.restore();
+  return {x:bx,y:by,w,h};
+}
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function rightAngle(px,py,a1,a2,size,col){
+  const s = size||9;
+  const p1 = {x:px+Math.cos(a1)*s, y:py+Math.sin(a1)*s};
+  const p2 = {x:px+Math.cos(a2)*s, y:py+Math.sin(a2)*s};
+  const p3 = {x:p1.x+Math.cos(a2)*s, y:p1.y+Math.sin(a2)*s};
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p3.x,p3.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+  ctx.restore();
+}
+function arcArrow(cx,cy,r,a0,a1,col,w,headAtEnd){
+  if(Math.abs(a1-a0) < 0.02) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=w||3; ctx.lineCap='round';
+  ctx.beginPath(); ctx.arc(cx,cy,r,a0,a1,a1<a0); ctx.stroke();
+  const ae = a1, dir = (a1>a0)?1:-1;
+  const hx = cx+Math.cos(ae)*r, hy = cy+Math.sin(ae)*r;
+  const ta = ae + dir*Math.PI/2;
+  ctx.fillStyle = col; const hs=9;
+  ctx.beginPath();
+  ctx.moveTo(hx+Math.cos(ta)*hs, hy+Math.sin(ta)*hs);
+  ctx.lineTo(hx+Math.cos(ta+2.5)*hs*0.95, hy+Math.sin(ta+2.5)*hs*0.95);
+  ctx.lineTo(hx+Math.cos(ta-2.5)*hs*0.95, hy+Math.sin(ta-2.5)*hs*0.95);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+/* ------------------------------ scene ---------------------------------- */
+function drawGrid(){
+  const g = ctx.createLinearGradient(0,0,0,VIEW.h);
+  g.addColorStop(0, C.stage); g.addColorStop(1, C.stage2);
+  ctx.fillStyle = g; ctx.fillRect(0,0,VIEW.w,VIEW.h);
+  if(!S.show.grid) return;
+  const sc = VIEW.scale;
+  let step = 0.1;
+  const cands=[0.01,0.02,0.05,0.1,0.2,0.5,1,2];
+  for(const c of cands){ if(c*sc>=26){ step=c; break; } step=c; }
+  const originX = P(0).x, originY = VIEW.ay;
+  ctx.save(); ctx.lineWidth=1;
+  ctx.strokeStyle = C.grid2;
+  ctx.beginPath();
+  for(let k=-200;k<=200;k++){
+    const x = originX + k*step*sc;
+    if(x<-2||x>VIEW.w+2) continue;
+    ctx.moveTo(Math.round(x)+0.5,0); ctx.lineTo(Math.round(x)+0.5,VIEW.h);
+  }
+  for(let k=-60;k<=60;k++){
+    const y = originY + k*step*sc;
+    if(y<-2||y>VIEW.h+2) continue;
+    ctx.moveTo(0,Math.round(y)+0.5); ctx.lineTo(VIEW.w,Math.round(y)+0.5);
+  }
+  ctx.stroke();
+  ctx.strokeStyle = C.grid; ctx.beginPath();
+  for(let k=-40;k<=40;k++){
+    const x = originX + k*step*5*sc;
+    if(x<-2||x>VIEW.w+2) continue;
+    ctx.moveTo(Math.round(x)+0.5,0); ctx.lineTo(Math.round(x)+0.5,VIEW.h);
+  }
+  ctx.stroke(); ctx.restore();
+}
+
+function drawGround(){ /* the floor is now drawn as a base plate under each support */ }
+function basePlate(cx, halfW){
+  const y = VIEW.groundY;
+  ctx.save();
+  ctx.strokeStyle = C.beamEdge; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(cx-halfW, y+0.5); ctx.lineTo(cx+halfW, y+0.5); ctx.stroke();
+  ctx.lineWidth = 1.1; ctx.globalAlpha = .55;
+  ctx.beginPath();
+  for(let x=-halfW; x<=halfW; x+=7){ ctx.moveTo(cx+x, y+1.5); ctx.lineTo(cx+x-6, y+9); }
+  ctx.stroke(); ctx.restore();
+}
+function drawSupport(s, tag, active){
+  const p0 = P(s), y = VIEW.groundY;
+  const h = Math.max(16, y - p0.y - VIEW.beamH*0.5);
+  const w = clamp(h*0.66, 20, 58);
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(p0.x, p0.y + VIEW.beamH*0.45);
+  ctx.lineTo(p0.x - w/2, y);
+  ctx.lineTo(p0.x + w/2, y);
+  ctx.closePath();
+  const g = ctx.createLinearGradient(p0.x-w/2, p0.y, p0.x+w/2, y);
+  g.addColorStop(0, C.beamA); g.addColorStop(0.5, C.beamB); g.addColorStop(1, C.beamEdge);
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = active ? C.accent : C.beamEdge; ctx.lineWidth = active?2.4:1.4;
+  ctx.stroke();
+  ctx.fillStyle = C.beamEdge;
+  ctx.beginPath(); ctx.arc(p0.x, p0.y + VIEW.beamH*0.45, 3.2, 0, 7); ctx.fill();
+  ctx.restore();
+  basePlate(p0.x, w*0.85);
+  if(tag) label(tag, p0.x, y+18, C.muted, {size:11.5, bold:true});
+}
+function drawBeam(){
+  const t = S.theta, sc = VIEW.scale, h = VIEW.beamH;
+  const p0 = P(0), p1 = P(S.L);
+  ctx.save();
+  ctx.translate(p0.x, p0.y); ctx.rotate(-t);
+  const Lp = S.L*sc;
+  // shadow
+  if(!S.fbd){
+    ctx.save(); ctx.globalAlpha=.14; ctx.fillStyle='#000';
+    roundRect(2, -h/2+4, Lp, h, h/2); ctx.fill(); ctx.restore();
+    const g = ctx.createLinearGradient(0,-h/2,0,h/2);
+    g.addColorStop(0, C.beamA); g.addColorStop(0.45, C.beamB); g.addColorStop(1, C.beamEdge);
+    ctx.fillStyle = g;
+    roundRect(0,-h/2,Lp,h,Math.min(h/2,7)); ctx.fill();
+    ctx.strokeStyle = C.beamEdge; ctx.lineWidth=1.2; ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.45)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(3,-h/2+2); ctx.lineTo(Lp-3,-h/2+2); ctx.stroke();
+    // ruler
+    if(S.show.ruler){
+      let step=0.1; const cands=[0.01,0.02,0.05,0.1,0.25,0.5];
+      for(const c of cands){ if(c*sc>=11){ step=c; break; } step=c; }
+      ctx.strokeStyle='rgba(0,0,0,.42)'; ctx.fillStyle='rgba(0,0,0,.62)';
+      ctx.font='600 9px ui-monospace,Menlo,monospace'; ctx.textAlign='center';
+      for(let k=0;k*step<=S.L+1e-9;k++){
+        const x = k*step*sc, major = (k % 5 === 0);
+        ctx.lineWidth = major?1.2:0.8;
+        ctx.beginPath(); ctx.moveTo(x,-h/2); ctx.lineTo(x, -h/2 + (major?h*0.55:h*0.3)); ctx.stroke();
+        if(major && step*5*sc>34){
+          const txt = (k*step).toFixed(step<0.1?2:(step<1?1:0));
+          ctx.textAlign = (x < 12) ? 'left' : ((x > Lp-12) ? 'right' : 'center');
+          ctx.fillText(txt, x, h/2-2.5);
+          ctx.textAlign = 'center';
+        }
+      }
+    }
+  } else {
+    ctx.strokeStyle = C.ink; ctx.lineWidth=2.6; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(Lp,0); ctx.stroke();
+  }
+  ctx.restore();
+  void p1;
+}
+
+function drawCom(){
+  if(!S.show.com || S.beamMass<=0) return;
+  const p = P(comS());
+  ctx.save();
+  ctx.translate(p.x,p.y);
+  ctx.fillStyle=C.ink; ctx.strokeStyle=C.ink; ctx.lineWidth=1.3;
+  const r=7;
+  ctx.beginPath(); ctx.arc(0,0,r,0,7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,-Math.PI/2,0); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.arc(0,0,r,Math.PI/2,Math.PI); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function massBox(it){
+  const t = S.theta;
+  const sz = massSize(it);
+  const p0 = P(it.x);
+  const hpx = mountH(it)*VIEW.scale;                 // +ve = above the rod's axis
+  // screen normal on the "up" side of the rod is (-sin t, -cos t)
+  const cx = p0.x - Math.sin(t)*hpx;
+  const cy = p0.y - Math.cos(t)*hpx;
+  return { w:sz.w, h:sz.h, cx, cy, base:p0, hpx };
+}
+function drawMasses(){
+  const t = S.theta;
+  for(const it of S.items){
+    if(it.kind!=='mass') continue;
+    const b = massBox(it);
+    const sel = S.sel===it.id, hov = hoverId===it.id, hi = walkHi===it.id;
+    if(!S.fbd && S.mount==='hang'){
+      // hanger: a short stem from the rod down to the top of the load
+      const nx = -Math.sin(t), ny = -Math.cos(t);
+      const a0 = { x:b.base.x - nx*VIEW.beamH*0.35, y:b.base.y - ny*VIEW.beamH*0.35 };
+      const a1 = { x:b.cx + nx*b.h/2, y:b.cy + ny*b.h/2 };
+      line(a0.x,a0.y,a1.x,a1.y, shade(it.colour,-45), 2.2);
+      ctx.save(); ctx.strokeStyle=shade(it.colour,-45); ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(a0.x + nx*2, a0.y + ny*2, 3.4, 0, 7); ctx.stroke(); ctx.restore();
+    }
+    ctx.save();
+    ctx.translate(b.cx,b.cy); ctx.rotate(-t);
+    if(!S.fbd){
+      ctx.save(); ctx.globalAlpha=.16; ctx.fillStyle='#000';
+      roundRect(-b.w/2+2,-b.h/2+4,b.w,b.h,4); ctx.fill(); ctx.restore();
+      const g = ctx.createLinearGradient(-b.w/2,-b.h/2,b.w/2,b.h/2);
+      g.addColorStop(0, it.colour); g.addColorStop(1, shade(it.colour,-28));
+      ctx.fillStyle=g; roundRect(-b.w/2,-b.h/2,b.w,b.h,4); ctx.fill();
+      ctx.strokeStyle = (sel||hi)? C.accent : shade(it.colour,-55);
+      ctx.lineWidth = (sel||hi)?2.6:1.2; ctx.stroke();
+      ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(-b.w/2+3,-b.h/2+2.5); ctx.lineTo(b.w/2-3,-b.h/2+2.5); ctx.stroke();
+      if(b.w>=27 && b.h>=24){
+        const txt = it.unknown==='m' ? '?' : fmtSig(it.m,3);
+        ctx.fillStyle='rgba(255,255,255,.97)';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        let fs = 12;
+        ctx.font='700 '+fs+'px system-ui,sans-serif';
+        while(ctx.measureText(txt).width > b.w-7 && fs>7){ fs-=0.5; ctx.font='700 '+fs+'px system-ui,sans-serif'; }
+        const two = b.h>=33 && it.unknown!=='m';
+        ctx.fillText(txt, 0, two? -5.5 : 0);
+        if(two){ ctx.font='600 9px system-ui,sans-serif'; ctx.globalAlpha=.88; ctx.fillText('kg',0,7); ctx.globalAlpha=1; }
+      }
+    } else {
+      ctx.fillStyle=it.colour; ctx.beginPath(); ctx.arc(0,0,4,0,7); ctx.fill();
+    }
+    ctx.restore();
+    if(hov||sel){
+      ctx.save(); ctx.strokeStyle=C.accent; ctx.globalAlpha=.35; ctx.lineWidth=6;
+      ctx.translate(b.cx,b.cy); ctx.rotate(-t); roundRect(-b.w/2-3,-b.h/2-3,b.w+6,b.h+6,6); ctx.stroke(); ctx.restore();
+    }
+  }
+}
+
+function shade(hex,amt){
+  const c = hex.replace('#','');
+  const n = parseInt(c.length===3? c.split('').map(x=>x+x).join('') : c, 16);
+  let r=(n>>16)+amt, g=((n>>8)&255)+amt, b=(n&255)+amt;
+  r=clamp(r,0,255); g=clamp(g,0,255); b=clamp(b,0,255);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* arrow length for a force magnitude */
+function arrowLen(F, maxF){
+  const big = clamp(VIEW.h*0.17, 56, 148);
+  const small = clamp(big*0.24, 16, 30);
+  if(!S.show.scaleArrows) return big*0.55;
+  if(!(maxF>0)) return big*0.5;
+  return clamp(small + (big-small)*(F/maxF), small, big);
+}
+
+function drawForces(sum){
+  GEO.clear();
+  const t = S.theta;
+  const rows = sum.A.rows.concat(sum.reactRows||[]);
+  let maxF = 0;
+  for(const r of rows) if(r.F) maxF = Math.max(maxF, r.F);
+  const tp = P(turnS());
+  const ap = P(sum.about);
+  let dimRow = 0;
+  const dimD = Math.min(Math.max(VIEW.groundY - VIEW.ay + 30, arrowLen(maxF,maxF) + 38), VIEW.h - VIEW.ay - 96);
+  const nrm = { x: Math.sin(t), y: Math.cos(t) };   // screen normal, below the rod
+
+  for(const r of rows){
+    if(r.kind==='couple'){ drawCouple(r); continue; }
+    if(!(r.F>0)) continue;
+    const hi = (walkHi===r.id) || (S.sel===r.id) || (hoverId===r.id);
+    const dirA = Math.atan2(-r.Fy, r.Fx);           // screen angle (y flipped)
+    const len = arrowLen(r.F, maxF) * (hi?1.06:1);
+    let sp;
+    if(r.kind==='weight' && r.id!=='beam'){
+      const it = itemById(r.id);
+      if(it){ const b = massBox(it); sp = {x:b.cx, y:b.cy}; }
+      else sp = P(r.s);
+    } else sp = P(r.s);
+    const ep = { x: sp.x + Math.cos(dirA)*len, y: sp.y + Math.sin(dirA)*len };
+    if(typeof r.id === 'number') GEO.set(r.id, {sp, ep, dirA});
+
+    // line of action
+    if(S.show.loa){
+      const big = hi? 460 : 290;
+      ctx.save(); ctx.globalAlpha = hi? 0.75 : 0.42;
+      line(sp.x-Math.cos(dirA)*big, sp.y-Math.sin(dirA)*big, sp.x+Math.cos(dirA)*big, sp.y+Math.sin(dirA)*big,
+           r.hex, hi?1.4:1, [4,5]);
+      ctx.restore();
+    }
+    const col = r.kind==='react' ? C.react : (r.kind==='weight' ? (r.id==='beam'? C.weight : r.hex) : r.hex);
+    arrow(sp.x, sp.y, ep.x, ep.y, col, hi?3.4:2.6, hi?11:9.5);
+
+    // perpendicular distance from the turning point
+    if(S.show.perp && r.dperp>1e-4){
+      if(r.isVert){
+        const D = dimD + dimRow*19; dimRow++;
+        let p1, p2, tk;
+        if(S.tiltMoments){
+          // true perpendicular distance: a horizontal dimension line
+          const yy = VIEW.ay + D;
+          p1 = {x:ap.x, y:yy}; p2 = {x:sp.x, y:yy}; tk = {x:0, y:1};
+          ctx.save(); ctx.globalAlpha=.32;
+          line(ap.x, ap.y, ap.x, yy, r.hex, 1, [3,4]);
+          line(sp.x, sp.y, sp.x, yy, r.hex, 1, [3,4]);
+          ctx.restore();
+        } else {
+          // distance measured along the rod, so the label always matches the table
+          const a0 = P(sum.about), b0 = P(r.s);
+          p1 = {x:a0.x + nrm.x*D, y:a0.y + nrm.y*D};
+          p2 = {x:b0.x + nrm.x*D, y:b0.y + nrm.y*D};
+          tk = nrm;
+          ctx.save(); ctx.globalAlpha=.32;
+          line(a0.x, a0.y, p1.x, p1.y, r.hex, 1, [3,4]);
+          line(b0.x, b0.y, p2.x, p2.y, r.hex, 1, [3,4]);
+          ctx.restore();
+        }
+        line(p1.x, p1.y, p2.x, p2.y, r.hex, hi?2:1.4);
+        line(p1.x-tk.x*5, p1.y-tk.y*5, p1.x+tk.x*5, p1.y+tk.y*5, r.hex, hi?2:1.4);
+        line(p2.x-tk.x*5, p2.y-tk.y*5, p2.x+tk.x*5, p2.y+tk.y*5, r.hex, hi?2:1.4);
+        if(S.show.values && Math.hypot(p2.x-p1.x, p2.y-p1.y) > 26)
+          label(fmt(r.dperp)+' m', (p1.x+p2.x)/2, (p1.y+p2.y)/2, r.hex, {size:10.5, mono:true});
+      } else {
+        const ux=Math.cos(dirA), uy=Math.sin(dirA);
+        const k = (ap.x-sp.x)*ux + (ap.y-sp.y)*uy;
+        const fx = sp.x+ux*k, fy = sp.y+uy*k;
+        line(ap.x,ap.y,fx,fy, r.hex, hi?2:1.4, [6,4]);
+        if(S.show.values && Math.hypot(fx-ap.x, fy-ap.y) > 24){
+          label(fmt(r.dperp)+' m', (ap.x+fx)/2, (ap.y+fy)/2 - 12, r.hex, {size:10.5, mono:true});
+        }
+        if(S.show.angle && Math.hypot(fx-ap.x,fy-ap.y)>16){
+          rightAngle(fx,fy, Math.atan2(ap.y-fy,ap.x-fx), dirA, 8, r.hex);
+        }
+      }
+    }
+    // components of an angled force
+    if(S.show.comp && r.kind==='force'){
+      const it = itemById(r.id);
+      if(it && Math.abs(Math.sin(RAD(it.ang)))>0.02 && Math.abs(Math.cos(RAD(it.ang)))>0.02){
+        const perpF = it.F*Math.sin(RAD(it.ang)), alongF = it.F*Math.cos(RAD(it.ang));
+        const uxb = Math.cos(-t), uyb = Math.sin(-t);
+        const nxb = Math.cos(-t-Math.PI/2), nyb = Math.sin(-t-Math.PI/2);
+        const la = arrowLen(Math.abs(alongF), maxF)*Math.sign(alongF||1);
+        const lp = arrowLen(Math.abs(perpF), maxF)*Math.sign(perpF||1);
+        arrow(sp.x,sp.y, sp.x+uxb*la, sp.y+uyb*la, r.hex, 1.6, 7);
+        arrow(sp.x,sp.y, sp.x+nxb*lp, sp.y+nyb*lp, r.hex, 1.6, 7);
+        line(sp.x+uxb*la, sp.y+uyb*la, sp.x+uxb*la+nxb*lp, sp.y+uyb*la+nyb*lp, r.hex, 0.9, [3,3]);
+        line(sp.x+nxb*lp, sp.y+nyb*lp, sp.x+uxb*la+nxb*lp, sp.y+uyb*la+nyb*lp, r.hex, 0.9, [3,3]);
+        if(S.show.values){
+          label(fmt(Math.abs(perpF))+' N', sp.x+nxb*lp*1.02+13*Math.sign(lp||1), sp.y+nyb*lp*1.02, r.hex, {size:10, mono:true});
+        }
+      }
+    }
+    // angle between force and beam
+    if(S.show.angle && r.kind==='force'){
+      const it = itemById(r.id);
+      if(it){
+        const beamA = -t;
+        const a0 = beamA, a1 = dirA;
+        ctx.save(); ctx.strokeStyle=r.hex; ctx.lineWidth=1.2; ctx.globalAlpha=.9;
+        ctx.beginPath(); ctx.arc(sp.x,sp.y,24,a0,a1, ((a1-a0+2*Math.PI)%(2*Math.PI))>Math.PI);
+        ctx.stroke(); ctx.restore();
+        if(S.show.values){
+          const mid = a0 + (((a1-a0+Math.PI*3)%(2*Math.PI))-Math.PI)/2;
+          label(fmt(Math.abs(((it.ang%360)+360)%360>180 ? 360-((it.ang%360)+360)%360 : ((it.ang%360)+360)%360),0)+'°',
+                sp.x+Math.cos(mid)*36, sp.y+Math.sin(mid)*36, r.hex, {size:10, mono:true});
+        }
+      }
+    }
+    // value label at the arrow head
+    if(S.show.values){
+      const off = 15;
+      const txt = (r.kind==='react'?'':'') + fmt(r.F)+' N';
+      label(txt, ep.x+Math.cos(dirA)*off, ep.y+Math.sin(dirA)*off, col, {size:11, mono:true, bold:hi});
+      if(r.kind==='react') label(r.id==='RA'?'R at A':'R at B', ep.x+Math.cos(dirA)*off, ep.y+Math.sin(dirA)*off-15, col, {size:10});
+    }
+  }
+  void tp;
+}
+
+function drawCouple(r){
+  const it = itemById(r.id); if(!it) return;
+  const t = S.theta, sc=VIEW.scale;
+  const half = it.sepF*sc/2;
+  const p = P(it.x);
+  const ux = Math.cos(-t), uy = Math.sin(-t);
+  const nx = Math.cos(-t-Math.PI/2), ny = Math.sin(-t-Math.PI/2);
+  const F = Math.abs(it.C)/Math.max(it.sepF,0.05);
+  const len = clamp(24+F*7, 26, 120) * Math.sign(it.C||1);
+  const a = {x:p.x-ux*half, y:p.y-uy*half}, b = {x:p.x+ux*half, y:p.y+uy*half};
+  arrow(a.x,a.y, a.x-nx*len, a.y-ny*len, it.colour, 2.6, 9);
+  arrow(b.x,b.y, b.x+nx*len, b.y+ny*len, it.colour, 2.6, 9);
+  line(a.x,a.y,b.x,b.y,it.colour,1.1,[4,4]);
+  if(S.show.values){
+    label(fmt(F)+' N', b.x+nx*len*1.16, b.y+ny*len*1.16, it.colour, {size:10.5,mono:true});
+    label(fmt(F)+' N', a.x-nx*len*1.16, a.y-ny*len*1.16, it.colour, {size:10.5,mono:true});
+    label('d = '+fmt(it.sepF)+' m', p.x, p.y-26, it.colour, {size:10.5,mono:true});
+  }
+}
+
+function drawMomentArc(sum){
+  if(!S.show.arc) return;
+  const p = P(sum.about);
+  const net = (sum.totalTau!==undefined? sum.totalTau : sum.A.tau);
+  const maxAbs = Math.max(sum.totalAcw||sum.A.acw, sum.totalCw||sum.A.cw, 0.001);
+  if(Math.abs(net) < 1e-4) return;
+  const r = clamp(VIEW.beamH*2.6 + 22, 34, 70);
+  const frac = clamp(Math.abs(net)/maxAbs, 0.08, 1);
+  const sweep = frac*Math.PI*1.35;
+  const col = net>0 ? C.acw : C.cw;
+  const start = net>0 ? -Math.PI*0.15 : Math.PI*1.15;
+  const end = net>0 ? start - sweep : start + sweep;
+  arcArrow(p.x,p.y,r,start,end,col,3.4);
+  if(S.show.values){
+    const mid=(start+end)/2;
+    label(fmt(Math.abs(net))+' N m', p.x+Math.cos(mid)*(r+22), p.y+Math.sin(mid)*(r+22), col, {size:11,mono:true,bold:true});
+  }
+}
+
+function drawTurningPoint(sum){
+  const p = P(sum.about);
+  const isProbe = S.probe.on;
+  ctx.save();
+  ctx.strokeStyle = isProbe? C.accent : C.ink;
+  ctx.lineWidth=1.6; ctx.setLineDash(isProbe?[4,3]:[]);
+  ctx.beginPath(); ctx.arc(p.x,p.y,9,0,7); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(p.x-13,p.y); ctx.lineTo(p.x+13,p.y);
+  ctx.moveTo(p.x,p.y-13); ctx.lineTo(p.x,p.y+13); ctx.stroke();
+  ctx.fillStyle = isProbe? C.accent : C.ink;
+  ctx.beginPath(); ctx.arc(p.x,p.y,2.6,0,7); ctx.fill();
+  ctx.restore();
+  if(isProbe) label('take moments here', p.x, p.y-30, C.accent, {size:10.5, bold:true});
+}
+
+function drawTrace(){
+  if(!S.show.trace || !trace.length) return;
+  ctx.save();
+  for(let i=0;i<trace.length;i++){
+    const th = trace[i], al = (i+1)/trace.length*0.22;
+    ctx.globalAlpha = al; ctx.strokeStyle=C.accent; ctx.lineWidth=2;
+    const tp = turnS();
+    const a = { x: VIEW.ax + (0-tp)*VIEW.scale*Math.cos(th), y: VIEW.ay - (0-tp)*VIEW.scale*Math.sin(th) };
+    const b = { x: VIEW.ax + (S.L-tp)*VIEW.scale*Math.cos(th), y: VIEW.ay - (S.L-tp)*VIEW.scale*Math.sin(th) };
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawTiltGauge(){
+  if(!S.tiltMoments || Math.abs(S.theta) < 0.004) return;
+  const p = P(turnS());
+  ctx.save();
+  ctx.strokeStyle=C.muted; ctx.setLineDash([5,4]); ctx.lineWidth=1.1; ctx.globalAlpha=.8;
+  const r = Math.min(VIEW.w*0.3, S.L*VIEW.scale*0.42);
+  ctx.beginPath(); ctx.moveTo(p.x-r,p.y); ctx.lineTo(p.x+r,p.y); ctx.stroke();
+  ctx.setLineDash([]); ctx.globalAlpha=1;
+  ctx.strokeStyle=C.accent; ctx.lineWidth=1.6;
+  const a1 = 0, a2 = -S.theta;
+  ctx.beginPath(); ctx.arc(p.x,p.y,42,Math.min(a1,a2),Math.max(a1,a2)); ctx.stroke();
+  ctx.restore();
+}
+
+function tiltLimits(){
+  /* the beam stops when its lower end reaches the bench; in the default
+     "tilt shows the imbalance" model the swing is kept modest so the
+     picture never drifts far from the level geometry the sums assume */
+  const cap = S.tiltMoments ? RAD(38) : RAD(15);
+  if(S.mode==='free') return {lo:-cap, hi:cap};
+  const p0 = turnS();
+  const hM = Math.max(0.02, (VIEW.groundY - VIEW.ay)/Math.max(VIEW.scale,1));
+  const dL = Math.max(p0, 1e-6), dR = Math.max(S.L-p0, 1e-6);
+  return { hi: Math.min(cap, Math.asin(clamp(hM/dL,0,1))), lo: -Math.min(cap, Math.asin(clamp(hM/dR,0,1))) };
+}
+function render(){
+  refreshColoursIfNeeded();
+  const sum = LAST || summary();
+  layout();
+  drawGrid();
+  drawGround();
+  drawTrace();
+  if(S.mode==='pivot') drawSupport(pivotS(), null, S.drag==='pivot');
+  else if(S.mode==='supports'){ drawSupport(supAS(),'A', S.drag==='supA'); drawSupport(supBS(),'B', S.drag==='supB'); }
+  drawBeam();
+  drawCom();
+  drawTiltGauge();
+  drawMasses();
+  drawForces(sum);
+  drawMomentArc(sum);
+  drawTurningPoint(sum);
+}
+let themeStamp = '';
+function refreshColoursIfNeeded(){
+  const t = document.documentElement.getAttribute('data-theme')||'light';
+  if(t!==themeStamp){ themeStamp=t; refreshColours(); }
+}
+
+/* ============================== APP GLUE =============================== */
+let LAST = null, listDirty = true, rafId = null, lastT = 0;
+
+function toast(msg){
+  const el=$('#toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),1900);
+}
+function snapshot(){
+  undoStack.push(JSON.stringify(serialise()));
+  if(undoStack.length>60) undoStack.shift();
+  redoStack.length=0;
+}
+function undo(){
+  if(!undoStack.length){ toast('Nothing to undo'); return; }
+  const s = undoStack.pop();
+  redoStack.push(JSON.stringify(serialise()));
+  deserialise(JSON.parse(s)); listDirty=true; syncControls(); recompute();
+}
+
+/* --------------------------- serialisation ------------------------------ */
+function serialise(){
+  return { v:1, mode:S.mode, mount:S.mount, tm:S.tiltMoments, L:S.L, bm:S.beamMass, com:S.comF, pf:S.pivotF, sa:S.supAF, sb:S.supBF,
+           g:S.g, th:S.theta, dyn:S.dyn, damp:S.damp, dec:S.dec, show:S.show, probe:S.probe,
+           items:S.items.map(i=>Object.assign({},i)), nextId:S.nextId, nextMass:S.nextMass, nextForce:S.nextForce };
+}
+function deserialise(o){
+  if(!o||typeof o!=='object') return false;
+  const d = defaults();
+  S.mode=o.mode||d.mode; S.mount=o.mount||d.mount; S.tiltMoments=!!o.tm; S.L=+o.L||d.L; S.beamMass=+o.bm||0; S.comF=(o.com===undefined?0.5:+o.com);
+  S.pivotF=(o.pf===undefined?0.5:+o.pf); S.supAF=(o.sa===undefined?0.1:+o.sa); S.supBF=(o.sb===undefined?0.9:+o.sb);
+  S.g=+o.g||9.81; S.theta=+o.th||0; S.omega=0; S.dyn=o.dyn!==false; S.damp=(o.damp===undefined?0.35:+o.damp);
+  S.dec=(o.dec===undefined?2:+o.dec);
+  S.show=Object.assign(d.show, o.show||{});
+  S.probe=Object.assign({on:false,f:0.25}, o.probe||{});
+  S.items=(o.items||[]).map(i=>Object.assign({},i));
+  S.nextId=o.nextId|| (S.items.reduce((a,i)=>Math.max(a,i.id),0)+1);
+  S.nextMass=o.nextMass||S.items.filter(i=>i.kind==='mass').length;
+  S.nextForce=o.nextForce||S.items.filter(i=>i.kind==='force').length;
+  S.sel=null; trace.length=0;
+  return true;
+}
+function encodeState(){
+  const json = JSON.stringify(serialise());
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeState(str){
+  try{
+    const b = str.replace(/-/g,'+').replace(/_/g,'/');
+    return JSON.parse(decodeURIComponent(escape(atob(b))));
+  }catch(e){ return null; }
+}
+
+/* --------------------------- physics loop ------------------------------- */
+function step(dt){
+  const tipSide = (S.mode==='supports') ? tipping() : null;
+  const canTilt = S.dyn && (S.mode!=='supports' || !!tipSide);
+  let target = 0;
+
+  if(canTilt && S.tiltMoments && S.mode!=='supports'){
+    /* -------- A-Level extension: true rigid-body rotation -------- */
+    const p = turnS();
+    const T = forceRows(p), I = inertia(p);
+    S.omega += (T.tau/I - S.damp*4*S.omega)*dt;
+    S.theta += S.omega*dt;
+    if(S.mode==='free'){
+      if(S.theta >  Math.PI) S.theta -= 2*Math.PI;
+      if(S.theta < -Math.PI) S.theta += 2*Math.PI;
+    } else {
+      const lim = tiltLimits();
+      if(S.theta > lim.hi){ S.theta = lim.hi; S.omega = Math.min(0,S.omega)*0.2; }
+      if(S.theta < lim.lo){ S.theta = lim.lo; S.omega = Math.max(0,S.omega)*0.2; }
+    }
+    pushTrace();
+    return Math.abs(S.omega)>2e-4 || Math.abs(T.tau/I)>2e-3;
+  }
+
+  /* -------- default: the tilt is a picture of the imbalance --------
+     The moments are always worked out for the level beam, so the beam
+     settles back to the horizontal exactly when the moments balance. */
+  if(canTilt){
+    const lim = tiltLimits();
+    if(tipSide){
+      const tau = forceRows(tipSide==='A'? supAS() : supBS()).tau;
+      target = tau > 0 ? lim.hi : lim.lo;
+    } else {
+      const A = forceRows(turnS());
+      const scaleM = Math.max(A.acw, A.cw, 1e-12);
+      const frac = clamp(A.tau/scaleM, -1, 1);
+      target = frac > 0 ? frac*lim.hi : (-frac)*lim.lo;
+    }
+  }
+  const k = 20, c = 2*Math.sqrt(k)*(0.42 + 0.85*S.damp);
+  S.omega += (k*(target - S.theta) - c*S.omega)*dt;
+  S.theta += S.omega*dt;
+  if(Math.abs(target-S.theta) < 2e-4 && Math.abs(S.omega) < 2e-3){ S.theta = target; S.omega = 0; }
+  pushTrace();
+  return Math.abs(S.omega) > 1e-4 || Math.abs(target-S.theta) > 1e-4;
+}
+function pushTrace(){
+  if(S.show.trace){ trace.push(S.theta); if(trace.length>26) trace.shift(); }
+  else if(trace.length) trace.length = 0;
+}
+function loop(ts){
+  const dt = Math.min(0.033, (ts-lastT)/1000 || 0.016); lastT = ts;
+  if(step(dt)) uiDirty = true;
+  LAST = summary();
+  render();
+  updateHud();
+  if(uiDirty){ uiDirty=false; updatePanels(); }
+  rafId = requestAnimationFrame(loop);
+}
+let uiDirty = true;
+function recompute(){ LAST = summary(); uiDirty = true; }
+
+/* ------------------------------- HUD ------------------------------------ */
+function updateHud(){
+  const s = LAST; if(!s) return;
+  const probeOn = S.probe.on;
+  const net = (s.totalTau!==undefined? s.totalTau : s.A.tau);
+  const acw = s.totalAcw!==undefined? s.totalAcw : s.A.acw;
+  const cw  = s.totalCw !==undefined? s.totalCw  : s.A.cw;
+  $('#hudNet').textContent = fmt(net);
+  $('#hudTilt').textContent = fmt(DEG(S.theta),1);
+  const tot = acw+cw;
+  const fa = tot>1e-9 ? acw/tot : 0.5;
+  $('#barAcw').style.width = (fa*100).toFixed(2)+'%';
+  $('#barCw').style.width  = ((1-fa)*100).toFixed(2)+'%';
+  $('#legAcw').textContent = 'anticlockwise '+fmt(acw)+' N m';
+  $('#legCw').textContent  = fmt(cw)+' N m clockwise';
+  $('#balNet').textContent = (probeOn?'about the probe:  ':'')+'ΣM = '+fmt(net)+' N m';
+  const st = $('#balStatus');
+  if(S.mode==='supports'){
+    if(s.tip){ st.textContent = 'Unstable — the beam topples about support '+s.tip; st.style.color='var(--bad)'; }
+    else { st.textContent = 'Supported and in equilibrium'; st.style.color='var(--ok)'; }
+  } else if(Math.abs(s.turnTau) < 5e-4){
+    st.textContent = 'Balanced — the moments cancel'; st.style.color='var(--ok)';
+  } else {
+    st.textContent = (s.turnTau>0? 'Turning anticlockwise' : 'Turning clockwise');
+    st.style.color = s.turnTau>0? 'var(--acw)':'var(--cw)';
+  }
+  const hr = $('#hudReact');
+  if(S.mode==='pivot'){
+    hr.hidden=false;
+    hr.innerHTML = 'Force on the pivot <b>'+fmt(s.react? s.react.R:0)+'</b> N';
+  } else if(S.mode==='supports' && s.react){
+    hr.hidden=false;
+    hr.innerHTML = s.tip
+      ? '<span style="color:var(--bad)">a support cannot pull down &rarr; it topples</span>'
+      : 'R<sub>A</sub> <b>'+fmt(s.react.RA)+'</b> N &nbsp;&nbsp; R<sub>B</sub> <b>'+fmt(s.react.RB)+'</b> N';
+  } else hr.hidden=true;
+  $('#hudTiltChip').hidden = !S.tiltMoments || (S.mode==='supports' && !s.tip);
+}
+
+/* ------------------------------ panels ---------------------------------- */
+function updatePanels(){
+  if(listDirty){ buildObjList(); listDirty=false; }
+  else refreshObjValues();
+  if(!$('#p-analyse').hidden) updateAnalyse();
+  if(!$('#p-solve').hidden) updateSolve();
+  if(!$('#p-graph').hidden) drawGraph();
+  const l = $('#live');
+  if(l && LAST) l.textContent = 'Resultant moment '+fmt(LAST.T.tau)+' newton metres.';
+}
+
+function unknownItem(){ return S.items.find(i=>i.unknown); }
+
+function buildObjList(){
+  const wrap = $('#objList'); wrap.innerHTML='';
+  $('#objCount').textContent = S.items.length;
+  if(!S.items.length){
+    wrap.innerHTML = '<p class="hint" style="margin:2px 0 0">Nothing on the beam yet. Add a mass or an applied force below, then drag it along the beam.</p>';
+    return;
+  }
+  for(const it of S.items){
+    const d = document.createElement('div');
+    d.className = 'obj'+(S.sel===it.id?' sel':'');
+    d.dataset.id = it.id;
+    const tag = it.kind==='mass'?'mass':(it.kind==='force'?'force':'couple');
+    let fields='';
+    if(it.kind==='mass'){
+      fields = '<span>m /kg</span><input type="number" data-f="m" step="0.05" min="0" value="'+it.m+'">'+
+               '<span>x /m</span><input type="number" data-f="x" step="0.05" min="0" max="'+S.L+'" value="'+round3(it.x)+'">';
+    } else if(it.kind==='force'){
+      fields = '<span>F /N</span><input type="number" data-f="F" step="0.5" min="0" value="'+it.F+'">'+
+               '<span>x /m</span><input type="number" data-f="x" step="0.05" min="0" max="'+S.L+'" value="'+round3(it.x)+'">'+
+               '<span>θ /°</span><input type="number" data-f="ang" step="5" value="'+round3(it.ang)+'">'+
+               '<span></span><span style="font-family:var(--mono);font-size:11px">to the beam</span>';
+    } else {
+      fields = '<span>C /N m</span><input type="number" data-f="C" step="0.5" value="'+it.C+'">'+
+               '<span>d /m</span><input type="number" data-f="sepF" step="0.05" min="0.05" value="'+round3(it.sepF)+'">';
+    }
+    const uv = it.kind==='mass'?'m':(it.kind==='force'?'F':'C');
+    d.innerHTML =
+      '<div class="head"><span class="dot" style="background:'+it.colour+'"></span>'+
+      '<span class="name">'+esc(it.label)+'</span><span class="tag">'+tag+'</span></div>'+
+      '<div class="grid">'+fields+'</div>'+
+      '<div class="acts">'+
+        '<button class="qbtn" data-u="'+uv+'" aria-pressed="'+(it.unknown===uv)+'" title="Treat this as the unknown">? '+uv+'</button>'+
+        (it.kind!=='couple'? '<button class="qbtn" data-u="x" aria-pressed="'+(it.unknown==='x')+'" title="Treat the position as the unknown">? x</button>':'')+
+        '<button class="qbtn" data-act="dup" title="Duplicate">copy</button>'+
+        '<button class="qbtn" data-act="del" title="Delete" style="color:var(--bad)">delete</button>'+
+      '</div>';
+    wrap.appendChild(d);
+  }
+}
+function refreshObjValues(){
+  for(const it of S.items){
+    const row = $('.obj[data-id="'+it.id+'"]'); if(!row) continue;
+    row.querySelectorAll('input[data-f]').forEach(inp=>{
+      if(document.activeElement===inp) return;
+      const f = inp.dataset.f;
+      const v = round3(it[f]);
+      if(parseFloat(inp.value)!==v) inp.value = v;
+    });
+    row.classList.toggle('sel', S.sel===it.id);
+  }
+}
+function round3(v){ return Math.round(v*1000)/1000; }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ----------------------------- analyse tab ------------------------------ */
+function updateAnalyse(){
+  const s = LAST; if(!s) return;
+  const rows = s.A.rows.concat(s.reactRows||[]);
+  const tb = $('#momTable tbody'); tb.innerHTML='';
+  let acw=0, cw=0;
+  for(const r of rows){
+    if(r.tau>0) acw+=r.tau; else cw+=-r.tau;
+    const tr = document.createElement('tr');
+    tr.dataset.id = r.id;
+    tr.innerHTML =
+      '<td class="nm" style="color:'+(r.hex||'')+'">'+esc(r.name)+'</td>'+
+      '<td>'+(r.F===null?'—':fmt(r.F))+'</td>'+
+      '<td>'+(r.dperp===null||r.dperp===undefined?'—':fmt(r.dperp))+'</td>'+
+      '<td>'+fmt(Math.abs(r.tau))+'</td>'+
+      '<td class="'+(r.sense==='acw'?'sense-acw':(r.sense==='cw'?'sense-cw':''))+'">'+
+        (r.sense==='acw'?'↺ acw':(r.sense==='cw'?'↻ cw':'—'))+'</td>';
+    tr.addEventListener('mouseenter',()=>{ hoverId=r.id; });
+    tr.addEventListener('mouseleave',()=>{ hoverId=null; });
+    tr.addEventListener('click',()=>{ if(typeof r.id==='number'){ S.sel=r.id; listDirty=true; recompute(); } });
+    tb.appendChild(tr);
+  }
+  const trA = document.createElement('tr'); trA.className='total';
+  trA.innerHTML = '<td colspan="3">Total anticlockwise</td><td>'+fmt(acw)+'</td><td class="sense-acw">↺</td>';
+  const trB = document.createElement('tr');
+  trB.innerHTML = '<td colspan="3">Total clockwise</td><td>'+fmt(cw)+'</td><td class="sense-cw">↻</td>';
+  const trC = document.createElement('tr'); trC.className='total';
+  const net = acw-cw;
+  trC.innerHTML = '<td colspan="3">Resultant moment</td><td>'+fmt(net)+'</td><td>'+
+    (Math.abs(net)<5e-4?'<span style="color:var(--ok)">zero</span>':(net>0?'<span class="sense-acw">↺</span>':'<span class="sense-cw">↻</span>'))+'</td>';
+  tb.appendChild(trA); tb.appendChild(trB); tb.appendChild(trC);
+
+  $('#aboutLabel').textContent = S.probe.on ? ('a point '+fmt(S.probe.f*S.L)+' m from the left end')
+    : (S.mode==='pivot' ? 'the pivot' : (S.mode==='supports' ? (s.tip? 'support '+s.tip : 'support A') : 'the centre of mass'));
+  $('#tableHint').innerHTML = (S.mode==='supports' && !s.tip && !S.probe.on)
+    ? 'Taking moments about A makes the moment of R<sub>A</sub> zero — its line of action passes straight through A. That is the whole trick.'
+    : 'd&#8869; is the <em>perpendicular</em> distance from the turning point to the line of action of the force.';
+
+  // status
+  const box = $('#anStatus'), txt = $('#anStatusText');
+  box.className='statusbig';
+  if(S.mode==='supports'){
+    if(s.tip){ box.classList.add('cw'); txt.textContent='The beam tips about support '+s.tip+' — a support cannot pull downwards.'; }
+    else { box.classList.add('ok'); txt.textContent='In equilibrium: the two supports provide exactly the right forces.'; }
+  } else if(Math.abs(s.T.tau)<5e-4){ box.classList.add('ok'); txt.textContent='In equilibrium — the resultant moment is zero.'; }
+  else if(s.T.tau>0){ box.classList.add('acw'); txt.textContent='Resultant moment '+fmt(s.T.tau)+' N m anticlockwise.'; }
+  else { box.classList.add('cw'); txt.textContent='Resultant moment '+fmt(-s.T.tau)+' N m clockwise.'; }
+
+  // equilibrium body
+  const eb = $('#eqBody'); let h='';
+  const totW = -s.A.Fy, totH = s.A.Fx;
+  if(S.mode==='supports' && s.react){
+    h += kv('Total downward force','ΣW = '+fmt(totW)+' N');
+    h += kv('Reaction at A','R<sub>A</sub> = '+fmt(s.react.RA)+' N');
+    h += kv('Reaction at B','R<sub>B</sub> = '+fmt(s.react.RB)+' N');
+    h += kv('Check ΣF (vertical)', fmt(s.react.RA+s.react.RB-totW)+' N');
+    if(Math.abs(totH)>1e-6) h += kv('Unbalanced horizontal force', fmt(totH)+' N');
+    if(s.tip) h += '<p class="hint bad">R<sub>'+(s.tip==='A'?'B':'A')+'</sub> came out negative, so that support would have to <em>pull the beam down</em>. In reality the beam lifts off and topples about support '+s.tip+'.</p>';
+  } else if(S.mode==='pivot'){
+    h += kv('Resultant moment','ΣM = '+fmt(s.T.tau)+' N m');
+    if(S.tiltMoments) h += kv('Type of equilibrium', stabilityWord());
+    h += kv('Total downward force','ΣW = '+fmt(totW)+' N');
+    h += kv('Force on the pivot', fmt(s.react.R)+' N'+(Math.abs(totH)>1e-6?'':' downwards'));
+    if(Math.abs(totH)>1e-6) h += kv('&nbsp;&nbsp;its components', fmt(Math.abs(totH))+' N horizontal, '+fmt(Math.abs(totW))+' N vertical');
+    h += '<p class="hint">The pivot pushes back with an equal and opposite force. It acts <em>through</em> the pivot, so it has no moment about the pivot — which is exactly why we take moments there.</p>';
+  } else {
+    const R = Math.hypot(s.A.Fx,s.A.Fy);
+    h += kv('Resultant force', fmt(R)+' N');
+    h += kv('Resultant moment about G','ΣM = '+fmt(s.T.tau)+' N m');
+    h += '<p class="hint">With no support the body is free. A <em>couple</em> gives a resultant moment with no resultant force — move the probe and the total never changes.</p>';
+  }
+  eb.innerHTML = h;
+
+  // probe
+  $('#chkProbe').checked = S.probe.on;
+  $('#vProbe').textContent = fmt(S.probe.f*S.L)+' m';
+  $('#inProbe').value = S.probe.f;
+  const po = $('#probeOut');
+  if(S.probe.on){
+    const total = rows.reduce((a,r)=>a+r.tau,0);
+    po.innerHTML = kv('ΣM about the probe', fmt(total)+' N m') +
+      (Math.abs(total)<5e-3
+        ? '<p class="hint" style="color:var(--ok)">Still zero. In equilibrium the resultant moment is zero about every point.</p>'
+        : '<p class="hint warn">Not zero — this body is not in equilibrium, so the point you choose matters.</p>');
+  } else po.innerHTML='';
+}
+function kv(k,v){ return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+function stabilityWord(){
+  const s = stability();
+  const col = s==='stable'?'var(--ok)':(s==='unstable'?'var(--bad)':'var(--warn)');
+  return '<span style="color:'+col+'">'+s+'</span>';
+}
+const MOUNT_TEXT = {
+  hang:'The loads hang below the rod, like slotted masses on hangers.',
+  axis:'The loads straddle the rod, with their weight acting through its axis.',
+  top:'The loads sit on top of the rod, as textbook diagrams usually draw them.'
+};
+const MOUNT_TEXT_ADV = {
+  hang:'Hung below the pivot line, a tilt swings the weights back: the balance is <b>stable</b> and finds a resting angle set by tan&thinsp;&theta; = &Sigma;Wd / &Sigma;Wh.',
+  axis:'With every weight acting through the rod&rsquo;s axis there is no restoring moment at all: the balance is <b>neutral</b> and stays at whatever angle you leave it.',
+  top:'Sitting above the pivot line, a tilt pulls the weights further over: the balance is <b>unstable</b> and the smallest nudge destroys it.'
+};
+
+/* ============================ WORKING / SOLVE =========================== */
+let WORK = [], walkIdx = -1;
+
+function n3(v){ return fmtSig(v,4); }
+function lineHTML(txt, cls){ return '<span class="step'+(cls?' '+cls:'')+'">'+txt+'</span>'; }
+
+function buildWorking(){
+  const s = LAST || summary();
+  const steps = [];
+  const push = (h, ids) => steps.push({h, ids: ids||[]});
+  const unk = unknownItem();
+
+  if(S.mode==='supports'){
+    const r = s.react;
+    const a = supAS(), b = supBS();
+    push('<span class="lbl">Two supports — find the reaction forces.</span>');
+    push('Take moments about <em>A</em> (this eliminates R<sub>A</sub>, because R<sub>A</sub> passes through A).');
+    const A = forceRows(a);
+    let cwsum = 0, acwsum = 0;
+    for(const row of A.rows){
+      if(row.kind==='couple'){ push('  '+esc(row.name)+':  couple = '+n3(Math.abs(row.C))+' N m '+(row.C>0?'↺':'↻'), [row.id]);
+        if(row.C>0) acwsum+=row.C; else cwsum+=-row.C; continue; }
+      const d = Math.abs(row.dperp||0);
+      const sense = row.tau>0?'anticlockwise':'clockwise';
+      push('  '+esc(row.name)+':  M = F × d = '+n3(row.F)+' × '+n3(d)+' = '+fmt(Math.abs(row.tau))+' N m ('+sense+')', [row.id]);
+      if(row.tau>0) acwsum+=row.tau; else cwsum+=-row.tau;
+    }
+    push('  Σ clockwise about A = '+fmt(cwsum)+' N m;  Σ anticlockwise about A = '+fmt(acwsum)+' N m');
+    push('R<sub>B</sub> acts upwards at '+n3(b-a)+' m from A, giving an anticlockwise moment R<sub>B</sub> × '+n3(b-a)+'.');
+    push('For equilibrium:  R<sub>B</sub> × '+n3(b-a)+' + '+fmt(acwsum)+' = '+fmt(cwsum));
+    push('<em>R<sub>B</sub> = '+fmt(r? r.RB:0)+' N</em>', ['RB']);
+    push('Now resolve vertically:  R<sub>A</sub> + R<sub>B</sub> = ΣW = '+fmt(-A.Fy)+' N');
+    push('<em>R<sub>A</sub> = '+fmt(-A.Fy)+' − '+fmt(r?r.RB:0)+' = '+fmt(r?r.RA:0)+' N</em>', ['RA']);
+    if(s.tip) push('<span style="color:var(--bad)">R<sub>'+(s.tip==='A'?'B':'A')+'</sub> is negative — that support would have to pull the beam down, so the beam topples about support '+s.tip+'.</span>');
+    else push('<span class="lbl">Check: both reactions are positive, so the beam rests on both supports.</span>');
+    return steps;
+  }
+
+  const about = S.mode==='free' ? systemComS() : pivotS();
+  const aboutName = S.mode==='free' ? 'the centre of mass' : 'the pivot';
+  push('<span class="lbl">Take moments about '+aboutName+', '+n3(about)+' m from the left-hand end. Anticlockwise is taken as positive.</span>');
+
+  const hasUnknown = !!(unk && S.mode==='pivot');
+  const saveTheta = S.theta;
+  if(hasUnknown) S.theta = 0;
+  const A = forceRows(about);
+  if(hasUnknown && Math.abs(saveTheta) > 0.01)
+    push('<span class="lbl">(worked with the beam level — a tilt scales every moment by the same factor cos&thinsp;&theta;, so the answer is unchanged)</span>');
+  let acw=0, cw=0, known=0, coeff=0;
+
+  // if there is an unknown, work out its coefficient
+  let unkInfo = null;
+  if(unk && S.mode==='pivot'){
+    const sol = solveFor(true);
+    if(sol) unkInfo = sol;
+  }
+
+  push('<span class="lbl">Anticlockwise moments</span>');
+  let anyA=false;
+  for(const row of A.rows){
+    if(unkInfo && row.id===unk.id) continue;
+    if(row.tau>1e-9){ anyA=true; push(momentLine(row), [row.id]); acw+=row.tau; }
+  }
+  if(!anyA) push('  (none)');
+  push('  <b>Σ M<sub>acw</sub> = '+fmt(acw)+' N m</b>');
+
+  push('<span class="lbl">Clockwise moments</span>');
+  let anyC=false;
+  for(const row of A.rows){
+    if(unkInfo && row.id===unk.id) continue;
+    if(row.tau<-1e-9){ anyC=true; push(momentLine(row), [row.id]); cw+=-row.tau; }
+  }
+  if(!anyC) push('  (none)');
+  push('  <b>Σ M<sub>cw</sub> = '+fmt(cw)+' N m</b>');
+
+  if(unkInfo){
+    const f = unk.unknown;
+    const symbol = f==='m'?'m':(f==='F'?'F':'x');
+    push('<span class="lbl">The unknown</span>');
+    push('Let <em>'+symbol+'</em> be the '+(f==='m'?'mass':(f==='F'?'force':'distance from the left-hand end'))+' of '+esc(unk.label)+'.');
+    const k = unkInfo.k, c0 = unkInfo.c0;
+    known = acw - cw + c0;
+    push('Moment of '+esc(unk.label)+' about '+aboutName+' = '+n3(k)+' '+symbol+(Math.abs(c0)>1e-9?(c0>0?' + ':' &minus; ')+n3(Math.abs(c0)):'')+'  N m', [unk.id]);
+    push('For equilibrium the resultant moment is zero:');
+    push('  '+fmt(acw)+' &minus; '+fmt(cw)+' + ( '+n3(k)+' '+symbol+(Math.abs(c0)>1e-9?(c0>0?' + ':' &minus; ')+n3(Math.abs(c0)):'')+' ) = 0');
+    push('  '+n3(k)+' '+symbol+' = '+fmt(-(acw-cw+c0),Math.max(S.dec,2)));
+    push('<em>'+symbol+' = '+fmt(unkInfo.value,3)+(f==='m'?' kg':(f==='F'?' N':' m'))+'</em>', [unk.id]);
+    if(unkInfo.value<0) push('<span style="color:var(--warn)">A negative answer means the force would have to act the other way round.</span>');
+    S.theta = saveTheta;
+  } else {
+    const net = acw-cw;
+    push('<span class="lbl">Resultant</span>');
+    push('  ΣM = '+fmt(acw)+' − '+fmt(cw)+' = <em>'+fmt(net)+' N m</em>');
+    if(Math.abs(net)<5e-4) push('  Anticlockwise = clockwise, so the beam is in equilibrium (the principle of moments).');
+    else push('  The beam turns '+(net>0?'anticlockwise':'clockwise')+'.');
+    if(S.mode==='pivot'){
+      push('<span class="lbl">Vertical equilibrium</span>');
+      push('  Force on the pivot = ΣW = '+fmt(-A.Fy)+' N downwards; the pivot pushes up with '+fmt(-A.Fy)+' N.');
+    }
+    S.theta = saveTheta;
+  }
+  return steps;
+}
+function momentLine(row){
+  if(row.kind==='couple') return '  '+esc(row.name)+':  couple = '+n3(Math.abs(row.C))+' N m';
+  const dperp = Math.abs(row.dperp||0);
+  if(row.kind==='weight'){
+    const m = (row.m!==undefined && row.m!==null) ? row.m : (row.F/S.g);
+    return '  '+esc(row.name)+':  W = mg = '+n3(m)+' &times; '+n3(S.g)+' = '+fmt(row.F)+' N,   M = W &times; d = '+
+           fmt(row.F)+' &times; '+n3(dperp)+' = <b>'+fmt(Math.abs(row.tau))+'</b> N m';
+  }
+  const it = itemById(row.id);
+  if(it && it.kind==='force'){
+    const along = Math.abs(row.d||0);
+    let th = ((it.ang%360)+360)%360; if(th>180) th = 360-th;
+    if(Math.abs(Math.abs(Math.sin(RAD(it.ang)))-1) > 1e-6){
+      return '  '+esc(row.name)+':  M = F d sin&theta; = '+n3(row.F)+' &times; '+n3(along)+' &times; sin&thinsp;'+n3(th)+
+             '&deg; = <b>'+fmt(Math.abs(row.tau))+'</b> N m';
+    }
+  }
+  return '  '+esc(row.name)+':  M = F &times; d = '+n3(row.F)+' &times; '+n3(dperp)+' = <b>'+fmt(Math.abs(row.tau))+'</b> N m';
+}
+
+function solveFor(peek){
+  const it = unknownItem(); if(!it || S.mode!=='pivot') return null;
+  const f = it.unknown;
+  if(!(f==='m'||f==='F'||f==='x')) return null;
+  const saveV = it[f], saveT = S.theta;
+  S.theta = 0;
+  const own = rows => { const r = rows.rows.find(x=>x.id===it.id); return r? r.tau : 0; };
+  it[f]=0; const R0 = forceRows(pivotS()); const t0 = R0.tau, own0 = own(R0);
+  it[f]=1; const R1 = forceRows(pivotS()); const own1 = own(R1);
+  it[f]=saveV; S.theta=saveT;
+  const k = own1-own0;
+  if(Math.abs(k)<1e-9) return null;
+  const value = -t0/k;
+  void peek;
+  return { ok:true, value, k, t0, c0:own0, rest:t0-own0 };
+}
+
+function renderWorking(){
+  WORK = buildWorking();
+  const out = $('#workOut');
+  out.innerHTML = WORK.map((s,i)=> '<span class="step" data-i="'+i+'">'+s.h+'</span>').join('');
+  walkIdx = -1; walkHi=null;
+  $('#btnWalkPrev').disabled = true; $('#btnWalkNext').disabled = true;
+  $('#walkStatus').textContent='';
+}
+function walkTo(i){
+  walkIdx = clamp(i, 0, WORK.length-1);
+  const spans = $$('#workOut .step');
+  spans.forEach((sp,j)=> sp.classList.toggle('hi', j===walkIdx));
+  const ids = WORK[walkIdx].ids;
+  walkHi = ids && ids.length ? ids[0] : null;
+  if(spans[walkIdx]) spans[walkIdx].scrollIntoView({block:'nearest'});
+  $('#walkStatus').textContent = 'step '+(walkIdx+1)+' of '+WORK.length;
+  $('#btnWalkPrev').disabled = walkIdx<=0;
+  $('#btnWalkNext').disabled = walkIdx>=WORK.length-1;
+}
+
+function updateSolve(){
+  renderWorkingThrottled();
+  const box = $('#unknownState');
+  const unk = unknownItem();
+  if(S.mode==='supports'){
+    box.innerHTML = '<p class="hint" style="margin:0">With two supports the beam is always in equilibrium, so there is nothing to balance. The working opposite shows the standard method for finding <b>both reaction forces</b>: take moments about one support, then resolve vertically.</p>';
+    $('#btnSolve').disabled = true;
+  } else if(!unk){
+    box.innerHTML = '<p class="hint" style="margin:0">No unknown selected. Everything is known, so the working shows the full moment calculation.</p>';
+    $('#btnSolve').disabled = true;
+  } else {
+    const sol = solveFor();
+    const f = unk.unknown;
+    const unit = f==='m'?'kg':(f==='F'?'N':'m');
+    box.innerHTML = '<div class="kv"><span class="k">Unknown</span><span class="v">'+esc(unk.label)+' &middot; '+f+'</span></div>'+
+      '<div class="kv"><span class="k">Value that balances the beam</span><span class="v" style="color:var(--accent)">'+
+      (sol? fmt(sol.value,3)+' '+unit : 'no solution')+'</span></div>';
+    $('#btnSolve').disabled = !sol;
+  }
+}
+let workTimer=null, workLast=0;
+function renderWorkingThrottled(){
+  const now = performance.now();
+  if(now - workLast > 260){ workLast = now; renderWorking(); return; }
+  if(workTimer) return;
+  workTimer = setTimeout(()=>{ workTimer=null; workLast=performance.now(); renderWorking(); }, 260);
+}
+
+/* ================================ GRAPH ================================= */
+function graphVars(){
+  const v = [];
+  v.push({key:'tilt', label:'Tilt of the beam θ /°', min:-30, max:30,
+          get:()=>DEG(S.theta), set:x=>{S.theta=RAD(x);}, unit:'°'});
+  v.push({key:'pivot', label:'Position of the pivot /m', min:0, max:S.L,
+          get:()=>pivotS(), set:x=>{S.pivotF=clamp(x/S.L,0,1);}, unit:'m'});
+  for(const it of S.items){
+    v.push({key:'x'+it.id, label:it.label+' — position /m', min:0, max:S.L,
+            get:()=>it.x, set:x=>{it.x=x;}, unit:'m'});
+    if(it.kind==='mass') v.push({key:'m'+it.id, label:it.label+' — mass /kg', min:0, max:Math.max(2, it.m*2),
+            get:()=>it.m, set:x=>{it.m=x;}, unit:'kg'});
+    if(it.kind==='force'){
+      v.push({key:'F'+it.id, label:it.label+' — magnitude /N', min:0, max:Math.max(10,it.F*2), get:()=>it.F, set:x=>{it.F=x;}, unit:'N'});
+      v.push({key:'a'+it.id, label:it.label+' — angle to beam /°', min:0, max:180, get:()=>it.ang, set:x=>{it.ang=x;}, unit:'°'});
+    }
+  }
+  return v;
+}
+let graphKey = 'x1';
+function fillGraphSelect(){
+  const sel = $('#graphVar'), vs = graphVars();
+  const cur = sel.value || graphKey;
+  sel.innerHTML = vs.map(v=>'<option value="'+v.key+'">'+esc(v.label)+'</option>').join('');
+  if(vs.some(v=>v.key===cur)) sel.value = cur; else sel.value = vs[0].key;
+  graphKey = sel.value;
+}
+function drawGraph(){
+  const cvg = $('#graph'); if(!cvg) return;
+  const box = cvg.getBoundingClientRect(); if(box.width < 20) return;
+  const dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  const bw = Math.round(box.width*dpr), bh = Math.round(box.height*dpr);
+  if(cvg.width!==bw || cvg.height!==bh){ cvg.width=bw; cvg.height=bh; }
+  const g = cvg.getContext('2d');
+  g.setTransform(dpr,0,0,dpr,0,0);
+  const vs = graphVars(); const V = vs.find(v=>v.key===graphKey) || vs[0];
+  const W=box.width, H=box.height;
+  if(!V){ g.clearRect(0,0,W,H); return; }
+  const padL=62, padB=40, padT=14, padR=16;
+  const N=190;
+  const save = V.get(), saveT = S.theta;
+  const xs=[], y1=[], y2=[];
+  const supMode = S.mode==='supports';
+  for(let i=0;i<=N;i++){
+    const x = V.min + (V.max-V.min)*i/N;
+    V.set(x);
+    if(V.key!=='tilt') S.theta = saveT;
+    xs.push(x);
+    if(supMode){ const r = reactions(); y1.push(r?r.RA:0); y2.push(r?r.RB:0); }
+    else { y1.push(forceRows(turnS()).tau); y2.push(null); }
+  }
+  V.set(save); S.theta = saveT;
+
+  let lo=Infinity, hi=-Infinity;
+  for(const a of y1){ if(a<lo)lo=a; if(a>hi)hi=a; }
+  if(supMode) for(const a of y2){ if(a<lo)lo=a; if(a>hi)hi=a; }
+  if(!isFinite(lo)||!isFinite(hi)||hi-lo<1e-6){ lo-=1; hi+=1; }
+  const pad=(hi-lo)*0.14; lo-=pad; hi+=pad;
+  if(lo>0) lo=0; if(hi<0) hi=0;
+
+  const X = x => padL + (x-V.min)/(V.max-V.min)*(W-padL-padR);
+  const Y = y => H-padB - (y-lo)/(hi-lo)*(H-padB-padT);
+
+  g.clearRect(0,0,W,H);
+  g.fillStyle = C.stage; g.fillRect(0,0,W,H);
+  // grid
+  g.strokeStyle=C.grid2; g.lineWidth=1; g.beginPath();
+  for(let i=0;i<=5;i++){ const yy=Math.round(padT+(H-padB-padT)*i/5)+0.5; g.moveTo(padL,yy); g.lineTo(W-padR,yy); }
+  for(let i=0;i<=6;i++){ const xx=Math.round(padL+(W-padL-padR)*i/6)+0.5; g.moveTo(xx,padT); g.lineTo(xx,H-padB); }
+  g.stroke();
+  // axes
+  g.strokeStyle=C.line; g.lineWidth=1.6;
+  g.beginPath(); g.moveTo(padL,padT); g.lineTo(padL,H-padB); g.lineTo(W-padR,H-padB); g.stroke();
+  // zero line
+  if(lo<0&&hi>0){ g.strokeStyle=C.muted; g.setLineDash([5,4]); g.lineWidth=1.4;
+    g.beginPath(); g.moveTo(padL,Y(0)); g.lineTo(W-padR,Y(0)); g.stroke(); g.setLineDash([]); }
+  // labels
+  g.fillStyle=C.muted; g.font='600 10.5px system-ui,sans-serif'; g.textAlign='right'; g.textBaseline='middle';
+  for(let i=0;i<=5;i++){ const val = hi-(hi-lo)*i/5; g.fillText(fmt(val,1), padL-6, padT+(H-padB-padT)*i/5); }
+  g.textAlign='center'; g.textBaseline='top';
+  for(let i=0;i<=6;i++){ const val = V.min+(V.max-V.min)*i/6; g.fillText(fmt(val,V.unit==='°'?0:2), padL+(W-padL-padR)*i/6, H-padB+7); }
+  g.font='700 11.5px system-ui,sans-serif'; g.fillText(V.label, W/2, H-15);
+  g.save(); g.translate(11,H/2); g.rotate(-Math.PI/2); g.textBaseline='top'; g.font='600 10.5px system-ui,sans-serif';
+  g.fillText(supMode?'Reaction force /N':'Resultant moment /N m',0,0); g.restore();
+  // curves
+  const plot=(arr,col,w)=>{ g.strokeStyle=col; g.lineWidth=w; g.beginPath();
+    arr.forEach((y,i)=>{ const xx=X(xs[i]), yy=Y(y); i?g.lineTo(xx,yy):g.moveTo(xx,yy); }); g.stroke(); };
+  if(supMode){ plot(y1,C.acw,2.6); plot(y2,C.cw,2.6);
+    g.font='700 11px system-ui'; g.textAlign='left'; g.textBaseline='middle';
+    g.fillStyle=C.acw; g.fillText('R at A', padL+8, padT+9); g.fillStyle=C.cw; g.fillText('R at B', padL+52, padT+9);
+  } else plot(y1,C.accent,2.8);
+  // zero crossings
+  g.fillStyle=C.ok;
+  for(let i=1;i<y1.length;i++){
+    if((y1[i-1]<0)!==(y1[i]<0)){
+      const f = Math.abs(y1[i-1])/(Math.abs(y1[i-1])+Math.abs(y1[i]));
+      const xc = xs[i-1]+(xs[i]-xs[i-1])*f;
+      g.beginPath(); g.arc(X(xc),Y(0),4.5,0,7); g.fill();
+      g.font='700 11px ui-monospace,monospace'; g.textAlign='center'; g.textBaseline='bottom';
+      g.fillText(fmt(xc,2)+(V.unit==='m'?' m':V.unit), X(xc), Y(0)-9);
+    }
+  }
+  // current value marker
+  const cx = X(clamp(save,V.min,V.max));
+  const cy = Y(supMode ? (reactions()?reactions().RA:0) : forceRows(turnS()).tau);
+  g.strokeStyle=C.ink; g.setLineDash([3,3]); g.lineWidth=1.2;
+  g.beginPath(); g.moveTo(cx,padT); g.lineTo(cx,H-padB); g.stroke(); g.setLineDash([]);
+  g.fillStyle=C.ink; g.beginPath(); g.arc(cx,cy,4.5,0,7); g.fill();
+  g.strokeStyle=C.stage; g.lineWidth=2; g.stroke();
+
+  const rd = $('#graphRead');
+  if(supMode){ const r=reactions(); rd.innerHTML = kv('Now','R_A = '+fmt(r?r.RA:0)+' N,  R_B = '+fmt(r?r.RB:0)+' N'); }
+  else rd.innerHTML = kv('Right now', 'ΣM = '+fmt(forceRows(turnS()).tau)+' N m')+
+      kv(V.label.replace(' /'+V.unit,''), fmt(save, V.unit==='°'?0:2)+' '+V.unit);
+}
+
+/* ============================ INTERACTION =============================== */
+const GEO = new Map();
+function inRotRect(px,py,cx,cy,w,h,rot){
+  const dx=px-cx, dy=py-cy, c=Math.cos(-rot), s=Math.sin(-rot);
+  const lx = dx*c - dy*s, ly = dx*s + dy*c;
+  return Math.abs(lx)<=w/2 && Math.abs(ly)<=h/2;
+}
+function distToSeg(px,py,x1,y1,x2,y2){
+  const vx=x2-x1, vy=y2-y1, L2=vx*vx+vy*vy;
+  let t = L2>0 ? ((px-x1)*vx+(py-y1)*vy)/L2 : 0;
+  t = clamp(t,0,1);
+  return Math.hypot(px-(x1+vx*t), py-(y1+vy*t));
+}
+function hitTest(px,py){
+  if(S.probe.on){ const p=P(S.probe.f*S.L); if(Math.hypot(px-p.x,py-p.y)<15) return {type:'probe'}; }
+  for(let i=S.items.length-1;i>=0;i--){
+    const it = S.items[i];
+    const gg = GEO.get(it.id);
+    if(gg && Math.hypot(px-gg.ep.x, py-gg.ep.y) < 15 && it.kind==='force') return {type:'item',id:it.id,mode:'head'};
+    if(it.kind==='mass'){
+      const b = massBox(it);
+      if(inRotRect(px,py,b.cx,b.cy,b.w+10,b.h+10,-S.theta)) return {type:'item',id:it.id,mode:'move'};
+      if(gg && distToSeg(px,py,gg.sp.x,gg.sp.y,gg.ep.x,gg.ep.y)<9) return {type:'item',id:it.id,mode:'move'};
+    } else if(it.kind==='force'){
+      if(gg && distToSeg(px,py,gg.sp.x,gg.sp.y,gg.ep.x,gg.ep.y)<10) return {type:'item',id:it.id,mode:'move'};
+    } else if(it.kind==='couple'){
+      const p = P(it.x); if(Math.hypot(px-p.x,py-p.y)<18) return {type:'item',id:it.id,mode:'move'};
+    }
+  }
+  const inTri = (s)=>{ const p=P(s); return px>p.x-26 && px<p.x+26 && py>p.y-4 && py<VIEW.groundY+6; };
+  if(S.mode==='pivot' && inTri(pivotS())) return {type:'pivot'};
+  if(S.mode==='supports'){
+    if(inTri(supAS())) return {type:'supA'};
+    if(inTri(supBS())) return {type:'supB'};
+  }
+  const a=P(0), b=P(S.L);
+  if(S.tiltMoments && distToSeg(px,py,a.x,a.y,b.x,b.y) < VIEW.beamH*0.9+5) return {type:'beam'};
+  return null;
+}
+function snap(v){ return S.show.snap && !shiftKey ? Math.round(v/0.05)*0.05 : v; }
+let shiftKey=false, dragStart=null;
+window.addEventListener('keydown',e=>{ if(e.key==='Shift') shiftKey=true; });
+window.addEventListener('keyup',e=>{ if(e.key==='Shift') shiftKey=false; });
+
+function ptr(e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+
+cv.addEventListener('pointerdown', e=>{
+  cv.setPointerCapture(e.pointerId);
+  const p = ptr(e); const h = hitTest(p.x,p.y);
+  shiftKey = e.shiftKey;
+  snapshot();
+  if(!h){ S.sel=null; listDirty=true; recompute(); return; }
+  if(h.type==='item'){ S.sel=h.id; listDirty=true; S.drag={kind:'item',id:h.id,mode:h.mode}; }
+  else if(h.type==='pivot') S.drag={kind:'pivot'};
+  else if(h.type==='supA') S.drag={kind:'supA'};
+  else if(h.type==='supB') S.drag={kind:'supB'};
+  else if(h.type==='probe') S.drag={kind:'probe'};
+  else if(h.type==='beam'){ S.drag={kind:'tilt', startTheta:S.theta, startAng:Math.atan2(VIEW.ay-p.y, p.x-VIEW.ax)}; S.sel=null; listDirty=true; }
+  cv.classList.add('dragging');
+  recompute();
+});
+cv.addEventListener('pointermove', e=>{
+  const p = ptr(e); shiftKey = e.shiftKey;
+  if(!S.drag){
+    const h = hitTest(p.x,p.y);
+    const nh = (h && h.type==='item') ? h.id : null;
+    if(nh!==hoverId){ hoverId=nh; }
+    cv.style.cursor = h ? (h.type==='beam'?'ns-resize':'grab') : 'default';
+    return;
+  }
+  const d = S.drag;
+  if(d.kind==='item'){
+    const it = itemById(d.id); if(!it) return;
+    if(d.mode==='head' && it.kind==='force'){
+      const sp = GEO.get(it.id) ? GEO.get(it.id).sp : P(it.x);
+      const scr = Math.atan2(p.y-sp.y, p.x-sp.x);
+      let ang = DEG(-scr - S.theta);
+      ang = ((ang%360)+360)%360; if(ang>180) ang-=360;
+      it.ang = shiftKey ? ang : Math.round(ang);
+      if(S.show.scaleArrows){
+        const dist = Math.hypot(p.x-sp.x,p.y-sp.y);
+        const maxF = maxForce();
+        const big = clamp(VIEW.h*0.17, 56, 148), small = clamp(big*0.24, 16, 30);
+        const F = maxF*(dist-small)/Math.max(big-small,1);
+        it.F = clamp(Math.round(F*10)/10, 0.1, 9999);
+      }
+    } else {
+      it.x = clamp(snap(invP(p.x,p.y)), 0, S.L);
+    }
+  } else if(d.kind==='pivot'){ S.pivotF = clamp(snap(invP(p.x,p.y))/S.L,0,1); }
+  else if(d.kind==='supA'){ S.supAF = clamp(snap(invP(p.x,p.y))/S.L,0,1); }
+  else if(d.kind==='supB'){ S.supBF = clamp(snap(invP(p.x,p.y))/S.L,0,1); }
+  else if(d.kind==='probe'){ S.probe.f = clamp(invP(p.x,p.y)/S.L,-0.4,1.4); }
+  else if(d.kind==='tilt'){
+    const a = Math.atan2(VIEW.ay-p.y, p.x-VIEW.ax);
+    let th = d.startTheta + (a - d.startAng);
+    const lim = tiltLimits(); S.theta = clamp(th, lim.lo, lim.hi); S.omega = 0;
+  }
+  syncControls(); recompute();
+});
+function endDrag(e){
+  if(S.drag){ S.drag=null; cv.classList.remove('dragging'); recompute(); }
+  if(e && e.pointerId!==undefined && cv.hasPointerCapture && cv.hasPointerCapture(e.pointerId)) cv.releasePointerCapture(e.pointerId);
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+cv.addEventListener('dblclick', e=>{
+  const p=ptr(e); const h=hitTest(p.x,p.y);
+  if(h && h.type==='beam'){ snapshot(); addMass(clamp(snap(invP(p.x,p.y)),0,S.L)); listDirty=true; recompute(); }
+});
+function maxForce(){
+  let m=0;
+  if(S.beamMass>0) m=Math.max(m,S.beamMass*S.g);
+  for(const it of S.items){
+    if(it.kind==='mass') m=Math.max(m,it.m*S.g);
+    if(it.kind==='force') m=Math.max(m,it.F);
+  }
+  if(S.mode==='supports'){ const r=reactions(); if(r) m=Math.max(m,Math.abs(r.RA),Math.abs(r.RB)); }
+  return m||1;
+}
+
+/* ------------------------------ keyboard -------------------------------- */
+window.addEventListener('keydown', e=>{
+  const tag = (e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='select'||tag==='textarea') return;
+  if(e.ctrlKey||e.metaKey){
+    if(e.key.toLowerCase()==='z'){ e.preventDefault(); undo(); }
+    return;
+  }
+  const it = S.sel? itemById(S.sel):null;
+  switch(e.key){
+    case ' ': e.preventDefault(); $('#btnPlay').click(); break;
+    case 'ArrowLeft': case 'ArrowRight':
+      if(it){ e.preventDefault(); const dx=(e.key==='ArrowLeft'?-1:1)*(e.shiftKey?0.05:0.01);
+        it.x = clamp(it.x+dx,0,S.L); recompute(); syncControls(); } break;
+    case 'ArrowUp': case 'ArrowDown':
+      if(it){ e.preventDefault(); const k=(e.key==='ArrowUp'?1:-1)*(e.shiftKey?0.5:0.1);
+        if(it.kind==='mass') it.m=Math.max(0,Math.round((it.m+k*0.5)*100)/100);
+        else if(it.kind==='force') it.F=Math.max(0,Math.round((it.F+k*2)*10)/10);
+        else it.C=Math.round((it.C+k)*10)/10;
+        listDirty=true; recompute(); } break;
+    case 'Delete': case 'Backspace': if(it){ snapshot(); S.items=S.items.filter(o=>o.id!==it.id); S.sel=null; listDirty=true; fillGraphSelect(); recompute(); } break;
+    case 'm': case 'M': snapshot(); S.sel=addMass().id; listDirty=true; fillGraphSelect(); recompute(); break;
+    case 'f': case 'F': snapshot(); S.sel=addForce().id; listDirty=true; fillGraphSelect(); recompute(); break;
+    case 'p': case 'P': $('#btnProbe').click(); break;
+    case 'd': case 'D': $('#btnFbd').click(); break;
+    case 'v': case 'V': $('#btnValues').click(); break;
+    case 'l': case 'L': $('#btnLevel').click(); break;
+    case 't': case 'T': toggleTheme(); break;
+    case '1': setMode('pivot'); break;
+    case '2': setMode('supports'); break;
+    case '3': setMode('free'); break;
+    case '?': $('#dlgHelp').showModal(); break;
+  }
+});
+
+/* ============================== CONTROLS ================================ */
+function syncControls(){
+  $('#inLen').value=S.L;        $('#vLen').textContent=fmt(S.L,2)+' m';
+  $('#inBeamMass').value=S.beamMass; $('#vBeamMass').textContent=fmt(S.beamMass,2)+' kg';
+  $('#inCom').value=S.comF;     $('#vCom').textContent=fmt(S.comF*100,1)+' %';
+  $('#inPivot').value=S.pivotF; $('#vPivot').textContent=fmt(pivotS(),2)+' m';
+  $('#inSupA').value=S.supAF;   $('#vSupA').textContent=fmt(supAS(),2)+' m';
+  $('#inSupB').value=S.supBF;   $('#vSupB').textContent=fmt(supBS(),2)+' m';
+  $('#inG').value=S.g;          $('#vG').textContent=fmt(S.g,2);
+  $('#inDamp').value=S.damp;    $('#vDamp').textContent=fmt(S.damp,2);
+  $('#inDec').value=S.dec;      $('#vDec').textContent=S.dec;
+  $('#chkDyn').checked=S.dyn;
+  $('#selMount').value=S.mount;
+  $('#mountHint').innerHTML = (S.tiltMoments? MOUNT_TEXT_ADV : MOUNT_TEXT)[S.mount]||'';
+  const ctm = $('#chkTiltM'); if(ctm) ctm.checked = S.tiltMoments;
+  const tmh = $('#tiltMHint');
+  if(tmh) tmh.innerHTML = S.tiltMoments
+    ? 'Every moment now carries a factor cos&thinsp;&theta;, and the beam is simulated as a real rigid body. Because the loads then have a genuine height above or below the pivot line, a beam can come to rest <em>balanced but tilted</em> — which is the point of the stable / neutral / unstable distinction.'
+    : 'The moments are always worked out for the level beam, so the beam returns to the horizontal exactly when they balance. The tilt on screen is just a picture of how far out of balance it is.';
+  $('#inProbe').value=S.probe.f;$('#vProbe').textContent=fmt(S.probe.f*S.L,2)+' m';
+  $('#chkProbe').checked=S.probe.on;
+  $('#btnProbe').setAttribute('aria-pressed', S.probe.on);
+  $('#btnFbd').setAttribute('aria-pressed', S.fbd);
+  $('#btnValues').setAttribute('aria-pressed', !S.show.values);
+  $('#btnPlay').setAttribute('aria-pressed', S.dyn);
+  $('#modePivot').setAttribute('aria-pressed', S.mode==='pivot');
+  $('#modeSupports').setAttribute('aria-pressed', S.mode==='supports');
+  $('#modeFree').setAttribute('aria-pressed', S.mode==='free');
+  $('#fPivot').hidden = S.mode!=='pivot';
+  $('#fSupA').hidden = S.mode!=='supports';
+  $('#fSupB').hidden = S.mode!=='supports';
+  $('#grpPivot').hidden = S.mode==='free';
+  $('#grpProbe').hidden = false;
+  const sh=S.show;
+  const map={cShowGrid:'grid',cShowRuler:'ruler',cShowValues:'values',cShowPerp:'perp',cShowLoA:'loa',
+             cShowComp:'comp',cShowArc:'arc',cShowCom:'com',cShowAngle:'angle',cSnap:'snap',
+             cScaleArrows:'scaleArrows',cShowTrace:'trace'};
+  for(const k in map){ const el=$('#'+k); if(el) el.checked = !!sh[map[k]]; }
+  $('#playIcon').innerHTML = S.dyn ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"/>' : '<path d="M7 4l13 8-13 8z"/>';
+}
+function setMode(m){
+  snapshot();
+  S.mode=m; S.omega=0;
+  if(m==='supports') S.theta=0;
+  syncControls(); listDirty=true; recompute();
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme')||'light';
+  const nx = cur==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',nx);
+  try{ localStorage.setItem('ml-theme',nx); }catch(err){}
+  refreshColours(); themeStamp=nx; drawGraph();
+}
+
+function wire(){
+  // mode
+  $('#modePivot').onclick=()=>setMode('pivot');
+  $('#modeSupports').onclick=()=>setMode('supports');
+  $('#modeFree').onclick=()=>setMode('free');
+
+  const rng=(id,fn)=>{ const el=$('#'+id); el.addEventListener('input',()=>{ fn(parseFloat(el.value)); syncControls(); recompute(); }); };
+  rng('inLen', v=>{ S.L=v; for(const it of S.items) it.x=clamp(it.x,0,S.L); fillGraphSelect(); });
+  rng('inBeamMass', v=>{ S.beamMass=v; });
+  rng('inCom', v=>{ S.comF=v; });
+  rng('inPivot', v=>{ S.pivotF=v; });
+  rng('inSupA', v=>{ S.supAF=v; });
+  rng('inSupB', v=>{ S.supBF=v; });
+  rng('inG', v=>{ S.g=v; });
+  rng('inDamp', v=>{ S.damp=v; });
+  rng('inDec', v=>{ S.dec=v; });
+  rng('inProbe', v=>{ S.probe.f=v; });
+  $('#selG').onchange=e=>{ S.g=parseFloat(e.target.value); syncControls(); recompute(); };
+  $('#selMount').onchange=e=>{ snapshot(); S.mount=e.target.value; S.omega=0; syncControls(); recompute(); };
+  $('#chkDyn').onchange=e=>{ S.dyn=e.target.checked; if(!S.dyn) S.omega=0; syncControls(); recompute(); };
+  $('#chkTiltM').onchange=e=>{ snapshot(); S.tiltMoments=e.target.checked; S.omega=0;
+    if(!S.tiltMoments) S.theta=0; syncControls(); recompute(); };
+  $('#chkProbe').onchange=e=>{ S.probe.on=e.target.checked; syncControls(); recompute(); };
+  const map={cShowGrid:'grid',cShowRuler:'ruler',cShowValues:'values',cShowPerp:'perp',cShowLoA:'loa',
+             cShowComp:'comp',cShowArc:'arc',cShowCom:'com',cShowAngle:'angle',cSnap:'snap',
+             cScaleArrows:'scaleArrows',cShowTrace:'trace'};
+  for(const k in map){ const el=$('#'+k); if(el) el.onchange=()=>{ S.show[map[k]]= el.checked?1:0; recompute(); }; }
+
+  // stage tools
+  $('#btnPlay').onclick=()=>{ S.dyn=!S.dyn; if(!S.dyn) S.omega=0; syncControls(); recompute(); };
+  $('#btnLevel').onclick=()=>{ S.theta=0; S.omega=0; trace.length=0; recompute(); };
+  $('#btnAddMass').onclick=$('#btnAddMass2').onclick=()=>{ snapshot(); S.sel=addMass().id; listDirty=true; fillGraphSelect(); recompute(); };
+  $('#btnAddForce').onclick=$('#btnAddForce2').onclick=()=>{ snapshot(); S.sel=addForce().id; listDirty=true; fillGraphSelect(); recompute(); };
+  $('#btnAddCouple').onclick=()=>{ snapshot(); S.sel=addCouple().id; listDirty=true; fillGraphSelect(); recompute(); };
+  $('#btnDelete').onclick=()=>{ if(S.sel){ snapshot(); S.items=S.items.filter(o=>o.id!==S.sel); S.sel=null; listDirty=true; fillGraphSelect(); recompute(); } };
+  $('#btnClear').onclick=()=>{ snapshot(); S.items=[]; S.sel=null; listDirty=true; fillGraphSelect(); recompute(); };
+  $('#btnProbe').onclick=()=>{ S.probe.on=!S.probe.on; syncControls(); recompute(); };
+  $('#btnFbd').onclick=()=>{ S.fbd=!S.fbd; syncControls(); recompute(); };
+  $('#btnUndo').onclick=undo;
+  $('#btnValues').onclick=()=>{ S.show.values = S.show.values?0:1; syncControls(); recompute();
+    toast(S.show.values? 'Values shown' : 'Values hidden — over to the students'); };
+
+  // object list delegation
+  $('#objList').addEventListener('input', e=>{
+    const inp=e.target; if(!inp.dataset.f) return;
+    const id=+inp.closest('.obj').dataset.id, it=itemById(id); if(!it) return;
+    let v=parseFloat(inp.value); if(!isFinite(v)) return;
+    if(inp.dataset.f==='x') v=clamp(v,0,S.L);
+    if(inp.dataset.f==='m'||inp.dataset.f==='F') v=Math.max(0,v);
+    if(inp.dataset.f==='sepF') v=Math.max(0.05,v);
+    it[inp.dataset.f]=v; recompute();
+  });
+  $('#objList').addEventListener('click', e=>{
+    const b=e.target.closest('button'); const row=e.target.closest('.obj'); if(!row) return;
+    const id=+row.dataset.id, it=itemById(id); if(!it) return;
+    if(!b){ S.sel=id; listDirty=true; recompute(); return; }
+    if(b.dataset.act==='del'){ snapshot(); S.items=S.items.filter(o=>o.id!==id); if(S.sel===id)S.sel=null; }
+    else if(b.dataset.act==='dup'){ snapshot(); const c=Object.assign({},it); c.id=S.nextId++; c.x=clamp(c.x+0.15,0,S.L); c.colour=nextColour(); c.label=it.label+' (copy)'; c.unknown=null; S.items.push(c); S.sel=c.id; }
+    else if(b.dataset.u){
+      snapshot();
+      const was = it.unknown===b.dataset.u;
+      for(const o of S.items) o.unknown=null;
+      it.unknown = was? null : b.dataset.u;
+      if(it.unknown){ S.theta=0; S.omega=0; S.dyn=false; trace.length=0; toast('Beam held level while you work it out'); }
+    }
+    listDirty=true; fillGraphSelect(); recompute();
+  });
+
+  // solve tab
+  $('#btnSolve').onclick=()=>{
+    const sol=solveFor(), it=unknownItem();
+    if(!sol||!it) return;
+    snapshot();
+    it[it.unknown] = Math.round(sol.value*1000)/1000;
+    it.unknown = null;
+    S.theta=0; S.omega=0;
+    listDirty=true; recompute();
+    toast('Applied — the beam now balances');
+  };
+  $('#btnCopyWork').onclick=()=>{
+    const txt = WORK.map(w=>w.h.replace(/<[^>]+>/g,'')).join('\n');
+    navigator.clipboard.writeText(txt).then(()=>toast('Working copied')).catch(()=>toast('Copy failed'));
+  };
+  $('#btnWalk').onclick=()=>walkTo(0);
+  $('#btnWalkNext').onclick=()=>walkTo(walkIdx+1);
+  $('#btnWalkPrev').onclick=()=>walkTo(walkIdx-1);
+
+  // graph
+  $('#graphVar').onchange=e=>{ graphKey=e.target.value; drawGraph(); };
+
+  // tabs
+  $$('.tabs button').forEach(btn=>{
+    btn.onclick=()=>{
+      $$('.tabs button').forEach(b=>b.setAttribute('aria-selected', b===btn));
+      $$('[role=tabpanel]').forEach(p=>p.hidden = (p.id !== btn.getAttribute('aria-controls')));
+      if(btn.id==='tab-graph'){ fillGraphSelect(); drawGraph(); }
+      if(btn.id==='tab-solve') renderWorking();
+      LAST = summary(); updatePanels();
+    };
+  });
+
+  // header
+  $('#btnTheme').onclick=toggleTheme;
+  $('#btnHelp').onclick=()=>$('#dlgHelp').showModal();
+  $('#closeHelp').onclick=()=>$('#dlgHelp').close();
+  $('#btnPresets').onclick=()=>$('#dlgPresets').showModal();
+  $('#closePresets').onclick=()=>$('#dlgPresets').close();
+  $('#btnShare').onclick=()=>{
+    const url = location.origin+location.pathname+'#s='+encodeState();
+    navigator.clipboard.writeText(url).then(()=>toast('Link copied')).catch(()=>{ location.hash='s='+encodeState(); toast('Setup saved to the address bar'); });
+  };
+  $('#btnCopyState').onclick=()=>navigator.clipboard.writeText(encodeState()).then(()=>toast('Setup code copied')).catch(()=>toast('Copy failed'));
+  $('#btnPasteState').onclick=async()=>{
+    let txt=null;
+    try{ txt = await navigator.clipboard.readText(); }catch(err){ txt = prompt('Paste the setup code:'); }
+    if(!txt) return;
+    const o = decodeState(txt.trim().replace(/^.*#s=/,''));
+    if(o && deserialise(o)){ snapshot(); listDirty=true; fillGraphSelect(); syncControls(); recompute(); toast('Setup loaded'); }
+    else toast('That is not a valid setup code');
+  };
+  $('#btnPng').onclick=$('#btnPng2').onclick=savePng;
+  $('#btnReset').onclick=()=>{ snapshot(); S=defaults(); starter(); listDirty=true; fillGraphSelect(); syncControls(); recompute(); };
+}
+
+function savePng(){
+  const w = cv.width, h = cv.height;
+  const off = document.createElement('canvas'); off.width=w; off.height=h;
+  const oc = off.getContext('2d');
+  oc.fillStyle = css('--stage'); oc.fillRect(0,0,w,h);
+  oc.drawImage(cv,0,0);
+  oc.fillStyle = css('--muted'); oc.font='600 '+(13*VIEW.dpr)+'px system-ui,sans-serif'; oc.textAlign='right';
+  oc.fillText('Moments Lab', w-12*VIEW.dpr, h-12*VIEW.dpr);
+  off.toBlob(b=>{
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b); a.download='moments-diagram.png'; a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    toast('Diagram saved');
+  });
+}
+
+/* ============================== PRESETS ================================= */
+const PRESETS = [
+ { n:'Balanced seesaw', d:'The classic GCSE starting point: two masses either side of a central pivot.',
+   f:()=>{ S.mode='pivot'; S.L=2; S.beamMass=0; S.pivotF=0.5; S.items=[]; addMass(0.6,0.5); addMass(1.5,0.4); } },
+ { n:'Find the missing mass', d:'One mass is unknown. Open the Solve tab and read the full mark-scheme working.',
+   f:()=>{ S.mode='pivot'; S.L=2; S.beamMass=0; S.pivotF=0.5; S.items=[]; addMass(0.4,1.2); const b=addMass(1.6,0.5); b.unknown='m'; } },
+ { n:'Non-uniform beam', d:'A heavy beam whose centre of mass is not in the middle — a favourite A-Level twist.',
+   f:()=>{ S.mode='pivot'; S.L=3; S.beamMass=4; S.comF=0.35; S.pivotF=0.5; S.items=[]; addMass(2.6,2); } },
+ { n:'Metre rule practical', d:'A 1 m rule of mass 0.10 kg pivoted at the 50 cm mark, with 100 g hangers.',
+   f:()=>{ S.mode='pivot'; S.L=1; S.beamMass=0.1; S.comF=0.5; S.pivotF=0.5; S.items=[]; addMass(0.2,0.1); addMass(0.8,0.1); } },
+ { n:'Angled force', d:'A force pulling at 35° to the beam. Compare the perpendicular distance with resolving the force.',
+   f:()=>{ S.mode='pivot'; S.L=2; S.beamMass=0; S.pivotF=0.2; S.items=[]; addMass(0.6,1.5); addForce(1.8,12,35); S.show.comp=1; } },
+ { n:'Plank on two supports', d:'A person standing on a plank. Find both reaction forces.',
+   f:()=>{ S.mode='supports'; S.L=4; S.beamMass=20; S.comF=0.5; S.supAF=0.05; S.supBF=0.95; S.items=[]; addMass(2.8,60); } },
+ { n:'Diving board (overhang)', d:'Load beyond the far support: one reaction goes negative and the board tips.',
+   f:()=>{ S.mode='supports'; S.L=3; S.beamMass=8; S.supAF=0.1; S.supBF=0.5; S.items=[]; addMass(2.9,55); } },
+ { n:'Tower crane', d:'A counterweight balancing a load on a jib. Move the load and watch the balance change.',
+   f:()=>{ S.mode='pivot'; S.L=4; S.beamMass=1.5; S.pivotF=0.35; S.items=[]; addMass(0.2,900); addMass(3.4,180); } },
+ { n:'Wheelbarrow', d:'A second-class lever: the wheel is the pivot, the load is close to it, the effort is at the handles.',
+   f:()=>{ S.mode='pivot'; S.L=1.6; S.beamMass=0; S.pivotF=0; S.items=[]; addMass(0.5,25); const e=addForce(1.55,80,90); e.label='Effort'; } },
+ { n:'Forearm and biceps', d:'A third-class lever: elbow pivot, biceps 5 cm away, load in the hand at 35 cm.',
+   f:()=>{ S.mode='pivot'; S.L=0.4; S.beamMass=0; S.pivotF=0; S.items=[]; const b=addForce(0.05,150,90); b.label='Biceps'; addMass(0.35,4); } },
+ { n:'Couple (pure turning)', d:'Two equal, opposite, parallel forces. Drag the probe: the moment is the same about every point.',
+   f:()=>{ S.mode='free'; S.L=2; S.beamMass=0; S.items=[]; const c=addCouple(4); c.x=1; c.sepF=1.2; S.probe.on=true; S.dyn=false; } },
+ { n:'Bridge with two loads', d:'Two vehicles on a supported span. Watch the reactions share the load as they move.',
+   f:()=>{ S.mode='supports'; S.L=6; S.beamMass=200; S.supAF=0.02; S.supBF=0.98; S.items=[]; addMass(1.5,900); addMass(4.2,1400); } }
+];
+function buildPresetList(){
+  const w=$('#presetList'); w.innerHTML='';
+  PRESETS.forEach((p,i)=>{
+    const b=document.createElement('button');
+    b.className='btn'; b.style.cssText='flex-direction:column;align-items:flex-start;text-align:left;padding:11px 12px;height:100%';
+    b.innerHTML='<b style="font-size:13px">'+esc(p.n)+'</b><span style="font-weight:400;font-size:11.5px;color:var(--muted);white-space:normal;line-height:1.45">'+esc(p.d)+'</span>';
+    b.onclick=()=>{
+      snapshot();
+      const keep = {show:S.show, g:S.g, dec:S.dec, dyn:S.dyn, damp:S.damp};
+      S = defaults(); Object.assign(S, keep);
+      S.show = Object.assign({}, keep.show);
+      PRESETS[i].f();
+      S.theta=0; S.omega=0; S.sel=null;
+      if(S.items.some(o=>o.unknown)) S.dyn=false;
+      listDirty=true; fillGraphSelect(); syncControls(); recompute();
+      $('#dlgPresets').close(); toast(p.n+' loaded');
+    };
+    w.appendChild(b);
+  });
+}
+
+/* =============================== HELP =================================== */
+const HELP = `
+<h4>What Moments Lab does</h4>
+<p>Everything on the beam is live. Drag a mass and every number — moments, reactions, the graph and the written solution — updates in the same frame. Nothing is pre-baked, so any question you can draw, you can build.</p>
+
+<h4>The physics</h4>
+<p>The moment of a force about a point is</p>
+<p style="font-family:var(--mono);background:var(--panel-2);padding:8px 10px;border-radius:8px"><b>M = F &times; d&#8869;</b> &nbsp; where d&#8869; is the perpendicular distance from the point to the line of action of the force.</p>
+<p>For a force at an angle <b>&theta;</b> to the beam, a distance <b>d</b> along it, this is the same as <b>M = F d sin&theta;</b>. Turn on <em>Components</em> in the Display tab to see why: only the component perpendicular to the beam, <em>F sin&theta;</em>, has any turning effect.</p>
+<p>The <b>principle of moments</b>: for a body in equilibrium the total anticlockwise moment about any point equals the total clockwise moment about that same point. Moments Lab takes anticlockwise as positive throughout.</p>
+<p>Tilt the beam by dragging it. The perpendicular distances shrink by a factor of cos&thinsp;&theta; — which is exactly why a tilted balance is still a balance.</p>
+
+<h4>The three arrangements</h4>
+<ul>
+<li><b>Single pivot</b> — the beam can turn. Unbalanced moments make it swing, damped, until it settles or reaches its stops.</li>
+<li><b>Two supports</b> — the beam is held level and the two reaction forces are calculated for you: take moments about A to eliminate R<sub>A</sub>, then resolve vertically. If a reaction comes out negative the beam topples, and Moments Lab says so.</li>
+<li><b>Free body</b> — nothing holds the beam. Use it for couples: two equal, opposite, parallel forces produce the same moment about <em>every</em> point.</li>
+</ul>
+
+<h4>What the tilt means</h4>
+<p>By default the moments are always worked out for the <b>level</b> beam &mdash; that is the question a moments problem actually asks &mdash; and the tilt you see is simply a picture of how far out of balance the beam is. So <em>balanced</em> and <em>horizontal</em> always mean the same thing: put the moments right and the beam swings back to level on its own. The numbers in the table do not wobble while it settles, because they never depended on the angle.</p>
+<p>For A&#8209;Level you can turn that on its head. In the <b>Display</b> tab, tick <b>Moments change as the beam tilts</b> and every moment picks up its factor cos&thinsp;&theta;, with the beam simulated as a genuine rigid body. <b>How the loads are drawn</b> then becomes physics rather than decoration:</p>
+<ul>
+<li><b>Hanging below the rod</b> &mdash; a tilt swings the weights back, so the balance is <b>stable</b> and settles at tan&thinsp;&theta; = &Sigma;Wd&thinsp;/&thinsp;&Sigma;Wh. This is how a real beam balance works, and it means a beam can rest balanced but tilted.</li>
+<li><b>Straddling the axis</b> &mdash; every weight acts through the pivot line, so nothing restores it: <b>neutral</b> equilibrium, the textbook idealisation, and the reason a knife&#8209;edge balance has to be levelled by hand.</li>
+<li><b>Sitting on top</b> &mdash; a tilt pulls the weights further over: <b>unstable</b>, and the smallest nudge destroys the balance.</li>
+</ul>
+<p>The Analyse tab names which of the three you are looking at, so stable, neutral and unstable come out of the apparatus rather than out of a definition.</p>
+
+<h4>The moment probe</h4>
+<p>Press <kbd>P</kbd> and drag the crosshair. It takes moments about wherever you put it, including the reaction forces. When the body is in equilibrium the total stays stubbornly at zero — the single most useful idea in A-Level statics, and one that is hard to believe until you watch it happen.</p>
+
+<h4>Marking an unknown</h4>
+<p>In the <b>Build</b> tab press <span class="pill">? m</span> on any mass (or <span class="pill">? F</span> / <span class="pill">? x</span>). The <b>Solve</b> tab then works out the value that balances the beam and writes out the full solution line by line. <em>Walk through it</em> steps through the working, highlighting each force on the diagram as its line appears.</p>
+
+<h4>Keyboard</h4>
+<ul style="columns:2">
+<li><kbd>Space</kbd> free / freeze the beam</li>
+<li><kbd>L</kbd> level the beam</li>
+<li><kbd>M</kbd> add a mass</li>
+<li><kbd>F</kbd> add a force</li>
+<li><kbd>P</kbd> moment probe</li>
+<li><kbd>V</kbd> hide / show values</li>
+<li><kbd>D</kbd> free-body view</li>
+<li><kbd>T</kbd> light / dark</li>
+<li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> arrangement</li>
+<li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> move selection</li>
+<li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> change its size</li>
+<li><kbd>Delete</kbd> remove selection</li>
+<li><kbd>Ctrl</kbd>+<kbd>Z</kbd> undo</li>
+<li><kbd>Shift</kbd>+drag ignores snapping</li>
+<li>double-click the beam adds a mass</li>
+</ul>
+
+<h4>Colour key</h4>
+<div class="legendgrid">
+  <div><span class="swatch" style="background:var(--weight)"></span> weight of the beam</div>
+  <div><span class="swatch" style="background:var(--react)"></span> reaction / support force</div>
+  <div><span class="swatch" style="background:var(--acw)"></span> anticlockwise moment</div>
+  <div><span class="swatch" style="background:var(--cw)"></span> clockwise moment</div>
+</div>
+
+<h4>Sharing a question with a class</h4>
+<p>Press the link button in the toolbar. The whole arrangement is encoded in the address, so a pasted link rebuilds the exact question — no logins, no files, nothing to install. <em>Save PNG</em> drops the diagram straight into a worksheet.</p>
+<p style="margin-top:16px;color:var(--muted);font-size:12px">Moments Lab runs entirely in your browser. Nothing is uploaded anywhere.</p>
+`;
+
+/* =============================== START ================================== */
+function starter(){
+  S.mode='pivot'; S.L=2; S.beamMass=0; S.pivotF=0.5; S.items=[];
+  addMass(0.6,0.5); addMass(1.5,0.4);
+}
+function init(){
+  try{ const t=localStorage.getItem('ml-theme'); if(t) document.documentElement.setAttribute('data-theme',t); }catch(e){}
+  if(!document.documentElement.getAttribute('data-theme')){
+    document.documentElement.setAttribute('data-theme', matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+  }
+  refreshColours(); themeStamp=document.documentElement.getAttribute('data-theme');
+  $('#helpBody').innerHTML = HELP;
+  buildPresetList();
+  let loaded=false;
+  if(location.hash.startsWith('#s=')){
+    const o=decodeState(location.hash.slice(3));
+    if(o) loaded = deserialise(o);
+  }
+  if(!loaded) starter();
+  wire();
+  fillGraphSelect();
+  syncControls();
+  resize();
+  recompute();
+  renderWorking();
+  new ResizeObserver(()=>{ resize(); recompute(); }).observe(cv.parentElement);
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{ refreshColours(); drawGraph(); });
+  rafId = requestAnimationFrame(loop);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+</script>
+</body>
+</html>
