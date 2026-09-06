@@ -1,0 +1,3155 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="description" content="Momentum Lab - an interactive collision, explosion and impulse simulator for GCSE and A-Level Physics. Conservation of momentum, elastic and inelastic collisions, impulse and force-time graphs, two-dimensional collisions and crumple zones.">
+<title>Momentum Lab &mdash; Collisions, Impulse and Conservation</title>
+<style>
+/* ---- standalone page only: delete these two rules when pasting #mtmlab as a fragment ---- */
+html,body{height:100%;margin:0;background:#f2f4f8}
+body{overflow:hidden}
+/* --------------------------------------------------------------------------------------- */
+
+#mtmlab{
+  /* ---- light palette ---- */
+  --bg:#eff2f7;
+  --bg2:#e4e9f1;
+  --stage:#f7f9fc;
+  --stage2:#e8edf5;
+  --panel:#ffffff;
+  --panel2:#f3f6fa;
+  --panel3:#e8edf5;
+  --ink:#141b26;
+  --ink2:#3a4658;
+  --muted:#6a7789;
+  --line:#d5dce7;
+  --line2:#bfc9d9;
+  --accent:#6d28d9;
+  --accent-ink:#ffffff;
+  --accent-soft:#ece5ff;
+  --mom:#6d28d9;          /* momentum */
+  --mom-soft:#ece5ff;
+  --force:#c2410c;        /* force / impulse */
+  --force-soft:#ffe8db;
+  --energy:#047857;       /* kinetic energy */
+  --energy-soft:#d7f2e7;
+  --ok:#15803d;
+  --warn:#b45309;
+  --bad:#be123c;
+  --grid:#ccd6e6;
+  --grid2:#e0e7f1;
+  --track:#c6cfdd;
+  --track2:#98a4b8;
+  --track3:#5d687c;
+  --shadow:0 1px 2px rgba(16,24,40,.06), 0 8px 22px rgba(16,24,40,.08);
+  --shadow-sm:0 1px 2px rgba(16,24,40,.09);
+  --radius:12px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+  color-scheme:light;
+  width:100%;
+  height:100%;
+  min-height:560px;
+  display:flex;
+  flex-direction:column;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:14px;
+  line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  position:relative;
+  overflow:hidden;
+  contain:layout style;
+}
+#mtmlab[data-theme="dark"]{
+  --bg:#0b0e15;
+  --bg2:#11151f;
+  --stage:#0e131d;
+  --stage2:#141b28;
+  --panel:#141a26;
+  --panel2:#1b2231;
+  --panel3:#232c3e;
+  --ink:#e9edf6;
+  --ink2:#c3cbdb;
+  --muted:#8a95a9;
+  --line:#28324a;
+  --line2:#37425e;
+  --accent:#a78bfa;
+  --accent-ink:#140a25;
+  --accent-soft:#2a2050;
+  --mom:#b39bff;
+  --mom-soft:#2a2050;
+  --force:#fb923c;
+  --force-soft:#4a2412;
+  --energy:#34d399;
+  --energy-soft:#0f3a2c;
+  --ok:#4ade80;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --grid:#232f47;
+  --grid2:#1a2334;
+  --track:#7b869a;
+  --track2:#4b5468;
+  --track3:#2c3446;
+  --shadow:0 1px 2px rgba(0,0,0,.45), 0 10px 28px rgba(0,0,0,.5);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.45);
+  color-scheme:dark;
+}
+
+#mtmlab *,#mtmlab *::before,#mtmlab *::after{box-sizing:border-box}
+#mtmlab button,#mtmlab input,#mtmlab select,#mtmlab textarea{font:inherit;color:inherit;margin:0}
+#mtmlab :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+#mtmlab [hidden]{display:none !important}
+#mtmlab .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ---------------- top bar ---------------- */
+#mtmlab .topbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 13px;background:var(--panel);border-bottom:1px solid var(--line);
+  flex:0 0 auto;z-index:5;box-shadow:var(--shadow-sm)
+}
+#mtmlab .brand{display:flex;align-items:center;gap:10px;min-width:0}
+#mtmlab .mark{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;
+  background:linear-gradient(140deg,var(--accent),#0ea5e9);
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow-sm)
+}
+#mtmlab .brand h1{font-size:16px;margin:0;letter-spacing:-.02em;font-weight:700;white-space:nowrap}
+#mtmlab .brand .sub{font-size:11.5px;color:var(--muted);margin-top:-2px;white-space:nowrap}
+
+#mtmlab .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+#mtmlab .seg button{
+  border:0;background:transparent;padding:6px 12px;border-radius:7px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.14s
+}
+#mtmlab .seg button:hover{color:var(--ink)}
+#mtmlab .seg button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:var(--shadow-sm)}
+#mtmlab[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--panel3);color:var(--accent)}
+
+#mtmlab .spacer{flex:1 1 auto}
+#mtmlab .iconbtn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink2);
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;cursor:pointer;transition:.14s;flex:0 0 auto
+}
+#mtmlab .iconbtn:hover{background:var(--panel3);color:var(--ink)}
+#mtmlab .iconbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#mtmlab .btn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;transition:.14s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap
+}
+#mtmlab .btn:hover{background:var(--panel3)}
+#mtmlab .btn:active{transform:translateY(1px)}
+#mtmlab .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#mtmlab .btn.primary:hover{filter:brightness(1.08)}
+#mtmlab .btn.ghost{background:transparent}
+#mtmlab .btn.sm{padding:4px 9px;font-size:11.5px;border-radius:7px}
+#mtmlab .btn.danger{color:var(--bad)}
+#mtmlab .btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------------- layout ---------------- */
+#mtmlab .main{display:flex;flex:1 1 auto;min-height:0;min-width:0}
+#mtmlab .stagewrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;background:var(--stage);overflow:hidden}
+#mtmlab canvas.scene{display:block;width:100%;height:100%;touch-action:none}
+
+#mtmlab .tools{
+  position:absolute;left:11px;top:11px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:5px;
+  box-shadow:var(--shadow-sm);max-width:calc(100% - 22px);opacity:.96
+}
+#mtmlab .tools .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+#mtmlab .speedwrap{display:flex;align-items:center;gap:6px;padding:0 4px;font-size:11.5px;color:var(--muted)}
+#mtmlab .speedwrap input[type=range]{flex:0 0 76px;width:76px;margin:0 2px}
+
+#mtmlab .hud{position:absolute;right:11px;top:11px;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none;max-width:46%}
+#mtmlab .chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
+  box-shadow:var(--shadow-sm);font-variant-numeric:tabular-nums;opacity:.96
+}
+#mtmlab .chip b{font-family:var(--mono);font-size:12.5px}
+#mtmlab .chip.big{font-size:13px;padding:8px 12px;border-color:var(--mom);background:var(--mom-soft);color:var(--mom)}
+
+#mtmlab .verdict{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:11px;width:min(660px,calc(100% - 22px));
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:9px 12px 10px;box-shadow:var(--shadow);opacity:.97
+}
+#mtmlab .verdict .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+#mtmlab .verdict .status{font-weight:700;font-size:13px;letter-spacing:-.01em}
+#mtmlab .verdict .num{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+#mtmlab .pbar{height:15px;border-radius:8px;background:var(--panel3);position:relative;overflow:hidden}
+#mtmlab .pbar i{position:absolute;top:0;bottom:0;display:block;border-radius:8px;transition:.1s linear}
+#mtmlab .pbar .zero{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--ink);opacity:.55}
+#mtmlab .plegend{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:4px;font-family:var(--mono);gap:8px}
+
+/* ---------------- panel ---------------- */
+#mtmlab .panel{
+  flex:0 0 400px;max-width:400px;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0
+}
+#mtmlab .tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+#mtmlab .tabs::-webkit-scrollbar{display:none}
+#mtmlab .tabs button{
+  flex:1 1 auto;border:0;background:transparent;padding:10px 6px 9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:.14s;white-space:nowrap
+}
+#mtmlab .tabs button:hover{color:var(--ink)}
+#mtmlab .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--panel)}
+#mtmlab .tabbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:13px}
+#mtmlab .tabbody::-webkit-scrollbar{width:10px}
+#mtmlab .tabbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--panel)}
+#mtmlab .tabpanel[hidden]{display:none}
+
+#mtmlab .group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;background:var(--panel);overflow:hidden}
+#mtmlab .group>h3{
+  margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+#mtmlab .group .body{padding:11px 12px}
+#mtmlab .group.tight .body{padding:8px}
+
+#mtmlab .field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#mtmlab .field:last-child{margin-bottom:0}
+#mtmlab .field label{flex:0 0 104px;font-size:12.5px;color:var(--ink2);font-weight:600}
+#mtmlab .field .val{flex:0 0 82px;text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+#mtmlab .field input[type=range]{flex:1 1 auto;min-width:0}
+#mtmlab .field.col{flex-direction:column;align-items:stretch;gap:6px}
+#mtmlab .field.col label{flex:none}
+
+#mtmlab input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+#mtmlab input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#mtmlab input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);
+  border:2px solid var(--accent);margin-top:-7px;box-shadow:var(--shadow-sm);transition:.12s
+}
+#mtmlab input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+#mtmlab input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#mtmlab input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--shadow-sm)}
+
+#mtmlab input[type=number],#mtmlab input[type=text],#mtmlab select{
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+  font-size:12.5px;min-width:0;width:100%;font-family:var(--mono)
+}
+#mtmlab select{font-family:var(--sans);cursor:pointer}
+#mtmlab input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+#mtmlab .check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:3px 0}
+#mtmlab .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+
+#mtmlab .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+#mtmlab .hint.warn{color:var(--warn)}
+#mtmlab .hint.bad{color:var(--bad)}
+#mtmlab .hint.ok{color:var(--ok)}
+#mtmlab .hint em{font-style:normal;color:var(--accent);font-weight:600}
+
+/* body cards */
+#mtmlab .bodylist{display:flex;flex-direction:column;gap:7px}
+#mtmlab .bodycard{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px;transition:.14s}
+#mtmlab .bodycard.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+#mtmlab .bodycard .head{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+#mtmlab .bodycard .dot{width:13px;height:13px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(0,0,0,.18)}
+#mtmlab .bodycard .name{font-size:12.5px;font-weight:700;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#mtmlab .bodycard .grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:5px 7px;align-items:center}
+#mtmlab .bodycard .grid span{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+#mtmlab .bodycard .acts{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+#mtmlab .qbtn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;font-weight:700;color:var(--muted)}
+#mtmlab .qbtn:hover{color:var(--ink)}
+
+/* tables */
+#mtmlab table.led{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+#mtmlab table.led th{
+  text-align:right;font-size:11px;color:var(--muted);padding:5px 6px;
+  border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap
+}
+#mtmlab table.led th:first-child,#mtmlab table.led td:first-child{text-align:left}
+#mtmlab table.led td{padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);text-align:right;white-space:nowrap}
+#mtmlab table.led td.nm{font-family:var(--sans);font-weight:600;max-width:96px;overflow:hidden;text-overflow:ellipsis}
+#mtmlab table.led tr.tot td{font-weight:700;border-top:2px solid var(--line2);border-bottom:0}
+#mtmlab table.led tr.sub td{color:var(--muted);border-bottom:1px dashed var(--line)}
+
+#mtmlab .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+#mtmlab .kv:last-child{border-bottom:0}
+#mtmlab .kv .k{color:var(--muted);font-weight:600}
+#mtmlab .kv .v{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+#mtmlab .banner{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:13px;
+  background:var(--panel2);border:1px solid var(--line);margin-bottom:12px
+}
+#mtmlab .banner .ic{font-size:17px;line-height:1.1;flex:0 0 auto}
+#mtmlab .banner.ok{background:var(--energy-soft);border-color:var(--energy);color:var(--energy)}
+#mtmlab .banner.mom{background:var(--mom-soft);border-color:var(--mom);color:var(--mom)}
+#mtmlab .banner.warn{background:var(--force-soft);border-color:var(--force);color:var(--force)}
+#mtmlab .banner.bad{background:var(--force-soft);border-color:var(--bad);color:var(--bad)}
+
+#mtmlab .working{
+  font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--panel2);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;
+  overflow-x:auto;color:var(--ink);min-height:60px
+}
+#mtmlab .working .step{display:block;padding:1px 0}
+#mtmlab .working .lbl{color:var(--muted)}
+#mtmlab .working .hi{background:var(--accent-soft);border-radius:3px;padding:0 2px}
+#mtmlab .working em{font-style:normal;color:var(--accent);font-weight:700}
+#mtmlab .working b{color:var(--ink)}
+
+#mtmlab .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel3);color:var(--muted)}
+#mtmlab .pill.ok{background:var(--energy-soft);color:var(--energy)}
+#mtmlab .pill.bad{background:var(--force-soft);color:var(--bad)}
+#mtmlab .pill.mom{background:var(--mom-soft);color:var(--mom)}
+
+#mtmlab canvas.graph{width:100%;height:250px;display:block;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+#mtmlab .graphtabs{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+#mtmlab .graphtabs button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 9px;
+  font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted)
+}
+#mtmlab .graphtabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+/* solver grid */
+#mtmlab .solvegrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;align-items:end}
+#mtmlab .solvegrid .cell{display:flex;flex-direction:column;gap:3px}
+#mtmlab .solvegrid .cell span{font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:.02em}
+#mtmlab .solvegrid input{text-align:center;padding:6px 4px}
+#mtmlab .solvegrid input.unk{background:var(--accent-soft);border-color:var(--accent);font-weight:700;color:var(--accent)}
+#mtmlab .solvegrid .cell.hdr{grid-column:1 / -1;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+
+/* dialogs */
+#mtmlab .modal{
+  position:absolute;inset:0;background:rgba(9,12,20,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:20
+}
+#mtmlab .modal[open]{display:flex}
+#mtmlab .modal .sheet{
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);
+  max-width:min(760px,100%);width:100%;max-height:100%;display:flex;flex-direction:column;overflow:hidden
+}
+#mtmlab .modal .dhead{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto}
+#mtmlab .modal .dhead h2{margin:0;font-size:16px}
+#mtmlab .modal .dbody{padding:15px;overflow-y:auto;flex:1 1 auto}
+#mtmlab .modal h4{margin:16px 0 6px;font-size:13px;color:var(--accent)}
+#mtmlab .modal h4:first-child{margin-top:0}
+#mtmlab .modal p,#mtmlab .modal li{font-size:13px;color:var(--ink2);line-height:1.6}
+#mtmlab .modal ul{margin:6px 0;padding-left:20px}
+#mtmlab kbd{
+  font-family:var(--mono);font-size:11px;background:var(--panel3);border:1px solid var(--line);
+  border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink)
+}
+#mtmlab .eq{font-family:var(--mono);background:var(--panel2);padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px}
+#mtmlab .presetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:9px}
+#mtmlab .presetgrid button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 11px;cursor:pointer;
+  text-align:left;display:flex;flex-direction:column;gap:3px;transition:.14s
+}
+#mtmlab .presetgrid button:hover{background:var(--panel3);border-color:var(--accent)}
+#mtmlab .presetgrid b{font-size:13px}
+#mtmlab .presetgrid span{font-size:11.5px;color:var(--muted);line-height:1.45}
+#mtmlab .presetgrid .tag{align-self:flex-start;margin-top:3px}
+
+#mtmlab .toast{
+  position:absolute;left:50%;bottom:96px;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--panel);padding:9px 15px;border-radius:10px;font-size:13px;font-weight:600;
+  transition:.22s;z-index:25;box-shadow:var(--shadow);max-width:80%;text-align:center
+}
+#mtmlab .toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  #mtmlab .main{flex-direction:column}
+  #mtmlab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:48%}
+  #mtmlab .stagewrap{flex:1 1 auto;min-height:220px}
+  #mtmlab .brand .sub{display:none}
+  #mtmlab .verdict{bottom:8px;padding:7px 10px}
+}
+@media (max-width:800px){
+  #mtmlab .seg{order:5;width:100%}
+  #mtmlab .seg button{flex:1 1 0;padding:7px 4px}
+}
+@media (max-width:600px){
+  #mtmlab .speedwrap label{display:none}
+  #mtmlab .speedwrap{padding:0 2px}
+  #mtmlab .topbar{gap:8px;padding:7px 10px}
+  #mtmlab .brand .txt{display:none}
+  #mtmlab .hud{display:none}
+  #mtmlab .iconbtn{width:30px;height:30px}
+  #mtmlab .solvegrid{grid-template-columns:repeat(2,1fr)}
+}
+
+/* --- keep the top bar on a single row in a ~1000 px embed column --- */
+@media (max-width:1120px){
+  /* in a narrow embed the readout chips would sit on top of the toolbar */
+  #mtmlab .hud{top:60px}
+  #mtmlab .topbar{gap:8px;padding:7px 10px}
+  #mtmlab .brand .sub{display:none}
+  #mtmlab .brand h1{font-size:15px}
+  #mtmlab .seg{padding:2px}
+  #mtmlab .seg button{padding:6px 8px;font-size:12px}
+  #mtmlab .iconbtn{width:31px;height:31px}
+  #mtmlab .btn.sm{padding:5px 8px}
+}
+</style>
+</head>
+<body>
+<div id="mtmlab" data-theme="light">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6.5" cy="12" r="3.2"></circle>
+          <circle cx="17.5" cy="12" r="3.2"></circle>
+          <path d="M11 9.4h3"></path>
+          <path d="M12.6 8l1.6 1.4-1.6 1.4"></path>
+        </svg>
+      </div>
+      <div class="txt">
+        <h1>Momentum Lab</h1>
+        <div class="sub">Collisions, impulse &amp; conservation &middot; GCSE &amp; A&#8209;Level</div>
+      </div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Simulation">
+      <button id="modeLine" aria-pressed="true" title="Trolleys on a track: collisions and explosions in a straight line (1)">Straight line</button>
+      <button id="mode2D" aria-pressed="false" title="Pucks on a table: oblique collisions in two dimensions (2)">Two dimensions</button>
+      <button id="modeSafe" aria-pressed="false" title="Crash test: impulse, contact time and crumple zones (3)">Impact &amp; safety</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button class="btn sm" id="btnPresets" title="Load a ready-made scenario">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h10"></path></svg>
+      <span class="pl">Scenarios</span>
+    </button>
+    <button class="iconbtn" id="btnShare" title="Copy a link that restores this exact setup" aria-label="Copy share link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnPng" title="Save the diagram as a PNG image" aria-label="Save image">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnTheme" title="Light or dark (T)" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnHelp" title="Help, the physics and keyboard shortcuts" aria-label="Help">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"></path><path d="M12 17.6h.01"></path></svg>
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="stagewrap" id="stagewrap">
+      <canvas class="scene" id="scene" tabindex="0" aria-label="Momentum simulation. Use the panel to change masses and velocities."></canvas>
+
+      <div class="tools">
+        <button class="iconbtn" id="btnPlay" title="Run or pause (Space)" aria-pressed="false" aria-label="Run or pause">
+          <svg id="playIcon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnStep" title="Advance one small step (.)" aria-label="Step forward">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 5l9 7-9 7z"></path><path d="M18 5v14"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnReset" title="Back to the start (R)" aria-label="Reset">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v6h6"></path><path d="M20 20v-6h-6"></path><path d="M20 9A8 8 0 0 0 6.3 6.3L4 10"></path><path d="M4 15a8 8 0 0 0 13.7 2.7L20 14"></path></svg>
+        </button>
+        <button class="btn sm primary" id="btnFire" title="Release the stored energy between the two objects (X)" hidden>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 5.2L20 9l-4 4 1 6-5-2.8L7 19l1-6-4-4 5.6-.8z"></path></svg>
+          Release the spring
+        </button>
+        <div class="divider"></div>
+        <div class="speedwrap">
+          <label for="inSpeed" title="Slow the whole simulation down">Speed</label>
+          <input type="range" id="inSpeed" min="-2" max="0.3" step="0.01" value="0">
+          <span id="vSpeed" style="font-family:var(--mono);min-width:38px;text-align:right">1.0&times;</span>
+        </div>
+        <div class="divider"></div>
+        <button class="iconbtn" id="btnVectors" title="Show or hide the momentum arrows (V)" aria-pressed="true" aria-label="Toggle vectors">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 12h13"></path><path d="M13 7l5 5-5 5"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnTrails" title="Show or hide motion trails" aria-pressed="true" aria-label="Toggle trails">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="12" r="3"></circle><path d="M3 12h3"></path><path d="M8 12h1.5"></path><path d="M11.5 12H13"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnValues" title="Hide every number so students work them out (H)" aria-pressed="false" aria-label="Hide values">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="2.6"></circle><path d="M3 3l18 18"></path></svg>
+        </button>
+      </div>
+
+      <div class="hud" id="hud">
+        <div class="chip big" id="hudTotal">Total momentum <b id="hudP">0.00</b> kg&#8202;m/s</div>
+        <div class="chip" id="hudKe">Kinetic energy <b id="hudK">0.00</b> J</div>
+        <div class="chip" id="hudExtra" hidden>&nbsp;</div>
+      </div>
+
+      <div class="verdict">
+        <div class="row1">
+          <span class="status" id="vStatus">Ready</span>
+          <span class="num" id="vNum">&nbsp;</span>
+        </div>
+        <div class="pbar" id="pbar" aria-hidden="true"><span class="zero" id="pzero"></span></div>
+        <div class="plegend"><span id="vLeft">&nbsp;</span><span id="vRight">&nbsp;</span></div>
+      </div>
+      <p class="sr" id="live" aria-live="polite"></p>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div class="panel">
+      <div class="tabs" role="tablist" aria-label="Panels">
+        <button role="tab" id="tab-setup"   aria-selected="true"  aria-controls="p-setup">Set up</button>
+        <button role="tab" id="tab-analyse" aria-selected="false" aria-controls="p-analyse">Analyse</button>
+        <button role="tab" id="tab-solve"   aria-selected="false" aria-controls="p-solve">Solve</button>
+        <button role="tab" id="tab-graphs"  aria-selected="false" aria-controls="p-graphs">Graphs</button>
+        <button role="tab" id="tab-display" aria-selected="false" aria-controls="p-display">Display</button>
+      </div>
+      <div class="tabbody">
+
+        <!-- ================= SET UP ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-setup" aria-labelledby="tab-setup">
+
+          <div class="group" id="grpCollision">
+            <h3>The collision</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inE">Bounciness <span title="coefficient of restitution">e</span></label>
+                <input type="range" id="inE" min="0" max="1" step="0.01" value="1">
+                <span class="val" id="vE">1.00</span>
+              </div>
+              <p class="hint" id="eHint"></p>
+              <div class="field" style="margin-top:10px">
+                <label for="inCt">Contact time</label>
+                <input type="range" id="inCt" min="0.004" max="0.5" step="0.002" value="0.06">
+                <span class="val" id="vCt">60 ms</span>
+              </div>
+              <p class="hint">The contact time changes the <em>force</em> of the collision but never the impulse: the area under the force&#8209;time graph is always the change in momentum.</p>
+            </div>
+          </div>
+
+          <div class="group tight" id="grpBodies">
+            <h3>Objects <span class="pill" id="bodyCount">2</span></h3>
+            <div class="body">
+              <div class="bodylist" id="bodyList"></div>
+              <div class="field" style="margin-top:10px">
+                <label for="inExpE">Spring energy</label>
+                <input type="range" id="inExpE" min="0.5" max="200" step="0.5" value="12">
+                <span class="val" id="vExpE">12.0 J</span>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm" id="btnAddBody">+ Object</button>
+                <button class="btn sm" id="btnExplode" title="Release a spring between the two objects">Explode</button>
+                <button class="btn sm ghost" id="btnSwap" title="Mirror every velocity">Reverse all</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="group" id="grpTrack">
+            <h3>The track</h3>
+            <div class="body">
+              <label class="check"><input type="checkbox" id="chkWalls"> <span>Walls at both ends (objects bounce back)</span></label>
+              <label class="check"><input type="checkbox" id="chkGates" checked> <span>Light gates, as in the trolley practical</span></label>
+              <div class="field" style="margin-top:9px">
+                <label for="inCard">Card length</label>
+                <input type="range" id="inCard" min="0.02" max="0.30" step="0.005" value="0.10">
+                <span class="val" id="vCard">10.0 cm</span>
+              </div>
+              <div id="gateOut"></div>
+            </div>
+          </div>
+
+          <div class="group" id="grp2D" hidden>
+            <h3>Two-dimensional collision</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inB">Impact offset <i>b</i></label>
+                <input type="range" id="inB" min="-1" max="1" step="0.01" value="0.45">
+                <span class="val" id="vB">0.45</span>
+              </div>
+              <p class="hint">The offset is measured as a fraction of the sum of the radii. Zero is a dead&#8209;centre, head&#8209;on hit; &plusmn;1 is a grazing touch.</p>
+              <label class="check" style="margin-top:8px"><input type="checkbox" id="chkTriangle" checked> <span>Draw the momentum vector triangle</span></label>
+              <label class="check"><input type="checkbox" id="chkComponents" checked> <span>Resolve into <i>x</i> and <i>y</i> components</span></label>
+            </div>
+          </div>
+
+          <div class="group" id="grpSafety" hidden>
+            <h3>Crash test</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inCarM">Car mass</label>
+                <input type="range" id="inCarM" min="200" max="3000" step="10" value="1200">
+                <span class="val" id="vCarM">1200 kg</span>
+              </div>
+              <div class="field">
+                <label for="inCarV">Speed</label>
+                <input type="range" id="inCarV" min="2" max="40" step="0.5" value="13.4">
+                <span class="val" id="vCarV">13.4 m/s</span>
+              </div>
+              <div class="field">
+                <label for="inCarT">Stopping time</label>
+                <input type="range" id="inCarT" min="0.01" max="0.6" step="0.005" value="0.15">
+                <span class="val" id="vCarT">150 ms</span>
+              </div>
+              <div class="field">
+                <label for="inDummy">Occupant mass</label>
+                <input type="range" id="inDummy" min="20" max="120" step="1" value="70">
+                <span class="val" id="vDummy">70 kg</span>
+              </div>
+              <label class="check"><input type="checkbox" id="chkBelt" checked> <span>Seat belt and airbag (the occupant stops more slowly)</span></label>
+              <p class="hint">A crumple zone does not change the momentum the car has to lose. It changes the <em>time</em> taken to lose it &mdash; and that is what changes the force.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ANALYSE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-analyse" aria-labelledby="tab-analyse" hidden>
+          <div class="banner" id="anBanner"><span class="ic">&#8644;</span><span id="anText">Run the collision to fill in the table.</span></div>
+
+          <div class="group">
+            <h3>Before and after <span class="pill" id="ledTag">latest collision</span></h3>
+            <div class="body" style="padding:6px 8px 10px">
+              <table class="led" id="ledTable">
+                <thead><tr><th>Object</th><th>m&nbsp;/&thinsp;kg</th><th>u&nbsp;/&thinsp;m&#8202;s&#8315;&#185;</th><th>v&nbsp;/&thinsp;m&#8202;s&#8315;&#185;</th><th>&Delta;p&nbsp;/&thinsp;N&#8202;s</th></tr></thead>
+                <tbody></tbody>
+              </table>
+              <p class="hint" id="ledHint">Rightwards is taken as positive throughout.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Momentum</h3>
+            <div class="body" id="momBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>Kinetic energy</h3>
+            <div class="body" id="keBody"></div>
+          </div>
+
+          <div class="group" id="grpImpulse">
+            <h3>Impulse and force</h3>
+            <div class="body" id="impBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= SOLVE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-solve" aria-labelledby="tab-solve" hidden>
+          <div class="group">
+            <h3>Conservation calculator</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Type in what an exam question gives you and leave <b>one</b> box empty. Momentum Lab finds the missing value and writes out the full solution.</p>
+              <div class="solvegrid" style="margin-top:10px">
+                <div class="cell hdr">Before</div>
+                <div class="cell"><span>m&#8321; /kg</span><input type="number" id="sm1" step="0.1" value="2"></div>
+                <div class="cell"><span>u&#8321; /m s&#8315;&#185;</span><input type="number" id="su1" step="0.1" value="3"></div>
+                <div class="cell"><span>m&#8322; /kg</span><input type="number" id="sm2" step="0.1" value="4"></div>
+                <div class="cell"><span>u&#8322; /m s&#8315;&#185;</span><input type="number" id="su2" step="0.1" value="0"></div>
+                <div class="cell hdr">After</div>
+                <div class="cell"><span>v&#8321; /m s&#8315;&#185;</span><input type="number" id="sv1" step="0.1" value="-1"></div>
+                <div class="cell"><span>v&#8322; /m s&#8315;&#185;</span><input type="number" id="sv2" step="0.1" placeholder="?"></div>
+                <div class="cell" style="grid-column:span 2;align-self:end">
+                  <label class="check"><input type="checkbox" id="sStick"> <span>They stick together</span></label>
+                </div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:11px;flex-wrap:wrap">
+                <button class="btn sm primary" id="btnSolve">Solve</button>
+                <button class="btn sm" id="btnLoadSolve">Load into the simulation</button>
+                <button class="btn sm ghost" id="btnFromSim">Read from the simulation</button>
+              </div>
+              <div id="solveOut" style="margin-top:10px"></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Predict, then check</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Work out the velocities after the collision yourself, type them in and see how you did.</p>
+              <div class="solvegrid" style="grid-template-columns:1fr 1fr auto;margin-top:9px">
+                <div class="cell"><span>your v&#8321; /m s&#8315;&#185;</span><input type="number" id="pv1" step="0.1"></div>
+                <div class="cell"><span>your v&#8322; /m s&#8315;&#185;</span><input type="number" id="pv2" step="0.1"></div>
+                <div class="cell"><span>&nbsp;</span><button class="btn sm primary" id="btnCheck">Check</button></div>
+              </div>
+              <div id="checkOut" style="margin-top:9px"></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Working <span class="pill" id="workTag">live</span></h3>
+            <div class="body">
+              <div class="working" id="workOut"></div>
+              <div style="display:flex;gap:6px;margin-top:9px;align-items:center;flex-wrap:wrap">
+                <button class="btn sm" id="btnWalk">&#9654; Walk through it</button>
+                <button class="btn sm" id="btnWalkPrev" disabled>&#8592;</button>
+                <button class="btn sm" id="btnWalkNext" disabled>&#8594;</button>
+                <button class="btn sm ghost" id="btnCopyWork">Copy</button>
+                <span class="hint" id="walkStatus" style="margin:0"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= GRAPHS ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-graphs" aria-labelledby="tab-graphs" hidden>
+          <div class="group">
+            <h3>Against time</h3>
+            <div class="body">
+              <div class="graphtabs" role="group" aria-label="Graph to show">
+                <button id="gTabP" aria-pressed="true">Momentum</button>
+                <button id="gTabV" aria-pressed="false">Velocity</button>
+                <button id="gTabK" aria-pressed="false">Kinetic energy</button>
+                <button id="gTabF" aria-pressed="false">Force</button>
+              </div>
+              <canvas class="graph" id="graph" width="760" height="500"></canvas>
+              <div id="graphRead" style="margin-top:9px"></div>
+              <p class="hint" id="graphHint"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= DISPLAY ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-display" aria-labelledby="tab-display" hidden>
+          <div class="group">
+            <h3>What to draw</h3>
+            <div class="body">
+              <div class="checkgrid">
+                <label class="check"><input type="checkbox" id="cGrid" checked> <span>Grid</span></label>
+                <label class="check"><input type="checkbox" id="cRuler" checked> <span>Ruler</span></label>
+                <label class="check"><input type="checkbox" id="cVel" checked> <span>Velocity arrows</span></label>
+                <label class="check"><input type="checkbox" id="cMom" checked> <span>Momentum arrows</span></label>
+                <label class="check"><input type="checkbox" id="cTotal" checked> <span>Total momentum</span></label>
+                <label class="check"><input type="checkbox" id="cLabels" checked> <span>Labels</span></label>
+                <label class="check"><input type="checkbox" id="cSquash" checked> <span>Squash on impact</span></label>
+                <label class="check"><input type="checkbox" id="cStrobe"> <span>Strobe images</span></label>
+                <label class="check"><input type="checkbox" id="cPause" checked> <span>Pause after impact</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Numbers</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inDec">Decimals</label>
+                <input type="range" id="inDec" min="0" max="4" step="1" value="2">
+                <span class="val" id="vDec">2</span>
+              </div>
+              <label class="check"><input type="checkbox" id="cSig"> <span>Round answers to 3 significant figures in the working</span></label>
+              <p class="hint">Momentum is in kg&#8202;m&#8202;s&#8315;&#185;, which is the same unit as the newton second (N&#8202;s) used for impulse &mdash; the app writes N&#8202;s wherever a quantity is an impulse.</p>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Save &amp; share</h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn sm" id="btnCopyState">Copy setup code</button>
+                <button class="btn sm" id="btnPasteState">Paste setup code</button>
+                <button class="btn sm" id="btnPng2">Save PNG</button>
+                <button class="btn sm ghost danger" id="btnHardReset">Reset everything</button>
+              </div>
+              <p class="hint">A setup code holds the whole scenario in a short piece of text. Paste one into a worksheet and students rebuild the exact question in a click.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalHelp" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="sheet">
+      <div class="dhead"><h2>Momentum Lab</h2><button class="iconbtn" id="closeHelp" aria-label="Close">&times;</button></div>
+      <div class="dbody" id="helpBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalPresets" role="dialog" aria-modal="true" aria-label="Scenarios">
+    <div class="sheet">
+      <div class="dhead"><h2>Scenarios</h2><button class="iconbtn" id="closePresets" aria-label="Close">&times;</button></div>
+      <div class="dbody"><div class="presetgrid" id="presetList"></div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+"use strict";
+/* ==========================================================================
+   MOMENTUM LAB
+   Conservation of momentum, impulse and collisions for GCSE and A-Level.
+   Sign convention: rightwards (+x) is positive; in two dimensions the usual
+   x-y axes are used with y upwards.
+   ========================================================================== */
+
+var ROOT = document.getElementById('mtmlab');
+function $(s){ return ROOT.querySelector(s); }
+function $$(s){ return Array.prototype.slice.call(ROOT.querySelectorAll(s)); }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+var PI = Math.PI;
+var COLOURS = ['#e11d48','#0284c7','#16a34a','#d97706','#7c3aed','#0891b2'];
+var LETTERS = 'ABCDEF';
+
+/* ------------------------------- state --------------------------------- */
+function defaults(){
+  return {
+    mode:'line',
+    e:1, ct:0.06,
+    bodies:[],
+    walls:false,
+    gates:{on:true, x:[1.10, 2.90], card:0.10},
+    trackL:4.0,
+    t:0, running:false, speed:1,
+    b2d:0.45, tri:true, comps:true, explodeE:12,
+    safety:{ m:1200, u:13.4, T:0.15, dummy:70, belt:true },
+    dec:2, sig:false,
+    show:{grid:1,ruler:1,vel:1,mom:1,total:1,labels:1,squash:1,strobe:0,values:1,trails:1},
+    sel:null,
+    pauseAfter:true, pauseAt:null,
+    nextId:1,
+    contact:null,
+    last:null,
+    hist:[],
+    strobes:[],
+    gateReads:[],
+    initial:null,
+    graph:'p'
+  };
+}
+var S = defaults();
+
+/* ------------------------------ numbers -------------------------------- */
+function fmt(v,dp){
+  if(v===null||v===undefined||!isFinite(v)) return '–';
+  dp = (dp===undefined)? S.dec : dp;
+  var s = Math.abs(v) < 5e-13 ? 0 : v;
+  var out = s.toFixed(dp);
+  if(parseFloat(out)===0) out = (0).toFixed(dp);
+  return out;
+}
+function sig(v,n){
+  if(!isFinite(v)) return '–';
+  if(v===0) return '0';
+  return String(parseFloat(v.toPrecision(n||3)));
+}
+/* number as it should appear inside a line of working */
+function w(v){ return S.sig ? sig(v,3) : fmt(v); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+
+/* ------------------------------- bodies -------------------------------- */
+function halfLen(m){ return clamp(0.07 + 0.055*Math.cbrt(Math.max(m,0.01)), 0.08, 0.42); }
+function bodyHalf(o){ return (o && o.hl!==undefined && o.hl!==null)? o.hl : halfLen(o.m); }
+function radius(m){ return clamp(0.05 + 0.052*Math.cbrt(Math.max(m,0.01)), 0.055, 0.34); }
+
+function makeBody(o){
+  var id = S.nextId++;
+  var b = {
+    id:id,
+    label: o.label || ('Object '+LETTERS[(id-1)%6]),
+    m: (o.m===undefined? 1 : o.m),
+    x: (o.x===undefined? 1 : o.x),
+    y: (o.y===undefined? 0 : o.y),
+    vx:(o.vx===undefined? 0 : o.vx),
+    vy:(o.vy===undefined? 0 : o.vy),
+    colour: o.colour || COLOURS[(id-1)%COLOURS.length],
+    kind: o.kind || 'trolley',
+    hl: o.hl,
+    trail: [],
+    gateT: [null,null], gateV:[null,null], gateIn:[false,false]
+  };
+  S.bodies.push(b);
+  return b;
+}
+function bodyById(id){
+  for(var i=0;i<S.bodies.length;i++) if(S.bodies[i].id===id) return S.bodies[i];
+  return null;
+}
+function sortedBodies(){
+  return S.bodies.slice().sort(function(a,b){ return a.x-b.x; });
+}
+
+/* ---------------------------- system totals ----------------------------- */
+function totalP(){
+  var px=0, py=0;
+  for(var i=0;i<S.bodies.length;i++){ px += S.bodies[i].m*S.bodies[i].vx; py += S.bodies[i].m*S.bodies[i].vy; }
+  return {x:px, y:py, mag:Math.hypot(px,py)};
+}
+function totalKE(){
+  var k=0;
+  for(var i=0;i<S.bodies.length;i++){
+    var b=S.bodies[i];
+    k += 0.5*b.m*(b.vx*b.vx + b.vy*b.vy);
+  }
+  return k;
+}
+function totalMass(){
+  var m=0; for(var i=0;i<S.bodies.length;i++) m+=S.bodies[i].m; return m;
+}
+function cmVelocity(){
+  var p = totalP(), M = totalMass();
+  return M>0 ? {x:p.x/M, y:p.y/M} : {x:0,y:0};
+}
+
+/* ======================= COLLISION MATHEMATICS ==========================
+   One dimension, coefficient of restitution e:
+
+     v1 = ( m1 u1 + m2 u2 + m2 e (u2 - u1) ) / (m1 + m2)
+     v2 = ( m1 u1 + m2 u2 + m1 e (u1 - u2) ) / (m1 + m2)
+
+   e = 1 gives a perfectly elastic collision (kinetic energy conserved),
+   e = 0 gives a perfectly inelastic one (the objects move off together).
+   Momentum is conserved for every value of e.
+   ======================================================================== */
+function restitution1D(m1,u1,m2,u2,e){
+  var M = m1+m2;
+  return {
+    v1: (m1*u1 + m2*u2 + m2*e*(u2-u1))/M,
+    v2: (m1*u1 + m2*u2 + m1*e*(u1-u2))/M
+  };
+}
+/* kinetic energy lost in a 1-D collision: 1/2 mu (1-e^2) (u1-u2)^2 */
+function keLost1D(m1,u1,m2,u2,e){
+  var mu = m1*m2/(m1+m2);
+  return 0.5*mu*(1-e*e)*(u1-u2)*(u1-u2);
+}
+/* explosion: stored energy E released between two bodies moving together */
+function explodeVels(m1,m2,E,V){
+  var w1 = Math.sqrt(2*E*m2/(m1*(m1+m2)));
+  return { v1: V - w1, v2: V + m1*w1/m2 };
+}
+
+/* ---- two dimensions: impulse along the line of centres ------------------ */
+function collide2D(b1,b2,e){
+  var nx = b2.x-b1.x, ny = b2.y-b1.y;
+  var d = Math.hypot(nx,ny) || 1e-9;
+  nx/=d; ny/=d;
+  var rvn = (b1.vx-b2.vx)*nx + (b1.vy-b2.vy)*ny;   // approach speed along the line of centres
+  if(rvn <= 0) return null;
+  var J = (1+e)*rvn/(1/b1.m + 1/b2.m);
+  return {
+    nx:nx, ny:ny, J:J,
+    v1x: b1.vx - J/b1.m*nx, v1y: b1.vy - J/b1.m*ny,
+    v2x: b2.vx + J/b2.m*nx, v2y: b2.vy + J/b2.m*ny
+  };
+}
+
+/* ============================ CONTACT MODEL =============================
+   A collision is spread over a contact time T with a half-sine force
+   pulse, F(t) = Fpeak sin(pi t / T). Its area is exactly the impulse:
+
+     integral of F dt = 2 Fpeak T / pi = |change in momentum|
+
+   so Fpeak = pi |dp| / (2T). The velocity during contact follows
+   v(t) = u + (dp/m)(1 - cos(pi t / T))/2, which lands exactly on the
+   final velocity at t = T. The force-time graph is therefore correct by
+   construction, and lengthening the contact time lowers the peak force
+   without changing the area at all - which is the whole crumple-zone idea.
+   ======================================================================== */
+function startContact(i,j,T,forced){
+  var b1 = S.bodies[i], b2 = (j>=0)? S.bodies[j] : null;
+  var u1 = b1.vx, u2 = b2? b2.vx : 0, v1, v2;
+  if(forced){ v1 = forced.v1; v2 = forced.v2; }
+  else if(b2){ var r = restitution1D(b1.m,u1,b2.m,u2,S.e); v1=r.v1; v2=r.v2; }
+  else { v1 = -S.e*u1; v2 = 0; }
+  var dp1 = b1.m*(v1-u1);
+  T = Math.max(T||S.ct, 0.002);
+  S.contact = {
+    i:i, j:j, t0:S.t, T:T,
+    u1:u1, u2:u2, v1:v1, v2:v2,
+    dp1:dp1, dp2:-dp1,
+    Fpeak: PI*Math.abs(dp1)/(2*T),
+    dir: dp1>=0 ? 1 : -1,
+    wall: (j<0)
+  };
+  return S.contact;
+}
+function contactForce(){
+  var c = S.contact; if(!c) return 0;
+  var f = (S.t - c.t0)/c.T;
+  if(f<0||f>1) return 0;
+  return c.Fpeak*Math.sin(PI*f);
+}
+function applyContact(){
+  var c = S.contact; if(!c) return false;
+  var f = (S.t - c.t0)/c.T;
+  if(f >= 1){
+    var b1 = S.bodies[c.i];
+    b1.vx = c.v1;
+    if(!c.wall) S.bodies[c.j].vx = c.v2;
+    finishCollision(c);
+    S.contact = null;
+    separate();
+    recordHistory();
+    return false;
+  }
+  var k = (1-Math.cos(PI*clamp(f,0,1)))/2;
+  var a = S.bodies[c.i];
+  a.vx = c.u1 + (c.dp1/a.m)*k;
+  if(!c.wall){ var b = S.bodies[c.j]; b.vx = c.u2 + (c.dp2/b.m)*k; }
+  return true;
+}
+function separate(){
+  var list = sortedBodies();
+  for(var k=0;k<list.length-1;k++){
+    var a=list[k], b=list[k+1];
+    var gap = (b.x-bodyHalf(b)) - (a.x+bodyHalf(a));
+    if(gap < 0){ var s=(-gap)/2+0.0005; a.x-=s; b.x+=s; }
+  }
+}
+
+/* record what happened, for the ledger and the working */
+function finishCollision(c){
+  var b1 = S.bodies[c.i], b2 = c.wall? null : S.bodies[c.j];
+  var keB = 0.5*b1.m*c.u1*c.u1 + (b2? 0.5*b2.m*c.u2*c.u2 : 0);
+  var keA = 0.5*b1.m*c.v1*c.v1 + (b2? 0.5*b2.m*c.v2*c.v2 : 0);
+  if(S.pauseAfter) S.pauseAt = S.t + 0.55;
+  S.last = {
+    kind: c.wall? 'wall' : 'pair',
+    at: S.t,
+    T: c.T,
+    Fpeak: c.Fpeak,
+    Fmean: Math.abs(c.dp1)/c.T,
+    rows: [
+      { label:b1.label, colour:b1.colour, m:b1.m, u:c.u1, v:c.v1, dp:c.dp1 },
+      b2 ? { label:b2.label, colour:b2.colour, m:b2.m, u:c.u2, v:c.v2, dp:c.dp2 }
+         : { label:'Wall / Earth', colour:'#64748b', m:Infinity, u:0, v:0, dp:c.dp2 }
+    ],
+    pBefore: b1.m*c.u1 + (b2? b2.m*c.u2 : 0),
+    pAfter:  b1.m*c.v1 + (b2? b2.m*c.v2 : 0),
+    keBefore: keB, keAfter: keA,
+    e: b2 ? ((c.u1-c.u2)!==0 ? -(c.v1-c.v2)/(c.u1-c.u2) : S.e) : S.e,
+    impulse: Math.abs(c.dp1)
+  };
+}
+
+/* ============================== STEPPING ================================ */
+var TABLE_W = 4.0, TABLE_H = 2.6;
+var strobeClock = 0, histClock = 0;
+
+function detect1D(){
+  if(S.contact) return;
+  var list = sortedBodies();
+  for(var k=0;k<list.length-1;k++){
+    var a=list[k], b=list[k+1];
+    var gap = (b.x-bodyHalf(b)) - (a.x+bodyHalf(a));
+    if(gap <= 0 && (a.vx - b.vx) > 1e-9){
+      var i = S.bodies.indexOf(a), j = S.bodies.indexOf(b);
+      var s = -gap/2;
+      a.x -= s; b.x += s;
+      startContact(i,j,S.ct);
+      recordHistory();
+      return;
+    }
+  }
+  var barrier = (S.mode==='safety');
+  if(S.walls || barrier){
+    for(var n=0;n<S.bodies.length;n++){
+      var o = S.bodies[n], h = bodyHalf(o);
+      if(!barrier && o.x - h <= 0 && o.vx < 0){ o.x = h; startContact(n,-1,S.ct); recordHistory(); return; }
+      if(o.x + h >= S.trackL && o.vx > 0){
+        o.x = S.trackL - h;
+        startContact(n,-2, barrier? S.safety.T : S.ct);
+        if(barrier){ S.contact.v1 = 0; S.contact.dp1 = -o.m*S.contact.u1; S.contact.dp2 = -S.contact.dp1;
+                     S.contact.Fpeak = PI*Math.abs(S.contact.dp1)/(2*S.contact.T); S.impactT = S.t; }
+        recordHistory();
+        return;
+      }
+    }
+  }
+}
+
+function detect2D(){
+  if(S.contact) return;
+  for(var i=0;i<S.bodies.length;i++) for(var j=i+1;j<S.bodies.length;j++){
+    var a=S.bodies[i], b=S.bodies[j];
+    var d = Math.hypot(b.x-a.x, b.y-a.y);
+    if(d <= radius(a.m)+radius(b.m)){
+      var r = collide2D(a,b,S.e);
+      if(!r) continue;
+      var T = Math.min(S.ct, 0.025);
+      var dpx = a.m*(r.v1x-a.vx), dpy = a.m*(r.v1y-a.vy);
+      S.contact = {
+        i:i, j:j, t0:S.t, T:T, twoD:true,
+        u:[{x:a.vx,y:a.vy},{x:b.vx,y:b.vy}],
+        v:[{x:r.v1x,y:r.v1y},{x:r.v2x,y:r.v2y}],
+        dp:[{x:dpx,y:dpy},{x:-dpx,y:-dpy}],
+        Fpeak: PI*Math.hypot(dpx,dpy)/(2*T),
+        nx:r.nx, ny:r.ny, wall:false
+      };
+      recordHistory();
+      return;
+    }
+  }
+}
+function applyContact2D(){
+  var c = S.contact; if(!c) return false;
+  var f = (S.t-c.t0)/c.T;
+  var a = S.bodies[c.i], b = S.bodies[c.j];
+  if(f >= 1){
+    a.vx=c.v[0].x; a.vy=c.v[0].y; b.vx=c.v[1].x; b.vy=c.v[1].y;
+    finish2D(c); S.contact=null; recordHistory();
+    var d = Math.hypot(b.x-a.x, b.y-a.y) || 1e-9;
+    var need = radius(a.m)+radius(b.m) - d;
+    if(need>0){ var ux=(b.x-a.x)/d, uy=(b.y-a.y)/d; a.x-=ux*need/2; a.y-=uy*need/2; b.x+=ux*need/2; b.y+=uy*need/2; }
+    return false;
+  }
+  var k = (1-Math.cos(PI*clamp(f,0,1)))/2;
+  a.vx = c.u[0].x + c.dp[0].x/a.m*k; a.vy = c.u[0].y + c.dp[0].y/a.m*k;
+  b.vx = c.u[1].x + c.dp[1].x/b.m*k; b.vy = c.u[1].y + c.dp[1].y/b.m*k;
+  return true;
+}
+function finish2D(c){
+  if(S.pauseAfter) S.pauseAt = S.t + 0.55;
+  var a = S.bodies[c.i], b = S.bodies[c.j];
+  var keB = 0.5*a.m*(c.u[0].x*c.u[0].x+c.u[0].y*c.u[0].y) + 0.5*b.m*(c.u[1].x*c.u[1].x+c.u[1].y*c.u[1].y);
+  var keA = 0.5*a.m*(c.v[0].x*c.v[0].x+c.v[0].y*c.v[0].y) + 0.5*b.m*(c.v[1].x*c.v[1].x+c.v[1].y*c.v[1].y);
+  S.last = {
+    kind:'2d', at:S.t, T:c.T, Fpeak:c.Fpeak, Fmean:Math.hypot(c.dp[0].x,c.dp[0].y)/c.T,
+    rows:[
+      { label:a.label, colour:a.colour, m:a.m, u:c.u[0], v:c.v[0], dp:c.dp[0] },
+      { label:b.label, colour:b.colour, m:b.m, u:c.u[1], v:c.v[1], dp:c.dp[1] }
+    ],
+    pBefore:{x:a.m*c.u[0].x+b.m*c.u[1].x, y:a.m*c.u[0].y+b.m*c.u[1].y},
+    pAfter:{x:a.m*c.v[0].x+b.m*c.v[1].x, y:a.m*c.v[0].y+b.m*c.v[1].y},
+    keBefore:keB, keAfter:keA,
+    impulse: Math.hypot(c.dp[0].x,c.dp[0].y),
+    twoD:true
+  };
+}
+
+/* ----------------------------- light gates ------------------------------ */
+function updateGates(prevX){
+  if(!S.gates.on || S.mode!=='line') return;
+  var half = S.gates.card/2;
+  for(var n=0;n<S.bodies.length;n++){
+    var b = S.bodies[n];
+    for(var g=0; g<S.gates.x.length; g++){
+      var gx = S.gates.x[g];
+      var inNow = Math.abs(b.x - gx) < half;
+      if(inNow && !b.gateIn[g]){ b.gateIn[g]=true; b.gateT[g]=S.t; }
+      else if(!inNow && b.gateIn[g]){
+        b.gateIn[g]=false;
+        var dt = S.t - b.gateT[g];
+        if(dt>1e-6){
+          var v = S.gates.card/dt * (b.x>gx?1:-1);
+          b.gateV[g] = v;
+          S.gateReads.unshift({ label:b.label, colour:b.colour, gate:g+1, dt:dt, v:v, t:S.t });
+          if(S.gateReads.length>8) S.gateReads.pop();
+        }
+      }
+    }
+  }
+  void prevX;
+}
+
+/* ------------------------------ main step ------------------------------- */
+function step(dt){
+  S.t += dt;
+  if(S.contact){ if(S.contact.twoD) applyContact2D(); else applyContact(); }
+
+  for(var i=0;i<S.bodies.length;i++){
+    var b = S.bodies[i];
+    b.x += b.vx*dt;
+    if(S.mode==='2d') b.y += b.vy*dt;
+    if(S.show.trails){
+      b.trail.push(S.mode==='2d'? {x:b.x,y:b.y} : {x:b.x,y:0});
+      if(b.trail.length>420) b.trail.shift();
+    } else if(b.trail.length) b.trail.length = 0;
+  }
+
+  if(S.mode==='2d') detect2D(); else detect1D();
+  updateGates();
+
+  strobeClock += dt;
+  if(S.show.strobe && strobeClock > 0.11){
+    strobeClock = 0;
+    S.strobes.push(S.bodies.map(function(b){ return {x:b.x,y:b.y,m:b.m,c:b.colour}; }));
+    if(S.strobes.length>90) S.strobes.shift();
+  }
+
+  histClock += dt;
+  if(histClock >= (S.contact? 0.0011 : 0.004)){
+    histClock = 0;
+    recordHistory();
+  }
+
+  /* keep everything on the apparatus so the result stays readable */
+  if(S.mode==='2d'){
+    for(var k=0;k<S.bodies.length;k++){
+      var o = S.bodies[k];
+      if(o.x<-0.25 || o.x>TABLE_W+0.25 || o.y<-0.25 || o.y>TABLE_H+0.25){ S.running=false; S.pauseAt=null; }
+    }
+  } else if(!S.walls){
+    for(var q=0;q<S.bodies.length;q++){
+      var o2 = S.bodies[q];
+      if(o2.x < 0 || o2.x > S.trackL){ S.running=false; S.pauseAt=null; }
+    }
+  }
+  if(S.pauseAt!==null && S.t >= S.pauseAt){ S.pauseAt = null; S.running = false; }
+}
+
+function recordHistory(){
+  var F = 0;
+  if(S.contact) F = contactForce();
+  var p = totalP(), ke = totalKE();
+  var rec = { t:S.t, F:F, pT:(S.mode==='2d'? p.mag : p.x), kT:ke, v:[], p:[], k:[] };
+  for(var i=0;i<S.bodies.length;i++){
+    var b = S.bodies[i];
+    var sp = (S.mode==='2d')? Math.hypot(b.vx,b.vy) : b.vx;
+    rec.v.push(sp);
+    rec.p.push(b.m*sp);
+    rec.k.push(0.5*b.m*(b.vx*b.vx+b.vy*b.vy));
+  }
+  S.hist.push(rec);
+  if(S.hist.length>4200) S.hist.shift();
+}
+
+/* --------------------------- reset / snapshot --------------------------- */
+function snapshotInitial(){
+  S.initial = S.bodies.map(function(b){
+    return {id:b.id,label:b.label,m:b.m,x:b.x,y:b.y,vx:b.vx,vy:b.vy,colour:b.colour,kind:b.kind};
+  });
+}
+function resetSim(){
+  if(S.initial){
+    S.bodies = S.initial.map(function(o){
+      return {id:o.id,label:o.label,m:o.m,x:o.x,y:o.y,vx:o.vx,vy:o.vy,colour:o.colour,kind:o.kind,
+              trail:[], gateT:[null,null], gateV:[null,null], gateIn:[false,false]};
+    });
+  }
+  S.t=0; S.contact=null; S.last=null; S.hist=[]; S.strobes=[]; S.gateReads=[];
+  S.running=false; S.impactT=null;
+  histClock=0; strobeClock=0;
+}
+
+/* ------------------------------ explosion ------------------------------- */
+/* True when the scene is a loaded spring waiting to be released: two or more
+   objects in a line, all at rest, with stored energy set and nothing having
+   happened yet. Several scenarios start this way, and without something to
+   press they simply sit there - so the app has to say so. */
+function armed(){
+  if(S.mode!=='line') return false;
+  if(S.bodies.length<2) return false;
+  if(!(S.explodeE>0)) return false;
+  if(S.last) return false;
+  for(var i=0;i<S.bodies.length;i++) if(Math.abs(S.bodies[i].vx)>1e-9) return false;
+  return true;
+}
+function doExplode(E){
+  if(S.bodies.length<2) return false;
+  if(S.pauseAfter) S.pauseAt = S.t + 0.55;
+  var list = sortedBodies();
+  var a = list[0], b = list[1];
+  var V = (a.m*a.vx + b.m*b.vx)/(a.m+b.m);
+  var r = explodeVels(a.m, b.m, E, V);
+  var u1=a.vx, u2=b.vx;
+  a.vx = r.v1; b.vx = r.v2;
+  var dp1 = a.m*(a.vx-u1);
+  var T = S.ct;
+  S.last = {
+    kind:'explosion', at:S.t, T:T, Fpeak:PI*Math.abs(dp1)/(2*T), Fmean:Math.abs(dp1)/T,
+    rows:[
+      {label:a.label, colour:a.colour, m:a.m, u:u1, v:a.vx, dp:dp1},
+      {label:b.label, colour:b.colour, m:b.m, u:u2, v:b.vx, dp:-dp1}
+    ],
+    pBefore:a.m*u1+b.m*u2, pAfter:a.m*a.vx+b.m*b.vx,
+    keBefore:0.5*a.m*u1*u1+0.5*b.m*u2*u2,
+    keAfter:0.5*a.m*a.vx*a.vx+0.5*b.m*b.vx*b.vx,
+    energy:E, impulse:Math.abs(dp1)
+  };
+  return true;
+}
+
+/* ------------------------- crash-test arithmetic ------------------------ */
+function safetyNumbers(){
+  var s = S.safety;
+  var dpCar = s.m*s.u;
+  var Tocc = s.belt ? s.T*1.5 : 0.012;
+  var dpOcc = s.dummy*s.u;
+  return {
+    dpCar: dpCar,
+    Tcar: s.T,
+    FcarMean: dpCar/s.T,
+    FcarPeak: PI*dpCar/(2*s.T),
+    aCar: s.u/s.T,
+    gCar: s.u/s.T/9.81,
+    crush: s.u*s.T/2,
+    dpOcc: dpOcc,
+    Tocc: Tocc,
+    FoccMean: dpOcc/Tocc,
+    FoccPeak: PI*dpOcc/(2*Tocc),
+    gOcc: s.u/Tocc/9.81,
+    belt: s.belt
+  };
+}
+
+/* ============================== RENDERER ================================ */
+var cv = $('#scene'), ctx = cv.getContext('2d');
+var V = { w:0, h:0, dpr:1, scale:120, ox:0, oy:0, trackY:0 };
+var C = {}, themeStamp = '';
+
+function cssVar(n){ return getComputedStyle(ROOT).getPropertyValue(n).trim(); }
+function refreshColours(){
+  C = {
+    stage:cssVar('--stage'), stage2:cssVar('--stage2'), grid:cssVar('--grid'), grid2:cssVar('--grid2'),
+    ink:cssVar('--ink'), ink2:cssVar('--ink2'), muted:cssVar('--muted'), line:cssVar('--line'),
+    accent:cssVar('--accent'), mom:cssVar('--mom'), force:cssVar('--force'), energy:cssVar('--energy'),
+    track:cssVar('--track'), track2:cssVar('--track2'), track3:cssVar('--track3'),
+    panel:cssVar('--panel'), ok:cssVar('--ok'), bad:cssVar('--bad'), warn:cssVar('--warn')
+  };
+}
+function themeCheck(){
+  var t = ROOT.getAttribute('data-theme')||'light';
+  if(t!==themeStamp){ themeStamp=t; refreshColours(); }
+}
+function resize(){
+  var r = cv.parentElement.getBoundingClientRect();
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  V.w = r.width; V.h = r.height; V.dpr = dpr;
+  cv.width = Math.max(1,Math.round(r.width*dpr));
+  cv.height = Math.max(1,Math.round(r.height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  layout();
+}
+function layout(){
+  var tl = ROOT.querySelector('.tools');
+  V.top = (tl? tl.getBoundingClientRect().height : 44) + 22;
+  if(S.mode==='2d'){
+    var padx = 46, pady = 58;
+    var sc = Math.min((V.w-2*padx)/TABLE_W, (V.h-pady-70)/TABLE_H);
+    V.scale = clamp(sc, 20, 400);
+    V.ox = (V.w - TABLE_W*V.scale)/2;
+    V.oy = pady + TABLE_H*V.scale;
+  } else {
+    var pad = Math.min(60, V.w*0.06);
+    V.scale = clamp((V.w-2*pad)/S.trackL, 20, 420);
+    V.ox = (V.w - S.trackL*V.scale)/2;
+    V.trackY = clamp(V.h*0.60, 150, V.h-96);
+    V.oy = V.trackY;
+  }
+}
+function X(x){ return V.ox + x*V.scale; }
+function Y(y){ return V.oy - y*V.scale; }
+function invX(px){ return (px - V.ox)/V.scale; }
+function invY(py){ return (V.oy - py)/V.scale; }
+
+/* ------------------------- drawing primitives --------------------------- */
+function ln(x1,y1,x2,y2,col,wd,dash){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=wd||1;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,col,wd,head){
+  var a = Math.atan2(y2-y1,x2-x1), hs = head||9;
+  if(Math.hypot(x2-x1,y2-y1) < 2) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=wd||2.4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*hs*0.8, y2-Math.sin(a)*hs*0.8); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.42)*hs, y2-Math.sin(a-0.42)*hs);
+  ctx.lineTo(x2-Math.cos(a)*hs*0.66, y2-Math.sin(a)*hs*0.66);
+  ctx.lineTo(x2-Math.cos(a+0.42)*hs, y2-Math.sin(a+0.42)*hs);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function rr(x,y,wd,h,r){
+  r = Math.min(r, wd/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+wd-r,y); ctx.quadraticCurveTo(x+wd,y,x+wd,y+r);
+  ctx.lineTo(x+wd,y+h-r); ctx.quadraticCurveTo(x+wd,y+h,x+wd-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function tag(text,x,y,col,o){
+  o = o||{};
+  ctx.save();
+  ctx.font = (o.bold?'700 ':'600 ')+(o.size||11.5)+'px '+(o.mono?'ui-monospace,Menlo,Consolas,monospace':'system-ui,-apple-system,Segoe UI,sans-serif');
+  var m = ctx.measureText(text), pad=4, wd=m.width+pad*2, h=(o.size||11.5)+7;
+  var bx = x - (o.anchor==='l'?0:(o.anchor==='r'? wd : wd/2)), by = y-h/2;
+  bx = clamp(bx, 3, Math.max(3, V.w - wd - 3));
+  by = clamp(by, 2, Math.max(2, V.h - h - 2));
+  if(o.box!==false){
+    ctx.fillStyle = o.bg||C.stage; ctx.globalAlpha = o.alpha===undefined?0.9:o.alpha;
+    rr(bx,by,wd,h,5); ctx.fill(); ctx.globalAlpha=1;
+    if(o.border){ ctx.strokeStyle=o.border; ctx.lineWidth=1; rr(bx,by,wd,h,5); ctx.stroke(); }
+  }
+  ctx.fillStyle = col||C.ink; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(text, bx+pad, by+h/2+0.5);
+  ctx.restore();
+  return {x:bx,y:by,w:wd,h:h};
+}
+function shade(hex,amt){
+  var c = hex.replace('#','');
+  if(c.length===3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  var n = parseInt(c,16);
+  var r=clamp((n>>16)+amt,0,255), g=clamp(((n>>8)&255)+amt,0,255), b=clamp((n&255)+amt,0,255);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* --------------------------- scale for arrows --------------------------- */
+function maxAbsP(){
+  var m = 0;
+  for(var i=0;i<S.bodies.length;i++){
+    var b=S.bodies[i];
+    m = Math.max(m, Math.abs(b.m*Math.hypot(b.vx,b.vy)));
+  }
+  if(S.last && S.last.rows) for(var k=0;k<S.last.rows.length;k++){
+    var r = S.last.rows[k];
+    if(isFinite(r.m)) m = Math.max(m, Math.abs(r.m*(typeof r.u==='object'? Math.hypot(r.u.x,r.u.y) : r.u)));
+  }
+  return m || 1;
+}
+function maxAbsV(){
+  var m=0;
+  for(var i=0;i<S.bodies.length;i++){ var b=S.bodies[i]; m=Math.max(m,Math.hypot(b.vx,b.vy)); }
+  return m||1;
+}
+function pxFor(val, maxVal, maxPx){ return (Math.abs(val)/maxVal)*maxPx; }
+
+/* ------------------------------ background ------------------------------ */
+function drawBg(){
+  var g = ctx.createLinearGradient(0,0,0,V.h);
+  g.addColorStop(0,C.stage); g.addColorStop(1,C.stage2);
+  ctx.fillStyle=g; ctx.fillRect(0,0,V.w,V.h);
+  if(!S.show.grid) return;
+  var step = 0.1, cands=[0.02,0.05,0.1,0.2,0.5,1];
+  for(var i=0;i<cands.length;i++){ if(cands[i]*V.scale>=24){ step=cands[i]; break; } step=cands[i]; }
+  ctx.save(); ctx.lineWidth=1; ctx.strokeStyle=C.grid2; ctx.beginPath();
+  for(var k=-40;k<=400;k++){
+    var x = X(k*step);
+    if(x<-2||x>V.w+2) continue;
+    ctx.moveTo(Math.round(x)+0.5,0); ctx.lineTo(Math.round(x)+0.5,V.h);
+  }
+  for(var q=-40;q<=400;q++){
+    var y = Y(q*step);
+    if(y<-2||y>V.h+2) continue;
+    ctx.moveTo(0,Math.round(y)+0.5); ctx.lineTo(V.w,Math.round(y)+0.5);
+  }
+  ctx.stroke();
+  ctx.strokeStyle=C.grid; ctx.beginPath();
+  for(var z=-10;z<=100;z++){
+    var xx = X(z*step*5);
+    if(xx<-2||xx>V.w+2) continue;
+    ctx.moveTo(Math.round(xx)+0.5,0); ctx.lineTo(Math.round(xx)+0.5,V.h);
+  }
+  ctx.stroke(); ctx.restore();
+}
+
+/* ------------------------------- the track ------------------------------ */
+function drawTrack(){
+  var y = V.trackY, x0 = X(0), x1 = X(S.trackL);
+  ctx.save();
+  ctx.fillStyle = C.track2;
+  rr(x0-6, y, (x1-x0)+12, 11, 3); ctx.fill();
+  ctx.strokeStyle = C.track3; ctx.lineWidth=1.1; ctx.stroke();
+  ctx.fillStyle = C.track3; ctx.globalAlpha=.5;
+  ctx.fillRect(x0-6, y+11, (x1-x0)+12, 4);
+  ctx.globalAlpha=1;
+  if(S.walls || S.mode==='safety'){
+    var wh = (S.mode==='safety')? 104 : 62;
+    var ww = (S.mode==='safety')? 16 : 12;
+    if(S.mode!=='safety'){
+      ctx.fillStyle=C.track3; rr(x0-16, y-wh, ww, wh+14, 3); ctx.fill();
+    }
+    ctx.fillStyle=C.track3; rr(x1+2, y-wh, ww, wh+14, 3); ctx.fill();
+    ctx.strokeStyle=C.track3; ctx.lineWidth=1.2; ctx.globalAlpha=.55;
+    ctx.beginPath();
+    for(var hh=0; hh<wh+12; hh+=9){ ctx.moveTo(x1+2+ww, y-wh+hh); ctx.lineTo(x1+2+ww+10, y-wh+hh+9); }
+    ctx.stroke(); ctx.globalAlpha=1;
+  }
+  if(S.show.ruler){
+    var step=0.1, cands=[0.05,0.1,0.2,0.5];
+    for(var i=0;i<cands.length;i++){ if(cands[i]*V.scale>=13){ step=cands[i]; break; } step=cands[i]; }
+    ctx.strokeStyle=C.muted; ctx.fillStyle=C.muted;
+    ctx.font='600 9.5px ui-monospace,Menlo,monospace'; ctx.textAlign='center'; ctx.textBaseline='top';
+    ctx.globalAlpha=.85;
+    for(var k=0; k*step<=S.trackL+1e-9; k++){
+      var xx = X(k*step), major = (k%5===0);
+      ctx.lineWidth = major?1.2:0.7;
+      ctx.beginPath(); ctx.moveTo(xx, y+16); ctx.lineTo(xx, y+16+(major?7:4)); ctx.stroke();
+      if(major && step*5*V.scale>32) ctx.fillText((k*step).toFixed(step<0.1?2:1), xx, y+26);
+    }
+    ctx.globalAlpha=1;
+    tag('metres from the left-hand end', X(S.trackL/2), y+46, C.muted, {size:10, box:false});
+  }
+  ctx.restore();
+}
+
+function drawGates(){
+  if(!S.gates.on || S.mode!=='line') return;
+  var y = V.trackY;
+  for(var g=0; g<S.gates.x.length; g++){
+    var gx = X(S.gates.x[g]);
+    var lit = false;
+    for(var n=0;n<S.bodies.length;n++) if(S.bodies[n].gateIn[g]) lit = true;
+    ctx.save();
+    ctx.fillStyle = C.track3;
+    rr(gx-16, y-74, 5, 74, 2); ctx.fill();
+    rr(gx+11, y-74, 5, 74, 2); ctx.fill();
+    ctx.strokeStyle = lit? C.force : C.accent;
+    ctx.globalAlpha = lit? 0.95 : 0.45;
+    ctx.lineWidth = lit? 2.4 : 1.4;
+    ctx.setLineDash(lit? [] : [4,4]);
+    ctx.beginPath(); ctx.moveTo(gx-11, y-52); ctx.lineTo(gx+11, y-52); ctx.stroke();
+    ctx.restore();
+    tag('gate '+(g+1), gx, y-84, lit? C.force : C.muted, {size:10, bold:lit});
+  }
+}
+
+/* ------------------------------ trolleys -------------------------------- */
+function bands(){
+  var top = V.top || 66;
+  var mom = clamp(V.trackY - V.h*0.30, top+34, Math.max(top+34, V.trackY-96));
+  var vel = mom - 42;
+  var showVel = (vel >= top + 40);
+  var tot = showVel ? vel - 44 : mom - 44;
+  var showTot = (tot >= top) && (V.h >= 430);
+  return { tot:tot, vel:vel, mom:mom, showVel:showVel, showTot:showTot };
+}
+function trolleyBox(b){
+  var hl = Math.max(bodyHalf(b)*V.scale, 15);
+  var h  = clamp(26 + 16*Math.cbrt(Math.max(b.m,0.01)), 24, 82);
+  h = Math.min(h, hl*2.6);
+  var squash = 1;
+  if(S.show.squash && S.contact && !S.contact.twoD){
+    var idx = S.bodies.indexOf(b);
+    if(idx===S.contact.i || idx===S.contact.j){
+      var f = clamp((S.t-S.contact.t0)/S.contact.T,0,1);
+      squash = 1 - 0.13*Math.sin(PI*f);
+    }
+  }
+  return { hl:hl*squash, h:h, cx:X(b.x), cy:V.trackY - h/2 - 2 };
+}
+function drawTrolley(b){
+  var t = trolleyBox(b);
+  var sel = (S.sel===b.id);
+  ctx.save();
+  ctx.globalAlpha=.16; ctx.fillStyle='#000';
+  rr(t.cx-t.hl+2, t.cy-t.h/2+4, t.hl*2, t.h, 6); ctx.fill();
+  ctx.globalAlpha=1;
+  var g = ctx.createLinearGradient(t.cx-t.hl, t.cy-t.h/2, t.cx+t.hl, t.cy+t.h/2);
+  g.addColorStop(0, b.colour); g.addColorStop(1, shade(b.colour,-30));
+  ctx.fillStyle=g;
+  rr(t.cx-t.hl, t.cy-t.h/2, t.hl*2, t.h, 6); ctx.fill();
+  ctx.strokeStyle = sel? C.accent : shade(b.colour,-60);
+  ctx.lineWidth = sel? 2.6 : 1.2; ctx.stroke();
+  ctx.strokeStyle='rgba(255,255,255,.32)'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(t.cx-t.hl+4, t.cy-t.h/2+2.5); ctx.lineTo(t.cx+t.hl-4, t.cy-t.h/2+2.5); ctx.stroke();
+  /* wheels */
+  ctx.fillStyle = shade(b.colour,-70);
+  var wr = 5.5;
+  ctx.beginPath(); ctx.arc(t.cx-t.hl*0.55, V.trackY+1, wr, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(t.cx+t.hl*0.55, V.trackY+1, wr, 0, 7); ctx.fill();
+  /* interrupt card */
+  if(S.gates.on){
+    var cw = S.gates.card*V.scale;
+    ctx.fillStyle = shade(b.colour,-45);
+    rr(t.cx-cw/2, t.cy-t.h/2-13, cw, 13, 2); ctx.fill();
+  }
+  /* mass label */
+  if(S.show.values && t.hl*2>28 && t.h>24){
+    var txt = sig(b.m,3);
+    ctx.fillStyle='rgba(255,255,255,.97)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    var fs=13; ctx.font='700 '+fs+'px system-ui,sans-serif';
+    while(ctx.measureText(txt).width > t.hl*2-8 && fs>7){ fs-=0.5; ctx.font='700 '+fs+'px system-ui,sans-serif'; }
+    ctx.fillText(txt, t.cx, t.cy - (t.h>44?6:0));
+    if(t.h>44){ ctx.font='600 9.5px system-ui,sans-serif'; ctx.globalAlpha=.9; ctx.fillText('kg', t.cx, t.cy+8); ctx.globalAlpha=1; }
+  }
+  ctx.restore();
+  return t;
+}
+
+/* A compressed spring drawn between the two objects whenever the scene is
+   armed, so that a pair of stationary trolleys does not look like a bug. */
+function drawSpring(){
+  var list = sortedBodies();
+  if(list.length < 2) return;
+  var a = trolleyBox(list[0]), b = trolleyBox(list[1]);
+  var x1 = a.cx + a.hl, x2 = b.cx - b.hl;
+  if(x2 - x1 < 6){ x1 = a.cx; x2 = b.cx; }
+  var y = Math.min(a.cy, b.cy);
+  var w = x2 - x1, coils = 7, amp = Math.min(11, Math.max(5, w/7));
+  ctx.save();
+  ctx.strokeStyle = cssVar('--accent'); ctx.lineWidth = 2.4;
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(x1, y);
+  for(var i=0;i<=coils*2;i++){
+    var f = i/(coils*2);
+    ctx.lineTo(x1 + w*f, y + ((i%2)? amp : -amp));
+  }
+  ctx.lineTo(x2, y);
+  ctx.stroke();
+  ctx.restore();
+  if(S.show.values){
+    var top = Math.min(a.cy - a.h/2, b.cy - b.h/2) - 14;
+    tag(fmt(S.explodeE,0)+' J stored in the spring', (x1+x2)/2, top, cssVar('--accent'),
+        {size:11, bold:true, border:cssVar('--accent')});
+  }
+}
+
+/* ---------------------------- vectors, line ----------------------------- */
+function drawLineVectors(){
+  var maxP = maxAbsP(), maxV = maxAbsV();
+  var pxMax = clamp(V.w*0.16, 46, 140);
+  var B = bands();
+  for(var i=0;i<S.bodies.length;i++){
+    var b = S.bodies[i], t = trolleyBox(b);
+    var p = b.m*b.vx;
+    var L = Math.abs(p)>1e-9 ? pxFor(p,maxP,pxMax)*Math.sign(p) : 0;
+    var stag = (S.bodies.length>1)? ((i%2)*10 - 5) : 0;
+    var yM = B.mom + stag, yV = B.vel + stag;
+    GEO[b.id] = { base:{x:t.cx, y:yM}, tip:{x:t.cx+L, y:yM} };
+    /* faint connector so it is obvious which arrow belongs to which object */
+    ln(t.cx, t.cy - t.h/2 - 4, t.cx, yM + 12, b.colour, 1, [3,4]);
+    if(S.show.mom){
+      if(Math.abs(L)>10){
+        arrow(t.cx, yM, t.cx+L, yM, b.colour, 3.6, 11);
+        if(S.show.values) tag(fmt(p)+' kg m/s', t.cx + L + (L>0?40:-40), yM, b.colour, {size:10.5, mono:true});
+      } else {
+        ctx.save(); ctx.strokeStyle=b.colour; ctx.lineWidth=2; ctx.globalAlpha=.7;
+        ctx.beginPath(); ctx.arc(t.cx, yM, 6, 0, 7); ctx.stroke(); ctx.restore();
+        if(S.show.values) tag('0', t.cx+24, yM, b.colour, {size:10.5, mono:true});
+      }
+    }
+    if(S.show.vel && B.showVel && Math.abs(b.vx)>1e-9){
+      var L2 = pxFor(b.vx,maxV,pxMax*0.7)*Math.sign(b.vx);
+      arrow(t.cx, yV, t.cx+L2, yV, b.colour, 1.7, 8);
+      if(S.show.values) tag(fmt(b.vx)+' m/s', t.cx + L2 + (L2>0?34:-34), yV, b.colour, {size:10, mono:true, alpha:0.8});
+    }
+    if(S.show.labels) tag(b.label, t.cx, V.trackY + 62, b.colour, {size:10.5, bold:true});
+  }
+  if(S.show.mom && S.show.labels){
+    tag('momentum  p = mv', 12, B.mom, C.muted, {size:10, anchor:'l', box:false});
+    if(S.show.vel && B.showVel) tag('velocity', 12, B.vel, C.muted, {size:10, anchor:'l', box:false});
+  }
+}
+function drawTotalBand(){
+  if(!S.show.total) return;
+  var B = bands();
+  if(S.mode!=='2d' && !B.showTot) return;
+  var y = (S.mode==='2d')? Math.max(30, (V.top||60)-30) : B.tot, cx = V.w/2;
+  var p = totalP();
+  var val = (S.mode==='2d')? p.mag : p.x;
+  var maxP = maxAbsP()*Math.max(1, S.bodies.length*0.7);
+  var pxMax = clamp(V.w*0.20, 60, 190);
+  var L = clamp(val/maxP, -1, 1)*pxMax;
+  ctx.save();
+  ctx.strokeStyle = C.line; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+  ctx.beginPath(); ctx.moveTo(cx, y-14); ctx.lineTo(cx, y+14); ctx.stroke();
+  ctx.restore();
+  if(S.p0 !== undefined && Math.abs(S.p0)>1e-9){
+    var L0 = clamp(S.p0/maxP,-1,1)*pxMax;
+    ln(cx+L0, y-12, cx+L0, y+12, C.muted, 1.4, [3,3]);
+  }
+  if(Math.abs(L)>1) arrow(cx, y, cx+L, y, C.mom, 5, 13);
+  else { ctx.save(); ctx.fillStyle=C.mom; ctx.beginPath(); ctx.arc(cx,y,4,0,7); ctx.fill(); ctx.restore(); }
+  var txt = 'total momentum ' + (S.show.values? (fmt(val)+' kg m/s') : '');
+  tag(txt, cx + (L>=0? -(pxMax+16) : (pxMax+16)), y, C.mom, {size:11, bold:true, anchor: L>=0?'r':'l', mono:false});
+}
+function drawStrobes(){
+  if(!S.show.strobe || !S.strobes.length) return;
+  ctx.save();
+  for(var i=0;i<S.strobes.length;i++){
+    var fr = S.strobes[i], al = (i+1)/S.strobes.length*0.30;
+    ctx.globalAlpha = al;
+    for(var k=0;k<fr.length;k++){
+      var o = fr[k];
+      ctx.fillStyle = o.c;
+      if(S.mode==='2d'){ ctx.beginPath(); ctx.arc(X(o.x),Y(o.y),radius(o.m)*V.scale,0,7); ctx.fill(); }
+      else { var hl = (o.hl!==undefined&&o.hl!==null? o.hl : halfLen(o.m))*V.scale; ctx.fillRect(X(o.x)-hl, V.trackY-24, hl*2, 22); }
+    }
+  }
+  ctx.restore();
+}
+function drawTrails(){
+  if(!S.show.trails) return;
+  ctx.save(); ctx.lineWidth=2.2; ctx.lineCap='round';
+  for(var i=0;i<S.bodies.length;i++){
+    var b=S.bodies[i]; if(b.trail.length<2) continue;
+    ctx.strokeStyle=b.colour; ctx.globalAlpha=.24;
+    ctx.beginPath();
+    for(var k=0;k<b.trail.length;k++){
+      var pt=b.trail[k];
+      var px = X(pt.x), py = (S.mode==='2d')? Y(pt.y) : V.trackY-6;
+      if(k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawContactFlash(){
+  var c = S.contact; if(!c) return;
+  var f = clamp((S.t-c.t0)/c.T,0,1), a = Math.sin(PI*f);
+  var px, py;
+  if(c.twoD){
+    var A=S.bodies[c.i], B=S.bodies[c.j];
+    px = X((A.x+B.x)/2); py = Y((A.y+B.y)/2);
+  } else {
+    var b1=S.bodies[c.i];
+    px = X(b1.x + (c.wall? (c.j===-2? halfLen(b1.m) : -halfLen(b1.m)) : Math.sign(c.dp1)*-halfLen(b1.m)));
+    py = V.trackY - 30;
+  }
+  ctx.save(); ctx.globalAlpha = 0.16+0.5*a; ctx.strokeStyle=C.force; ctx.lineWidth=2.4; ctx.lineCap='round';
+  for(var k=0;k<8;k++){
+    var ang = k*PI/4 + 0.2;
+    var r0 = 9+10*a, r1 = r0+9+13*a;
+    ctx.beginPath();
+    ctx.moveTo(px+Math.cos(ang)*r0, py+Math.sin(ang)*r0);
+    ctx.lineTo(px+Math.cos(ang)*r1, py+Math.sin(ang)*r1);
+    ctx.stroke();
+  }
+  ctx.restore();
+  if(S.show.values){
+    tag('F = '+fmt(contactForce(),0)+' N', px, py-46, C.force, {size:11, bold:true, mono:true});
+  }
+}
+
+/* ------------------------------ two-D view ------------------------------ */
+function drawTable(){
+  var x0=X(0), y0=Y(TABLE_H), x1=X(TABLE_W), y1=Y(0);
+  ctx.save();
+  ctx.fillStyle = C.stage2;
+  rr(x0,y0,x1-x0,y1-y0,8); ctx.fill();
+  ctx.strokeStyle=C.track2; ctx.lineWidth=2; ctx.stroke();
+  ctx.restore();
+  if(S.show.ruler){
+    ctx.save(); ctx.strokeStyle=C.muted; ctx.fillStyle=C.muted; ctx.globalAlpha=.8;
+    ctx.font='600 9.5px ui-monospace,Menlo,monospace'; ctx.textAlign='center'; ctx.textBaseline='top';
+    for(var k=0;k*0.5<=TABLE_W+1e-9;k++){
+      var xx=X(k*0.5);
+      ctx.beginPath(); ctx.moveTo(xx,y1); ctx.lineTo(xx,y1+6); ctx.stroke();
+      ctx.fillText((k*0.5).toFixed(1), xx, y1+9);
+    }
+    ctx.restore();
+  }
+}
+function drawPuck(b){
+  var r = radius(b.m)*V.scale, px=X(b.x), py=Y(b.y);
+  var sel = (S.sel===b.id);
+  var sq = 1;
+  if(S.show.squash && S.contact && S.contact.twoD){
+    var idx=S.bodies.indexOf(b);
+    if(idx===S.contact.i||idx===S.contact.j){
+      var f=clamp((S.t-S.contact.t0)/S.contact.T,0,1); sq = 1-0.1*Math.sin(PI*f);
+    }
+  }
+  ctx.save();
+  ctx.globalAlpha=.18; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.arc(px+2,py+3,r*sq,0,7); ctx.fill(); ctx.globalAlpha=1;
+  var g = ctx.createRadialGradient(px-r*0.35,py-r*0.35,r*0.1,px,py,r);
+  g.addColorStop(0, shade(b.colour,42)); g.addColorStop(1, shade(b.colour,-22));
+  ctx.fillStyle=g;
+  ctx.beginPath(); ctx.arc(px,py,r*sq,0,7); ctx.fill();
+  ctx.strokeStyle = sel? C.accent : shade(b.colour,-60); ctx.lineWidth = sel?2.8:1.4; ctx.stroke();
+  if(S.show.values && r>15){
+    ctx.fillStyle='rgba(255,255,255,.97)'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    var fs = clamp(r*0.55,9,15); ctx.font='700 '+fs+'px system-ui,sans-serif';
+    ctx.fillText(sig(b.m,3), px, py);
+  }
+  ctx.restore();
+}
+function draw2DVectors(){
+  var maxP = maxAbsP(), maxV = maxAbsV();
+  var pxMax = clamp(V.scale*0.9, 50, 150);
+  for(var i=0;i<S.bodies.length;i++){
+    var b=S.bodies[i], px=X(b.x), py=Y(b.y);
+    var p = Math.hypot(b.m*b.vx, b.m*b.vy);
+    var aa = Math.atan2(-b.vy, b.vx), LL = p>1e-9? pxFor(p,maxP,pxMax) : 0;
+    GEO[b.id] = { base:{x:px,y:py}, tip:{x:px+Math.cos(aa)*LL, y:py+Math.sin(aa)*LL} };
+    if(S.show.mom && p<=1e-9){
+      ctx.save(); ctx.strokeStyle=b.colour; ctx.lineWidth=2; ctx.globalAlpha=.65;
+      ctx.beginPath(); ctx.arc(px,py, radius(b.m)*V.scale+9, 0, 7); ctx.stroke(); ctx.restore();
+    }
+    if(S.show.mom && p>1e-9){
+      var L = LL, a = aa;
+      arrow(px,py, px+Math.cos(a)*L, py+Math.sin(a)*L, b.colour, 3.4, 11);
+      if(S.show.values) tag(fmt(p)+' kg m/s', px+Math.cos(a)*(L+40), py+Math.sin(a)*(L+16), b.colour, {size:10.5,mono:true});
+      if(S.comps && Math.abs(b.vx)>1e-6 && Math.abs(b.vy)>1e-6){
+        var Lx = pxFor(b.m*b.vx,maxP,pxMax)*Math.sign(b.vx);
+        var Ly = pxFor(b.m*b.vy,maxP,pxMax)*Math.sign(b.vy);
+        ln(px, py, px+Lx, py, b.colour, 1.1, [4,3]);
+        ln(px+Lx, py, px+Lx, py-Ly, b.colour, 1.1, [4,3]);
+      }
+    }
+    if(S.show.vel && Math.hypot(b.vx,b.vy)>1e-9){
+      var L2 = pxFor(Math.hypot(b.vx,b.vy),maxV,pxMax*0.55), a2=Math.atan2(-b.vy,b.vx);
+      arrow(px,py, px+Math.cos(a2)*L2, py+Math.sin(a2)*L2, shade(b.colour,45), 1.5, 7);
+    }
+    if(S.show.labels) tag(b.label, px, py-radius(b.m)*V.scale-14, b.colour, {size:10.5,bold:true});
+  }
+}
+function drawTriangle(){
+  if(!S.tri || !S.last || !S.last.twoD) return;
+  var L = S.last;
+  var boxW = clamp(V.w*0.26, 140, 260), boxH = boxW*0.78;
+  var bx = 14, by = 72;
+  ctx.save();
+  ctx.fillStyle=C.panel; ctx.globalAlpha=.94;
+  rr(bx,by,boxW,boxH,10); ctx.fill(); ctx.globalAlpha=1;
+  ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.stroke();
+  ctx.restore();
+  tag('momentum vectors', bx+boxW/2, by+13, C.muted, {size:10, box:false});
+  var pm = 0;
+  [L.rows[0],L.rows[1]].forEach(function(r){
+    pm = Math.max(pm, Math.hypot(r.m*r.u.x,r.m*r.u.y), Math.hypot(r.m*r.v.x,r.m*r.v.y));
+  });
+  pm = Math.max(pm, Math.hypot(L.pBefore.x,L.pBefore.y)) || 1;
+  var sc = (boxW*0.34)/pm;
+  var ox = bx+boxW*0.30, oy = by+boxH*0.62;
+  function vec(x0,y0,px,py,col,wd){ arrow(x0,y0, x0+px*sc, y0-py*sc, col, wd, 8); return {x:x0+px*sc, y:y0-py*sc}; }
+  var r1=L.rows[0], r2=L.rows[1];
+  var e1 = vec(ox,oy, r1.m*r1.u.x, r1.m*r1.u.y, r1.colour, 2.4);
+  var e2 = vec(e1.x,e1.y, r2.m*r2.u.x, r2.m*r2.u.y, r2.colour, 2.4);
+  var f1 = vec(ox,oy, r1.m*r1.v.x, r1.m*r1.v.y, r1.colour, 2.4);
+  vec(f1.x,f1.y, r2.m*r2.v.x, r2.m*r2.v.y, r2.colour, 2.4);
+  ctx.save(); ctx.setLineDash([4,3]);
+  arrow(ox,oy, e2.x, e2.y, C.mom, 3, 10);
+  ctx.restore();
+  tag('before and after end at the same point', bx+boxW/2, by+boxH-11, C.mom, {size:9.5, box:false});
+}
+
+/* ------------------------------ safety view ----------------------------- */
+function drawCar(b){
+  var n = safetyNumbers();
+  var hlpx = bodyHalf(b)*V.scale;
+  var h = clamp(hlpx*0.44, 32, 88);
+  var wallX = X(S.trackL);
+  var front = Math.min(X(b.x)+hlpx, wallX);
+  var back  = X(b.x)-hlpx;
+  if(front-back < hlpx*0.95) back = front - hlpx*0.95;    /* the car cannot fold to nothing */
+  var len = front-back;
+  var cy = V.trackY - h/2 - 2;
+  var crush = 0;
+  if(S.contact && S.contact.wall){
+    var f = clamp((S.t-S.contact.t0)/S.contact.T,0,1);
+    crush = (1-Math.cos(PI*f))/2;
+  } else if(S.impactT!==null && S.impactT!==undefined && S.t>S.impactT) crush = 1;
+  var noseFull = clamp(n.crush*V.scale, 8, len*0.42);
+  var nose = Math.max(noseFull*(1-crush*0.9), 3);
+  ctx.save();
+  ctx.globalAlpha=.18; ctx.fillStyle='#000';
+  rr(back+2, cy-h/2+5, len, h, 8); ctx.fill(); ctx.globalAlpha=1;
+  /* crumple zone at the front */
+  ctx.fillStyle = shade(b.colour,-54);
+  rr(front-nose, cy-h/2+4, nose, h-8, 4); ctx.fill();
+  ctx.strokeStyle=C.force; ctx.globalAlpha=.7; ctx.lineWidth=1.2;
+  for(var k=1;k<4;k++){ var xx = front-nose + nose*k/4; ln(xx, cy-h/2+6, xx, cy+h/2-6, C.force, 1.2); }
+  ctx.globalAlpha=1;
+  /* cabin */
+  var g = ctx.createLinearGradient(back, cy-h/2, front, cy+h/2);
+  g.addColorStop(0,b.colour); g.addColorStop(1,shade(b.colour,-28));
+  ctx.fillStyle=g;
+  rr(back, cy-h/2, len-nose, h, 8); ctx.fill();
+  ctx.strokeStyle=shade(b.colour,-62); ctx.lineWidth=1.4; ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,.34)';
+  rr(back+len*0.30, cy-h/2+5, len*0.30, h*0.40, 4); ctx.fill();
+  /* occupant */
+  var occ = 0;
+  if(S.impactT!==null && S.impactT!==undefined && S.t>=S.impactT){
+    var dtOcc = (S.t-S.impactT)/Math.max(n.Tocc,0.001);
+    occ = clamp((1-Math.cos(PI*clamp(dtOcc,0,1)))/2, 0, 1);
+  }
+  var seat = back + len*0.30;
+  var slide = occ*(n.belt? 0.10 : 0.34)*len;
+  var hr = clamp(h*0.11, 4, 8);
+  ctx.fillStyle = shade(b.colour,-78);
+  ctx.beginPath(); ctx.arc(seat+slide, cy-h*0.12, hr, 0, 7); ctx.fill();
+  ctx.fillRect(seat+slide-hr*0.7, cy-h*0.02, hr*1.4, h*0.30);
+  if(n.belt) ln(seat+slide-hr, cy-h*0.02, seat+slide+hr, cy+h*0.24, '#ffffff', 2);
+  /* wheels */
+  ctx.fillStyle=shade(b.colour,-74);
+  ctx.beginPath(); ctx.arc(back+len*0.22, V.trackY+2, Math.max(7,h*0.17), 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(front-nose-len*0.10, V.trackY+2, Math.max(7,h*0.17), 0, 7); ctx.fill();
+  ctx.restore();
+  if(S.show.values){
+    tag(sig(b.m,4)+' kg', back+len*0.5, cy-h*0.30, '#fff', {size:12, bold:true, box:false});
+    if(crush>0.05) tag('crumple '+fmt(n.crush,2)+' m', front-nose*0.5, cy+h/2+18, C.force, {size:10, mono:true});
+  }
+}
+function drawForceGauge(){
+  var n = safetyNumbers();
+  var F = S.contact? contactForce() : 0;
+  var maxF = Math.max(n.FcarPeak, 1);
+  var bw = 26, bh = clamp(V.h*0.36, 110, 250);
+  var bx = 24, by = Math.max(78, V.h*0.30);
+  ctx.save();
+  ctx.fillStyle=C.panel; ctx.globalAlpha=.92; rr(bx-6,by-24,bw+12,bh+40,8); ctx.fill(); ctx.globalAlpha=1;
+  ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle=C.stage2; rr(bx,by,bw,bh,5); ctx.fill();
+  var frac = clamp(F/maxF,0,1);
+  var grd = ctx.createLinearGradient(0,by+bh,0,by);
+  grd.addColorStop(0,C.energy); grd.addColorStop(0.55,C.warn); grd.addColorStop(1,C.bad);
+  ctx.fillStyle=grd;
+  rr(bx, by+bh*(1-frac), bw, bh*frac, 5); ctx.fill();
+  ctx.restore();
+  tag('force', bx+bw/2, by-13, C.muted, {size:10, box:false});
+  tag(fmt(F/1000,1)+' kN', bx+bw/2, by+bh+13, C.force, {size:11, bold:true, mono:true});
+}
+
+/* ------------------------------- render --------------------------------- */
+function render(){
+  themeCheck();
+  layout();
+  drawBg();
+  if(S.mode==='2d'){
+    drawTable();
+    drawStrobes();
+    drawTrails();
+    for(var i=0;i<S.bodies.length;i++) drawPuck(S.bodies[i]);
+    draw2DVectors();
+    drawContactFlash();
+    drawTotalBand();
+    drawTriangle();
+  } else {
+    drawTrack();
+    drawStrobes();
+    drawTrails();
+    drawGates();
+    for(var k=0;k<S.bodies.length;k++){
+      if(S.mode==='safety') drawCar(S.bodies[k]); else drawTrolley(S.bodies[k]);
+    }
+    if(S.mode!=='safety') drawLineVectors();
+    if(armed()) drawSpring();
+    drawContactFlash();
+    drawTotalBand();
+    if(S.mode==='safety') drawForceGauge();
+  }
+}
+
+/* =============================== PANELS ================================= */
+var listDirty = true, uiDirty = true;
+function toast(msg){
+  var el=$('#toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove('show'); },1900);
+}
+function kv(k,v){ return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+
+function updateAll(){ uiDirty = true; }
+
+function updateHud(){
+  var p = totalP(), ke = totalKE();
+  var pv = (S.mode==='2d')? p.mag : p.x;
+  $('#hudP').textContent = fmt(pv);
+  $('#hudK').textContent = fmt(ke);
+  var extra = $('#hudExtra');
+  if(S.mode==='safety'){
+    var n = safetyNumbers();
+    extra.hidden=false;
+    extra.innerHTML = 'Peak force <b>'+fmt(n.FcarPeak/1000,1)+'</b> kN &nbsp; <b>'+fmt(n.gCar,1)+'</b> g';
+  } else if(S.contact){
+    extra.hidden=false;
+    extra.innerHTML = 'Contact force <b>'+fmt(contactForce(),0)+'</b> N';
+  } else extra.hidden = true;
+
+  /* verdict bar: kinetic energy, as a fraction of the largest it has been */
+  var k0 = (S.ke0===undefined)? ke : S.ke0;
+  var kRef = Math.max(k0, ke, 1e-12);
+  var frac = clamp(ke/kRef, 0, 1);
+  var bar = $('#pbar');
+  var fill = bar.querySelector('i');
+  if(!fill){ fill = document.createElement('i'); bar.appendChild(fill); }
+  fill.style.left='0'; fill.style.width=(frac*100).toFixed(2)+'%';
+  fill.style.background = frac>0.97? cssVar('--energy') : (frac>0.6? cssVar('--warn') : cssVar('--force'));
+  $('#pzero').style.left = '100%';
+
+  var st = $('#vStatus'), num = $('#vNum');
+  var p0 = (S.p0===undefined)? pv : S.p0;
+  var drift = Math.abs(pv - p0);
+  var L = S.last;
+  if(S.mode==='safety'){
+    var sn = safetyNumbers();
+    st.innerHTML = 'The car must lose '+fmt(sn.dpCar,0)+' N s of momentum &mdash; the crumple zone only changes how long it takes';
+    st.style.color = cssVar('--force');
+    num.textContent = 'average force '+fmt(sn.FcarMean/1000,1)+' kN  ('+fmt(sn.gCar,1)+' g)';
+  } else if(L && L.kind==='explosion'){
+    st.textContent = 'Explosion · total momentum unchanged at '+fmt(pv)+' kg m s⁻¹, with '+fmt(L.keAfter-L.keBefore)+' J released';
+    st.style.color = cssVar('--mom');
+    num.textContent = 'Σp = '+fmt(pv)+' kg m/s';
+  } else if(drift > 1e-6*Math.max(1,Math.abs(p0))){
+    st.textContent = 'A wall has pushed on the objects — momentum has passed to the Earth, so the total is no longer constant';
+    st.style.color = cssVar('--warn');
+    num.textContent = 'Σp = '+fmt(pv)+' kg m/s  (started at '+fmt(p0)+')';
+  } else if(armed()){
+    st.innerHTML = 'Everything is at rest with a spring compressed between the objects &mdash; nothing moves until you <b>release it</b>';
+    st.style.color = cssVar('--accent');
+    num.textContent = 'stored energy ' + fmt(S.explodeE,0) + ' J';
+  } else if(!L){
+    st.textContent = S.running? 'Running…' : 'Ready — press play';
+    st.style.color = cssVar('--ink');
+    num.textContent = 'Σp = '+fmt(pv)+' kg m/s';
+  } else if(Math.abs(L.keBefore-L.keAfter) < 1e-9*Math.max(1,L.keBefore)){
+    st.textContent = 'Momentum conserved · kinetic energy conserved — an elastic collision';
+    st.style.color = cssVar('--energy');
+    num.textContent = 'Σp = '+fmt(pv)+' kg m/s';
+  } else {
+    st.textContent = 'Momentum conserved · '+fmt((L.keBefore-L.keAfter)/Math.max(L.keBefore,1e-12)*100,0)+'% of the kinetic energy has gone — an inelastic collision';
+    st.style.color = cssVar('--mom');
+    num.textContent = 'Σp = '+fmt(pv)+' kg m/s';
+  }
+  $('#vLeft').textContent = 'kinetic energy '+fmt(ke)+' J';
+  $('#vRight').textContent = (S.mode==='safety'||(L&&L.kind==='explosion'))? ('peak '+fmt(kRef)+' J') : ('started at '+fmt(k0)+' J');
+  var live = $('#live');
+  if(live) live.textContent = 'Total momentum '+fmt(pv)+' kilogram metres per second.';
+}
+
+/* ------------------------------ set-up tab ------------------------------ */
+function buildBodyList(){
+  var wrap = $('#bodyList'); wrap.innerHTML='';
+  $('#bodyCount').textContent = S.bodies.length;
+  for(var i=0;i<S.bodies.length;i++){
+    var b = S.bodies[i];
+    var d = document.createElement('div');
+    d.className = 'bodycard'+(S.sel===b.id?' sel':'');
+    d.setAttribute('data-id', b.id);
+    var fields =
+      '<span>m /kg</span><input type="number" data-f="m" step="0.1" min="0.01" value="'+r3(b.m)+'">'+
+      '<span>'+(S.mode==='2d'?'x /m':'start x /m')+'</span><input type="number" data-f="x" step="0.05" value="'+r3(b.x)+'">'+
+      '<span>'+(S.mode==='2d'?'vx /m s⁻¹':'u /m s⁻¹')+'</span><input type="number" data-f="vx" step="0.1" value="'+r3(b.vx)+'">';
+    if(S.mode==='2d'){
+      fields += '<span>y /m</span><input type="number" data-f="y" step="0.05" value="'+r3(b.y)+'">'+
+                '<span>vy /m s⁻¹</span><input type="number" data-f="vy" step="0.1" value="'+r3(b.vy)+'">'+
+                '<span></span><span></span>';
+    } else {
+      fields += '<span>p /kg m s⁻¹</span><span style="font-family:var(--mono);font-size:11.5px;color:'+b.colour+';font-weight:700">'+fmt(b.m*b.vx)+'</span>';
+    }
+    d.innerHTML =
+      '<div class="head"><span class="dot" style="background:'+b.colour+'"></span>'+
+      '<span class="name">'+esc(b.label)+'</span>'+
+      (S.bodies.length>1? '<button class="qbtn" data-act="del" title="Remove" style="color:var(--bad)">remove</button>':'')+
+      '</div><div class="grid">'+fields+'</div>';
+    wrap.appendChild(d);
+  }
+}
+function refreshBodyValues(){
+  for(var i=0;i<S.bodies.length;i++){
+    var b = S.bodies[i];
+    var row = ROOT.querySelector('.bodycard[data-id="'+b.id+'"]');
+    if(!row) continue;
+    var ins = row.querySelectorAll('input[data-f]');
+    for(var k=0;k<ins.length;k++){
+      var inp = ins[k];
+      if(document.activeElement===inp) continue;
+      var val = r3(b[inp.getAttribute('data-f')]);
+      if(parseFloat(inp.value)!==val) inp.value = val;
+    }
+    row.classList.toggle('sel', S.sel===b.id);
+  }
+}
+function r3(v){ return Math.round(v*1000)/1000; }
+
+function updateSetupTexts(){
+  var e = S.e;
+  var t;
+  if(e>0.995) t = '<em>e = 1</em> is a perfectly elastic collision: the objects bounce apart with the same relative speed they approached with, and no kinetic energy is lost.';
+  else if(e<0.005) t = '<em>e = 0</em> is a perfectly inelastic collision: the objects move off together with a common velocity, and the greatest possible amount of kinetic energy is lost.';
+  else t = 'A partly elastic collision. The objects separate at <em>'+fmt(e,2)+'</em> times their approach speed, and some kinetic energy is lost as heat and sound. Momentum is conserved whatever the value of <i>e</i>.';
+  $('#eHint').innerHTML = t;
+  $('#vE').textContent = fmt(S.e,2);
+  $('#vCt').textContent = Math.round(S.ct*1000)+' ms';
+  $('#vCard').textContent = fmt(S.gates.card*100,1)+' cm';
+  $('#vSpeed').textContent = fmt(S.speed,S.speed<0.1?2:1)+'×';
+  $('#vDec').textContent = S.dec;
+  $('#vB').textContent = fmt(S.b2d,2);
+  $('#vExpE').textContent = fmt(S.explodeE,1)+' J';
+  var s = S.safety;
+  $('#vCarM').textContent = Math.round(s.m)+' kg';
+  $('#vCarV').textContent = fmt(s.u,1)+' m/s';
+  $('#vCarT').textContent = Math.round(s.T*1000)+' ms';
+  $('#vDummy').textContent = Math.round(s.dummy)+' kg';
+
+  /* light-gate readings */
+  var go = $('#gateOut');
+  if(S.gates.on && S.gateReads.length){
+    var h = '<table class="led" style="margin-top:9px"><thead><tr><th>Gate</th><th>Object</th><th>t /ms</th><th>v /m s⁻¹</th></tr></thead><tbody>';
+    for(var i=0;i<S.gateReads.length;i++){
+      var g = S.gateReads[i];
+      h += '<tr><td>'+g.gate+'</td><td class="nm" style="color:'+g.colour+'">'+esc(g.label)+'</td><td>'+fmt(g.dt*1000,1)+'</td><td>'+fmt(g.v)+'</td></tr>';
+    }
+    h += '</tbody></table><p class="hint">Each reading is the card length divided by the time the beam was blocked, exactly as a light gate measures it.</p>';
+    go.innerHTML = h;
+  } else if(S.gates.on){
+    go.innerHTML = '<p class="hint">Run the collision and the gates will time each card as it passes.</p>';
+  } else go.innerHTML = '';
+}
+
+/* ------------------------------ analyse tab ----------------------------- */
+function updateAnalyse(){
+  var L = S.last;
+  var banner = $('#anBanner'), bt = $('#anText');
+  banner.className = 'banner';
+  var tb = $('#ledTable').querySelector('tbody');
+  tb.innerHTML='';
+  if(!L){
+    bt.textContent = 'Nothing has collided yet. Press play, or use the Scenarios button for a ready-made question.';
+    $('#momBody').innerHTML = kv('Total momentum now', fmt(S.mode==='2d'? totalP().mag : totalP().x)+' kg m s⁻¹');
+    $('#keBody').innerHTML = kv('Total kinetic energy now', fmt(totalKE())+' J');
+    $('#impBody').innerHTML = '<p class="hint" style="margin:0">The impulse and force appear once a collision has happened.</p>';
+    return;
+  }
+  var two = !!L.twoD;
+  for(var i=0;i<L.rows.length;i++){
+    var r = L.rows[i];
+    var u = two? r.u.x : r.u, v = two? r.v.x : r.v, dp = two? r.dp.x : r.dp;
+    var tr = document.createElement('tr');
+    tr.innerHTML = '<td class="nm" style="color:'+r.colour+'">'+esc(r.label)+'</td>'+
+      '<td>'+(isFinite(r.m)? fmt(r.m):'∞')+'</td><td>'+fmt(u)+'</td><td>'+fmt(v)+'</td>'+
+      '<td style="color:'+(dp>0?cssVar('--energy'):cssVar('--force'))+'">'+(dp>0?'+':'')+fmt(dp)+'</td>';
+    tb.appendChild(tr);
+  }
+  $('#ledTag').textContent = L.kind==='explosion'? 'explosion' : (L.kind==='wall'? 'impact with the wall' : 'latest collision');
+  $('#ledHint').innerHTML = two
+    ? 'The table shows the <i>x</i> components. Use the Graphs tab and the vector triangle for the full picture.'
+    : 'Rightwards is taken as positive throughout. Notice that the two changes of momentum are equal and opposite.';
+
+  var pB = two? L.pBefore.x : L.pBefore, pA = two? L.pAfter.x : L.pAfter;
+  var dpTot = pA - pB;
+  var h = kv('Total momentum before', fmt(pB)+' kg m s⁻¹') +
+          kv('Total momentum after',  fmt(pA)+' kg m s⁻¹') +
+          kv('Change', fmt(dpTot)+' kg m s⁻¹');
+  if(two) h += kv('y components', fmt(L.pBefore.y)+'  →  '+fmt(L.pAfter.y)+' kg m s⁻¹');
+  if(L.kind==='wall'){
+    h = kv('Momentum before', fmt(pB)+' kg m s⁻¹') + kv('Momentum after', fmt(pA)+' kg m s⁻¹') +
+        kv('Change', fmt(dpTot)+' kg m s⁻¹');
+    h += '<p class="hint warn">The barrier is joined to the Earth. Momentum is still conserved overall — the momentum the object loses is passed to the Earth — but the momentum of the object <em>on its own</em> is not.</p>';
+  } else {
+    h += '<p class="hint ok">The total is unchanged, because the only forces acting during the collision are the equal and opposite forces the objects exert on each other.</p>';
+  }
+  if(S.walls) h += '<p class="hint warn">The walls are switched on. A wall exerts an external force on the system, so once an object bounces off it the total momentum of the objects alone is no longer conserved.</p>';
+  $('#momBody').innerHTML = h;
+
+  var lost = L.keBefore - L.keAfter;
+  var pct = L.keBefore>1e-12 ? lost/L.keBefore*100 : 0;
+  var kh = kv('Kinetic energy before', fmt(L.keBefore)+' J') + kv('Kinetic energy after', fmt(L.keAfter)+' J');
+  if(L.kind==='explosion'){
+    kh += kv('Energy released', fmt(L.keAfter-L.keBefore)+' J');
+    kh += '<p class="hint">In an explosion the store of energy in the spring (or the chemical store in a propellant) is transferred to kinetic energy. Momentum still totals what it did before &mdash; zero if everything started at rest.</p>';
+    banner.classList.add('mom'); bt.innerHTML = 'Explosion: momentum still adds to '+fmt(pB)+' kg m s⁻¹, and '+fmt(L.keAfter-L.keBefore)+' J of stored energy has become kinetic energy.';
+  } else if(Math.abs(lost) < 1e-9){
+    kh += '<p class="hint ok">No kinetic energy has been lost, so this is a <em>perfectly elastic</em> collision.</p>';
+    banner.classList.add('ok'); bt.innerHTML = 'Elastic collision: both momentum and kinetic energy are conserved.';
+  } else {
+    kh += kv('Kinetic energy lost', fmt(lost)+' J  ('+fmt(pct,0)+'%)');
+    kh += '<p class="hint">The missing kinetic energy has been transferred to thermal and sound stores. This is an <em>inelastic</em> collision &mdash; momentum is still conserved exactly.</p>';
+    banner.classList.add('mom'); bt.innerHTML = 'Inelastic collision: momentum conserved, but '+fmt(pct,0)+'% of the kinetic energy has been transferred away.';
+  }
+  $('#keBody').innerHTML = kh;
+
+  var J = L.impulse;
+  var ih = kv('Impulse on each object', fmt(J)+' N s') +
+           kv('Contact time', fmt(L.T*1000,0)+' ms') +
+           kv('Average force', fmt(L.Fmean,0)+' N') +
+           kv('Peak force', fmt(L.Fpeak,0)+' N');
+  ih += '<p class="hint">Impulse = <em>F</em>&Delta;<em>t</em> = change in momentum, so the area under the force&#8209;time graph is the change in momentum. Doubling the contact time halves the force for exactly the same impulse.</p>';
+  $('#impBody').innerHTML = ih;
+}
+
+/* ============================ WORKING / SOLVE =========================== */
+var WORK = [], walkIdx = -1;
+
+function buildWorking(){
+  var st = [], L = S.last;
+  function push(h){ st.push({h:h}); }
+
+  if(S.mode==='safety'){
+    var n = safetyNumbers(), s = S.safety;
+    push('<span class="lbl">A crash is an impulse problem. The car has to lose all of its momentum.</span>');
+    push('Momentum to be lost:  p = m u = '+w(s.m)+' × '+w(s.u)+' = <b>'+w(n.dpCar)+'</b> kg m s⁻¹');
+    push('Impulse = F&Delta;t = change in momentum, so');
+    push('  average F = p / &Delta;t = '+w(n.dpCar)+' / '+w(s.T)+' = <em>'+fmt(n.FcarMean/1000,1)+' kN</em>');
+    push('Deceleration:  a = u / &Delta;t = '+w(s.u)+' / '+w(s.T)+' = '+fmt(n.aCar,1)+' m s⁻² = <b>'+fmt(n.gCar,1)+' g</b>');
+    push('Crumple distance:  d = &frac12; u &Delta;t = '+fmt(n.crush,2)+' m');
+    push('<span class="lbl">The occupant</span>');
+    push('The occupant also has to lose all of their momentum: p = '+w(s.dummy)+' × '+w(s.u)+' = '+w(n.dpOcc)+' kg m s⁻¹');
+    push('Stopping time '+(n.belt?'with a belt and airbag':'with no restraint')+' = '+fmt(n.Tocc*1000,0)+' ms');
+    push('  average F = '+w(n.dpOcc)+' / '+w(n.Tocc)+' = <em>'+fmt(n.FoccMean/1000,1)+' kN</em>  ('+fmt(n.gOcc,0)+' g)');
+    var rigid = n.dpCar/0.02;
+    push('<span class="lbl">Why the crumple zone matters</span>');
+    push('With a rigid front (&Delta;t = 20 ms) the same change in momentum would need '+fmt(rigid/1000,0)+' kN — '+fmt(rigid/n.FcarMean,1)+' times as much force. The impulse is identical; only the time has changed.');
+    return st;
+  }
+
+  if(!L){
+    var p = totalP();
+    push('<span class="lbl">Nothing has collided yet. Here is the situation as it stands.</span>');
+    push('Take rightwards as positive.');
+    var tot = 0;
+    for(var i=0;i<S.bodies.length;i++){
+      var b=S.bodies[i], pb=b.m*b.vx;
+      push('  '+esc(b.label)+':  p = m u = '+w(b.m)+' × '+w(b.vx)+' = <b>'+w(pb)+'</b> kg m s⁻¹');
+      tot += pb;
+    }
+    push('  total momentum = <em>'+w(S.mode==='2d'? p.mag : tot)+' kg m s⁻¹</em>');
+    push('  total kinetic energy = '+w(totalKE())+' J');
+    return st;
+  }
+
+  if(L.twoD) return buildWorking2D(L);
+
+  var r1 = L.rows[0], r2 = L.rows[1];
+  push('<span class="lbl">Take rightwards as positive.</span>');
+
+  if(L.kind==='explosion'){
+    push('<span class="lbl">Before the explosion</span>');
+    push('  total momentum = '+w(r1.m)+' × '+w(r1.u)+' + '+w(r2.m)+' × '+w(r2.u)+' = <b>'+w(L.pBefore)+'</b> kg m s⁻¹');
+    push('<span class="lbl">After the explosion</span>');
+    push('  momentum is conserved, so  m₁v₁ + m₂v₂ = '+w(L.pBefore));
+    push('  '+w(r1.m)+' × '+w(r1.v)+' + '+w(r2.m)+' × '+w(r2.v)+' = <b>'+w(L.pAfter)+'</b> kg m s⁻¹  ✓');
+    push('  the two objects fly apart with equal and opposite momentum');
+    push('<span class="lbl">Energy</span>');
+    push('  energy released = '+w(L.keAfter-L.keBefore)+' J');
+    push('  kinetic energy shared:  '+esc(r1.label)+' '+w(0.5*r1.m*r1.v*r1.v)+' J,  '+esc(r2.label)+' '+w(0.5*r2.m*r2.v*r2.v)+' J');
+    push('  the lighter object always carries away more kinetic energy, because KE = p²/2m');
+    return st;
+  }
+
+  push('<span class="lbl">Before the collision</span>');
+  push('  p₁ = m₁u₁ = '+w(r1.m)+' × '+w(r1.u)+' = <b>'+w(r1.m*r1.u)+'</b> kg m s⁻¹');
+  if(isFinite(r2.m)) push('  p₂ = m₂u₂ = '+w(r2.m)+' × '+w(r2.u)+' = <b>'+w(r2.m*r2.u)+'</b> kg m s⁻¹');
+  push('  total = <b>'+w(L.pBefore)+'</b> kg m s⁻¹');
+  push('<span class="lbl">Conservation of momentum</span>');
+  if(isFinite(r2.m)){
+    push('  m₁v₁ + m₂v₂ = m₁u₁ + m₂u₂');
+    push('  '+w(r1.m)+' × '+w(r1.v)+' + '+w(r2.m)+' × '+w(r2.v)+' = '+w(L.pAfter)+'  ✓');
+  } else {
+    push('  the wall is attached to the Earth, so the momentum the object loses is passed to the Earth');
+    push('  change in momentum of the object = '+w(r1.dp)+' kg m s⁻¹');
+  }
+  push('<span class="lbl">Kinetic energy</span>');
+  push('  before = '+w(L.keBefore)+' J,  after = '+w(L.keAfter)+' J');
+  if(Math.abs(L.keBefore-L.keAfter) < 1e-9) push('  no kinetic energy lost — the collision is <em>elastic</em>');
+  else push('  '+w(L.keBefore-L.keAfter)+' J transferred to thermal and sound stores — the collision is <em>inelastic</em>');
+  push('<span class="lbl">Impulse and force</span>');
+  push('  impulse on '+esc(r1.label)+' = m₁(v₁ − u₁) = '+w(r1.m)+'('+w(r1.v)+' − '+w(r1.u)+') = <b>'+w(r1.dp)+'</b> N s');
+  if(isFinite(r2.m)) push('  impulse on '+esc(r2.label)+' = <b>'+w(r2.dp)+'</b> N s — equal and opposite, by Newton’s third law');
+  push('  average force = impulse / contact time = '+w(Math.abs(r1.dp))+' / '+w(L.T)+' = <em>'+fmt(L.Fmean,0)+' N</em>');
+  push('  peak force of the pulse = '+fmt(L.Fpeak,0)+' N');
+  return st;
+}
+
+function buildWorking2D(L){
+  var st=[]; function push(h){ st.push({h:h}); }
+  var r1=L.rows[0], r2=L.rows[1];
+  push('<span class="lbl">Momentum is a vector, so resolve into components and treat each direction separately.</span>');
+  push('<span class="lbl">Horizontal (x)</span>');
+  push('  before: '+w(r1.m)+'('+w(r1.u.x)+') + '+w(r2.m)+'('+w(r2.u.x)+') = <b>'+w(L.pBefore.x)+'</b> kg m s⁻¹');
+  push('  after:  '+w(r1.m)+'('+w(r1.v.x)+') + '+w(r2.m)+'('+w(r2.v.x)+') = <b>'+w(L.pAfter.x)+'</b> kg m s⁻¹  ✓');
+  push('<span class="lbl">Vertical (y)</span>');
+  push('  before: '+w(r1.m)+'('+w(r1.u.y)+') + '+w(r2.m)+'('+w(r2.u.y)+') = <b>'+w(L.pBefore.y)+'</b> kg m s⁻¹');
+  push('  after:  '+w(r1.m)+'('+w(r1.v.y)+') + '+w(r2.m)+'('+w(r2.v.y)+') = <b>'+w(L.pAfter.y)+'</b> kg m s⁻¹  ✓');
+  var a1 = Math.atan2(r1.v.y,r1.v.x)*180/PI, a2 = Math.atan2(r2.v.y,r2.v.x)*180/PI;
+  push('<span class="lbl">The paths afterwards</span>');
+  push('  '+esc(r1.label)+': speed '+w(Math.hypot(r1.v.x,r1.v.y))+' m s⁻¹ at '+fmt(a1,1)+'° to the x axis');
+  push('  '+esc(r2.label)+': speed '+w(Math.hypot(r2.v.x,r2.v.y))+' m s⁻¹ at '+fmt(a2,1)+'° to the x axis');
+  var between = Math.abs(a1-a2);
+  if(between>180) between = 360-between;
+  push('  angle between them = '+fmt(between,1)+'°');
+  if(Math.abs(r1.m-r2.m)<1e-9 && Math.abs(L.keBefore-L.keAfter)<1e-6 && Math.hypot(r2.u.x,r2.u.y)<1e-9)
+    push('  <em>equal masses, elastic, one initially at rest — the two always separate at 90°</em>');
+  push('<span class="lbl">Kinetic energy</span>');
+  push('  before = '+w(L.keBefore)+' J,  after = '+w(L.keAfter)+' J');
+  return st;
+}
+
+function renderWorking(){
+  WORK = buildWorking();
+  var out = $('#workOut');
+  out.innerHTML = WORK.map(function(s,i){ return '<span class="step" data-i="'+i+'">'+s.h+'</span>'; }).join('');
+  walkIdx = -1;
+  $('#btnWalkPrev').disabled = true; $('#btnWalkNext').disabled = true; $('#walkStatus').textContent='';
+}
+var workLast = 0, workTimer = null;
+function renderWorkingThrottled(){
+  var now = (window.performance&&performance.now)? performance.now() : Date.now();
+  if(now-workLast > 280){ workLast=now; renderWorking(); return; }
+  if(workTimer) return;
+  workTimer = setTimeout(function(){ workTimer=null; workLast=(window.performance&&performance.now)?performance.now():Date.now(); renderWorking(); }, 280);
+}
+function walkTo(i){
+  walkIdx = clamp(i,0,WORK.length-1);
+  var spans = $$('#workOut .step');
+  for(var k=0;k<spans.length;k++) spans[k].classList.toggle('hi', k===walkIdx);
+  if(spans[walkIdx]) spans[walkIdx].scrollIntoView({block:'nearest'});
+  $('#walkStatus').textContent = 'step '+(walkIdx+1)+' of '+WORK.length;
+  $('#btnWalkPrev').disabled = walkIdx<=0;
+  $('#btnWalkNext').disabled = walkIdx>=WORK.length-1;
+}
+
+/* ----------------------- conservation calculator ------------------------ */
+var SKEYS = ['sm1','su1','sm2','su2','sv1','sv2'];
+function readSolve(){
+  var o = {}, blanks = [];
+  for(var i=0;i<SKEYS.length;i++){
+    var el = $('#'+SKEYS[i]);
+    var raw = el.value.trim();
+    if(raw===''){ o[SKEYS[i]] = null; blanks.push(SKEYS[i]); }
+    else {
+      var v = parseFloat(raw);
+      o[SKEYS[i]] = isFinite(v)? v : null;
+      if(!isFinite(v)) blanks.push(SKEYS[i]);
+    }
+  }
+  return {vals:o, blanks:blanks};
+}
+function solveConservation(){
+  var stick = $('#sStick').checked;
+  var r = readSolve(), v = r.vals, blanks = r.blanks.slice();
+  if(stick){
+    /* v1 and v2 are the same unknown */
+    var known = (v.sv1!==null)? v.sv1 : v.sv2;
+    v.sv1 = known; v.sv2 = known;
+    blanks = blanks.filter(function(k){ return k!=='sv1' && k!=='sv2'; });
+    if(known===null) blanks.push('sv');
+  }
+  if(blanks.length!==1) return {ok:false, msg:'Leave exactly one box empty — at the moment '+(blanks.length===0?'every box is filled in':blanks.length+' are empty')+'.'};
+  var k = blanks[0], ans, steps = [];
+  var m1=v.sm1, u1=v.su1, m2=v.sm2, u2=v.su2, v1=v.sv1, v2=v.sv2;
+  function line(h){ steps.push(h); }
+  line('<span class="lbl">Take rightwards as positive. Momentum is conserved:</span>');
+  line('  m₁u₁ + m₂u₂ = m₁v₁ + m₂v₂');
+  if(k==='sv'){
+    if(m1===null||u1===null||m2===null||u2===null) return {ok:false,msg:'Fill in all four of m₁, u₁, m₂ and u₂.'};
+    var before = m1*u1+m2*u2;
+    ans = before/(m1+m2);
+    line('  they stick together, so v₁ = v₂ = v and  m₁u₁ + m₂u₂ = (m₁ + m₂)v');
+    line('  '+w(m1)+'×'+w(u1)+' + '+w(m2)+'×'+w(u2)+' = ('+w(m1)+' + '+w(m2)+')v');
+    line('  '+w(before)+' = '+w(m1+m2)+' v');
+    line('  <em>v = '+w(ans)+' m s⁻¹</em>');
+    return {ok:true, key:'sv', value:ans, steps:steps, stick:true};
+  }
+  var need = {sm1:[u1,m2,u2,v1,v2], su1:[m1,m2,u2,v1,v2], sm2:[m1,u1,u2,v1,v2],
+              su2:[m1,u1,m2,v1,v2], sv1:[m1,u1,m2,u2,v2], sv2:[m1,u1,m2,u2,v1]}[k];
+  for(var i=0;i<need.length;i++) if(need[i]===null) return {ok:false, msg:'Two or more boxes are empty. Leave just one.'};
+  if(k==='sv2'){
+    ans = (m1*u1+m2*u2-m1*v1)/m2;
+    line('  '+w(m1)+'×'+w(u1)+' + '+w(m2)+'×'+w(u2)+' = '+w(m1)+'×'+w(v1)+' + '+w(m2)+'×v₂');
+    line('  '+w(m1*u1+m2*u2)+' = '+w(m1*v1)+' + '+w(m2)+' v₂');
+    line('  <em>v₂ = '+w(ans)+' m s⁻¹</em>');
+  } else if(k==='sv1'){
+    ans = (m1*u1+m2*u2-m2*v2)/m1;
+    line('  '+w(m1*u1+m2*u2)+' = '+w(m1)+' v₁ + '+w(m2*v2));
+    line('  <em>v₁ = '+w(ans)+' m s⁻¹</em>');
+  } else if(k==='su1'){
+    ans = (m1*v1+m2*v2-m2*u2)/m1;
+    line('  '+w(m1)+' u₁ + '+w(m2*u2)+' = '+w(m1*v1+m2*v2));
+    line('  <em>u₁ = '+w(ans)+' m s⁻¹</em>');
+  } else if(k==='su2'){
+    ans = (m1*v1+m2*v2-m1*u1)/m2;
+    line('  '+w(m1*u1)+' + '+w(m2)+' u₂ = '+w(m1*v1+m2*v2));
+    line('  <em>u₂ = '+w(ans)+' m s⁻¹</em>');
+  } else if(k==='sm1'){
+    if(Math.abs(u1-v1)<1e-12) return {ok:false,msg:'u₁ and v₁ are equal, so this object’s momentum never changes and its mass cannot be found.'};
+    ans = m2*(v2-u2)/(u1-v1);
+    line('  rearranging:  m₁(u₁ − v₁) = m₂(v₂ − u₂)');
+    line('  m₁ × '+w(u1-v1)+' = '+w(m2)+' × '+w(v2-u2));
+    line('  <em>m₁ = '+w(ans)+' kg</em>');
+  } else if(k==='sm2'){
+    if(Math.abs(v2-u2)<1e-12) return {ok:false,msg:'u₂ and v₂ are equal, so this object’s momentum never changes and its mass cannot be found.'};
+    ans = m1*(u1-v1)/(v2-u2);
+    line('  rearranging:  m₂(v₂ − u₂) = m₁(u₁ − v₁)');
+    line('  m₂ × '+w(v2-u2)+' = '+w(m1)+' × '+w(u1-v1));
+    line('  <em>m₂ = '+w(ans)+' kg</em>');
+  }
+  return {ok:true, key:k, value:ans, steps:steps};
+}
+
+/* ================================ GRAPH ================================= */
+function drawGraph(){
+  var cvg = $('#graph'); if(!cvg) return;
+  var box = cvg.getBoundingClientRect();
+  if(box.width < 20) return;
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  var bw = Math.round(box.width*dpr), bh = Math.round(box.height*dpr);
+  if(cvg.width!==bw || cvg.height!==bh){ cvg.width=bw; cvg.height=bh; }
+  var g = cvg.getContext('2d');
+  g.setTransform(dpr,0,0,dpr,0,0);
+  var W = box.width, H = box.height;
+  var padL=62, padB=38, padT=14, padR=16;
+  g.clearRect(0,0,W,H);
+  g.fillStyle = C.stage; g.fillRect(0,0,W,H);
+
+  var mode = S.graph;
+  var hist = S.hist;
+  var t0 = 0, t1 = Math.max(S.t, 0.4);
+  if(mode==='F'){
+    if(S.last){ t0 = Math.max(0, S.last.at - S.last.T*1.35); t1 = S.last.at + S.last.T*0.4; }
+    else if(S.contact){ t0 = Math.max(0,S.contact.t0-S.contact.T*0.3); t1 = S.contact.t0+S.contact.T*1.35; }
+    else { t0=0; t1=Math.max(S.t,0.2); }
+  }
+  if(t1-t0 < 1e-6) t1 = t0+0.1;
+
+  /* series */
+  var series = [], zeroLine = true, yLab = '';
+  if(mode==='p'){
+    yLab = 'momentum / kg m s⁻¹';
+    for(var i=0;i<S.bodies.length;i++) series.push({c:S.bodies[i].colour, n:S.bodies[i].label, wd:2.2, get:function(ii){ return function(r){ return r.p[ii]; }; }(i)});
+    series.push({c:C.mom, n:'total', wd:3.4, get:function(r){ return r.pT; }});
+  } else if(mode==='v'){
+    yLab = 'velocity / m s⁻¹';
+    for(var j=0;j<S.bodies.length;j++) series.push({c:S.bodies[j].colour, n:S.bodies[j].label, wd:2.4, get:function(jj){ return function(r){ return r.v[jj]; }; }(j)});
+  } else if(mode==='k'){
+    yLab = 'kinetic energy / J';
+    for(var q=0;q<S.bodies.length;q++) series.push({c:S.bodies[q].colour, n:S.bodies[q].label, wd:2.2, get:function(qq){ return function(r){ return r.k[qq]; }; }(q)});
+    series.push({c:C.energy, n:'total', wd:3.4, get:function(r){ return r.kT; }});
+    zeroLine = false;
+  } else {
+    yLab = 'force on each object / N';
+    series.push({c:C.force, n:'contact force', wd:3, fill:true, get:function(r){ return r.F; }});
+    zeroLine = false;
+  }
+
+  var lo=Infinity, hi=-Infinity, n;
+  for(n=0;n<hist.length;n++){
+    var r = hist[n];
+    if(r.t<t0||r.t>t1) continue;
+    for(var s=0;s<series.length;s++){
+      var val = series[s].get(r);
+      if(val===undefined||!isFinite(val)) continue;
+      if(val<lo) lo=val; if(val>hi) hi=val;
+    }
+  }
+  if(!isFinite(lo)||!isFinite(hi)){ lo=0; hi=1; }
+  if(hi-lo<1e-9){ hi=lo+1; }
+  var pad = (hi-lo)*0.16; lo-=pad; hi+=pad;
+  if(mode==='F'){ lo = 0; }
+  else if(zeroLine){ if(lo>0) lo=0; if(hi<0) hi=0; }
+  else if(lo>0) lo=0;
+
+  var X2 = function(t){ return padL + (t-t0)/(t1-t0)*(W-padL-padR); };
+  var Y2 = function(y){ return H-padB - (y-lo)/(hi-lo)*(H-padB-padT); };
+
+  g.strokeStyle=C.grid2; g.lineWidth=1; g.beginPath();
+  for(var a=0;a<=5;a++){ var yy=Math.round(padT+(H-padB-padT)*a/5)+0.5; g.moveTo(padL,yy); g.lineTo(W-padR,yy); }
+  for(var b2=0;b2<=6;b2++){ var xx=Math.round(padL+(W-padL-padR)*b2/6)+0.5; g.moveTo(xx,padT); g.lineTo(xx,H-padB); }
+  g.stroke();
+  g.strokeStyle=C.line; g.lineWidth=1.5;
+  g.beginPath(); g.moveTo(padL,padT); g.lineTo(padL,H-padB); g.lineTo(W-padR,H-padB); g.stroke();
+  if(lo<0&&hi>0){ g.strokeStyle=C.muted; g.setLineDash([5,4]); g.lineWidth=1.3;
+    g.beginPath(); g.moveTo(padL,Y2(0)); g.lineTo(W-padR,Y2(0)); g.stroke(); g.setLineDash([]); }
+
+  g.fillStyle=C.muted; g.font='600 10.5px system-ui,sans-serif'; g.textAlign='right'; g.textBaseline='middle';
+  for(var c2=0;c2<=5;c2++){ var val2 = hi-(hi-lo)*c2/5; g.fillText(fmt(val2, Math.abs(hi-lo)>100?0:1), padL-6, padT+(H-padB-padT)*c2/5); }
+  g.textAlign='center'; g.textBaseline='top';
+  for(var d2=0;d2<=6;d2++){ var tv = t0+(t1-t0)*d2/6; g.fillText(fmt(tv, (t1-t0)<0.5?3:2), padL+(W-padL-padR)*d2/6, H-padB+7); }
+  g.font='700 11.5px system-ui,sans-serif'; g.fillText('time / s', W/2, H-15);
+  g.save(); g.translate(11,H/2); g.rotate(-PI/2); g.textBaseline='top'; g.font='600 10.5px system-ui,sans-serif';
+  g.fillText(yLab,0,0); g.restore();
+
+  /* shaded impulse area for the force graph */
+  if(mode==='F'){
+    g.save(); g.fillStyle=C.force; g.globalAlpha=.20;
+    g.beginPath(); g.moveTo(X2(t0), Y2(0));
+    var started=false;
+    for(n=0;n<hist.length;n++){
+      var rr2=hist[n]; if(rr2.t<t0||rr2.t>t1) continue;
+      g.lineTo(X2(rr2.t), Y2(rr2.F)); started=true;
+    }
+    if(started){ g.lineTo(X2(Math.min(t1,S.t)), Y2(0)); g.closePath(); g.fill(); }
+    g.restore();
+  }
+
+  for(var s2=0;s2<series.length;s2++){
+    var se = series[s2];
+    g.strokeStyle=se.c; g.lineWidth=se.wd; g.lineJoin='round';
+    g.beginPath(); var first=true;
+    for(n=0;n<hist.length;n++){
+      var rec=hist[n]; if(rec.t<t0||rec.t>t1) continue;
+      var yv = se.get(rec); if(yv===undefined||!isFinite(yv)) continue;
+      var px=X2(rec.t), py=Y2(yv);
+      if(first){ g.moveTo(px,py); first=false; } else g.lineTo(px,py);
+    }
+    g.stroke();
+  }
+  /* legend */
+  g.font='700 10.5px system-ui,sans-serif'; g.textAlign='left'; g.textBaseline='middle';
+  var lx = padL+9, ly = padT+10;
+  for(var s3=0;s3<series.length;s3++){
+    g.fillStyle=series[s3].c;
+    g.fillRect(lx, ly-4, 13, 3);
+    g.fillText(series[s3].n, lx+18, ly);
+    lx += 22 + g.measureText(series[s3].n).width + 10;
+    if(lx > W-90){ lx = padL+9; ly += 15; }
+  }
+
+  var rd = $('#graphRead'), hint = $('#graphHint');
+  if(mode==='p'){
+    rd.innerHTML = kv('Total momentum now', fmt(S.mode==='2d'?totalP().mag:totalP().x)+' kg m s⁻¹');
+    hint.innerHTML = 'The individual momenta jump at the collision, but the thick line — the total — is perfectly flat straight through it. That flat line <em>is</em> conservation of momentum.';
+  } else if(mode==='v'){
+    rd.innerHTML = '';
+    hint.innerHTML = 'The gradient of a velocity–time graph is the acceleration, so the steep part is the collision itself. A longer contact time makes that part less steep, which means a smaller force.';
+  } else if(mode==='k'){
+    rd.innerHTML = kv('Total kinetic energy now', fmt(totalKE())+' J');
+    hint.innerHTML = 'Kinetic energy is only conserved when the collision is elastic. Drop the bounciness below 1 and watch the total step down at the moment of impact.';
+  } else {
+    var area = 0;
+    for(n=1;n<hist.length;n++){ area += 0.5*(hist[n].F+hist[n-1].F)*(hist[n].t-hist[n-1].t); }
+    rd.innerHTML = kv('Area under the graph', fmt(area)+' N s') +
+      (S.last? kv('Change of momentum', fmt(Math.abs(S.last.impulse))+' N s') + kv('Peak force', fmt(S.last.Fpeak,0)+' N') : '');
+    hint.innerHTML = 'The shaded area is the impulse, and it equals the change in momentum exactly. Change the contact time in the Set up tab: the pulse gets taller and narrower, or shorter and wider, but the area never changes.';
+  }
+}
+
+/* ============================ INTERACTION =============================== */
+var GEO = {};
+function inBox(px,py,cx,cy,w2,h2){ return Math.abs(px-cx)<=w2 && Math.abs(py-cy)<=h2; }
+function hitTest(px,py){
+  for(var i=S.bodies.length-1;i>=0;i--){
+    var b=S.bodies[i], gg=GEO[b.id];
+    if(gg && gg.tip && Math.hypot(px-gg.tip.x, py-gg.tip.y)<15) return {id:b.id, mode:'vel'};
+    if(S.mode==='2d'){
+      if(Math.hypot(px-X(b.x), py-Y(b.y)) <= radius(b.m)*V.scale+6) return {id:b.id, mode:'move'};
+    } else {
+      var t = trolleyBox(b);
+      if(inBox(px,py,t.cx,t.cy,t.hl+6,t.h/2+6)) return {id:b.id, mode:'move'};
+    }
+  }
+  if(S.gates.on && S.mode==='line'){
+    for(var g=0; g<S.gates.x.length; g++){
+      if(Math.abs(px - X(S.gates.x[g]))<14 && py>V.trackY-84 && py<V.trackY) return {gate:g};
+    }
+  }
+  return null;
+}
+var drag = null, shiftDown = false;
+function ptr(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+
+cv.addEventListener('pointerdown', function(e){
+  cv.setPointerCapture(e.pointerId);
+  var p = ptr(e), h = hitTest(p.x,p.y);
+  if(!h){ S.sel=null; listDirty=true; updateAll(); return; }
+  if(h.gate!==undefined){ drag={gate:h.gate}; return; }
+  S.sel = h.id; listDirty = true;
+  drag = {id:h.id, mode:h.mode};
+  if(h.mode==='move'){ S.running=false; }
+  updateAll();
+});
+cv.addEventListener('pointermove', function(e){
+  var p = ptr(e);
+  if(!drag){
+    var h = hitTest(p.x,p.y);
+    cv.style.cursor = h? (h.gate!==undefined?'ew-resize':(h.mode==='vel'?'crosshair':'grab')) : 'default';
+    return;
+  }
+  if(drag.gate!==undefined){
+    S.gates.x[drag.gate] = clamp(invX(p.x), 0.05, S.trackL-0.05);
+    updateAll(); return;
+  }
+  var b = bodyById(drag.id); if(!b) return;
+  if(drag.mode==='move'){
+    if(S.mode==='2d'){ b.x = clamp(invX(p.x),0,TABLE_W); b.y = clamp(invY(p.y),0,TABLE_H); }
+    else b.x = clamp(invX(p.x), bodyHalf(b), S.trackL-bodyHalf(b));
+    resnapshot();
+  } else {
+    var gg = GEO[b.id]; if(!gg) return;
+    var maxP = maxAbsP(), pxMax = clamp((S.mode==='2d'? V.scale*0.9 : V.w*0.16), 46, 150);
+    var dx = p.x-gg.base.x, dy = p.y-gg.base.y;
+    if(S.mode==='2d'){
+      var mag = Math.hypot(dx,dy)/pxMax*maxP;      // momentum magnitude
+      var ang = Math.atan2(-dy,dx);
+      b.vx = Math.cos(ang)*mag/b.m; b.vy = Math.sin(ang)*mag/b.m;
+    } else {
+      var pv = dx/pxMax*maxP;
+      b.vx = pv/b.m;
+    }
+    if(!shiftDown){ b.vx = Math.round(b.vx*10)/10; if(S.mode==='2d') b.vy = Math.round(b.vy*10)/10; }
+    S.running=false;
+    resnapshot();
+  }
+  updateAll();
+});
+function endDrag(e){
+  if(drag){ drag=null; updateAll(); }
+  if(e && e.pointerId!==undefined && cv.hasPointerCapture && cv.hasPointerCapture(e.pointerId)) cv.releasePointerCapture(e.pointerId);
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+function resnapshot(){
+  if(S.t>0){ S.t=0; S.contact=null; S.last=null; S.hist=[]; S.strobes=[]; S.gateReads=[];
+    for(var i=0;i<S.bodies.length;i++){ S.bodies[i].trail.length=0; S.bodies[i].gateIn=[false,false]; } }
+  snapshotInitial();
+  var p = totalP(); S.p0 = (S.mode==='2d')? p.mag : p.x;
+  S.ke0 = totalKE();
+}
+
+/* ------------------------------- keyboard ------------------------------- */
+ROOT.addEventListener('keydown', function(e){
+  var tg = (e.target.tagName||'').toLowerCase();
+  if(tg==='input'||tg==='select'||tg==='textarea') return;
+  if(e.key==='Shift') shiftDown=true;
+  var b = S.sel? bodyById(S.sel) : null;
+  switch(e.key){
+    case ' ': e.preventDefault(); togglePlay(); break;
+    case '.': e.preventDefault(); stepOnce(); break;
+    case 'r': case 'R': doReset(); break;
+    case 'x': case 'X': if(armed()) fireExplosion(); break;
+    case 'v': case 'V': $('#btnVectors').click(); break;
+    case 'h': case 'H': $('#btnValues').click(); break;
+    case 't': case 'T': toggleTheme(); break;
+    case '1': setMode('line'); break;
+    case '2': setMode('2d'); break;
+    case '3': setMode('safety'); break;
+    case 'ArrowLeft': case 'ArrowRight':
+      if(b){ e.preventDefault(); b.vx += (e.key==='ArrowRight'?1:-1)*(e.shiftKey?1:0.1);
+             b.vx = Math.round(b.vx*100)/100; resnapshot(); listDirty=true; updateAll(); } break;
+    case 'ArrowUp': case 'ArrowDown':
+      if(b){ e.preventDefault(); b.m = Math.max(0.05, b.m + (e.key==='ArrowUp'?1:-1)*(e.shiftKey?1:0.1));
+             b.m = Math.round(b.m*100)/100; resnapshot(); listDirty=true; updateAll(); } break;
+  }
+});
+ROOT.addEventListener('keyup', function(e){ if(e.key==='Shift') shiftDown=false; });
+
+/* ============================== CONTROLS ================================ */
+function togglePlay(){
+  /* Nothing is moving and a spring is compressed between the objects, so
+     "play" can only sensibly mean "let it go". */
+  if(!S.running && armed()){ fireExplosion(); return; }
+  S.running = !S.running;
+  if(S.running && S.p0===undefined) resnapshot();
+  syncControls();
+}
+function fireExplosion(){
+  var E = S.explodeE;
+  if(doExplode(E)){
+    S.running = true;
+    listDirty = true;
+    syncControls(); updateAll();
+    toast('Released — ' + E + ' J of stored energy');
+    var live = $('#live'); if(live) live.textContent = 'Spring released.';
+  }
+}
+function stepOnce(){ S.running=false; subStep(0.01*S.speed); updateAll(); }
+function doReset(){ S.pauseAt=null; resetSim(); var p=totalP(); S.p0=(S.mode==='2d')?p.mag:p.x; S.ke0=totalKE(); listDirty=true; updateAll(); }
+
+function setMode(m){
+  if(S.mode===m) return;
+  S.mode = m;
+  if(m==='line') scenarioTwoTrolleys();
+  else if(m==='2d') scenario2D();
+  else scenarioSafety();
+  syncControls(); listDirty=true; updateAll();
+}
+function toggleTheme(){
+  var cur = ROOT.getAttribute('data-theme')||'light';
+  ROOT.setAttribute('data-theme', cur==='light'?'dark':'light');
+  try{ localStorage.setItem('mtm-theme', ROOT.getAttribute('data-theme')); }catch(err){}
+  refreshColours(); themeStamp = ROOT.getAttribute('data-theme'); drawGraph();
+}
+function syncControls(){
+  $('#modeLine').setAttribute('aria-pressed', S.mode==='line');
+  $('#mode2D').setAttribute('aria-pressed', S.mode==='2d');
+  $('#modeSafe').setAttribute('aria-pressed', S.mode==='safety');
+  $('#grpCollision').hidden = (S.mode==='safety');
+  $('#grpBodies').hidden = (S.mode==='safety');
+  $('#grpTrack').hidden = (S.mode!=='line');
+  $('#grp2D').hidden = (S.mode!=='2d');
+  $('#grpSafety').hidden = (S.mode!=='safety');
+  $('#grpImpulse').hidden = false;
+  $('#inE').value=S.e; $('#inCt').value=S.ct; $('#inCard').value=S.gates.card;
+  $('#inSpeed').value = Math.log10(S.speed);
+  $('#inDec').value=S.dec; $('#inB').value=S.b2d; $('#inExpE').value=S.explodeE;
+  $('#chkWalls').checked=S.walls; $('#chkGates').checked=S.gates.on;
+  $('#chkTriangle').checked=S.tri; $('#chkComponents').checked=S.comps;
+  $('#inCarM').value=S.safety.m; $('#inCarV').value=S.safety.u;
+  $('#inCarT').value=S.safety.T; $('#inDummy').value=S.safety.dummy;
+  $('#chkBelt').checked=S.safety.belt;
+  $('#cSig').checked=S.sig;
+  var cp=$('#cPause'); if(cp) cp.checked=S.pauseAfter;
+  var map={cGrid:'grid',cRuler:'ruler',cVel:'vel',cMom:'mom',cTotal:'total',cLabels:'labels',cSquash:'squash',cStrobe:'strobe'};
+  for(var k in map){ var el=$('#'+k); if(el) el.checked=!!S.show[map[k]]; }
+  $('#btnPlay').setAttribute('aria-pressed', S.running);
+  var fb = $('#btnFire'); if(fb) fb.hidden = !armed();
+  var eb = $('#btnExplode'); if(eb) eb.classList.toggle('primary', armed());
+  $('#playIcon').innerHTML = S.running
+    ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>'
+    : '<path d="M7 4l13 8-13 8z"></path>';
+  $('#btnVectors').setAttribute('aria-pressed', !!S.show.mom);
+  $('#btnTrails').setAttribute('aria-pressed', !!S.show.trails);
+  $('#btnValues').setAttribute('aria-pressed', !S.show.values);
+  $('#gTabP').setAttribute('aria-pressed', S.graph==='p');
+  $('#gTabV').setAttribute('aria-pressed', S.graph==='v');
+  $('#gTabK').setAttribute('aria-pressed', S.graph==='k');
+  $('#gTabF').setAttribute('aria-pressed', S.graph==='F');
+  updateSetupTexts();
+}
+
+/* ---------------------------- scenario setup ---------------------------- */
+function clearBodies(){ S.bodies=[]; S.nextId=1; S.sel=null; }
+function scenarioTwoTrolleys(){
+  S.mode='line'; S.trackL=4; S.walls=false; S.e=1; S.ct=0.06;
+  clearBodies();
+  makeBody({m:2, x:1.0, vx:2.0, label:'Trolley A'});
+  makeBody({m:1, x:2.6, vx:0,   label:'Trolley B'});
+  S.gates.x=[1.9,3.3];
+  afterScenario();
+}
+function scenario2D(){
+  S.mode='2d'; S.e=1;
+  clearBodies();
+  makeBody({m:1, x:0.5, y:1.30, vx:2.4, vy:0, label:'Puck A'});
+  makeBody({m:1, x:2.4, y:1.30, vx:0, vy:0, label:'Puck B'});
+  applyImpact();
+  afterScenario();
+}
+function scenarioSafety(){
+  S.mode='safety'; S.trackL=14; S.walls=false;
+  clearBodies();
+  makeBody({m:S.safety.m, x:2.6, vx:S.safety.u, label:'Car', colour:'#0284c7', hl:2.1});
+  afterScenario();
+}
+function afterScenario(){
+  S.t=0; S.contact=null; S.last=null; S.hist=[]; S.strobes=[]; S.gateReads=[]; S.running=false; S.impactT=null;
+  snapshotInitial();
+  var p=totalP(); S.p0=(S.mode==='2d')?p.mag:p.x; S.ke0=totalKE();
+  listDirty=true;
+}
+function applyImpact(){
+  if(S.mode!=='2d' || S.bodies.length<2) return;
+  var a=S.bodies[0], b=S.bodies[1];
+  var off = S.b2d*(radius(a.m)+radius(b.m));
+  a.y = b.y + off;
+  resnapshot();
+}
+function syncSafetyBody(){
+  if(S.mode!=='safety' || !S.bodies.length) return;
+  var car = S.bodies[0];
+  car.m = S.safety.m; car.vx = S.safety.u; car.x = 2.6; car.hl = 2.1;
+  S.t=0; S.contact=null; S.last=null; S.hist=[]; S.strobes=[]; S.impactT=null;
+  car.trail.length=0;
+  snapshotInitial();
+  var p=totalP(); S.p0=p.x; S.ke0=totalKE();
+}
+
+/* ------------------------------- the loop ------------------------------- */
+var lastT = 0, raf = null;
+function subStep(dt){
+  var maxh = 0.0012;
+  var n = Math.max(1, Math.ceil(Math.abs(dt)/maxh));
+  var h = dt/n;
+  var wasRunning = S.running;
+  for(var i=0;i<n;i++){
+    step(h);
+    /* step() stops the run when a body leaves the track; without this the
+       rest of the frame would carry it far past the end and out of sight */
+    if(wasRunning && !S.running) break;
+  }
+}
+function loop(ts){
+  var real = Math.min(0.034, (ts-lastT)/1000 || 0.016); lastT = ts;
+  if(S.running){ subStep(real*S.speed); uiDirty = true; }
+  render();
+  updateHud();
+  if(uiDirty){ uiDirty=false; refreshPanels(); }
+  raf = requestAnimationFrame(loop);
+}
+function refreshPanels(){
+  if(listDirty){ buildBodyList(); listDirty=false; } else refreshBodyValues();
+  updateSetupTexts();
+  if(!$('#p-analyse').hidden) updateAnalyse();
+  if(!$('#p-solve').hidden) renderWorkingThrottled();
+  if(!$('#p-graphs').hidden) drawGraph();
+}
+
+/* ============================== WIRING ================================== */
+function rng(id, fn){
+  var el = $('#'+id);
+  el.addEventListener('input', function(){ fn(parseFloat(el.value)); syncControls(); updateAll(); });
+}
+function chk(id, fn){
+  var el = $('#'+id);
+  el.addEventListener('change', function(){ fn(el.checked); syncControls(); updateAll(); });
+}
+function wire(){
+  $('#modeLine').onclick = function(){ setMode('line'); };
+  $('#mode2D').onclick   = function(){ setMode('2d'); };
+  $('#modeSafe').onclick = function(){ setMode('safety'); };
+
+  rng('inE',  function(v){ S.e=v; resnapshot(); });
+  rng('inCt', function(v){ S.ct=v; resnapshot(); });
+  rng('inCard', function(v){ S.gates.card=v; });
+  rng('inSpeed', function(v){ S.speed = Math.pow(10, v); });
+  rng('inDec', function(v){ S.dec=v|0; });
+  rng('inB', function(v){ S.b2d=v; applyImpact(); });
+  rng('inCarM', function(v){ S.safety.m=v; syncSafetyBody(); });
+  rng('inCarV', function(v){ S.safety.u=v; syncSafetyBody(); });
+  rng('inCarT', function(v){ S.safety.T=v; syncSafetyBody(); });
+  rng('inDummy', function(v){ S.safety.dummy=v; });
+  rng('inExpE', function(v){ S.explodeE=v; });
+
+  chk('chkWalls', function(b){ S.walls=b; resnapshot(); });
+  chk('chkGates', function(b){ S.gates.on=b; });
+  chk('chkTriangle', function(b){ S.tri=b; });
+  chk('chkComponents', function(b){ S.comps=b; });
+  chk('chkBelt', function(b){ S.safety.belt=b; });
+  chk('cSig', function(b){ S.sig=b; });
+  chk('cPause', function(b){ S.pauseAfter=b; if(!b) S.pauseAt=null; });
+  var map={cGrid:'grid',cRuler:'ruler',cVel:'vel',cMom:'mom',cTotal:'total',cLabels:'labels',cSquash:'squash',cStrobe:'strobe'};
+  Object.keys(map).forEach(function(k){ chk(k, function(b){ S.show[map[k]] = b?1:0; }); });
+
+  $('#btnPlay').onclick = togglePlay;
+  $('#btnStep').onclick = stepOnce;
+  $('#btnReset').onclick = doReset;
+  $('#btnVectors').onclick = function(){ S.show.mom = S.show.mom?0:1; S.show.vel = S.show.mom; syncControls(); updateAll(); };
+  $('#btnTrails').onclick = function(){ S.show.trails = S.show.trails?0:1; syncControls(); updateAll(); };
+  $('#btnValues').onclick = function(){ S.show.values = S.show.values?0:1; syncControls(); updateAll();
+    toast(S.show.values? 'Values shown' : 'Values hidden — over to the students'); };
+
+  $('#btnAddBody').onclick = function(){
+    if(S.bodies.length>=6){ toast('Six objects is the limit'); return; }
+    var x = S.mode==='2d'? 1.2 : (S.bodies.length? Math.min(S.trackL-0.4, S.bodies[S.bodies.length-1].x+0.9) : 1);
+    var b = makeBody({m:1, x:x, y: S.mode==='2d'? 0.7 : 0, vx:0});
+    S.sel=b.id; resnapshot(); listDirty=true; updateAll();
+  };
+  $('#btnExplode').onclick = fireExplosion;
+  $('#btnFire').onclick = fireExplosion;
+  $('#btnSwap').onclick = function(){
+    for(var i=0;i<S.bodies.length;i++){ S.bodies[i].vx*=-1; S.bodies[i].vy*=-1; }
+    resnapshot(); listDirty=true; updateAll();
+  };
+
+  $('#bodyList').addEventListener('input', function(e){
+    var inp = e.target; if(!inp.getAttribute || !inp.getAttribute('data-f')) return;
+    var card = inp.closest('.bodycard'); if(!card) return;
+    var b = bodyById(parseInt(card.getAttribute('data-id'),10)); if(!b) return;
+    var v = parseFloat(inp.value); if(!isFinite(v)) return;
+    var f = inp.getAttribute('data-f');
+    if(S.t>0) resetSim();
+    b = bodyById(parseInt(card.getAttribute('data-id'),10));
+    if(f==='m') v = Math.max(0.01, v);
+    b[f] = v;
+    resnapshot(); updateAll();
+  });
+  $('#bodyList').addEventListener('click', function(e){
+    var btn = e.target.closest('button'), card = e.target.closest('.bodycard');
+    if(!card) return;
+    var id = parseInt(card.getAttribute('data-id'),10);
+    if(!btn){ S.sel=id; listDirty=true; updateAll(); return; }
+    if(btn.getAttribute('data-act')==='del' && S.bodies.length>1){
+      S.bodies = S.bodies.filter(function(b){ return b.id!==id; });
+      if(S.sel===id) S.sel=null;
+      resnapshot(); listDirty=true; updateAll();
+    }
+  });
+
+  /* graph tabs */
+  [['gTabP','p'],['gTabV','v'],['gTabK','k'],['gTabF','F']].forEach(function(pair){
+    $('#'+pair[0]).onclick = function(){ S.graph=pair[1]; syncControls(); drawGraph(); };
+  });
+
+  /* solver */
+  $('#btnSolve').onclick = function(){
+    var r = solveConservation();
+    var out = $('#solveOut');
+    if(!r.ok){ out.innerHTML = '<p class="hint bad" style="margin:0">'+r.msg+'</p>'; return; }
+    var el = $('#'+(r.key==='sv'?'sv2':r.key));
+    if(r.key==='sv'){ $('#sv1').value = r3(r.value); $('#sv2').value = r3(r.value); }
+    else el.value = r3(r.value);
+    out.innerHTML = '<div class="working">'+r.steps.map(function(s){ return '<span class="step">'+s+'</span>'; }).join('')+'</div>';
+    toast('Answer '+fmt(r.value,3));
+  };
+  $('#btnFromSim').onclick = function(){
+    var L = S.last;
+    if(L && !L.twoD && L.rows.length===2 && isFinite(L.rows[1].m)){
+      $('#sm1').value=r3(L.rows[0].m); $('#su1').value=r3(L.rows[0].u);
+      $('#sm2').value=r3(L.rows[1].m); $('#su2').value=r3(L.rows[1].u);
+      $('#sv1').value=r3(L.rows[0].v); $('#sv2').value='';
+      toast('Loaded from the latest collision');
+    } else if(S.bodies.length>=2){
+      $('#sm1').value=r3(S.bodies[0].m); $('#su1').value=r3(S.bodies[0].vx);
+      $('#sm2').value=r3(S.bodies[1].m); $('#su2').value=r3(S.bodies[1].vx);
+      $('#sv1').value=''; $('#sv2').value='';
+      toast('Loaded the objects as they are now');
+    }
+  };
+  $('#btnLoadSolve').onclick = function(){
+    var r = readSolve().vals;
+    if(r.sm1===null||r.su1===null||r.sm2===null||r.su2===null){ toast('Fill in both masses and both starting velocities'); return; }
+    if(S.mode!=='line') setMode('line');
+    clearBodies();
+    makeBody({m:r.sm1, x:1.0, vx:r.su1, label:'Object 1'});
+    makeBody({m:r.sm2, x:2.6, vx:r.su2, label:'Object 2'});
+    if($('#sStick').checked) S.e = 0;
+    afterScenario(); syncControls(); updateAll();
+    toast('Loaded into the simulation — press play');
+  };
+  $('#sStick').addEventListener('change', function(){
+    var on = $('#sStick').checked;
+    $('#sv2').disabled = on;
+    if(on) $('#sv2').value = $('#sv1').value;
+  });
+  $('#btnCheck').onclick = function(){
+    var L = S.last, out = $('#checkOut');
+    if(!L || L.twoD || L.rows.length<2 || !isFinite(L.rows[1].m)){
+      out.innerHTML = '<p class="hint" style="margin:0">Run a straight-line collision between two objects first, then check your answer against it.</p>'; return;
+    }
+    var g1 = parseFloat($('#pv1').value), g2 = parseFloat($('#pv2').value);
+    if(!isFinite(g1)||!isFinite(g2)){ out.innerHTML='<p class="hint bad" style="margin:0">Type in both velocities first.</p>'; return; }
+    var tol = Math.max(0.05, Math.abs(L.rows[0].v)*0.02, Math.abs(L.rows[1].v)*0.02);
+    var ok1 = Math.abs(g1-L.rows[0].v)<=tol, ok2 = Math.abs(g2-L.rows[1].v)<=tol;
+    var h = '';
+    h += '<div class="kv"><span class="k">'+esc(L.rows[0].label)+'</span><span class="v">'+(ok1?'<span style="color:'+cssVar('--ok')+'">✓ '+fmt(g1)+'</span>':'<span style="color:'+cssVar('--bad')+'">✗ you said '+fmt(g1)+', it is '+fmt(L.rows[0].v)+'</span>')+'</span></div>';
+    h += '<div class="kv"><span class="k">'+esc(L.rows[1].label)+'</span><span class="v">'+(ok2?'<span style="color:'+cssVar('--ok')+'">✓ '+fmt(g2)+'</span>':'<span style="color:'+cssVar('--bad')+'">✗ you said '+fmt(g2)+', it is '+fmt(L.rows[1].v)+'</span>')+'</span></div>';
+    var pGuess = L.rows[0].m*g1 + L.rows[1].m*g2;
+    h += '<p class="hint '+(Math.abs(pGuess-L.pBefore)<0.05?'ok':'warn')+'">Your answers give a total momentum of '+fmt(pGuess)+' kg m s⁻¹; before the collision it was '+fmt(L.pBefore)+'. '+
+         (Math.abs(pGuess-L.pBefore)<0.05? 'Momentum checks out.' : 'That is the first thing to check in any momentum question.')+'</p>';
+    out.innerHTML = h;
+  };
+  $('#btnWalk').onclick = function(){ walkTo(0); };
+  $('#btnWalkNext').onclick = function(){ walkTo(walkIdx+1); };
+  $('#btnWalkPrev').onclick = function(){ walkTo(walkIdx-1); };
+  $('#btnCopyWork').onclick = function(){
+    var txt = WORK.map(function(s){ return s.h.replace(/<[^>]+>/g,''); }).join('\n');
+    if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ toast('Working copied'); },function(){ toast('Copy failed'); });
+  };
+
+  /* tabs */
+  $$('.tabs button').forEach(function(btn){
+    btn.onclick = function(){
+      $$('.tabs button').forEach(function(b){ b.setAttribute('aria-selected', b===btn); });
+      $$('.tabpanel').forEach(function(p){ p.hidden = (p.id !== btn.getAttribute('aria-controls')); });
+      if(btn.id==='tab-solve') renderWorking();
+      if(btn.id==='tab-graphs') drawGraph();
+      updateAll();
+    };
+  });
+
+  /* header */
+  $('#btnTheme').onclick = toggleTheme;
+  $('#btnHelp').onclick = function(){ $('#modalHelp').setAttribute('open',''); };
+  $('#closeHelp').onclick = function(){ $('#modalHelp').removeAttribute('open'); };
+  $('#btnPresets').onclick = function(){ $('#modalPresets').setAttribute('open',''); };
+  $('#closePresets').onclick = function(){ $('#modalPresets').removeAttribute('open'); };
+  $('#modalHelp').addEventListener('click', function(e){ if(e.target===this) this.removeAttribute('open'); });
+  $('#modalPresets').addEventListener('click', function(e){ if(e.target===this) this.removeAttribute('open'); });
+
+  $('#btnShare').onclick = function(){
+    var url = location.origin+location.pathname+'#m='+encodeState();
+    if(navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ toast('Link copied'); },
+      function(){ location.hash='m='+encodeState(); toast('Setup saved to the address bar'); });
+    else { location.hash='m='+encodeState(); toast('Setup saved to the address bar'); }
+  };
+  $('#btnCopyState').onclick = function(){
+    if(navigator.clipboard) navigator.clipboard.writeText(encodeState()).then(function(){ toast('Setup code copied'); },function(){ toast('Copy failed'); });
+  };
+  $('#btnPasteState').onclick = function(){
+    function apply(txt){
+      if(!txt) return;
+      var o = decodeState(String(txt).trim().replace(/^.*#m=/,''));
+      if(o && deserialise(o)){ syncControls(); listDirty=true; updateAll(); toast('Setup loaded'); }
+      else toast('That is not a valid setup code');
+    }
+    if(navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(apply, function(){ apply(prompt('Paste the setup code:')); });
+    else apply(prompt('Paste the setup code:'));
+  };
+  $('#btnPng').onclick = $('#btnPng2').onclick = savePng;
+  $('#btnHardReset').onclick = function(){
+    var theme = ROOT.getAttribute('data-theme');
+    S = defaults(); scenarioTwoTrolleys();
+    ROOT.setAttribute('data-theme', theme);
+    syncControls(); listDirty=true; updateAll();
+  };
+}
+
+function savePng(){
+  var off = document.createElement('canvas');
+  off.width = cv.width; off.height = cv.height;
+  var oc = off.getContext('2d');
+  oc.fillStyle = cssVar('--stage'); oc.fillRect(0,0,off.width,off.height);
+  oc.drawImage(cv,0,0);
+  off.toBlob(function(bl){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(bl); a.download='momentum-diagram.png'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    toast('Diagram saved');
+  });
+}
+
+/* --------------------------- save / restore ----------------------------- */
+function serialise(){
+  return { v:1, mode:S.mode, e:S.e, ct:S.ct, walls:S.walls, trackL:S.trackL,
+    gates:{on:S.gates.on, x:S.gates.x.slice(), card:S.gates.card},
+    b2d:S.b2d, tri:S.tri, comps:S.comps, dec:S.dec, sig:S.sig, explodeE:S.explodeE, pauseAfter:S.pauseAfter,
+    safety:{m:S.safety.m,u:S.safety.u,T:S.safety.T,dummy:S.safety.dummy,belt:S.safety.belt},
+    show:S.show,
+    bodies:S.bodies.map(function(b){ return {m:b.m,x:b.x,y:b.y,vx:b.vx,vy:b.vy,colour:b.colour,label:b.label}; })
+  };
+}
+function deserialise(o){
+  if(!o||typeof o!=='object') return false;
+  var d = defaults();
+  S.mode=o.mode||'line'; S.e=(o.e===undefined?1:+o.e); S.ct=(o.ct===undefined?0.06:+o.ct);
+  S.walls=!!o.walls; S.trackL=+o.trackL||4;
+  S.gates={on:(o.gates&&o.gates.on!==false), x:(o.gates&&o.gates.x)||[1.9,3.3], card:(o.gates&&o.gates.card)||0.10};
+  S.b2d=(o.b2d===undefined?0.45:+o.b2d); S.tri=o.tri!==false; S.comps=o.comps!==false;
+  S.explodeE=(o.explodeE===undefined?12:+o.explodeE);
+  S.pauseAfter = (o.pauseAfter!==false);
+  S.dec=(o.dec===undefined?2:+o.dec); S.sig=!!o.sig;
+  S.safety = Object.assign({}, d.safety, o.safety||{});
+  S.show = Object.assign({}, d.show, o.show||{});
+  clearBodies();
+  (o.bodies||[]).forEach(function(b){ makeBody(b); });
+  if(!S.bodies.length) makeBody({m:1,x:1,vx:1});
+  afterScenario();
+  return true;
+}
+function encodeState(){
+  var json = JSON.stringify(serialise());
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeState(str){
+  try{ return JSON.parse(decodeURIComponent(escape(atob(String(str).replace(/-/g,'+').replace(/_/g,'/'))))); }
+  catch(e){ return null; }
+}
+
+/* ============================== SCENARIOS =============================== */
+var PRESETS = [
+ { n:'Complete transfer', t:'GCSE', d:'Equal masses, perfectly elastic, one at rest. The moving ball stops dead and passes on all of its momentum.',
+   f:function(){ base('line'); S.e=1; makeBody({m:1,x:0.9,vx:3,label:'Ball A'}); makeBody({m:1,x:2.6,vx:0,label:'Ball B'}); } },
+ { n:'Trolleys that stick', t:'GCSE', d:'A 2 kg trolley runs into a stationary 1 kg trolley and they move off together. The classic inelastic question.',
+   f:function(){ base('line'); S.e=0; makeBody({m:2,x:0.9,vx:3,label:'Trolley A'}); makeBody({m:1,x:2.6,vx:0,label:'Trolley B'}); } },
+ { n:'Head-on crash', t:'GCSE', d:'Two trolleys approaching each other. Watch the signs carefully — momentum to the left is negative.',
+   f:function(){ base('line'); S.e=0; makeBody({m:4,x:0.8,vx:2,label:'Trolley A'}); makeBody({m:1,x:3.1,vx:-3,label:'Trolley B'}); } },
+ { n:'Heavy into light', t:'A-Level', d:'A heavy trolley barely slows; the light one shoots off at almost twice the speed. Elastic.',
+   f:function(){ base('line'); S.e=1; makeBody({m:6,x:0.8,vx:2,label:'Heavy'}); makeBody({m:0.5,x:2.6,vx:0,label:'Light'}); } },
+ { n:'Light into heavy', t:'A-Level', d:'The light trolley bounces straight back with almost the same speed while the heavy one barely moves.',
+   f:function(){ base('line'); S.e=1; makeBody({m:0.5,x:0.8,vx:4,label:'Light'}); makeBody({m:6,x:2.6,vx:0,label:'Heavy'}); } },
+ { n:'Newton’s cradle', t:'A-Level', d:'Five equal masses in a row, perfectly elastic. Momentum and energy pass along the line and only the end one moves off.',
+   f:function(){ base('line'); S.e=1; S.gates.on=false;
+     for(var i=0;i<5;i++) makeBody({m:1, x:1.5+i*0.31, vx:0, label:'Ball '+LETTERS[i]});
+     S.bodies[0].x = 0.6; S.bodies[0].vx = 2.4; } },
+ { n:'Explosion on a track', t:'GCSE', d:'Two trolleys at rest with a compressed spring between them — press “Release the spring”, or play. The total momentum stays at zero.',
+   f:function(){ base('line'); S.explodeE=12; S.speed=0.5;
+       makeBody({m:2,x:1.7,vx:0,label:'Trolley A'}); makeBody({m:3,x:2.15,vx:0,label:'Trolley B'}); } },
+ { n:'Cannon and ball', t:'GCSE', d:'A heavy cannon fires a light ball — press “Release the spring”, or play. Equal and opposite momentum, but the ball takes almost all the kinetic energy. Opens in slow motion.',
+   f:function(){ base('line'); S.explodeE=9000; S.speed=0.02;
+       makeBody({m:400,x:1.4,vx:0,label:'Cannon'}); makeBody({m:6,x:2.15,vx:0,label:'Ball'}); } },
+ { n:'Rifle recoil', t:'A-Level', d:'A 4 kg rifle and a 20 g bullet — press “Release the spring”, or play. Same size of momentum each way; wildly different speeds and energies. Opens in very slow motion.',
+   f:function(){ base('line'); S.explodeE=1600; S.speed=0.01;
+       makeBody({m:4,x:1.5,vx:0,label:'Rifle'}); makeBody({m:0.02,x:2.0,vx:0,label:'Bullet'}); } },
+ { n:'Bouncing off a wall', t:'A-Level', d:'One trolley, walls switched on. The wall is joined to the Earth, so the momentum of the trolley alone is not conserved.',
+   f:function(){ base('line'); S.e=0.7; S.walls=true; makeBody({m:1,x:1.2,vx:2.5,label:'Trolley'}); } },
+ { n:'Glancing blow, 90°', t:'A-Level', d:'Equal masses, elastic, one at rest. Whatever the offset, the two always separate at right angles.',
+   f:function(){ base('2d'); S.e=1; S.b2d=0.5; makeBody({m:1,x:0.4,y:1.30,vx:2.6,vy:0,label:'Puck A'}); makeBody({m:1,x:2.4,y:1.30,vx:0,vy:0,label:'Puck B'}); } },
+ { n:'Off-centre, unequal', t:'A-Level', d:'A heavy puck clips a light one. Resolve into components and check each direction separately.',
+   f:function(){ base('2d'); S.e=1; S.b2d=0.6; makeBody({m:3,x:0.4,y:1.30,vx:2.2,vy:0,label:'Heavy'}); makeBody({m:1,x:2.4,y:1.30,vx:0,vy:0,label:'Light'}); } },
+ { n:'Two-dimensional pile-up', t:'A-Level', d:'A sticky oblique collision: the pucks move off together along the direction of the total momentum.',
+   f:function(){ base('2d'); S.e=0; S.b2d=0.4; makeBody({m:2,x:0.4,y:0.9,vx:2.4,vy:0.6,label:'Puck A'}); makeBody({m:1.5,x:2.4,y:1.9,vx:-0.6,vy:-1.4,label:'Puck B'}); } },
+ { n:'Urban crash, 30 mph', t:'GCSE', d:'A 1200 kg car stopping in 150 ms. Compare the force with and without the crumple zone.',
+   f:function(){ base('safety'); S.safety={m:1200,u:13.4,T:0.15,dummy:70,belt:true}; } },
+ { n:'No crumple zone', t:'GCSE', d:'The same crash, but the front of the car does not deform. Identical impulse, ten times the force.',
+   f:function(){ base('safety'); S.safety={m:1200,u:13.4,T:0.015,dummy:70,belt:false}; } },
+ { n:'Motorway, 70 mph', t:'GCSE', d:'A 1500 kg car at 31 m/s. Doubling the speed doubles the momentum and quadruples the kinetic energy.',
+   f:function(){ base('safety'); S.safety={m:1500,u:31.3,T:0.2,dummy:70,belt:true}; } }
+];
+function base(mode){
+  var theme = ROOT.getAttribute('data-theme');
+  var show = Object.assign({}, S.show), dec = S.dec, sig = S.sig, sp = S.speed;
+  S = defaults();
+  S.show = show; S.dec = dec; S.sig = sig; S.speed = sp;
+  S.mode = mode;
+  clearBodies();
+  ROOT.setAttribute('data-theme', theme);
+}
+function buildPresetList(){
+  var wrap = $('#presetList'); wrap.innerHTML='';
+  PRESETS.forEach(function(p,i){
+    var b = document.createElement('button');
+    b.innerHTML = '<b>'+esc(p.n)+'</b><span>'+esc(p.d)+'</span><span class="pill tag '+(p.t==='GCSE'?'':'mom')+'">'+p.t+'</span>';
+    b.onclick = function(){
+      PRESETS[i].f();
+      if(S.mode==='2d') applyImpact();
+      if(S.mode==='safety') scenarioSafety();
+      afterScenario(); syncControls(); listDirty=true; updateAll();
+      $('#modalPresets').removeAttribute('open');
+      toast(p.n+' loaded');
+    };
+    wrap.appendChild(b);
+  });
+}
+
+/* ================================ HELP ================================== */
+var HELP = ''+
+'<h4>What this is</h4>'+
+'<p>Everything on screen is live. Change a mass, drag an object, drag the tip of a momentum arrow, and the ledger, the graphs and the written solution all follow in the same frame. Anything you can set up, you can analyse.</p>'+
+
+'<h4>The physics</h4>'+
+'<p class="eq">momentum  p = mv &nbsp;&nbsp;(kg m s&#8315;&#185;)<br>impulse  F&Delta;t = &Delta;(mv) = mv &minus; mu &nbsp;&nbsp;(N s)</p>'+
+'<p>In a collision the two objects push on each other with equal and opposite forces for exactly the same length of time, so they receive equal and opposite impulses. That is why the total momentum of the pair cannot change &mdash; conservation of momentum is Newton’s third law in disguise.</p>'+
+'<p>Kinetic energy is a different matter. It is only conserved in a <b>perfectly elastic</b> collision. Slide the bounciness <i>e</i> below 1 and some kinetic energy is transferred to thermal and sound stores; at <i>e</i> = 0 the objects move off together and the loss is as large as it can be. Momentum is conserved throughout.</p>'+
+
+'<h4>The three simulations</h4>'+
+'<ul>'+
+'<li><b>Straight line</b> &mdash; trolleys on a track, with light gates that time an interrupt card just as the real practical does. Collisions, explosions, and up to six objects for a Newton’s cradle.</li>'+
+'<li><b>Two dimensions</b> &mdash; pucks on a table. Momentum is a vector, so it is conserved separately in the <i>x</i> and <i>y</i> directions. The vector diagram in the corner shows the before and after routes finishing at the same point.</li>'+
+'<li><b>Impact and safety</b> &mdash; a crash test. The car has a fixed amount of momentum to lose, so the only thing a crumple zone, a seat belt or an airbag can change is the <em>time</em> it takes to lose it.</li>'+
+'</ul>'+
+
+'<h4>The force&ndash;time graph</h4>'+
+'<p>The contact is spread over a real contact time with a smooth force pulse, and the pulse is built so that its area is exactly the change in momentum. Open the <b>Graphs</b> tab, choose <b>Force</b>, then change the contact time in <b>Set up</b>: the pulse becomes taller and narrower, or shorter and wider, and the shaded area never changes. That single picture is the whole of impulse, and the whole reason crumple zones work.</p>'+
+
+'<h4>Working it out</h4>'+
+'<p>The <b>Solve</b> tab has three things. The <b>conservation calculator</b> takes the six quantities an exam question uses, lets you leave one blank, and writes out the full solution. <b>Predict, then check</b> marks your own answer against the simulation. And the <b>working</b> panel writes out the whole calculation for whatever has just happened, with a step&#8209;by&#8209;step walk&#8209;through.</p>'+
+
+'<h4>Keyboard</h4>'+
+'<ul style="columns:2">'+
+'<li><kbd>Space</kbd> run or pause</li>'+
+'<li><kbd>.</kbd> one small step</li>'+
+'<li><kbd>R</kbd> back to the start</li>'+
+'<li><kbd>V</kbd> arrows on or off</li>'+
+'<li><kbd>H</kbd> hide the numbers</li>'+
+'<li><kbd>T</kbd> light or dark</li>'+
+'<li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> simulation</li>'+
+'<li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> change velocity</li>'+
+'<li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> change mass</li>'+
+'<li>drag an object to move it</li>'+
+'<li>drag an arrow tip to set its velocity</li>'+
+'<li>drag a light gate along the track</li>'+
+'</ul>'+
+
+'<h4>Signs</h4>'+
+'<p>Rightwards is positive everywhere in the straight&#8209;line simulation, and the usual <i>x</i>&#8211;<i>y</i> axes are used on the table. Getting the signs right is most of the skill in a momentum question, so the app never hides them: a velocity to the left is shown as a negative number, not as a size and a direction.</p>'+
+
+'<h4>Sharing</h4>'+
+'<p>The link button copies the whole scenario into a web address, so a pasted link rebuilds the exact question with nothing to install. <em>Save PNG</em> drops the diagram into a worksheet, and <kbd>H</kbd> hides every number so a class can work them out first.</p>';
+
+/* ================================ START ================================= */
+function init(){
+  try{ var th = localStorage.getItem('mtm-theme'); if(th) ROOT.setAttribute('data-theme', th); }catch(e){}
+  if(!ROOT.getAttribute('data-theme')){
+    ROOT.setAttribute('data-theme', (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches)? 'dark':'light');
+  }
+  refreshColours(); themeStamp = ROOT.getAttribute('data-theme');
+  $('#helpBody').innerHTML = HELP;
+  buildPresetList();
+  wire();
+
+  var loaded = false;
+  if(location.hash && location.hash.indexOf('#m=')===0){
+    var o = decodeState(location.hash.slice(3));
+    if(o) loaded = deserialise(o);
+  }
+  if(!loaded) scenarioTwoTrolleys();
+
+  syncControls();
+  resize();
+  listDirty = true; updateAll();
+  renderWorking();
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){ resize(); drawGraph(); updateAll(); }).observe(cv.parentElement);
+  } else {
+    window.addEventListener('resize', function(){ resize(); updateAll(); });
+  }
+  raf = requestAnimationFrame(loop);
+
+  window.MTM = {
+    get S(){ return S; }, set S(v){ S=v; },
+    defaults:defaults, restitution1D:restitution1D, keLost1D:keLost1D, explodeVels:explodeVels,
+    collide2D:collide2D, totalP:totalP, totalKE:totalKE, safetyNumbers:safetyNumbers,
+    step:step, subStep:subStep, doExplode:doExplode, solveConservation:solveConservation,
+    scenarioTwoTrolleys:scenarioTwoTrolleys, scenario2D:scenario2D, scenarioSafety:scenarioSafety,
+    makeBody:makeBody, clearBodies:clearBodies, afterScenario:afterScenario, resnapshot:resnapshot,
+    encodeState:encodeState, decodeState:decodeState, deserialise:deserialise, serialise:serialise,
+    setMode:setMode, syncControls:syncControls, updateAll:updateAll, buildWorking:buildWorking,
+    PRESETS:PRESETS, halfLen:halfLen, bodyHalf:bodyHalf, radius:radius, contactForce:contactForce,
+    get GEO(){ return GEO; }, get V(){ return V; }, trolleyBox:trolleyBox, X:X, Y:Y, bands:bands
+  };
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</body>
+</html>
