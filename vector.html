@@ -1,0 +1,2851 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="description" content="Vector Lab - an interactive vectors simulator for GCSE and A-Level Physics. Resolving into components, resultants by calculation and by scale drawing, the closed triangle of forces, equilibrium and equilibrants, tension in two cables, and forces on an inclined plane.">
+<title>Vector Lab &mdash; Resolving, Resultants and Equilibrium</title>
+<style>
+/* ---- standalone page only: delete these two rules when pasting #veclab as a fragment ---- */
+html,body{height:100%;margin:0;background:#eef1f6}
+body{overflow:hidden}
+/* --------------------------------------------------------------------------------------- */
+
+#veclab{
+  --bg:#edf1f6;
+  --bg2:#e3e9f0;
+  --stage:#f6f8fb;
+  --stage2:#e9eef4;
+  --panel:#ffffff;
+  --panel2:#f3f6fa;
+  --panel3:#e8edf4;
+  --ink:#111a24;
+  --ink2:#374757;
+  --muted:#657687;
+  --line:#d3dbe4;
+  --line2:#bcc7d3;
+  --accent:#c2410c;
+  --accent-ink:#ffffff;
+  --accent-soft:#fde6d8;
+  --res:#7c2d12;            /* resultant */
+  --res-soft:#fbe4d5;
+  --equil:#6d28d9;          /* equilibrant */
+  --equil-soft:#ece5ff;
+  --comp:#0369a1;           /* component construction */
+  --axis:#475569;
+  --ok:#15803d;
+  --warn:#b45309;
+  --bad:#be123c;
+  --grid:#c6d2df;
+  --grid2:#dfe7ef;
+  --shadow:0 1px 2px rgba(17,26,36,.07), 0 8px 22px rgba(17,26,36,.09);
+  --shadow-sm:0 1px 2px rgba(17,26,36,.1);
+  --radius:12px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+  color-scheme:light;
+  width:100%; height:100%; min-height:560px;
+  display:flex; flex-direction:column;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:14px; line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  position:relative; overflow:hidden; contain:layout style;
+}
+#veclab[data-theme="dark"]{
+  --bg:#0a0e13;
+  --bg2:#10161d;
+  --stage:#0d131b;
+  --stage2:#131b25;
+  --panel:#121922;
+  --panel2:#19212c;
+  --panel3:#222c39;
+  --ink:#e7eef6;
+  --ink2:#c1ccd8;
+  --muted:#8494a4;
+  --line:#25303c;
+  --line2:#35424f;
+  --accent:#fb923c;
+  --accent-ink:#231005;
+  --accent-soft:#3a2110;
+  --res:#fdba74;
+  --res-soft:#3a2110;
+  --equil:#a78bfa;
+  --equil-soft:#2a2050;
+  --comp:#38bdf8;
+  --axis:#94a3b8;
+  --ok:#4ade80;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --grid:#22303c;
+  --grid2:#182129;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.55);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+#veclab *,#veclab *::before,#veclab *::after{box-sizing:border-box}
+#veclab button,#veclab input,#veclab select,#veclab textarea{font:inherit;color:inherit;margin:0}
+#veclab :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+#veclab [hidden]{display:none !important}
+#veclab .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+#veclab .topbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 13px;background:var(--panel);border-bottom:1px solid var(--line);
+  flex:0 0 auto;z-index:5;box-shadow:var(--shadow-sm)
+}
+#veclab .brand{display:flex;align-items:center;gap:10px;min-width:0}
+#veclab .mark{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;
+  background:linear-gradient(140deg,var(--accent),#7c2d12);
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow-sm)
+}
+#veclab .brand h1{font-size:16px;margin:0;letter-spacing:-.02em;font-weight:700;white-space:nowrap}
+#veclab .brand .sub{font-size:11.5px;color:var(--muted);margin-top:-2px;white-space:nowrap}
+
+#veclab .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+#veclab .seg button{
+  border:0;background:transparent;padding:6px 11px;border-radius:7px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.14s
+}
+#veclab .seg button:hover{color:var(--ink)}
+#veclab .seg button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:var(--shadow-sm)}
+#veclab[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--panel3)}
+
+#veclab .spacer{flex:1 1 auto}
+#veclab .iconbtn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink2);
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;cursor:pointer;transition:.14s;flex:0 0 auto
+}
+#veclab .iconbtn:hover{background:var(--panel3);color:var(--ink)}
+#veclab .iconbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#veclab .btn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;transition:.14s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap
+}
+#veclab .btn:hover{background:var(--panel3)}
+#veclab .btn:active{transform:translateY(1px)}
+#veclab .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#veclab .btn.primary:hover{filter:brightness(1.08)}
+#veclab .btn.ghost{background:transparent}
+#veclab .btn.sm{padding:4px 9px;font-size:11.5px;border-radius:7px}
+#veclab .btn.danger{color:var(--bad)}
+#veclab .btn:disabled{opacity:.45;cursor:not-allowed}
+
+#veclab .main{display:flex;flex:1 1 auto;min-height:0;min-width:0}
+#veclab .stagewrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;background:var(--stage);overflow:hidden}
+#veclab canvas.scene{display:block;width:100%;height:100%;touch-action:none}
+
+#veclab .tools{
+  position:absolute;left:11px;top:11px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:5px;
+  box-shadow:var(--shadow-sm);max-width:calc(100% - 22px);opacity:.96
+}
+#veclab .tools .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+
+#veclab .hud{position:absolute;right:11px;top:11px;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none;max-width:44%}
+#veclab .chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
+  box-shadow:var(--shadow-sm);font-variant-numeric:tabular-nums;opacity:.96
+}
+#veclab .chip b{font-family:var(--mono);font-size:12.5px}
+#veclab .chip.res{border-color:var(--res);background:var(--res-soft);color:var(--res)}
+
+#veclab .verdict{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:11px;width:min(700px,calc(100% - 22px));
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:9px 12px 10px;box-shadow:var(--shadow);opacity:.97
+}
+#veclab .verdict .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#veclab .verdict .status{font-weight:700;font-size:13px;letter-spacing:-.01em}
+#veclab .verdict .num{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+#veclab .verdict .row2{display:block;margin-top:5px;font-family:var(--mono);font-size:11.5px;line-height:1.55;color:var(--muted)}
+#veclab .verdict .row2 b{color:var(--ink)}
+
+#veclab .panel{
+  flex:0 0 400px;max-width:400px;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0
+}
+#veclab .tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+#veclab .tabs::-webkit-scrollbar{display:none}
+#veclab .tabs button{
+  flex:1 1 auto;border:0;background:transparent;padding:10px 6px 9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:.14s;white-space:nowrap
+}
+#veclab .tabs button:hover{color:var(--ink)}
+#veclab .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--panel)}
+#veclab .tabbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:13px}
+#veclab .tabbody::-webkit-scrollbar{width:10px}
+#veclab .tabbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--panel)}
+#veclab .tabpanel[hidden]{display:none}
+
+#veclab .group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;background:var(--panel);overflow:hidden}
+#veclab .group>h3{
+  margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+#veclab .group .body{padding:11px 12px}
+#veclab .group.tight .body{padding:8px}
+
+#veclab .field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#veclab .field:last-child{margin-bottom:0}
+#veclab .field label{flex:0 0 104px;font-size:12.5px;color:var(--ink2);font-weight:600}
+#veclab .field .val{flex:0 0 80px;text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+#veclab .field input[type=range]{flex:1 1 auto;min-width:0}
+#veclab .field.col{flex-direction:column;align-items:stretch;gap:6px}
+#veclab .field.col label{flex:none}
+
+#veclab input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+#veclab input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#veclab input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);
+  border:2px solid var(--accent);margin-top:-7px;box-shadow:var(--shadow-sm);transition:.12s
+}
+#veclab input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+#veclab input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#veclab input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--shadow-sm)}
+
+#veclab input[type=number],#veclab input[type=text],#veclab select{
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+  font-size:12.5px;min-width:0;width:100%;font-family:var(--mono)
+}
+#veclab select{font-family:var(--sans);cursor:pointer}
+#veclab input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+#veclab .check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:3px 0}
+#veclab .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+
+#veclab .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+#veclab .hint.warn{color:var(--warn)}
+#veclab .hint.bad{color:var(--bad)}
+#veclab .hint.ok{color:var(--ok)}
+#veclab .hint em{font-style:normal;color:var(--accent);font-weight:600}
+
+#veclab .veclist{display:flex;flex-direction:column;gap:7px}
+#veclab .veccard{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px;transition:.14s}
+#veclab .veccard.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+#veclab .veccard .head{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+#veclab .veccard .dot{width:13px;height:13px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(0,0,0,.18)}
+#veclab .veccard .name{font-size:12.5px;font-weight:700;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#veclab .veccard .grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:5px 7px;align-items:center}
+#veclab .veccard .grid span{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+#veclab .veccard .acts{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+#veclab .qbtn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;font-weight:700;color:var(--muted)}
+#veclab .qbtn:hover{color:var(--ink)}
+#veclab .qbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#veclab table.led{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+#veclab table.led th{text-align:right;font-size:11px;color:var(--muted);padding:5px 6px;border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap}
+#veclab table.led th:first-child,#veclab table.led td:first-child{text-align:left}
+#veclab table.led td{padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);text-align:right;white-space:nowrap}
+#veclab table.led td.nm{font-family:var(--sans);font-weight:600;max-width:104px;overflow:hidden;text-overflow:ellipsis}
+#veclab table.led tr.tot td{font-weight:700;border-top:2px solid var(--line2);border-bottom:0}
+
+#veclab .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+#veclab .kv:last-child{border-bottom:0}
+#veclab .kv .k{color:var(--muted);font-weight:600}
+#veclab .kv .v{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+#veclab .banner{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:13px;
+  background:var(--panel2);border:1px solid var(--line);margin-bottom:12px
+}
+#veclab .banner .ic{font-size:17px;line-height:1.1;flex:0 0 auto}
+#veclab .banner.ok{background:color-mix(in srgb,var(--ok) 14%,var(--panel));border-color:var(--ok);color:var(--ok)}
+#veclab .banner.warn{background:var(--res-soft);border-color:var(--accent);color:var(--accent)}
+
+#veclab .working{
+  font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--panel2);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;
+  overflow-x:auto;color:var(--ink);min-height:60px
+}
+#veclab .working .step{display:block;padding:1px 0}
+#veclab .working .lbl{color:var(--muted)}
+#veclab .working .hi{background:var(--accent-soft);border-radius:3px;padding:0 2px}
+#veclab .working em{font-style:normal;color:var(--accent);font-weight:700}
+
+#veclab .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel3);color:var(--muted)}
+#veclab .pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+#veclab .pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+#veclab .pill.res{background:var(--res-soft);color:var(--res)}
+
+#veclab canvas.graph{width:100%;height:250px;display:block;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+#veclab .graphtabs{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+#veclab .graphtabs button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 9px;
+  font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted)
+}
+#veclab .graphtabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#veclab .modal{position:absolute;inset:0;background:rgba(8,12,18,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+#veclab .modal[open]{display:flex}
+#veclab .modal .sheet{
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);
+  max-width:min(760px,100%);width:100%;max-height:100%;display:flex;flex-direction:column;overflow:hidden
+}
+#veclab .modal .dhead{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto}
+#veclab .modal .dhead h2{margin:0;font-size:16px}
+#veclab .modal .dbody{padding:15px;overflow-y:auto;flex:1 1 auto}
+#veclab .modal h4{margin:16px 0 6px;font-size:13px;color:var(--accent)}
+#veclab .modal h4:first-child{margin-top:0}
+#veclab .modal p,#veclab .modal li{font-size:13px;color:var(--ink2);line-height:1.6}
+#veclab .modal ul{margin:6px 0;padding-left:20px}
+#veclab kbd{font-family:var(--mono);font-size:11px;background:var(--panel3);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink)}
+#veclab .eq{font-family:var(--mono);background:var(--panel2);padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px}
+#veclab .presetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:9px}
+#veclab .presetgrid button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 11px;cursor:pointer;
+  text-align:left;display:flex;flex-direction:column;gap:3px;transition:.14s
+}
+#veclab .presetgrid button:hover{background:var(--panel3);border-color:var(--accent)}
+#veclab .presetgrid b{font-size:13px}
+#veclab .presetgrid span{font-size:11.5px;color:var(--muted);line-height:1.45}
+#veclab .presetgrid .tag{align-self:flex-start;margin-top:3px}
+
+#veclab .toast{
+  position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--panel);padding:9px 15px;border-radius:10px;font-size:13px;font-weight:600;
+  transition:.22s;z-index:25;box-shadow:var(--shadow);max-width:80%;text-align:center
+}
+#veclab .toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  #veclab .main{flex-direction:column}
+  #veclab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:46%}
+  #veclab .stagewrap{flex:1 1 auto;min-height:220px}
+  #veclab .brand .sub{display:none}
+  #veclab .verdict{bottom:8px;padding:7px 10px}
+}
+@media (max-width:820px){
+  #veclab .seg{order:5;width:100%}
+  #veclab .seg button{flex:1 1 0;padding:7px 3px;font-size:11.5px}
+}
+@media (max-width:600px){
+  #veclab .topbar{gap:8px;padding:7px 10px}
+  #veclab .brand .txt{display:none}
+  #veclab .hud{display:none}
+  #veclab .iconbtn{width:28px;height:28px}
+  #veclab .tools{gap:4px;padding:4px;left:8px;top:8px}
+}
+
+/* --- keep the top bar on a single row in a ~1000 px embed column --- */
+@media (max-width:1120px){
+  #veclab .topbar{gap:8px;padding:7px 10px}
+  #veclab .brand .sub{display:none}
+  #veclab .brand h1{font-size:15px}
+  #veclab .seg{padding:2px}
+  #veclab .seg button{padding:6px 8px;font-size:12px}
+  #veclab .iconbtn{width:31px;height:31px}
+  #veclab .btn.sm{padding:5px 8px}
+}
+</style>
+</head>
+<body>
+<div id="veclab" data-theme="light">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 20L18 6"></path>
+          <path d="M12 6h6v6"></path>
+          <path d="M4 20h9"></path>
+          <path d="M4 20V13"></path>
+        </svg>
+      </div>
+      <div class="txt">
+        <h1>Vector Lab</h1>
+        <div class="sub">Resolving, resultants &amp; equilibrium &middot; GCSE &amp; A&#8209;Level</div>
+      </div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Simulation">
+      <button id="modeResultant" aria-pressed="true" title="Add vectors and find the resultant (1)">Resultant</button>
+      <button id="modeResolve" aria-pressed="false" title="Resolve one vector into components (2)">Resolve</button>
+      <button id="modeEquil" aria-pressed="false" title="Three forces in equilibrium (3)">Equilibrium</button>
+      <button id="modeSlope" aria-pressed="false" title="A block on a slope (4)">Slope</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button class="btn sm" id="btnPresets" title="Load a ready-made question">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h10"></path></svg>
+      <span>Scenarios</span>
+    </button>
+    <button class="iconbtn" id="btnShare" title="Copy a link that restores this exact setup" aria-label="Copy share link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnPng" title="Save the diagram as a PNG image" aria-label="Save image">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnTheme" title="Light or dark (T)" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnHelp" title="Help, the physics and keyboard shortcuts" aria-label="Help">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"></path><path d="M12 17.6h.01"></path></svg>
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="stagewrap" id="stagewrap">
+      <canvas class="scene" id="scene" tabindex="0" aria-label="Vector diagram. Drag the tip of a vector to change it."></canvas>
+
+      <div class="tools">
+        <button class="iconbtn" id="btnComp" title="Resolve every vector into components (C)" aria-pressed="true" aria-label="Toggle components">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19h11"></path><path d="M5 19V8"></path><path d="M5 19L17 7"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnPoly" title="Show the tip-to-tail polygon (P)" aria-pressed="true" aria-label="Toggle polygon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 18L11 5l9 6-5 7z"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnPara" title="Show the parallelogram of two vectors (G)" aria-pressed="false" aria-label="Toggle parallelogram">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M7 18h13L17 6H4z"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnEquil" title="Show the equilibrant (E)" aria-pressed="false" aria-label="Toggle equilibrant">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 4v16"></path><path d="M8 8l4-4 4 4"></path><path d="M8 16l4 4 4-4"></path></svg>
+        </button>
+        <div class="divider"></div>
+        <button class="iconbtn" id="btnAddVec" title="Add a vector (A)" aria-label="Add vector">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20L15 9"></path><path d="M9 8h7v7"></path><path d="M19 4v6M22 7h-6" opacity=".55"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnDelVec" title="Delete the selected vector (Del)" aria-label="Delete vector">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M9 7V5h6v2"></path><path d="M6 7l1 13h10l1-13"></path></svg>
+        </button>
+        <div class="divider"></div>
+        <button class="iconbtn" id="btnScale" title="Scale-drawing overlay: ruler and protractor (S)" aria-pressed="false" aria-label="Toggle scale drawing">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 15h18"></path><path d="M6 15v-3M10 15v-4M14 15v-3M18 15v-4"></path><path d="M3 19h18"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnValues" title="Hide every number so students work them out (H)" aria-pressed="false" aria-label="Hide values">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="2.6"></circle><path d="M3 3l18 18"></path></svg>
+        </button>
+        <span class="divider" id="dvPane" hidden></span>
+        <button class="iconbtn" id="btnPane" title="Switch between the space diagram and the vector diagram" aria-label="Switch diagram" hidden>&#8646;</button>
+      </div>
+
+      <div class="hud" id="hud">
+        <div class="chip res"><span id="hudRLbl">Resultant</span> <b id="hudR">0.00</b> <span id="hudUnit">N</span></div>
+        <div class="chip">Direction <b id="hudDir">0.0</b>&deg;</div>
+        <div class="chip"><span id="hudSumX">&Sigma;x 0.00</span> &nbsp; <span id="hudSumY">&Sigma;y 0.00</span></div>
+      </div>
+
+      <div class="verdict">
+        <div class="row1">
+          <span class="status" id="vStatus">Ready</span>
+          <span class="num" id="vNum">&nbsp;</span>
+        </div>
+        <div class="row2" id="vRow2"></div>
+      </div>
+      <p class="sr" id="live" aria-live="polite"></p>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div class="panel">
+      <div class="tabs" role="tablist" aria-label="Panels">
+        <button role="tab" id="tab-setup"   aria-selected="true"  aria-controls="p-setup">Set up</button>
+        <button role="tab" id="tab-analyse" aria-selected="false" aria-controls="p-analyse">Analyse</button>
+        <button role="tab" id="tab-solve"   aria-selected="false" aria-controls="p-solve">Solve</button>
+        <button role="tab" id="tab-graphs"  aria-selected="false" aria-controls="p-graphs">Graphs</button>
+        <button role="tab" id="tab-display" aria-selected="false" aria-controls="p-display">Display</button>
+      </div>
+      <div class="tabbody">
+
+        <!-- ================= SET UP ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-setup" aria-labelledby="tab-setup">
+
+          <div class="group" id="grpQuantity">
+            <h3>The quantity</h3>
+            <div class="body">
+              <div class="field col">
+                <label for="selQty">These vectors are</label>
+                <select id="selQty">
+                  <option value="force">forces, in newtons (N)</option>
+                  <option value="velocity">velocities, in metres per second (m s⁻¹)</option>
+                  <option value="displacement">displacements, in metres (m)</option>
+                </select>
+              </div>
+              <label class="check" style="margin-top:8px"><input type="checkbox" id="chkBearing"> <span>Give directions as compass bearings</span></label>
+              <p class="hint">Every vector idea in this app works for any vector quantity. Switching to displacements turns a force question into a journey question without changing a single number.</p>
+            </div>
+          </div>
+
+          <div class="group tight" id="grpVectors">
+            <h3>Vectors <span class="pill" id="vecCount">0</span></h3>
+            <div class="body">
+              <div class="veclist" id="vecList"></div>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm" id="btnAddVec2">+ Vector</button>
+                <button class="btn sm" id="btnBalance" title="Add the vector that would balance the others">+ Equilibrant</button>
+                <button class="btn sm ghost danger" id="btnClearVecs">Clear all</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="group" id="grpAxes">
+            <h3>The axes</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inAxis">Rotate axes</label>
+                <input type="range" id="inAxis" min="-90" max="90" step="0.5" value="0">
+                <span class="val" id="vAxis">0.0&deg;</span>
+              </div>
+              <p class="hint" id="axisHint">Resolving is a <em>choice</em>. Rotate the axes and every component changes, but the vectors themselves and their resultant do not move at all. Choosing the axes well is what makes a hard question easy.</p>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm" id="btnAxisZero">Horizontal &amp; vertical</button>
+                <button class="btn sm" id="btnAxisAlign">Align with the selected vector</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="group" id="grpSlope" hidden>
+            <h3>The slope</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inSlopeAng">Slope angle</label>
+                <input type="range" id="inSlopeAng" min="0" max="60" step="0.5" value="25">
+                <span class="val" id="vSlopeAng">25.0&deg;</span>
+              </div>
+              <div class="field">
+                <label for="inSlopeM">Mass</label>
+                <input type="range" id="inSlopeM" min="0.1" max="100" step="0.1" value="5">
+                <span class="val" id="vSlopeM">5.0 kg</span>
+              </div>
+              <div class="field">
+                <label for="inMu">Friction &mu;</label>
+                <input type="range" id="inMu" min="0" max="1.2" step="0.01" value="0.35">
+                <span class="val" id="vMu">0.35</span>
+              </div>
+              <div class="field">
+                <label for="inPush">Push up the slope</label>
+                <input type="range" id="inPush" min="0" max="400" step="1" value="0">
+                <span class="val" id="vPush">0 N</span>
+              </div>
+              <div class="field">
+                <label for="inGs">g</label>
+                <input type="range" id="inGs" min="1.6" max="25" step="0.01" value="9.81">
+                <span class="val" id="vGs">9.81</span>
+              </div>
+              <p class="hint">Take the axes along and perpendicular to the slope and the weight splits into <em>mg&thinsp;sin&thinsp;&theta;</em> down the slope and <em>mg&thinsp;cos&thinsp;&theta;</em> into it. That one choice of axes is the whole trick.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ANALYSE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-analyse" aria-labelledby="tab-analyse" hidden>
+          <div class="banner" id="anBanner"><span class="ic">&#8599;</span><span id="anText">Add some vectors to see the sum.</span></div>
+
+          <div class="group">
+            <h3>Components <span class="pill" id="axisTag">along x and y</span></h3>
+            <div class="body" style="padding:6px 8px 10px">
+              <table class="led" id="compTable">
+                <thead><tr><th>Vector</th><th>size</th><th>angle</th><th>x</th><th>y</th></tr></thead>
+                <tbody></tbody>
+              </table>
+              <p class="hint" id="compHint">Add the x components, add the y components, then put the two totals back together with Pythagoras.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>The resultant</h3>
+            <div class="body" id="resBody"></div>
+          </div>
+
+          <div class="group" id="grpSlopeAn" hidden>
+            <h3>On the slope</h3>
+            <div class="body" id="slopeBody"></div>
+          </div>
+
+          <div class="group" id="grpEquilAn">
+            <h3>Equilibrium check</h3>
+            <div class="body" id="equilBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= SOLVE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-solve" aria-labelledby="tab-solve" hidden>
+          <div class="group">
+            <h3>Find the unknowns</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Press <span class="pill">?</span> on a vector in the <b>Set up</b> tab to mark it unknown. Mark <b>one</b> vector completely unknown and Vector Lab finds the equilibrant; mark <b>two</b> whose directions you know and it solves the pair of simultaneous equations.</p>
+              <div id="unknownState" style="margin-top:10px"></div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn sm primary" id="btnSolve">Solve &amp; apply</button>
+                <button class="btn sm" id="btnCopyWork">Copy working</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Predict, then check</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Work out the resultant yourself, then see how you did.</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-top:9px;align-items:end">
+                <div><span style="font-size:10.5px;color:var(--muted);font-weight:700">size</span><input type="number" id="pMag" step="0.1"></div>
+                <div><span style="font-size:10.5px;color:var(--muted);font-weight:700">direction /°</span><input type="number" id="pDir" step="0.1"></div>
+                <div><button class="btn sm primary" id="btnCheck">Check</button></div>
+              </div>
+              <div id="checkOut" style="margin-top:9px"></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Working <span class="pill" id="workTag">live</span></h3>
+            <div class="body">
+              <div class="working" id="workOut"></div>
+              <div style="display:flex;gap:6px;margin-top:9px;align-items:center;flex-wrap:wrap">
+                <button class="btn sm" id="btnWalk">&#9654; Walk through it</button>
+                <button class="btn sm" id="btnWalkPrev" disabled>&#8592;</button>
+                <button class="btn sm" id="btnWalkNext" disabled>&#8594;</button>
+                <span class="hint" id="walkStatus" style="margin:0"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= GRAPHS ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-graphs" aria-labelledby="tab-graphs" hidden>
+          <div class="group">
+            <h3>How things change</h3>
+            <div class="body">
+              <div class="graphtabs" role="group" aria-label="Graph to show">
+                <button id="gTabAngle" aria-pressed="true">Resultant vs angle between</button>
+                <button id="gTabAxis" aria-pressed="false">Components vs axis angle</button>
+                <button id="gTabSlope" aria-pressed="false">Slope</button>
+              </div>
+              <canvas class="graph" id="graph" width="760" height="500"></canvas>
+              <div id="graphRead" style="margin-top:9px"></div>
+              <p class="hint" id="graphHint"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= DISPLAY ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-display" aria-labelledby="tab-display" hidden>
+          <div class="group">
+            <h3>What to draw</h3>
+            <div class="body">
+              <div class="checkgrid">
+                <label class="check"><input type="checkbox" id="cGrid" checked> <span>Grid</span></label>
+                <label class="check"><input type="checkbox" id="cAxes" checked> <span>Axes</span></label>
+                <label class="check"><input type="checkbox" id="cComp" checked> <span>Components</span></label>
+                <label class="check"><input type="checkbox" id="cPoly" checked> <span>Polygon</span></label>
+                <label class="check"><input type="checkbox" id="cPara"> <span>Parallelogram</span></label>
+                <label class="check"><input type="checkbox" id="cResult" checked> <span>Resultant</span></label>
+                <label class="check"><input type="checkbox" id="cEquil"> <span>Equilibrant</span></label>
+                <label class="check"><input type="checkbox" id="cAngles" checked> <span>Angle marks</span></label>
+                <label class="check"><input type="checkbox" id="cLabels" checked> <span>Labels</span></label>
+                <label class="check"><input type="checkbox" id="cSnap" checked> <span>Snap to 5&deg;</span></label>
+              </div>
+              <p class="hint">Hold <kbd>Shift</kbd> while dragging a vector to place it at any angle and size.</p>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Scale drawing</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inScale">Scale</label>
+                <input type="range" id="inScale" min="1" max="100" step="1" value="10">
+                <span class="val" id="vScale">10 / cm</span>
+              </div>
+              <p class="hint">Turn on the scale&#8209;drawing overlay in the toolbar to get a ruler and a protractor on the vector diagram, and the stated scale printed beside it &mdash; the method Edexcel and OCR both ask for.</p>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Numbers</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inDec">Decimals</label>
+                <input type="range" id="inDec" min="0" max="4" step="1" value="2">
+                <span class="val" id="vDec">2</span>
+              </div>
+              <label class="check"><input type="checkbox" id="cSig"> <span>Round to 3 significant figures in the working</span></label>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Save &amp; share</h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn sm" id="btnCopyState">Copy setup code</button>
+                <button class="btn sm" id="btnPasteState">Paste setup code</button>
+                <button class="btn sm" id="btnPng2">Save PNG</button>
+                <button class="btn sm ghost danger" id="btnHardReset">Reset everything</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalHelp" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="sheet">
+      <div class="dhead"><h2>Vector Lab</h2><button class="iconbtn" id="closeHelp" aria-label="Close">&times;</button></div>
+      <div class="dbody" id="helpBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalPresets" role="dialog" aria-modal="true" aria-label="Scenarios">
+    <div class="sheet">
+      <div class="dhead"><h2>Scenarios</h2><button class="iconbtn" id="closePresets" aria-label="Close">&times;</button></div>
+      <div class="dbody"><div class="presetgrid" id="presetList"></div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+"use strict";
+/* ==========================================================================
+   VECTOR LAB
+   Resolving, resultants and equilibrium for GCSE and A-Level.
+   Directions are measured anticlockwise from the +x axis, in degrees, and
+   every vector is stored as a size and a direction rather than as a pair of
+   components - because that is how questions are set.
+   ========================================================================== */
+
+var ROOT = document.getElementById('veclab');
+function $(s){ return ROOT.querySelector(s); }
+function $$(s){ return Array.prototype.slice.call(ROOT.querySelectorAll(s)); }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+var PI = Math.PI;
+var RAD = function(d){ return d*PI/180; }, DEG = function(r){ return r*180/PI; };
+var PALETTE = ['#2563eb','#dc2626','#15803d','#7c3aed','#0891b2','#b45309'];
+var LETTERS = 'ABCDEF';
+
+/* ------------------------------- state --------------------------------- */
+function defaults(){
+  return {
+    mode:'resultant',
+    qty:'force',
+    bearing:false,
+    vecs:[],
+    axis:0,
+    slope:{ angle:25, mass:5, mu:0.35, push:0, g:9.81 },
+    show:{grid:1,axes:1,comp:1,poly:1,para:0,result:1,equil:0,angles:1,labels:1,snap:1,values:1,scaledraw:0},
+    scale:10,
+    dec:2, sig:false,
+    sel:null,
+    graph:'angle',
+    pane:'space',
+    nextId:1
+  };
+}
+var S = defaults();
+
+/* ------------------------------ numbers -------------------------------- */
+function fmt(v,dp){
+  if(v===null||v===undefined||!isFinite(v)) return '–';
+  dp = (dp===undefined)? S.dec : dp;
+  var s = Math.abs(v) < 5e-13 ? 0 : v;
+  var out = s.toFixed(dp);
+  if(parseFloat(out)===0) out = (0).toFixed(dp);
+  return out;
+}
+function sig(v,n){
+  if(!isFinite(v)) return '–';
+  if(v===0) return '0';
+  return String(parseFloat(v.toPrecision(n||3)));
+}
+function w(v){ return S.sig ? sig(v,3) : fmt(v); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+/* the unit and the word for the quantity being handled */
+function UNIT(){ return S.qty==='force'? 'N' : (S.qty==='velocity'? 'm s⁻¹' : 'm'); }
+function QTYNAME(){ return S.qty==='force'? 'force' : (S.qty==='velocity'? 'velocity' : 'displacement'); }
+function QTYNAMES(){ return S.qty==='velocity'? 'velocities' : QTYNAME()+'s'; }
+/* the caption over the space diagram */
+function SPACECAP(){ return S.qty==='force'? 'where the forces act' : 'all drawn from one point'; }
+
+/* --------------------------- angle conventions -------------------------- */
+function norm360(a){ a = a % 360; return a < 0 ? a+360 : a; }
+function norm180(a){ a = norm360(a); return a > 180 ? a-360 : a; }
+/* a direction measured anticlockwise from +x, expressed as a compass bearing */
+function toBearing(dirDeg){ return norm360(90 - dirDeg); }
+function fromBearing(b){ return norm180(90 - b); }
+function dirText(dirDeg){
+  if(S.bearing) return fmt(toBearing(dirDeg),1)+'° (bearing)';
+  return fmt(norm180(dirDeg),1)+'°';
+}
+
+/* ------------------------------- vectors -------------------------------- */
+function makeVec(o){
+  var id = S.nextId++;
+  var v = {
+    id:id,
+    label: o.label || ('Vector '+LETTERS[(id-1)%6]),
+    mag: (o.mag===undefined? 10 : o.mag),
+    dir: (o.dir===undefined? 0 : o.dir),
+    colour: o.colour || PALETTE[(id-1)%PALETTE.length],
+    unknown: o.unknown || null,
+    derived: !!o.derived
+  };
+  S.vecs.push(v);
+  return v;
+}
+function vecById(id){
+  for(var i=0;i<S.vecs.length;i++) if(S.vecs[i].id===id) return S.vecs[i];
+  return null;
+}
+function compX(v){ return v.mag*Math.cos(RAD(v.dir)); }
+function compY(v){ return v.mag*Math.sin(RAD(v.dir)); }
+/* components along a pair of axes rotated by "ax" degrees */
+function along(v, ax){ return v.mag*Math.cos(RAD(v.dir - ax)); }
+function across(v, ax){ return v.mag*Math.sin(RAD(v.dir - ax)); }
+
+/* the vectors that are actually drawn and summed in the current mode */
+function activeVecs(){
+  if(S.mode==='slope') return slopeVecs();
+  return S.vecs;
+}
+function resultant(list){
+  list = list || activeVecs();
+  var x=0, y=0;
+  for(var i=0;i<list.length;i++){ x += compX(list[i]); y += compY(list[i]); }
+  return { x:x, y:y, mag:Math.hypot(x,y), dir: (Math.hypot(x,y)<1e-12? 0 : DEG(Math.atan2(y,x))) };
+}
+function equilibrant(list){
+  var r = resultant(list);
+  return { mag:r.mag, dir: norm180(r.dir+180), x:-r.x, y:-r.y };
+}
+
+/* ====================== SOLVING FOR UNKNOWN VECTORS ======================
+   Two exam cases are covered.
+
+   One vector completely unknown: for equilibrium it must be the equilibrant
+   of all the others - the same size, the opposite direction.
+
+   Two vectors of unknown size but known direction (two cables holding a
+   sign, say): resolving in both directions gives a pair of simultaneous
+   equations,
+        m1 cos d1 + m2 cos d2 = -Sx
+        m1 sin d1 + m2 sin d2 = -Sy
+   which is solved here by determinants. The solution fails only when the
+   two directions are parallel, and then the problem really has no answer.
+   ======================================================================== */
+function unknownVecs(){
+  var out = [];
+  for(var i=0;i<S.vecs.length;i++) if(S.vecs[i].unknown) out.push(S.vecs[i]);
+  return out;
+}
+function knownSum(){
+  var x=0, y=0;
+  for(var i=0;i<S.vecs.length;i++){
+    var v = S.vecs[i];
+    if(v.unknown) continue;
+    x += compX(v); y += compY(v);
+  }
+  return {x:x, y:y};
+}
+function solveUnknowns(){
+  var u = unknownVecs();
+  if(u.length===0) return {ok:false, why:'none'};
+  var K = knownSum();
+  if(u.length===1 && u[0].unknown==='both'){
+    var mag = Math.hypot(K.x,K.y);
+    return { ok:true, kind:'equilibrant', K:K,
+             values:[{id:u[0].id, mag:mag, dir:norm180(DEG(Math.atan2(-K.y,-K.x)))}] };
+  }
+  if(u.length===1 && u[0].unknown==='mag'){
+    /* one size unknown: it can only work if the known sum is exactly opposite */
+    var d = RAD(u[0].dir);
+    var m = -(K.x*Math.cos(d) + K.y*Math.sin(d));
+    var resid = Math.hypot(K.x + m*Math.cos(d), K.y + m*Math.sin(d));
+    return { ok:true, kind:'one-size', K:K, resid:resid,
+             values:[{id:u[0].id, mag:m, dir:u[0].dir}] };
+  }
+  if(u.length===2 && u[0].unknown==='mag' && u[1].unknown==='mag'){
+    var d1 = RAD(u[0].dir), d2 = RAD(u[1].dir);
+    var c1=Math.cos(d1), s1=Math.sin(d1), c2=Math.cos(d2), s2=Math.sin(d2);
+    var D = c1*s2 - c2*s1;
+    if(Math.abs(D) < 1e-9) return {ok:false, why:'parallel'};
+    var m1 = (-K.x*s2 + K.y*c2)/D;
+    var m2 = ( K.x*s1 - K.y*c1)/D;
+    return { ok:true, kind:'two-sizes', K:K, D:D,
+             values:[{id:u[0].id, mag:m1, dir:u[0].dir},{id:u[1].id, mag:m2, dir:u[1].dir}] };
+  }
+  return {ok:false, why:'shape'};
+}
+
+/* ============================== THE SLOPE ===============================
+   Choosing axes along and perpendicular to the slope splits the weight into
+   mg sin(theta) down the slope and mg cos(theta) into it. Everything else
+   follows from those two components.
+   ======================================================================== */
+function slopeState(){
+  var s = S.slope;
+  var th = RAD(s.angle);
+  var W = s.mass*s.g;
+  var wAlong = -W*Math.sin(th);          /* down the slope is negative */
+  var wPerp  = -W*Math.cos(th);          /* into the surface */
+  var N = W*Math.cos(th);
+  var driving = s.push + wAlong;          /* net along-slope force before friction */
+  var fMax = s.mu*N;
+  var moving = Math.abs(driving) > fMax + 1e-9;
+  var friction = moving ? -Math.sign(driving)*fMax : -driving;
+  var net = driving + friction;
+  var a = moving ? net/s.mass : 0;
+  return {
+    theta:s.angle, W:W, N:N, wAlong:wAlong, wPerp:wPerp,
+    push:s.push, fMax:fMax, friction:friction, driving:driving,
+    net:net, a:a, moving:moving,
+    limitAngle: DEG(Math.atan(s.mu)),
+    slidesAlone: Math.tan(th) > s.mu + 1e-12
+  };
+}
+function slopeVecs(){
+  var st = slopeState(), th = S.slope.angle;
+  var list = [];
+  list.push({ id:-1, label:'Weight  W = mg', mag:st.W, dir:-90, colour:'#dc2626', derived:true });
+  list.push({ id:-2, label:'Normal contact force  N', mag:st.N, dir:th+90, colour:'#2563eb', derived:true });
+  if(Math.abs(st.friction) > 1e-9)
+    list.push({ id:-3, label:'Friction  f', mag:Math.abs(st.friction), dir: st.friction>0? th : th+180,
+                colour:'#b45309', derived:true });
+  if(st.push > 1e-9)
+    list.push({ id:-4, label:'Push  P', mag:st.push, dir:th, colour:'#15803d', derived:true });
+  return list;
+}
+
+/* =============================== VIEW =================================== */
+var cv = $('#scene'), ctx = cv.getContext('2d');
+var V = { w:0, h:0, dpr:1, pxu:6, top:66, bot:92, split:0, freeze:false, twoPane:true, vertical:false, A:null, B:null };
+var LP = { cx:0, cy:0, r:0 };          /* the space diagram, on the left */
+var RP = { x0:0, y0:0, w:0, h:0, ox:0, oy:0 };   /* the vector diagram, on the right */
+var C = {}, themeStamp = '';
+var PX_PER_CM = 37.8;
+
+function cssVar(n){ return getComputedStyle(ROOT).getPropertyValue(n).trim(); }
+function refreshColours(){
+  C = {
+    stage:cssVar('--stage'), stage2:cssVar('--stage2'), grid:cssVar('--grid'), grid2:cssVar('--grid2'),
+    ink:cssVar('--ink'), ink2:cssVar('--ink2'), muted:cssVar('--muted'), line:cssVar('--line'),
+    accent:cssVar('--accent'), res:cssVar('--res'), equil:cssVar('--equil'), comp:cssVar('--comp'),
+    axis:cssVar('--axis'), panel:cssVar('--panel'), ok:cssVar('--ok'), bad:cssVar('--bad'), warn:cssVar('--warn')
+  };
+}
+function themeCheck(){
+  var t = ROOT.getAttribute('data-theme')||'light';
+  if(t!==themeStamp){ themeStamp=t; refreshColours(); }
+}
+function resize(){
+  var r = cv.parentElement.getBoundingClientRect();
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  V.w = r.width; V.h = r.height; V.dpr = dpr;
+  cv.width = Math.max(1, Math.round(r.width*dpr));
+  cv.height = Math.max(1, Math.round(r.height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  layout();
+}
+/* the tip-to-tail polygon, in units */
+function polyPoints(list){
+  list = list || activeVecs();
+  var pts = [{x:0,y:0}], x=0, y=0;
+  for(var i=0;i<list.length;i++){ x += compX(list[i]); y += compY(list[i]); pts.push({x:x,y:y}); }
+  return pts;
+}
+function polyExtent(){
+  var pts = polyPoints(), minx=0,maxx=0,miny=0,maxy=0;
+  /* Resolve mode draws a right-angled triangle in the second pane, whose
+     corner can sit outside the plain tip-to-tail path */
+  if(S.mode==='resolve' && S.vecs.length===1){
+    var a = RAD(S.axis), al = along(S.vecs[0], S.axis);
+    pts = pts.concat([{x: al*Math.cos(a), y: al*Math.sin(a)}]);
+  }
+  for(var i=0;i<pts.length;i++){
+    if(pts[i].x<minx) minx=pts[i].x; if(pts[i].x>maxx) maxx=pts[i].x;
+    if(pts[i].y<miny) miny=pts[i].y; if(pts[i].y>maxy) maxy=pts[i].y;
+  }
+  return {minx:minx,maxx:maxx,miny:miny,maxy:maxy,w:Math.max(maxx-minx,1e-6),h:Math.max(maxy-miny,1e-6)};
+}
+function maxMagnitude(){
+  var list = activeVecs(), m = 1e-6;
+  for(var i=0;i<list.length;i++) m = Math.max(m, Math.abs(list[i].mag));
+  m = Math.max(m, resultant(list).mag);
+  return m;
+}
+function spaceExtent(){
+  var list = activeVecs(), i, pts = [{x:0,y:0}];
+  for(i=0;i<list.length;i++) pts.push({x:compX(list[i]), y:compY(list[i])});
+  var R = resultant(list);
+  if(S.show.result && S.mode!=='resolve') pts.push({x:R.x, y:R.y});
+  if(S.show.equil) pts.push({x:-R.x, y:-R.y});
+  if(S.show.para && list.length>=2)
+    pts.push({x:compX(list[0])+compX(list[1]), y:compY(list[0])+compY(list[1])});
+  if(S.show.comp){
+    var a = RAD(S.axis);
+    for(i=0;i<list.length;i++){
+      var al = along(list[i],S.axis), ac = across(list[i],S.axis);
+      pts.push({x: al*Math.cos(a), y: al*Math.sin(a)});
+      pts.push({x:-ac*Math.sin(a), y: ac*Math.cos(a)});
+    }
+  }
+  var minx=0,maxx=0,miny=0,maxy=0;
+  for(i=0;i<pts.length;i++){
+    if(pts[i].x<minx) minx=pts[i].x; if(pts[i].x>maxx) maxx=pts[i].x;
+    if(pts[i].y<miny) miny=pts[i].y; if(pts[i].y>maxy) maxy=pts[i].y;
+  }
+  return {minx:minx,maxx:maxx,miny:miny,maxy:maxy,
+          w:Math.max(maxx-minx,1e-6), h:Math.max(maxy-miny,1e-6)};
+}
+/* Two panes: side by side when there is room, stacked when there is not.
+   Both are drawn to the SAME scale, so an arrow in one is the same length
+   as the matching arrow in the other - which is the whole point of showing
+   them together. */
+function layout(){
+  var tl = ROOT.querySelector('.tools');
+  var vb = ROOT.querySelector('.verdict');
+  V.top = (tl? tl.getBoundingClientRect().height : 44) + 20;
+  V.bot = (vb? vb.getBoundingClientRect().height : 70) + 30;
+  if(V.freeze) return;
+  var wide = V.w >= 660;
+  V.twoPane = true; V.vertical = !wide;
+  var top = V.top + 14, bottom = Math.max(top+90, V.h - V.bot), H = bottom - top;
+  var A, B;
+  if(wide){
+    V.split = V.w*0.54;
+    A = {x:4, y:top, w:V.split-10, h:H};
+    B = {x:V.split+10, y:top, w:Math.max(80, V.w-V.split-16), h:H};
+  } else {
+    /* Too narrow for two panes side by side, and stacking them makes both
+       useless - so one at a time, with a button to swap. */
+    V.split = V.w;
+    A = {x:4, y:top, w:V.w-8, h:H};
+    B = {x:6, y:top, w:V.w-12, h:H};
+  }
+  V.A = A; V.B = B;
+  LP.r = Math.max(36, Math.min(A.w*0.42, A.h*0.44));
+
+  var e = spaceExtent(), p = polyExtent();
+  var pxuL = Math.min(A.w*0.74/e.w, A.h*0.72/e.h);
+  var pxuR = Math.min(B.w*0.80/p.w, B.h*0.74/p.h);
+  V.pxu = Math.max(0.05, Math.min(pxuL, pxuR));
+  if(S.show.scaledraw) V.pxu = PX_PER_CM/Math.max(S.scale, 0.01);
+
+  if(S.mode==='slope'){
+    LP.cx = A.x + A.w*0.48; LP.cy = A.y + A.h*0.54;
+  } else {
+    LP.cx = A.x + A.w/2 - ((e.minx+e.maxx)/2)*V.pxu;
+    LP.cy = A.y + A.h/2 + ((e.miny+e.maxy)/2)*V.pxu;
+  }
+  RP.x0 = B.x; RP.y0 = B.y; RP.w = B.w; RP.h = B.h;
+  RP.ox = B.x + B.w/2 - ((p.minx+p.maxx)/2)*V.pxu;
+  RP.oy = B.y + B.h/2 + ((p.miny+p.maxy)/2)*V.pxu;
+}
+/* space diagram: units -> screen */
+function LX(x){ return LP.cx + x*V.pxu; }
+function LY(y){ return LP.cy - y*V.pxu; }
+/* vector diagram: units -> screen */
+function RX(x){ return RP.ox + x*V.pxu; }
+function RY(y){ return RP.oy - y*V.pxu; }
+
+/* ------------------------- drawing primitives --------------------------- */
+function ln(x1,y1,x2,y2,col,wd,dash){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=wd||1;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,col,wd,head){
+  var a = Math.atan2(y2-y1,x2-x1), hs = head||10;
+  var len = Math.hypot(x2-x1,y2-y1);
+  if(len < 2) return;
+  if(hs > len*0.6) hs = len*0.6;
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=wd||2.6; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*hs*0.8, y2-Math.sin(a)*hs*0.8); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.42)*hs, y2-Math.sin(a-0.42)*hs);
+  ctx.lineTo(x2-Math.cos(a)*hs*0.66, y2-Math.sin(a)*hs*0.66);
+  ctx.lineTo(x2-Math.cos(a+0.42)*hs, y2-Math.sin(a+0.42)*hs);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function rr(x,y,wd,h,r){
+  r = Math.min(r, Math.abs(wd)/2, Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+wd-r,y); ctx.quadraticCurveTo(x+wd,y,x+wd,y+r);
+  ctx.lineTo(x+wd,y+h-r); ctx.quadraticCurveTo(x+wd,y+h,x+wd-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function tag(text,x,y,col,o){
+  o = o||{};
+  ctx.save();
+  var fs = (o.size||11.5)*(V.vertical?0.86:1);
+  o = {size:fs, bold:o.bold, mono:o.mono, box:o.box, bg:o.bg, alpha:o.alpha, border:o.border, anchor:o.anchor};
+  ctx.font = (o.bold?'700 ':'600 ')+(o.size||11.5)+'px '+(o.mono?'ui-monospace,Menlo,Consolas,monospace':'system-ui,-apple-system,Segoe UI,sans-serif');
+  var m = ctx.measureText(text), pad=4, wd=m.width+pad*2, h=(o.size||11.5)+7;
+  var bx = x - (o.anchor==='l'?0:(o.anchor==='r'? wd : wd/2)), by = y-h/2;
+  bx = clamp(bx, 3, Math.max(3, V.w - wd - 3));
+  by = clamp(by, 2, Math.max(2, V.h - h - 2));
+  if(o.box!==false){
+    ctx.fillStyle = o.bg || cssVar('--panel'); ctx.globalAlpha = o.alpha===undefined?0.88:o.alpha;
+    rr(bx,by,wd,h,5); ctx.fill(); ctx.globalAlpha=1;
+    if(o.border){ ctx.strokeStyle=o.border; ctx.lineWidth=1; rr(bx,by,wd,h,5); ctx.stroke(); }
+  }
+  ctx.fillStyle = col||C.ink; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(text, bx+pad, by+h/2+0.5);
+  ctx.restore();
+  return {x:bx,y:by,w:wd,h:h};
+}
+function shade(hex,amt){
+  var c = hex.replace('#','');
+  if(c.length===3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  var n = parseInt(c,16);
+  var r=clamp((n>>16)+amt,0,255), g=clamp(((n>>8)&255)+amt,0,255), b=clamp((n&255)+amt,0,255);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+/* an arc marking the angle from a1 to a2 (screen angles), with a label */
+function angleArc(cx,cy,r,a1,a2,col,label){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1.3; ctx.globalAlpha=.95;
+  var d = a2-a1;
+  while(d >  PI) d -= 2*PI;
+  while(d < -PI) d += 2*PI;
+  ctx.beginPath(); ctx.arc(cx,cy,r,a1,a1+d,d<0); ctx.stroke(); ctx.restore();
+  if(label){
+    var mid = a1 + d/2;
+    tag(label, cx+Math.cos(mid)*(r+15), cy+Math.sin(mid)*(r+15), col, {size:10, mono:true});
+  }
+}
+function rightAngle(px,py,a1,a2,size,col){
+  var s = size||9;
+  var p1 = {x:px+Math.cos(a1)*s, y:py+Math.sin(a1)*s};
+  var p2 = {x:px+Math.cos(a2)*s, y:py+Math.sin(a2)*s};
+  var p3 = {x:p1.x+Math.cos(a2)*s, y:p1.y+Math.sin(a2)*s};
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p3.x,p3.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+  ctx.restore();
+}
+function niceStep(pxPerUnit, minPx){
+  var cands = [0.1,0.2,0.5,1,2,5,10,20,25,50,100,200,500,1000];
+  for(var i=0;i<cands.length;i++) if(cands[i]*pxPerUnit >= (minPx||34)) return cands[i];
+  return 2000;
+}
+
+/* =========================== SPACE DIAGRAM ============================== */
+function drawBg(){
+  var g = ctx.createLinearGradient(0,0,0,V.h);
+  g.addColorStop(0, C.stage); g.addColorStop(1, C.stage2);
+  ctx.fillStyle = g; ctx.fillRect(0,0,V.w,V.h);
+  if(S.show.grid){
+    var st = niceStep(V.pxu, 30)*V.pxu;
+    if(st > 6){
+      ctx.save(); ctx.strokeStyle=C.grid2; ctx.lineWidth=1; ctx.beginPath();
+      for(var x=(LP.cx%st); x<V.w; x+=st){ ctx.moveTo(Math.round(x)+0.5,0); ctx.lineTo(Math.round(x)+0.5,V.h); }
+      for(var y=(LP.cy%st); y<V.h; y+=st){ ctx.moveTo(0,Math.round(y)+0.5); ctx.lineTo(V.w,Math.round(y)+0.5); }
+      ctx.stroke(); ctx.restore();
+    }
+  }
+  var A = V.A, B = V.B;
+  if(!A || !B) return;
+  if(V.vertical){
+    tag(S.pane==='space' ? 'space diagram — '+SPACECAP() : 'vector diagram — drawn tip to tail',
+        V.w/2, A.y-6, C.muted, {size:10.5, box:false});
+  } else {
+    ln(V.split, A.y-10, V.split, A.y+A.h+6, C.line, 1.4, [6,5]);
+    tag('space diagram — '+SPACECAP(), A.x+A.w/2, A.y-6, C.muted, {size:10.5, box:false});
+    tag('vector diagram — drawn tip to tail', B.x+B.w/2, B.y-6, C.muted, {size:10.5, box:false});
+  }
+}
+/* how far a ray from (cx,cy) can travel before it leaves the pane */
+function rayT(cx,cy,ux,uy,R){
+  var t = 1e9;
+  if(ux >  1e-9) t = Math.min(t, (R.x+R.w-cx)/ux);
+  if(ux < -1e-9) t = Math.min(t, (R.x-cx)/ux);
+  if(uy >  1e-9) t = Math.min(t, (R.y+R.h-cy)/uy);
+  if(uy < -1e-9) t = Math.min(t, (R.y-cy)/uy);
+  return Math.max(0, t);
+}
+var AXH = {x:0, y:0, on:false};
+function drawAxes(){
+  AXH.on = false;
+  if(!S.show.axes || !V.A) return;
+  var A = V.A, a = RAD(S.axis);
+  var ux = Math.cos(a), uy = -Math.sin(a);
+  var nx = Math.cos(a+PI/2), ny = -Math.sin(a+PI/2);
+  var tR = rayT(LP.cx,LP.cy, ux, uy,A), tL = rayT(LP.cx,LP.cy,-ux,-uy,A);
+  var tU = rayT(LP.cx,LP.cy, nx, ny,A), tD = rayT(LP.cx,LP.cy,-nx,-ny,A);
+  ctx.save(); ctx.globalAlpha=.8;
+  ln(LP.cx-ux*tL, LP.cy-uy*tL, LP.cx+ux*tR, LP.cy+uy*tR, C.axis, 1.3, [7,5]);
+  ln(LP.cx-nx*tD, LP.cy-ny*tD, LP.cx+nx*tU, LP.cy+ny*tU, C.axis, 1.3, [7,5]);
+  ctx.restore();
+  var rot = Math.abs(S.axis) > 0.05;
+  tag(rot?'x′':'x', LP.cx+ux*(tR-14), LP.cy+uy*(tR-14), C.axis, {size:11, bold:true});
+  tag(rot?'y′':'y', LP.cx+nx*(tU-14), LP.cy+ny*(tU-14), C.axis, {size:11, bold:true});
+  /* the handle that turns the axes */
+  var hr = Math.max(40, Math.min(tR-38, LP.r*0.92));
+  AXH.x = LP.cx+ux*hr; AXH.y = LP.cy+uy*hr; AXH.on = true;
+  ctx.save();
+  ctx.fillStyle = C.panel; ctx.strokeStyle = C.accent; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(AXH.x, AXH.y, 8, 0, 7); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = C.accent;
+  ctx.beginPath(); ctx.arc(AXH.x, AXH.y, 3, 0, 7); ctx.fill();
+  ctx.restore();
+  if(rot && S.show.angles && !V.vertical){
+    angleArc(LP.cx, LP.cy, 34, 0, -a, C.accent, fmt(S.axis,1)+'°');
+    ctx.save(); ctx.globalAlpha=.4;
+    ln(LP.cx, LP.cy, LP.cx+Math.min(tR,LP.r*0.8), LP.cy, C.muted, 1, [3,3]);
+    ctx.restore();
+  }
+}
+function vecEnd(v){ return { x: LX(compX(v)), y: LY(compY(v)) }; }
+
+function drawSpaceVectors(){
+  var list = activeVecs(), i;
+  /* the dashed projections onto the axes */
+  if(S.show.comp){
+    var a = RAD(S.axis);
+    var ux = Math.cos(a), uy = -Math.sin(a);
+    var nx = Math.cos(a+PI/2), ny = -Math.sin(a+PI/2);
+    for(i=0;i<list.length;i++){
+      var v = list[i], e = vecEnd(v);
+      var al = along(v,S.axis)*V.pxu, ac = across(v,S.axis)*V.pxu;
+      var pAl = { x: LP.cx+ux*al, y: LP.cy+uy*al };
+      var pAc = { x: LP.cx+nx*ac, y: LP.cy+ny*ac };
+      ctx.save(); ctx.globalAlpha = (S.sel===v.id)?0.85:0.4;
+      ln(e.x,e.y,pAl.x,pAl.y, v.colour, 1, [4,3]);
+      ln(e.x,e.y,pAc.x,pAc.y, v.colour, 1, [4,3]);
+      ctx.restore();
+      if(S.sel===v.id || list.length===1){
+        var bigA = Math.abs(al) > 12, bigC = Math.abs(ac) > 12;
+        if(bigA){
+          arrow(LP.cx, LP.cy, pAl.x, pAl.y, C.comp, 2.2, 9);
+          if(S.show.values) tag(fmt(along(v,S.axis))+' '+UNIT(), (LP.cx+pAl.x)/2 + nx*17, (LP.cy+pAl.y)/2 + ny*17, C.comp, {size:10, mono:true});
+        }
+        if(bigC){
+          arrow(LP.cx, LP.cy, pAc.x, pAc.y, C.comp, 2.2, 9);
+          if(S.show.values) tag(fmt(across(v,S.axis))+' '+UNIT(), (LP.cx+pAc.x)/2 + ux*24, (LP.cy+pAc.y)/2 + uy*24, C.comp, {size:10, mono:true});
+        }
+        if(S.show.angles && bigA && bigC) rightAngle(pAl.x,pAl.y, Math.atan2(LP.cy-pAl.y, LP.cx-pAl.x), Math.atan2(e.y-pAl.y, e.x-pAl.x), 8, C.comp);
+      }
+    }
+  }
+  /* the parallelogram of the first two vectors */
+  if(S.show.para && list.length>=2){
+    var e1 = vecEnd(list[0]), e2 = vecEnd(list[1]);
+    var sum = { x: LX(compX(list[0])+compX(list[1])), y: LY(compY(list[0])+compY(list[1])) };
+    ctx.save(); ctx.globalAlpha=.55;
+    ln(e1.x,e1.y,sum.x,sum.y, list[1].colour, 1.4, [6,4]);
+    ln(e2.x,e2.y,sum.x,sum.y, list[0].colour, 1.4, [6,4]);
+    ctx.restore();
+  }
+  /* the vectors themselves */
+  for(i=0;i<list.length;i++){
+    var vv = list[i], ee = vecEnd(vv);
+    var sel = (S.sel===vv.id);
+    arrow(LP.cx, LP.cy, ee.x, ee.y, vv.colour, sel?4:3, 12);
+    if(sel){
+      ctx.save(); ctx.strokeStyle=C.accent; ctx.globalAlpha=.5; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(ee.x,ee.y,10,0,7); ctx.stroke(); ctx.restore();
+    }
+    if(S.show.labels){
+      var lx = ee.x + Math.cos(RAD(vv.dir))*20, ly = ee.y - Math.sin(RAD(vv.dir))*20;
+      var txt = S.show.values ? (vv.label.replace(/^Vector /,'')+'  '+fmt(vv.mag)+' '+UNIT()) : vv.label.replace(/^Vector /,'');
+      if(vv.unknown) txt = vv.label.replace(/^Vector /,'')+'  ?';
+      tag(txt, lx, ly, vv.colour, {size:11, bold:true, mono:false});
+    }
+    if(S.show.angles && !V.vertical && !vv.derived && Math.abs(vv.mag)>1e-9 && Math.abs(norm180(vv.dir-S.axis))>4){
+      angleArc(LP.cx, LP.cy, 52+i*11, -RAD(S.axis), -RAD(vv.dir), vv.colour,
+               S.show.values? fmt(norm180(vv.dir-S.axis),1)+'°' : '');
+    }
+  }
+  /* the resultant, drawn on the space diagram too */
+  if(S.show.result && S.mode!=='resolve'){
+    var R = resultant(list);
+    if(R.mag > 1e-9){
+      var re = { x: LX(R.x), y: LY(R.y) };
+      arrow(LP.cx, LP.cy, re.x, re.y, C.res, 4.4, 13);
+      if(S.show.labels) tag('resultant '+(S.show.values? fmt(R.mag)+' '+UNIT() : ''), re.x+Math.cos(RAD(R.dir))*30, re.y-Math.sin(RAD(R.dir))*30, C.res, {size:11, bold:true});
+    }
+  }
+  if(S.show.equil){
+    var E = equilibrant(list);
+    if(E.mag > 1e-9){
+      var ep = { x: LX(E.x), y: LY(E.y) };
+      arrow(LP.cx, LP.cy, ep.x, ep.y, C.equil, 3.4, 12);
+      if(S.show.labels) tag('equilibrant '+(S.show.values? fmt(E.mag)+' '+UNIT() : ''), ep.x+Math.cos(RAD(E.dir))*32, ep.y-Math.sin(RAD(E.dir))*32, C.equil, {size:11, bold:true});
+    }
+  }
+  /* the point the vectors act at */
+  ctx.save(); ctx.fillStyle=C.ink;
+  ctx.beginPath(); ctx.arc(LP.cx, LP.cy, 4.5, 0, 7); ctx.fill(); ctx.restore();
+}
+
+/* ------------------------------ the slope ------------------------------- */
+function slopeGeom(){
+  var th = RAD(S.slope.angle);
+  var maxW = LP.r*1.85, maxH = LP.r*1.15;
+  var L = Math.min(maxW, maxH/Math.max(Math.sin(th),0.06));
+  var bx = LP.cx - L*Math.cos(th)/2, by = LP.cy + L*Math.sin(th)/2 + 10;
+  return {
+    ax:bx, ay:by,                                  /* bottom of the slope */
+    tx:bx + L*Math.cos(th), ty:by - L*Math.sin(th), /* top of the slope */
+    L:L, th:th,
+    px:bx + L*0.52*Math.cos(th), py:by - L*0.52*Math.sin(th)  /* where the block sits */
+  };
+}
+function drawSlope(){
+  var G = slopeGeom();
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(G.ax, G.ay); ctx.lineTo(G.tx, G.ty); ctx.lineTo(G.tx, G.ay); ctx.closePath();
+  var g = ctx.createLinearGradient(G.ax, G.ty, G.tx, G.ay);
+  g.addColorStop(0, cssVar('--panel3')); g.addColorStop(1, cssVar('--panel2'));
+  ctx.fillStyle=g; ctx.fill();
+  ctx.strokeStyle=C.line2; ctx.lineWidth=1.6; ctx.stroke();
+  ctx.strokeStyle=C.muted; ctx.lineWidth=1; ctx.globalAlpha=.5;
+  ctx.beginPath();
+  for(var k=6;k<G.L;k+=11){ ctx.moveTo(G.tx, G.ay-k*0.55); ctx.lineTo(G.tx+9, G.ay-k*0.55+9); }
+  ctx.stroke(); ctx.globalAlpha=1;
+  /* the horizontal, and the angle between it and the slope */
+  ln(G.ax-14, G.ay, G.tx+14, G.ay, C.muted, 1.2, [5,4]);
+  ctx.restore();
+  if(S.show.angles){
+    angleArc(G.ax, G.ay, 40, 0, -G.th, C.accent, fmt(S.slope.angle,1)+'°');
+  }
+  /* the block */
+  var bs = clamp(LP.r*0.20, 18, 44);
+  ctx.save();
+  ctx.translate(G.px, G.py); ctx.rotate(-G.th);
+  ctx.globalAlpha=.2; ctx.fillStyle='#000'; rr(-bs/2+2, -bs+4, bs, bs, 4); ctx.fill(); ctx.globalAlpha=1;
+  var g2 = ctx.createLinearGradient(-bs/2,-bs,bs/2,0);
+  g2.addColorStop(0,'#64748b'); g2.addColorStop(1,'#334155');
+  ctx.fillStyle=g2; rr(-bs/2, -bs, bs, bs, 4); ctx.fill();
+  ctx.strokeStyle='#1e293b'; ctx.lineWidth=1.3; ctx.stroke();
+  if(S.show.values){
+    ctx.fillStyle='#fff'; ctx.font='700 11px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(fmt(S.slope.mass,1), 0, -bs/2);
+  }
+  ctx.restore();
+  return G;
+}
+function drawSlopeForces(){
+  var G = slopeGeom(), st = slopeState();
+  var list = slopeVecs();
+  var bs = clamp(LP.r*0.20, 18, 44);
+  var ox = G.px - Math.sin(G.th)*bs/2, oy = G.py - Math.cos(G.th)*bs/2;
+  var maxm = 1e-6, i;
+  for(i=0;i<list.length;i++) maxm = Math.max(maxm, list[i].mag);
+  var pxu = Math.min(LP.r*0.52/maxm, V.pxu*2.2);
+  for(i=0;i<list.length;i++){
+    var v = list[i];
+    var ex = ox + Math.cos(RAD(v.dir))*v.mag*pxu, ey = oy - Math.sin(RAD(v.dir))*v.mag*pxu;
+    arrow(ox, oy, ex, ey, v.colour, 3, 11);
+    if(S.show.labels){
+      var t = v.label.split('  ')[0] + (S.show.values? '  '+fmt(v.mag)+' N' : '');
+      tag(t, ex + Math.cos(RAD(v.dir))*30, ey - Math.sin(RAD(v.dir))*30, v.colour, {size:10.5, bold:true});
+    }
+  }
+  /* the weight resolved along and perpendicular to the slope */
+  if(S.show.comp){
+    var W = st.W;
+    var alongEnd = { x: ox - Math.cos(G.th)*W*Math.sin(G.th)*pxu, y: oy + Math.sin(G.th)*W*Math.sin(G.th)*pxu };
+    var perpEnd  = { x: ox + Math.sin(G.th)*W*Math.cos(G.th)*pxu, y: oy + Math.cos(G.th)*W*Math.cos(G.th)*pxu };
+    var wEnd = { x: ox, y: oy + W*pxu };
+    ctx.save(); ctx.globalAlpha=.55;
+    ln(wEnd.x, wEnd.y, alongEnd.x, alongEnd.y, C.comp, 1.2, [4,3]);
+    ln(wEnd.x, wEnd.y, perpEnd.x, perpEnd.y, C.comp, 1.2, [4,3]);
+    ctx.restore();
+    arrow(ox, oy, alongEnd.x, alongEnd.y, C.comp, 2.2, 9);
+    arrow(ox, oy, perpEnd.x, perpEnd.y, C.comp, 2.2, 9);
+    if(S.show.values){
+      tag('mg sin θ = '+fmt(W*Math.sin(G.th))+' N', alongEnd.x - 20, alongEnd.y + 16, C.comp, {size:10, mono:true});
+      tag('mg cos θ = '+fmt(W*Math.cos(G.th))+' N', perpEnd.x + 30, perpEnd.y + 12, C.comp, {size:10, mono:true});
+    }
+  }
+  ctx.save(); ctx.fillStyle=C.ink;
+  ctx.beginPath(); ctx.arc(ox, oy, 4, 0, 7); ctx.fill(); ctx.restore();
+}
+
+/* =========================== VECTOR DIAGRAM ============================= */
+function drawVectorDiagram(){
+  var list = activeVecs();
+  if(!list.length) return;
+  var pts = polyPoints(list), i;
+  var R = resultant(list);
+  var closes = R.mag < Math.max(1e-9, maxMagnitude()*0.004);
+
+  /* a faint frame for the pane */
+  ctx.save(); ctx.globalAlpha=.5;
+  ctx.strokeStyle=C.line; ctx.lineWidth=1;
+  rr(RP.x0, RP.y0, RP.w, RP.h, 10); ctx.stroke(); ctx.restore();
+
+  if(S.mode==='resolve' && list.length===1){ drawResolveTriangle(list[0]); return; }
+
+  if(S.show.poly){
+    for(i=0;i<list.length;i++){
+      var a = pts[i], b = pts[i+1], v = list[i];
+      arrow(RX(a.x), RY(a.y), RX(b.x), RY(b.y), v.colour, (S.sel===v.id)?4:2.8, 11);
+      if(S.show.labels){
+        var mx = (RX(a.x)+RX(b.x))/2, my = (RY(a.y)+RY(b.y))/2;
+        var nrm = RAD(v.dir)+PI/2;
+        tag(v.label.replace(/^Vector /,'')+(S.show.values? ' '+fmt(v.mag):''),
+            mx+Math.cos(nrm)*15, my-Math.sin(nrm)*15, v.colour, {size:10, bold:true});
+      }
+    }
+  }
+  var s0 = pts[0], sN = pts[pts.length-1];
+  if(closes){
+    ctx.save(); ctx.strokeStyle=C.ok; ctx.lineWidth=3; ctx.globalAlpha=.35;
+    ctx.beginPath();
+    for(i=0;i<pts.length;i++){ if(i===0) ctx.moveTo(RX(pts[i].x),RY(pts[i].y)); else ctx.lineTo(RX(pts[i].x),RY(pts[i].y)); }
+    ctx.closePath(); ctx.stroke(); ctx.restore();
+    tag('the polygon closes — in equilibrium', RP.x0+RP.w/2, RP.y0+RP.h-14, C.ok, {size:11, bold:true});
+  } else {
+    if(S.show.result){
+      arrow(RX(s0.x), RY(s0.y), RX(sN.x), RY(sN.y), C.res, 4.2, 13);
+      if(S.show.labels){
+        var mx2 = (RX(s0.x)+RX(sN.x))/2, my2 = (RY(s0.y)+RY(sN.y))/2;
+        var n2 = RAD(R.dir)-PI/2;
+        tag('resultant'+(S.show.values? ' '+fmt(R.mag)+' '+UNIT():''),
+            mx2+Math.cos(n2)*17, my2-Math.sin(n2)*17, C.res, {size:11, bold:true});
+      }
+    }
+    if(S.show.equil){
+      arrow(RX(sN.x), RY(sN.y), RX(s0.x), RY(s0.y), C.equil, 3.2, 12);
+      if(S.show.labels) tag('equilibrant', (RX(s0.x)+RX(sN.x))/2, (RY(s0.y)+RY(sN.y))/2 + 18, C.equil, {size:10.5, bold:true});
+    }
+    tag('the polygon does not close — there is a resultant', RP.x0+RP.w/2, RP.y0+RP.h-14, C.res, {size:11, bold:true});
+  }
+  /* start and finish */
+  ctx.save(); ctx.fillStyle=C.ink;
+  ctx.beginPath(); ctx.arc(RX(s0.x), RY(s0.y), 4, 0, 7); ctx.fill(); ctx.restore();
+  if(S.show.labels){
+    var d0 = list.length? RAD(list[0].dir)+PI : PI;
+    tag('start', RX(s0.x)+Math.cos(d0)*20, RY(s0.y)-Math.sin(d0)*20, C.muted, {size:9.5, box:false});
+  }
+
+  if(S.show.scaledraw) drawScaleOverlay();
+}
+/* In Resolve mode the second pane shows the right-angled triangle that the
+   two components make with the vector - the picture the algebra comes from. */
+function drawResolveTriangle(v){
+  var a = RAD(S.axis);
+  var ux = Math.cos(a), uy = Math.sin(a);
+  var nx = -Math.sin(a), ny = Math.cos(a);
+  var al = along(v,S.axis), ac = across(v,S.axis);
+  var O = {x:0, y:0}, A = {x:al*ux, y:al*uy}, B = {x:al*ux+ac*nx, y:al*uy+ac*ny};
+  var rot = Math.abs(S.axis) > 1e-9;
+  var ox = RX(O.x), oy = RY(O.y), ax = RX(A.x), ay = RY(A.y), bx = RX(B.x), by = RY(B.y);
+
+  ctx.save(); ctx.globalAlpha=.20; ctx.fillStyle=C.comp;
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ax,ay); ctx.lineTo(bx,by); ctx.closePath(); ctx.fill();
+  ctx.restore();
+
+  arrow(ox,oy,ax,ay, C.comp, 3, 11);
+  arrow(ax,ay,bx,by, C.comp, 3, 11);
+  arrow(ox,oy,bx,by, v.colour, 3.6, 13);
+
+  if(Math.abs(al)>1e-6 && Math.abs(ac)>1e-6)
+    rightAngle(ax,ay, Math.atan2(oy-ay, ox-ax), Math.atan2(by-ay, bx-ax), 10, C.comp);
+
+  if(S.show.labels){
+    var lx = rot? 'x′' : 'x', ly = rot? 'y′' : 'y';
+    tag(lx+': '+(S.show.values? fmt(al)+' '+UNIT() : '••'), (ox+ax)/2 - nx*20, (oy+ay)/2 + ny*20, C.comp, {size:11, bold:true});
+    tag(ly+': '+(S.show.values? fmt(ac)+' '+UNIT() : '••'), (ax+bx)/2 + ux*26, (ay+by)/2 - uy*26, C.comp, {size:11, bold:true});
+    tag(v.label.replace(/^Vector /,'')+(S.show.values? '  '+fmt(v.mag)+' '+UNIT() : ''),
+        (ox+bx)/2 - Math.sin(RAD(v.dir))*22, (oy+by)/2 - Math.cos(RAD(v.dir))*22, v.colour, {size:11, bold:true});
+  }
+  if(S.show.angles){
+    angleArc(ox,oy, 44, 0, -RAD(v.dir), v.colour, '');
+    angleArc(ox,oy, 30, 0, -a, C.axis, '');
+    tag(fmt(norm180(v.dir-S.axis),1)+'°', ox+Math.cos(-RAD((v.dir+S.axis)/2))*62, oy+Math.sin(-RAD((v.dir+S.axis)/2))*62, v.colour, {size:10, mono:true});
+  }
+  ctx.save(); ctx.fillStyle=C.ink;
+  ctx.beginPath(); ctx.arc(ox,oy,4,0,7); ctx.fill(); ctx.restore();
+  tag('the components and the '+QTYNAME()+' make a right-angled triangle', RP.x0+RP.w/2, RP.y0+RP.h-14, C.comp, {size:11, bold:true});
+}
+function drawScaleOverlay(){
+  var y = RP.y0 + RP.h - 34, x0 = RP.x0 + 14;
+  var cm = PX_PER_CM, n = Math.floor((RP.w-28)/cm);
+  ctx.save();
+  ctx.fillStyle = cssVar('--panel'); ctx.globalAlpha=.9;
+  rr(x0-6, y-16, n*cm+12, 30, 5); ctx.fill(); ctx.globalAlpha=1;
+  ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.stroke();
+  ctx.strokeStyle=C.ink2; ctx.lineWidth=1.2;
+  ctx.beginPath();
+  for(var i=0;i<=n;i++){
+    ctx.moveTo(x0+i*cm, y+8); ctx.lineTo(x0+i*cm, y+8-(i%5===0?12:7));
+    if(i%5===0 && i>0){
+      ctx.save(); ctx.fillStyle=C.muted; ctx.font='600 9px ui-monospace,monospace';
+      ctx.textAlign='center'; ctx.textBaseline='bottom';
+      ctx.fillText(i+' cm', x0+i*cm, y-6); ctx.restore();
+    }
+  }
+  ctx.stroke(); ctx.restore();
+  tag('scale: 1 cm ≡ '+fmt(S.scale,0)+' '+UNIT(), RP.x0+RP.w/2, RP.y0+14, C.accent, {size:11, bold:true, border:C.accent});
+  /* a protractor at the start of the polygon */
+  var pts = polyPoints(), sx = RX(pts[0].x), sy = RY(pts[0].y), r = 62;
+  ctx.save(); ctx.globalAlpha=.55; ctx.strokeStyle=C.axis; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(sx, sy, r, -PI, 0); ctx.stroke();
+  for(var a=0;a<=180;a+=10){
+    var rad = -RAD(a), rr2 = (a%30===0)? r-9 : r-5;
+    ctx.beginPath(); ctx.moveTo(sx+Math.cos(rad)*r, sy+Math.sin(rad)*r);
+    ctx.lineTo(sx+Math.cos(rad)*rr2, sy+Math.sin(rad)*rr2); ctx.stroke();
+  }
+  ctx.restore();
+  ln(sx-r, sy, sx+r, sy, C.axis, 1, [4,3]);
+}
+
+/* ------------------------------- render --------------------------------- */
+function render(){
+  themeCheck();
+  layout();
+  drawBg();
+  var showSpace = !V.vertical || S.pane==='space';
+  var showVec   = !V.vertical || S.pane==='vector';
+  if(showSpace){
+    if(S.mode==='slope'){ drawSlope(); drawSlopeForces(); }
+    else { drawAxes(); drawSpaceVectors(); }
+  }
+  if(showVec) drawVectorDiagram();
+}
+
+/* ============================== PANELS =================================== */
+var LIVE = $('#live'), TOAST = $('#toast'), toastT = null;
+function toast(msg){
+  TOAST.textContent = msg; TOAST.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(function(){ TOAST.classList.remove('show'); }, 1900);
+}
+function say(msg){ LIVE.textContent = msg; }
+
+/* ------------------------------ the HUD --------------------------------- */
+function updateHud(){
+  var list = activeVecs(), R = resultant(list);
+  var solo = (S.mode==='resolve' && list.length===1);
+  $('#hudRLbl').textContent = solo ? 'Size' : 'Resultant';
+  $('#hudR').textContent = fmt(solo? list[0].mag : R.mag);
+  $('#hudUnit').textContent = UNIT();
+  var hd = solo? list[0].dir : R.dir;
+  $('#hudDir').textContent = list.length ? fmt(S.bearing? toBearing(hd) : norm180(hd), 1) : '0.0';
+  $('#hudSumX').textContent = (S.axis? 'Σ∥ ' : 'Σx ') + fmt(sumAlong(list));
+  $('#hudSumY').textContent = (S.axis? 'Σ⊥ ' : 'Σy ') + fmt(sumAcross(list));
+  if(!S.show.values){
+    $('#hudR').textContent = '••'; $('#hudDir').textContent = '••';
+    $('#hudSumX').textContent = 'Σx ••'; $('#hudSumY').textContent = 'Σy ••';
+  }
+}
+function sumAlong(list){
+  list = list||activeVecs(); var t=0;
+  for(var i=0;i<list.length;i++) t += along(list[i], S.axis);
+  return t;
+}
+function sumAcross(list){
+  list = list||activeVecs(); var t=0;
+  for(var i=0;i<list.length;i++) t += across(list[i], S.axis);
+  return t;
+}
+function isBalanced(list){
+  list = list||activeVecs();
+  return resultant(list).mag < Math.max(1e-9, maxMagnitude()*0.004);
+}
+
+/* ---------------------------- the verdict bar --------------------------- */
+function updateVerdict(){
+  var st = $('#vStatus'), num = $('#vNum'), row2 = $('#vRow2');
+  var list = activeVecs(), R = resultant(list), U = UNIT();
+  var vd = $('.verdict');
+  vd.classList.remove('ok','bad','warn');
+
+  if(!list.length){
+    st.textContent = 'Nothing to add up yet';
+    num.textContent = '';
+    row2.innerHTML = '<b>Add a vector</b> from the Set up tab, or open a scenario, then drag its tip on the diagram.';
+    return;
+  }
+  if(S.mode==='slope'){
+    var sl = slopeState();
+    if(sl.moving){
+      vd.classList.add('warn');
+      st.textContent = 'The block accelerates';
+      num.textContent = fmt(Math.abs(sl.a))+' m s⁻²';
+      row2.innerHTML = 'Along the slope the forces do not balance: <b>'+fmt(sl.net)+' '+U+'</b> '
+        + (sl.net>0? 'up' : 'down') + ' the slope on '+fmt(S.slope.mass,1)+' kg. '
+        + 'Perpendicular to it they always do — that is why <b>N = mg cos θ</b>.';
+    } else {
+      vd.classList.add('ok');
+      st.textContent = 'The block stays put';
+      num.textContent = 'a = 0';
+      row2.innerHTML = 'Friction takes whatever value it needs, here <b>'+fmt(Math.abs(sl.friction))+' '+U+'</b>, '
+        + 'and it can go no higher than μN = <b>'+fmt(sl.fMax)+' '+U+'</b>. '
+        + 'It starts to slide once tan θ &gt; μ, that is beyond <b>'+fmt(sl.limitAngle,1)+'°</b>.';
+    }
+    return;
+  }
+  if(S.mode==='resolve' && list.length===1){
+    var v0 = list[0], al = along(v0,S.axis), ac = across(v0,S.axis);
+    var rot0 = Math.abs(S.axis) > 1e-9;
+    st.textContent = 'One '+QTYNAME()+', two components';
+    num.textContent = S.show.values? (fmt(v0.mag)+' '+U+' at '+dirText(v0.dir)) : 'hidden';
+    row2.innerHTML = 'Along the '+(rot0?'turned ':'')+'x axis: <b>'+fmt(v0.mag)+' cos '+fmt(norm180(v0.dir-S.axis),1)+'° = '+fmt(al)+' '+U+'</b>. '
+      + 'Across it: <b>'+fmt(v0.mag)+' sin '+fmt(norm180(v0.dir-S.axis),1)+'° = '+fmt(ac)+' '+U+'</b>. '
+      + 'Together they do exactly what the single '+QTYNAME()+' does — nothing has been added or lost.';
+    return;
+  }
+  if(isBalanced(list)){
+    vd.classList.add('ok');
+    st.textContent = 'In equilibrium';
+    num.textContent = 'ΣF = 0';
+    row2.innerHTML = 'Both totals come to zero, so the tip-to-tail polygon <b>closes</b>. '
+      + (list.length===3? 'Three forces in equilibrium always make a closed triangle.' : 'Nothing accelerates.');
+    return;
+  }
+  st.textContent = 'There is a resultant';
+  num.textContent = S.show.values? (fmt(R.mag)+' '+U+' at '+dirText(R.dir)) : 'hidden';
+  var eq = equilibrant(list);
+  row2.innerHTML = 'Σx = <b>'+fmt(sumAlong(list))+'</b>, Σy = <b>'+fmt(sumAcross(list))+'</b>. '
+    + 'The equilibrant — the one '+QTYNAME()+' that would cancel these — is <b>'+fmt(eq.mag)+' '+U+'</b> at <b>'+dirText(eq.dir)+'</b>.';
+  if(!S.show.values){ row2.innerHTML = 'The numbers are hidden. Work out Σx and Σy yourself, then press <b>H</b> to check.'; }
+}
+
+/* ------------------------- setup tab: live text ------------------------- */
+function updateSetupTexts(){
+  $('#vAxis').textContent = fmt(S.axis,1)+'°';
+  $('#vScale').textContent = fmt(S.scale,0)+' / cm';
+  $('#vDec').textContent = String(S.dec);
+  $('#vSlopeAng').textContent = fmt(S.slope.angle,1)+'°';
+  $('#vSlopeM').textContent = fmt(S.slope.mass,1)+' kg';
+  $('#vMu').textContent = fmt(S.slope.mu,2);
+  $('#vPush').textContent = fmt(S.slope.push,0)+' N';
+  $('#vGs').textContent = fmt(S.slope.g,2);
+  $('#vecCount').textContent = String(S.vecs.length);
+  $('#btnPane').hidden = !V.vertical;
+  $('#dvPane').hidden  = !V.vertical;
+  $('#btnPane').setAttribute('aria-pressed', String(S.pane==='vector'));
+  $('#grpSlope').hidden = (S.mode!=='slope');
+  $('#grpVectors').hidden = (S.mode==='slope');
+  $('#grpQuantity').hidden = (S.mode==='slope');
+  $('#grpSlopeAn').hidden = (S.mode!=='slope');
+  $('#grpEquilAn').hidden = (S.mode==='slope');
+  $('#axisTag').textContent = S.axis? ('along axes turned '+fmt(S.axis,1)+'°') : 'along x and y';
+  var hint = $('#axisHint');
+  if(S.mode==='slope'){
+    hint.innerHTML = 'On a slope the sensible axes are <em>along</em> and <em>perpendicular to</em> the surface, '
+      + 'so they are set for you at '+fmt(S.slope.angle,1)+'°. Nothing then has to be resolved twice.';
+  } else {
+    hint.innerHTML = 'Resolving is a <em>choice</em>. Rotate the axes and every component changes, but the vectors themselves '
+      + 'and their resultant do not move at all. Choosing the axes well is what makes a hard question easy.';
+  }
+}
+
+/* ------------------------- setup tab: vector cards ---------------------- */
+function buildVecList(){
+  var host = $('#vecList');
+  if(S.mode==='slope'){
+    var sv = slopeVecs(), h = '<p class="hint" style="margin:0">The forces on the block are worked out from the slope, so they cannot be edited directly. Use the sliders below.</p>';
+    for(var k=0;k<sv.length;k++){
+      h += '<div class="veccard" style="margin-top:8px"><div class="head"><span class="dot" style="background:'+sv[k].colour+'"></span>'
+         + '<span class="name">'+esc(sv[k].label)+'</span><span class="pill">'+fmt(sv[k].mag)+' N</span></div></div>';
+    }
+    host.innerHTML = h;
+    return;
+  }
+  var out = '';
+  for(var i=0;i<S.vecs.length;i++){
+    var v = S.vecs[i];
+    var un = v.unknown;
+    out += '<div class="veccard'+(S.sel===v.id?' sel':'')+'" data-id="'+v.id+'">'
+      + '<div class="head">'
+        + '<span class="dot" style="background:'+v.colour+'"></span>'
+        + '<span class="name" contenteditable="true" spellcheck="false" data-name="'+v.id+'">'+esc(v.label)+'</span>'
+        + (un? '<span class="pill bad">unknown</span>' : '')
+      + '</div>'
+      + '<div class="grid">'
+        + '<span>size</span><input type="number" step="0.1" data-mag="'+v.id+'" value="'+fmt(v.mag)+'"'+(un==='both'||un==='mag'?' disabled':'')+'>'
+        + '<span>'+(S.bearing?'bearing':'angle')+'</span><input type="number" step="0.5" data-dir="'+v.id+'" value="'+fmt(S.bearing? toBearing(v.dir) : norm180(v.dir),1)+'"'+(un==='both'?' disabled':'')+'>'
+      + '</div>'
+      + '<div class="acts">'
+        + '<button class="qbtn" data-sel="'+v.id+'" aria-pressed="'+(S.sel===v.id)+'">select</button>'
+        + '<button class="qbtn" data-unk="'+v.id+'" aria-pressed="'+(!!un)+'" title="Mark this vector unknown and solve for it">?</button>'
+        + '<button class="qbtn" data-unkm="'+v.id+'" aria-pressed="'+(un==='mag')+'" title="Only the size is unknown; the direction is fixed">? size</button>'
+        + '<button class="qbtn" data-flip="'+v.id+'" title="Reverse it">flip</button>'
+        + '<button class="qbtn" data-dup="'+v.id+'" title="Duplicate">copy</button>'
+        + '<button class="qbtn" data-del="'+v.id+'" title="Delete">×</button>'
+      + '</div></div>';
+  }
+  if(!S.vecs.length) out = '<p class="hint" style="margin:0">No vectors yet. Press <b>+ Vector</b>, or load a scenario from the toolbar.</p>';
+  host.innerHTML = out;
+  wireVecList();
+}
+/* only the numbers change while dragging, so the cards are not rebuilt */
+function refreshVecValues(){
+  for(var i=0;i<S.vecs.length;i++){
+    var v = S.vecs[i];
+    var mi = $('[data-mag="'+v.id+'"]'), di = $('[data-dir="'+v.id+'"]');
+    if(mi && document.activeElement!==mi) mi.value = fmt(v.mag);
+    if(di && document.activeElement!==di) di.value = fmt(S.bearing? toBearing(v.dir) : norm180(v.dir), 1);
+    var card = $('.veccard[data-id="'+v.id+'"]');
+    if(card) card.classList.toggle('sel', S.sel===v.id);
+    var sb = $('[data-sel="'+v.id+'"]');
+    if(sb) sb.setAttribute('aria-pressed', String(S.sel===v.id));
+  }
+}
+
+/* ---------------------------- analyse tab ------------------------------- */
+function updateAnalyse(){
+  var list = activeVecs(), R = resultant(list), U = UNIT();
+  var rot = Math.abs(S.axis) > 1e-9;
+  var hx = rot? 'x′' : 'x', hy = rot? 'y′' : 'y';
+
+  /* the banner */
+  var ban = $('#anBanner'), txt = $('#anText');
+  ban.classList.remove('ok','warn');
+  if(!list.length){ txt.textContent = 'Add some vectors to see the sum.'; }
+  else if(isBalanced(list)){ ban.classList.add('ok'); txt.innerHTML = 'The components cancel in both directions, so these '+QTYNAMES()+' are <b>in equilibrium</b>.'; }
+  else { txt.innerHTML = 'Resolving in two perpendicular directions turns '+list.length+' '+QTYNAMES()+' into <b>two numbers</b>, and those two numbers give the resultant.'; }
+
+  /* the components table */
+  var th = $('#compTable').querySelector('thead').querySelector('tr');
+  th.innerHTML = '<th>Vector</th><th>size</th><th>angle</th><th>'+hx+'</th><th>'+hy+'</th>';
+  var tb = $('#compTable').querySelector('tbody'), rows = '';
+  for(var i=0;i<list.length;i++){
+    var v = list[i], ax = along(v,S.axis), ay = across(v,S.axis);
+    var rel = norm180(v.dir - S.axis);
+    rows += '<tr'+(S.sel===v.id?' style="background:var(--accent-soft)"':'')+'>'
+      + '<td class="nm"><span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:'+v.colour+';margin-right:5px"></span>'
+      + esc(v.label.replace(/^Vector /,''))+'</td>'
+      + '<td>'+num(v.mag)+'</td>'
+      + '<td>'+num(rel,1)+'°</td>'
+      + '<td>'+num(ax)+'</td><td>'+num(ay)+'</td></tr>';
+  }
+  rows += '<tr class="tot"><td class="nm">total</td><td>—</td><td>—</td><td>'+num(sumAlong(list))+'</td><td>'+num(sumAcross(list))+'</td></tr>';
+  tb.innerHTML = rows || '<tr><td class="nm" colspan="5">—</td></tr>';
+  $('#compHint').innerHTML = rot
+    ? 'These components are measured along axes turned <b>'+fmt(S.axis,1)+'°</b>. Every number in the table has changed, but the resultant in the last panel has not — it is the same '+QTYNAME()+' described from a different direction.'
+    : 'Add the '+hx+' components, add the '+hy+' components, then put the two totals back together with Pythagoras.';
+
+  /* the resultant */
+  var rb = $('#resBody');
+  if(!list.length){ rb.innerHTML = '<p class="hint" style="margin:0">Nothing to add up yet.</p>'; }
+  else {
+    var eq = equilibrant(list);
+    rb.innerHTML =
+      kv('Σ'+hx, num(sumAlong(list))+' '+U) +
+      kv('Σ'+hy, num(sumAcross(list))+' '+U) +
+      kv('size of the resultant', '<b>'+num(R.mag)+' '+U+'</b>') +
+      kv('its direction', S.show.values? dirText(R.dir) : '••') +
+      kv('the equilibrant', num(eq.mag)+' '+U+' at '+(S.show.values? dirText(eq.dir):'••')) +
+      '<p class="hint">R = √(Σ'+hx+'² + Σ'+hy+'²) and the angle comes from tan θ = Σ'+hy+' ⁄ Σ'+hx+'. '
+      + 'Watch the quadrant: a calculator gives the same tangent for two opposite directions, so always sketch it.</p>';
+  }
+
+  /* equilibrium check */
+  var eb = $('#equilBody');
+  if(!list.length){ eb.innerHTML = '<p class="hint" style="margin:0">—</p>'; }
+  else if(isBalanced(list)){
+    eb.innerHTML = '<p class="hint ok" style="margin:0"><b>Equilibrium.</b> Σ'+hx+' = 0 and Σ'+hy+' = 0, so the polygon closes. '
+      + (list.length===3? 'With exactly three '+QTYNAMES()+' this is the closed triangle, and the sine rule will find any missing one.' : '')
+      + '</p>';
+  } else {
+    eb.innerHTML = '<p class="hint bad" style="margin:0"><b>Not in equilibrium.</b> The totals come to '
+      + num(sumAlong(list))+' '+U+' and '+num(sumAcross(list))+' '+U+'. '
+      + 'One more '+QTYNAME()+' of '+num(equilibrant(list).mag)+' '+U+' at '+(S.show.values? dirText(equilibrant(list).dir):'••')+' would balance them — press <b>+ Equilibrant</b> to add it.</p>';
+  }
+
+  /* the slope */
+  if(S.mode==='slope') updateSlopePanel();
+}
+function num(v,dp){ return S.show.values ? (dp===undefined? w(v) : fmt(v,dp)) : '••'; }
+function kv(k,v){ return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+
+function updateSlopePanel(){
+  var st = slopeState(), b = $('#slopeBody'), s = S.slope;
+  b.innerHTML =
+    kv('weight  W = mg', num(st.W)+' N') +
+    kv('down the slope  mg sin θ', num(Math.abs(st.wAlong))+' N') +
+    kv('into the slope  mg cos θ', num(Math.abs(st.wPerp))+' N') +
+    kv('normal contact force  N', num(st.N)+' N') +
+    kv('the most friction can be  μN', num(st.fMax)+' N') +
+    kv('friction now', num(Math.abs(st.friction))+' N '+(st.moving? '(at its limit, sliding)' : '(just enough to hold it)')) +
+    kv('resultant along the slope', num(st.net)+' N') +
+    kv('acceleration', num(Math.abs(st.a))+' m s⁻²') +
+    '<p class="hint">Perpendicular to the slope there is no acceleration, so N = mg cos θ — which is <em>less</em> than the weight. '
+    + 'Left alone, the block slides once tan θ &gt; μ, here at <b>'+fmt(st.limitAngle,1)+'°</b>. Notice that the mass cancels out of that condition entirely.</p>'
+    + (s.push>0? '<p class="hint">The push of '+fmt(s.push,0)+' N acts along the slope, so it adds straight onto mg sin θ without being resolved at all.</p>' : '');
+}
+
+/* =========================== WORKING & SOLVING ==========================
+   The working panel writes out the same lines a marker wants to see: state
+   the components, total them, then combine. It is generated from the live
+   state, so a student can change one number and watch which line moves.
+   ======================================================================== */
+var WALK = { on:false, i:0, n:0 };
+
+function workLines(){
+  var list = activeVecs(), U = UNIT(), L = [];
+  var rot = Math.abs(S.axis) > 1e-9;
+  var hx = rot? 'x′' : 'x', hy = rot? 'y′' : 'y';
+  if(!list.length) return [['<span class="lbl">Nothing to work out yet.</span>']];
+
+  if(S.mode==='slope'){
+    var st = slopeState(), s = S.slope;
+    L.push(['<em>1</em> Take axes along and perpendicular to the slope.',
+            '<span class="lbl">θ = '+fmt(s.angle,1)+'°, m = '+fmt(s.mass,1)+' kg, μ = '+fmt(s.mu,2)+', g = '+fmt(s.g,2)+' N kg⁻¹</span>']);
+    L.push(['<em>2</em> Weight:  W = mg = '+fmt(s.mass,1)+' × '+fmt(s.g,2)+' = <span class="hi">'+w(st.W)+' N</span>']);
+    L.push(['<em>3</em> Resolve the weight:',
+            '  down the slope:  mg sin θ = '+w(st.W)+' × sin '+fmt(s.angle,1)+'° = <span class="hi">'+w(Math.abs(st.wAlong))+' N</span>',
+            '  into the slope:  mg cos θ = '+w(st.W)+' × cos '+fmt(s.angle,1)+'° = <span class="hi">'+w(Math.abs(st.wPerp))+' N</span>']);
+    L.push(['<em>4</em> Perpendicular to the slope nothing accelerates, so',
+            '  N = mg cos θ = <span class="hi">'+w(st.N)+' N</span>',
+            '<span class="lbl">  (less than the weight — that is why friction on a slope is weaker)</span>']);
+    L.push(['<em>5</em> Friction can be at most',
+            '  μN = '+fmt(s.mu,2)+' × '+w(st.N)+' = <span class="hi">'+w(st.fMax)+' N</span>']);
+    if(st.moving){
+      L.push(['<em>6</em> The force along the slope, '+w(Math.abs(st.driving))+' N, beats μN, so it slides and friction sits at its limit.',
+              '  resultant = '+w(st.driving)+' + ('+w(st.friction)+') = <span class="hi">'+w(st.net)+' N</span>',
+              '  a = F ⁄ m = '+w(st.net)+' ⁄ '+fmt(s.mass,1)+' = <span class="hi">'+w(st.a)+' m s⁻²</span>']);
+    } else {
+      L.push(['<em>6</em> The force along the slope is only '+w(Math.abs(st.driving))+' N, which is less than μN, so friction simply matches it.',
+              '  friction = <span class="hi">'+w(Math.abs(st.friction))+' N</span>, and a = 0']);
+      L.push(['<em>7</em> It begins to slip when mg sin θ = μ mg cos θ, that is when tan θ = μ,',
+              '  θ = tan⁻¹('+fmt(s.mu,2)+') = <span class="hi">'+fmt(st.limitAngle,1)+'°</span>',
+              '<span class="lbl">  the mass has cancelled — a heavy block and a light one slip at the same angle</span>']);
+    }
+    return L;
+  }
+
+  var i, v, sx = sumAlong(list), sy = sumAcross(list), R = resultant(list);
+  var sxLine = [], syLine = [];
+  if(unknownVecs().length)
+    L.push(['<span class="lbl">A vector marked ? still carries a placeholder size, so the numbers below are not the answer yet — use <em>Solve &amp; apply</em> first.</span>']);
+  L.push(['<em>1</em> Resolve every '+QTYNAME()+' along '+hx+' and '+hy
+          + (rot? ', with the axes turned '+fmt(S.axis,1)+'°.' : '.')]);
+  for(i=0;i<list.length;i++){
+    v = list[i];
+    var rel = norm180(v.dir - S.axis);
+    L.push(['<span class="lbl">   '+esc(v.label.replace(/^Vector /,''))+':</span>'
+            + '  '+hx+' = '+w(v.mag)+' cos '+fmt(rel,1)+'° = <span class="hi">'+w(along(v,S.axis))+'</span>'
+            + '   '+hy+' = '+w(v.mag)+' sin '+fmt(rel,1)+'° = <span class="hi">'+w(across(v,S.axis))+'</span>']);
+    sxLine.push(w(along(v,S.axis)));
+    syLine.push(w(across(v,S.axis)));
+  }
+  L.push(['<em>2</em> Add each direction separately.',
+          '  Σ'+hx+' = '+sxLine.join(' + ').replace(/\+ -/g,'− ')+' = <span class="hi">'+w(sx)+' '+U+'</span>',
+          '  Σ'+hy+' = '+syLine.join(' + ').replace(/\+ -/g,'− ')+' = <span class="hi">'+w(sy)+' '+U+'</span>']);
+
+  if(isBalanced(list)){
+    L.push(['<em>3</em> Both totals are zero, so the '+QTYNAMES()+' are <span class="hi">in equilibrium</span>.',
+            '<span class="lbl">   Drawn tip to tail they form a closed polygon.</span>']);
+    return L;
+  }
+  L.push(['<em>3</em> Put the two totals back together with Pythagoras.',
+          '  R = √('+w(sx)+'² + '+w(sy)+'²) = <span class="hi">'+w(R.mag)+' '+U+'</span>']);
+  var ang = DEG(Math.atan2(Math.abs(sy), Math.abs(sx)));
+  L.push(['<em>4</em> Then the direction.',
+          '  tan θ = '+w(Math.abs(sy))+' ⁄ '+w(Math.abs(sx))+'  so θ = '+fmt(ang,1)+'° from the '+hx+' axis',
+          '  taking the quadrant into account: <span class="hi">'+dirText(R.dir)+'</span>'
+          + (rot? ' <span class="lbl">(measured from the turned axis)</span>' : '')]);
+  L.push(['<em>5</em> The equilibrant is the same size in the opposite direction:',
+          '  <span class="hi">'+w(R.mag)+' '+U+' at '+dirText(equilibrant(list).dir)+'</span>']);
+  return L;
+}
+function renderWork(){
+  var L = workLines(), out = '', n = WALK.on ? Math.min(WALK.i+1, L.length) : L.length;
+  WALK.n = L.length;
+  for(var i=0;i<n;i++){
+    for(var j=0;j<L[i].length;j++) out += '<span class="step">'+L[i][j]+'</span>';
+    if(i<n-1) out += '<span class="step">&nbsp;</span>';
+  }
+  $('#workOut').innerHTML = out;
+  $('#workTag').textContent = WALK.on ? ('step '+n+' of '+L.length) : 'live';
+  $('#workTag').className = 'pill'+(WALK.on?' res':'');
+  $('#btnWalkPrev').disabled = !WALK.on || WALK.i<=0;
+  $('#btnWalkNext').disabled = !WALK.on || WALK.i>=L.length-1;
+  $('#walkStatus').textContent = WALK.on ? 'Use ← and → to step through.' : '';
+}
+function workPlain(){
+  var L = workLines(), out = [];
+  for(var i=0;i<L.length;i++){
+    for(var j=0;j<L[i].length;j++){
+      out.push(L[i][j].replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>'));
+    }
+    out.push('');
+  }
+  return out.join('\n');
+}
+
+/* --------------------------- the solver panel --------------------------- */
+function updateSolvePanel(){
+  var host = $('#unknownState'), sol = solveUnknowns(), U = UNIT();
+  var u = unknownVecs();
+  if(S.mode==='slope'){
+    host.innerHTML = '<p class="hint" style="margin:0">The slope works out its own forces. Switch to <b>Resultant</b> or <b>Equilibrium</b> to solve for unknown vectors.</p>';
+    $('#btnSolve').disabled = true;
+    return;
+  }
+  $('#btnSolve').disabled = !sol.ok;
+  if(!u.length){
+    host.innerHTML = '<p class="hint" style="margin:0">No vector is marked unknown. Press <b>?</b> on a vector card to make it one.</p>';
+    return;
+  }
+  if(!sol.ok){
+    host.innerHTML = '<p class="hint bad" style="margin:0">'
+      + (sol.why==='parallel'
+          ? 'The two unknown directions are parallel, so they cannot be separated — there is no unique answer.'
+          : 'Mark either <b>one</b> vector fully unknown, or <b>two</b> whose directions you know with only their sizes unknown.')
+      + '</p>';
+    return;
+  }
+  var K = sol.K, h = '';
+  if(sol.kind==='equilibrant'){
+    var val = sol.values[0], v0 = vecById(val.id);
+    h = '<div class="eq">for equilibrium&nbsp; Σx = 0 and Σy = 0<br>'
+      + 'known: Σx = '+w(K.x)+',&nbsp; Σy = '+w(K.y)+'<br>'
+      + esc(v0.label)+' must be&nbsp; <b>'+w(val.mag)+' '+U+'</b> at <b>'+dirText(val.dir)+'</b></div>'
+      + '<p class="hint">One completely unknown force in an equilibrium problem is always the equilibrant of the rest: same size, opposite direction.</p>';
+  } else if(sol.kind==='one-size'){
+    var v1 = vecById(sol.values[0].id);
+    h = '<div class="eq">resolving along '+esc(v1.label)+'&#39;s own direction ('+fmt(norm180(v1.dir),1)+'°)<br>'
+      + 'size = <b>'+w(sol.values[0].mag)+' '+U+'</b></div>';
+    if(sol.resid > 1e-6*Math.max(1,maxMagnitude())){
+      h += '<p class="hint warn">Perpendicular to that direction the others leave <b>'+w(sol.resid)+' '+U+'</b> unbalanced, '
+        + 'so no size of this one vector alone can produce equilibrium. Mark a second vector unknown as well.</p>';
+    }
+  } else {
+    var a = vecById(sol.values[0].id), b = vecById(sol.values[1].id);
+    var d1 = norm180(a.dir), d2 = norm180(b.dir);
+    h = '<div class="eq">'
+      + 'x:&nbsp; m₁ cos '+fmt(d1,1)+'° + m₂ cos '+fmt(d2,1)+'° = '+w(-K.x)+'<br>'
+      + 'y:&nbsp; m₁ sin '+fmt(d1,1)+'° + m₂ sin '+fmt(d2,1)+'° = '+w(-K.y)+'<br>'
+      + '<span style="opacity:.75">solving the pair together</span><br>'
+      + esc(a.label)+' = <b>'+w(sol.values[0].mag)+' '+U+'</b><br>'
+      + esc(b.label)+' = <b>'+w(sol.values[1].mag)+' '+U+'</b></div>'
+      + '<p class="hint">Two unknown sizes need two equations, and resolving in two perpendicular directions is exactly where they come from. '
+      + (Math.min(sol.values[0].mag, sol.values[1].mag) < 0
+          ? 'A negative answer here means that '+QTYNAME()+' actually points the other way.'
+          : 'Both answers are positive, so both '+QTYNAMES()+' act as drawn.')
+      + '</p>';
+  }
+  host.innerHTML = h;
+}
+function applySolution(){
+  var sol = solveUnknowns();
+  if(!sol.ok){ toast('Nothing to solve just yet'); return; }
+  for(var i=0;i<sol.values.length;i++){
+    var v = vecById(sol.values[i].id);
+    if(!v) continue;
+    if(sol.values[i].mag < 0){ v.mag = -sol.values[i].mag; v.dir = norm180(sol.values[i].dir+180); }
+    else { v.mag = sol.values[i].mag; v.dir = norm180(sol.values[i].dir); }
+    v.unknown = null;
+  }
+  toast('Solved — the unknowns are filled in');
+  say('The unknown vectors have been worked out and applied.');
+  buildVecList();
+  refresh();
+}
+
+/* ------------------------- predict, then check -------------------------- */
+function doCheck(){
+  var pm = parseFloat($('#pMag').value), pd = parseFloat($('#pDir').value);
+  var out = $('#checkOut');
+  var list = activeVecs(), R = resultant(list), U = UNIT();
+  if(!list.length){ out.innerHTML = '<p class="hint" style="margin:0">There is nothing to predict yet.</p>'; return; }
+  if(!isFinite(pm) && !isFinite(pd)){ out.innerHTML = '<p class="hint" style="margin:0">Type a size, a direction, or both.</p>'; return; }
+  var trueDir = S.bearing? toBearing(R.dir) : norm180(R.dir);
+  var rows = '', good = 0, tot = 0;
+  function judge(name, guess, real, tol, unit){
+    tot++;
+    var err = Math.abs(guess-real);
+    if(name==='direction'){ err = Math.abs(norm180(guess-real)); }
+    var ok = err <= tol;
+    if(ok) good++;
+    return '<div class="kv"><span class="k">'+name+'</span><span class="v" style="color:'+(ok?'var(--ok)':'var(--bad)')+'">'
+      + fmt(guess,1)+' vs '+fmt(real,1)+' '+unit+' &nbsp;'+(ok?'✓':'out by '+fmt(err,1))+'</span></div>';
+  }
+  if(isFinite(pm)) rows += judge('size', pm, R.mag, Math.max(0.05, R.mag*0.02), U);
+  if(isFinite(pd)) rows += judge('direction', pd, trueDir, 1.5, '°');
+  var msg = (good===tot)
+    ? '<p class="hint ok" style="margin:6px 0 0"><b>Spot on.</b> Within tolerance on '+(tot===1?'that':'both')+'.</p>'
+    : '<p class="hint warn" style="margin:6px 0 0">Not quite. Open the <b>Working</b> panel below and compare it line by line — the usual culprits are a sine where a cosine belongs, and the quadrant of the angle.</p>';
+  out.innerHTML = rows + msg;
+  say(good===tot? 'Prediction correct.' : 'Prediction not within tolerance.');
+}
+
+/* =============================== GRAPHS =================================
+   Three graphs, each answering a question that a single static diagram
+   cannot: how the resultant of two vectors depends on the angle between
+   them, how components depend on the axes you choose, and how friction on
+   a slope compares with its own limit as the slope steepens.
+   ======================================================================== */
+var gcv = $('#graph'), gx = gcv.getContext('2d');
+var GHOVER = null;
+
+function gTheme(){ return { ink:C.ink||'#111', ink2:C.ink2||'#333', mut:C.muted||'#777',
+                            line:C.line||'#ddd', pan:C.panel||'#fff', acc:C.accent||'#c2410c',
+                            res:C.res||'#7c2d12', comp:C.comp||'#0369a1', ok:C.ok||'#0a0', bad:C.bad||'#a00' }; }
+
+function gFrame(t, xlab, ylab, xa, xb, ya, yb){
+  var W = gcv.width, H = gcv.height, m = {l:66, r:18, t:34, b:48};
+  gx.clearRect(0,0,W,H);
+  gx.fillStyle = t.pan; gx.fillRect(0,0,W,H);
+  var px = function(x){ return m.l + (x-xa)/(xb-xa)*(W-m.l-m.r); };
+  var py = function(y){ return H-m.b - (y-ya)/(yb-ya)*(H-m.t-m.b); };
+  var i, sx = niceStep((W-m.l-m.r)/(xb-xa), 70), sy = niceStep((H-m.t-m.b)/(yb-ya), 46);
+  gx.strokeStyle = t.line; gx.lineWidth = 1; gx.font = '600 15px system-ui,sans-serif';
+  gx.fillStyle = t.mut; gx.textAlign='center'; gx.textBaseline='top';
+  for(i=Math.ceil(xa/sx)*sx; i<=xb+1e-9; i+=sx){
+    gx.beginPath(); gx.moveTo(px(i), m.t); gx.lineTo(px(i), H-m.b); gx.stroke();
+    gx.fillText(parseFloat(i.toFixed(4)), px(i), H-m.b+8);
+  }
+  gx.textAlign='right'; gx.textBaseline='middle';
+  for(i=Math.ceil(ya/sy)*sy; i<=yb+1e-9; i+=sy){
+    gx.beginPath(); gx.moveTo(m.l, py(i)); gx.lineTo(W-m.r, py(i)); gx.stroke();
+    gx.fillText(parseFloat(i.toFixed(4)), m.l-9, py(i));
+  }
+  gx.strokeStyle = t.ink2; gx.lineWidth = 1.6;
+  gx.beginPath(); gx.moveTo(m.l, m.t); gx.lineTo(m.l, H-m.b); gx.lineTo(W-m.r, H-m.b); gx.stroke();
+  if(ya < 0 && yb > 0){
+    gx.strokeStyle = t.ink2; gx.lineWidth = 1; gx.setLineDash([5,4]);
+    gx.beginPath(); gx.moveTo(m.l, py(0)); gx.lineTo(W-m.r, py(0)); gx.stroke(); gx.setLineDash([]);
+  }
+  gx.fillStyle = t.ink; gx.font='700 16px system-ui,sans-serif';
+  gx.textAlign='center'; gx.textBaseline='bottom'; gx.fillText(xlab, m.l+(W-m.l-m.r)/2, H-6);
+  gx.save(); gx.translate(16, m.t+(H-m.t-m.b)/2); gx.rotate(-Math.PI/2);
+  gx.textBaseline='top'; gx.fillText(ylab, 0, 0); gx.restore();
+  return {px:px, py:py, m:m, W:W, H:H};
+}
+function gCurve(F, xa, xb, col, wd, dash){
+  var n = 400, first = true;
+  gx.save(); gx.strokeStyle=col; gx.lineWidth=wd||2.6; gx.lineJoin='round';
+  if(dash) gx.setLineDash(dash);
+  gx.beginPath();
+  for(var i=0;i<=n;i++){
+    var x = xa + (xb-xa)*i/n, y = F.f(x);
+    if(!isFinite(y)){ first = true; continue; }
+    var X = F.px(x), Y = F.py(y);
+    if(first){ gx.moveTo(X,Y); first=false; } else gx.lineTo(X,Y);
+  }
+  gx.stroke(); gx.restore();
+}
+function gKey(items, x, y){
+  gx.save(); gx.font='700 15px system-ui,sans-serif'; gx.textAlign='left'; gx.textBaseline='middle';
+  var wd = 0, i;
+  for(i=0;i<items.length;i++) wd = Math.max(wd, gx.measureText(items[i].t).width);
+  wd += 44;
+  var h = items.length*23 + 14;
+  gx.fillStyle = C.panel; gx.globalAlpha = .93;
+  gx.beginPath();
+  gx.moveTo(x-10+7, y-18); gx.lineTo(x-10+wd-7, y-18);
+  gx.quadraticCurveTo(x-10+wd, y-18, x-10+wd, y-18+7);
+  gx.lineTo(x-10+wd, y-18+h-7); gx.quadraticCurveTo(x-10+wd, y-18+h, x-10+wd-7, y-18+h);
+  gx.lineTo(x-10+7, y-18+h); gx.quadraticCurveTo(x-10, y-18+h, x-10, y-18+h-7);
+  gx.lineTo(x-10, y-18+7); gx.quadraticCurveTo(x-10, y-18, x-10+7, y-18);
+  gx.closePath(); gx.fill();
+  gx.globalAlpha = 1; gx.strokeStyle = C.line; gx.lineWidth = 1; gx.stroke();
+  for(i=0;i<items.length;i++){
+    gx.fillStyle = items[i].c;
+    gx.fillRect(x, y+i*23-2, 20, 4);
+    gx.fillStyle = C.ink; gx.fillText(items[i].t, x+27, y+i*23);
+  }
+  gx.restore();
+}
+function gDot(px,py,x,y,col,label){
+  gx.save(); gx.fillStyle=col; gx.strokeStyle=C.panel; gx.lineWidth=2.5;
+  gx.beginPath(); gx.arc(px(x),py(y),6.5,0,7); gx.fill(); gx.stroke();
+  if(label){
+    gx.font='700 14px system-ui,sans-serif'; gx.fillStyle=col; gx.textAlign='left'; gx.textBaseline='bottom';
+    gx.fillText(label, px(x)+10, py(y)-8);
+  }
+  gx.restore();
+}
+
+function drawGraph(){
+  themeCheck();
+  var t = gTheme(), read = $('#graphRead'), hint = $('#graphHint');
+  var U = UNIT();
+
+  if(S.graph==='angle'){
+    var list = S.vecs.slice(0,2);
+    if(S.mode==='slope') list = [];
+    if(list.length < 2){
+      gFrame(t,'angle between them / °','resultant / '+U, 0, 180, 0, 1);
+      gx.fillStyle=t.mut; gx.font='600 17px system-ui,sans-serif'; gx.textAlign='center';
+      gx.fillText('This graph needs two vectors. Add a second one in the Set up tab.', gcv.width/2, gcv.height/2);
+      read.innerHTML=''; hint.textContent='';
+      return;
+    }
+    var a = list[0].mag, b = list[1].mag;
+    var f = function(th){ return Math.sqrt(a*a + b*b + 2*a*b*Math.cos(RAD(th))); };
+    var lo = Math.abs(a-b), hi = a+b;
+    var F = gFrame(t, 'angle between them / °', 'size of the resultant / '+U, 0, 180, 0, hi*1.12);
+    F.f = f;
+    gCurve(F, 0, 180, t.res, 3.2);
+    /* the two extremes */
+    gx.save(); gx.strokeStyle=t.mut; gx.setLineDash([5,4]); gx.lineWidth=1.2;
+    gx.beginPath(); gx.moveTo(F.m.l, F.py(hi)); gx.lineTo(F.W-F.m.r, F.py(hi)); gx.stroke();
+    gx.beginPath(); gx.moveTo(F.m.l, F.py(lo)); gx.lineTo(F.W-F.m.r, F.py(lo)); gx.stroke();
+    gx.restore();
+    gx.fillStyle=t.mut; gx.font='600 14px system-ui,sans-serif'; gx.textAlign='left'; gx.textBaseline='bottom';
+    gx.fillText('a + b = '+fmt(hi)+'  (same direction)', F.m.l+8, F.py(hi)-5);
+    gx.textBaseline='top';
+    gx.fillText('|a − b| = '+fmt(lo)+'  (opposite)', F.m.l+8, F.py(lo)+5);
+    var now = Math.abs(norm180(list[1].dir - list[0].dir));
+    gDot(F.px, F.py, now, f(now), t.acc, fmt(f(now))+' '+U+' at '+fmt(now,1)+'°');
+    /* the perpendicular case */
+    gDot(F.px, F.py, 90, f(90), t.comp, 'at 90°: √(a²+b²) = '+fmt(f(90)));
+    read.innerHTML = kv('the two sizes', fmt(a)+' '+U+' and '+fmt(b)+' '+U)
+      + kv('angle between them now', fmt(now,1)+'°')
+      + kv('resultant now', fmt(f(now))+' '+U)
+      + kv('largest possible', fmt(hi)+' '+U) + kv('smallest possible', fmt(lo)+' '+U);
+    hint.innerHTML = 'The curve is the cosine rule, R² = a² + b² + 2ab cos θ. Two vectors can only ever produce a resultant '
+      + 'between <b>'+fmt(lo)+'</b> and <b>'+fmt(hi)+' '+U+'</b> — which is exactly why a triangle question with a stated resultant outside that range has no answer. '
+      + 'Notice how flat the curve is near 0°: at small angles the size hardly changes.';
+    return;
+  }
+
+  if(S.graph==='axis'){
+    var lst = activeVecs();
+    if(!lst.length){
+      gFrame(t,'axis angle / °','component / '+U, -90, 90, -1, 1);
+      gx.fillStyle=t.mut; gx.font='600 17px system-ui,sans-serif'; gx.textAlign='center';
+      gx.fillText('Add a vector first.', gcv.width/2, gcv.height/2);
+      read.innerHTML=''; hint.textContent='';
+      return;
+    }
+    var v = (S.sel!==null && vecById(S.sel)) ? vecById(S.sel) : lst[0];
+    var R = resultant(lst), mx = Math.max(v.mag, R.mag)*1.15;
+    var Fa = gFrame(t, 'axis turned by / °', 'component / '+U, -90, 90, -mx, mx);
+    /* the chosen vector */
+    Fa.f = function(ax){ return v.mag*Math.cos(RAD(v.dir-ax)); };
+    gCurve(Fa, -90, 90, v.colour, 3);
+    Fa.f = function(ax){ return v.mag*Math.sin(RAD(v.dir-ax)); };
+    gCurve(Fa, -90, 90, v.colour, 2.2, [7,5]);
+    /* the resultant, which is what must not change */
+    Fa.f = function(){ return R.mag; };
+    gCurve(Fa, -90, 90, t.res, 2.6, [3,4]);
+    gDot(Fa.px, Fa.py, S.axis, v.mag*Math.cos(RAD(v.dir-S.axis)), t.acc, 'now');
+    gKey([{c:v.colour, t:esc(v.label.replace(/^Vector /,''))+' along the axis'},
+          {c:v.colour, t:'the same vector across it'},
+          {c:t.res, t:'size of the resultant — unchanged'}], Fa.m.l+14, Fa.m.t+16);
+    read.innerHTML = kv('vector shown', esc(v.label))
+      + kv('axis turned by', fmt(S.axis,1)+'°')
+      + kv('component along', fmt(along(v,S.axis))+' '+U)
+      + kv('component across', fmt(across(v,S.axis))+' '+U)
+      + kv('size of the resultant', fmt(R.mag)+' '+U);
+    hint.innerHTML = 'Both components swing between +'+fmt(v.mag)+' and −'+fmt(v.mag)+' as the axes turn, and they are always a quarter of a cycle apart. '
+      + 'The flat line is the point of the graph: <b>the resultant never moves</b>. Components are a description you choose; the vector is the physics.';
+    return;
+  }
+
+  /* the slope */
+  var s = S.slope, W = s.mass*s.g;
+  var Fs = gFrame(t, 'slope angle / °', 'force along the slope / N', 0, 60, 0, W*1.08);
+  Fs.f = function(th){ return W*Math.sin(RAD(th)); };
+  gCurve(Fs, 0, 60, t.res, 3);
+  Fs.f = function(th){ return s.mu*W*Math.cos(RAD(th)); };
+  gCurve(Fs, 0, 60, t.comp, 3);
+  Fs.f = function(th){ return W*Math.cos(RAD(th)); };
+  gCurve(Fs, 0, 60, t.mut, 1.8, [4,4]);
+  var lim = DEG(Math.atan(s.mu));
+  if(lim <= 60){
+    gx.save(); gx.strokeStyle=t.bad; gx.lineWidth=1.6; gx.setLineDash([6,4]);
+    gx.beginPath(); gx.moveTo(Fs.px(lim), Fs.m.t); gx.lineTo(Fs.px(lim), Fs.H-Fs.m.b); gx.stroke(); gx.restore();
+    gDot(Fs.px, Fs.py, lim, W*Math.sin(RAD(lim)), t.bad, 'slips here: tan θ = μ, θ = '+fmt(lim,1)+'°');
+  }
+  gDot(Fs.px, Fs.py, s.angle, W*Math.sin(RAD(s.angle)), t.acc, 'now');
+  gKey([{c:t.res, t:'mg sin θ — pulling it down the slope'},
+        {c:t.comp, t:'μN = μ mg cos θ — the most friction can give'},
+        {c:t.mut, t:'N = mg cos θ'}], Fs.m.l+14, Fs.m.t+16);
+  var st = slopeState();
+  read.innerHTML = kv('slope angle now', fmt(s.angle,1)+'°')
+    + kv('mg sin θ', fmt(Math.abs(st.wAlong))+' N')
+    + kv('μN', fmt(st.fMax)+' N')
+    + kv('it slips beyond', fmt(lim,1)+'°')
+    + kv('state', st.moving? 'sliding' : 'held by friction');
+  hint.innerHTML = 'One curve rises, the other falls, and where they cross the block lets go. Setting mg sin θ = μ mg cos θ cancels m and g and leaves <b>tan θ = μ</b> — '
+    + 'a measurement of that angle is the standard way of finding μ in the lab. Change the mass and neither crossing point moves.';
+}
+
+/* ============================ INTERACTION ==============================
+   The diagram is the control. Dragging a vector's tip sets its size and its
+   direction at once, which is the connection students most often miss when
+   they only ever type numbers into boxes.
+   ======================================================================== */
+var DRAG = null;
+
+function pointer(e){
+  var r = cv.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+function hitVector(p){
+  if(S.mode==='slope') return null;
+  var best = null, bd = 20;
+  for(var i=S.vecs.length-1;i>=0;i--){
+    var e = vecEnd(S.vecs[i]);
+    var d = Math.hypot(p.x-e.x, p.y-e.y);
+    if(d < bd){ bd = d; best = S.vecs[i]; }
+  }
+  return best;
+}
+function hitAxis(p){
+  if(!S.show.axes || !AXH.on) return false;
+  return Math.hypot(p.x-AXH.x, p.y-AXH.y) < 16;
+}
+function snapAngle(a, shift){
+  if(shift || !S.show.snap) return a;
+  return Math.round(a/5)*5;
+}
+function snapMag(m, shift){
+  if(shift || !S.show.snap) return m;
+  var st = niceStep(V.pxu, 30)/2;
+  return Math.round(m/st)*st;
+}
+cv.addEventListener('pointerdown', function(e){
+  cv.focus();
+  var p = pointer(e);
+  var v = hitVector(p);
+  if(!v && hitAxis(p)){
+    DRAG = {kind:'axis'}; V.freeze = true; cv.setPointerCapture(e.pointerId);
+    e.preventDefault(); return;
+  }
+  if(v){
+    S.sel = v.id;
+    DRAG = {kind:'vec', id:v.id};
+    V.freeze = true;
+    cv.setPointerCapture(e.pointerId);
+    refreshVecValues(); refresh();
+    e.preventDefault(); return;
+  }
+  /* clicking empty space in the space pane deselects */
+  if(p.x < V.split){ S.sel = null; refreshVecValues(); refresh(); }
+});
+cv.addEventListener('pointermove', function(e){
+  var p = pointer(e);
+  if(!DRAG){
+    cv.style.cursor = (hitVector(p) || hitAxis(p)) ? 'grab' : 'default';
+    return;
+  }
+  cv.style.cursor = 'grabbing';
+  if(DRAG.kind==='axis'){
+    var a = DEG(Math.atan2(LP.cy-p.y, p.x-LP.cx));
+    a = clamp(norm180(a) > 90 ? norm180(a)-180 : (norm180(a) < -90 ? norm180(a)+180 : norm180(a)), -90, 90);
+    S.axis = snapAngle(a, e.shiftKey);
+    $('#inAxis').value = S.axis;
+    refresh();
+    e.preventDefault(); return;
+  }
+  var v = vecById(DRAG.id);
+  if(!v) return;
+  var dx = (p.x - LP.cx)/V.pxu, dy = (LP.cy - p.y)/V.pxu;
+  var mag = Math.hypot(dx,dy), dir = DEG(Math.atan2(dy,dx));
+  if(!v.unknown || v.unknown==='both'){ v.dir = snapAngle(dir, e.shiftKey); }
+  if(!v.unknown){ v.mag = Math.max(0, snapMag(mag, e.shiftKey)); }
+  refreshVecValues(); refresh();
+  e.preventDefault();
+});
+function endDrag(e){
+  if(!DRAG) return;
+  DRAG = null; V.freeze = false;
+  cv.style.cursor = 'default';
+  try{ cv.releasePointerCapture(e.pointerId); }catch(err){}
+  layout(); refresh();
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ------------------------------ keyboard -------------------------------- */
+cv.addEventListener('keydown', function(e){
+  var v = S.sel!==null? vecById(S.sel) : null;
+  var step = e.shiftKey? 1 : 5;
+  var mstep = e.shiftKey? 0.1 : 1;
+  var used = true;
+  if(v && !v.unknown){
+    if(e.key==='ArrowLeft')  v.dir = norm180(v.dir + step);
+    else if(e.key==='ArrowRight') v.dir = norm180(v.dir - step);
+    else if(e.key==='ArrowUp')   v.mag = v.mag + mstep;
+    else if(e.key==='ArrowDown') v.mag = Math.max(0, v.mag - mstep);
+    else used = false;
+  } else used = false;
+  if(!used){
+    var k = e.key.toLowerCase();
+    if(k==='a'){ addVector(); }
+    else if(k==='c'){ toggleShow('comp'); }
+    else if(k==='p'){ toggleShow('poly'); }
+    else if(k==='g'){ toggleShow('para'); }
+    else if(k==='e'){ toggleShow('equil'); }
+    else if(k==='s'){ toggleShow('scaledraw'); }
+    else if(k==='h'){ toggleShow('values'); }
+    else if(k==='t'){ setTheme(ROOT.getAttribute('data-theme')==='dark'?'light':'dark'); }
+    else if(k==='tab'){ return; }
+    else if(e.key==='Delete'||e.key==='Backspace'){ if(v) delVector(v.id); }
+    else if(e.key==='1'){ setMode('resultant'); }
+    else if(e.key==='2'){ setMode('resolve'); }
+    else if(e.key==='3'){ setMode('equil'); }
+    else if(e.key==='4'){ setMode('slope'); }
+    else return;
+    e.preventDefault();
+    return;
+  }
+  e.preventDefault();
+  refreshVecValues(); refresh();
+});
+
+/* --------------------------- vector operations -------------------------- */
+function addVector(o){
+  o = o || {};
+  if(S.vecs.length >= 6){ toast('Six vectors is plenty — delete one first'); return null; }
+  if(o.mag===undefined){
+    o.mag = 10;
+    o.dir = S.vecs.length ? norm180(S.vecs[S.vecs.length-1].dir - 60) : 0;
+  }
+  var v = makeVec(o);
+  S.sel = v.id;
+  buildVecList(); refresh();
+  say('Vector added.');
+  return v;
+}
+function delVector(id){
+  for(var i=0;i<S.vecs.length;i++){
+    if(S.vecs[i].id===id){ S.vecs.splice(i,1); break; }
+  }
+  if(S.sel===id) S.sel = S.vecs.length? S.vecs[S.vecs.length-1].id : null;
+  buildVecList(); refresh();
+}
+function addEquilibrant(){
+  if(!S.vecs.length){ toast('Add a vector first'); return; }
+  var E = equilibrant(S.vecs);
+  if(E.mag < 1e-9){ toast('They already balance'); return; }
+  addVector({ label:'Equilibrant', mag:E.mag, dir:E.dir, colour:'#6d28d9' });
+  toast('Added the vector that balances the others');
+}
+function toggleShow(k){
+  S.show[k] = S.show[k] ? 0 : 1;
+  syncControls(); refresh();
+}
+
+/* ------------------------------- modes ---------------------------------- */
+function setMode(m){
+  S.mode = m;
+  $$('.seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+  var id = {resultant:'#modeResultant', resolve:'#modeResolve', equil:'#modeEquil', slope:'#modeSlope'}[m];
+  $(id).setAttribute('aria-pressed','true');
+  if(m==='resolve'){
+    if(S.vecs.length===0) addVector({label:'Vector A', mag:12, dir:35});
+    S.sel = S.vecs[0].id;
+    S.show.comp = 1; S.show.result = 0;
+  } else if(m==='equil'){
+    S.show.result = 1; S.show.equil = 1; S.show.poly = 1;
+  } else if(m==='slope'){
+    S.axis = S.slope.angle;
+    S.show.comp = 1; S.show.result = 1;
+  } else {
+    S.show.result = 1;
+  }
+  if(m!=='slope' && Math.abs(S.axis - S.slope.angle) < 1e-9) S.axis = 0;
+  $('#inAxis').value = S.axis;
+  syncControls(); buildVecList(); refresh();
+  say('Mode: '+m);
+}
+
+/* --------------------------- wiring the panels -------------------------- */
+function wireVecList(){
+  $$('#vecList [data-mag]').forEach(function(el){
+    el.addEventListener('input', function(){
+      var v = vecById(+el.getAttribute('data-mag'));
+      var n = parseFloat(el.value);
+      if(v && isFinite(n)){ v.mag = n; refresh(); }
+    });
+  });
+  $$('#vecList [data-dir]').forEach(function(el){
+    el.addEventListener('input', function(){
+      var v = vecById(+el.getAttribute('data-dir'));
+      var n = parseFloat(el.value);
+      if(v && isFinite(n)){ v.dir = S.bearing? fromBearing(n) : norm180(n); refresh(); }
+    });
+  });
+  $$('#vecList [data-name]').forEach(function(el){
+    el.addEventListener('blur', function(){
+      var v = vecById(+el.getAttribute('data-name'));
+      if(v){ v.label = (el.textContent||'').trim().slice(0,28) || v.label; el.textContent = v.label; refresh(); }
+    });
+    el.addEventListener('keydown', function(ev){ if(ev.key==='Enter'){ ev.preventDefault(); el.blur(); } });
+  });
+  $$('#vecList [data-sel]').forEach(function(el){
+    el.addEventListener('click', function(){ S.sel = +el.getAttribute('data-sel'); buildVecList(); refresh(); });
+  });
+  $$('#vecList [data-unk]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var v = vecById(+el.getAttribute('data-unk'));
+      v.unknown = v.unknown==='both' ? null : 'both';
+      buildVecList(); refresh();
+    });
+  });
+  $$('#vecList [data-unkm]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var v = vecById(+el.getAttribute('data-unkm'));
+      v.unknown = v.unknown==='mag' ? null : 'mag';
+      buildVecList(); refresh();
+    });
+  });
+  $$('#vecList [data-flip]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var v = vecById(+el.getAttribute('data-flip'));
+      v.dir = norm180(v.dir+180); buildVecList(); refresh();
+    });
+  });
+  $$('#vecList [data-dup]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var v = vecById(+el.getAttribute('data-dup'));
+      addVector({label:v.label+' copy', mag:v.mag, dir:norm180(v.dir-25)});
+    });
+  });
+  $$('#vecList [data-del]').forEach(function(el){
+    el.addEventListener('click', function(){ delVector(+el.getAttribute('data-del')); });
+  });
+}
+
+function on(sel, ev, fn){ var el = $(sel); if(el) el.addEventListener(ev, fn); }
+function bindRange(sel, valSel, set){
+  on(sel, 'input', function(){ set(parseFloat($(sel).value)); refresh(); });
+}
+function syncControls(){
+  $('#cGrid').checked   = !!S.show.grid;
+  $('#cAxes').checked   = !!S.show.axes;
+  $('#cComp').checked   = !!S.show.comp;
+  $('#cPoly').checked   = !!S.show.poly;
+  $('#cPara').checked   = !!S.show.para;
+  $('#cResult').checked = !!S.show.result;
+  $('#cEquil').checked  = !!S.show.equil;
+  $('#cAngles').checked = !!S.show.angles;
+  $('#cLabels').checked = !!S.show.labels;
+  $('#cSnap').checked   = !!S.show.snap;
+  $('#cSig').checked    = !!S.sig;
+  $('#chkBearing').checked = !!S.bearing;
+  $('#selQty').value = S.qty;
+  $('#inAxis').value = S.axis;
+  $('#inScale').value = S.scale;
+  $('#inDec').value = S.dec;
+  $('#inSlopeAng').value = S.slope.angle;
+  $('#inSlopeM').value = S.slope.mass;
+  $('#inMu').value = S.slope.mu;
+  $('#inPush').value = S.slope.push;
+  $('#inGs').value = S.slope.g;
+  $('#btnComp').setAttribute('aria-pressed', String(!!S.show.comp));
+  $('#btnPoly').setAttribute('aria-pressed', String(!!S.show.poly));
+  $('#btnPara').setAttribute('aria-pressed', String(!!S.show.para));
+  $('#btnEquil').setAttribute('aria-pressed', String(!!S.show.equil));
+  $('#btnScale').setAttribute('aria-pressed', String(!!S.show.scaledraw));
+  $('#btnValues').setAttribute('aria-pressed', String(!S.show.values));
+}
+
+function wire(){
+  on('#modeResultant','click',function(){ setMode('resultant'); });
+  on('#modeResolve','click',function(){ setMode('resolve'); });
+  on('#modeEquil','click',function(){ setMode('equil'); });
+  on('#modeSlope','click',function(){ setMode('slope'); });
+
+  on('#btnComp','click',function(){ toggleShow('comp'); });
+  on('#btnPoly','click',function(){ toggleShow('poly'); });
+  on('#btnPara','click',function(){ toggleShow('para'); });
+  on('#btnEquil','click',function(){ toggleShow('equil'); });
+  on('#btnScale','click',function(){ toggleShow('scaledraw'); });
+  on('#btnValues','click',function(){ toggleShow('values'); });
+  on('#btnPane','click',function(){
+    S.pane = (S.pane==='space')? 'vector' : 'space';
+    toast(S.pane==='space'? 'Space diagram' : 'Vector diagram');
+    refresh();
+  });
+  on('#btnAddVec','click',function(){ addVector(); });
+  on('#btnAddVec2','click',function(){ addVector(); });
+  on('#btnDelVec','click',function(){ if(S.sel!==null) delVector(S.sel); });
+  on('#btnBalance','click', addEquilibrant);
+  on('#btnClearVecs','click',function(){ S.vecs = []; S.sel = null; buildVecList(); refresh(); });
+
+  on('#selQty','change',function(){ S.qty = $('#selQty').value; buildVecList(); refresh(); });
+  on('#chkBearing','change',function(){ S.bearing = $('#chkBearing').checked; buildVecList(); refresh(); });
+
+  bindRange('#inAxis','#vAxis', function(n){ S.axis = n; });
+  bindRange('#inScale','#vScale', function(n){ S.scale = n; });
+  bindRange('#inDec','#vDec', function(n){ S.dec = n; });
+  bindRange('#inSlopeAng','#vSlopeAng', function(n){ S.slope.angle = n; if(S.mode==='slope'){ S.axis = n; } });
+  bindRange('#inSlopeM','#vSlopeM', function(n){ S.slope.mass = n; });
+  bindRange('#inMu','#vMu', function(n){ S.slope.mu = n; });
+  bindRange('#inPush','#vPush', function(n){ S.slope.push = n; });
+  bindRange('#inGs','#vGs', function(n){ S.slope.g = n; });
+
+  on('#btnAxisZero','click',function(){ S.axis = 0; $('#inAxis').value = 0; refresh(); });
+  on('#btnAxisAlign','click',function(){
+    var v = S.sel!==null? vecById(S.sel) : S.vecs[0];
+    if(!v){ toast('Select a vector first'); return; }
+    var a = norm180(v.dir);
+    if(a > 90) a -= 180; if(a < -90) a += 180;
+    S.axis = Math.round(a*10)/10; $('#inAxis').value = S.axis;
+    toast('Axes aligned — that vector now has no perpendicular component');
+    refresh();
+  });
+
+  ['cGrid:grid','cAxes:axes','cComp:comp','cPoly:poly','cPara:para','cResult:result',
+   'cEquil:equil','cAngles:angles','cLabels:labels','cSnap:snap'].forEach(function(pair){
+    var p = pair.split(':');
+    on('#'+p[0],'change',function(){ S.show[p[1]] = $('#'+p[0]).checked?1:0; syncControls(); refresh(); });
+  });
+  on('#cSig','change',function(){ S.sig = $('#cSig').checked; refresh(); });
+
+  /* tabs */
+  $$('.tabs button').forEach(function(b){
+    b.addEventListener('click', function(){
+      $$('.tabs button').forEach(function(o){ o.setAttribute('aria-selected','false'); });
+      $$('.tabpanel').forEach(function(p){ p.hidden = true; });
+      b.setAttribute('aria-selected','true');
+      $('#'+b.getAttribute('aria-controls')).hidden = false;
+      if(b.id==='tab-graphs') drawGraph();
+    });
+  });
+  /* graph tabs */
+  [['#gTabAngle','angle'],['#gTabAxis','axis'],['#gTabSlope','slope']].forEach(function(p){
+    on(p[0],'click',function(){
+      S.graph = p[1];
+      ['#gTabAngle','#gTabAxis','#gTabSlope'].forEach(function(s){ $(s).setAttribute('aria-pressed', String(s===p[0])); });
+      drawGraph();
+    });
+  });
+
+  /* solve tab */
+  on('#btnSolve','click', applySolution);
+  on('#btnCheck','click', doCheck);
+  on('#btnCopyWork','click',function(){ copyText(workPlain(), 'Working copied'); });
+  on('#btnWalk','click',function(){
+    WALK.on = !WALK.on; WALK.i = 0;
+    $('#btnWalk').textContent = WALK.on? '■ Show it all' : '► Walk through it';
+    renderWork();
+  });
+  on('#btnWalkPrev','click',function(){ WALK.i = Math.max(0, WALK.i-1); renderWork(); });
+  on('#btnWalkNext','click',function(){ WALK.i = Math.min(WALK.n-1, WALK.i+1); renderWork(); });
+
+  /* top bar */
+  on('#btnTheme','click',function(){ setTheme(ROOT.getAttribute('data-theme')==='dark'?'light':'dark'); });
+  on('#btnHelp','click',function(){ openModal('#modalHelp'); });
+  on('#closeHelp','click',function(){ closeModal('#modalHelp'); });
+  on('#btnPresets','click',function(){ openModal('#modalPresets'); });
+  on('#closePresets','click',function(){ closeModal('#modalPresets'); });
+  on('#btnPng','click', savePng);
+  on('#btnPng2','click', savePng);
+  on('#btnShare','click', shareLink);
+  on('#btnCopyState','click',function(){ copyText(encodeState(), 'Setup code copied'); });
+  on('#btnPasteState','click', pasteState);
+  on('#btnHardReset','click',function(){
+    S = defaults(); preset('two'); setMode('resultant'); syncControls(); buildVecList(); refresh();
+    toast('Reset');
+  });
+  $$('.modal').forEach(function(m){
+    m.addEventListener('click', function(e){ if(e.target===m) m.removeAttribute('open'); });
+  });
+}
+function openModal(sel){ $(sel).setAttribute('open',''); }
+function closeModal(sel){ $(sel).removeAttribute('open'); }
+function setTheme(t){
+  ROOT.setAttribute('data-theme', t);
+  themeCheck(); refresh(); drawGraph();
+}
+function copyText(txt, msg){
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast(msg); }, function(){ fallbackCopy(txt,msg); });
+    } else fallbackCopy(txt,msg);
+  }catch(e){ fallbackCopy(txt,msg); }
+}
+function fallbackCopy(txt,msg){
+  var ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position='absolute'; ta.style.left='-9999px';
+  ROOT.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast(msg); }catch(e){ toast('Copy failed — select the text instead'); }
+  ROOT.removeChild(ta);
+}
+function savePng(){
+  try{
+    var a = document.createElement('a');
+    a.download = 'vector-lab.png';
+    a.href = cv.toDataURL('image/png');
+    a.click();
+    toast('Image saved');
+  }catch(e){ toast('The image could not be saved here'); }
+}
+
+/* --------------------------- save and restore --------------------------- */
+function encodeState(){
+  var o = {
+    m:S.mode, q:S.qty, b:S.bearing?1:0, ax:S.axis, sc:S.scale, dc:S.dec, sg:S.sig?1:0,
+    sl:[S.slope.angle,S.slope.mass,S.slope.mu,S.slope.push,S.slope.g],
+    sh:S.show, pn:S.pane,
+    v:S.vecs.map(function(v){ return [v.label, +v.mag.toFixed(4), +v.dir.toFixed(3), v.colour, v.unknown||0]; })
+  };
+  return 'VEC1'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+}
+function decodeState(code){
+  try{
+    if(code.indexOf('VEC1')!==0) return false;
+    var o = JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))));
+    S = defaults();
+    S.mode = o.m; S.qty = o.q; S.bearing = !!o.b; S.axis = o.ax; S.scale = o.sc; S.dec = o.dc; S.sig = !!o.sg;
+    S.slope = {angle:o.sl[0], mass:o.sl[1], mu:o.sl[2], push:o.sl[3], g:o.sl[4]};
+    if(o.pn) S.pane = o.pn;
+    for(var k in o.sh) if(S.show.hasOwnProperty(k)) S.show[k] = o.sh[k];
+    S.vecs = []; S.nextId = 1;
+    o.v.forEach(function(a){ makeVec({label:a[0], mag:a[1], dir:a[2], colour:a[3], unknown:a[4]||null}); });
+    S.sel = S.vecs.length? S.vecs[0].id : null;
+    return true;
+  }catch(e){ return false; }
+}
+function pasteState(){
+  var code = window.prompt('Paste a Vector Lab setup code');
+  if(!code) return;
+  if(decodeState(code.trim())){
+    setMode(S.mode); syncControls(); buildVecList(); refresh();
+    toast('Setup restored');
+  } else toast('That code was not recognised');
+}
+function shareLink(){
+  var base = location.href.split('#')[0];
+  copyText(base+'#'+encodeState(), 'Link copied — it restores this exact setup');
+}
+
+/* ============================== SCENARIOS ==============================
+   Each one is a question a student will actually meet, set up so that the
+   physics point of it is visible the moment it loads.
+   ======================================================================== */
+var PRESETS = [
+  { id:'two', tag:'GCSE', name:'Two forces at an angle',
+    text:'Two forces pulling on the same point. Drag either tip and watch the resultant swing.',
+    apply:function(){
+      S.mode='resultant'; S.qty='force'; S.axis=0;
+      addVector({label:'Force A', mag:12, dir:0});
+      addVector({label:'Force B', mag:9, dir:65});
+      S.show.para=1;
+    }},
+  { id:'perp', tag:'GCSE', name:'At right angles',
+    text:'The one case you can do with Pythagoras alone — and the case examiners set most often.',
+    apply:function(){
+      S.mode='resultant'; S.qty='force';
+      addVector({label:'Force A', mag:30, dir:0});
+      addVector({label:'Force B', mag:40, dir:90});
+      S.show.para=1;
+    }},
+  { id:'resolve', tag:'GCSE / A-Level', name:'Resolving one force',
+    text:'A single force split into components. Rotate the axes and watch both numbers change while the force does not.',
+    apply:function(){
+      S.mode='resolve'; S.qty='force';
+      addVector({label:'Pull on the sledge', mag:80, dir:30});
+      S.show.comp=1; S.show.result=0;
+    }},
+  { id:'tow', tag:'GCSE', name:'Two tugs and a tanker',
+    text:'Two ropes at equal angles either side. The sideways parts cancel; only the forward parts count.',
+    apply:function(){
+      S.mode='resultant'; S.qty='force';
+      addVector({label:'Tug 1', mag:50, dir:25});
+      addVector({label:'Tug 2', mag:50, dir:-25});
+    }},
+  { id:'tri', tag:'A-Level', name:'Three forces in equilibrium',
+    text:'Weight held by two cables. The polygon closes, so the three forces make a closed triangle.',
+    apply:function(){
+      S.mode='equil'; S.qty='force';
+      addVector({label:'Weight', mag:100, dir:-90, colour:'#dc2626'});
+      addVector({label:'Cable L', mag:100, dir:150});
+      addVector({label:'Cable R', mag:100, dir:30});
+      S.show.equil=0;
+    }},
+  { id:'sign', tag:'A-Level', name:'Sign on two cables — solve it',
+    text:'A 240 N sign on two cables at 40° and 155°. Both cable tensions are unknown; press Solve.',
+    apply:function(){
+      S.mode='equil'; S.qty='force';
+      addVector({label:'Weight', mag:240, dir:-90, colour:'#dc2626'});
+      var a = addVector({label:'Cable L', mag:100, dir:155});
+      var b = addVector({label:'Cable R', mag:100, dir:40});
+      a.unknown='mag'; b.unknown='mag';
+    }},
+  { id:'unknown', tag:'A-Level', name:'The missing force',
+    text:'Three forces are given. Find the fourth that would hold everything still.',
+    apply:function(){
+      S.mode='equil'; S.qty='force';
+      addVector({label:'F1', mag:40, dir:20});
+      addVector({label:'F2', mag:25, dir:120});
+      addVector({label:'F3', mag:30, dir:-60});
+      var u = addVector({label:'F4 — unknown', mag:20, dir:180, colour:'#6d28d9'});
+      u.unknown='both';
+    }},
+  { id:'slope', tag:'A-Level', name:'Block on a slope',
+    text:'Axes along and perpendicular to the surface. Steepen it until tan θ beats μ.',
+    apply:function(){
+      S.mode='slope'; S.qty='force';
+      S.slope = {angle:25, mass:5, mu:0.35, push:0, g:9.81};
+      S.axis = 25;
+    }},
+  { id:'slopepush', tag:'A-Level', name:'Pushing it up the slope',
+    text:'Add a push along the slope and see what it takes to get the block moving upwards.',
+    apply:function(){
+      S.mode='slope'; S.qty='force';
+      S.slope = {angle:20, mass:12, mu:0.4, push:100, g:9.81};
+      S.axis = 20;
+    }},
+  { id:'wind', tag:'GCSE / A-Level', name:'Aeroplane in a crosswind',
+    text:'Air speed plus wind speed gives the velocity over the ground. Same maths, different quantity.',
+    apply:function(){
+      S.mode='resultant'; S.qty='velocity'; S.bearing = true;
+      addVector({label:'Through the air', mag:220, dir:90});
+      addVector({label:'Wind', mag:45, dir:200});
+    }},
+  { id:'walk', tag:'GCSE', name:'A walk in three legs',
+    text:'Three displacements tip to tail. The resultant is the straight line home.',
+    apply:function(){
+      S.mode='resultant'; S.qty='displacement'; S.bearing = true;
+      addVector({label:'Leg 1', mag:400, dir:60});
+      addVector({label:'Leg 2', mag:300, dir:-15});
+      addVector({label:'Leg 3', mag:250, dir:170});
+      S.scale = 100;
+    }},
+  { id:'scale', tag:'Practical', name:'Scale drawing practice',
+    text:'Ruler and protractor on screen. Measure the closing side rather than calculating it.',
+    apply:function(){
+      S.mode='resultant'; S.qty='force';
+      addVector({label:'Force A', mag:35, dir:15});
+      addVector({label:'Force B', mag:28, dir:110});
+      S.scale = 10; S.show.scaledraw = 1; S.show.values = 0;
+    }}
+];
+function preset(id){
+  var p = null;
+  for(var i=0;i<PRESETS.length;i++) if(PRESETS[i].id===id) p = PRESETS[i];
+  if(!p) return;
+  var keepTheme = ROOT.getAttribute('data-theme');
+  S = defaults();
+  p.apply();
+  S.sel = S.vecs.length? S.vecs[0].id : null;
+  ROOT.setAttribute('data-theme', keepTheme);
+  setMode(S.mode);
+  syncControls(); buildVecList();
+  V.freeze = false;
+  refresh();
+  say(p.name+' loaded.');
+}
+function buildPresets(){
+  var h = '';
+  for(var i=0;i<PRESETS.length;i++){
+    h += '<button data-p="'+PRESETS[i].id+'"><b>'+esc(PRESETS[i].name)+'</b><span>'+esc(PRESETS[i].text)
+       + '</span><span class="pill tag">'+PRESETS[i].tag+'</span></button>';
+  }
+  $('#presetList').innerHTML = h;
+  $$('#presetList button').forEach(function(b){
+    b.addEventListener('click', function(){
+      preset(b.getAttribute('data-p'));
+      closeModal('#modalPresets');
+    });
+  });
+}
+
+/* ================================ HELP ================================== */
+function buildHelp(){
+  $('#helpBody').innerHTML =
+   '<h4>What this is</h4>'
+  +'<p>A sandbox for the three things every vector question comes down to: <b>resolving</b> one vector into two, '
+  +'finding the <b>resultant</b> of several, and recognising <b>equilibrium</b>. Everything is live — change one number '
+  +'and every diagram, table and line of working moves with it.</p>'
+
+  +'<h4>The two diagrams</h4>'
+  +'<p>On the left is the <b>space diagram</b>: the vectors all drawn from the point where they act, which is how the '
+  +'situation really looks. On the right is the <b>vector diagram</b>: the same vectors drawn nose to tail, which is how '
+  +'you add them. Students who confuse these two lose more marks than students who cannot do trigonometry.</p>'
+
+  +'<h4>Resolving is a choice</h4>'
+  +'<p>Drag the axes round, or use the slider, and every component in the table changes — yet the resultant does not move '
+  +'at all. Components describe a vector; they are not the vector. Choosing axes that kill one component is what turns a '
+  +'hard question into an easy one, and it is exactly what you do on a slope.</p>'
+
+  +'<h4>Equilibrium</h4>'
+  +'<p>Forces are in equilibrium when both totals come to zero, and that is the same statement as <em>the polygon closes</em>. '
+  +'For three forces the closed polygon is a triangle, so the sine rule and the cosine rule are available. Mark a vector '
+  +'unknown with <span class="pill">?</span> and Vector Lab will set up and solve the simultaneous equations for you, showing the working.</p>'
+
+  +'<h4>On a slope</h4>'
+  +'<p>Take the axes along and perpendicular to the surface. The weight then splits into <span class="eq">mg sin θ</span> down '
+  +'the slope and <span class="eq">mg cos θ</span> into it, and since nothing accelerates perpendicular to the surface, '
+  +'<span class="eq">N = mg cos θ</span>. The block slips once <span class="eq">tan θ &gt; μ</span> — and notice that the mass '
+  +'cancels out of that condition completely.</p>'
+
+  +'<h4>Angles and bearings</h4>'
+  +'<p>By default directions are measured anticlockwise from the positive x axis, which is what the algebra wants. Tick '
+  +'<b>compass bearings</b> and everything is quoted clockwise from north instead, which is what navigation questions want. '
+  +'The vectors themselves never move.</p>'
+
+  +'<h4>For teachers</h4>'
+  +'<p>Press <kbd>H</kbd> to hide the numbers on the diagram: the arrows stay, the answers vanish, and the class has something to work out. '
+  +'<b>Predict, then check</b> in the Solve tab takes their answer and marks it. <b>Copy setup code</b> turns any arrangement '
+  +'into a short string you can paste into a worksheet, and the share link restores it exactly.</p>'
+
+  +'<h4>Keyboard</h4>'
+  +'<ul>'
+  +'<li><kbd>1</kbd>–<kbd>4</kbd> switch mode; <kbd>A</kbd> add a vector; <kbd>Del</kbd> delete the selected one</li>'
+  +'<li><kbd>←</kbd> <kbd>→</kbd> turn the selected vector, <kbd>↑</kbd> <kbd>↓</kbd> change its size (hold <kbd>Shift</kbd> for fine steps)</li>'
+  +'<li><kbd>C</kbd> components, <kbd>P</kbd> polygon, <kbd>G</kbd> parallelogram, <kbd>E</kbd> equilibrant, <kbd>S</kbd> scale drawing</li>'
+  +'<li><kbd>H</kbd> hide the numbers, <kbd>T</kbd> light or dark</li>'
+  +'</ul>'
+  +'<p>Dragging a tip snaps to 5° and to sensible sizes; hold <kbd>Shift</kbd> while dragging to move freely.</p>';
+}
+
+/* =============================== REFRESH ================================ */
+var rafId = 0, pendingFull = false;
+function refresh(full){
+  if(full!==false) pendingFull = true;
+  if(rafId) return;
+  rafId = requestAnimationFrame(function(){
+    rafId = 0;
+    updateHud();
+    updateVerdict();
+    updateSetupTexts();
+    render();
+    if(pendingFull){
+      updateAnalyse();
+      renderWork();
+      updateSolvePanel();
+      if(!$('#p-graphs').hidden) drawGraph();
+      pendingFull = false;
+    }
+  });
+}
+
+/* ================================ INIT ================================== */
+function init(){
+  refreshColours();
+  buildPresets();
+  buildHelp();
+  wire();
+
+  var restored = false;
+  try{
+    var h = (location.hash||'').replace(/^#/,'');
+    if(h.indexOf('VEC1')===0) restored = decodeState(h);
+  }catch(e){}
+  if(!restored){ preset('two'); }
+  else { setMode(S.mode); syncControls(); buildVecList(); }
+
+  if(window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ resize(); refresh(); });
+    ro.observe($('#stagewrap'));
+  }
+  window.addEventListener('resize', function(){ resize(); refresh(); });
+  resize();
+  refresh();
+
+  /* the graph canvas is fixed-size, so it only needs redrawing on demand */
+  drawGraph();
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+/* a small surface for automated checking */
+window.VEC = {
+  state:function(){ return S; },
+  set:function(o){ for(var k in o) S[k] = o[k]; refresh(); },
+  resultant:resultant, equilibrant:equilibrant, solve:solveUnknowns,
+  slope:slopeState, along:along, across:across, poly:polyPoints,
+  preset:preset, mode:setMode, addVector:addVector, refresh:refresh,
+  encode:encodeState, decode:decodeState, work:workPlain,
+  balanced:function(){ return isBalanced(); },
+  sums:function(){ return {x:sumAlong(), y:sumAcross()}; },
+  view:function(){ return {LP:LP, RP:RP, V:V}; },
+  tip:function(id){ var v=vecById(id); return v? vecEnd(v) : null; }
+};
+
+})();
+</script>
+</body>
+</html>
