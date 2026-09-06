@@ -1,0 +1,3003 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="description" content="Motion Lab - an interactive motion graphs and suvat simulator for GCSE and A-Level Physics. Displacement-time, velocity-time and acceleration-time graphs drawn live, gradients and areas under the graph, distance against displacement, ticker-tape and multiflash views, a suvat solver that shows its working, and graph-reading practice questions that mark themselves.">
+<title>Motion Lab &mdash; Motion Graphs and suvat</title>
+<style>
+/* ---- standalone page only: delete these two rules when pasting #motlab as a fragment ---- */
+html,body{height:100%;margin:0;background:#f3eef0}
+body{overflow:hidden}
+/* --------------------------------------------------------------------------------------- */
+
+#motlab{
+  --bg:#f2ecee;
+  --bg2:#e9e1e4;
+  --stage:#fbf7f8;
+  --stage2:#f2e9ec;
+  --panel:#ffffff;
+  --panel2:#f8f3f5;
+  --panel3:#efe6e9;
+  --ink:#1b1216;
+  --ink2:#43333a;
+  --muted:#7d6870;
+  --line:#e3d7dc;
+  --line2:#cdbcc3;
+  --accent:#be123c;
+  --accent-ink:#ffffff;
+  --accent-soft:#fde7ec;
+  --dt:#1d4ed8;             /* displacement-time */
+  --dt-soft:#e0e9fd;
+  --vt:#047857;             /* velocity-time */
+  --vt-soft:#d8f3e8;
+  --at:#b45309;             /* acceleration-time */
+  --at-soft:#fcefdc;
+  --area:#0e7490;           /* the area under the graph */
+  --area-soft:#d5eff5;
+  --axis:#57505a;
+  --ok:#15803d;
+  --warn:#b45309;
+  --bad:#be123c;
+  --grid:#d9c9d0;
+  --grid2:#ece1e5;
+  --shadow:0 1px 2px rgba(27,18,22,.07), 0 8px 22px rgba(27,18,22,.10);
+  --shadow-sm:0 1px 2px rgba(27,18,22,.11);
+  --radius:12px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+  color-scheme:light;
+  width:100%; height:100%; min-height:600px;
+  display:flex; flex-direction:column;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:14px; line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  position:relative; overflow:hidden; contain:layout style;
+}
+#motlab[data-theme="dark"]{
+  --bg:#120d0f;
+  --bg2:#181113;
+  --stage:#161012;
+  --stage2:#1e1619;
+  --panel:#1b1416;
+  --panel2:#231a1d;
+  --panel3:#2e2226;
+  --ink:#f6eef1;
+  --ink2:#dbc9cf;
+  --muted:#a3898f;
+  --line:#33262a;
+  --line2:#463539;
+  --accent:#fb7185;
+  --accent-ink:#2b0710;
+  --accent-soft:#45151f;
+  --dt:#60a5fa;
+  --dt-soft:#152744;
+  --vt:#34d399;
+  --vt-soft:#0d3529;
+  --at:#fbbf24;
+  --at-soft:#3b2a0c;
+  --area:#22d3ee;
+  --area-soft:#0d3441;
+  --axis:#9d8f95;
+  --ok:#4ade80;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --grid:#2f2126;
+  --grid2:#1d1518;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.55);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+#motlab *,#motlab *::before,#motlab *::after{box-sizing:border-box}
+#motlab button,#motlab input,#motlab select,#motlab textarea{font:inherit;color:inherit;margin:0}
+#motlab :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+#motlab [hidden]{display:none !important}
+#motlab .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+#motlab .topbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 13px;background:var(--panel);border-bottom:1px solid var(--line);
+  flex:0 0 auto;z-index:5;box-shadow:var(--shadow-sm)
+}
+#motlab .brand{display:flex;align-items:center;gap:10px;min-width:0}
+#motlab .mark{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;
+  background:linear-gradient(140deg,var(--accent),#7f1d1d);
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow-sm)
+}
+#motlab .brand h1{font-size:16px;margin:0;letter-spacing:-.02em;font-weight:700;white-space:nowrap}
+#motlab .brand .sub{font-size:11.5px;color:var(--muted);margin-top:-2px;white-space:nowrap}
+
+#motlab .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+#motlab .seg button{
+  border:0;background:transparent;padding:6px 11px;border-radius:7px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.14s
+}
+#motlab .seg button:hover{color:var(--ink)}
+#motlab .seg button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:var(--shadow-sm)}
+#motlab[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--panel3)}
+
+#motlab .spacer{flex:1 1 auto}
+#motlab .iconbtn b{white-space:nowrap;letter-spacing:-.02em}
+#motlab .iconbtn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink2);
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;cursor:pointer;transition:.14s;flex:0 0 auto
+}
+#motlab .iconbtn:hover{background:var(--panel3);color:var(--ink)}
+#motlab .iconbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#motlab .btn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;transition:.14s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap
+}
+#motlab .btn:hover{background:var(--panel3)}
+#motlab .btn:active{transform:translateY(1px)}
+#motlab .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#motlab .btn.primary:hover{filter:brightness(1.08)}
+#motlab .btn.ghost{background:transparent}
+#motlab .btn.sm{padding:4px 9px;font-size:11.5px;border-radius:7px}
+#motlab .btn.danger{color:var(--bad)}
+#motlab .btn:disabled{opacity:.45;cursor:not-allowed}
+
+#motlab .main{display:flex;flex:1 1 auto;min-height:0;min-width:0}
+#motlab .stagewrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;background:var(--stage);overflow:hidden}
+#motlab canvas.scene{display:block;width:100%;height:100%;touch-action:none}
+
+#motlab .tools{
+  position:absolute;left:11px;top:11px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:5px;
+  box-shadow:var(--shadow-sm);max-width:calc(100% - 22px);opacity:.96
+}
+#motlab .tools .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+
+#motlab .hud{position:absolute;right:11px;top:11px;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none;max-width:44%}
+#motlab .chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
+  box-shadow:var(--shadow-sm);font-variant-numeric:tabular-nums;opacity:.96
+}
+#motlab .chip b{font-family:var(--mono);font-size:12.5px}
+#motlab .chip.res{border-color:var(--dt);background:var(--dt-soft);color:var(--dt)}
+
+#motlab .verdict{
+  position:static;width:min(760px,100%);
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:9px 12px 10px;box-shadow:var(--shadow);opacity:.97
+}
+#motlab .verdict .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#motlab .verdict .status{font-weight:700;font-size:13px;letter-spacing:-.01em}
+#motlab .verdict .num{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+#motlab .verdict .row2{display:block;margin-top:5px;font-family:var(--mono);font-size:11.5px;line-height:1.55;color:var(--muted)}
+#motlab .verdict .row2 b{color:var(--ink)}
+
+#motlab .panel{
+  flex:0 0 400px;max-width:400px;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0
+}
+#motlab .tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+#motlab .tabs::-webkit-scrollbar{display:none}
+#motlab .tabs button{
+  flex:1 1 auto;border:0;background:transparent;padding:10px 6px 9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:.14s;white-space:nowrap
+}
+#motlab .tabs button:hover{color:var(--ink)}
+#motlab .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--panel)}
+#motlab .tabbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:13px}
+#motlab .tabbody::-webkit-scrollbar{width:10px}
+#motlab .tabbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--panel)}
+#motlab .tabpanel[hidden]{display:none}
+
+#motlab .group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;background:var(--panel);overflow:hidden}
+#motlab .group>h3{
+  margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+#motlab .group .body{padding:11px 12px}
+#motlab .group.tight .body{padding:8px}
+
+#motlab .field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#motlab .field:last-child{margin-bottom:0}
+#motlab .field label{flex:0 0 104px;font-size:12.5px;color:var(--ink2);font-weight:600}
+#motlab .field .val{flex:0 0 80px;text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+#motlab .field input[type=range]{flex:1 1 auto;min-width:0}
+#motlab .field.col{flex-direction:column;align-items:stretch;gap:6px}
+#motlab .field.col label{flex:none}
+
+#motlab input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+#motlab input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#motlab input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);
+  border:2px solid var(--accent);margin-top:-7px;box-shadow:var(--shadow-sm);transition:.12s
+}
+#motlab input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+#motlab input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#motlab input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--shadow-sm)}
+
+#motlab input[type=number],#motlab input[type=text],#motlab select{
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+  font-size:12.5px;min-width:0;width:100%;font-family:var(--mono)
+}
+#motlab select{font-family:var(--sans);cursor:pointer}
+#motlab input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+#motlab .check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:3px 0}
+#motlab .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+
+#motlab .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+#motlab .hint.warn{color:var(--warn)}
+#motlab .hint.bad{color:var(--bad)}
+#motlab .hint.ok{color:var(--ok)}
+#motlab .hint em{font-style:normal;color:var(--accent);font-weight:600}
+
+#motlab .itemlist{display:flex;flex-direction:column;gap:7px}
+#motlab .item{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px;transition:.14s}
+#motlab .item.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+#motlab .item .head{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+#motlab .item .dot{width:13px;height:13px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(0,0,0,.18)}
+#motlab .item .name{font-size:12.5px;font-weight:700;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#motlab .item .grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:5px 7px;align-items:center}
+#motlab .item .grid span{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+#motlab .item .acts{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+#motlab .qbtn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;font-weight:700;color:var(--muted)}
+#motlab .qbtn:hover{color:var(--ink)}
+#motlab .qbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#motlab table.led{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+#motlab table.led th{text-align:right;font-size:11px;color:var(--muted);padding:5px 6px;border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap}
+#motlab table.led th:first-child,#motlab table.led td:first-child{text-align:left}
+#motlab table.led td{padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);text-align:right;white-space:nowrap}
+#motlab table.led td.nm{font-family:var(--sans);font-weight:600;max-width:104px;overflow:hidden;text-overflow:ellipsis}
+#motlab table.led tr.tot td{font-weight:700;border-top:2px solid var(--line2);border-bottom:0}
+
+#motlab .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+#motlab .kv:last-child{border-bottom:0}
+#motlab .kv .k{color:var(--muted);font-weight:600}
+#motlab .kv .v{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+#motlab .banner{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:13px;
+  background:var(--panel2);border:1px solid var(--line);margin-bottom:12px
+}
+#motlab .banner .ic{font-size:17px;line-height:1.1;flex:0 0 auto}
+#motlab .banner.ok{background:color-mix(in srgb,var(--ok) 14%,var(--panel));border-color:var(--ok);color:var(--ok)}
+#motlab .banner.warn{background:var(--dt-soft);border-color:var(--accent);color:var(--accent)}
+
+#motlab .working{
+  font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--panel2);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;
+  overflow-x:auto;color:var(--ink);min-height:60px
+}
+#motlab .working .step{display:block;padding:1px 0}
+#motlab .working .lbl{color:var(--muted)}
+#motlab .working .hi{background:var(--accent-soft);border-radius:3px;padding:0 2px}
+#motlab .working em{font-style:normal;color:var(--accent);font-weight:700}
+
+#motlab .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel3);color:var(--muted)}
+#motlab .pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+#motlab .pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+#motlab .pill.res{background:var(--dt-soft);color:var(--dt)}
+
+#motlab canvas.graph{width:100%;height:250px;display:block;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+#motlab .graphtabs{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+#motlab .graphtabs button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 9px;
+  font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted)
+}
+#motlab .graphtabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#motlab .modal{position:absolute;inset:0;background:rgba(8,12,18,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+#motlab .modal[open]{display:flex}
+#motlab .modal .sheet{
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);
+  max-width:min(760px,100%);width:100%;max-height:100%;display:flex;flex-direction:column;overflow:hidden
+}
+#motlab .modal .dhead{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto}
+#motlab .modal .dhead h2{margin:0;font-size:16px}
+#motlab .modal .dbody{padding:15px;overflow-y:auto;flex:1 1 auto}
+#motlab .modal h4{margin:16px 0 6px;font-size:13px;color:var(--accent)}
+#motlab .modal h4:first-child{margin-top:0}
+#motlab .modal p,#motlab .modal li{font-size:13px;color:var(--ink2);line-height:1.6}
+#motlab .modal ul{margin:6px 0;padding-left:20px}
+#motlab kbd{font-family:var(--mono);font-size:11px;background:var(--panel3);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink)}
+#motlab .eq{font-family:var(--mono);background:var(--panel2);padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px}
+#motlab .presetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:9px}
+#motlab .presetgrid button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 11px;cursor:pointer;
+  text-align:left;display:flex;flex-direction:column;gap:3px;transition:.14s
+}
+#motlab .presetgrid button:hover{background:var(--panel3);border-color:var(--accent)}
+#motlab .presetgrid b{font-size:13px}
+#motlab .presetgrid span{font-size:11.5px;color:var(--muted);line-height:1.45}
+#motlab .presetgrid .tag{align-self:flex-start;margin-top:3px}
+
+#motlab .toast{
+  position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--panel);padding:9px 15px;border-radius:10px;font-size:13px;font-weight:600;
+  transition:.22s;z-index:25;box-shadow:var(--shadow);max-width:80%;text-align:center
+}
+#motlab .toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1000px){
+  #motlab .main{flex-direction:column}
+  #motlab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:46%}
+  #motlab .stagewrap{flex:1 1 auto;min-height:220px}
+  #motlab .brand .sub{display:none}
+  #motlab .verdict{bottom:8px;padding:7px 10px}
+}
+@media (max-width:820px){
+  #motlab .seg{order:5;width:100%}
+  #motlab .seg button{flex:1 1 0;padding:7px 3px;font-size:11.5px}
+}
+@media (max-width:700px){
+  #motlab .readouts{display:none}
+  #motlab .verdict .row2{display:none}
+  #motlab .verdict{padding:6px 10px 7px}
+  #motlab .transport .tread{font-size:11px;padding:3px 6px}
+  #motlab .transport{padding:5px 8px;gap:6px}
+  #motlab .transport .playbtn{width:32px;height:32px}
+  #motlab .bottomstack{left:8px;right:8px;bottom:8px;gap:6px}
+}
+@media (max-width:600px){
+  #motlab .topbar{gap:8px;padding:7px 10px}
+  #motlab .brand .txt{display:none}
+  #motlab .hud{display:none}
+  #motlab .iconbtn{width:28px;height:28px}
+  #motlab .tools{gap:4px;padding:4px;left:8px;top:8px}
+}
+
+/* --------------------------- motion-specific --------------------------- */
+#motlab .stagewrap{display:flex;flex-direction:column}
+#motlab .bottomstack{
+  position:absolute;left:11px;right:11px;bottom:11px;display:flex;flex-direction:column;
+  gap:8px;align-items:center;z-index:3;pointer-events:none
+}
+#motlab .bottomstack>*{pointer-events:auto}
+#motlab .transport{
+  position:static;width:100%;display:flex;align-items:center;gap:9px;
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:7px 11px;
+  box-shadow:var(--shadow);opacity:.98;flex-wrap:wrap
+}
+#motlab .transport .playbtn{
+  width:38px;height:38px;border-radius:10px;border:0;background:var(--accent);color:var(--accent-ink);
+  display:grid;place-items:center;cursor:pointer;flex:0 0 auto;box-shadow:var(--shadow-sm)
+}
+#motlab .transport .playbtn:hover{filter:brightness(1.08)}
+#motlab .transport .scrub{flex:1 1 180px;min-width:120px}
+#motlab .transport .tread{
+  font-family:var(--mono);font-size:12px;font-weight:700;white-space:nowrap;
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:4px 8px;flex:0 0 auto
+}
+#motlab .transport select{padding:5px 7px;font-size:11.5px;flex:0 0 auto;width:auto}
+
+#motlab .readouts{
+  position:absolute;right:11px;top:11px;display:grid;grid-template-columns:1fr 1fr;gap:6px;
+  pointer-events:none;max-width:52%;z-index:2
+}
+#motlab .rd{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:5px 10px;
+  box-shadow:var(--shadow-sm);font-size:12px;font-variant-numeric:tabular-nums;opacity:.97;
+  display:flex;justify-content:space-between;gap:12px;align-items:baseline
+}
+#motlab .rd .k{color:var(--muted);font-weight:600;font-size:10.5px;white-space:nowrap}
+#motlab .rd b{font-family:var(--mono);font-size:12.5px}
+#motlab .rd.s{border-left:3px solid var(--dt)}
+#motlab .rd.v{border-left:3px solid var(--vt)}
+#motlab .rd.a{border-left:3px solid var(--at)}
+#motlab .rd.ar{border-left:3px solid var(--area)}
+
+#motlab .item .grid3{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:5px 7px;align-items:center}
+#motlab .item .grid3 span{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+#motlab .phasebar{display:flex;height:9px;border-radius:5px;overflow:hidden;border:1px solid var(--line);margin-bottom:8px}
+#motlab .phasebar i{display:block;height:100%}
+
+#motlab .suvat{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+#motlab .suvat .cell{display:flex;flex-direction:column;gap:3px}
+#motlab .suvat .cell label{font-family:var(--mono);font-size:13px;font-weight:700;text-align:center;color:var(--accent)}
+#motlab .suvat .cell input{text-align:center;padding:7px 4px;font-family:var(--mono);font-size:12.5px}
+#motlab .suvat .cell.solved input{background:var(--accent-soft);border-color:var(--accent);font-weight:700}
+#motlab .suvat .cell .u{font-size:10px;color:var(--muted);text-align:center;font-weight:600}
+#motlab .eqlist{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+#motlab .eqrow{
+  display:flex;align-items:center;gap:8px;padding:6px 9px;border:1px solid var(--line);
+  border-radius:8px;background:var(--panel2);font-family:var(--mono);font-size:12.5px
+}
+#motlab .eqrow.used{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+#motlab .eqrow .tagx{
+  font-family:var(--sans);font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--muted);margin-left:auto;white-space:nowrap
+}
+#motlab .qbox{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:11px 12px}
+#motlab .qbox .qtxt{font-size:13.5px;line-height:1.5}
+#motlab .qbox .qtxt b{color:var(--accent)}
+#motlab .ansrow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px;align-items:end}
+#motlab .choices{display:flex;flex-direction:column;gap:6px;margin-top:9px}
+#motlab .choices button{
+  text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:9px;
+  padding:8px 10px;font-size:12.5px;cursor:pointer;transition:.13s;color:var(--ink)
+}
+#motlab .choices button:hover{border-color:var(--accent);background:var(--panel3)}
+#motlab .choices button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+#motlab .choices button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+#motlab .score{display:flex;gap:8px;align-items:center;font-size:11.5px;color:var(--muted);font-weight:700}
+#motlab table.led td.t0{text-align:left}
+#motlab .tapekey{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--muted);font-weight:600;margin-top:7px}
+#motlab .tapekey i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+
+/* ------ small screens: these come last so they win over the rules above ---- */
+@media (max-width:700px){
+  #motlab .readouts{display:none}
+  #motlab .verdict .row2{display:none}
+  #motlab .verdict{padding:6px 10px 7px;width:100%}
+  #motlab .transport{padding:5px 8px;gap:6px}
+  #motlab .transport .playbtn{width:32px;height:32px}
+  #motlab .transport .tread{font-size:11px;padding:3px 6px}
+  #motlab .bottomstack{left:8px;right:8px;bottom:8px;gap:6px}
+  #motlab .suvat{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<div id="motlab" data-theme="light">
+
+  <!-- ============================== TOP BAR ============================== -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 20V4"></path>
+          <path d="M4 20h16"></path>
+          <path d="M4 17c4 0 4-9 8-9s4 6 8 6"></path>
+        </svg>
+      </span>
+      <div>
+        <h1>Motion Lab</h1>
+        <div class="sub">Motion graphs &amp; suvat &middot; GCSE &amp; A-Level Physics</div>
+      </div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="modeExplore" aria-pressed="true" title="Build a motion and watch the three graphs draw themselves (1)">Explore</button>
+      <button id="modeRead" aria-pressed="false" title="Gradients and areas under the graph (2)">Read the graph</button>
+      <button id="modeSuvat" aria-pressed="false" title="The equations of motion (3)">suvat</button>
+      <button id="modePractice" aria-pressed="false" title="Questions that mark themselves (4)">Practice</button>
+    </div>
+
+    <span class="spacer"></span>
+
+    <button class="btn sm" id="btnPresets" title="Load a ready-made motion">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>
+      Scenarios
+    </button>
+    <button class="iconbtn" id="btnShare" title="Copy a link that restores this exact motion" aria-label="Copy share link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnPng" title="Save the graphs as a PNG image" aria-label="Save image">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnTheme" title="Light or dark (T)" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnHelp" title="Help, the physics and keyboard shortcuts" aria-label="Help">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"></path><path d="M12 17.6h.01"></path></svg>
+    </button>
+  </header>
+
+  <!-- ================================ MAIN ================================ -->
+  <div class="main">
+
+    <div class="stagewrap" id="stagewrap">
+      <canvas class="scene" id="scene" tabindex="0" aria-label="Displacement-time, velocity-time and acceleration-time graphs. Drag across them to read values off."></canvas>
+
+      <div class="tools" role="group" aria-label="What to show">
+        <button class="iconbtn" id="btnGs" title="Show the displacement-time graph (S)" aria-pressed="true" aria-label="Toggle displacement-time graph"><b style="font-family:var(--mono);font-size:12px">s&ndash;t</b></button>
+        <button class="iconbtn" id="btnGv" title="Show the velocity-time graph (V)" aria-pressed="true" aria-label="Toggle velocity-time graph"><b style="font-family:var(--mono);font-size:12px">v&ndash;t</b></button>
+        <button class="iconbtn" id="btnGa" title="Show the acceleration-time graph (A)" aria-pressed="true" aria-label="Toggle acceleration-time graph"><b style="font-family:var(--mono);font-size:12px">a&ndash;t</b></button>
+        <span class="divider"></span>
+        <button class="iconbtn" id="btnTrack" title="Show the object moving along its track (K)" aria-pressed="true" aria-label="Toggle the track">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="7" cy="12" r="3"></circle><path d="M3 18h18"></path><path d="M12 12h9"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnTape" title="Multiflash dots at equal time intervals (M)" aria-pressed="true" aria-label="Toggle multiflash dots">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12h.01"></path><path d="M8 12h.01"></path><path d="M13 12h.01"></path><path d="M19 12h.01"></path></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="iconbtn" id="btnArea" title="Shade the area under the velocity-time graph (E)" aria-pressed="false" aria-label="Toggle the area under the graph">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 19h18"></path><path d="M4 19V9l7-4 9 7v7z" fill="currentColor" fill-opacity=".22"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnGrad" title="Draw the gradient at the play head (G)" aria-pressed="false" aria-label="Toggle the gradient line">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20L20 6"></path><path d="M14 6h6v6"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnValues" title="Hide the numbers so students work them out (H)" aria-pressed="false" aria-label="Hide values">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="2.6"></circle><path d="M3 3l18 18"></path></svg>
+        </button>
+      </div>
+
+      <div class="readouts" id="readouts">
+        <div class="rd s"><span class="k">displacement s</span><b id="rdS">0.00 m</b></div>
+        <div class="rd v"><span class="k">velocity v</span><b id="rdV">0.00 m s&#8315;&#185;</b></div>
+        <div class="rd a"><span class="k">acceleration a</span><b id="rdA">0.00 m s&#8315;&#178;</b></div>
+        <div class="rd ar"><span class="k">distance travelled</span><b id="rdD">0.00 m</b></div>
+      </div>
+
+      <div class="bottomstack">
+      <div class="verdict" role="status">
+        <div class="row1">
+          <span class="status" id="vStatus">Ready</span>
+          <span class="num" id="vNum">&nbsp;</span>
+        </div>
+        <div class="row2" id="vRow2"></div>
+      </div>
+
+      <div class="transport">
+        <button class="playbtn" id="btnPlay" aria-label="Play or pause (Space)" title="Play or pause (Space)">
+          <svg id="icPlay" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M7 4l13 8-13 8z"></path></svg>
+          <svg id="icPause" width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="none" hidden><path d="M6 5h4v14H6zM14 5h4v14h-4z"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnRewind" aria-label="Back to the start (R)" title="Back to the start (R)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"></path><path d="M4 9h10a6 6 0 0 1 0 12H8"></path></svg>
+        </button>
+        <input type="range" class="scrub" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Time">
+        <span class="tread"><span id="tNow">0.00</span> / <span id="tEnd">10.00</span> s</span>
+        <select id="selSpeed" aria-label="Playback speed" title="Playback speed">
+          <option value="0.25">&times;0.25</option>
+          <option value="0.5">&times;0.5</option>
+          <option value="1" selected>&times;1</option>
+          <option value="2">&times;2</option>
+        </select>
+      </div>
+      </div>
+
+      <p class="sr" id="live" aria-live="polite"></p>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <!-- =============================== PANEL =============================== -->
+    <aside class="panel">
+      <div class="tabs" role="tablist" aria-label="Panels">
+        <button role="tab" id="tab-build"    aria-selected="true"  aria-controls="p-build">Build</button>
+        <button role="tab" id="tab-analyse"  aria-selected="false" aria-controls="p-analyse">Analyse</button>
+        <button role="tab" id="tab-suvat"    aria-selected="false" aria-controls="p-suvat">suvat</button>
+        <button role="tab" id="tab-practice" aria-selected="false" aria-controls="p-practice">Practice</button>
+        <button role="tab" id="tab-display"  aria-selected="false" aria-controls="p-display">Display</button>
+      </div>
+
+      <div class="tabbody">
+
+        <!-- ================= BUILD ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-build" aria-labelledby="tab-build">
+
+          <div class="group">
+            <h3>How it starts</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inU0">Starting velocity</label>
+                <input type="range" id="inU0" min="-30" max="30" step="0.1" value="0">
+                <span class="val" id="vU0">0.0</span>
+              </div>
+              <div class="field">
+                <label for="inS0">Starting position</label>
+                <input type="range" id="inS0" min="-100" max="100" step="0.5" value="0">
+                <span class="val" id="vS0">0.0 m</span>
+              </div>
+              <p class="hint">Position is measured from a chosen origin, and one direction has to be picked as positive. Everything negative on these graphs simply means the other way.</p>
+            </div>
+          </div>
+
+          <div class="group tight">
+            <h3>Stages of the journey <span class="pill" id="phCount">0</span></h3>
+            <div class="body">
+              <div class="phasebar" id="phaseBar"></div>
+              <div class="itemlist" id="phaseList"></div>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm" id="btnAddPh">+ Stage</button>
+                <button class="btn sm" id="btnStop" title="Add the stage that brings it to rest">+ Bring to rest</button>
+                <button class="btn sm ghost danger" id="btnClearPh">Clear all</button>
+              </div>
+              <p class="hint">Every stage has a <em>constant</em> acceleration, which is all any exam graph ever asks for. A stage with a&nbsp;=&nbsp;0 is constant velocity; a negative a while moving forwards is a deceleration.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Draw it by hand</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Drag the <b>corner points</b> on the velocity&ndash;time graph to change a stage. Dragging up and down changes the velocity reached; dragging left and right changes how long the stage lasts. The other two graphs follow.</p>
+              <label class="check"><input type="checkbox" id="cSnapV" checked> <span>Snap to the gridlines</span></label>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ANALYSE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-analyse" aria-labelledby="tab-analyse" hidden>
+          <div class="banner" id="anBanner"><span class="ic">&#8599;</span><span id="anText">Scrub the play head to read values off the graphs.</span></div>
+
+          <div class="group">
+            <h3>At this moment <span class="pill" id="tTag">t = 0.00 s</span></h3>
+            <div class="body" id="momentBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>Gradient and area</h3>
+            <div class="body" id="gradAreaBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>The whole journey</h3>
+            <div class="body" id="wholeBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>Table of values</h3>
+            <div class="body" style="padding:6px 8px 10px">
+              <div class="field" style="margin-bottom:6px">
+                <label for="inRows">Every</label>
+                <input type="range" id="inRows" min="0.1" max="5" step="0.1" value="1">
+                <span class="val" id="vRows">1.0 s</span>
+              </div>
+              <table class="led" id="dataTable">
+                <thead><tr><th>t /s</th><th>s /m</th><th>v /m s&#8315;&#185;</th><th>a /m s&#8315;&#178;</th></tr></thead>
+                <tbody></tbody>
+              </table>
+              <button class="btn sm" id="btnCopyData" style="margin-top:9px">Copy as CSV</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SUVAT ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-suvat" aria-labelledby="tab-suvat" hidden>
+          <div class="group">
+            <h3>The equations of motion</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Type in any <b>three</b> and the rest follow. These equations only apply while the acceleration is constant, so use them one stage at a time.</p>
+              <div class="suvat" style="margin-top:11px">
+                <div class="cell" id="cellS"><label for="qS">s</label><input type="number" id="qS" step="any" placeholder="?"><span class="u">m</span></div>
+                <div class="cell" id="cellU"><label for="qU">u</label><input type="number" id="qU" step="any" placeholder="?"><span class="u">m s&#8315;&#185;</span></div>
+                <div class="cell" id="cellV"><label for="qV">v</label><input type="number" id="qV" step="any" placeholder="?"><span class="u">m s&#8315;&#185;</span></div>
+                <div class="cell" id="cellA"><label for="qA">a</label><input type="number" id="qA" step="any" placeholder="?"><span class="u">m s&#8315;&#178;</span></div>
+                <div class="cell" id="cellT"><label for="qT">t</label><input type="number" id="qT" step="any" placeholder="?"><span class="u">s</span></div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap">
+                <button class="btn sm primary" id="btnSolve">Solve</button>
+                <button class="btn sm" id="btnGravity" title="Put in g = 9.81 m s&#8315;&#178; downwards">a = &minus;g</button>
+                <button class="btn sm" id="btnToGraph" title="Draw this on the graphs">Send to the graphs</button>
+                <button class="btn sm ghost" id="btnClearSuvat">Clear</button>
+              </div>
+              <div id="suvatOut" style="margin-top:11px"></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Which equation to reach for</h3>
+            <div class="body">
+              <div class="eqlist" id="eqList"></div>
+              <p class="hint">Write down what you know, note what you want, then pick the equation with only those letters in it. The one that is missing tells you which equation you need.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Working</h3>
+            <div class="body">
+              <div class="working" id="suvatWork"></div>
+              <button class="btn sm" id="btnCopyWork" style="margin-top:9px">Copy working</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PRACTICE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-practice" aria-labelledby="tab-practice" hidden>
+          <div class="group">
+            <h3>Question <span class="pill" id="qTag">1</span></h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+                <select id="selQType" style="flex:1 1 150px">
+                  <option value="mix">A mixture of everything</option>
+                  <option value="grad">Gradients</option>
+                  <option value="area">Areas under the graph</option>
+                  <option value="shape">Reading the shape</option>
+                  <option value="suvat">suvat</option>
+                </select>
+                <select id="selQLevel" style="flex:0 0 auto">
+                  <option value="gcse">GCSE</option>
+                  <option value="alevel" selected>A-Level</option>
+                </select>
+              </div>
+              <div class="qbox">
+                <div class="qtxt" id="qText">Press <b>New question</b> to begin.</div>
+                <div id="qAnswerArea"></div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center">
+                <button class="btn sm primary" id="btnNewQ">New question</button>
+                <button class="btn sm" id="btnShowAns" disabled>Show the answer</button>
+                <span class="spacer"></span>
+                <span class="score" id="qScore">0 of 0</span>
+              </div>
+              <div id="qFeedback" style="margin-top:10px"></div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>How marks are lost</h3>
+            <div class="body" id="pitfallBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= DISPLAY ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-display" aria-labelledby="tab-display" hidden>
+          <div class="group">
+            <h3>On the graphs</h3>
+            <div class="body">
+              <div class="checkgrid">
+                <label class="check"><input type="checkbox" id="cGs" checked> <span>s&ndash;t graph</span></label>
+                <label class="check"><input type="checkbox" id="cGv" checked> <span>v&ndash;t graph</span></label>
+                <label class="check"><input type="checkbox" id="cGa" checked> <span>a&ndash;t graph</span></label>
+                <label class="check"><input type="checkbox" id="cGrid" checked> <span>Gridlines</span></label>
+                <label class="check"><input type="checkbox" id="cArea"> <span>Area under v&ndash;t</span></label>
+                <label class="check"><input type="checkbox" id="cGrad"> <span>Gradient line</span></label>
+                <label class="check"><input type="checkbox" id="cTrace" checked> <span>Draw as it plays</span></label>
+                <label class="check"><input type="checkbox" id="cCross" checked> <span>Play-head crosshair</span></label>
+                <label class="check"><input type="checkbox" id="cPoints" checked> <span>Corner points</span></label>
+                <label class="check"><input type="checkbox" id="cLabels" checked> <span>Labels</span></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>On the track</h3>
+            <div class="body">
+              <div class="checkgrid">
+                <label class="check"><input type="checkbox" id="cTrack" checked> <span>Show the track</span></label>
+                <label class="check"><input type="checkbox" id="cTape" checked> <span>Multiflash dots</span></label>
+                <label class="check"><input type="checkbox" id="cTrail" checked> <span>Trail behind it</span></label>
+              </div>
+              <div class="field" style="margin-top:8px">
+                <label for="inFlash">Flash every</label>
+                <input type="range" id="inFlash" min="0.05" max="2" step="0.05" value="0.5">
+                <span class="val" id="vFlash">0.50 s</span>
+              </div>
+              <p class="hint">Equal time intervals, so the spacing of the dots <em>is</em> the speed &mdash; exactly what a ticker tape or a multiflash photograph shows you in the lab.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>What to plot</h3>
+            <div class="body">
+              <label class="check"><input type="checkbox" id="cDistance"> <span>Plot distance and speed instead of displacement and velocity</span></label>
+              <p class="hint" id="distHint">Displacement and velocity carry a sign; distance and speed never go down and never go negative. Swapping between them is the quickest way to see the difference.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Numbers</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inDec">Decimal places</label>
+                <input type="range" id="inDec" min="0" max="3" step="1" value="2">
+                <span class="val" id="vDec">2</span>
+              </div>
+              <label class="check"><input type="checkbox" id="cSig"> <span>Round to 3 significant figures in the working</span></label>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Save and restore</h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn sm" id="btnCopyState">Copy setup code</button>
+                <button class="btn sm" id="btnPasteState">Paste setup code</button>
+                <button class="btn sm" id="btnPng2">Save PNG</button>
+                <button class="btn sm ghost danger" id="btnHardReset">Reset everything</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+  </div>
+
+  <!-- ============================== MODALS ============================== -->
+  <div class="modal" id="modalHelp" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="sheet">
+      <div class="dhead"><h2>Motion Lab</h2><button class="iconbtn" id="closeHelp" aria-label="Close">&times;</button></div>
+      <div class="dbody" id="helpBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalPresets" role="dialog" aria-modal="true" aria-label="Scenarios">
+    <div class="sheet">
+      <div class="dhead"><h2>Scenarios</h2><button class="iconbtn" id="closePresets" aria-label="Close">&times;</button></div>
+      <div class="dbody"><div class="presetgrid" id="presetList"></div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+"use strict";
+/* ==========================================================================
+   MOTION LAB
+   Motion graphs and the equations of motion, for GCSE and A-Level.
+
+   A journey is a list of STAGES, each with its own constant acceleration.
+   That is not a simplification of the syllabus - it is exactly the syllabus.
+   Constant acceleration in each stage makes the a-t graph a set of steps, the
+   v-t graph a set of straight lines and the s-t graph a set of parabolas, and
+   every gradient and every area can then be worked out exactly rather than
+   approximated. Curved v-t graphs (drag, for instance) are made by chopping
+   the motion into many short stages, which is what a real data logger does.
+   ========================================================================== */
+
+var ROOT = document.getElementById('motlab');
+function $(s){ return ROOT.querySelector(s); }
+function $$(s){ return Array.prototype.slice.call(ROOT.querySelectorAll(s)); }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+var PI = Math.PI;
+
+/* ------------------------------- state --------------------------------- */
+function defaults(){
+  return {
+    mode:'explore',
+    s0:0, u0:0,
+    phases:[ {t:4, a:2}, {t:3, a:0}, {t:3, a:-2.667} ],
+    t:0,
+    playing:false, speed:1,
+    show:{ gs:1, gv:1, ga:1, grid:1, area:0, grad:0, trace:1, cross:1, points:1,
+           labels:1, track:1, tape:1, trail:1, values:1 },
+    flash:0.5, rowStep:1,
+    solo:'v',
+    distance:false,
+    snapV:true,
+    dec:2, sig:false,
+    sel:null,
+    qType:'mix', qLevel:'alevel', qRight:0, qTotal:0,
+    nextId:1
+  };
+}
+var S = defaults();
+var MAXT = 60, MINPHT = 0.1;
+
+/* ------------------------------ numbers -------------------------------- */
+function fmt(v,dp){
+  if(v===null||v===undefined||!isFinite(v)) return '–';
+  dp = (dp===undefined)? S.dec : dp;
+  var s = Math.abs(v) < 5e-12 ? 0 : v;
+  var out = s.toFixed(dp);
+  if(parseFloat(out)===0) out = (0).toFixed(dp);
+  return out;
+}
+function sig(v,n){
+  if(!isFinite(v)) return '–';
+  if(Math.abs(v) < 1e-12) return '0';
+  return String(parseFloat(v.toPrecision(n||3)));
+}
+function w(v){ return S.sig ? sig(v,3) : fmt(v); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+/* a signed number with its sign always shown, for writing out substitutions */
+function sgn(v){ var t = w(v); return (v<0? t : '+'+t); }
+
+var U_S = 'm', U_V = 'm s⁻¹', U_A = 'm s⁻²';
+function nameS(){ return S.distance? 'distance' : 'displacement'; }
+function nameV(){ return S.distance? 'speed' : 'velocity'; }
+
+/* ========================== THE MOTION MODEL ===========================
+   build() turns the list of stages into a list of segments carrying their
+   start time, start velocity and start displacement, so that every later
+   question can be answered without stepping through the motion again.
+   ====================================================================== */
+var SEG = [], TOTAL = 0, DIRTY = true;
+
+function markDirty(){ DIRTY = true; }
+function segs(){
+  if(!DIRTY) return SEG;
+  var out = [], t = 0, v = S.u0, s = S.s0;
+  for(var i=0;i<S.phases.length;i++){
+    var p = S.phases[i], d = Math.max(1e-9, p.t);
+    var v1 = v + p.a*d;
+    var s1 = s + v*d + 0.5*p.a*d*d;
+    out.push({ i:i, t0:t, t1:t+d, dur:d, a:p.a, u:v, v:v1, s0:s, s1:s1 });
+    t += d; v = v1; s = s1;
+  }
+  SEG = out; TOTAL = t; DIRTY = false;
+  return SEG;
+}
+function total(){ segs(); return TOTAL; }
+function segAt(t){
+  var g = segs();
+  if(!g.length) return null;
+  t = clamp(t, 0, TOTAL);
+  for(var i=0;i<g.length;i++) if(t <= g[i].t1 + 1e-12) return g[i];
+  return g[g.length-1];
+}
+/* the state of the object at time t */
+function at(t){
+  var g = segs();
+  if(!g.length) return {s:S.s0, v:S.u0, a:0, t:0};
+  t = clamp(t, 0, TOTAL);
+  var q = segAt(t), d = t - q.t0;
+  return { t:t, s: q.s0 + q.u*d + 0.5*q.a*d*d, v: q.u + q.a*d, a: q.a };
+}
+/* the moment inside a stage when the velocity passes through zero */
+function zeroCross(q){
+  if(Math.abs(q.a) < 1e-12) return null;
+  var tz = -q.u/q.a;
+  return (tz > 1e-9 && tz < q.dur - 1e-9) ? tz : null;
+}
+/* distance travelled - the path length, which is not |displacement| whenever
+   the object turns round part way through */
+function pathLen(t){
+  var g = segs(), tot = 0;
+  if(!g.length) return 0;
+  t = clamp(t, 0, TOTAL);
+  for(var i=0;i<g.length;i++){
+    var q = g[i];
+    if(t <= q.t0) break;
+    var d = Math.min(t, q.t1) - q.t0;
+    var tz = zeroCross(q);
+    if(tz !== null && tz < d){
+      tot += Math.abs(q.u*tz + 0.5*q.a*tz*tz);
+      var d2 = d - tz, u2 = q.u + q.a*tz;
+      tot += Math.abs(u2*d2 + 0.5*q.a*d2*d2);
+    } else {
+      tot += Math.abs(q.u*d + 0.5*q.a*d*d);
+    }
+  }
+  return tot;
+}
+/* what is actually plotted on the top two graphs */
+function plotS(t){ return S.distance ? pathLen(t) : at(t).s; }
+function plotV(t){ var v = at(t).v; return S.distance ? Math.abs(v) : v; }
+
+/* the ranges the axes have to cover */
+function extentS(){
+  var g = segs(), lo = 0, hi = 0, i;
+  if(S.distance){ return {lo:0, hi:Math.max(1e-6, pathLen(TOTAL))}; }
+  lo = hi = S.s0;
+  for(i=0;i<g.length;i++){
+    var q = g[i];
+    lo = Math.min(lo, q.s0, q.s1); hi = Math.max(hi, q.s0, q.s1);
+    var tz = zeroCross(q);          /* v = 0 is where s turns round */
+    if(tz !== null){
+      var sx = q.s0 + q.u*tz + 0.5*q.a*tz*tz;
+      lo = Math.min(lo, sx); hi = Math.max(hi, sx);
+    }
+  }
+  return {lo:lo, hi:hi};
+}
+function extentV(){
+  var g = segs(), lo, hi, i;
+  if(S.distance){
+    hi = 0;
+    for(i=0;i<g.length;i++) hi = Math.max(hi, Math.abs(g[i].u), Math.abs(g[i].v));
+    return {lo:0, hi:Math.max(1e-6,hi)};
+  }
+  lo = hi = S.u0;
+  for(i=0;i<g.length;i++){ lo = Math.min(lo, g[i].u, g[i].v); hi = Math.max(hi, g[i].u, g[i].v); }
+  return {lo:lo, hi:hi};
+}
+function extentA(){
+  var g = segs(), lo = 0, hi = 0;
+  for(var i=0;i<g.length;i++){ lo = Math.min(lo, g[i].a); hi = Math.max(hi, g[i].a); }
+  return {lo:lo, hi:hi};
+}
+
+/* ------------------------- editing the stages --------------------------- */
+function addPhase(o){
+  o = o || {};
+  if(S.phases.length >= 8){ toast('Eight stages is plenty'); return null; }
+  var last = S.phases[S.phases.length-1];
+  S.phases.push({ t: (o.t===undefined? (last? last.t : 3) : o.t),
+                  a: (o.a===undefined? 0 : o.a) });
+  markDirty();
+  return S.phases[S.phases.length-1];
+}
+function delPhase(i){
+  if(S.phases.length <= 1){ toast('There has to be at least one stage'); return; }
+  S.phases.splice(i,1);
+  if(S.sel===i) S.sel = null;
+  markDirty();
+}
+/* the stage that would bring the object to rest at its present rate */
+function addStopPhase(){
+  var g = segs();
+  var vEnd = g.length? g[g.length-1].v : S.u0;
+  if(Math.abs(vEnd) < 1e-9){ toast('It is already at rest'); return; }
+  var dur = 2, a = -vEnd/dur;
+  addPhase({t:dur, a:a});
+  toast('Added a stage that brings it to rest');
+}
+
+/* =============================== VIEW =================================== */
+var cv = $('#scene'), ctx = cv.getContext('2d');
+var V = { w:0, h:0, dpr:1, top:0, bot:0, freeze:false, narrow:false };
+var PANES = [];              /* one entry per visible graph */
+var TRACK = null;            /* the strip showing the object itself */
+var C = {}, themeStamp = '';
+
+function cssVar(n){ return getComputedStyle(ROOT).getPropertyValue(n).trim(); }
+function refreshColours(){
+  C = {
+    stage:cssVar('--stage'), stage2:cssVar('--stage2'), grid:cssVar('--grid'), grid2:cssVar('--grid2'),
+    ink:cssVar('--ink'), ink2:cssVar('--ink2'), muted:cssVar('--muted'), line:cssVar('--line'),
+    line2:cssVar('--line2'), accent:cssVar('--accent'), panel:cssVar('--panel'), panel2:cssVar('--panel2'),
+    dt:cssVar('--dt'), vt:cssVar('--vt'), at:cssVar('--at'), area:cssVar('--area'),
+    axis:cssVar('--axis'), ok:cssVar('--ok'), bad:cssVar('--bad'), warn:cssVar('--warn')
+  };
+}
+function themeCheck(){
+  var t = ROOT.getAttribute('data-theme')||'light';
+  if(t!==themeStamp){ themeStamp=t; refreshColours(); }
+}
+function resize(){
+  var r = cv.parentElement.getBoundingClientRect();
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  V.w = r.width; V.h = r.height; V.dpr = dpr;
+  cv.width  = Math.max(1, Math.round(r.width*dpr));
+  cv.height = Math.max(1, Math.round(r.height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  layout();
+}
+
+/* --------------------------- axis scaling ------------------------------- */
+function niceStep(span, targetDivs){
+  var raw = span/Math.max(1,targetDivs);
+  var mag = Math.pow(10, Math.floor(Math.log(raw)/Math.LN10));
+  var n = raw/mag;
+  var step = (n<1.5?1:(n<3?2:(n<7?5:10)))*mag;
+  return step;
+}
+/* pad a range so the curve does not touch the frame, and always include zero */
+function padRange(lo,hi,forceZero){
+  if(forceZero!==false){ lo = Math.min(lo,0); hi = Math.max(hi,0); }
+  var span = hi-lo;
+  if(span < 1e-9){ lo -= 1; hi += 1; span = 2; }
+  var pad = span*0.12;
+  return {lo: lo-pad, hi: hi+pad};
+}
+
+/* ------------------------------- layout --------------------------------- */
+function layout(){
+  var tl = ROOT.querySelector('.tools');
+  var bs = ROOT.querySelector('.bottomstack');
+  var rd = ROOT.querySelector('.readouts');
+  V.top = (tl? tl.getBoundingClientRect().height : 44) + 20;
+  V.bot = (bs? bs.getBoundingClientRect().height : 110) + 20;
+  V.rdW = rd? rd.getBoundingClientRect().width : 0;
+  V.rdBottom = rd? (rd.getBoundingClientRect().height + 11) : 0;
+  V.narrow = V.w < 620;
+  if(V.freeze) return;
+
+  var top = V.top, bottom = Math.max(top+120, V.h - V.bot - 18);  /* 18 px for the shared time axis */
+  var H = bottom - top;
+  var wantTrack = !!S.show.track;
+  var trackH = wantTrack ? clamp(H*0.20, 62, 108) : 0;
+  if(wantTrack){
+    /* keep the track clear of the readout chips in the top-right corner */
+    var reserve = (top + 4 < V.rdBottom) ? (V.rdW + 16) : 0;
+    TRACK = { x:64, y:top+4, w:Math.max(80, V.w-64-24-reserve), h:trackH-14 };
+  } else TRACK = null;
+
+  var list = [];
+  if(V.narrow){
+    /* one graph at a time on a phone - three of them in 200 px helps nobody */
+    list = [S.solo || 'v'];
+  } else {
+    if(S.show.gs) list.push('s');
+    if(S.show.gv) list.push('v');
+    if(S.show.ga) list.push('a');
+    if(!list.length) list = ['v'];
+  }
+
+  var gap = 12;
+  var gTop = top + trackH + (wantTrack? 6 : 0);
+  var gH = (bottom - gTop - gap*(list.length-1)) / list.length;
+  var left = 64, right = 18;
+
+  PANES = [];
+  var eS = padRange(extentS().lo, extentS().hi);
+  var eV = padRange(extentV().lo, extentV().hi);
+  var eA = padRange(extentA().lo, extentA().hi);
+  var T = Math.max(0.2, total());
+  for(var i=0;i<list.length;i++){
+    var k = list[i];
+    var e = (k==='s')? eS : (k==='v'? eV : eA);
+    PANES.push({
+      k:k,
+      x: left, y: gTop + i*(gH+gap), w: Math.max(60, V.w-left-right), h: Math.max(46, gH),
+      t0:0, t1:T, lo:e.lo, hi:e.hi,
+      col: (k==='s'? C.dt : (k==='v'? C.vt : C.at)),
+      ylab: (k==='s'? (S.distance?'distance / m':'displacement / m')
+                    : (k==='v'? (S.distance?'speed / m s⁻¹':'velocity / m s⁻¹') : 'acceleration / m s⁻²')),
+      title:(k==='s'? (S.distance?'distance–time':'displacement–time')
+                    : (k==='v'? (S.distance?'speed–time':'velocity–time') : 'acceleration–time'))
+    });
+  }
+}
+function paneOf(k){ for(var i=0;i<PANES.length;i++) if(PANES[i].k===k) return PANES[i]; return null; }
+function PX(p,t){ return p.x + (t-p.t0)/(p.t1-p.t0)*p.w; }
+function PY(p,y){ return p.y + p.h - (y-p.lo)/(p.hi-p.lo)*p.h; }
+function invX(p,px){ return p.t0 + (px-p.x)/p.w*(p.t1-p.t0); }
+function invY(p,py){ return p.lo + (p.y+p.h-py)/p.h*(p.hi-p.lo); }
+function paneAtPoint(x,y){
+  for(var i=0;i<PANES.length;i++){
+    var p = PANES[i];
+    if(x >= p.x-46 && x <= p.x+p.w+8 && y >= p.y-8 && y <= p.y+p.h+16) return p;
+  }
+  return null;
+}
+
+/* ------------------------- drawing primitives --------------------------- */
+function ln(x1,y1,x2,y2,col,wd,dash){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=wd||1;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,col,wd,head){
+  var a = Math.atan2(y2-y1,x2-x1), hs = head||9;
+  var len = Math.hypot(x2-x1,y2-y1);
+  if(len < 2) return;
+  if(hs > len*0.6) hs = len*0.6;
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=wd||2.4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*hs*0.8, y2-Math.sin(a)*hs*0.8); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.42)*hs, y2-Math.sin(a-0.42)*hs);
+  ctx.lineTo(x2-Math.cos(a)*hs*0.66, y2-Math.sin(a)*hs*0.66);
+  ctx.lineTo(x2-Math.cos(a+0.42)*hs, y2-Math.sin(a+0.42)*hs);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function rr(x,y,wd,h,r){
+  r = Math.min(r, Math.abs(wd)/2, Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+wd-r,y); ctx.quadraticCurveTo(x+wd,y,x+wd,y+r);
+  ctx.lineTo(x+wd,y+h-r); ctx.quadraticCurveTo(x+wd,y+h,x+wd-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function tag(text,x,y,col,o){
+  o = o||{};
+  var fs = (o.size||11)*(V.narrow?0.88:1);
+  ctx.save();
+  ctx.font = (o.bold?'700 ':'600 ')+fs+'px '+(o.mono?'ui-monospace,Menlo,Consolas,monospace':'system-ui,-apple-system,Segoe UI,sans-serif');
+  var m = ctx.measureText(text), pad=4, wd=m.width+pad*2, h=fs+7;
+  var bx = x - (o.anchor==='l'?0:(o.anchor==='r'? wd : wd/2)), by = y-h/2;
+  bx = clamp(bx, 3, Math.max(3, V.w - wd - 3));
+  by = clamp(by, 2, Math.max(2, V.h - h - 2));
+  if(o.box!==false){
+    ctx.fillStyle = o.bg || C.panel; ctx.globalAlpha = o.alpha===undefined?0.9:o.alpha;
+    rr(bx,by,wd,h,5); ctx.fill(); ctx.globalAlpha=1;
+    if(o.border){ ctx.strokeStyle=o.border; ctx.lineWidth=1; rr(bx,by,wd,h,5); ctx.stroke(); }
+  }
+  ctx.fillStyle = col||C.ink; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(text, bx+pad, by+h/2+0.5);
+  ctx.restore();
+  return {x:bx,y:by,w:wd,h:h};
+}
+function dot(x,y,r,fill,stroke,wd){
+  ctx.save();
+  ctx.beginPath(); ctx.arc(x,y,r,0,7);
+  if(fill){ ctx.fillStyle=fill; ctx.fill(); }
+  if(stroke){ ctx.strokeStyle=stroke; ctx.lineWidth=wd||2; ctx.stroke(); }
+  ctx.restore();
+}
+function mix(hex, other, amt){
+  function rgb(h){
+    h = h.replace('#','');
+    if(h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var n = parseInt(h,16);
+    return [n>>16 & 255, n>>8 & 255, n & 255];
+  }
+  var a = rgb(hex), b = rgb(other);
+  var o = a.map(function(v,i){ return Math.round(v + (b[i]-v)*amt); });
+  return 'rgb('+o[0]+','+o[1]+','+o[2]+')';
+}
+
+/* ============================ DRAWING THE GRAPHS ======================== */
+function drawBg(){
+  var g = ctx.createLinearGradient(0,0,0,V.h);
+  g.addColorStop(0, C.stage); g.addColorStop(1, C.stage2);
+  ctx.fillStyle = g; ctx.fillRect(0,0,V.w,V.h);
+}
+
+function drawFrame(p){
+  var i;
+  var tStep = niceStep(p.t1-p.t0, Math.max(3, Math.round(p.w/112)));
+  var yStep = niceStep(p.hi-p.lo, Math.max(2, Math.round(p.h/44)));
+
+  /* the plotting area */
+  ctx.save();
+  ctx.fillStyle = C.panel; ctx.globalAlpha = 0.55;
+  rr(p.x, p.y, p.w, p.h, 8); ctx.fill();
+  ctx.restore();
+
+  if(S.show.grid){
+    ctx.save(); ctx.strokeStyle = C.grid2; ctx.lineWidth = 1; ctx.beginPath();
+    for(i=Math.ceil(p.t0/tStep)*tStep; i<=p.t1+1e-9; i+=tStep){
+      var gx = Math.round(PX(p,i))+0.5;
+      ctx.moveTo(gx, p.y); ctx.lineTo(gx, p.y+p.h);
+    }
+    for(i=Math.ceil(p.lo/yStep)*yStep; i<=p.hi+1e-9; i+=yStep){
+      var gy = Math.round(PY(p,i))+0.5;
+      ctx.moveTo(p.x, gy); ctx.lineTo(p.x+p.w, gy);
+    }
+    ctx.stroke(); ctx.restore();
+  }
+
+  /* the axes themselves */
+  var zeroY = PY(p, 0);
+  var showZero = (0 > p.lo && 0 < p.hi);
+  ctx.save();
+  ctx.strokeStyle = C.line2; ctx.lineWidth = 1;
+  rr(p.x, p.y, p.w, p.h, 8); ctx.stroke();
+  ctx.restore();
+  if(showZero) ln(p.x, zeroY, p.x+p.w, zeroY, C.axis, 1.6);
+  ln(p.x, p.y, p.x, p.y+p.h, C.axis, 1.6);
+
+  /* the numbers on the axes */
+  ctx.save();
+  ctx.fillStyle = C.muted;
+  ctx.font = '600 '+(V.narrow?9:10)+'px ui-monospace,Menlo,Consolas,monospace';
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  for(i=Math.ceil(p.lo/yStep)*yStep; i<=p.hi+1e-9; i+=yStep){
+    var vy = Math.abs(i)<1e-9?0:i;
+    if(Math.abs(vy) < 1e-9 && !showZero) continue;
+    ctx.fillText(shortNum(vy), p.x-6, PY(p,vy));
+  }
+  /* the time axis is shared, so it is numbered once, under the bottom graph */
+  if(p === PANES[PANES.length-1]){
+    ctx.textAlign='center'; ctx.textBaseline='top';
+    var baseY = p.y + p.h + 4;
+    for(i=Math.ceil(p.t0/tStep)*tStep; i<=p.t1+1e-9; i+=tStep){
+      ctx.fillText(shortNum(i), PX(p,i), baseY);
+    }
+  }
+  ctx.restore();
+
+  /* the graph's name is drawn last, in drawTitle, so a curve never sits on it */
+  ctx.save();
+  ctx.translate(15, p.y + p.h/2); ctx.rotate(-PI/2);
+  ctx.fillStyle = C.muted; ctx.font='600 '+(V.narrow?9:10)+'px system-ui,-apple-system,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText(p.ylab, 0, 0);
+  ctx.restore();
+  if(p === PANES[PANES.length-1]){
+    ctx.save();
+    ctx.fillStyle = C.muted; ctx.font='600 10px system-ui,-apple-system,sans-serif';
+    ctx.textAlign='right'; ctx.textBaseline='top';
+    ctx.fillText('time / s', p.x+p.w, p.y+p.h+17);
+    ctx.restore();
+  }
+}
+function drawTitle(p){
+  tag(p.title, p.x+9, p.y+11, p.col, {size:10.5, bold:true, anchor:'l', alpha:0.97, border:p.col});
+}
+function shortNum(v){
+  if(Math.abs(v) < 1e-9) return '0';
+  var a = Math.abs(v);
+  if(a >= 1000) return (v/1000).toFixed(a>=10000?0:1)+'k';
+  if(a >= 100) return v.toFixed(0);
+  if(a >= 10) return v.toFixed(a%1?1:0);
+  return v.toFixed(a%1? (a<1?2:1) : 0);
+}
+
+/* ---------------------------- the curves -------------------------------- */
+/* A displacement-time curve is a parabola within each stage, and a parabola
+   is drawn exactly by a quadratic Bezier whose control point sits at the
+   half-way time on the starting tangent - so no sampling is needed. */
+function pathSt(p, tEnd){
+  var g = segs();
+  ctx.beginPath();
+  if(!g.length) return;
+  ctx.moveTo(PX(p,0), PY(p, plotS(0)));
+  for(var i=0;i<g.length;i++){
+    var q = g[i];
+    if(q.t0 >= tEnd) break;
+    var te = Math.min(tEnd, q.t1);
+    if(S.distance){
+      /* distance can have a kink where the object turns round, so this half
+         is walked in small steps rather than drawn as one exact curve */
+      var n = Math.max(2, Math.round((te-q.t0)/Math.max(0.02,(p.t1-p.t0)/300)));
+      for(var k=1;k<=n;k++){
+        var tk = q.t0 + (te-q.t0)*k/n;
+        ctx.lineTo(PX(p,tk), PY(p, plotS(tk)));
+      }
+    } else {
+      var d = te - q.t0;
+      var sEnd = q.s0 + q.u*d + 0.5*q.a*d*d;
+      var tc = q.t0 + d/2, sc = q.s0 + q.u*(d/2);
+      ctx.quadraticCurveTo(PX(p,tc), PY(p,sc), PX(p,te), PY(p,sEnd));
+    }
+  }
+}
+function pathVt(p, tEnd){
+  var g = segs();
+  ctx.beginPath();
+  if(!g.length) return;
+  ctx.moveTo(PX(p,0), PY(p, plotV(0)));
+  for(var i=0;i<g.length;i++){
+    var q = g[i];
+    if(q.t0 >= tEnd) break;
+    var te = Math.min(tEnd, q.t1);
+    var tz = zeroCross(q);
+    if(S.distance && tz !== null && q.t0+tz < te){
+      ctx.lineTo(PX(p,q.t0+tz), PY(p,0));      /* speed bounces off zero */
+    }
+    ctx.lineTo(PX(p,te), PY(p, plotV(te)));
+  }
+}
+function pathAt(p, tEnd){
+  var g = segs();
+  ctx.beginPath();
+  if(!g.length) return;
+  var started = false;
+  for(var i=0;i<g.length;i++){
+    var q = g[i];
+    if(q.t0 >= tEnd) break;
+    var te = Math.min(tEnd, q.t1);
+    var y = PY(p, q.a);
+    if(!started){ ctx.moveTo(PX(p,q.t0), y); started = true; }
+    else ctx.lineTo(PX(p,q.t0), y);            /* the vertical jump */
+    ctx.lineTo(PX(p,te), y);
+  }
+}
+function drawCurve(p, tEnd){
+  ctx.save();
+  ctx.strokeStyle = p.col; ctx.lineWidth = 2.8; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(p.k==='s') pathSt(p, tEnd);
+  else if(p.k==='v') pathVt(p, tEnd);
+  else pathAt(p, tEnd);
+  ctx.stroke();
+  ctx.restore();
+  /* the part still to come, faint, so the shape is never a surprise */
+  if(tEnd < p.t1 - 1e-9){
+    ctx.save();
+    ctx.strokeStyle = p.col; ctx.globalAlpha = 0.18; ctx.lineWidth = 2.2;
+    ctx.setLineDash([5,5]);
+    if(p.k==='s') pathSt(p, p.t1);
+    else if(p.k==='v') pathVt(p, p.t1);
+    else pathAt(p, p.t1);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+/* --------------------- the area under the v-t graph --------------------- */
+/* Signed: area above the time axis counts as displacement one way, area
+   below it the other way. That sign is where most marks go missing. */
+function drawArea(p, tEnd){
+  var g = segs();
+  if(!g.length) return;
+  var zeroY = PY(p, 0);
+  for(var i=0;i<g.length;i++){
+    var q = g[i];
+    if(q.t0 >= tEnd) break;
+    var te = Math.min(tEnd, q.t1);
+    var parts = [[q.t0, te]];
+    var tz = zeroCross(q);
+    if(tz !== null && q.t0+tz < te) parts = [[q.t0, q.t0+tz],[q.t0+tz, te]];
+    for(var k=0;k<parts.length;k++){
+      var ta = parts[k][0], tb = parts[k][1];
+      if(tb - ta < 1e-9) continue;
+      var vm = plotV((ta+tb)/2);
+      var pos = vm >= 0;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(PX(p,ta), zeroY);
+      ctx.lineTo(PX(p,ta), PY(p, plotV(ta)));
+      ctx.lineTo(PX(p,tb), PY(p, plotV(tb)));
+      ctx.lineTo(PX(p,tb), zeroY);
+      ctx.closePath();
+      ctx.fillStyle = pos ? C.area : C.bad;
+      ctx.globalAlpha = pos ? 0.22 : 0.20;
+      ctx.fill();
+      ctx.globalAlpha = 0.75; ctx.strokeStyle = pos ? C.area : C.bad; ctx.lineWidth = 1;
+      ctx.setLineDash([3,3]); ctx.stroke();
+      ctx.restore();
+      /* label the block if it is big enough to hold one */
+      var bw = Math.abs(PX(p,tb)-PX(p,ta)), bh = Math.abs(PY(p,vm)-zeroY);
+      if(S.show.labels && S.show.values && bw > 46 && bh > 22){
+        var area = (S.distance? pathLen(tb)-pathLen(ta) : at(tb).s - at(ta).s);
+        tag((pos?'+':'')+fmt(area)+' m', (PX(p,ta)+PX(p,tb))/2, (zeroY+PY(p,vm))/2,
+            pos? C.area : C.bad, {size:10, mono:true, alpha:0.82});
+      }
+    }
+  }
+  /* the running total */
+  if(S.show.labels && S.show.values){
+    var tot = S.distance? pathLen(tEnd) : at(tEnd).s - S.s0;
+    tag('area so far = '+fmt(tot)+' m', p.x+p.w-9, p.y+p.h-13, C.area,
+        {size:10.5, bold:true, anchor:'r', border:C.area});
+  }
+}
+
+/* ------------------------- gradients at the play head -------------------- */
+function drawGradient(p, t){
+  var st = at(t), val, txt;
+  if(p.k==='s'){ val = S.distance? Math.abs(st.v) : st.v; txt = 'gradient = '+nameV()+' = '+fmt(val)+' '+U_V; }
+  else if(p.k==='v'){ val = st.a; txt = 'gradient = acceleration = '+fmt(val)+' '+U_A;
+                      if(S.distance) txt = 'gradient = '+fmt((st.v<0? -st.a : st.a))+' '+U_A; }
+  else return;
+  var y0 = (p.k==='s')? plotS(t) : plotV(t);
+  var m = (p.k==='s')? (S.distance? (st.v<0?-st.v:st.v) : st.v) : (S.distance && st.v<0 ? -st.a : st.a);
+  var half = Math.min(p.w*0.30, 130);
+  var dtU = half/p.w*(p.t1-p.t0);
+  var x1 = PX(p, t-dtU), x2 = PX(p, t+dtU);
+  var yA = PY(p, y0 - m*dtU), yB = PY(p, y0 + m*dtU);
+  ctx.save(); ctx.globalAlpha = 0.95;
+  ln(x1, yA, x2, yB, C.accent, 2.4, [7,4]);
+  ctx.restore();
+  /* the triangle that shows where the gradient comes from */
+  var xm = PX(p,t), ym = PY(p,y0);
+  ctx.save(); ctx.globalAlpha=0.55;
+  ln(xm, ym, x2, ym, C.accent, 1.2, [3,3]);
+  ln(x2, ym, x2, yB, C.accent, 1.2, [3,3]);
+  ctx.restore();
+  if(S.show.labels && S.show.values){
+    var ly = PY(p, y0), above = (ly - p.y) > 46;
+    tag(txt, xm - 16, above ? ly - 26 : ly + 30, C.accent,
+        {size:10.5, bold:true, border:C.accent, anchor:'r'});
+  }
+}
+
+/* --------------------------- the play head ------------------------------ */
+function drawCrosshair(p, t){
+  var x = PX(p, t);
+  ln(x, p.y, x, p.y+p.h, C.accent, 1.4, [4,4]);
+  var y = (p.k==='s')? plotS(t) : (p.k==='v'? plotV(t) : at(t).a);
+  var py = PY(p, clamp(y, p.lo, p.hi));
+  dot(x, py, 5.5, C.panel, p.col, 2.6);
+  if(S.show.labels && S.show.values){
+    var unit = (p.k==='s')? U_S : (p.k==='v'? U_V : U_A);
+    var up = (py - p.y) > 34;                 /* keep clear of the pane title */
+    tag(fmt(y)+' '+unit, x + 10, py + (up? -13 : 17), p.col, {size:10.5, mono:true, bold:true, anchor:'l'});
+  }
+}
+/* the corner points between stages - the handles you drag */
+function drawPoints(p){
+  if(!S.show.points) return;
+  var g = segs(), i;
+  for(i=0;i<=g.length;i++){
+    var t = (i<g.length)? g[i].t0 : TOTAL;
+    var y = (p.k==='s')? plotS(t) : (p.k==='v'? plotV(t) : at(Math.min(t, TOTAL-1e-9)).a);
+    if(p.k==='a') continue;
+    var sel = (S.sel!==null && (i===S.sel || i===S.sel+1));
+    dot(PX(p,t), PY(p, clamp(y,p.lo,p.hi)), sel?5.5:4.2,
+        p.k==='v'? C.panel : p.col, p.col, sel?2.8:1.8);
+  }
+}
+
+/* ======================= THE OBJECT ON ITS TRACK ========================
+   The graphs say what happened; this strip says what it looked like. Dots
+   at equal time intervals are exactly a ticker tape or a multiflash photo,
+   so the spacing of the dots IS the speed - the link students most often
+   fail to make between the practical and the graph.
+   ====================================================================== */
+function trackMap(){
+  var e = extentS();
+  var lo = Math.min(e.lo, 0), hi = Math.max(e.hi, 0);
+  if(S.distance){ lo = 0; hi = Math.max(1e-6, pathLen(TOTAL)); }
+  var span = hi - lo;
+  if(span < 1e-9){ lo -= 1; hi += 1; span = 2; }
+  var pad = span*0.06;
+  lo -= pad; hi += pad;
+  return { lo:lo, hi:hi, X:function(s){ return TRACK.x + (s-lo)/(hi-lo)*TRACK.w; } };
+}
+function drawTrack(t){
+  if(!TRACK) return;
+  var M = trackMap(), y = TRACK.y + TRACK.h*0.62;
+
+  /* the road */
+  ctx.save();
+  ctx.fillStyle = C.panel; ctx.globalAlpha = 0.6;
+  rr(TRACK.x-8, TRACK.y, TRACK.w+16, TRACK.h, 9); ctx.fill();
+  ctx.restore();
+  ln(TRACK.x, y, TRACK.x+TRACK.w, y, C.line2, 2);
+
+  /* a scale along it */
+  var step = niceStep(M.hi-M.lo, Math.max(3, Math.round(TRACK.w/94)));
+  ctx.save();
+  ctx.fillStyle = C.muted; ctx.font='600 9.5px ui-monospace,Menlo,monospace';
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  for(var q=Math.ceil(M.lo/step)*step; q<=M.hi+1e-9; q+=step){
+    var gx = M.X(q);
+    ln(gx, y-4, gx, y+4, C.line2, 1);
+    ctx.fillText(shortNum(q), gx, y+7);
+  }
+  ctx.restore();
+  /* the origin */
+  if(!S.distance && 0 > M.lo && 0 < M.hi){
+    ln(M.X(0), y-13, M.X(0), y+13, C.muted, 1.4, [3,3]);
+    if(S.show.labels) tag('0', M.X(0), y-20, C.muted, {size:9.5, box:false});
+  }
+
+  /* the multiflash dots, at equal time intervals */
+  if(S.show.tape){
+    var dt = Math.max(0.02, S.flash), k = 0, prev = null;
+    ctx.save();
+    for(var tt=0; tt<=Math.min(t, TOTAL)+1e-9; tt+=dt){
+      var sx = M.X(S.distance? pathLen(tt) : at(tt).s);
+      var age = 1 - (t-tt)/Math.max(1e-6,TOTAL);
+      ctx.globalAlpha = 0.30 + 0.55*clamp(age,0,1);
+      ctx.fillStyle = C.accent;
+      ctx.beginPath(); ctx.arc(sx, y-16, 3.1, 0, 7); ctx.fill();
+      if(prev !== null && S.show.labels && Math.abs(sx-prev) > 34 && S.show.values && k%2===0){
+        ctx.globalAlpha = 0.5;
+        ctx.strokeStyle = C.accent; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(prev, y-24); ctx.lineTo(sx, y-24); ctx.stroke();
+      }
+      prev = sx; k++;
+    }
+    ctx.restore();
+  }
+
+  /* the trail it has already covered */
+  var now = S.distance? pathLen(t) : at(t).s;
+  if(S.show.trail){
+    var x0 = M.X(S.distance? 0 : S.s0), x1 = M.X(now);
+    ctx.save(); ctx.strokeStyle = C.accent; ctx.globalAlpha = 0.3; ctx.lineWidth = 5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke(); ctx.restore();
+  }
+
+  /* the object itself, and an arrow for how fast it is going */
+  var cx = M.X(now), v = at(t).v;
+  if(S.distance) v = Math.abs(v);
+  ctx.save();
+  var grad = ctx.createLinearGradient(cx-11, y-11, cx+11, y+3);
+  grad.addColorStop(0, mix(C.accent,'#ffffff',0.25)); grad.addColorStop(1, C.accent);
+  ctx.fillStyle = grad; ctx.strokeStyle = C.panel; ctx.lineWidth = 2;
+  rr(cx-11, y-11, 22, 16, 5); ctx.fill(); ctx.stroke();
+  ctx.restore();
+  if(Math.abs(v) > 1e-6){
+    var L = clamp(Math.abs(v)/Math.max(1e-6, Math.max(Math.abs(extentV().lo), Math.abs(extentV().hi)))*46, 8, 52);
+    arrow(cx + (v>0? 13 : -13), y-3, cx + (v>0? 13+L : -13-L), y-3, C.vt, 2.4, 8);
+  }
+  if(S.show.labels && S.show.values){
+    tag((S.distance? 'distance ' : 's = ')+fmt(now)+' m', cx, y-32, C.accent, {size:10, mono:true, bold:true});
+  }
+  if(S.show.labels && TRACK.h > 58){
+    tag(S.distance? 'the path it has covered' : 'position along the line', TRACK.x+6, TRACK.y+9, C.muted, {size:9.5, box:false, anchor:'l'});
+  }
+}
+
+/* ------------------------------- render --------------------------------- */
+function render(){
+  themeCheck();
+  layout();
+  drawBg();
+  /* while it is playing, the curve is drawn as it happens; before anyone has
+     pressed play the whole graph is shown, so the shape is there to read */
+  var tEnd = (S.show.trace && (S.playing || S.t > 1e-9)) ? S.t : total();
+  if(TRACK) drawTrack(S.t);
+  for(var i=0;i<PANES.length;i++){
+    var p = PANES[i];
+    drawFrame(p);
+    if(p.k==='v' && S.show.area) drawArea(p, Math.min(S.t, tEnd));
+    drawCurve(p, tEnd);
+    drawPoints(p);
+    if(S.show.grad && (p.k==='s' || p.k==='v')) drawGradient(p, S.t);
+    if(S.show.cross) drawCrosshair(p, S.t);
+    drawTitle(p);
+  }
+}
+
+/* ============================== PANELS =================================== */
+var LIVE = $('#live'), TOAST = $('#toast'), toastT = null;
+function toast(msg){
+  TOAST.textContent = msg; TOAST.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(function(){ TOAST.classList.remove('show'); }, 1900);
+}
+function say(msg){ LIVE.textContent = msg; }
+function num(v,dp){ return S.show.values ? (dp===undefined? w(v) : fmt(v,dp)) : '••'; }
+function kv(k,v){ return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+
+/* ----------------------------- the readouts ----------------------------- */
+function updateReadouts(){
+  var st = at(S.t);
+  $('#rdS').textContent = (S.show.values? fmt(S.distance? pathLen(S.t) : st.s) : '••')+' m';
+  $('#rdV').textContent = (S.show.values? fmt(S.distance? Math.abs(st.v) : st.v) : '••')+' '+U_V;
+  $('#rdA').textContent = (S.show.values? fmt(st.a) : '••')+' '+U_A;
+  $('#rdD').textContent = (S.show.values? fmt(S.distance? at(S.t).s : pathLen(S.t)) : '••')+' m';
+  $('#readouts').querySelectorAll('.rd')[0].querySelector('.k').textContent = S.distance? 'distance' : 'displacement s';
+  $('#readouts').querySelectorAll('.rd')[1].querySelector('.k').textContent = S.distance? 'speed' : 'velocity v';
+  $('#readouts').querySelectorAll('.rd')[3].querySelector('.k').textContent = S.distance? 'displacement' : 'distance travelled';
+  $('#tNow').textContent = fmt(S.t,2);
+  $('#tEnd').textContent = fmt(total(),2);
+  var sc = $('#scrub');
+  if(document.activeElement !== sc) sc.value = String(Math.round(S.t/Math.max(1e-6,total())*1000));
+}
+
+/* ---------------------------- the verdict bar --------------------------- */
+function updateVerdict(){
+  var st = $('#vStatus'), nu = $('#vNum'), row2 = $('#vRow2');
+  var vd = $('.verdict');
+  vd.classList.remove('ok','bad','warn');
+  var m = at(S.t), q = segAt(S.t), i = q? q.i+1 : 1;
+
+  nu.textContent = S.show.values? ('t = '+fmt(S.t,2)+' s   ·   stage '+i+' of '+S.phases.length) : ('stage '+i);
+
+  var moving = Math.abs(m.v) > 1e-6, acc = Math.abs(m.a) > 1e-9;
+  if(!moving && !acc){
+    st.textContent = 'At rest, and staying there';
+    row2.innerHTML = 'The velocity–time graph sits on the axis, so the displacement–time graph is <b>flat</b>. A flat s–t graph does not mean "no motion happened" — it means nothing is happening <em>now</em>.';
+    return;
+  }
+  if(!acc){
+    vd.classList.add('ok');
+    st.textContent = 'Constant velocity';
+    row2.innerHTML = 'The v–t graph is horizontal, so the s–t graph is a <b>straight slope</b> of '+num(m.v)+' '+U_V+'. '
+      + 'A straight line on a displacement–time graph always means constant velocity, never constant acceleration.';
+    return;
+  }
+  if(!moving){
+    vd.classList.add('warn');
+    st.textContent = 'At rest, but not for long';
+    row2.innerHTML = 'The velocity is zero at this instant, yet the acceleration is <b>'+num(m.a)+' '+U_A+'</b>, '
+      + 'so it is about to move. A ball at the very top of its flight is the classic example: momentarily still, '
+      + 'still accelerating at 9.81 m s⁻² downwards.';
+    return;
+  }
+  var speedingUp = (m.v*m.a) > 0;
+  if(speedingUp){ st.textContent = 'Speeding up'; vd.classList.add('warn'); }
+  else { st.textContent = 'Slowing down'; }
+  row2.innerHTML = 'a = <b>'+num(m.a)+' '+U_A+'</b> and v = <b>'+num(m.v)+' '+U_V+'</b>. '
+    + (speedingUp
+        ? 'They point the same way, so it gains speed. '
+        : 'They point opposite ways, so it loses speed — and that is what "deceleration" really means. ')
+    + (m.a < 0 && m.v < 0
+        ? 'Both are negative: it is speeding up in the negative direction, not slowing down.'
+        : 'The s–t graph is curving here, so its gradient is changing from one instant to the next.');
+}
+
+/* ----------------------------- build tab -------------------------------- */
+function updateBuildTexts(){
+  $('#vU0').textContent = fmt(S.u0,1)+' '+U_V;
+  $('#vS0').textContent = fmt(S.s0,1)+' m';
+  $('#vDec').textContent = String(S.dec);
+  $('#vFlash').textContent = fmt(S.flash,2)+' s';
+  $('#vRows').textContent = fmt(S.rowStep,1)+' s';
+  $('#phCount').textContent = String(S.phases.length);
+  $('#tTag').textContent = 't = '+fmt(S.t,2)+' s';
+}
+function phaseColour(i){
+  var hues = ['#1d4ed8','#047857','#b45309','#7c3aed','#0891b2','#be123c','#4d7c0f','#a21caf'];
+  return hues[i % hues.length];
+}
+function buildPhaseList(){
+  var g = segs(), out = '', bar = '';
+  for(var i=0;i<S.phases.length;i++){
+    var p = S.phases[i], q = g[i];
+    var kind = Math.abs(p.a)<1e-9 ? (Math.abs(q.u)<1e-9? 'at rest' : 'constant velocity')
+             : ((q.u*p.a) >= 0 ? 'speeding up' : 'slowing down');
+    bar += '<i style="flex:'+p.t+';background:'+phaseColour(i)+';opacity:'+(S.sel===i?1:0.45)+'" title="Stage '+(i+1)+'"></i>';
+    out += '<div class="item'+(S.sel===i?' sel':'')+'" data-i="'+i+'">'
+      + '<div class="head">'
+        + '<span class="dot" style="background:'+phaseColour(i)+'"></span>'
+        + '<span class="name">Stage '+(i+1)+'</span>'
+        + '<span class="pill">'+esc(kind)+'</span>'
+      + '</div>'
+      + '<div class="grid3">'
+        + '<span>lasts</span><input type="number" step="0.1" min="0.1" data-t="'+i+'" value="'+fmt(p.t,2)+'">'
+        + '<span>a /m s⁻²</span><input type="number" step="0.1" data-a="'+i+'" value="'+fmt(p.a,2)+'">'
+      + '</div>'
+      + '<div class="acts">'
+        + '<button class="qbtn" data-sel="'+i+'" aria-pressed="'+(S.sel===i)+'">select</button>'
+        + '<button class="qbtn" data-jump="'+i+'" title="Move the play head to the start of this stage">go to</button>'
+        + '<button class="qbtn" data-zero="'+i+'" title="Make this stage constant velocity">a = 0</button>'
+        + '<button class="qbtn" data-dup="'+i+'" title="Duplicate">copy</button>'
+        + '<button class="qbtn" data-del="'+i+'" title="Delete">×</button>'
+      + '</div>'
+      + '<p class="hint" style="margin:7px 0 0">'
+        + 'v goes from <b>'+num(q.u)+'</b> to <b>'+num(q.v)+' '+U_V+'</b>; '
+        + 'it covers <b>'+num(q.s1-q.s0)+' m</b> in '+fmt(p.t,2)+' s.'
+      + '</p>'
+      + '</div>';
+  }
+  $('#phaseBar').innerHTML = bar;
+  $('#phaseList').innerHTML = out;
+  wirePhaseList();
+}
+function refreshPhaseValues(){
+  for(var i=0;i<S.phases.length;i++){
+    var ti = $('[data-t="'+i+'"]'), ai = $('[data-a="'+i+'"]');
+    if(ti && document.activeElement!==ti) ti.value = fmt(S.phases[i].t,2);
+    if(ai && document.activeElement!==ai) ai.value = fmt(S.phases[i].a,2);
+  }
+}
+
+/* ----------------------------- analyse tab ------------------------------ */
+function updateAnalyse(){
+  var m = at(S.t), q = segAt(S.t), T = total();
+  var ban = $('#anBanner'), txt = $('#anText');
+  ban.classList.remove('ok','warn');
+  txt.innerHTML = 'Everything below is read off at <b>t = '+fmt(S.t,2)+' s</b>. Drag across the graphs, or use ← and →, to move the play head.';
+
+  $('#momentBody').innerHTML =
+      kv(nameS(), num(S.distance? pathLen(S.t) : m.s)+' m')
+    + kv(nameV(), num(S.distance? Math.abs(m.v) : m.v)+' '+U_V)
+    + kv('acceleration', num(m.a)+' '+U_A)
+    + kv('distance travelled so far', num(pathLen(S.t))+' m')
+    + kv('displacement from the start', num(m.s - S.s0)+' m')
+    + '<p class="hint">'
+      + (Math.abs(pathLen(S.t) - Math.abs(m.s - S.s0)) > 1e-6
+          ? 'These last two differ because the object has <b>turned round</b>. Distance keeps counting; displacement can come back down.'
+          : 'These two agree, because the object has not yet reversed. As soon as it does, they part company.')
+    + '</p>';
+
+  var gradS = S.distance? Math.abs(m.v) : m.v;
+  $('#gradAreaBody').innerHTML =
+      '<div class="kv"><span class="k">gradient of the s–t graph</span><span class="v" style="color:var(--dt)">'+num(gradS)+' '+U_V+'</span></div>'
+    + '<div class="kv"><span class="k">gradient of the v–t graph</span><span class="v" style="color:var(--vt)">'+num(m.a)+' '+U_A+'</span></div>'
+    + '<div class="kv"><span class="k">area under v–t so far</span><span class="v" style="color:var(--area)">'+num(m.s - S.s0)+' m</span></div>'
+    + '<div class="kv"><span class="k">area under a–t so far</span><span class="v" style="color:var(--at)">'+num(m.v - S.u0)+' '+U_V+'</span></div>'
+    + '<p class="hint">Going <em>down</em> the list you take gradients; going <em>up</em> it you take areas. '
+      + 'That is the whole of graph interpretation in one sentence — and the area under an acceleration–time graph, '
+      + 'which almost nobody is taught to look for, gives the <b>change in velocity</b>.</p>'
+    + (q && Math.abs(q.a)>1e-9
+        ? '<p class="hint">The s–t graph is a curve in this stage, so its gradient is only the velocity <em>at that instant</em>. '
+          + 'A straight line drawn between two points on a curve gives the <b>average</b> velocity between them instead.</p>'
+        : '');
+
+  var sEnd = at(T).s, dist = pathLen(T);
+  var avgV = (sEnd - S.s0)/Math.max(1e-9,T), avgSp = dist/Math.max(1e-9,T);
+  $('#wholeBody').innerHTML =
+      kv('time taken', fmt(T,2)+' s')
+    + kv('displacement', num(sEnd - S.s0)+' m')
+    + kv('distance travelled', num(dist)+' m')
+    + kv('average velocity', num(avgV)+' '+U_V)
+    + kv('average speed', num(avgSp)+' '+U_V)
+    + kv('final velocity', num(at(T).v)+' '+U_V)
+    + '<p class="hint">'
+      + (Math.abs(avgV - avgSp) > 1e-6
+          ? 'Average <b>velocity</b> is displacement ÷ time; average <b>speed</b> is distance ÷ time. They differ here because the journey doubles back. A complete round trip has an average velocity of exactly zero however fast it was.'
+          : 'Average velocity is displacement ÷ time — not the average of the starting and finishing velocities, though for a single stage of constant acceleration those two happen to agree.')
+    + '</p>';
+
+  buildTable();
+}
+function tableRows(){
+  var T = total(), step = Math.max(0.05, S.rowStep), rows = [], t;
+  for(t=0; t<=T+1e-9; t+=step) rows.push(Math.min(t,T));
+  if(rows[rows.length-1] < T-1e-9) rows.push(T);
+  return rows;
+}
+function buildTable(){
+  var rows = tableRows(), out = '', i;
+  for(i=0;i<rows.length && i<160;i++){
+    var t = rows[i], m = at(t);
+    var here = Math.abs(t - S.t) < Math.max(0.05,S.rowStep)/2;
+    out += '<tr'+(here?' style="background:var(--accent-soft)"':'')+'>'
+      + '<td class="t0">'+fmt(t,2)+'</td>'
+      + '<td>'+num(S.distance? pathLen(t) : m.s)+'</td>'
+      + '<td>'+num(S.distance? Math.abs(m.v) : m.v)+'</td>'
+      + '<td>'+num(m.a)+'</td></tr>';
+  }
+  $('#dataTable').querySelector('tbody').innerHTML = out;
+}
+function tableCSV(){
+  var rows = tableRows(), out = ['t/s,'+(S.distance?'distance/m':'s/m')+','+(S.distance?'speed':'v')+'/m s^-1,a/m s^-2'];
+  for(var i=0;i<rows.length;i++){
+    var t = rows[i], m = at(t);
+    out.push([fmt(t,3), fmt(S.distance? pathLen(t) : m.s,4), fmt(S.distance? Math.abs(m.v):m.v,4), fmt(m.a,4)].join(','));
+  }
+  return out.join('\n');
+}
+
+/* ========================== THE SUVAT SOLVER ============================
+   Five equations, each missing one of the five letters. Note which letter
+   your question never mentions and the equation picks itself - that single
+   habit is worth more marks than any amount of rearranging practice.
+   ====================================================================== */
+var Q = { s:null, u:null, v:null, a:null, t:null, used:[], roots:null };
+
+var EQS = [
+  { n:1, miss:'v', txt:'s = ut + ½at²',  vars:['s','u','a','t'], gcse:false,
+    tag:'no v' },
+  { n:2, miss:'s', txt:'v = u + at',     vars:['v','u','a','t'], gcse:false,
+    tag:'no s' },
+  { n:3, miss:'a', txt:'s = ½(u + v)t',  vars:['s','u','v','t'], gcse:false,
+    tag:'no a' },
+  { n:4, miss:'t', txt:'v² = u² + 2as',  vars:['v','u','a','s'], gcse:true,
+    tag:'no t · the GCSE one' },
+  { n:5, miss:'u', txt:'s = vt − ½at²',  vars:['s','v','a','t'], gcse:false,
+    tag:'no u' }
+];
+
+/* each returns {vals:[...], note:''} or null when it cannot be done */
+function solveFor(eq, want, K){
+  var s=K.s, u=K.u, v=K.v, a=K.a, t=K.t, r;
+  function one(x){ return {vals:[x]}; }
+  if(eq.n===1){                       /* s = ut + ½at² */
+    if(want==='s') return one(u*t + 0.5*a*t*t);
+    if(want==='u'){ if(Math.abs(t)<1e-12) return null; return one((s - 0.5*a*t*t)/t); }
+    if(want==='a'){ if(Math.abs(t)<1e-12) return null; return one(2*(s - u*t)/(t*t)); }
+    if(want==='t'){
+      if(Math.abs(a)<1e-12){ if(Math.abs(u)<1e-12) return null; return one(s/u); }
+      var disc = u*u + 2*a*s;
+      if(disc < -1e-12) return null;
+      disc = Math.max(0,disc);
+      var rt = Math.sqrt(disc);
+      return {vals:[(-u+rt)/a, (-u-rt)/a], note:'quadratic'};
+    }
+  }
+  if(eq.n===2){                       /* v = u + at */
+    if(want==='v') return one(u + a*t);
+    if(want==='u') return one(v - a*t);
+    if(want==='a'){ if(Math.abs(t)<1e-12) return null; return one((v-u)/t); }
+    if(want==='t'){ if(Math.abs(a)<1e-12) return null; return one((v-u)/a); }
+  }
+  if(eq.n===3){                       /* s = ½(u+v)t */
+    if(want==='s') return one(0.5*(u+v)*t);
+    if(want==='u'){ if(Math.abs(t)<1e-12) return null; return one(2*s/t - v); }
+    if(want==='v'){ if(Math.abs(t)<1e-12) return null; return one(2*s/t - u); }
+    if(want==='t'){ if(Math.abs(u+v)<1e-12) return null; return one(2*s/(u+v)); }
+  }
+  if(eq.n===4){                       /* v² = u² + 2as */
+    if(want==='v'){
+      var d1 = u*u + 2*a*s;
+      if(d1 < -1e-12) return null;
+      r = Math.sqrt(Math.max(0,d1));
+      return {vals:[r, -r], note:'square root'};
+    }
+    if(want==='u'){
+      var d2 = v*v - 2*a*s;
+      if(d2 < -1e-12) return null;
+      r = Math.sqrt(Math.max(0,d2));
+      return {vals:[r, -r], note:'square root'};
+    }
+    if(want==='a'){ if(Math.abs(s)<1e-12) return null; return one((v*v - u*u)/(2*s)); }
+    if(want==='s'){ if(Math.abs(a)<1e-12) return null; return one((v*v - u*u)/(2*a)); }
+  }
+  if(eq.n===5){                       /* s = vt − ½at² */
+    if(want==='s') return one(v*t - 0.5*a*t*t);
+    if(want==='v'){ if(Math.abs(t)<1e-12) return null; return one((s + 0.5*a*t*t)/t); }
+    if(want==='a'){ if(Math.abs(t)<1e-12) return null; return one(2*(v*t - s)/(t*t)); }
+    if(want==='t'){
+      if(Math.abs(a)<1e-12){ if(Math.abs(v)<1e-12) return null; return one(s/v); }
+      var d3 = v*v - 2*a*s;
+      if(d3 < -1e-12) return null;
+      var rt3 = Math.sqrt(Math.max(0,d3));
+      return {vals:[(v-rt3)/a, (v+rt3)/a], note:'quadratic'};
+    }
+  }
+  return null;
+}
+/* the equation written out with every known replaced by its number and the
+   unknown left as a letter - which is what a marker wants to see */
+function subText(eq, K, want){
+  function f(k){
+    if(k===want) return want;
+    var x = K[k];
+    return (x<0? '('+w(x)+')' : w(x));
+  }
+  if(eq.n===1) return f('s')+' = '+f('u')+' × '+f('t')+' + ½ × '+f('a')+' × '+f('t')+'²';
+  if(eq.n===2) return f('v')+' = '+f('u')+' + '+f('a')+' × '+f('t');
+  if(eq.n===3) return f('s')+' = ½ × ('+f('u')+' + '+f('v')+') × '+f('t');
+  if(eq.n===4) return f('v')+'² = '+f('u')+'² + 2 × '+f('a')+' × '+f('s');
+  return f('s')+' = '+f('v')+' × '+f('t')+' − ½ × '+f('a')+' × '+f('t')+'²';
+}
+var UNIT_OF = {s:'m', u:'m s⁻¹', v:'m s⁻¹', a:'m s⁻²', t:'s'};
+
+function readSuvat(){
+  var K = {}, known = [], unknown = [], keys = ['s','u','v','a','t'];
+  for(var i=0;i<keys.length;i++){
+    var el = $('#q'+keys[i].toUpperCase());
+    var raw = (el.value||'').trim();
+    var n = raw===''? NaN : parseFloat(raw);
+    if(raw!=='' && isFinite(n)){ K[keys[i]] = n; known.push(keys[i]); }
+    else { K[keys[i]] = null; unknown.push(keys[i]); }
+  }
+  return {K:K, known:known, unknown:unknown};
+}
+function suvatSolve(){
+  var R = readSuvat(), K = R.K, steps = [], used = [], i;
+  var out = $('#suvatOut');
+  if(R.known.length < 3){
+    out.innerHTML = '<p class="hint bad" style="margin:0">You have given '+R.known.length
+      + ' value'+(R.known.length===1?'':'s')+'. Three are needed — with only two, an infinite family of motions fits.</p>';
+    $('#suvatWork').innerHTML = '<span class="step lbl">Nothing to work out yet.</span>';
+    highlightEqs([]); return;
+  }
+  if(R.known.length === 5){
+    out.innerHTML = '<p class="hint" style="margin:0">All five are filled in. Clear one and it will be worked out for you — or press <b>Send to the graphs</b> to see this motion drawn.</p>';
+    checkConsistency(K, out);
+    highlightEqs([]); return;
+  }
+  /* first unknown: the equation that leaves out one of the missing letters */
+  var work = [], solvedKeys = [];
+  var K2 = {s:K.s,u:K.u,v:K.v,a:K.a,t:K.t};
+  var remaining = R.unknown.slice();
+  var guard = 0;
+  while(remaining.length && guard++ < 6){
+    var picked = null;
+    for(i=0;i<EQS.length;i++){
+      var eq = EQS[i];
+      var missing = eq.vars.filter(function(k){ return K2[k]===null; });
+      if(missing.length === 1){ picked = {eq:eq, want:missing[0]}; break; }
+    }
+    if(!picked) break;
+    var res = solveFor(picked.eq, picked.want, K2);
+    if(!res){
+      work.push({eq:picked.eq, want:picked.want, fail:true});
+      break;
+    }
+    var chosen = res.vals[0], alt = null;
+    if(res.vals.length > 1){
+      /* prefer a positive time; otherwise keep both and say so */
+      if(picked.want==='t'){
+        var pos = res.vals.filter(function(x){ return x > 1e-9; });
+        chosen = pos.length? Math.min.apply(null,pos) : res.vals[0];
+        alt = res.vals.filter(function(x){ return Math.abs(x-chosen) > 1e-9; })[0];
+      } else {
+        chosen = res.vals[0]; alt = res.vals[1];
+      }
+    }
+    K2[picked.want] = chosen;
+    solvedKeys.push(picked.want);
+    used.push(picked.eq.n);
+    work.push({eq:picked.eq, want:picked.want, val:chosen, alt:alt, note:res.note, K:{s:K2.s,u:K2.u,v:K2.v,a:K2.a,t:K2.t}});
+    remaining = remaining.filter(function(k){ return k!==picked.want; });
+  }
+  /* write the answers back into the boxes */
+  var keys = ['s','u','v','a','t'];
+  for(i=0;i<keys.length;i++){
+    var cell = $('#cell'+keys[i].toUpperCase());
+    var inp  = $('#q'+keys[i].toUpperCase());
+    var isNew = solvedKeys.indexOf(keys[i]) >= 0;
+    cell.classList.toggle('solved', isNew);
+    if(isNew) inp.value = fmt(K2[keys[i]], Math.max(2,S.dec));
+  }
+  Q = K2; Q.used = used;
+  highlightEqs(used);
+  renderSuvatWork(work, K2);
+
+  if(remaining.length){
+    out.innerHTML = '<p class="hint warn" style="margin:0">Those three do not pin the motion down — most often because a division by zero is involved '
+      + '(a stationary object, or no acceleration). Change one value and try again.</p>';
+  } else {
+    var neg = (K2.t !== null && K2.t < 0);
+    out.innerHTML = '<p class="hint ok" style="margin:0"><b>Solved.</b> The filled-in boxes are the answers. '
+      + (neg? 'The time came out negative, which means the described state happened <em>before</em> the clock was started. '
+            : '')
+      + 'Press <b>Send to the graphs</b> to see this drawn.</p>';
+    say('Solved.');
+  }
+}
+function checkConsistency(K, out){
+  var pred = K.u + K.a*K.t;
+  if(Math.abs(pred - K.v) > 1e-6*Math.max(1,Math.abs(K.v))){
+    out.innerHTML += '<p class="hint bad" style="margin-top:7px">These five do not agree with each other: v = u + at would give <b>'
+      + w(pred)+' '+U_V+'</b>, not '+w(K.v)+'.</p>';
+  }
+}
+function highlightEqs(used){
+  var host = $('#eqList'), h = '';
+  for(var i=0;i<EQS.length;i++){
+    var e = EQS[i];
+    h += '<div class="eqrow'+(used.indexOf(e.n)>=0?' used':'')+'">'
+       + '<span>'+e.txt+'</span><span class="tagx">'+e.tag+'</span></div>';
+  }
+  host.innerHTML = h;
+}
+function renderSuvatWork(work, K){
+  var h = '', i;
+  if(!work.length){ $('#suvatWork').innerHTML = '<span class="step lbl">Nothing to work out yet.</span>'; return; }
+  for(i=0;i<work.length;i++){
+    var it = work[i];
+    h += '<span class="step"><em>'+(i+1)+'</em> The letter left out is <b>'+it.eq.miss+'</b>, so use</span>';
+    h += '<span class="step">   '+it.eq.txt+'</span>';
+    if(it.fail){
+      h += '<span class="step lbl">   That cannot be rearranged here — it would mean dividing by zero.</span>';
+      continue;
+    }
+    h += '<span class="step">   '+subText(it.eq, it.K, it.want)+'</span>';
+    h += '<span class="step">   <b>'+it.want+' = <span class="hi">'+w(it.val)+' '+UNIT_OF[it.want]+'</span></b></span>';
+    if(it.alt !== null && it.alt !== undefined && isFinite(it.alt)){
+      h += '<span class="step lbl">   ('+(it.note==='quadratic'
+              ? 'a quadratic, so there are two answers: '+w(it.val)+' and '+w(it.alt)
+                + '. Take the one that makes sense — usually the positive time, though both are real if the object passes the same point twice.'
+              : 'the square root gives ±, so '+w(it.val)+' or '+w(it.alt)
+                + '. The sign says which way it is going, so choose it from the direction of travel.')+')</span>';
+    }
+    h += '<span class="step">&nbsp;</span>';
+  }
+  $('#suvatWork').innerHTML = h;
+}
+function suvatWorkPlain(){
+  return ($('#suvatWork').textContent||'').replace(/\n{3,}/g,'\n\n');
+}
+function suvatToGraph(){
+  var R = readSuvat(), K = Q && Q.t!==null && Q.t!==undefined ? Q : R.K;
+  if(K.t===null || K.a===null || K.u===null || !isFinite(K.t) || K.t<=0){
+    toast('Solve it first — a time and an acceleration are needed'); return;
+  }
+  S.u0 = clamp(K.u, -30, 30);
+  S.s0 = 0;
+  S.phases = [{ t: clamp(K.t, MINPHT, MAXT), a: K.a }];
+  S.t = 0; S.sel = 0;
+  markDirty();
+  setMode('explore');
+  buildPhaseList(); syncControls(); refresh();
+  toast('Drawn on the graphs');
+}
+function suvatGravity(){
+  $('#qA').value = '-9.81';
+  suvatSolve();
+}
+function suvatClear(){
+  ['S','U','V','A','T'].forEach(function(k){
+    $('#q'+k).value = '';
+    $('#cell'+k).classList.remove('solved');
+  });
+  Q = {s:null,u:null,v:null,a:null,t:null,used:[]};
+  $('#suvatOut').innerHTML = '';
+  $('#suvatWork').innerHTML = '<span class="step lbl">Type in any three values and press Solve.</span>';
+  highlightEqs([]);
+}
+
+/* ============================ PRACTICE ==================================
+   Questions built from a motion that is actually drawn on the graphs, so
+   the student reads a real graph rather than a picture of one. Everything
+   is marked against the exact value, with the working shown afterwards.
+   ====================================================================== */
+var QU = null;
+
+function rnd(a,b,step){
+  step = step || 1;
+  var n = Math.round((a + Math.random()*(b-a))/step)*step;
+  return parseFloat(n.toFixed(4));
+}
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+/* a motion that looks like something out of a question paper */
+function randomMotion(level){
+  var gcse = (level==='gcse');
+  var kind = pick(gcse ? ['rest-cruise-stop','cruise','accel','cruise-stop']
+                       : ['rest-cruise-stop','accel','reverse','thrown','cruise-stop','two-accel']);
+  var u0 = 0, ph = [];
+  if(kind==='cruise'){ u0 = rnd(4,20,gcse?2:0.5); ph = [{t:rnd(4,10,1), a:0}]; }
+  else if(kind==='accel'){ u0 = gcse?0:rnd(0,8,0.5); ph = [{t:rnd(3,8,1), a:rnd(1,4,gcse?1:0.5)}]; }
+  else if(kind==='cruise-stop'){
+    u0 = rnd(6,20,gcse?2:0.5);
+    var td = rnd(2,6,1);
+    ph = [{t:rnd(3,7,1), a:0}, {t:td, a:-u0/td}];
+  }
+  else if(kind==='rest-cruise-stop'){
+    var ta = rnd(2,5,1), acc = rnd(1,4,gcse?1:0.5), vmax = acc*ta;
+    var tb = rnd(2,6,1), tc = rnd(2,5,1);
+    ph = [{t:ta, a:acc}, {t:tb, a:0}, {t:tc, a:-vmax/tc}];
+  }
+  else if(kind==='two-accel'){
+    u0 = rnd(0,5,0.5);
+    ph = [{t:rnd(2,5,1), a:rnd(1,3,0.5)}, {t:rnd(2,5,1), a:rnd(-3,-1,0.5)}];
+  }
+  else if(kind==='reverse'){
+    u0 = rnd(6,16,1);
+    ph = [{t:rnd(4,8,1), a:rnd(-4,-2,0.5)}];
+  }
+  else { /* thrown straight up */
+    u0 = rnd(10,25,1);
+    ph = [{t: parseFloat((2*u0/9.81).toFixed(2)), a:-9.81}];
+  }
+  return {u0:u0, s0:0, phases:ph, kind:kind};
+}
+/* true when every stage boundary lands on a tenth of a second, so a question
+   can quote the times exactly as the student will read them off the axis */
+function tidyTimes(m){
+  var t = 0;
+  for(var i=0;i<m.phases.length;i++){
+    t += m.phases[i].t;
+    if(Math.abs(t*10 - Math.round(t*10)) > 1e-9) return false;
+  }
+  return true;
+}
+function loadMotion(m){
+  S.u0 = m.u0; S.s0 = m.s0;
+  S.phases = m.phases.map(function(p){ return {t:p.t, a:p.a}; });
+  S.t = 0; S.sel = null; S.playing = false;
+  markDirty();
+}
+/* a sentence describing what the object does */
+function describe(){
+  var g = segs(), out = [], i;
+  for(i=0;i<g.length;i++){
+    var q = g[i];
+    var startsRest = Math.abs(q.u) < 1e-6, endsRest = Math.abs(q.v) < 1e-6;
+    if(Math.abs(q.a) < 1e-9){
+      out.push(startsRest? 'stays still' : 'travels at a steady '+fmt(Math.abs(q.u),1)+' m s⁻¹');
+    } else if(startsRest){
+      out.push('accelerates from rest');
+    } else if(endsRest){
+      out.push('slows to a stop');
+    } else if(q.u*q.a > 0){
+      out.push('speeds up');
+    } else if(q.v*q.u < 0){
+      out.push('slows down, stops and comes back the other way');
+    } else {
+      out.push('slows down');
+    }
+  }
+  var s = out.join(', then ');
+  return s.charAt(0).toUpperCase()+s.slice(1)+'.';
+}
+
+/* ----------------------------- the questions ---------------------------- */
+function newQuestion(){
+  var type = S.qType, level = S.qLevel;
+  if(type==='mix') type = pick(level==='gcse' ? ['grad','area','shape'] : ['grad','area','shape','suvat']);
+  var m = randomMotion(level), guardM = 0;
+  while((type==='grad' || type==='area') && !tidyTimes(m) && guardM++ < 25) m = randomMotion(level);
+  loadMotion(m);
+  var g = segs(), T = total();
+  var q = null;
+
+  if(type==='grad'){
+    var whichG = (level==='gcse') ? 'v-from-straight' : pick(['v-from-straight','a-from-vt','v-from-curve']);
+    if(whichG==='a-from-vt' || g.length===1 && Math.abs(g[0].a)>1e-9 && Math.random()<0.5){
+      var idx = 0;
+      for(var i=0;i<g.length;i++) if(Math.abs(g[i].a) > 1e-9){ idx = i; break; }
+      var seg = g[idx];
+      q = { kind:'num',
+        text:'Between <b>t = '+fmt(seg.t0,1)+' s</b> and <b>t = '+fmt(seg.t1,1)+' s</b>, find the <b>acceleration</b> from the velocity–time graph.',
+        unit:U_A, ans:seg.a,
+        how:'The gradient of a velocity–time graph is the acceleration.<br>'
+           + 'gradient = change in v ÷ change in t = ('+w(seg.v)+' − '+w(seg.u)+') ÷ ('+fmt(seg.t1,1)+' − '+fmt(seg.t0,1)+') = <b>'+w(seg.a)+' '+U_A+'</b>'
+           + (seg.a<0? '<br>It is negative because the velocity is falling — read the sign straight off the slope.' : '') };
+    } else if(whichG==='v-from-curve'){
+      var tq = rnd(T*0.25, T*0.75, 0.5);
+      var st = at(tq);
+      q = { kind:'num',
+        text:'Find the <b>velocity at t = '+fmt(tq,1)+' s</b> from the <b>displacement–time</b> graph.',
+        unit:U_V, ans:st.v,
+        how:'The gradient of a displacement–time graph is the velocity. The graph is curved here, so it is the gradient of the <b>tangent</b> at that instant, not a straight line between two points.<br>'
+           + 'v = <b>'+w(st.v)+' '+U_V+'</b><br>Turn on the gradient tool to see the tangent drawn on.' };
+    } else {
+      var flat = null;
+      for(var j=0;j<g.length;j++) if(Math.abs(g[j].a) < 1e-9 && Math.abs(g[j].u) > 1e-9){ flat = g[j]; break; }
+      if(!flat) flat = g[0];
+      var tm = (flat.t0 + flat.t1)/2, stm = at(tm);
+      q = { kind:'num',
+        text:'Find the <b>velocity at t = '+fmt(tm,1)+' s</b> from the <b>displacement–time</b> graph.',
+        unit:U_V, ans:stm.v,
+        how:'The gradient of a displacement–time graph is the velocity. Here that part of the graph is a straight line, so pick two points on it and divide the rise by the run.<br>'
+           + 'v = <b>'+w(stm.v)+' '+U_V+'</b>' };
+    }
+  }
+
+  else if(type==='area'){
+    var mode = (level==='gcse') ? 'disp-all' : pick(['disp-all','disp-part','dv-from-at','distance']);
+    if(mode==='disp-part'){
+      var s1 = g[0], s2 = g[Math.min(g.length-1, 1)];
+      var ta = s1.t1, tb = Math.min(T, s2.t1);
+      if(tb - ta < 0.5){ ta = 0; tb = s1.t1; }
+      q = { kind:'num',
+        text:'Use the <b>area under the velocity–time graph</b> to find the displacement between <b>t = '+fmt(ta,1)+' s</b> and <b>t = '+fmt(tb,1)+' s</b>.',
+        unit:U_S, ans: at(tb).s - at(ta).s,
+        how:'The area under a velocity–time graph is the displacement.<br>'
+           + 'Split it into a rectangle and a triangle, or use ½(u + v)t for that part.<br>'
+           + 'area = <b>'+w(at(tb).s - at(ta).s)+' m</b>' };
+    } else if(mode==='dv-from-at'){
+      var sq = g[0];
+      q = { kind:'num',
+        text:'Use the <b>area under the acceleration–time graph</b> for the first stage to find the <b>change in velocity</b>.',
+        unit:U_V, ans: sq.v - sq.u,
+        how:'The area under an acceleration–time graph is the change in velocity.<br>'
+           + 'area = a × t = '+w(sq.a)+' × '+fmt(sq.dur,2)+' = <b>'+w(sq.v-sq.u)+' '+U_V+'</b><br>'
+           + 'It is the same statement as v − u = at, just read off a graph.' };
+    } else if(mode==='distance'){
+      q = { kind:'num',
+        text:'Find the <b>total distance travelled</b> over the whole journey.',
+        unit:U_S, ans: pathLen(T),
+        how:'Distance counts every metre covered, so any area <b>below</b> the time axis has to be added as a positive amount, not subtracted.<br>'
+           + 'total distance = <b>'+w(pathLen(T))+' m</b>'
+           + (Math.abs(pathLen(T) - Math.abs(at(T).s - S.s0)) > 1e-6
+               ? '<br>The displacement is only '+w(at(T).s-S.s0)+' m, because the object turns round.'
+               : '') };
+    } else {
+      q = { kind:'num',
+        text:'Use the <b>area under the velocity–time graph</b> to find the <b>total displacement</b> of the whole journey.',
+        unit:U_S, ans: at(T).s - S.s0,
+        how:'The area under a velocity–time graph is the displacement.<br>'
+           + 'Break it into rectangles and triangles and add them up, counting anything below the axis as negative.<br>'
+           + 'displacement = <b>'+w(at(T).s - S.s0)+' m</b>' };
+    }
+  }
+
+  else if(type==='shape'){
+    var right = describe();
+    var opts = [right], guard = 0;
+    while(opts.length < 4 && guard++ < 40){
+      var saveP = S.phases, saveU = S.u0;
+      var alt = randomMotion(level);
+      S.phases = alt.phases; S.u0 = alt.u0; markDirty();
+      var d = describe();
+      S.phases = saveP; S.u0 = saveU; markDirty();
+      if(opts.indexOf(d) < 0) opts.push(d);
+    }
+    /* shuffle */
+    for(var k=opts.length-1;k>0;k--){ var r=Math.floor(Math.random()*(k+1)); var tmp=opts[k]; opts[k]=opts[r]; opts[r]=tmp; }
+    q = { kind:'choice',
+      text:'Which description fits the graphs shown?',
+      options:opts, ansIdx:opts.indexOf(right),
+      how:'Read the <b>velocity–time</b> graph stage by stage. A horizontal line is constant velocity; a line sloping down towards the axis is slowing; a line crossing the axis means it has turned round.<br>The answer is: <b>'+esc(right)+'</b>' };
+  }
+
+  else { /* suvat word problem - the graph would give the answer away, so it
+            is kept back and drawn only once the question has been answered */
+    var sc = pick(['brake','drop','throw','runway']);
+    if(sc==='brake'){
+      var u = rnd(12,30,1), a = -rnd(3,8,0.5);
+      var d = -u*u/(2*a);
+      var mBrake = {u0:u, s0:0, phases:[{t:-u/a, a:a}]};
+      q = { kind:'num',
+        text:'A car travelling at <b>'+w(u)+' m s⁻¹</b> brakes at <b>'+w(Math.abs(a))+' m s⁻²</b>. How far does it travel before stopping?',
+        unit:U_S, ans:d,
+        reveal:mBrake,
+        how:'Time is neither given nor wanted, so use <b>v² = u² + 2as</b>.<br>'
+           + '0 = '+w(u)+'² + 2×('+w(a)+')×s<br>'
+           + 's = <b>'+w(d)+' m</b>' };
+    } else if(sc==='drop'){
+      var h = rnd(5,80,1), tt = Math.sqrt(2*h/9.81);
+      var mDrop = {u0:0, s0:0, phases:[{t:parseFloat(tt.toFixed(2)), a:-9.81}]};
+      q = { kind:'num',
+        text:'A stone is dropped from rest and falls <b>'+w(h)+' m</b>. Taking g = 9.81 m s⁻², how long does it take? (Ignore air resistance.)',
+        unit:'s', ans:tt,
+        reveal:mDrop,
+        how:'v is neither given nor wanted, so use <b>s = ut + ½at²</b> with u = 0.<br>'
+           + w(h)+' = ½ × 9.81 × t²<br>t = <b>'+w(tt)+' s</b><br>Mass never appears — a heavy stone and a light one take the same time.' };
+    } else if(sc==='throw'){
+      var uu = rnd(8,25,1), hmax = uu*uu/(2*9.81);
+      var mThrow = {u0:uu, s0:0, phases:[{t:parseFloat((2*uu/9.81).toFixed(2)), a:-9.81}]};
+      q = { kind:'num',
+        text:'A ball is thrown straight up at <b>'+w(uu)+' m s⁻¹</b>. Taking g = 9.81 m s⁻², how high does it rise?',
+        unit:U_S, ans:hmax,
+        reveal:mThrow,
+        how:'At the top v = 0, and time is not wanted, so use <b>v² = u² + 2as</b>.<br>'
+           + '0 = '+w(uu)+'² + 2×(−9.81)×s<br>s = <b>'+w(hmax)+' m</b><br>'
+           + 'The acceleration is 9.81 m s⁻² downwards the whole way — including at the very top, where the ball is momentarily still.' };
+    } else {
+      var vT = rnd(50,80,1), aT = rnd(2,5,0.5), tT = vT/aT;
+      var mRun = {u0:0, s0:0, phases:[{t:parseFloat(tT.toFixed(2)), a:aT}]};
+      q = { kind:'num',
+        text:'An aeroplane starts from rest and accelerates at <b>'+w(aT)+' m s⁻²</b> until it reaches <b>'+w(vT)+' m s⁻¹</b>. How long does that take?',
+        unit:'s', ans:tT,
+        reveal:mRun,
+        how:'s is neither given nor wanted, so use <b>v = u + at</b>.<br>'
+           + w(vT)+' = 0 + '+w(aT)+'t<br>t = <b>'+w(tT)+' s</b>' };
+    }
+  }
+
+  QU = q; QU.answered = false;
+  S.t = 0;
+  renderQuestion();
+  syncControls(); buildPhaseList(); refresh();
+  say('New question.');
+}
+function renderQuestion(){
+  var host = $('#qAnswerArea'), fb = $('#qFeedback');
+  $('#qText').innerHTML = QU ? QU.text : 'Press <b>New question</b> to begin.';
+  fb.innerHTML = '';
+  $('#btnShowAns').disabled = !QU;
+  if(!QU){ host.innerHTML=''; return; }
+  if(QU.kind==='num'){
+    host.innerHTML = '<div class="ansrow">'
+      + '<div><span style="font-size:10.5px;color:var(--muted);font-weight:700">your answer / '+QU.unit+'</span>'
+      + '<input type="number" step="any" id="qAns" placeholder="type it in"></div>'
+      + '<div><button class="btn sm primary" id="btnMark">Mark it</button></div></div>';
+    $('#btnMark').addEventListener('click', markNumeric);
+    $('#qAns').addEventListener('keydown', function(e){ if(e.key==='Enter') markNumeric(); });
+  } else {
+    var h = '<div class="choices">';
+    for(var i=0;i<QU.options.length;i++) h += '<button data-c="'+i+'">'+esc(QU.options[i])+'</button>';
+    h += '</div>';
+    host.innerHTML = h;
+    $$('#qAnswerArea .choices button').forEach(function(b){
+      b.addEventListener('click', function(){ markChoice(+b.getAttribute('data-c')); });
+    });
+  }
+  $('#qTag').textContent = String(S.qTotal+1);
+  $('#qScore').textContent = S.qRight+' of '+S.qTotal;
+}
+function markNumeric(){
+  if(!QU || QU.answered) return;
+  var v = parseFloat(($('#qAns').value||'').trim());
+  if(!isFinite(v)){ toast('Type a number first'); return; }
+  var tol = Math.max(0.05, Math.abs(QU.ans)*0.03);
+  var ok = Math.abs(v - QU.ans) <= tol;
+  var signOnly = !ok && Math.abs(Math.abs(v) - Math.abs(QU.ans)) <= tol;
+  finishQuestion(ok, signOnly
+    ? 'The size is right but the <b>sign</b> is not. On these graphs a sign is a direction, and dropping it costs the mark.'
+    : '');
+}
+function markChoice(i){
+  if(!QU || QU.answered) return;
+  var btns = $$('#qAnswerArea .choices button');
+  btns[i].classList.add(i===QU.ansIdx? 'right':'wrong');
+  if(i!==QU.ansIdx) btns[QU.ansIdx].classList.add('right');
+  finishQuestion(i===QU.ansIdx, '');
+}
+function finishQuestion(ok, extra){
+  QU.answered = true;
+  if(QU.reveal){ loadMotion(QU.reveal); S.t = 0; buildPhaseList(); refresh(); }
+  S.qTotal++; if(ok) S.qRight++;
+  var fb = $('#qFeedback');
+  fb.innerHTML = '<p class="hint '+(ok?'ok':'bad')+'" style="margin:0"><b>'
+    + (ok? 'Correct.' : 'Not quite.') + '</b> '
+    + (QU.kind==='num' ? 'The answer is <b>'+w(QU.ans)+' '+QU.unit+'</b>. ' : '')
+    + (extra? extra+' ' : '')
+    + '</p><div class="qbox" style="margin-top:8px"><div class="qtxt">'+QU.how
+    + (QU.reveal? '<br><span style="opacity:.75">The motion is now drawn on the graphs — press play to watch it.</span>' : '')
+    + '</div></div>';
+  $('#qScore').textContent = S.qRight+' of '+S.qTotal;
+  say(ok? 'Correct.' : 'Not correct.');
+}
+function showAnswer(){
+  if(!QU) return;
+  if(!QU.answered){ QU.answered = true; S.qTotal++; $('#qScore').textContent = S.qRight+' of '+S.qTotal; }
+  if(QU.reveal){ loadMotion(QU.reveal); S.t = 0; buildPhaseList(); refresh(); }
+  $('#qFeedback').innerHTML = '<div class="qbox"><div class="qtxt">'
+    + (QU.kind==='num'? '<b>'+w(QU.ans)+' '+QU.unit+'</b><br>' : '')
+    + QU.how + '</div></div>';
+}
+function buildPitfalls(){
+  $('#pitfallBody').innerHTML =
+      '<p class="hint" style="margin-top:0"><b>Confusing the two graphs.</b> A horizontal line on a displacement–time graph means stationary; a horizontal line on a velocity–time graph means constant velocity. They look identical and mean opposite things.</p>'
+    + '<p class="hint"><b>Losing the sign.</b> Area below the time axis is a displacement the other way. Quote a negative answer as negative — it is a direction, not a mistake.</p>'
+    + '<p class="hint"><b>Distance instead of displacement.</b> If the object turns round, the two stop agreeing. Read which one the question asked for.</p>'
+    + '<p class="hint"><b>A chord instead of a tangent.</b> On a curved displacement–time graph, a straight line between two points gives the <em>average</em> velocity. The velocity at an instant needs a tangent.</p>'
+    + '<p class="hint"><b>Using suvat across a change in acceleration.</b> The equations only hold while a is constant, so apply them one stage at a time and carry the final velocity of one into the next as the starting velocity.</p>'
+    + '<p class="hint"><b>Forgetting that g still acts at the top.</b> A ball thrown upwards is momentarily at rest at the highest point, but its acceleration is 9.81 m s⁻² downwards throughout.</p>';
+}
+
+/* ============================ INTERACTION ==============================
+   Dragging a corner point on the velocity-time graph is the heart of it:
+   up and down changes the velocity that stage reaches, left and right
+   changes how long it lasts, and the other two graphs redraw as you go.
+   ====================================================================== */
+var DRAG = null;
+
+function pointer(e){
+  var r = cv.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+function hitPoint(pt){
+  var p = paneOf('v');
+  if(!p || !S.show.points) return null;
+  if(S.distance) return null;
+  var g = segs();
+  for(var i=0;i<=g.length;i++){
+    var t = (i<g.length)? g[i].t0 : TOTAL;
+    var v = (i<g.length)? g[i].u : g[g.length-1].v;
+    var x = PX(p,t), y = PY(p, clamp(v,p.lo,p.hi));
+    if(Math.hypot(pt.x-x, pt.y-y) < 14) return {i:i, p:p};
+  }
+  return null;
+}
+function snapVal(v, step, shift){
+  if(shift || !S.snapV) return v;
+  return Math.round(v/step)*step;
+}
+cv.addEventListener('pointerdown', function(e){
+  cv.focus();
+  var pt = pointer(e);
+  var hp = hitPoint(pt);
+  if(hp && S.mode!=='practice'){
+    DRAG = {kind:'pt', i:hp.i};
+    S.sel = Math.min(hp.i, S.phases.length-1);
+    V.freeze = true;
+    cv.setPointerCapture(e.pointerId);
+    buildPhaseList(); refresh();
+    e.preventDefault(); return;
+  }
+  var p = paneAtPoint(pt.x, pt.y);
+  if(p){
+    DRAG = {kind:'scrub'};
+    S.playing = false; syncPlay();
+    S.t = clamp(invX(p, pt.x), 0, total());
+    cv.setPointerCapture(e.pointerId);
+    refresh();
+    e.preventDefault();
+  }
+});
+cv.addEventListener('pointermove', function(e){
+  var pt = pointer(e);
+  if(!DRAG){
+    cv.style.cursor = hitPoint(pt) ? 'grab' : (paneAtPoint(pt.x,pt.y)? 'ew-resize' : 'default');
+    return;
+  }
+  if(DRAG.kind==='scrub'){
+    var p = paneAtPoint(pt.x, pt.y) || PANES[0];
+    S.t = clamp(invX(p, pt.x), 0, total());
+    refresh();
+    e.preventDefault(); return;
+  }
+  cv.style.cursor = 'grabbing';
+  var pv = paneOf('v');
+  if(!pv) return;
+  var g = segs(), i = DRAG.i;
+  var vNew = invY(pv, pt.y), tNew = invX(pv, pt.x);
+  var vStep = niceStep(pv.hi-pv.lo, 10), tStep = niceStep(total(), 10);
+  vNew = snapVal(vNew, vStep, e.shiftKey);
+  tNew = snapVal(tNew, tStep, e.shiftKey);
+
+  if(i===0){
+    /* the very first point sets the starting velocity */
+    S.u0 = clamp(vNew, -60, 60);
+  } else {
+    /* the point at the end of stage i-1: its height sets that stage's
+       acceleration, its horizontal position sets that stage's duration */
+    var q = g[i-1];
+    var dur = clamp(tNew - q.t0, MINPHT, MAXT);
+    S.phases[i-1].t = dur;
+    markDirty();
+    var q2 = segs()[i-1];
+    S.phases[i-1].a = (clamp(vNew,-60,60) - q2.u)/dur;
+  }
+  markDirty();
+  S.t = clamp(S.t, 0, total());
+  refreshPhaseValues(); refresh();
+  e.preventDefault();
+});
+function endDrag(e){
+  if(!DRAG) return;
+  var was = DRAG.kind;
+  DRAG = null; V.freeze = false;
+  cv.style.cursor = 'default';
+  try{ cv.releasePointerCapture(e.pointerId); }catch(err){}
+  if(was==='pt') buildPhaseList();
+  layout(); refresh();
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ------------------------------ keyboard -------------------------------- */
+cv.addEventListener('keydown', function(e){
+  var T = total(), step = e.shiftKey? T/200 : T/50;
+  var k = e.key.toLowerCase();
+  if(e.key==='ArrowLeft'){ S.playing=false; syncPlay(); S.t = clamp(S.t-step,0,T); }
+  else if(e.key==='ArrowRight'){ S.playing=false; syncPlay(); S.t = clamp(S.t+step,0,T); }
+  else if(e.key===' '){ togglePlay(); }
+  else if(k==='r'){ S.t = 0; }
+  else if(k==='s'){ toggleShow('gs'); }
+  else if(k==='v'){ toggleShow('gv'); }
+  else if(k==='a'){ toggleShow('ga'); }
+  else if(k==='e'){ toggleShow('area'); }
+  else if(k==='g'){ toggleShow('grad'); }
+  else if(k==='k'){ toggleShow('track'); }
+  else if(k==='m'){ toggleShow('tape'); }
+  else if(k==='h'){ toggleShow('values'); }
+  else if(k==='t'){ setTheme(ROOT.getAttribute('data-theme')==='dark'?'light':'dark'); }
+  else if(e.key==='1'){ setMode('explore'); }
+  else if(e.key==='2'){ setMode('read'); }
+  else if(e.key==='3'){ setMode('suvat'); }
+  else if(e.key==='4'){ setMode('practice'); }
+  else return;
+  e.preventDefault();
+  refresh();
+});
+
+/* ------------------------------ playback -------------------------------- */
+var lastFrame = 0, rafPlay = 0;
+function tick(ts){
+  rafPlay = 0;
+  if(!S.playing) return;
+  var dt = lastFrame? Math.min(0.05, (ts-lastFrame)/1000) : 0;
+  lastFrame = ts;
+  S.t += dt*S.speed;
+  if(S.t >= total()){ S.t = total(); S.playing = false; syncPlay(); }
+  refresh();
+  if(S.playing) rafPlay = requestAnimationFrame(tick);
+}
+function togglePlay(){
+  if(!S.playing && S.t >= total()-1e-9) S.t = 0;
+  S.playing = !S.playing;
+  lastFrame = 0;
+  syncPlay();
+  if(S.playing && !rafPlay) rafPlay = requestAnimationFrame(tick);
+  refresh();
+}
+function syncPlay(){
+  $('#icPlay').hidden = S.playing;
+  $('#icPause').hidden = !S.playing;
+  $('#btnPlay').setAttribute('aria-label', S.playing? 'Pause' : 'Play');
+}
+
+/* ------------------------------- modes ---------------------------------- */
+function setMode(m){
+  S.mode = m;
+  $$('.seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+  var id = {explore:'#modeExplore', read:'#modeRead', suvat:'#modeSuvat', practice:'#modePractice'}[m];
+  $(id).setAttribute('aria-pressed','true');
+  var tab = {explore:'tab-build', read:'tab-analyse', suvat:'tab-suvat', practice:'tab-practice'}[m];
+  showTab(tab);
+  if(m==='read'){ S.show.grad = 1; S.show.area = 1; S.show.trace = 0; S.t = Math.min(S.t, total()); }
+  else if(m==='explore'){ S.show.trace = 1; }
+  else if(m==='practice'){ S.show.grad = 0; S.show.area = 0; S.show.trace = 0;
+                           if(!QU) newQuestion(); }
+  syncControls(); refresh();
+  say('Mode: '+m);
+}
+function showTab(id){
+  $$('.tabs button').forEach(function(o){ o.setAttribute('aria-selected', String(o.id===id)); });
+  $$('.tabpanel').forEach(function(p){ p.hidden = true; });
+  var b = $('#'+id);
+  if(b) $('#'+b.getAttribute('aria-controls')).hidden = false;
+}
+function toggleShow(k){
+  if(V.narrow && (k==='gs'||k==='gv'||k==='ga')){
+    S.solo = k.charAt(1);
+    S.show[k] = 1;
+    syncControls(); layout(); refresh();
+    return;
+  }
+  S.show[k] = S.show[k] ? 0 : 1;
+  if(!S.show.gs && !S.show.gv && !S.show.ga){ S.show.gv = 1; toast('At least one graph has to stay on'); }
+  syncControls(); layout(); refresh();
+}
+
+/* --------------------------- wiring the panels -------------------------- */
+function wirePhaseList(){
+  $$('#phaseList [data-t]').forEach(function(el){
+    el.addEventListener('input', function(){
+      var i = +el.getAttribute('data-t'), n = parseFloat(el.value);
+      if(isFinite(n) && n > 0){ S.phases[i].t = clamp(n, MINPHT, MAXT); markDirty(); refresh(); }
+    });
+  });
+  $$('#phaseList [data-a]').forEach(function(el){
+    el.addEventListener('input', function(){
+      var i = +el.getAttribute('data-a'), n = parseFloat(el.value);
+      if(isFinite(n)){ S.phases[i].a = clamp(n, -60, 60); markDirty(); refresh(); }
+    });
+  });
+  $$('#phaseList [data-sel]').forEach(function(el){
+    el.addEventListener('click', function(){ S.sel = +el.getAttribute('data-sel'); buildPhaseList(); refresh(); });
+  });
+  $$('#phaseList [data-jump]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var i = +el.getAttribute('data-jump');
+      S.playing = false; syncPlay();
+      S.t = segs()[i].t0; refresh();
+    });
+  });
+  $$('#phaseList [data-zero]').forEach(function(el){
+    el.addEventListener('click', function(){
+      S.phases[+el.getAttribute('data-zero')].a = 0; markDirty(); buildPhaseList(); refresh();
+    });
+  });
+  $$('#phaseList [data-dup]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var i = +el.getAttribute('data-dup'), p = S.phases[i];
+      S.phases.splice(i+1, 0, {t:p.t, a:p.a}); markDirty(); buildPhaseList(); refresh();
+    });
+  });
+  $$('#phaseList [data-del]').forEach(function(el){
+    el.addEventListener('click', function(){ delPhase(+el.getAttribute('data-del')); buildPhaseList(); refresh(); });
+  });
+}
+
+function on(sel, ev, fn){ var el = $(sel); if(el) el.addEventListener(ev, fn); }
+function syncControls(){
+  $('#cGs').checked = !!S.show.gs;
+  $('#cGv').checked = !!S.show.gv;
+  $('#cGa').checked = !!S.show.ga;
+  $('#cGrid').checked = !!S.show.grid;
+  $('#cArea').checked = !!S.show.area;
+  $('#cGrad').checked = !!S.show.grad;
+  $('#cTrace').checked = !!S.show.trace;
+  $('#cCross').checked = !!S.show.cross;
+  $('#cPoints').checked = !!S.show.points;
+  $('#cLabels').checked = !!S.show.labels;
+  $('#cTrack').checked = !!S.show.track;
+  $('#cTape').checked = !!S.show.tape;
+  $('#cTrail').checked = !!S.show.trail;
+  $('#cDistance').checked = !!S.distance;
+  $('#cSnapV').checked = !!S.snapV;
+  $('#cSig').checked = !!S.sig;
+  $('#inU0').value = S.u0;
+  $('#inS0').value = S.s0;
+  $('#inDec').value = S.dec;
+  $('#inFlash').value = S.flash;
+  $('#inRows').value = S.rowStep;
+  $('#selSpeed').value = String(S.speed);
+  $('#selQType').value = S.qType;
+  $('#selQLevel').value = S.qLevel;
+  if(V.narrow){
+    $('#btnGs').setAttribute('aria-pressed', String(S.solo==='s'));
+    $('#btnGv').setAttribute('aria-pressed', String(S.solo==='v'));
+    $('#btnGa').setAttribute('aria-pressed', String(S.solo==='a'));
+  } else {
+    $('#btnGs').setAttribute('aria-pressed', String(!!S.show.gs));
+    $('#btnGv').setAttribute('aria-pressed', String(!!S.show.gv));
+    $('#btnGa').setAttribute('aria-pressed', String(!!S.show.ga));
+  }
+  $('#btnTrack').setAttribute('aria-pressed', String(!!S.show.track));
+  $('#btnTape').setAttribute('aria-pressed', String(!!S.show.tape));
+  $('#btnArea').setAttribute('aria-pressed', String(!!S.show.area));
+  $('#btnGrad').setAttribute('aria-pressed', String(!!S.show.grad));
+  $('#btnValues').setAttribute('aria-pressed', String(!S.show.values));
+}
+function wire(){
+  on('#modeExplore','click',function(){ setMode('explore'); });
+  on('#modeRead','click',function(){ setMode('read'); });
+  on('#modeSuvat','click',function(){ setMode('suvat'); });
+  on('#modePractice','click',function(){ setMode('practice'); });
+
+  on('#btnGs','click',function(){ toggleShow('gs'); });
+  on('#btnGv','click',function(){ toggleShow('gv'); });
+  on('#btnGa','click',function(){ toggleShow('ga'); });
+  on('#btnTrack','click',function(){ toggleShow('track'); });
+  on('#btnTape','click',function(){ toggleShow('tape'); });
+  on('#btnArea','click',function(){ toggleShow('area'); });
+  on('#btnGrad','click',function(){ toggleShow('grad'); });
+  on('#btnValues','click',function(){ toggleShow('values'); });
+
+  on('#btnPlay','click', togglePlay);
+  on('#btnRewind','click',function(){ S.t = 0; refresh(); });
+  on('#scrub','input',function(){
+    S.playing = false; syncPlay();
+    S.t = (+$('#scrub').value)/1000*total();
+    refresh();
+  });
+  on('#selSpeed','change',function(){ S.speed = parseFloat($('#selSpeed').value); });
+
+  on('#inU0','input',function(){ S.u0 = parseFloat($('#inU0').value); markDirty(); buildPhaseList(); refresh(); });
+  on('#inS0','input',function(){ S.s0 = parseFloat($('#inS0').value); markDirty(); refresh(); });
+  on('#inDec','input',function(){ S.dec = parseInt($('#inDec').value,10); refresh(); });
+  on('#inFlash','input',function(){ S.flash = parseFloat($('#inFlash').value); refresh(); });
+  on('#inRows','input',function(){ S.rowStep = parseFloat($('#inRows').value); refresh(); });
+
+  on('#btnAddPh','click',function(){ addPhase(); buildPhaseList(); refresh(); });
+  on('#btnStop','click',function(){ addStopPhase(); buildPhaseList(); refresh(); });
+  on('#btnClearPh','click',function(){
+    S.phases = [{t:5, a:0}]; S.sel = null; markDirty(); buildPhaseList(); refresh();
+  });
+
+  ['cGs:gs','cGv:gv','cGa:ga','cGrid:grid','cArea:area','cGrad:grad','cTrace:trace',
+   'cCross:cross','cPoints:points','cLabels:labels','cTrack:track','cTape:tape','cTrail:trail'].forEach(function(pair){
+    var p = pair.split(':');
+    on('#'+p[0],'change',function(){
+      S.show[p[1]] = $('#'+p[0]).checked?1:0;
+      if(!S.show.gs && !S.show.gv && !S.show.ga){ S.show.gv = 1; }
+      syncControls(); layout(); refresh();
+    });
+  });
+  on('#cDistance','change',function(){
+    S.distance = $('#cDistance').checked;
+    $('#distHint').innerHTML = S.distance
+      ? 'Now plotting <b>distance</b> and <b>speed</b>. Neither can ever fall, and neither can be negative — the graph of a journey that doubles back keeps climbing.'
+      : 'Displacement and velocity carry a sign; distance and speed never go down and never go negative. Swapping between them is the quickest way to see the difference.';
+    layout(); refresh();
+  });
+  on('#cSnapV','change',function(){ S.snapV = $('#cSnapV').checked; });
+  on('#cSig','change',function(){ S.sig = $('#cSig').checked; refresh(); });
+
+  $$('.tabs button').forEach(function(b){
+    b.addEventListener('click', function(){ showTab(b.id); if(b.id==='tab-analyse') updateAnalyse(); });
+  });
+
+  on('#btnSolve','click', suvatSolve);
+  on('#btnGravity','click', suvatGravity);
+  on('#btnToGraph','click', suvatToGraph);
+  on('#btnClearSuvat','click', suvatClear);
+  on('#btnCopyWork','click',function(){ copyText(suvatWorkPlain(), 'Working copied'); });
+  ['S','U','V','A','T'].forEach(function(k){
+    on('#q'+k,'keydown',function(e){ if(e.key==='Enter') suvatSolve(); });
+  });
+
+  on('#btnNewQ','click', newQuestion);
+  on('#btnShowAns','click', showAnswer);
+  on('#selQType','change',function(){ S.qType = $('#selQType').value; });
+  on('#selQLevel','change',function(){ S.qLevel = $('#selQLevel').value; });
+
+  on('#btnCopyData','click',function(){ copyText(tableCSV(), 'Table copied as CSV'); });
+
+  on('#btnTheme','click',function(){ setTheme(ROOT.getAttribute('data-theme')==='dark'?'light':'dark'); });
+  on('#btnHelp','click',function(){ $('#modalHelp').setAttribute('open',''); });
+  on('#closeHelp','click',function(){ $('#modalHelp').removeAttribute('open'); });
+  on('#btnPresets','click',function(){ $('#modalPresets').setAttribute('open',''); });
+  on('#closePresets','click',function(){ $('#modalPresets').removeAttribute('open'); });
+  on('#btnPng','click', savePng);
+  on('#btnPng2','click', savePng);
+  on('#btnShare','click', shareLink);
+  on('#btnCopyState','click',function(){ copyText(encodeState(), 'Setup code copied'); });
+  on('#btnPasteState','click', pasteState);
+  on('#btnHardReset','click',function(){
+    S = defaults(); markDirty(); QU = null;
+    setMode('explore'); syncControls(); buildPhaseList(); suvatClear(); renderQuestion(); refresh();
+    toast('Reset');
+  });
+  $$('.modal').forEach(function(m){
+    m.addEventListener('click', function(e){ if(e.target===m) m.removeAttribute('open'); });
+  });
+}
+function setTheme(t){ ROOT.setAttribute('data-theme', t); themeCheck(); refresh(); }
+function copyText(txt, msg){
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast(msg); }, function(){ fallbackCopy(txt,msg); });
+    } else fallbackCopy(txt,msg);
+  }catch(e){ fallbackCopy(txt,msg); }
+}
+function fallbackCopy(txt,msg){
+  var ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position='absolute'; ta.style.left='-9999px';
+  ROOT.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast(msg); }catch(e){ toast('Copy failed — select the text instead'); }
+  ROOT.removeChild(ta);
+}
+function savePng(){
+  try{
+    var a = document.createElement('a');
+    a.download = 'motion-lab.png';
+    a.href = cv.toDataURL('image/png');
+    a.click();
+    toast('Image saved');
+  }catch(e){ toast('The image could not be saved here'); }
+}
+
+/* --------------------------- save and restore --------------------------- */
+function encodeState(){
+  var o = {
+    m:S.mode, s0:S.s0, u0:S.u0,
+    p:S.phases.map(function(p){ return [+p.t.toFixed(4), +p.a.toFixed(4)]; }),
+    sh:S.show, d:S.distance?1:0, fl:S.flash, dc:S.dec, sg:S.sig?1:0, rs:S.rowStep
+  };
+  return 'MOT1'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+}
+function decodeState(code){
+  try{
+    if(code.indexOf('MOT1')!==0) return false;
+    var o = JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))));
+    S = defaults();
+    S.mode = o.m; S.s0 = o.s0; S.u0 = o.u0;
+    S.phases = o.p.map(function(a){ return {t:a[0], a:a[1]}; });
+    for(var k in o.sh) if(S.show.hasOwnProperty(k)) S.show[k] = o.sh[k];
+    S.distance = !!o.d; S.flash = o.fl; S.dec = o.dc; S.sig = !!o.sg; S.rowStep = o.rs || 1;
+    markDirty();
+    return true;
+  }catch(e){ return false; }
+}
+function pasteState(){
+  var code = window.prompt('Paste a Motion Lab setup code');
+  if(!code) return;
+  if(decodeState(code.trim())){
+    setMode(S.mode); syncControls(); buildPhaseList(); refresh();
+    toast('Setup restored');
+  } else toast('That code was not recognised');
+}
+function shareLink(){
+  var base = location.href.split('#')[0];
+  copyText(base+'#'+encodeState(), 'Link copied — it restores this exact motion');
+}
+
+/* ============================== SCENARIOS ==============================
+   Each one is a graph a student will actually be shown, set up so the
+   point of it is visible the moment it loads.
+   ====================================================================== */
+var PRESETS = [
+  { id:'cruise', tag:'GCSE', name:'Constant velocity',
+    text:'The simplest case: a straight sloping s–t graph, a flat v–t graph, and nothing at all on the a–t graph.',
+    apply:function(){ S.u0 = 8; S.phases = [{t:8, a:0}]; } },
+
+  { id:'accel', tag:'GCSE', name:'Accelerating from rest',
+    text:'A curved s–t graph and a straight sloping v–t graph. These are the two most confused shapes in the whole topic.',
+    apply:function(){ S.u0 = 0; S.phases = [{t:8, a:1.5}]; S.show.grad = 1; } },
+
+  { id:'journey', tag:'GCSE', name:'Speed up, cruise, stop',
+    text:'The classic three-stage v–t graph. The area under it splits neatly into a triangle, a rectangle and a triangle.',
+    apply:function(){ S.u0 = 0; S.phases = [{t:4, a:2},{t:5, a:0},{t:3, a:-8/3}]; S.show.area = 1; } },
+
+  { id:'stopdist', tag:'GCSE', name:'Thinking and braking distance',
+    text:'Constant speed for the reaction time, then hard braking. The two areas are the thinking distance and the braking distance.',
+    apply:function(){ S.u0 = 20; S.phases = [{t:0.7, a:0},{t:2.9, a:-20/2.9}]; S.show.area = 1; } },
+
+  { id:'thrown', tag:'GCSE / A-Level', name:'Thrown straight up',
+    text:'One constant acceleration of −9.81 m s⁻² the whole way. At the top the ball is still, but it is not unaccelerated.',
+    apply:function(){ S.u0 = 19.62; S.phases = [{t:4, a:-9.81}]; S.s0 = 0; S.show.grad = 1; } },
+
+  { id:'drop', tag:'GCSE / A-Level', name:'Dropped from a height',
+    text:'Starts from rest and falls. Displacement is measured downwards as negative, which is worth getting used to.',
+    apply:function(){ S.u0 = 0; S.s0 = 45; S.phases = [{t:3.03, a:-9.81}]; } },
+
+  { id:'thereback', tag:'A-Level', name:'There and back',
+    text:'The object turns round, so distance and displacement part company. Try the distance/speed switch in Display.',
+    apply:function(){ S.u0 = 12; S.phases = [{t:6, a:-4}]; S.show.area = 1; } },
+
+  { id:'lift', tag:'A-Level', name:'A lift between floors',
+    text:'Accelerate, cruise, decelerate — then sit still. Notice the a–t graph: three steps and then nothing.',
+    apply:function(){ S.u0 = 0; S.phases = [{t:2, a:1.2},{t:5, a:0},{t:2, a:-1.2},{t:2, a:0}]; } },
+
+  { id:'bounce', tag:'A-Level', name:'A bouncing ball',
+    text:'Free fall, a sudden reversal at the floor, then free fall again. Each bounce is its own stage of constant acceleration.',
+    apply:function(){
+      S.s0 = 5; S.u0 = 0;
+      var v = Math.sqrt(2*9.81*5), e = 0.75, ph = [];
+      ph.push({t: v/9.81, a:-9.81});
+      for(var k=0;k<3;k++){
+        var vb = v*Math.pow(e,k+1);
+        ph.push({t: 0.04, a: (vb + v*Math.pow(e,k))/0.04});
+        ph.push({t: 2*vb/9.81, a:-9.81});
+      }
+      S.phases = ph;
+      S.show.ga = 0;
+    } },
+
+  { id:'drag', tag:'A-Level', name:'Falling with air resistance',
+    text:'Chopped into many short stages so the acceleration falls away and the velocity levels off at a terminal value.',
+    apply:function(){
+      S.u0 = 0; S.s0 = 0;
+      var vT = 30, dt = 0.4, ph = [], v = 0;
+      for(var k=0;k<30;k++){
+        var a = -9.81*(1 - (v/vT)*(v/vT));
+        ph.push({t:dt, a:a});
+        v += a*dt;
+      }
+      S.phases = ph;
+      S.show.points = 0;
+      S.speed = 2;
+    } },
+
+  { id:'sprint', tag:'A-Level', name:'A 100 m sprinter',
+    text:'A hard acceleration out of the blocks, then a long stretch at nearly constant speed. The area comes to about 100 m.',
+    apply:function(){ S.u0 = 0; S.phases = [{t:2.2, a:4.6},{t:8.56, a:0.06}]; S.show.area = 1; } },
+
+  { id:'twostage', tag:'A-Level', name:'A rocket, then free fall',
+    text:'Two very different accelerations one after the other, from the pad back to the ground. suvat has to be applied to each stage separately.',
+    apply:function(){ S.u0 = 0; S.phases = [{t:5, a:12},{t:14.36, a:-9.81}]; S.speed = 2; } }
+];
+function preset(id){
+  var p = null;
+  for(var i=0;i<PRESETS.length;i++) if(PRESETS[i].id===id) p = PRESETS[i];
+  if(!p) return;
+  var theme = ROOT.getAttribute('data-theme');
+  var keepMode = S.mode, keepDec = S.dec;
+  S = defaults();
+  S.dec = keepDec;
+  S.phases = [];
+  p.apply();
+  if(!S.phases.length) S.phases = [{t:5, a:0}];
+  S.t = 0; S.playing = false; S.sel = null;
+  markDirty();
+  ROOT.setAttribute('data-theme', theme);
+  S.mode = (keepMode==='practice')? 'explore' : keepMode;
+  setMode(S.mode);
+  syncControls(); buildPhaseList(); syncPlay();
+  V.freeze = false;
+  layout(); refresh();
+  say(p.name+' loaded.');
+}
+function buildPresets(){
+  var h = '';
+  for(var i=0;i<PRESETS.length;i++){
+    h += '<button data-p="'+PRESETS[i].id+'"><b>'+esc(PRESETS[i].name)+'</b><span>'+esc(PRESETS[i].text)
+       + '</span><span class="pill tag">'+PRESETS[i].tag+'</span></button>';
+  }
+  $('#presetList').innerHTML = h;
+  $$('#presetList button').forEach(function(b){
+    b.addEventListener('click', function(){
+      preset(b.getAttribute('data-p'));
+      $('#modalPresets').removeAttribute('open');
+    });
+  });
+}
+
+/* ================================ HELP ================================== */
+function buildHelp(){
+  $('#helpBody').innerHTML =
+   '<h4>What this is</h4>'
+  +'<p>Three graphs of the same motion, drawn at the same time, with the object itself moving along a track above them. '
+  +'Change anything and all four update together — which is the only reliable way to see that a displacement–time graph and a '
+  +'velocity–time graph of the same journey look nothing like each other.</p>'
+
+  +'<h4>Down for gradients, up for areas</h4>'
+  +'<p>The three graphs are one ladder.</p>'
+  +'<ul>'
+  +'<li>The <b>gradient</b> of the displacement–time graph is the velocity.</li>'
+  +'<li>The <b>gradient</b> of the velocity–time graph is the acceleration.</li>'
+  +'<li>The <b>area</b> under the velocity–time graph is the change in displacement.</li>'
+  +'<li>The <b>area</b> under the acceleration–time graph is the change in velocity.</li>'
+  +'</ul>'
+  +'<p>That last one is rarely taught and often worth an easy mark. Turn on the area and gradient tools and watch all four statements hold at once.</p>'
+
+  +'<h4>Signs</h4>'
+  +'<p>One direction has to be chosen as positive. After that, a negative velocity means travelling the other way and a negative area '
+  +'means a displacement the other way. <b>Deceleration</b> is not the same as negative acceleration: an object with negative velocity '
+  +'and negative acceleration is speeding up. The bar at the bottom says which is happening at every moment.</p>'
+
+  +'<h4>Distance or displacement?</h4>'
+  +'<p>Switch to <b>distance and speed</b> in the Display tab and watch what changes. A journey that doubles back has a distance that keeps '
+  +'climbing and a displacement that comes back down; a complete round trip has an average velocity of exactly zero however fast it was.</p>'
+
+  +'<h4>Ticker tape without the ticker tape</h4>'
+  +'<p>The dots on the track are printed at equal time intervals, so their spacing <em>is</em> the speed. Set the flash interval to match '
+  +'a real tape timer and the picture on screen is the picture on the bench.</p>'
+
+  +'<h4>The equations of motion</h4>'
+  +'<p>Fill in any three of <span class="eq">s u v a t</span> and the rest follow. The trick is to notice the letter your question never '
+  +'mentions: that letter is missing from exactly one equation, and that is the one to use. The equations only hold while the acceleration '
+  +'is constant, so a journey with several stages needs them applied one stage at a time.</p>'
+
+  +'<h4>For teachers</h4>'
+  +'<p>Press <kbd>H</kbd> to hide the numbers: the shapes stay and the values vanish, so the class has something to work out. '
+  +'<b>Practice</b> generates a fresh motion for every question, draws it, and marks the answer — including telling a student when they have '
+  +'the right size and the wrong sign. <b>Copy setup code</b> turns any motion into a short string for a worksheet, and the share link '
+  +'restores it exactly.</p>'
+
+  +'<h4>Keyboard</h4>'
+  +'<ul>'
+  +'<li><kbd>Space</kbd> play or pause, <kbd>R</kbd> back to the start, <kbd>←</kbd> <kbd>→</kbd> step the play head (hold <kbd>Shift</kbd> for fine steps)</li>'
+  +'<li><kbd>S</kbd> <kbd>V</kbd> <kbd>A</kbd> show or hide each graph; <kbd>K</kbd> the track, <kbd>M</kbd> the multiflash dots</li>'
+  +'<li><kbd>E</kbd> the area, <kbd>G</kbd> the gradient, <kbd>H</kbd> hide the numbers, <kbd>T</kbd> light or dark</li>'
+  +'<li><kbd>1</kbd>–<kbd>4</kbd> switch mode</li>'
+  +'</ul>'
+  +'<p>Drag anywhere across the graphs to move the play head, or drag a <b>corner point</b> on the velocity–time graph to reshape the motion.</p>';
+}
+
+/* =============================== REFRESH ================================ */
+var rafId = 0, pendingFull = false;
+function refresh(full){
+  if(full!==false) pendingFull = true;
+  if(rafId) return;
+  rafId = requestAnimationFrame(function(){
+    rafId = 0;
+    updateReadouts();
+    updateVerdict();
+    updateBuildTexts();
+    render();
+    if(pendingFull){
+      if(!$('#p-analyse').hidden) updateAnalyse();
+      pendingFull = false;
+    }
+  });
+}
+
+/* ================================ INIT ================================== */
+function init(){
+  refreshColours();
+  buildPresets();
+  buildHelp();
+  buildPitfalls();
+  highlightEqs([]);
+  wire();
+  suvatClear();
+
+  var restored = false;
+  try{
+    var h = (location.hash||'').replace(/^#/,'');
+    if(h.indexOf('MOT1')===0) restored = decodeState(h);
+  }catch(e){}
+  if(!restored) preset('journey');
+  else { setMode(S.mode); syncControls(); buildPhaseList(); }
+
+  syncPlay();
+  if(window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ resize(); refresh(); });
+    ro.observe($('#stagewrap'));
+  }
+  window.addEventListener('resize', function(){ resize(); refresh(); });
+  resize();
+  buildPhaseList();
+  refresh();
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+/* a small surface for automated checking */
+window.MOT = {
+  state:function(){ return S; },
+  segs:segs, total:total, at:at, pathLen:pathLen,
+  set:function(o){ for(var k in o) S[k] = o[k]; markDirty(); refresh(); },
+  motion:function(m){ S.u0=m.u0; S.s0=m.s0||0; S.phases=m.phases; markDirty(); refresh(); },
+  preset:preset, mode:setMode, refresh:refresh,
+  encode:encodeState, decode:decodeState,
+  suvat:{ read:readSuvat, solve:suvatSolve, solveFor:solveFor, eqs:EQS },
+  question:function(){ return QU; }, newQuestion:newQuestion,
+  view:function(){ return {V:V, PANES:PANES, TRACK:TRACK}; },
+  play:togglePlay
+};
+
+})();
+</script>
+</body>
+</html>
