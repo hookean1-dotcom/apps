@@ -1,0 +1,2913 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="description" content="Third Law Lab - an interactive Newton's third law simulator for GCSE and A-Level Physics. Identify action-reaction pairs, pull a scene apart into separate free-body diagrams, test any two forces against the five conditions for a third law pair, watch an accelerating lift break the pair that never was one, and see equal forces produce wildly unequal accelerations.">
+<title>Third Law Lab &mdash; Newton&rsquo;s Third Law Pairs</title>
+<style>
+/* ---- standalone page only: delete these two rules when pasting #n3lab as a fragment ---- */
+html,body{height:100%;margin:0;background:#eef2ed}
+body{overflow:hidden}
+/* -------------------------------------------------------------------------------------- */
+
+#n3lab{
+  --bg:#edf2ee;
+  --bg2:#e3eae5;
+  --stage:#f7faf8;
+  --stage2:#eaf1ec;
+  --panel:#ffffff;
+  --panel2:#f3f8f4;
+  --panel3:#e7efe9;
+  --ink:#111a14;
+  --ink2:#35473c;
+  --muted:#65786d;
+  --line:#d5e1d9;
+  --line2:#bccdc3;
+  --accent:#15803d;
+  --accent-ink:#ffffff;
+  --accent-soft:#d9f0e0;
+  --grav:#dc2626;          /* gravitational */
+  --normal:#2563eb;        /* normal contact */
+  --friction:#b45309;      /* friction */
+  --tension:#7c3aed;       /* tension */
+  --thrust:#0891b2;        /* thrust, push, drive */
+  --drag:#64748b;          /* drag */
+  --magnet:#db2777;        /* magnetic */
+  --upthrust:#0d9488;      /* upthrust */
+  --ok:#15803d;
+  --warn:#b45309;
+  --bad:#be123c;
+  --grid:#c6d6cc;
+  --grid2:#dfe9e3;
+  --shadow:0 1px 2px rgba(17,26,20,.07), 0 8px 22px rgba(17,26,20,.10);
+  --shadow-sm:0 1px 2px rgba(17,26,20,.11);
+  --radius:12px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+  color-scheme:light;
+  width:100%; height:100%; min-height:580px;
+  display:flex; flex-direction:column;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:14px; line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  position:relative; overflow:hidden; contain:layout style;
+}
+#n3lab[data-theme="dark"]{
+  --bg:#0b110d;
+  --bg2:#111a14;
+  --stage:#0e150f;
+  --stage2:#141d17;
+  --panel:#131b16;
+  --panel2:#1a241d;
+  --panel3:#243026;
+  --ink:#e9f2ec;
+  --ink2:#c5d5cb;
+  --muted:#8a9d92;
+  --line:#25322a;
+  --line2:#354538;
+  --accent:#4ade80;
+  --accent-ink:#06210f;
+  --accent-soft:#173d25;
+  --grav:#f87171;
+  --normal:#60a5fa;
+  --friction:#fbbf24;
+  --tension:#a78bfa;
+  --thrust:#22d3ee;
+  --drag:#94a3b8;
+  --magnet:#f472b6;
+  --upthrust:#2dd4bf;
+  --ok:#4ade80;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --grid:#22302a;
+  --grid2:#18211c;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.55);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+#n3lab *,#n3lab *::before,#n3lab *::after{box-sizing:border-box}
+#n3lab button,#n3lab input,#n3lab select,#n3lab textarea{font:inherit;color:inherit;margin:0}
+#n3lab :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+#n3lab [hidden]{display:none !important}
+#n3lab .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+#n3lab .topbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 13px;background:var(--panel);border-bottom:1px solid var(--line);
+  flex:0 0 auto;z-index:5;box-shadow:var(--shadow-sm)
+}
+#n3lab .brand{display:flex;align-items:center;gap:10px;min-width:0}
+#n3lab .mark{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;
+  background:linear-gradient(140deg,var(--accent),#065f46);
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow-sm)
+}
+#n3lab .brand h1{font-size:16px;margin:0;letter-spacing:-.02em;font-weight:700;white-space:nowrap}
+#n3lab .brand .sub{font-size:11.5px;color:var(--muted);margin-top:-2px;white-space:nowrap}
+
+#n3lab .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+#n3lab .seg button{
+  border:0;background:transparent;padding:6px 11px;border-radius:7px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.14s
+}
+#n3lab .seg button:hover{color:var(--ink)}
+#n3lab .seg button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:var(--shadow-sm)}
+#n3lab[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--panel3)}
+
+#n3lab .spacer{flex:1 1 auto}
+#n3lab .iconbtn b{white-space:nowrap;letter-spacing:-.02em}
+#n3lab .iconbtn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink2);
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;cursor:pointer;transition:.14s;flex:0 0 auto
+}
+#n3lab .iconbtn:hover{background:var(--panel3);color:var(--ink)}
+#n3lab .iconbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#n3lab .btn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;transition:.14s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap
+}
+#n3lab .btn:hover{background:var(--panel3)}
+#n3lab .btn:active{transform:translateY(1px)}
+#n3lab .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#n3lab .btn.primary:hover{filter:brightness(1.08)}
+#n3lab .btn.ghost{background:transparent}
+#n3lab .btn.sm{padding:4px 9px;font-size:11.5px;border-radius:7px}
+#n3lab .btn.danger{color:var(--bad)}
+#n3lab .btn:disabled{opacity:.45;cursor:not-allowed}
+
+#n3lab .main{display:flex;flex:1 1 auto;min-height:0;min-width:0}
+#n3lab .stagewrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;background:var(--stage);overflow:hidden}
+#n3lab canvas.scene{display:block;width:100%;height:100%;touch-action:none}
+
+#n3lab .tools{
+  position:absolute;left:11px;top:11px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:5px;
+  box-shadow:var(--shadow-sm);max-width:calc(100% - 22px);opacity:.96
+}
+#n3lab .tools .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+
+#n3lab .hud{position:absolute;right:11px;top:11px;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none;max-width:44%}
+#n3lab .chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
+  box-shadow:var(--shadow-sm);font-variant-numeric:tabular-nums;opacity:.96
+}
+#n3lab .chip b{font-family:var(--mono);font-size:12.5px}
+#n3lab .chip.res{border-color:var(--normal);background:var(--accent-soft);color:var(--normal)}
+
+#n3lab .verdict{
+  position:static;width:min(760px,100%);
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:9px 12px 10px;box-shadow:var(--shadow);opacity:.97
+}
+#n3lab .verdict .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#n3lab .verdict .status{font-weight:700;font-size:13px;letter-spacing:-.01em}
+#n3lab .verdict .num{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+#n3lab .verdict .row2{display:block;margin-top:5px;font-family:var(--mono);font-size:11.5px;line-height:1.55;color:var(--muted)}
+#n3lab .verdict .row2 b{color:var(--ink)}
+
+#n3lab .panel{
+  flex:0 0 400px;max-width:400px;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0
+}
+#n3lab .tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+#n3lab .tabs::-webkit-scrollbar{display:none}
+#n3lab .tabs button{
+  flex:1 1 auto;border:0;background:transparent;padding:10px 6px 9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:.14s;white-space:nowrap
+}
+#n3lab .tabs button:hover{color:var(--ink)}
+#n3lab .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--panel)}
+#n3lab .tabbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:13px}
+#n3lab .tabbody::-webkit-scrollbar{width:10px}
+#n3lab .tabbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--panel)}
+#n3lab .tabpanel[hidden]{display:none}
+
+#n3lab .group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;background:var(--panel);overflow:hidden}
+#n3lab .group>h3{
+  margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+#n3lab .group .body{padding:11px 12px}
+#n3lab .group.tight .body{padding:8px}
+
+#n3lab .field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#n3lab .field:last-child{margin-bottom:0}
+#n3lab .field label{flex:0 0 104px;font-size:12.5px;color:var(--ink2);font-weight:600}
+#n3lab .field .val{flex:0 0 80px;text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+#n3lab .field input[type=range]{flex:1 1 auto;min-width:0}
+#n3lab .field.col{flex-direction:column;align-items:stretch;gap:6px}
+#n3lab .field.col label{flex:none}
+
+#n3lab input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+#n3lab input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#n3lab input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);
+  border:2px solid var(--accent);margin-top:-7px;box-shadow:var(--shadow-sm);transition:.12s
+}
+#n3lab input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+#n3lab input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#n3lab input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--shadow-sm)}
+
+#n3lab input[type=number],#n3lab input[type=text],#n3lab select{
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+  font-size:12.5px;min-width:0;width:100%;font-family:var(--mono)
+}
+#n3lab select{font-family:var(--sans);cursor:pointer}
+#n3lab input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+#n3lab .check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:3px 0}
+#n3lab .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+
+#n3lab .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+#n3lab .hint.warn{color:var(--warn)}
+#n3lab .hint.bad{color:var(--bad)}
+#n3lab .hint.ok{color:var(--ok)}
+#n3lab .hint em{font-style:normal;color:var(--accent);font-weight:600}
+
+#n3lab .itemlist{display:flex;flex-direction:column;gap:7px}
+#n3lab .item{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px;transition:.14s}
+#n3lab .item.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+#n3lab .item .head{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+#n3lab .item .dot{width:13px;height:13px;border-radius:4px;flex:0 0 auto;border:1px solid rgba(0,0,0,.18)}
+#n3lab .item .name{font-size:12.5px;font-weight:700;flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#n3lab .item .grid{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:5px 7px;align-items:center}
+#n3lab .item .grid span{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap}
+#n3lab .item .acts{display:flex;gap:4px;margin-top:7px;flex-wrap:wrap}
+#n3lab .qbtn{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:2px 7px;font-size:11px;cursor:pointer;font-weight:700;color:var(--muted)}
+#n3lab .qbtn:hover{color:var(--ink)}
+#n3lab .qbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#n3lab table.led{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+#n3lab table.led th{text-align:right;font-size:11px;color:var(--muted);padding:5px 6px;border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap}
+#n3lab table.led th:first-child,#n3lab table.led td:first-child{text-align:left}
+#n3lab table.led td{padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);text-align:right;white-space:nowrap}
+#n3lab table.led td.nm{font-family:var(--sans);font-weight:600;max-width:104px;overflow:hidden;text-overflow:ellipsis}
+#n3lab table.led tr.tot td{font-weight:700;border-top:2px solid var(--line2);border-bottom:0}
+
+#n3lab .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+#n3lab .kv:last-child{border-bottom:0}
+#n3lab .kv .k{color:var(--muted);font-weight:600}
+#n3lab .kv .v{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+#n3lab .banner{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:13px;
+  background:var(--panel2);border:1px solid var(--line);margin-bottom:12px
+}
+#n3lab .banner .ic{font-size:17px;line-height:1.1;flex:0 0 auto}
+#n3lab .banner.ok{background:color-mix(in srgb,var(--ok) 14%,var(--panel));border-color:var(--ok);color:var(--ok)}
+#n3lab .banner.warn{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+
+#n3lab .working{
+  font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--panel2);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;
+  overflow-x:auto;color:var(--ink);min-height:60px
+}
+#n3lab .working .step{display:block;padding:1px 0}
+#n3lab .working .lbl{color:var(--muted)}
+#n3lab .working .hi{background:var(--accent-soft);border-radius:3px;padding:0 2px}
+#n3lab .working em{font-style:normal;color:var(--accent);font-weight:700}
+
+#n3lab .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel3);color:var(--muted)}
+#n3lab .pill.ok{background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+#n3lab .pill.bad{background:color-mix(in srgb,var(--bad) 18%,transparent);color:var(--bad)}
+#n3lab .pill.res{background:var(--accent-soft);color:var(--normal)}
+
+#n3lab canvas.graph{width:100%;height:250px;display:block;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+#n3lab .graphtabs{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+#n3lab .graphtabs button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 9px;
+  font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted)
+}
+#n3lab .graphtabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#n3lab .modal{position:absolute;inset:0;background:rgba(8,12,18,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+#n3lab .modal[open]{display:flex}
+#n3lab .modal .sheet{
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);
+  max-width:min(760px,100%);width:100%;max-height:100%;display:flex;flex-direction:column;overflow:hidden
+}
+#n3lab .modal .dhead{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto}
+#n3lab .modal .dhead h2{margin:0;font-size:16px}
+#n3lab .modal .dbody{padding:15px;overflow-y:auto;flex:1 1 auto}
+#n3lab .modal h4{margin:16px 0 6px;font-size:13px;color:var(--accent)}
+#n3lab .modal h4:first-child{margin-top:0}
+#n3lab .modal p,#n3lab .modal li{font-size:13px;color:var(--ink2);line-height:1.6}
+#n3lab .modal ul{margin:6px 0;padding-left:20px}
+#n3lab kbd{font-family:var(--mono);font-size:11px;background:var(--panel3);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink)}
+#n3lab .eq{font-family:var(--mono);background:var(--panel2);padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px}
+#n3lab .presetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:9px}
+#n3lab .presetgrid button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 11px;cursor:pointer;
+  text-align:left;display:flex;flex-direction:column;gap:3px;transition:.14s
+}
+#n3lab .presetgrid button:hover{background:var(--panel3);border-color:var(--accent)}
+#n3lab .presetgrid b{font-size:13px}
+#n3lab .presetgrid span{font-size:11.5px;color:var(--muted);line-height:1.45}
+#n3lab .presetgrid .tag{align-self:flex-start;margin-top:3px}
+
+#n3lab .toast{
+  position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--panel);padding:9px 15px;border-radius:10px;font-size:13px;font-weight:600;
+  transition:.22s;z-index:25;box-shadow:var(--shadow);max-width:80%;text-align:center
+}
+#n3lab .toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  #n3lab .main{flex-direction:column}
+  #n3lab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:46%}
+  #n3lab .stagewrap{flex:1 1 auto;min-height:220px}
+  #n3lab .brand .sub{display:none}
+  #n3lab .verdict{bottom:8px;padding:7px 10px}
+}
+@media (max-width:820px){
+  #n3lab .seg{order:5;width:100%}
+  #n3lab .seg button{flex:1 1 0;padding:7px 3px;font-size:11.5px}
+}
+@media (max-width:1180px){
+  /* the stage is only ~600 px wide in a typical embed column; the four chips
+     do not fit there, and every value they carry is on the graphs anyway */
+  #n3lab .readouts{display:none}
+}
+@media (max-width:700px){
+  #n3lab .verdict .row2{display:none}
+  #n3lab .verdict{padding:6px 10px 7px}
+  #n3lab .transport .tread{font-size:11px;padding:3px 6px}
+  #n3lab .transport{padding:5px 8px;gap:6px}
+  #n3lab .transport .playbtn{width:32px;height:32px}
+  #n3lab .bottomstack{left:8px;right:8px;bottom:8px;gap:6px}
+}
+@media (max-width:600px){
+  #n3lab .topbar{gap:8px;padding:7px 10px}
+  #n3lab .brand .txt{display:none}
+  #n3lab .hud{display:none}
+  #n3lab .iconbtn{width:28px;height:28px}
+  #n3lab .tools{gap:4px;padding:4px;left:8px;top:8px}
+}
+
+
+/* ------------------------- third-law specifics -------------------------- */
+#n3lab .fkey{
+  position:absolute;left:11px;bottom:11px;display:flex;gap:5px;flex-wrap:wrap;max-width:calc(100% - 22px);
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:6px 8px;
+  box-shadow:var(--shadow-sm);opacity:.97;z-index:2
+}
+#n3lab .fkey b{font-size:10px;color:var(--muted);align-self:center;margin-right:2px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+#n3lab .fkey span{
+  font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:4px;
+  padding:2px 7px;border-radius:6px;background:var(--panel2);border:1px solid var(--line)
+}
+#n3lab .fkey i{width:14px;height:3px;border-radius:2px;display:inline-block}
+
+#n3lab .pairbar{
+  position:absolute;right:11px;top:11px;width:min(330px,44%);
+  background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 11px;
+  box-shadow:var(--shadow);opacity:.98;z-index:3
+}
+#n3lab .pairbar h4{margin:0 0 5px;font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+#n3lab .pairbar .fl{display:flex;align-items:flex-start;gap:7px;font-size:12px;line-height:1.4;padding:3px 0}
+#n3lab .pairbar .fl i{width:10px;height:10px;border-radius:3px;flex:0 0 auto;margin-top:3px}
+#n3lab .pairbar .swap{
+  display:flex;align-items:center;gap:6px;margin:4px 0;color:var(--accent);
+  font-size:10.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase
+}
+#n3lab .pairbar .swap::before,#n3lab .pairbar .swap::after{content:"";flex:1;height:1px;background:var(--line)}
+
+#n3lab .tests{display:flex;flex-direction:column;gap:5px}
+#n3lab .test{
+  display:flex;align-items:flex-start;gap:8px;padding:7px 9px;border-radius:9px;
+  border:1px solid var(--line);background:var(--panel2);font-size:12.5px;line-height:1.45
+}
+#n3lab .test .mk{
+  width:19px;height:19px;border-radius:6px;flex:0 0 auto;display:grid;place-items:center;
+  font-size:12px;font-weight:900;color:#fff;margin-top:1px
+}
+#n3lab .test.yes{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+#n3lab .test.yes .mk{background:var(--ok)}
+#n3lab .test.no{border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+#n3lab .test.no .mk{background:var(--bad)}
+#n3lab .test .lb{display:block;font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);margin-bottom:1px;font-weight:800}
+
+#n3lab .picker{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#n3lab .picker select{width:100%}
+#n3lab .picker .lb{font-size:10.5px;font-weight:800;color:var(--muted);letter-spacing:.03em;text-transform:uppercase;margin-bottom:3px}
+
+#n3lab .verdictbig{
+  border-radius:11px;padding:11px 13px;margin-top:10px;font-size:13.5px;line-height:1.5;
+  border:1px solid var(--line);background:var(--panel2)
+}
+#n3lab .verdictbig.yes{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+#n3lab .verdictbig.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 10%,transparent)}
+#n3lab .verdictbig h4{margin:0 0 4px;font-size:14.5px;letter-spacing:-.01em}
+
+#n3lab .bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+#n3lab .barrow .bl{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px;gap:8px}
+#n3lab .barrow .bl b{font-family:var(--mono);font-variant-numeric:tabular-nums}
+#n3lab .bartrack{height:13px;border-radius:7px;background:var(--panel3);overflow:hidden;border:1px solid var(--line)}
+#n3lab .bartrack i{display:block;height:100%;border-radius:6px;transition:width .12s linear}
+
+#n3lab .fcard{
+  border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px 10px;
+  cursor:pointer;transition:.13s;display:flex;gap:8px;align-items:flex-start
+}
+#n3lab .fcard:hover{border-color:var(--accent);background:var(--panel3)}
+#n3lab .fcard.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+#n3lab .fcard.partner{border-color:var(--accent);border-style:dashed}
+#n3lab .fcard i{width:11px;height:11px;border-radius:3px;flex:0 0 auto;margin-top:3px}
+#n3lab .fcard .tx{flex:1 1 auto;min-width:0;font-size:12.5px;line-height:1.4}
+#n3lab .fcard .mg{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap}
+
+#n3lab .bodypill{
+  display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:20px;
+  border:1px solid var(--line);background:var(--panel2);font-size:11.5px;font-weight:700
+}
+#n3lab .bodypill i{width:9px;height:9px;border-radius:50%}
+#n3lab .qbox{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:11px 12px}
+#n3lab .qbox .qtxt{font-size:13.5px;line-height:1.5}
+#n3lab .qbox .qtxt b{color:var(--accent)}
+#n3lab .choices{display:flex;flex-direction:column;gap:6px;margin-top:9px}
+#n3lab .choices button{
+  text-align:left;border:1px solid var(--line);background:var(--panel);border-radius:9px;
+  padding:8px 10px;font-size:12.5px;cursor:pointer;transition:.13s;color:var(--ink)
+}
+#n3lab .choices button:hover{border-color:var(--accent);background:var(--panel3)}
+#n3lab .choices button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,transparent)}
+#n3lab .choices button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+#n3lab .score{display:flex;gap:8px;align-items:center;font-size:11.5px;color:var(--muted);font-weight:700}
+#n3lab .ansrow{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px;align-items:end}
+
+/* --- keep the top bar on a single row in a ~1000 px embed column --- */
+@media (max-width:1120px){
+  #n3lab .topbar{gap:8px;padding:7px 10px}
+  #n3lab .brand .sub{display:none}
+  #n3lab .brand h1{font-size:15px}
+  #n3lab .seg{padding:2px}
+  #n3lab .seg button{padding:6px 7px;font-size:11.5px}
+  #n3lab .iconbtn{width:31px;height:31px}
+  #n3lab .btn.sm{padding:5px 8px}
+  #n3lab .pairbar{width:min(300px,50%)}
+}
+@media (max-width:700px){
+  #n3lab .pairbar{position:static;width:auto;margin:0;box-shadow:none;border-radius:0;border:0;border-bottom:1px solid var(--line)}
+  #n3lab .verdict .row2{display:none}
+  #n3lab .fkey{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="n3lab" data-theme="light">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9h7"></path><path d="M6 6L3 9l3 3"></path>
+          <path d="M21 15h-7"></path><path d="M18 12l3 3-3 3"></path>
+        </svg>
+      </span>
+      <div>
+        <h1>Third Law Lab</h1>
+        <div class="sub">Action&ndash;reaction pairs &middot; GCSE &amp; A-Level Physics</div>
+      </div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Mode">
+      <button id="modeExplore" aria-pressed="true" title="Look at a situation and find the pairs (1)">Find the pairs</button>
+      <button id="modeTest" aria-pressed="false" title="Test any two forces against the five conditions (2)">Is it a pair?</button>
+      <button id="modeEffect" aria-pressed="false" title="Equal forces, very different accelerations (3)">Same force, different effect</button>
+      <button id="modePractice" aria-pressed="false" title="Questions that mark themselves (4)">Practice</button>
+    </div>
+
+    <span class="spacer"></span>
+
+    <button class="btn sm" id="btnPresets" title="Choose a situation">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>
+      Situations
+    </button>
+    <button class="iconbtn" id="btnShare" title="Copy a link that restores this exact view" aria-label="Copy share link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnPng" title="Save the diagram as a PNG image" aria-label="Save image">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnTheme" title="Light or dark (T)" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnHelp" title="Help and the physics" aria-label="Help">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"></path><path d="M12 17.6h.01"></path></svg>
+    </button>
+  </header>
+
+  <div class="main">
+    <div class="stagewrap" id="stagewrap">
+      <canvas class="scene" id="scene" tabindex="0" aria-label="The situation, with the forces drawn on it. Click a force to see its third law partner."></canvas>
+
+      <div class="tools" role="group" aria-label="What to show">
+        <button class="iconbtn" id="btnSplit" title="Pull the bodies apart into separate free-body diagrams (S)" aria-pressed="false" aria-label="Separate the free-body diagrams">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7L3 12l5 5"></path><path d="M16 7l5 5-5 5"></path><path d="M12 4v16"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnPartner" title="Highlight the partner of the selected force (P)" aria-pressed="true" aria-label="Highlight the partner">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 9h9"></path><path d="M10 6l3 3-3 3"></path><path d="M20 15h-9"></path><path d="M14 12l-3 3 3 3"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnLabels" title="Force labels (L)" aria-pressed="true" aria-label="Toggle labels">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h10"></path><path d="M4 17h13"></path></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="iconbtn" id="btnScale" title="Draw the arrows to scale (C)" aria-pressed="true" aria-label="Arrows to scale">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 17h18"></path><path d="M6 17V9"></path><path d="M12 17V5"></path><path d="M18 17v-4"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnNet" title="Show the resultant force on each body (N)" aria-pressed="false" aria-label="Show the resultant">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18L18 6"></path><path d="M12 6h6v6"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnValues" title="Hide the numbers (H)" aria-pressed="false" aria-label="Hide values">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="2.6"></circle><path d="M3 3l18 18"></path></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="iconbtn" id="btnZoomOut" title="Zoom out (&minus;)" aria-label="Zoom out">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M8 11h6"></path><path d="M16.5 16.5L21 21"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnZoomIn" title="Zoom in (+), or scroll on the diagram" aria-label="Zoom in">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M8 11h6"></path><path d="M11 8v6"></path><path d="M16.5 16.5L21 21"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnZoomFit" title="Fit it back to the window (0)" aria-pressed="false" aria-label="Fit to the window">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5"></path><path d="M20 9V4h-5"></path><path d="M4 15v5h5"></path><path d="M20 15v5h-5"></path></svg>
+        </button>
+      </div>
+
+      <div class="pairbar" id="pairbar" hidden>
+        <h4 id="pairTitle">The pair</h4>
+        <div class="fl" id="flA"></div>
+        <div class="swap">and its partner</div>
+        <div class="fl" id="flB"></div>
+      </div>
+
+      <div class="fkey" id="fkey"></div>
+
+      <div class="verdict" role="status">
+        <div class="row1">
+          <span class="status" id="vStatus">Choose a situation</span>
+          <span class="num" id="vNum">&nbsp;</span>
+        </div>
+        <div class="row2" id="vRow2"></div>
+      </div>
+
+      <p class="sr" id="live" aria-live="polite"></p>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <aside class="panel">
+      <div class="tabs" role="tablist" aria-label="Panels">
+        <button role="tab" id="tab-scene"    aria-selected="true"  aria-controls="p-scene">Situation</button>
+        <button role="tab" id="tab-forces"   aria-selected="false" aria-controls="p-forces">Forces</button>
+        <button role="tab" id="tab-test"     aria-selected="false" aria-controls="p-test">Is it a pair?</button>
+        <button role="tab" id="tab-effect"   aria-selected="false" aria-controls="p-effect">Effect</button>
+        <button role="tab" id="tab-practice" aria-selected="false" aria-controls="p-practice">Practice</button>
+        <button role="tab" id="tab-display"  aria-selected="false" aria-controls="p-display">Display</button>
+      </div>
+
+      <div class="tabbody">
+
+        <!-- ================= SITUATION ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-scene" aria-labelledby="tab-scene">
+          <div class="banner" id="scBanner"><span class="ic">&#8599;</span><span id="scText"></span></div>
+
+          <div class="group">
+            <h3>Pull it apart</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inSplit">Separate</label>
+                <input type="range" id="inSplit" min="0" max="1" step="0.01" value="0">
+                <span class="val" id="vSplit">together</span>
+              </div>
+              <p class="hint" id="splitHint">Slide it across and every body moves into a box of its own, carrying only the forces that act <em>on it</em>. A third law pair always ends up <b>split between two boxes</b>. Two forces that balance always stay in the <b>same box</b>. That one picture settles almost every question on this topic.</p>
+            </div>
+          </div>
+
+          <div class="group" id="grpLift" hidden>
+            <h3>Accelerate the lift</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inLiftA">Acceleration</label>
+                <input type="range" id="inLiftA" min="-6" max="6" step="0.1" value="0">
+                <span class="val" id="vLiftA">0.0 m s&#8315;&#178;</span>
+              </div>
+              <p class="hint">Upwards is positive. Watch the two bars below: the genuine pair stays equal whatever you do, while the two forces on the book only happen to match when the lift is not accelerating.</p>
+              <div class="bars" id="liftBars"></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>The bodies</h3>
+            <div class="body" id="bodyBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= FORCES ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-forces" aria-labelledby="tab-forces" hidden>
+          <div class="group tight">
+            <h3>Every force here <span class="pill" id="fCount">0</span></h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Each one names the body doing the pushing and the body being pushed. Click any of them and its partner is outlined too &mdash; on the diagram and in this list.</p>
+              <div class="itemlist" id="forceList" style="margin-top:9px"></div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Forces on one body</h3>
+            <div class="body">
+              <div class="field col">
+                <label for="selBody">Show only the forces acting on</label>
+                <select id="selBody"></select>
+              </div>
+              <div id="oneBodyOut" style="margin-top:10px"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= IS IT A PAIR ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-test" aria-labelledby="tab-test" hidden>
+          <div class="group">
+            <h3>Test any two forces</h3>
+            <div class="body">
+              <div class="picker">
+                <div><div class="lb">First force</div><select id="selF1"></select></div>
+                <div><div class="lb">Second force</div><select id="selF2"></select></div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm" id="btnTryImpostor" title="Load the two forces students most often mistake for a pair">Try the classic mistake</button>
+                <button class="btn sm" id="btnTryReal">Try a genuine pair</button>
+              </div>
+              <div class="verdictbig" id="testVerdict"></div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>The five conditions</h3>
+            <div class="body">
+              <div class="tests" id="testList"></div>
+              <p class="hint">Only the fourth one really decides it. Two forces on the <em>same</em> body can be equal and opposite for all sorts of reasons; a third law pair is equal and opposite because it is <b>one interaction described from both ends</b>.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= EFFECT ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-effect" aria-labelledby="tab-effect" hidden>
+          <div class="group">
+            <h3>Same force, different effect</h3>
+            <div class="body">
+              <div class="field col">
+                <label for="selPairE">Choose an interaction</label>
+                <select id="selPairE"></select>
+              </div>
+              <div id="effectOut" style="margin-top:11px"></div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Try your own numbers</h3>
+            <div class="body">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+                <div><div class="lb" style="font-size:10.5px;color:var(--muted);font-weight:700">force / N</div><input type="number" id="eF" step="any" value="6000"></div>
+                <div><div class="lb" style="font-size:10.5px;color:var(--muted);font-weight:700">mass A / kg</div><input type="number" id="eMa" step="any" value="2000"></div>
+                <div><div class="lb" style="font-size:10.5px;color:var(--muted);font-weight:700">mass B / kg</div><input type="number" id="eMb" step="any" value="900"></div>
+              </div>
+              <div id="effectCalc" style="margin-top:11px"></div>
+              <p class="hint">The force is the same on both, because it is one interaction. The <em>accelerations</em> differ, because a = F&#8202;/&#8202;m. Nothing here says a heavier object pushes harder &mdash; it simply gets pushed about less.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= PRACTICE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-practice" aria-labelledby="tab-practice" hidden>
+          <div class="group">
+            <h3>Question <span class="pill" id="qTag">1</span></h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+                <select id="selQType" style="flex:1 1 150px">
+                  <option value="mix">A mixture of everything</option>
+                  <option value="partner">Name the partner</option>
+                  <option value="ispair">Pair or not a pair?</option>
+                  <option value="size">How big is the other force?</option>
+                  <option value="accel">Same force, different acceleration</option>
+                </select>
+                <select id="selQLevel" style="flex:0 0 auto">
+                  <option value="gcse">GCSE</option>
+                  <option value="alevel" selected>A-Level</option>
+                </select>
+              </div>
+              <div class="qbox">
+                <div class="qtxt" id="qText">Press <b>New question</b> to begin.</div>
+                <div id="qAnswerArea"></div>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;align-items:center">
+                <button class="btn sm primary" id="btnNewQ">New question</button>
+                <button class="btn sm" id="btnShowAns" disabled>Show the answer</button>
+                <span class="spacer"></span>
+                <span class="score" id="qScore">0 of 0</span>
+              </div>
+              <div id="qFeedback" style="margin-top:10px"></div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>How marks are lost</h3>
+            <div class="body" id="pitfallBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= DISPLAY ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-display" aria-labelledby="tab-display" hidden>
+          <div class="group">
+            <h3>On the diagram</h3>
+            <div class="body">
+              <div class="checkgrid">
+                <label class="check"><input type="checkbox" id="cLabels" checked> <span>Force labels</span></label>
+                <label class="check"><input type="checkbox" id="cValues" checked> <span>Numbers</span></label>
+                <label class="check"><input type="checkbox" id="cScale" checked> <span>Arrows to scale</span></label>
+                <label class="check"><input type="checkbox" id="cPartner" checked> <span>Highlight the partner</span></label>
+                <label class="check"><input type="checkbox" id="cNet"> <span>Resultant on each body</span></label>
+                <label class="check"><input type="checkbox" id="cGrid" checked> <span>Background grid</span></label>
+                <label class="check"><input type="checkbox" id="cBoxes" checked> <span>Boxes when separated</span></label>
+                <label class="check"><input type="checkbox" id="cAgent"> <span>Always name both bodies on the arrow</span></label>
+              </div>
+              <p class="hint">Whatever you choose here, the <b>selected</b> force and its partner are always labelled in the only form that can be marked right: <em>the force on ___ from ___</em>. Switch this on to put every arrow in that form.</p>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Zoom</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inZoom">Magnify</label>
+                <input type="range" id="inZoom" min="0.5" max="6" step="0.05" value="1">
+                <span class="val" id="vZoom">100%</span>
+              </div>
+              <p class="hint">Scroll or pinch on the diagram to zoom where the pointer is, drag it to move around, and double-click to jump in. Everything grows together &mdash; arrows, boxes and labels &mdash; so it stays readable from the back of a classroom. Press <kbd>0</kbd> or the fit button to come back.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Numbers</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inDec">Decimal places</label>
+                <input type="range" id="inDec" min="0" max="3" step="1" value="1">
+                <span class="val" id="vDec">1</span>
+              </div>
+              <div class="field">
+                <label for="inG">g</label>
+                <input type="range" id="inG" min="1.6" max="12" step="0.01" value="9.81">
+                <span class="val" id="vG">9.81 N kg&#8315;&#185;</span>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Save and restore</h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn sm" id="btnCopyState">Copy setup code</button>
+                <button class="btn sm" id="btnPasteState">Paste setup code</button>
+                <button class="btn sm" id="btnPng2">Save PNG</button>
+                <button class="btn sm ghost danger" id="btnHardReset">Reset everything</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+  </div>
+
+  <div class="modal" id="modalHelp" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="sheet">
+      <div class="dhead"><h2>Third Law Lab</h2><button class="iconbtn" id="closeHelp" aria-label="Close">&times;</button></div>
+      <div class="dbody" id="helpBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalPresets" role="dialog" aria-modal="true" aria-label="Situations">
+    <div class="sheet">
+      <div class="dhead"><h2>Situations</h2><button class="iconbtn" id="closePresets" aria-label="Close">&times;</button></div>
+      <div class="dbody"><div class="presetgrid" id="presetList"></div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+"use strict";
+/* ==========================================================================
+   THIRD LAW LAB
+   Newton's third law pairs, for GCSE and A-Level.
+
+   The whole app rests on one decision: a force is never stored on its own.
+   Everything is stored as an INTERACTION between two bodies, and each
+   interaction is then read out as two forces - "A on B" and "B on A". The
+   third law is therefore true here by construction rather than by drawing,
+   and the app can never show a pair that is unequal, which is exactly the
+   thing a diagram drawn by hand so easily gets wrong.
+   ========================================================================== */
+
+var ROOT = document.getElementById('n3lab');
+function $(s){ return ROOT.querySelector(s); }
+function $$(s){ return Array.prototype.slice.call(ROOT.querySelectorAll(s)); }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+var PI = Math.PI;
+var RAD = function(d){ return d*PI/180; }, DEG = function(r){ return r*180/PI; };
+
+/* --------------------------- kinds of force ----------------------------- */
+var TYPES = {
+  grav:     { name:'gravitational', short:'gravity', verb:'pulls',    css:'--grav',
+              note:'A force at a distance between two masses. Both masses feel it.' },
+  normal:   { name:'normal contact', short:'contact', verb:'pushes',  css:'--normal',
+              note:'Two surfaces touching, each pushing the other away, at right angles to the surface.' },
+  friction: { name:'friction',      short:'friction', verb:'drags',   css:'--friction',
+              note:'Two surfaces touching, each gripping the other, along the surface.' },
+  tension:  { name:'tension',       short:'tension',  verb:'pulls',   css:'--tension',
+              note:'A rope, string or bar pulling inwards on whatever is attached to each end.' },
+  thrust:   { name:'contact push',  short:'push',     verb:'pushes',  css:'--thrust',
+              note:'One body driving another away by pushing on it.' },
+  drag:     { name:'drag',          short:'drag',     verb:'drags',   css:'--drag',
+              note:'A fluid resisting motion through it - and being pushed along in turn.' },
+  magnet:   { name:'magnetic',      short:'magnetic', verb:'attracts',css:'--magnet',
+              note:'A force at a distance between two magnets. Neither one is the stronger.' },
+  upthrust: { name:'upthrust',      short:'upthrust', verb:'pushes',  css:'--upthrust',
+              note:'A fluid pushing up on whatever is floating or swimming in it.' }
+};
+function typeColour(t){ return cssVar(TYPES[t]? TYPES[t].css : '--ink'); }
+
+/* ------------------------------- state --------------------------------- */
+function defaults(){
+  return {
+    mode:'explore',
+    sceneId:'book',
+    split:0,
+    liftA:0,
+    zoom:1, panX:0, panY:0,
+    g:9.81,
+    sel:null,          /* the selected force id */
+    f1:null, f2:null,  /* the two forces being tested */
+    show:{ labels:1, values:1, scale:1, partner:1, net:0, grid:1, boxes:1, agent:0 },
+    dec:1,
+    bodyFilter:'',
+    effectPair:null,
+    qType:'mix', qLevel:'alevel', qRight:0, qTotal:0
+  };
+}
+var S = defaults();
+
+/* ------------------------------ numbers -------------------------------- */
+function fmt(v,dp){
+  if(v===null||v===undefined||!isFinite(v)) return '–';
+  dp = (dp===undefined)? S.dec : dp;
+  var a = Math.abs(v);
+  if(a !== 0 && (a < 1e-3 || a >= 1e6)) return sci(v);
+  var s = a < 5e-13 ? 0 : v;
+  var out = s.toFixed(dp);
+  if(parseFloat(out)===0) out = (0).toFixed(dp);
+  return out;
+}
+/* proper scientific notation, because the Earth's acceleration needs it */
+function sci(v,sf){
+  if(v===0) return '0';
+  var e = Math.floor(Math.log(Math.abs(v))/Math.LN10);
+  var m = v/Math.pow(10,e);
+  return parseFloat(m.toFixed(sf===undefined?2:sf))+' × 10'+sup(e);
+}
+function sup(n){
+  var map={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  return String(n).split('').map(function(c){ return map[c]||c; }).join('');
+}
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+function val(v,dp){ return S.show.values ? fmt(v,dp) : '••'; }
+
+/* --------------------------- direction words ---------------------------- */
+function dirWord(deg){
+  var d = ((deg%360)+360)%360;
+  var names = ['to the right','up and to the right','upwards','up and to the left',
+               'to the left','down and to the left','downwards','down and to the right'];
+  return names[Math.round(d/45)%8];
+}
+function opposite(deg){ return ((deg+180)%360+360)%360; }
+
+/* ====================== BUILDING A SITUATION ===========================
+   make() returns the bodies and the interactions. Every magnitude is worked
+   out from the masses and g rather than typed in, so changing g or the
+   lift's acceleration keeps every scene exactly self-consistent.
+   ====================================================================== */
+var EARTH_M = 5.97e24;
+
+var SCENES = [
+{ id:'book', name:'A book resting on a table', tag:'GCSE',
+  blurb:'The situation every textbook opens with — and the one where the classic mistake lives. Two of these forces look like a pair and are not.',
+  make:function(g){
+    var mb=0.8, mt=15;
+    return {
+      world:{w:3.4,h:2.0,ground:0},
+      bodies:[
+        {id:'earth', label:'The Earth', m:EARTH_M, shape:'planet', x:0, y:-0.30, w:3.4, h:0.62, colour:'#4d7c0f'},
+        {id:'table', label:'Table', m:mt, shape:'table', x:0, y:0.31, w:1.5, h:0.62, colour:'#a16207'},
+        {id:'book',  label:'Book',  m:mb, shape:'rect',  x:0, y:0.665, w:0.52, h:0.09, colour:'#1d4ed8'}
+      ],
+      accel:{ earth:[0,0], table:[0,0], book:[0,0] },
+      pairs:[
+        {type:'grav',   from:'earth', to:'book',  mag:mb*g, dir:270, ptOn:[0,0.665], ptFrom:[0.55,-0.05]},
+        {type:'normal', from:'table', to:'book',  mag:mb*g, dir:90,  ptOn:[0,0.62]},
+        {type:'grav',   from:'earth', to:'table', mag:mt*g, dir:270, ptOn:[0,0.36],  ptFrom:[-0.55,-0.05]},
+        {type:'normal', from:'earth', to:'table', mag:(mt+mb)*g, dir:90, ptOn:[0,0.0]}
+      ],
+      impostor:[0,1],
+      impostorWhy:'Both of these act on the <b>book</b>. They are equal here only because the book is not accelerating — tilt the table, or put the book in a lift, and they stop matching.'
+    };
+  }},
+
+{ id:'lift', name:'A book in an accelerating lift', tag:'A-Level',
+  blurb:'The demonstration that settles the argument. Accelerate the lift and watch which pair stays equal and which one falls apart.',
+  lift:true,
+  make:function(g, a){
+    var mb=0.8, ml=400;
+    var N = mb*(g+a), T = (ml+mb)*(g+a);
+    return {
+      world:{w:3.4,h:2.2,ground:0},
+      bodies:[
+        {id:'earth', label:'The Earth', m:EARTH_M, shape:'offscene', nocheck:true},
+        {id:'lift',  label:'Lift car', m:ml, shape:'liftcar', x:0, y:0.75, w:1.3, h:1.5, colour:'#475569'},
+        {id:'book',  label:'Book', m:mb, shape:'rect', x:0, y:0.155, w:0.5, h:0.09, colour:'#1d4ed8'}
+      ],
+      accel:{ earth:[0,0], lift:[0,a], book:[0,a] },
+      pairs:[
+        {type:'grav',    from:'earth', to:'book', mag:mb*g, dir:270, ptOn:[0,0.155], ptFrom:[0.9,0.05]},
+        {type:'normal',  from:'lift',  to:'book', mag:N,    dir:90,  ptOn:[0,0.11]},
+        {type:'grav',    from:'earth', to:'lift', mag:ml*g, dir:270, ptOn:[0,0.75],  ptFrom:[-0.9,0.05]},
+        {type:'tension', from:'cable', to:'lift', mag:T,    dir:90,  ptOn:[0,1.5], noPartnerBody:true}
+      ],
+      impostor:[0,1],
+      impostorWhy:'Both act on the <b>book</b>. Away from a = 0 they are plainly different sizes, yet the genuine pair below them stays matched to the last decimal place.'
+    };
+  }},
+
+{ id:'ball', name:'A falling ball and the Earth', tag:'GCSE',
+  blurb:'The ball pulls the Earth upwards exactly as hard as the Earth pulls the ball down. Look at what that does to each of them.',
+  make:function(g){
+    var m=0.5;
+    return {
+      world:{w:3.4,h:2.2,ground:0},
+      bodies:[
+        {id:'earth', label:'The Earth', m:EARTH_M, shape:'planet', x:0, y:-0.55, w:3.4, h:0.9, colour:'#4d7c0f'},
+        {id:'ball',  label:'Ball', m:m, shape:'circle', x:0, y:1.35, w:0.30, h:0.30, colour:'#dc2626'}
+      ],
+      accel:{ ball:[0,-g], earth:[0, m*g/EARTH_M] },
+      pairs:[
+        {type:'grav', from:'earth', to:'ball', mag:m*g, dir:270, ptOn:[0,1.35], ptFrom:[0,-0.12]}
+      ]
+    };
+  }},
+
+{ id:'walk', name:'Walking', tag:'GCSE',
+  blurb:'You do not move yourself forward. The ground moves you forward, because you pushed it backwards first.',
+  make:function(g){
+    var m=65, a=1.2, F=m*a;
+    return {
+      world:{w:3.4,h:2.2,ground:0},
+      bodies:[
+        {id:'earth',  label:'The Earth', m:EARTH_M, shape:'planet', x:0, y:-0.35, w:3.4, h:0.7, colour:'#4d7c0f'},
+        {id:'person', label:'Walker', m:m, shape:'person', x:-0.3, y:0.85, w:0.55, h:1.7, colour:'#0f766e'}
+      ],
+      accel:{ person:[a,0], earth:[-F/EARTH_M, 0] },
+      pairs:[
+        {type:'grav',     from:'earth', to:'person', mag:m*g, dir:270, ptOn:[-0.3,0.95], ptFrom:[0.9,-0.06]},
+        {type:'normal',   from:'earth', to:'person', mag:m*g, dir:90,  ptOn:[-0.3,0.02]},
+        {type:'friction', from:'earth', to:'person', mag:F,   dir:0,   ptOn:[-0.15,0.02]}
+      ]
+    };
+  }},
+
+{ id:'rocket', name:'A rocket in empty space', tag:'GCSE',
+  blurb:'Nothing to push against — and it still works. The rocket pushes the exhaust gas backwards; the gas pushes the rocket forwards.',
+  make:function(){
+    var mr=5000, mg=250, F=60000;
+    return {
+      world:{w:3.4,h:2.0,ground:null,space:true},
+      bodies:[
+        {id:'rocket', label:'Rocket', m:mr, shape:'rocket', x:0.45, y:0.95, w:1.5, h:0.5, colour:'#e2e8f0'},
+        {id:'gas',    label:'Exhaust gas', m:mg, shape:'blob', x:-0.95, y:0.95, w:0.9, h:0.55, colour:'#f59e0b'}
+      ],
+      accel:{ rocket:[F/mr,0], gas:[-F/mg,0] },
+      pairs:[
+        {type:'thrust', from:'rocket', to:'gas', mag:F, dir:180, ptOn:[-0.35,0.95]}
+      ]
+    };
+  }},
+
+{ id:'swim', name:'A swimmer', tag:'GCSE',
+  blurb:'The swimmer pushes the water backwards, so the water pushes the swimmer forwards. Same idea as walking, in a fluid.',
+  make:function(g){
+    var m=70, a=0.5, F=m*a, mw=25;
+    return {
+      world:{w:3.4,h:2.0,ground:null,water:1.05},
+      bodies:[
+        {id:'water',   label:'The water', m:mw, shape:'blob', x:-0.95, y:0.72, w:1.0, h:0.6, colour:'#0ea5e9', nocheck:true},
+        {id:'swimmer', label:'Swimmer', m:m, shape:'person', x:0.35, y:0.85, w:0.55, h:1.6, colour:'#be123c'},
+        {id:'earth',   label:'The Earth', m:EARTH_M, shape:'offscene', nocheck:true}
+      ],
+      accel:{ swimmer:[a,0], water:[-F/mw,0] },
+      pairs:[
+        {type:'thrust',   from:'swimmer', to:'water',   mag:F,   dir:180, ptOn:[-0.25,0.80]},
+        {type:'grav',     from:'earth',   to:'swimmer', mag:m*g, dir:270, ptOn:[0.35,0.85], ptFrom:[1.3,0.06]},
+        {type:'upthrust', from:'water',   to:'swimmer', mag:m*g, dir:90,  ptOn:[0.35,0.60]}
+      ]
+    };
+  }},
+
+{ id:'crash', name:'A lorry runs into a car', tag:'GCSE',
+  blurb:'The lorry does not hit the car harder than the car hits the lorry. It never can. What differs is what the force does to each of them.',
+  make:function(g){
+    var ml=2000, mc=900, F=6000;
+    return {
+      world:{w:3.6,h:2.0,ground:0},
+      bodies:[
+        {id:'earth', label:'The Earth', m:EARTH_M, shape:'planet', x:0, y:-0.30, w:3.6, h:0.6, colour:'#4d7c0f', nocheck:true},
+        {id:'lorry', label:'Lorry', m:ml, shape:'vehicle', big:true,  x:-0.85, y:0.44, w:1.5, h:0.75, colour:'#b45309'},
+        {id:'car',   label:'Car',   m:mc, shape:'vehicle', big:false, x:0.72, y:0.34, w:1.1, h:0.5,  colour:'#0369a1'}
+      ],
+      accel:{ lorry:[-F/ml,0], car:[F/mc,0] },
+      pairs:[
+        {type:'thrust', from:'lorry', to:'car',   mag:F,    dir:0,   ptOn:[0.17,0.36]},
+        {type:'grav',   from:'earth', to:'lorry', mag:ml*g, dir:270, ptOn:[-0.85,0.44], ptFrom:[-1.4,-0.05]},
+        {type:'normal', from:'earth', to:'lorry', mag:ml*g, dir:90,  ptOn:[-0.85,0.02]},
+        {type:'grav',   from:'earth', to:'car',   mag:mc*g, dir:270, ptOn:[0.72,0.34],  ptFrom:[1.4,-0.05]},
+        {type:'normal', from:'earth', to:'car',   mag:mc*g, dir:90,  ptOn:[0.72,0.02]}
+      ]
+    };
+  }},
+
+{ id:'horse', name:'The horse and the cart', tag:'A-Level',
+  blurb:'If the cart pulls back on the horse just as hard as the horse pulls the cart, how does anything move? Separate the diagrams and the answer is obvious.',
+  make:function(g){
+    var mh=500, mc=300, a=0.8;
+    var fc=200;                       /* friction holding the cart back */
+    var T = mc*a + fc;                /* tension in the harness */
+    var Fh = mh*a + T;                /* the ground's grip on the horse */
+    return {
+      world:{w:3.8,h:2.0,ground:0},
+      bodies:[
+        {id:'earth', label:'The Earth', m:EARTH_M, shape:'planet', x:0, y:-0.30, w:3.8, h:0.6, colour:'#4d7c0f', nocheck:true},
+        {id:'cart',  label:'Cart',  m:mc, shape:'rect',  x:-0.95, y:0.44, w:1.05, h:0.6, colour:'#a16207'},
+        {id:'horse', label:'Horse', m:mh, shape:'horse', x:0.75, y:0.62, w:1.25, h:1.05, colour:'#7c2d12'}
+      ],
+      accel:{ horse:[a,0], cart:[a,0] },
+      pairs:[
+        {type:'tension',  from:'horse', to:'cart',  mag:T,    dir:0,   ptOn:[-0.42,0.55]},
+        {type:'friction', from:'earth', to:'horse', mag:Fh,   dir:0,   ptOn:[0.75,0.02]},
+        {type:'friction', from:'earth', to:'cart',  mag:fc,   dir:180, ptOn:[-0.95,0.02]},
+        {type:'grav',     from:'earth', to:'horse', mag:mh*g, dir:270, ptOn:[0.75,0.62], ptFrom:[1.5,-0.05]},
+        {type:'normal',   from:'earth', to:'horse', mag:mh*g, dir:90,  ptOn:[1.0,0.02]},
+        {type:'grav',     from:'earth', to:'cart',  mag:mc*g, dir:270, ptOn:[-0.95,0.44], ptFrom:[-1.5,-0.05]},
+        {type:'normal',   from:'earth', to:'cart',  mag:mc*g, dir:90,  ptOn:[-1.2,0.02]}
+      ]
+    };
+  }},
+
+{ id:'magnets', name:'A big magnet and a small one', tag:'A-Level',
+  blurb:'The big magnet does not attract the small one more strongly. It cannot. Watch which one does the moving.',
+  make:function(g){
+    var mB=0.5, mS=0.05, F=2.4;
+    return {
+      world:{w:3.4,h:1.8,ground:0.35},
+      bodies:[
+        {id:'earth', label:'The bench', m:EARTH_M, shape:'planet', x:0, y:0.05, w:3.4, h:0.6, colour:'#57534e', nocheck:true},
+        {id:'big',   label:'Big magnet',   m:mB, shape:'magnet', x:-0.85, y:0.52, w:0.62, h:0.26, colour:'#db2777'},
+        {id:'small', label:'Small magnet', m:mS, shape:'magnet', x:0.75, y:0.49, w:0.34, h:0.19, colour:'#f472b6'}
+      ],
+      accel:{ big:[F/mB,0], small:[-F/mS,0] },
+      pairs:[
+        {type:'magnet', from:'big',   to:'small', mag:F,    dir:180, ptOn:[0.75,0.49], ptFrom:[-0.85,0.52]},
+        {type:'grav',   from:'earth', to:'big',   mag:mB*g, dir:270, ptOn:[-0.85,0.52]},
+        {type:'normal', from:'earth', to:'big',   mag:mB*g, dir:90,  ptOn:[-0.85,0.39]},
+        {type:'grav',   from:'earth', to:'small', mag:mS*g, dir:270, ptOn:[0.75,0.49]},
+        {type:'normal', from:'earth', to:'small', mag:mS*g, dir:90,  ptOn:[0.75,0.395]}
+      ]
+    };
+  }},
+
+{ id:'skaters', name:'Two skaters push apart', tag:'A-Level',
+  blurb:'One of them does the pushing. Both of them get pushed — by the same size of force.',
+  make:function(g){
+    var mA=60, mB=45, F=120;
+    return {
+      world:{w:3.6,h:2.0,ground:0},
+      bodies:[
+        {id:'earth', label:'The ice', m:EARTH_M, shape:'planet', x:0, y:-0.28, w:3.6, h:0.56, colour:'#93c5fd', nocheck:true},
+        {id:'a', label:'Skater A', m:mA, shape:'person', x:-0.55, y:0.85, w:0.5, h:1.65, colour:'#7c3aed'},
+        {id:'b', label:'Skater B', m:mB, shape:'person', x:0.62, y:0.82, w:0.48, h:1.55, colour:'#0891b2'}
+      ],
+      accel:{ a:[-F/mA,0], b:[F/mB,0] },
+      pairs:[
+        {type:'thrust', from:'a',     to:'b', mag:F,    dir:0,   ptOn:[0.30,1.05]},
+        {type:'grav',   from:'earth', to:'a', mag:mA*g, dir:270, ptOn:[-0.55,0.95], ptFrom:[-1.5,-0.04]},
+        {type:'normal', from:'earth', to:'a', mag:mA*g, dir:90,  ptOn:[-0.55,0.02]},
+        {type:'grav',   from:'earth', to:'b', mag:mB*g, dir:270, ptOn:[0.62,0.92],  ptFrom:[1.5,-0.04]},
+        {type:'normal', from:'earth', to:'b', mag:mB*g, dir:90,  ptOn:[0.62,0.02]}
+      ]
+    };
+  }},
+
+{ id:'tug', name:'Tug of war', tag:'GCSE',
+  blurb:'Neither team can pull harder on the rope than the other. The winner is decided entirely by the ground.',
+  make:function(g){
+    var mA=300, mB=280, T=1200;
+    return {
+      world:{w:3.8,h:2.0,ground:0},
+      bodies:[
+        {id:'earth', label:'The Earth', m:EARTH_M, shape:'planet', x:0, y:-0.28, w:3.8, h:0.56, colour:'#4d7c0f', nocheck:true},
+        {id:'ta', label:'Team A', m:mA, shape:'person', x:-1.05, y:0.85, w:0.55, h:1.65, colour:'#b91c1c'},
+        {id:'tb', label:'Team B', m:mB, shape:'person', x:1.05, y:0.85, w:0.55, h:1.65, colour:'#1d4ed8'},
+        {id:'rope', label:'Rope', m:0.5, shape:'rope', x:0, y:1.02, w:1.9, h:0.05, colour:'#a16207', nocheck:true}
+      ],
+      accel:{ ta:[0,0], tb:[0,0] },
+      pairs:[
+        {type:'tension',  from:'tb',    to:'ta', mag:T,    dir:0,   ptOn:[-0.72,1.02], ptFrom:[0.72,1.02]},
+        {type:'friction', from:'earth', to:'ta', mag:T,    dir:180, ptOn:[-1.05,0.02]},
+        {type:'friction', from:'earth', to:'tb', mag:T,    dir:0,   ptOn:[1.05,0.02]},
+        {type:'grav',     from:'earth', to:'ta', mag:mA*g, dir:270, ptOn:[-1.05,0.95]},
+        {type:'normal',   from:'earth', to:'ta', mag:mA*g, dir:90,  ptOn:[-1.25,0.02]},
+        {type:'grav',     from:'earth', to:'tb', mag:mB*g, dir:270, ptOn:[1.05,0.95]},
+        {type:'normal',   from:'earth', to:'tb', mag:mB*g, dir:90,  ptOn:[1.25,0.02]}
+      ]
+    };
+  }},
+
+{ id:'gun', name:'Firing a rifle', tag:'A-Level',
+  blurb:'The rifle drives the bullet forwards and the bullet drives the rifle backwards, with the same force for the same length of time.',
+  make:function(){
+    var mr=4, mb=0.02, F=3000;
+    return {
+      world:{w:3.4,h:1.6,ground:null,space:false,plain:true},
+      bodies:[
+        {id:'rifle',  label:'Rifle',  m:mr, shape:'rect',   x:-0.55, y:0.75, w:1.35, h:0.16, colour:'#44403c'},
+        {id:'bullet', label:'Bullet', m:mb, shape:'bullet', x:0.42, y:0.75, w:0.16, h:0.09, colour:'#b45309'}
+      ],
+      accel:{ rifle:[-F/mr,0], bullet:[F/mb,0] },
+      pairs:[
+        {type:'thrust', from:'rifle', to:'bullet', mag:F, dir:0, ptOn:[0.34,0.75]}
+      ]
+    };
+  }}
+];
+
+/* ------------------------- turning a scene into forces ------------------ */
+var SC = null;      /* the built scene */
+function sceneDef(id){
+  for(var i=0;i<SCENES.length;i++) if(SCENES[i].id===id) return SCENES[i];
+  return SCENES[0];
+}
+function buildScene(){
+  var def = sceneDef(S.sceneId);
+  SC = def.make(S.g, S.liftA);
+  SC.def = def;
+  SC.byId = {};
+  for(var i=0;i<SC.bodies.length;i++) SC.byId[SC.bodies[i].id] = SC.bodies[i];
+  /* every interaction becomes two forces, and they can never disagree */
+  SC.forces = [];
+  for(var k=0;k<SC.pairs.length;k++){
+    var p = SC.pairs[k];
+    p.idx = k;
+    SC.forces.push({ id:'f'+k+'a', pair:k, type:p.type, agent:p.from, object:p.to,
+                     mag:p.mag, dir:p.dir, pt:p.ptOn, partner:'f'+k+'b' });
+    SC.forces.push({ id:'f'+k+'b', pair:k, type:p.type, agent:p.to, object:p.from,
+                     mag:p.mag, dir:opposite(p.dir), pt:(p.ptFrom||p.ptOn), partner:'f'+k+'a',
+                     offscene: !!p.noPartnerBody || (SC.byId[p.from] && SC.byId[p.from].shape==='offscene') });
+  }
+  SC.byFid = {};
+  for(var j=0;j<SC.forces.length;j++) SC.byFid[SC.forces[j].id] = SC.forces[j];
+  return SC;
+}
+function forceById(id){ return SC && SC.byFid[id] ? SC.byFid[id] : null; }
+function bodyById(id){ return SC && SC.byId[id] ? SC.byId[id] : null; }
+function bodyLabel(id){
+  var b = bodyById(id);
+  if(b) return b.label;
+  return id==='cable' ? 'The cable' : id;
+}
+/* forces acting ON a given body */
+function forcesOn(id){
+  var out = [];
+  for(var i=0;i<SC.forces.length;i++) if(SC.forces[i].object===id) out.push(SC.forces[i]);
+  return out;
+}
+function resultantOn(id){
+  var f = forcesOn(id), x=0, y=0;
+  for(var i=0;i<f.length;i++){ x += f[i].mag*Math.cos(RAD(f[i].dir)); y += f[i].mag*Math.sin(RAD(f[i].dir)); }
+  return {x:x, y:y, mag:Math.hypot(x,y), dir:DEG(Math.atan2(y,x))};
+}
+function accelOf(id){
+  var a = SC.accel && SC.accel[id];
+  return a? {x:a[0], y:a[1]} : {x:0,y:0};
+}
+
+/* --------------------------- describing a force ------------------------- */
+/* "the book", but "Skater A" - names that already read as proper nouns keep
+   their own form, everything else takes an article */
+function withArticle(id){
+  var lab = bodyLabel(id);
+  if(/^The\s/.test(lab)) return lab;
+  if(/\s[A-Z0-9]$/.test(lab)) return lab;
+  return 'the '+lab.charAt(0).toLowerCase()+lab.slice(1);
+}
+function forceSentence(f, withDir){
+  var verb = TYPES[f.type].verb;
+  var s = cap(withArticle(f.agent))+' '+verb+' '+withArticle(f.object);
+  if(withDir!==false) s += ' '+dirWord(f.dir);
+  return s;
+}
+function forceFormal(f){
+  return 'the '+TYPES[f.type].name+' force on '+withArticle(f.object)+' from '+withArticle(f.agent);
+}
+function forceShort(f){
+  return TYPES[f.type].short+': '+shortLab(f.agent)+' → '+shortLab(f.object);
+}
+function shortLab(id){ var b=bodyById(id); return b? b.label : (id==='cable'?'cable':id); }
+function lower(s){
+  if(/^The /.test(s)) return 'the '+s.slice(4);
+  return /^[A-Z][a-z]/.test(s) ? s.charAt(0).toLowerCase()+s.slice(1) : s;
+}
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+/* ===================== THE FIVE CONDITIONS FOR A PAIR ==================
+   Written out as separate checks so the app can say WHICH one fails, which
+   is the whole value of the exercise.
+   ====================================================================== */
+function testPair(f1, f2){
+  if(!f1 || !f2 || f1.id===f2.id) return null;
+  var sameType   = f1.type === f2.type;
+  var sameSize   = Math.abs(f1.mag - f2.mag) < 1e-9*Math.max(1, f1.mag);
+  /* two directions are opposite when they differ by 180 degrees, whichever
+     way round they are quoted - the modulo has to be taken before the
+     comparison, not after, or 270 against 90 comes out wrong */
+  var dd = (((f1.dir - f2.dir) % 360) + 360) % 360;
+  var oppDir     = Math.abs(dd - 180) < 1e-9;
+  var diffBodies = f1.object !== f2.object;
+  var swapped    = (f1.agent === f2.object) && (f1.object === f2.agent);
+  var sameLine   = swapped || (sameType && oppDir && diffBodies);
+  var isPair     = (f1.partner === f2.id);
+  return {
+    isPair:isPair,
+    tests:[
+      {ok:sameType,   label:'The same kind of force',
+       why: sameType ? 'Both are '+TYPES[f1.type].name+' forces.'
+                     : 'One is '+TYPES[f1.type].name+' and the other is '+TYPES[f2.type].name+'. A pair is one interaction, so it can only be one kind of force.'},
+      {ok:sameSize,   label:'The same size',
+       why: sameSize ? 'Both are '+fmt(f1.mag)+' N.'
+                     : fmt(f1.mag)+' N against '+fmt(f2.mag)+' N — not the same.'},
+      {ok:oppDir,     label:'Opposite in direction',
+       why: oppDir ? 'One acts '+dirWord(f1.dir)+', the other '+dirWord(f2.dir)+'.'
+                   : 'They act '+dirWord(f1.dir)+' and '+dirWord(f2.dir)+', which are not opposite.'},
+      {ok:diffBodies, label:'Acting on different bodies',
+       why: diffBodies ? 'One acts on '+withArticle(f1.object)+', the other on '+withArticle(f2.object)+'.'
+                       : 'Both act on <b>'+withArticle(f1.object)+'</b>. Two forces on the same body can never be a third law pair, however well they match.'},
+      {ok:swapped,    label:'Each body acting on the other',
+       why: swapped ? cap(withArticle(f1.agent))+' acts on '+withArticle(f1.object)+', and '+withArticle(f2.agent)+' acts on '+withArticle(f2.object)+' — the same interaction from both ends.'
+                    : 'These are not the two ends of one interaction: '+withArticle(f1.agent)+' on '+withArticle(f1.object)+', and '+withArticle(f2.agent)+' on '+withArticle(f2.object)+'.'}
+    ]
+  };
+}
+
+/* =============================== VIEW =================================== */
+var cv = $('#scene'), ctx = cv.getContext('2d');
+var V = { w:0, h:0, dpr:1, top:0, bot:0, scale:1, ox:0, oy:0, narrow:false,
+          tx:0, ty:0, vis:{x0:0,y0:0,x1:0,y1:0} };
+var C = {}, themeStamp = '';
+var BOX = {};        /* where each body sits when the diagrams are separated */
+
+function cssVar(n){ return getComputedStyle(ROOT).getPropertyValue(n).trim(); }
+function refreshColours(){
+  C = {
+    stage:cssVar('--stage'), stage2:cssVar('--stage2'), grid:cssVar('--grid'), grid2:cssVar('--grid2'),
+    ink:cssVar('--ink'), ink2:cssVar('--ink2'), muted:cssVar('--muted'), line:cssVar('--line'),
+    line2:cssVar('--line2'), accent:cssVar('--accent'), panel:cssVar('--panel'), panel2:cssVar('--panel2'),
+    panel3:cssVar('--panel3'), ok:cssVar('--ok'), bad:cssVar('--bad'), warn:cssVar('--warn')
+  };
+}
+function themeCheck(){
+  var t = ROOT.getAttribute('data-theme')||'light';
+  if(t!==themeStamp){ themeStamp=t; refreshColours(); }
+}
+function resize(){
+  var r = cv.parentElement.getBoundingClientRect();
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  V.w = r.width; V.h = r.height; V.dpr = dpr;
+  cv.width  = Math.max(1, Math.round(r.width*dpr));
+  cv.height = Math.max(1, Math.round(r.height*dpr));
+  layout();
+}
+/* ------------------------------- zoom ----------------------------------
+   Everything is laid out for a fitted view and then the whole picture is
+   scaled by one transform, so the arrows, the boxes and the labels all grow
+   together - a zoom that made the diagram bigger but left the text the same
+   size would not help anybody at the back of the room.
+   ---------------------------------------------------------------------- */
+var ZMIN = 0.5, ZMAX = 6;
+function applyView(){
+  var z = clamp(S.zoom, ZMIN, ZMAX);
+  var cx = V.w/2, cy = V.top + (V.h - V.top - V.bot)/2;
+  V.tx = cx - cx*z + S.panX;
+  V.ty = cy - cy*z + S.panY;
+  ctx.setTransform(V.dpr*z, 0, 0, V.dpr*z, V.dpr*V.tx, V.dpr*V.ty);
+  V.vis = { x0:(0 - V.tx)/z, y0:(0 - V.ty)/z, x1:(V.w - V.tx)/z, y1:(V.h - V.ty)/z };
+}
+/* a point on the canvas, in the coordinates the drawing code works in */
+function toVirtual(px,py){
+  var z = clamp(S.zoom, ZMIN, ZMAX);
+  return { x:(px - V.tx)/z, y:(py - V.ty)/z };
+}
+function zoomAbout(px, py, factor){
+  var z0 = clamp(S.zoom, ZMIN, ZMAX);
+  var z1 = clamp(z0*factor, ZMIN, ZMAX);
+  if(Math.abs(z1-z0) < 1e-9) return;
+  /* keep whatever is under the pointer where it is */
+  var v = toVirtual(px, py);
+  S.zoom = z1;
+  applyView();
+  var after = toVirtual(px, py);
+  S.panX += (after.x - v.x)*z1;
+  S.panY += (after.y - v.y)*z1;
+  clampPan();
+}
+function clampPan(){
+  var z = clamp(S.zoom, ZMIN, ZMAX);
+  var lim = Math.max(V.w, V.h)*z*0.6;
+  S.panX = clamp(S.panX, -lim, lim);
+  S.panY = clamp(S.panY, -lim, lim);
+}
+function resetView(){ S.zoom = 1; S.panX = 0; S.panY = 0; }
+/* The picture should fill the space, so the view is fitted to the bodies that
+   are actually there plus room for the arrows - a declared world box always
+   ends up mostly empty sky. */
+function sceneExtent(){
+  if(!SC) return {x0:-1.7,x1:1.7,y0:-0.2,y1:1.8,w:3.4,h:2.0};
+  var x0=1e9,x1=-1e9,y0=1e9,y1=-1e9, any=false;
+  for(var i=0;i<SC.bodies.length;i++){
+    var b = SC.bodies[i];
+    if(b.shape==='offscene') continue;
+    var hw=(b.w||0.3)/2, hh=(b.h||0.3)/2;
+    var by0 = b.y-hh, by1 = b.y+hh;
+    if(b.shape==='planet'){
+      /* the ground is scenery: it fills whatever width there is and must not
+         be allowed to zoom the interesting part of the picture out */
+      y0 = Math.min(y0, by1-0.22); y1 = Math.max(y1, by1);
+      any = true; continue;
+    }
+    x0=Math.min(x0,b.x-hw); x1=Math.max(x1,b.x+hw);
+    y0=Math.min(y0,by0);    y1=Math.max(y1,by1);
+    any=true;
+  }
+  if(!any) return {x0:-1.7,x1:1.7,y0:-0.2,y1:1.8,w:3.4,h:2.0};
+  var mx=0.38, my=0.42;                  /* room for the arrows and their labels */
+  x0-=mx; x1+=mx; y0-=my*0.55; y1+=my;
+  return {x0:x0,x1:x1,y0:y0,y1:y1,w:Math.max(0.5,x1-x0),h:Math.max(0.5,y1-y0)};
+}
+function layout(){
+  var tl = ROOT.querySelector('.tools');
+  var vb = ROOT.querySelector('.verdict');
+  var fk = ROOT.querySelector('.fkey');
+  V.top = (tl? tl.getBoundingClientRect().height : 44) + 18;
+  V.bot = (vb? vb.getBoundingClientRect().height : 60) + (fk? fk.getBoundingClientRect().height : 34) + 34;
+  V.narrow = V.w < 560;
+  var e = sceneExtent();
+  var fullW = V.w - 30, fullH = Math.max(140, V.h - V.top - V.bot);
+  /* the room the arrows need is already allowed for in metres by
+     sceneExtent(), so only a small pixel border is wanted here - reserving
+     both was what made every diagram come out half the size it could be */
+  var resX = 26, resY = 22;
+  var availW = Math.max(80, fullW - resX*2), availH = Math.max(80, fullH - resY*2);
+  V.scale = Math.min(availW/e.w, availH/e.h);
+  V.ox = V.w/2 - ((e.x0+e.x1)/2)*V.scale;
+  V.oy = V.top + fullH/2 + ((e.y0+e.y1)/2)*V.scale;
+  layoutBoxes(fullW, fullH);
+}
+/* where each body goes once the diagrams are pulled apart */
+function layoutBoxes(availW, availH){
+  BOX = {};
+  if(!SC) return;
+  var list = SC.bodies.filter(function(b){ return b.shape!=='offscene'; });
+  var n = list.length;
+  var cols = (n<=2)? n : (n<=4? 2 : 3);
+  var rows = Math.ceil(n/cols);
+  var padX = 18, padY = 12;
+  var bw = (V.w - padX*(cols+1))/cols;
+  var bh = (availH - padY*(rows-1))/rows;
+  for(var i=0;i<n;i++){
+    var r = Math.floor(i/cols), c = i%cols;
+    var wide = (r===rows-1) ? (n - r*cols) : cols;      /* centre a short last row */
+    var bwr = (V.w - padX*(wide+1))/wide;
+    BOX[list[i].id] = {
+      x: padX + c*(bwr+padX) + bwr/2,
+      y: V.top + r*(bh+padY) + bh/2,
+      w: bwr, h: bh
+    };
+  }
+}
+/* in a box of its own a body may need shrinking to fit */
+function bodyScale(b){
+  var bx = BOX[b.id];
+  if(!bx || S.split<=0) return 1;
+  var w = (b.w||0.4)*V.scale, h = (b.h||0.3)*V.scale;
+  var target = Math.min(1, (bx.w-40)/Math.max(1,w), (bx.h-70)/Math.max(1,h));
+  return 1 + (target-1)*S.split;
+}
+/* scene metres -> screen, blended towards the separated layout */
+function bodyCentre(b){
+  var sx = V.ox + b.x*V.scale, sy = V.oy - b.y*V.scale;
+  var bx = BOX[b.id];
+  if(!bx || S.split<=0) return {x:sx, y:sy, s:1};
+  var t = S.split;
+  return { x: sx + (bx.x - sx)*t, y: sy + (bx.y - sy)*t, s:1 };
+}
+/* a point given in scene metres, carried along with the body it belongs to */
+function pointOn(bodyId, pt){
+  var b = bodyById(bodyId);
+  var sx = V.ox + pt[0]*V.scale, sy = V.oy - pt[1]*V.scale;
+  if(!b || b.shape==='offscene'){
+    /* a force on something not drawn: park it at the edge it points towards */
+    var bxo = BOX[bodyId];
+    if(!bxo) return {x:sx, y:sy};
+  }
+  if(!b) return {x:sx, y:sy};
+  var c0 = {x:V.ox + b.x*V.scale, y:V.oy - b.y*V.scale};
+  var c1 = bodyCentre(b);
+  return {x: sx + (c1.x-c0.x), y: sy + (c1.y-c0.y)};
+}
+
+/* ------------------------- drawing primitives --------------------------- */
+function ln(x1,y1,x2,y2,col,wd,dash){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=wd||1;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,col,wd,head){
+  var a = Math.atan2(y2-y1,x2-x1), hs = head||11;
+  var len = Math.hypot(x2-x1,y2-y1);
+  if(len < 2) return;
+  if(hs > len*0.55) hs = len*0.55;
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=wd||3; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*hs*0.82, y2-Math.sin(a)*hs*0.82); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.40)*hs, y2-Math.sin(a-0.40)*hs);
+  ctx.lineTo(x2-Math.cos(a)*hs*0.62, y2-Math.sin(a)*hs*0.62);
+  ctx.lineTo(x2-Math.cos(a+0.40)*hs, y2-Math.sin(a+0.40)*hs);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function rr(x,y,wd,h,r){
+  r = Math.min(r, Math.abs(wd)/2, Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+wd-r,y); ctx.quadraticCurveTo(x+wd,y,x+wd,y+r);
+  ctx.lineTo(x+wd,y+h-r); ctx.quadraticCurveTo(x+wd,y+h,x+wd-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+/* Every label goes through here, so this is the one place to stop them piling
+   up: a new label is nudged vertically until it finds a clear space. */
+var LABELS = [];
+function resetLabels(){ LABELS.length = 0; }
+function boxFree(r){
+  for(var i=0;i<LABELS.length;i++){
+    var b = LABELS[i];
+    if(!(r.x+r.w+3 < b.x || b.x+b.w+3 < r.x || r.y+r.h+3 < b.y || b.y+b.h+3 < r.y)) return false;
+  }
+  return true;
+}
+function tag(text,x,y,col,o){
+  o = o||{};
+  var fs = (o.size||11)*(V.narrow?0.87:1);
+  ctx.save();
+  ctx.font = (o.bold?'700 ':'600 ')+fs+'px '+(o.mono?'ui-monospace,Menlo,Consolas,monospace':'system-ui,-apple-system,Segoe UI,sans-serif');
+  var m = ctx.measureText(text), pad=5, wd=m.width+pad*2, h=fs+8;
+  var bx = x - (o.anchor==='l'?0:(o.anchor==='r'? wd : wd/2)), by = y-h/2;
+  var vb = V.vis;
+  bx = clamp(bx, vb.x0+4, Math.max(vb.x0+4, vb.x1 - wd - 4));
+  by = clamp(by, vb.y0+3, Math.max(vb.y0+3, vb.y1 - h - 3));
+  if(o.avoid!==false){
+    var step = h+4, tries = [0,-step,step,-2*step,2*step,-3*step,3*step,-4*step,4*step,-5*step,5*step];
+    for(var t=0;t<tries.length;t++){
+      var cand = {x:bx, y:clamp(by+tries[t], vb.y0+3, Math.max(vb.y0+3, vb.y1-h-3)), w:wd, h:h};
+      if(boxFree(cand)){ by = cand.y; break; }
+    }
+    LABELS.push({x:bx,y:by,w:wd,h:h});
+  }
+  if(o.box!==false){
+    ctx.fillStyle = o.bg || C.panel; ctx.globalAlpha = o.alpha===undefined?0.93:o.alpha;
+    rr(bx,by,wd,h,6); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle = o.border || C.line; ctx.lineWidth=1; rr(bx,by,wd,h,6); ctx.stroke();
+  }
+  ctx.fillStyle = col||C.ink; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(text, bx+pad, by+h/2+0.5);
+  ctx.restore();
+  return {x:bx,y:by,w:wd,h:h};
+}
+function shade(hex,amt){
+  var c = String(hex||'#888888').replace('#','');
+  if(c.length===3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  var n = parseInt(c,16);
+  if(!isFinite(n)) return hex;
+  var r=clamp((n>>16)+amt,0,255), g=clamp(((n>>8)&255)+amt,0,255), b=clamp((n&255)+amt,0,255);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+/* ============================ DRAWING THE BODIES ========================
+   Plain shapes drawn from primitives - the point of the picture is which
+   body a force acts on, so anything decorative would only get in the way.
+   ====================================================================== */
+function drawBg(){
+  var vb = V.vis;
+  var g = ctx.createLinearGradient(0,vb.y0,0,vb.y1);
+  g.addColorStop(0, C.stage); g.addColorStop(1, C.stage2);
+  ctx.fillStyle = g; ctx.fillRect(vb.x0-2, vb.y0-2, (vb.x1-vb.x0)+4, (vb.y1-vb.y0)+4);
+  if(S.show.grid && S.split < 0.5){
+    var st = Math.max(26, V.scale*0.25);
+    ctx.save(); ctx.strokeStyle=C.grid2; ctx.lineWidth=1/Math.max(0.5,S.zoom); ctx.beginPath();
+    var x0 = V.ox - Math.ceil((V.ox-vb.x0)/st)*st;
+    var y0 = V.oy - Math.ceil((V.oy-vb.y0)/st)*st;
+    for(var x=x0; x<vb.x1; x+=st){ ctx.moveTo(x, vb.y0); ctx.lineTo(x, vb.y1); }
+    for(var y=y0; y<vb.y1; y+=st){ ctx.moveTo(vb.x0, y); ctx.lineTo(vb.x1, y); }
+    ctx.stroke(); ctx.restore();
+  }
+}
+function drawBoxes(){
+  if(S.split<=0.02 || !S.show.boxes) return;
+  ctx.save();
+  ctx.globalAlpha = clamp((S.split-0.05)/0.35, 0, 1)*0.95;
+  for(var i=0;i<SC.bodies.length;i++){
+    var b = SC.bodies[i];
+    if(b.shape==='offscene') continue;
+    var bx = BOX[b.id]; if(!bx) continue;
+    ctx.fillStyle = C.panel; ctx.globalAlpha *= 1;
+    var al = ctx.globalAlpha;
+    ctx.globalAlpha = al*0.55;
+    rr(bx.x-bx.w/2+8, bx.y-bx.h/2+6, bx.w-16, bx.h-12, 12); ctx.fill();
+    ctx.globalAlpha = al;
+    ctx.strokeStyle = C.line2; ctx.lineWidth = 1.4; ctx.setLineDash([6,5]);
+    rr(bx.x-bx.w/2+8, bx.y-bx.h/2+6, bx.w-16, bx.h-12, 12); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = C.muted;
+    ctx.font = '800 10px system-ui,-apple-system,sans-serif';
+    ctx.textAlign='left'; ctx.textBaseline='top';
+    ctx.fillText('FORCES ON '+b.label.toUpperCase(), bx.x-bx.w/2+18, bx.y-bx.h/2+14);
+  }
+  ctx.restore();
+}
+function drawWorld(){
+  if(!SC || S.split > 0.6) return;
+  var a = 1 - clamp(S.split/0.6, 0, 1);
+  ctx.save(); ctx.globalAlpha = a;
+  if(SC.world.space){
+    ctx.fillStyle = C.ink; ctx.globalAlpha = a*0.35;
+    for(var i=0;i<40;i++){
+      var sx = (i*127.3)%V.w, sy = V.top + ((i*211.7)%Math.max(40,(V.h-V.top-V.bot)));
+      ctx.beginPath(); ctx.arc(sx, sy, (i%4===0)?1.6:1, 0, 7); ctx.fill();
+    }
+  }
+  if(SC.world.water!==undefined && SC.world.water!==null){
+    var wy = V.oy - SC.world.water*V.scale;
+    ctx.globalAlpha = a*0.35; ctx.fillStyle = '#0ea5e9';
+    ctx.fillRect(0, wy, V.w, Math.max(0, V.h - V.bot + 20 - wy));
+    ctx.globalAlpha = a*0.9;
+    ln(0, wy, V.w, wy, '#0284c7', 2);
+  }
+  ctx.restore();
+}
+function bodyRect(b){
+  var c = bodyCentre(b), k = bodyScale(b);
+  return { cx:c.x, cy:c.y, w:(b.w||0.4)*V.scale*k, h:(b.h||0.3)*V.scale*k };
+}
+function drawBody(b){
+  if(b.shape==='offscene') return;
+  var R = bodyRect(b), col = b.colour || '#64748b';
+  var sel = highlightBodies().indexOf(b.id) >= 0;
+  ctx.save();
+  switch(b.shape){
+    case 'planet': drawGround(b, R); break;
+    case 'table':  drawTable(b, R); break;
+    case 'person': drawPerson(b, R); break;
+    case 'vehicle':drawVehicle(b, R); break;
+    case 'rocket': drawRocket(b, R); break;
+    case 'blob':   drawBlob(b, R); break;
+    case 'circle': drawCircle(b, R); break;
+    case 'magnet': drawMagnet(b, R); break;
+    case 'horse':  drawHorse(b, R); break;
+    case 'liftcar':drawLift(b, R); break;
+    case 'rope':   drawRope(b, R); break;
+    case 'bullet': drawBullet(b, R); break;
+    default:       drawRectBody(b, R);
+  }
+  ctx.restore();
+  if(sel){
+    ctx.save();
+    ctx.strokeStyle = C.accent; ctx.lineWidth = 2.4; ctx.globalAlpha=.85; ctx.setLineDash([5,4]);
+    rr(R.cx-R.w/2-7, R.cy-R.h/2-7, R.w+14, R.h+14, 10); ctx.stroke();
+    ctx.restore();
+  }
+  if(S.show.labels && b.shape!=='planet'){
+    /* beside the body, so it never lands on an arrow rising from it */
+    var txt = b.label + (S.show.values && b.m < 1e20 ? '  '+fmt(b.m, b.m<1?2:0)+' kg' : '');
+    var bx = BOX[b.id];
+    if(S.split > 0.3 && bx){
+      tag(txt, bx.x, bx.y + bx.h/2 - 26, col, {size:10.5, bold:true});
+    } else {
+      var leftRoom = R.cx - R.w/2 > V.vis.x0 + 150;
+      tag(txt, leftRoom ? R.cx-R.w/2-10 : R.cx+R.w/2+10, R.cy, col,
+          {size:10.5, bold:true, anchor: leftRoom ? 'r' : 'l'});
+    }
+  }
+}
+function grad(R, col){
+  var g = ctx.createLinearGradient(R.cx-R.w/2, R.cy-R.h/2, R.cx+R.w/2, R.cy+R.h/2);
+  g.addColorStop(0, shade(col, 34)); g.addColorStop(1, shade(col, -26));
+  return g;
+}
+function drawRectBody(b,R){
+  ctx.globalAlpha=.16; ctx.fillStyle='#000';
+  rr(R.cx-R.w/2+3, R.cy-R.h/2+4, R.w, R.h, 5); ctx.fill(); ctx.globalAlpha=1;
+  ctx.fillStyle = grad(R, b.colour);
+  rr(R.cx-R.w/2, R.cy-R.h/2, R.w, R.h, 5); ctx.fill();
+  ctx.strokeStyle = shade(b.colour,-60); ctx.lineWidth=1.3; ctx.stroke();
+}
+function drawBullet(b,R){
+  ctx.fillStyle = grad(R, b.colour);
+  ctx.beginPath();
+  ctx.moveTo(R.cx-R.w/2, R.cy-R.h/2);
+  ctx.lineTo(R.cx+R.w/2-R.h*0.5, R.cy-R.h/2);
+  ctx.quadraticCurveTo(R.cx+R.w/2+R.h*0.3, R.cy, R.cx+R.w/2-R.h*0.5, R.cy+R.h/2);
+  ctx.lineTo(R.cx-R.w/2, R.cy+R.h/2);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = shade(b.colour,-60); ctx.lineWidth=1.2; ctx.stroke();
+}
+function drawCircle(b,R){
+  var r = Math.min(R.w,R.h)/2;
+  ctx.globalAlpha=.16; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.arc(R.cx+2, R.cy+3, r, 0, 7); ctx.fill(); ctx.globalAlpha=1;
+  var g = ctx.createRadialGradient(R.cx-r*0.3, R.cy-r*0.35, r*0.1, R.cx, R.cy, r);
+  g.addColorStop(0, shade(b.colour,60)); g.addColorStop(1, shade(b.colour,-30));
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(R.cx,R.cy,r,0,7); ctx.fill();
+  ctx.strokeStyle = shade(b.colour,-60); ctx.lineWidth=1.3; ctx.stroke();
+}
+function drawGround(b,R){
+  /* scenery: spans the whole canvas and runs off the bottom of it */
+  var top = R.cy - R.h/2;
+  var bx = BOX[b.id];
+  var apart = S.split > 0.02 && bx;
+  /* once it is in a box of its own the ground has to stay inside that box */
+  var x0 = apart ? bx.x-bx.w/2+14 : V.vis.x0-10;
+  var wd = apart ? bx.w-28 : (V.vis.x1-V.vis.x0)+20;
+  var bot = apart ? Math.min(top+R.h, bx.y+bx.h/2-10) : V.vis.y1+10;
+  var g = ctx.createLinearGradient(0, top, 0, bot);
+  g.addColorStop(0, shade(b.colour,28)); g.addColorStop(1, shade(b.colour,-30));
+  ctx.fillStyle = g;
+  ctx.fillRect(x0, top, wd, bot-top);
+  ctx.strokeStyle = shade(b.colour,-45); ctx.lineWidth=2.2;
+  ctx.beginPath(); ctx.moveTo(x0, top); ctx.lineTo(x0+wd, top); ctx.stroke();
+  ctx.save(); ctx.globalAlpha=.35; ctx.strokeStyle=shade(b.colour,-55); ctx.lineWidth=1;
+  ctx.beginPath();
+  for(var x=x0+13; x<x0+wd; x+=13){ ctx.moveTo(x, top); ctx.lineTo(x-9, top+9); }
+  ctx.stroke(); ctx.restore();
+  if(S.show.labels) tag(b.label, x0+52, top+17, '#ffffff',
+      {size:10, bold:true, bg:shade(b.colour,-45), border:shade(b.colour,-60)});
+}
+function drawTable(b,R){
+  var topH = R.h*0.16, legW = R.w*0.08;
+  ctx.fillStyle = grad(R, b.colour);
+  rr(R.cx-R.w/2, R.cy-R.h/2, R.w, topH, 3); ctx.fill();
+  ctx.strokeStyle = shade(b.colour,-55); ctx.lineWidth=1.2; ctx.stroke();
+  ctx.fillStyle = shade(b.colour,-12);
+  [-1,1].forEach(function(s){
+    ctx.beginPath();
+    ctx.rect(R.cx + s*(R.w/2-legW*1.6), R.cy-R.h/2+topH, legW, R.h-topH);
+    ctx.fill(); ctx.stroke();
+  });
+}
+function drawPerson(b,R){
+  var col = b.colour, x=R.cx, top=R.cy-R.h/2, H=R.h;
+  var hr = H*0.11;
+  ctx.strokeStyle = shade(col,-15); ctx.lineWidth = Math.max(3, H*0.055); ctx.lineCap='round';
+  ctx.fillStyle = shade(col,10);
+  ctx.beginPath(); ctx.arc(x, top+hr, hr, 0, 7); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(x, top+hr*2); ctx.lineTo(x, top+H*0.55);          /* body */
+  ctx.moveTo(x, top+H*0.55); ctx.lineTo(x-H*0.14, top+H);      /* legs */
+  ctx.moveTo(x, top+H*0.55); ctx.lineTo(x+H*0.16, top+H);
+  ctx.moveTo(x, top+H*0.30); ctx.lineTo(x-H*0.19, top+H*0.46); /* arms */
+  ctx.moveTo(x, top+H*0.30); ctx.lineTo(x+H*0.20, top+H*0.40);
+  ctx.stroke();
+}
+function drawVehicle(b,R){
+  var col=b.colour, x=R.cx-R.w/2, y=R.cy-R.h/2, w=R.w, h=R.h;
+  ctx.fillStyle = grad(R,col);
+  if(b.big){
+    rr(x, y, w*0.62, h, 4); ctx.fill();
+    ctx.strokeStyle=shade(col,-55); ctx.lineWidth=1.3; ctx.stroke();
+    rr(x+w*0.62, y+h*0.22, w*0.38, h*0.78, 4); ctx.fill(); ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(x, y+h);
+    ctx.lineTo(x, y+h*0.48);
+    ctx.lineTo(x+w*0.24, y+h*0.48);
+    ctx.quadraticCurveTo(x+w*0.36, y, x+w*0.60, y);
+    ctx.lineTo(x+w*0.78, y+h*0.10);
+    ctx.quadraticCurveTo(x+w, y+h*0.22, x+w, y+h*0.55);
+    ctx.lineTo(x+w, y+h);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle=shade(col,-55); ctx.lineWidth=1.3; ctx.stroke();
+  }
+  ctx.fillStyle = shade(col,-70);
+  var wr = h*0.20;
+  [0.22,0.80].forEach(function(f){
+    ctx.beginPath(); ctx.arc(x+w*f, y+h, wr, 0, 7); ctx.fill();
+  });
+}
+function drawRocket(b,R){
+  var col=b.colour, x=R.cx-R.w/2, y=R.cy-R.h/2, w=R.w, h=R.h;
+  ctx.fillStyle = grad(R,col);
+  ctx.beginPath();
+  ctx.moveTo(x, y+h*0.5);
+  ctx.lineTo(x+w*0.22, y);
+  ctx.lineTo(x+w*0.80, y);
+  ctx.quadraticCurveTo(x+w, y+h*0.5, x+w*0.80, y+h);
+  ctx.lineTo(x+w*0.22, y+h);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=1.4; ctx.stroke();
+  ctx.fillStyle='#dc2626';
+  ctx.beginPath(); ctx.moveTo(x+w*0.24,y); ctx.lineTo(x+w*0.10,y-h*0.35); ctx.lineTo(x+w*0.34,y); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x+w*0.24,y+h); ctx.lineTo(x+w*0.10,y+h*1.35); ctx.lineTo(x+w*0.34,y+h); ctx.closePath(); ctx.fill();
+  ctx.fillStyle='#0ea5e9';
+  ctx.beginPath(); ctx.arc(x+w*0.66, y+h*0.5, h*0.16, 0, 7); ctx.fill();
+}
+function drawBlob(b,R){
+  ctx.save();
+  var g = ctx.createRadialGradient(R.cx, R.cy, 2, R.cx, R.cy, Math.max(R.w,R.h)/2);
+  g.addColorStop(0, shade(b.colour,50)); g.addColorStop(1, shade(b.colour,-10));
+  ctx.fillStyle=g; ctx.globalAlpha=.75;
+  for(var i=0;i<7;i++){
+    var a = i/7*Math.PI*2;
+    ctx.beginPath();
+    ctx.arc(R.cx+Math.cos(a)*R.w*0.26, R.cy+Math.sin(a)*R.h*0.26, Math.min(R.w,R.h)*0.34, 0, 7);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+function drawMagnet(b,R){
+  var x=R.cx-R.w/2, y=R.cy-R.h/2;
+  ctx.fillStyle='#dc2626'; rr(x, y, R.w/2, R.h, 3); ctx.fill();
+  ctx.fillStyle='#1e40af'; rr(x+R.w/2, y, R.w/2, R.h, 3); ctx.fill();
+  ctx.strokeStyle='#0f172a'; ctx.lineWidth=1.2; rr(x,y,R.w,R.h,3); ctx.stroke();
+  ctx.fillStyle='#fff'; ctx.font='700 '+Math.max(8,R.h*0.55)+'px system-ui,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('N', x+R.w*0.25, R.cy); ctx.fillText('S', x+R.w*0.75, R.cy);
+}
+function drawHorse(b,R){
+  var col=b.colour, x=R.cx-R.w/2, y=R.cy-R.h/2, w=R.w, h=R.h;
+  ctx.fillStyle = grad(R,col);
+  rr(x+w*0.10, y+h*0.32, w*0.72, h*0.36, 6); ctx.fill();
+  ctx.strokeStyle=shade(col,-55); ctx.lineWidth=1.3; ctx.stroke();
+  ctx.beginPath();                                   /* neck and head */
+  ctx.moveTo(x+w*0.70, y+h*0.36);
+  ctx.lineTo(x+w*0.86, y+h*0.05);
+  ctx.lineTo(x+w*1.00, y+h*0.10);
+  ctx.lineTo(x+w*0.88, y+h*0.42);
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.strokeStyle=shade(col,-30); ctx.lineWidth=Math.max(3,h*0.07); ctx.lineCap='round';
+  ctx.beginPath();
+  [0.20,0.34,0.60,0.74].forEach(function(f){ ctx.moveTo(x+w*f, y+h*0.66); ctx.lineTo(x+w*f, y+h); });
+  ctx.stroke();
+}
+function drawLift(b,R){
+  var x=R.cx-R.w/2, y=R.cy-R.h/2;
+  ctx.strokeStyle=C.muted; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(R.cx, y); ctx.lineTo(R.cx, Math.max(0, y-V.scale*0.55)); ctx.stroke();
+  ctx.fillStyle = C.panel2; ctx.globalAlpha=.65;
+  rr(x, y, R.w, R.h, 5); ctx.fill(); ctx.globalAlpha=1;
+  ctx.strokeStyle = shade(b.colour,0); ctx.lineWidth=3.2;
+  rr(x, y, R.w, R.h, 5); ctx.stroke();
+  ctx.fillStyle = shade(b.colour,20);
+  ctx.fillRect(x, y+R.h-Math.max(5,R.h*0.05), R.w, Math.max(5,R.h*0.05));
+}
+function drawRope(b,R){
+  ctx.strokeStyle = shade(b.colour,0); ctx.lineWidth = Math.max(3, R.h);
+  ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(R.cx-R.w/2, R.cy); ctx.lineTo(R.cx+R.w/2, R.cy); ctx.stroke();
+}
+
+/* ============================ FORCE ARROWS ============================== */
+function maxMag(){
+  var m = 1e-9;
+  for(var i=0;i<SC.forces.length;i++) m = Math.max(m, SC.forces[i].mag);
+  return m;
+}
+/* arrow length in pixels: to scale if asked for, otherwise all the same */
+function arrowLen(f){
+  var base = Math.min(V.w*0.55, Math.max(120, (V.h-V.top-V.bot)))*0.155;
+  if(!S.show.scale) return base;
+  var mx = maxMag();
+  var r = f.mag/mx;
+  return base*(0.30 + 0.70*Math.sqrt(r));
+}
+function visibleForces(){
+  var out = [];
+  for(var i=0;i<SC.forces.length;i++){
+    var f = SC.forces[i];
+    if(f.offscene && S.split < 0.35) continue;        /* nothing to hang it on yet */
+    if(S.bodyFilter && f.object !== S.bodyFilter) continue;
+    out.push(f);
+  }
+  return out;
+}
+function highlightBodies(){
+  if(S.mode==='test'){
+    var a = forceById(S.f1), b = forceById(S.f2);
+    return [a&&a.object, b&&b.object].filter(Boolean);
+  }
+  var f = forceById(S.sel);
+  if(!f) return [];
+  var p = forceById(f.partner);
+  return S.show.partner && p ? [f.object, p.object] : [f.object];
+}
+function forceAnchor(f){
+  /* a force on a body that is not drawn is hung off that body's own box */
+  var b = bodyById(f.object);
+  if(!b || b.shape==='offscene'){
+    var bx0 = BOX[f.object];
+    if(bx0) return {x:bx0.x, y:bx0.y};
+  }
+  var p = pointOn(f.object, f.pt);
+  if(!b || S.split<=0) return p;
+  /* pulled apart, this becomes a free-body diagram, and there every force is
+     drawn from the body itself rather than from where the surfaces touch */
+  var c = bodyCentre(b);
+  return { x: p.x + (c.x-p.x)*S.split, y: p.y + (c.y-p.y)*S.split };
+}
+/* arrows sharing an application point are nudged sideways so that neither the
+   shafts nor the labels sit on top of one another */
+function anchorFan(f){
+  var list = visibleForces(), same = [], i;
+  var A = forceAnchor(f);
+  for(i=0;i<list.length;i++){
+    var g = list[i], B = forceAnchor(g);
+    if(Math.hypot(A.x-B.x, A.y-B.y) < 34 && Math.abs(((g.dir-f.dir)%360+360)%360 % 180) < 1e-6) same.push(g.id);
+  }
+  if(same.length < 2) return 0;
+  var k = same.indexOf(f.id);
+  return (k - (same.length-1)/2) * 19;
+}
+function forceGeom(f){
+  var a = forceAnchor(f), L = arrowLen(f), th = RAD(f.dir);
+  var off = anchorFan(f);
+  var nx = Math.cos(th + PI/2), ny = -Math.sin(th + PI/2);
+  var x1 = a.x + nx*off, y1 = a.y + ny*off;
+  return { x1:x1, y1:y1, x2:x1 + Math.cos(th)*L, y2:y1 - Math.sin(th)*L, L:L, nx:nx, ny:ny };
+}
+function drawForce(f, state){
+  var G = forceGeom(f), col = typeColour(f.type);
+  var wd = state==='sel' ? 5 : (state==='partner' ? 4.4 : 3.1);
+  ctx.save();
+  if(state==='dim') ctx.globalAlpha = 0.30;
+  if(state==='sel' || state==='partner'){
+    ctx.save();
+    ctx.strokeStyle = state==='sel' ? C.accent : C.accent;
+    ctx.globalAlpha = state==='sel' ? 0.32 : 0.22;
+    ctx.lineWidth = wd + 9; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(G.x1,G.y1); ctx.lineTo(G.x2,G.y2); ctx.stroke();
+    ctx.restore();
+  }
+  arrow(G.x1, G.y1, G.x2, G.y2, col, wd, state==='view'?11:13);
+  ctx.fillStyle = col;
+  ctx.beginPath(); ctx.arc(G.x1, G.y1, state==='view'?3:3.8, 0, 7); ctx.fill();
+  ctx.restore();
+  if(S.show.labels && state!=='dim'){
+    var long = (state==='sel' || state==='partner');
+    var lx = G.x2 + Math.cos(RAD(f.dir))*(long?20:15) + G.nx*(long?0:10);
+    var ly = G.y2 - Math.sin(RAD(f.dir))*(long?20:15) + G.ny*(long?0:10);
+    tag(forceLabelText(f, long), lx, ly, col,
+        {size:long?11:10, bold:long, border:long?C.accent:null});
+  }
+}
+/* The short form keeps the picture readable; the long form is the wording an
+   examiner wants, so it is used automatically for whatever is selected. */
+function forceLabelText(f, long){
+  var t;
+  if(long || S.show.agent) t = cap(TYPES[f.type].short)+' on '+withArticle(f.object)+' from '+withArticle(f.agent);
+  else t = cap(TYPES[f.type].short);
+  if(S.show.values) t += '  '+fmt(f.mag)+' N';
+  return t;
+}
+function drawNet(){
+  if(!S.show.net) return;
+  for(var i=0;i<SC.bodies.length;i++){
+    var b = SC.bodies[i];
+    if(b.shape==='offscene' || b.nocheck) continue;
+    if(S.bodyFilter && b.id!==S.bodyFilter) continue;
+    var R = resultantOn(b.id), c = bodyCentre(b);
+    if(R.mag < 1e-6){
+      tag('resultant = 0', c.x, c.y - (b.h||0.3)*V.scale/2 - 30, C.ok, {size:10.5, bold:true, border:C.ok});
+      continue;
+    }
+    var mx = maxMag(), base = Math.min(V.w*0.55, Math.max(120,(V.h-V.top-V.bot)))*0.155;
+    var L = base*(0.30+0.70*Math.sqrt(R.mag/mx));
+    var th = RAD(R.dir);
+    ctx.save(); ctx.setLineDash([7,4]);
+    arrow(c.x, c.y, c.x+Math.cos(th)*L, c.y-Math.sin(th)*L, C.accent, 4, 13);
+    ctx.restore();
+    tag('resultant '+val(R.mag)+' N', c.x+Math.cos(th)*(L+22), c.y-Math.sin(th)*(L+22), C.accent,
+        {size:10.5, bold:true, border:C.accent});
+  }
+}
+
+/* ------------------------------- render --------------------------------- */
+function render(){
+  themeCheck();
+  layout();
+  ctx.setTransform(V.dpr,0,0,V.dpr,0,0);
+  ctx.clearRect(0,0,V.w,V.h);
+  applyView();
+  resetLabels();
+  drawBg();
+  drawWorld();
+  drawBoxes();
+  var i, b;
+  for(i=0;i<SC.bodies.length;i++){
+    b = SC.bodies[i];
+    if(b.shape==='planet') drawBody(b);
+  }
+  for(i=0;i<SC.bodies.length;i++){
+    b = SC.bodies[i];
+    if(b.shape!=='planet') drawBody(b);
+  }
+  /* the offscene bodies only get a box, and only once things are apart */
+  if(S.split > 0.35){
+    for(i=0;i<SC.bodies.length;i++){
+      b = SC.bodies[i];
+      if(b.shape!=='offscene') continue;
+      var bx = BOX[b.id];
+      if(!bx) continue;
+      var c = {x:bx.x, y:bx.y};
+      ctx.save(); ctx.globalAlpha = clamp((S.split-0.35)/0.3,0,1);
+      ctx.fillStyle = C.panel3;
+      ctx.beginPath(); ctx.arc(c.x, c.y, 26, 0, 7); ctx.fill();
+      ctx.strokeStyle = C.line2; ctx.lineWidth=1.4; ctx.stroke();
+      ctx.restore();
+      tag(b.label, c.x, c.y+40, C.muted, {size:10.5, bold:true});
+    }
+  }
+
+  var sel = forceById(S.sel), partner = sel && S.show.partner ? forceById(sel.partner) : null;
+  var t1 = S.mode==='test' ? forceById(S.f1) : null;
+  var t2 = S.mode==='test' ? forceById(S.f2) : null;
+  var list = visibleForces();
+  var dimming = !!(sel || t1 || t2);
+  for(i=0;i<list.length;i++){
+    var f = list[i];
+    var st = 'view';
+    if(t1 && f.id===t1.id) st = 'sel';
+    else if(t2 && f.id===t2.id) st = 'partner';
+    else if(sel && f.id===sel.id) st = 'sel';
+    else if(partner && f.id===partner.id) st = 'partner';
+    else if(dimming) st = 'dim';
+    if(st==='dim') drawForce(f, st);
+  }
+  for(i=0;i<list.length;i++){
+    var f2 = list[i];
+    var st2 = 'view';
+    if(t1 && f2.id===t1.id) st2 = 'sel';
+    else if(t2 && f2.id===t2.id) st2 = 'partner';
+    else if(sel && f2.id===sel.id) st2 = 'sel';
+    else if(partner && f2.id===partner.id) st2 = 'partner';
+    else if(dimming) continue;
+    if(st2!=='dim') drawForce(f2, st2);
+  }
+  drawNet();
+}
+
+/* ============================== PANELS =================================== */
+var LIVE = $('#live'), TOAST = $('#toast'), toastT = null;
+function toast(msg){
+  TOAST.textContent = msg; TOAST.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(function(){ TOAST.classList.remove('show'); }, 1900);
+}
+function say(msg){ LIVE.textContent = msg; }
+function kv(k,v){ return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+function dot(col){ return '<i style="background:'+col+'"></i>'; }
+
+/* ------------------------------ the key --------------------------------- */
+function buildKey(){
+  var used = {}, h = '<b>forces</b>';
+  for(var i=0;i<SC.pairs.length;i++) used[SC.pairs[i].type] = 1;
+  for(var t in used){
+    h += '<span><i style="background:'+typeColour(t)+'"></i>'+TYPES[t].name+'</span>';
+  }
+  $('#fkey').innerHTML = h;
+}
+
+/* ---------------------------- the pair bar ------------------------------ */
+function updatePairBar(){
+  var bar = $('#pairbar');
+  var f = forceById(S.sel);
+  if(!f || S.mode==='test'){ bar.hidden = true; return; }
+  var p = forceById(f.partner);
+  bar.hidden = false;
+  $('#pairTitle').textContent = 'One interaction, two forces';
+  $('#flA').innerHTML = dot(typeColour(f.type))
+    + '<span><b>'+esc(cap(forceSentence(f)))+'</b><br><span style="color:var(--muted);font-size:11px">'
+    + esc(cap(forceFormal(f)))+' &middot; '+val(f.mag)+' N</span></span>';
+  $('#flB').innerHTML = dot(typeColour(p.type))
+    + '<span><b>'+esc(cap(forceSentence(p)))+'</b><br><span style="color:var(--muted);font-size:11px">'
+    + esc(cap(forceFormal(p)))+' &middot; '+val(p.mag)+' N</span></span>';
+}
+
+/* ---------------------------- the verdict bar --------------------------- */
+function updateVerdict(){
+  var st = $('#vStatus'), nu = $('#vNum'), row2 = $('#vRow2');
+  var vd = $('.verdict');
+  vd.classList.remove('ok','bad','warn');
+  var f = forceById(S.sel);
+
+  if(S.mode==='test'){
+    var r = testPair(forceById(S.f1), forceById(S.f2));
+    if(!r){ st.textContent = 'Pick two different forces'; nu.textContent=''; row2.innerHTML =
+      'Choose one in each box on the right. The five conditions will be checked one at a time.'; return; }
+    if(r.isPair){ vd.classList.add('ok'); st.textContent = 'Yes — a third law pair';
+      nu.textContent = 'both '+val(forceById(S.f1).mag)+' N';
+      row2.innerHTML = 'These two are the same interaction described from each end, so they are equal and opposite <b>always</b> — not just in this situation.';
+    } else { vd.classList.add('bad'); st.textContent = 'No — not a third law pair';
+      var bad = r.tests.filter(function(t){ return !t.ok; });
+      nu.textContent = bad.length+' condition'+(bad.length===1?'':'s')+' failed';
+      row2.innerHTML = bad.length? bad[0].why : 'They are not the two ends of one interaction.';
+    }
+    return;
+  }
+  if(!f){
+    st.textContent = SC.def.name;
+    nu.textContent = SC.def.tag;
+    row2.innerHTML = esc(SC.def.blurb) + ' <b>Click any arrow</b> to see its partner.';
+    return;
+  }
+  var p = forceById(f.partner);
+  vd.classList.add('ok');
+  st.textContent = cap(forceSentence(f));
+  nu.textContent = val(f.mag)+' N';
+  row2.innerHTML = 'Its partner is <b>'+esc(lower(forceSentence(p)))+'</b>, also '+val(p.mag)+' N. '
+    + 'One acts on '+esc(withArticle(f.object))+' and the other on '+esc(withArticle(p.object))
+    + ' — different bodies, which is why nothing cancels out.';
+}
+
+/* ------------------------------ scene tab ------------------------------- */
+function updateSceneTab(){
+  $('#scText').innerHTML = esc(SC.def.blurb);
+  $('#vSplit').textContent = S.split<0.03? 'together' : (S.split>0.97? 'apart' : Math.round(S.split*100)+'%');
+  $('#vLiftA').textContent = fmt(S.liftA,1)+' m s⁻²';
+  $('#vDec').textContent = String(S.dec);
+  $('#vG').textContent = fmt(S.g,2)+' N kg⁻¹';
+  $('#grpLift').hidden = !SC.def.lift;
+  if(SC.def.lift) updateLiftBars();
+
+  var h = '';
+  for(var i=0;i<SC.bodies.length;i++){
+    var b = SC.bodies[i];
+    var R = resultantOn(b.id), a = accelOf(b.id);
+    var mass = b.m >= 1e20 ? sci(b.m,2)+' kg' : fmt(b.m, b.m<1?2:0)+' kg';
+    h += '<div class="kv"><span class="k"><span class="bodypill">'+dot(b.colour||'#888')+esc(b.label)+'</span></span>'
+       + '<span class="v">'+mass+'</span></div>';
+    if(!b.nocheck && b.shape!=='offscene'){
+      var amag = Math.hypot(a.x,a.y);
+      h += '<p class="hint" style="margin:2px 0 9px">resultant force '
+         + (R.mag<1e-6? '<b>zero</b>' : '<b>'+val(R.mag)+' N</b> '+dirWord(R.dir))
+         + ' &nbsp;·&nbsp; acceleration '
+         + (amag<1e-12? '<b>zero</b>' : '<b>'+(amag<1e-3? sci(amag,2) : fmt(amag,2))+' m s⁻²</b> '+dirWord(DEG(Math.atan2(a.y,a.x))))
+         + '</p>';
+    }
+  }
+  $('#bodyBody').innerHTML = h;
+}
+function updateLiftBars(){
+  var f0 = SC.byFid['f0a'], f1 = SC.byFid['f1a'];   /* weight of book, normal on book */
+  var genuine = f1.mag, partner = f1.mag;           /* the pair is equal by construction */
+  var mx = Math.max(genuine, f0.mag, 1e-9)*1.15;
+  function bar(lab1, v1, col1, lab2, v2, col2, ok, note){
+    return '<div class="barrow">'
+      + '<div class="bl"><span>'+lab1+'</span><b>'+fmt(v1)+' N</b></div>'
+      + '<div class="bartrack"><i style="width:'+(v1/mx*100)+'%;background:'+col1+'"></i></div>'
+      + '<div class="bl" style="margin-top:5px"><span>'+lab2+'</span><b>'+fmt(v2)+' N</b></div>'
+      + '<div class="bartrack"><i style="width:'+(v2/mx*100)+'%;background:'+col2+'"></i></div>'
+      + '<p class="hint '+(ok?'ok':'bad')+'" style="margin:5px 0 0">'+note+'</p></div>';
+  }
+  var equalNow = Math.abs(f0.mag - f1.mag) < 1e-9;
+  $('#liftBars').innerHTML =
+    bar('Lift pushes up on the book', f1.mag, typeColour('normal'),
+        'Book pushes down on the lift', partner, typeColour('normal'), true,
+        '<b>A genuine pair.</b> Equal at every acceleration, because it is one interaction.')
+    + '<div style="height:6px"></div>'
+    + bar('Lift pushes up on the book', f1.mag, typeColour('normal'),
+        'The Earth pulls the book down', f0.mag, typeColour('grav'), equalNow,
+        equalNow ? 'Equal — but only because a = 0 right now. Move the slider.'
+                 : '<b>Not a pair.</b> Different by '+fmt(Math.abs(f1.mag-f0.mag))+' N. Both act on the book, and they only ever match when the book is not accelerating.');
+}
+
+/* ----------------------------- forces tab ------------------------------- */
+function buildForceList(){
+  var h = '', sel = forceById(S.sel);
+  var partnerId = sel? sel.partner : null;
+  for(var i=0;i<SC.forces.length;i++){
+    var f = SC.forces[i];
+    var cls = 'fcard' + (f.id===S.sel? ' sel' : (f.id===partnerId? ' partner' : ''));
+    h += '<div class="'+cls+'" data-f="'+f.id+'">'
+       + dot(typeColour(f.type))
+       + '<span class="tx"><b>'+esc(cap(forceSentence(f)))+'</b><br>'
+       + '<span style="color:var(--muted);font-size:11px">'+esc(cap(forceFormal(f)))+'</span></span>'
+       + '<span class="mg">'+val(f.mag)+' N</span></div>';
+  }
+  $('#forceList').innerHTML = h;
+  $('#fCount').textContent = SC.forces.length;
+  $$('#forceList .fcard').forEach(function(el){
+    el.addEventListener('click', function(){
+      S.sel = el.getAttribute('data-f');
+      buildForceList(); refresh();
+    });
+  });
+}
+function buildBodySelect(){
+  var sel = $('#selBody'), h = '<option value="">— pick a body —</option>';
+  for(var i=0;i<SC.bodies.length;i++){
+    var b = SC.bodies[i];
+    h += '<option value="'+b.id+'"'+(S.bodyFilter===b.id?' selected':'')+'>'+esc(b.label)+'</option>';
+  }
+  sel.innerHTML = h;
+  updateOneBody();
+}
+function updateOneBody(){
+  var out = $('#oneBodyOut');
+  if(!S.bodyFilter){ out.innerHTML = '<p class="hint" style="margin:0">Pick a body and the diagram will show only the forces acting on it — which is exactly what a free-body diagram is.</p>'; return; }
+  var b = bodyById(S.bodyFilter);
+  var list = forcesOn(S.bodyFilter), R = resultantOn(S.bodyFilter), a = accelOf(S.bodyFilter);
+  var h = '<p class="hint" style="margin:0 0 8px">Forces acting <b>on '+esc(lower(b.label))+'</b> — and nothing else. Not one of these is a partner of another one here, because they all act on the same body.</p>';
+  for(var i=0;i<list.length;i++){
+    h += '<div class="kv"><span class="k">'+dot(typeColour(list[i].type))+' from '+esc(withArticle(list[i].agent))+'</span>'
+       + '<span class="v">'+val(list[i].mag)+' N '+dirWord(list[i].dir)+'</span></div>';
+  }
+  h += '<div class="kv"><span class="k"><b>resultant</b></span><span class="v"><b>'
+     + (R.mag<1e-6? '0' : val(R.mag)+' N '+dirWord(R.dir))+'</b></span></div>';
+  if(!b.nocheck){
+    var amag = Math.hypot(a.x,a.y);
+    h += '<p class="hint">Newton\'s second law then gives a = F ⁄ m = '
+       + (R.mag<1e-6? '0' : val(R.mag)+' ⁄ '+(b.m>=1e20? sci(b.m,2):fmt(b.m,b.m<1?2:0)))
+       + ' = <b>'+(amag<1e-12? '0' : (amag<1e-3? sci(amag,2) : fmt(amag,2)))+' m s⁻²</b>.</p>';
+  }
+  out.innerHTML = h;
+}
+
+/* ======================== THE PAIR TESTER =============================== */
+function buildForceSelects(){
+  var opts = '';
+  for(var i=0;i<SC.forces.length;i++){
+    var f = SC.forces[i];
+    opts += '<option value="'+f.id+'">'+esc(cap(forceSentence(f, false)))+' ('+TYPES[f.type].short+')</option>';
+  }
+  var s1 = $('#selF1'), s2 = $('#selF2');
+  s1.innerHTML = opts; s2.innerHTML = opts;
+  if(!S.f1 || !forceById(S.f1)) S.f1 = SC.forces[0].id;
+  if(!S.f2 || !forceById(S.f2)) S.f2 = SC.forces.length>1? SC.forces[1].id : SC.forces[0].id;
+  s1.value = S.f1; s2.value = S.f2;
+  updateTest();
+}
+function updateTest(){
+  var f1 = forceById(S.f1), f2 = forceById(S.f2);
+  var r = testPair(f1, f2);
+  var vb = $('#testVerdict'), tl = $('#testList');
+  vb.classList.remove('yes','no');
+  if(!r){
+    vb.innerHTML = '<h4>Choose two different forces</h4><p style="margin:0">They cannot be tested against themselves.</p>';
+    tl.innerHTML = '';
+    return;
+  }
+  if(r.isPair){
+    vb.classList.add('yes');
+    vb.innerHTML = '<h4>Yes — this is a Newton\'s third law pair</h4>'
+      + '<p style="margin:0">'+esc(cap(forceSentence(f1)))+', and '+esc(lower(forceSentence(f2)))+'. '
+      + 'One interaction, described from each end. They stay equal and opposite no matter what else happens.</p>';
+  } else {
+    vb.classList.add('no');
+    var fails = r.tests.filter(function(t){ return !t.ok; });
+    vb.innerHTML = '<h4>No — these two are not a pair</h4>'
+      + '<p style="margin:0">'+fails[0].why+'</p>';
+  }
+  var h = '';
+  for(var i=0;i<r.tests.length;i++){
+    var t = r.tests[i];
+    h += '<div class="test '+(t.ok?'yes':'no')+'">'
+       + '<span class="mk">'+(t.ok?'✓':'✕')+'</span>'
+       + '<span><span class="lb">'+esc(t.label)+'</span>'+t.why+'</span></div>';
+  }
+  tl.innerHTML = h;
+}
+function loadImpostor(){
+  var im = SC.def.make(S.g, S.liftA).impostor;
+  if(!im){ toast('This situation has no classic trap — try the book on a table'); return; }
+  S.f1 = 'f'+im[0]+'a'; S.f2 = 'f'+im[1]+'a';
+  $('#selF1').value = S.f1; $('#selF2').value = S.f2;
+  updateTest(); refresh();
+  say('The two forces students most often mistake for a pair are now selected.');
+}
+function loadRealPair(){
+  S.f1 = 'f0a'; S.f2 = 'f0b';
+  $('#selF1').value = S.f1; $('#selF2').value = S.f2;
+  updateTest(); refresh();
+}
+
+/* ===================== SAME FORCE, DIFFERENT EFFECT ===================== */
+function buildEffectSelect(){
+  var sel = $('#selPairE'), h = '';
+  for(var i=0;i<SC.pairs.length;i++){
+    var p = SC.pairs[i];
+    if(p.noPartnerBody) continue;
+    h += '<option value="'+i+'">'+esc(cap(bodyLabel(p.from))+' and '+withArticle(p.to))
+       + ' — '+TYPES[p.type].short+'</option>';
+  }
+  sel.innerHTML = h;
+  if(S.effectPair===null || !SC.pairs[S.effectPair] || SC.pairs[S.effectPair].noPartnerBody){
+    S.effectPair = 0;
+    for(var k=0;k<SC.pairs.length;k++) if(!SC.pairs[k].noPartnerBody){ S.effectPair = k; break; }
+  }
+  sel.value = String(S.effectPair);
+  updateEffect();
+}
+function updateEffect(){
+  var p = SC.pairs[S.effectPair];
+  var out = $('#effectOut');
+  if(!p){ out.innerHTML = ''; return; }
+  var A = bodyById(p.from), B = bodyById(p.to);
+  if(!A || !B){ out.innerHTML = '<p class="hint" style="margin:0">One end of this interaction is not drawn here.</p>'; return; }
+  var aA = p.mag/A.m, aB = p.mag/B.m;
+  var ratio = aA>aB ? aA/aB : aB/aA;
+  var mx = Math.max(aA,aB);
+  function row(b, acc, col){
+    return '<div class="barrow" style="margin-bottom:9px">'
+      + '<div class="bl"><span><span class="bodypill">'+dot(b.colour||'#888')+esc(b.label)+'</span> '
+      + (b.m>=1e20? sci(b.m,2):fmt(b.m,b.m<1?2:0))+' kg</span><b>'
+      + (acc<1e-3? sci(acc,2) : fmt(acc,2))+' m s⁻²</b></div>'
+      + '<div class="bartrack"><i style="width:'+clamp(acc/mx*100,0.4,100)+'%;background:'+col+'"></i></div></div>';
+  }
+  out.innerHTML =
+    '<p class="hint" style="margin:0 0 10px">Both bodies feel <b>'+val(p.mag)+' N</b> — the same interaction, so the same size of force on each. '
+    + 'Now divide by the masses.</p>'
+    + row(A, aA, typeColour(p.type)) + row(B, aB, C.accent)
+    + kv('the force on each', val(p.mag)+' N')
+    + kv('acceleration of '+lower(A.label), (aA<1e-3? sci(aA,2):fmt(aA,2))+' m s⁻²')
+    + kv('acceleration of '+lower(B.label), (aB<1e-3? sci(aB,2):fmt(aB,2))+' m s⁻²')
+    + kv('ratio of the accelerations', (ratio>1e4? sci(ratio,2) : fmt(ratio,1))+' : 1')
+    + '<p class="hint">The forces are identical; the accelerations differ by a factor of <b>'
+    + (ratio>1e4? sci(ratio,2) : fmt(ratio,1))+'</b>, which is just the ratio of the masses the other way up. '
+    + 'That is the whole reason the third law feels wrong at first: we judge a force by what it does to us, and it does far more to the lighter body.</p>';
+}
+function updateEffectCalc(){
+  var F = parseFloat($('#eF').value), ma = parseFloat($('#eMa').value), mb = parseFloat($('#eMb').value);
+  var out = $('#effectCalc');
+  if(!isFinite(F) || !isFinite(ma) || !isFinite(mb) || ma<=0 || mb<=0){
+    out.innerHTML = '<p class="hint bad" style="margin:0">Give a force and two positive masses.</p>'; return;
+  }
+  var aA = F/ma, aB = F/mb;
+  out.innerHTML = kv('force on each of them', fmt(F)+' N')
+    + kv('acceleration of A', (aA<1e-3? sci(aA,2):fmt(aA,2))+' m s⁻²')
+    + kv('acceleration of B', (aB<1e-3? sci(aB,2):fmt(aB,2))+' m s⁻²')
+    + kv('B accelerates more by', fmt(aB/aA,2)+' times');
+}
+
+/* ============================== PRACTICE ===============================
+   Questions are generated from the situation actually on screen, so the
+   student reads a real diagram rather than a description of one.
+   ====================================================================== */
+var QU = null;
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; }
+  return a;
+}
+function realPairs(){
+  var out = [];
+  for(var i=0;i<SC.pairs.length;i++) if(!SC.pairs[i].noPartnerBody) out.push(i);
+  return out;
+}
+function newQuestion(){
+  var type = S.qType;
+  if(type==='mix') type = pick(S.qLevel==='gcse' ? ['partner','ispair','size'] : ['partner','ispair','size','accel']);
+  /* a fresh situation each time, so the picture is never the same twice */
+  var ids = SCENES.filter(function(s){
+    if(S.qLevel==='gcse') return s.tag==='GCSE';
+    return true;
+  }).map(function(s){ return s.id; });
+  if(type==='accel'){
+    ids = ['crash','magnets','skaters','ball','gun','rocket'].filter(function(id){
+      return ids.indexOf(id)>=0 || S.qLevel!=='gcse';
+    });
+  }
+  S.sceneId = pick(ids);
+  S.split = 0; S.sel = null; S.bodyFilter = '';
+  buildScene();
+
+  var q = null, pidx, p, fA, fB;
+  if(type==='partner'){
+    pidx = pick(realPairs()); p = SC.pairs[pidx];
+    fA = SC.byFid['f'+pidx+'a']; fB = SC.byFid['f'+pidx+'b'];
+    S.sel = fA.id;
+    var right = cap(forceSentence(fB));
+    var wrong = [];
+    /* plausible distractors: same body, reversed wording, a different force here */
+    var others = SC.forces.filter(function(f){ return f.id!==fA.id && f.id!==fB.id; });
+    shuffle(others);
+    for(var i=0;i<others.length && wrong.length<2;i++) wrong.push(cap(forceSentence(others[i])));
+    var sameBody = forcesOn(fA.object).filter(function(f){ return f.id!==fA.id; });
+    if(sameBody.length) wrong.push(cap(forceSentence(sameBody[0])));
+    wrong.push(cap(bodyLabel(fA.agent))+' '+TYPES[fA.type].verb+' '+withArticle(fA.object)+' '+dirWord(opposite(fA.dir)));
+    var opts = shuffle([right].concat(shuffle(wrong).slice(0,3)));
+    q = { kind:'choice',
+      text:'The highlighted force is <b>'+esc(lower(forceSentence(fA)))+'</b>. Which force is its Newton\'s third law partner?',
+      options:opts, ansIdx:opts.indexOf(right),
+      how:'Swap the two bodies over and reverse the direction, keeping the same kind of force.<br>'
+         +'<b>'+esc(right)+'</b><br>It acts on '+esc(withArticle(fB.object))+', not on '+esc(withArticle(fA.object))
+         +' — a partner never acts on the same body as the force it partners.' };
+  }
+  else if(type==='ispair'){
+    var useReal = Math.random() < 0.45;
+    var im = SC.def.make(S.g, S.liftA).impostor;
+    if(!useReal && im){ fA = SC.byFid['f'+im[0]+'a']; fB = SC.byFid['f'+im[1]+'a']; }
+    else if(useReal){ pidx = pick(realPairs()); fA = SC.byFid['f'+pidx+'a']; fB = SC.byFid['f'+pidx+'b']; }
+    else {
+      /* any two forces on the same body, or two unrelated ones */
+      var pool = SC.forces.slice(); shuffle(pool);
+      fA = pool[0];
+      var same = forcesOn(fA.object).filter(function(f){ return f.id!==fA.id; });
+      fB = same.length? same[0] : pool.find(function(f){ return f.id!==fA.id && f.id!==fA.partner; });
+      if(!fB) fB = pool[1];
+    }
+    var res = testPair(fA, fB);
+    S.f1 = fA.id; S.f2 = fB.id; S.mode = 'explore';
+    var yes = res.isPair;
+    q = { kind:'choice',
+      text:'Are these two forces a Newton\'s third law pair?<br><br>'
+         + '<b>1.</b> '+esc(cap(forceSentence(fA)))+'<br><b>2.</b> '+esc(cap(forceSentence(fB))),
+      options:['Yes — they are a third law pair','No — they are not'],
+      ansIdx: yes?0:1,
+      how: yes
+        ? 'Yes. They are one interaction seen from both ends: '+esc(withArticle(fA.agent))+' on '
+          + esc(withArticle(fA.object))+', and '+esc(withArticle(fB.agent))+' on '+esc(withArticle(fB.object))+'.'
+        : 'No. '+res.tests.filter(function(t){ return !t.ok; })[0].why };
+  }
+  else if(type==='size'){
+    pidx = pick(realPairs()); p = SC.pairs[pidx];
+    fA = SC.byFid['f'+pidx+'a']; fB = SC.byFid['f'+pidx+'b'];
+    S.sel = fA.id;
+    q = { kind:'num', unit:'N', ans:p.mag,
+      text:esc(cap(bodyLabel(fA.agent)))+' exerts a force of <b>'+fmt(p.mag)+' N</b> on '
+         + esc(withArticle(fA.object))+'. How big is the force that '
+         + esc(withArticle(fA.object))+' exerts on '+esc(withArticle(fA.agent))+'?',
+      how:'Exactly the same size: <b>'+fmt(p.mag)+' N</b>, in the opposite direction.<br>'
+         +'The third law puts no condition at all on the masses. A heavier body is not able to push harder — '
+         +'it simply accelerates less when pushed.' };
+  }
+  else {
+    pidx = pick(realPairs()); p = SC.pairs[pidx];
+    var A = bodyById(p.from), B = bodyById(p.to);
+    if(!A || !B || A.m>=1e20 || B.m>=1e20){
+      var alt = realPairs().filter(function(k){
+        var x=bodyById(SC.pairs[k].from), y=bodyById(SC.pairs[k].to);
+        return x&&y&&x.m<1e20&&y.m<1e20;
+      });
+      if(alt.length){ pidx = pick(alt); p = SC.pairs[pidx]; A = bodyById(p.from); B = bodyById(p.to); }
+    }
+    var target = (A.m <= B.m) ? A : B;
+    var acc = p.mag/target.m;
+    S.sel = 'f'+pidx+'a';
+    q = { kind:'num', unit:'m s⁻²', ans:acc,
+      text:'The interaction between '+esc(lower(A.label))+' and '+esc(lower(B.label))+' is <b>'+fmt(p.mag)+' N</b> on each. '
+         + 'What acceleration does that give <b>'+esc(lower(target.label))+'</b> ('+fmt(target.m, target.m<1?2:0)+' kg)?',
+      how:'a = F ⁄ m = '+fmt(p.mag)+' ⁄ '+fmt(target.m,target.m<1?2:0)+' = <b>'
+         + (acc<1e-3? sci(acc,2):fmt(acc,2))+' m s⁻²</b>.<br>'
+         + 'The other body feels the same force but has a different mass, so it gets a different acceleration. '
+         + 'Equal forces, unequal effects.' };
+  }
+  QU = q; QU.answered = false;
+  buildKey(); buildForceList(); buildBodySelect(); buildForceSelects(); buildEffectSelect();
+  renderQuestion();
+  syncControls(); refresh();
+  say('New question.');
+}
+function renderQuestion(){
+  var host = $('#qAnswerArea'), fb = $('#qFeedback');
+  $('#qText').innerHTML = QU ? QU.text : 'Press <b>New question</b> to begin.';
+  fb.innerHTML = '';
+  $('#btnShowAns').disabled = !QU;
+  if(!QU){ host.innerHTML=''; return; }
+  if(QU.kind==='num'){
+    host.innerHTML = '<div class="ansrow">'
+      + '<div><span style="font-size:10.5px;color:var(--muted);font-weight:700">your answer / '+QU.unit+'</span>'
+      + '<input type="number" step="any" id="qAns" placeholder="type it in"></div>'
+      + '<div><button class="btn sm primary" id="btnMark">Mark it</button></div></div>';
+    $('#btnMark').addEventListener('click', markNumeric);
+    $('#qAns').addEventListener('keydown', function(e){ if(e.key==='Enter') markNumeric(); });
+  } else {
+    var h = '<div class="choices">';
+    for(var i=0;i<QU.options.length;i++) h += '<button data-c="'+i+'">'+esc(QU.options[i])+'</button>';
+    h += '</div>';
+    host.innerHTML = h;
+    $$('#qAnswerArea .choices button').forEach(function(b){
+      b.addEventListener('click', function(){ markChoice(+b.getAttribute('data-c')); });
+    });
+  }
+  $('#qTag').textContent = String(S.qTotal+1);
+  $('#qScore').textContent = S.qRight+' of '+S.qTotal;
+}
+function markNumeric(){
+  if(!QU || QU.answered) return;
+  var v = parseFloat(($('#qAns').value||'').trim());
+  if(!isFinite(v)){ toast('Type a number first'); return; }
+  var tol = Math.max(1e-9, Math.abs(QU.ans)*0.02);
+  finishQuestion(Math.abs(v-QU.ans) <= tol, '');
+}
+function markChoice(i){
+  if(!QU || QU.answered) return;
+  var btns = $$('#qAnswerArea .choices button');
+  btns[i].classList.add(i===QU.ansIdx? 'right':'wrong');
+  if(i!==QU.ansIdx) btns[QU.ansIdx].classList.add('right');
+  finishQuestion(i===QU.ansIdx, '');
+}
+function finishQuestion(ok, extra){
+  QU.answered = true;
+  S.qTotal++; if(ok) S.qRight++;
+  $('#qFeedback').innerHTML = '<p class="hint '+(ok?'ok':'bad')+'" style="margin:0"><b>'
+    + (ok? 'Correct.' : 'Not quite.') + '</b> '
+    + (QU.kind==='num' ? 'The answer is <b>'+(Math.abs(QU.ans)<1e-3? sci(QU.ans,2):fmt(QU.ans))+' '+QU.unit+'</b>. ' : '')
+    + (extra||'') + '</p>'
+    + '<div class="qbox" style="margin-top:8px"><div class="qtxt">'+QU.how+'</div></div>';
+  $('#qScore').textContent = S.qRight+' of '+S.qTotal;
+  say(ok? 'Correct.' : 'Not correct.');
+}
+function showAnswer(){
+  if(!QU) return;
+  if(!QU.answered){ QU.answered = true; S.qTotal++; $('#qScore').textContent = S.qRight+' of '+S.qTotal; }
+  $('#qFeedback').innerHTML = '<div class="qbox"><div class="qtxt">'
+    + (QU.kind==='num'? '<b>'+(Math.abs(QU.ans)<1e-3? sci(QU.ans,2):fmt(QU.ans))+' '+QU.unit+'</b><br>' : '')
+    + QU.how + '</div></div>';
+}
+function buildPitfalls(){
+  $('#pitfallBody').innerHTML =
+      '<p class="hint" style="margin-top:0"><b>Naming a force without naming both bodies.</b> "Weight" and "the normal force" are not answers. '
+    + 'Write <em>the force on the book from the table</em> and the partner writes itself.</p>'
+    + '<p class="hint"><b>Picking two forces on the same body.</b> The commonest error in the topic. The weight of a book and the table\'s push on it '
+    + 'both act on the <em>book</em>, so they cannot be a pair — whatever their sizes.</p>'
+    + '<p class="hint"><b>Thinking the heavier body pushes harder.</b> A lorry and a car push on each other equally. What differs is a = F ⁄ m.</p>'
+    + '<p class="hint"><b>Saying the pair cancels out.</b> They act on different bodies, so they never appear in the same resultant. '
+    + 'Only forces on the <em>same</em> body can cancel.</p>'
+    + '<p class="hint"><b>Changing the kind of force.</b> A gravitational pull is partnered by a gravitational pull, never by a contact push.</p>'
+    + '<p class="hint"><b>Thinking a rocket pushes against the air.</b> It pushes against its own exhaust gas, which is why it works in space at all.</p>';
+}
+
+/* ============================ INTERACTION =============================== */
+function pointer(e){
+  var r = cv.getBoundingClientRect();
+  return toVirtual(e.clientX - r.left, e.clientY - r.top);
+}
+function rawPointer(e){
+  var r = cv.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+/* the nearest force arrow to a click, if it is close enough to count */
+function hitForce(p){
+  var list = visibleForces(), best=null, bd=22;
+  for(var i=0;i<list.length;i++){
+    var G = forceGeom(list[i]);
+    var d = distToSeg(p.x, p.y, G.x1, G.y1, G.x2, G.y2);
+    if(d < bd){ bd = d; best = list[i]; }
+  }
+  return best;
+}
+function distToSeg(px,py,x1,y1,x2,y2){
+  var dx=x2-x1, dy=y2-y1, L2=dx*dx+dy*dy;
+  if(L2<1e-9) return Math.hypot(px-x1,py-y1);
+  var t = clamp(((px-x1)*dx+(py-y1)*dy)/L2, 0, 1);
+  return Math.hypot(px-(x1+t*dx), py-(y1+t*dy));
+}
+var PAN = null;
+cv.addEventListener('pointerdown', function(e){
+  cv.focus();
+  var p = pointer(e), f = hitForce(p);
+  /* empty space starts a drag; if the pointer never really moves it is
+     treated as a click instead, so selecting a force still works */
+  if(!f){
+    PAN = { x0:e.clientX, y0:e.clientY, px:S.panX, py:S.panY, moved:false };
+    try{ cv.setPointerCapture(e.pointerId); }catch(err){}
+  }
+  if(f){
+    if(S.mode==='test'){
+      /* clicking on the diagram fills the second box, then the first */
+      if(S.f1 && S.f1!==f.id && (!S.f2 || S.f2!==f.id)){ S.f2 = S.f1===f.id? S.f2 : f.id; }
+      else { S.f1 = f.id; }
+      if(S.f1===S.f2){ S.f2 = forceById(S.f1).partner; }
+      $('#selF1').value = S.f1; $('#selF2').value = S.f2;
+      updateTest();
+    } else {
+      S.sel = (S.sel===f.id)? null : f.id;
+      buildForceList();
+    }
+    refresh();
+    e.preventDefault(); return;
+  }
+});
+cv.addEventListener('pointermove', function(e){
+  if(PAN){
+    var dx = e.clientX - PAN.x0, dy = e.clientY - PAN.y0;
+    if(!PAN.moved && Math.hypot(dx,dy) > 4) PAN.moved = true;
+    if(PAN.moved){
+      S.panX = PAN.px + dx; S.panY = PAN.py + dy;
+      clampPan();
+      cv.style.cursor = 'grabbing';
+      refresh();
+      e.preventDefault();
+    }
+    return;
+  }
+  var p = pointer(e);
+  cv.style.cursor = hitForce(p) ? 'pointer' : (S.zoom>1.01? 'grab' : 'default');
+});
+function endPan(e){
+  if(!PAN) return;
+  var wasClick = !PAN.moved;
+  PAN = null;
+  cv.style.cursor = 'default';
+  try{ cv.releasePointerCapture(e.pointerId); }catch(err){}
+  if(wasClick && S.mode!=='test'){ S.sel = null; buildForceList(); refresh(); }
+}
+cv.addEventListener('pointerup', endPan);
+cv.addEventListener('pointercancel', endPan);
+cv.addEventListener('wheel', function(e){
+  e.preventDefault();
+  var r = cv.getBoundingClientRect();
+  zoomAbout(e.clientX-r.left, e.clientY-r.top, Math.exp(-e.deltaY*0.0016));
+  syncControls(); refresh();
+}, {passive:false});
+cv.addEventListener('dblclick', function(e){
+  var r = cv.getBoundingClientRect();
+  zoomAbout(e.clientX-r.left, e.clientY-r.top, e.shiftKey? 1/1.7 : 1.7);
+  syncControls(); refresh();
+});
+cv.addEventListener('keydown', function(e){
+  var k = e.key.toLowerCase();
+  if(k==='s'){ S.split = S.split>0.5? 0 : 1; $('#inSplit').value = S.split; }
+  else if(k==='p'){ toggleShow('partner'); }
+  else if(k==='l'){ toggleShow('labels'); }
+  else if(k==='c'){ toggleShow('scale'); }
+  else if(k==='n'){ toggleShow('net'); }
+  else if(k==='h'){ toggleShow('values'); }
+  else if(k==='t'){ setTheme(ROOT.getAttribute('data-theme')==='dark'?'light':'dark'); }
+  else if(e.key==='1'){ setMode('explore'); }
+  else if(e.key==='2'){ setMode('test'); }
+  else if(e.key==='3'){ setMode('effect'); }
+  else if(e.key==='4'){ setMode('practice'); }
+  else if(e.key==='Escape'){ S.sel = null; buildForceList(); }
+  else if(e.key==='+' || e.key==='='){ zoomAbout(V.w/2, V.h/2, 1.25); }
+  else if(e.key==='-' || e.key==='_'){ zoomAbout(V.w/2, V.h/2, 1/1.25); }
+  else if(e.key==='0'){ resetView(); }
+  else if(e.key==='ArrowRight' || e.key==='ArrowLeft'){
+    var list = visibleForces();
+    if(!list.length) return;
+    var i = 0;
+    for(var j=0;j<list.length;j++) if(list[j].id===S.sel) i = j + (e.key==='ArrowRight'?1:-1);
+    S.sel = list[((i%list.length)+list.length)%list.length].id;
+    buildForceList();
+  }
+  else return;
+  e.preventDefault();
+  syncControls(); refresh();
+});
+function toggleShow(k){ S.show[k] = S.show[k]?0:1; syncControls(); refresh(); }
+
+/* ------------------------------- modes ---------------------------------- */
+function setMode(m){
+  S.mode = m;
+  $$('.seg button').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+  $({explore:'#modeExplore', test:'#modeTest', effect:'#modeEffect', practice:'#modePractice'}[m])
+    .setAttribute('aria-pressed','true');
+  var tab = {explore:'tab-scene', test:'tab-test', effect:'tab-effect', practice:'tab-practice'}[m];
+  showTab(tab);
+  if(m==='test'){ S.sel = null; buildForceSelects(); }
+  if(m==='effect'){ S.sel = null; buildEffectSelect(); }
+  if(m==='practice' && !QU) newQuestion();
+  syncControls(); refresh();
+  say('Mode: '+m);
+}
+function showTab(id){
+  $$('.tabs button').forEach(function(o){ o.setAttribute('aria-selected', String(o.id===id)); });
+  $$('.tabpanel').forEach(function(p){ p.hidden = true; });
+  var b = $('#'+id);
+  if(b) $('#'+b.getAttribute('aria-controls')).hidden = false;
+}
+
+/* ------------------------------- wiring --------------------------------- */
+function on(sel, ev, fn){ var el = $(sel); if(el) el.addEventListener(ev, fn); }
+function syncControls(){
+  $('#cLabels').checked  = !!S.show.labels;
+  $('#cValues').checked  = !!S.show.values;
+  $('#cScale').checked   = !!S.show.scale;
+  $('#cPartner').checked = !!S.show.partner;
+  $('#cNet').checked     = !!S.show.net;
+  $('#cGrid').checked    = !!S.show.grid;
+  $('#cBoxes').checked   = !!S.show.boxes;
+  $('#cAgent').checked   = !!S.show.agent;
+  $('#inSplit').value = S.split;
+  $('#inLiftA').value = S.liftA;
+  $('#inDec').value = S.dec;
+  $('#inG').value = S.g;
+  $('#selQType').value = S.qType;
+  $('#selQLevel').value = S.qLevel;
+  $('#btnSplit').setAttribute('aria-pressed', String(S.split>0.5));
+  $('#btnPartner').setAttribute('aria-pressed', String(!!S.show.partner));
+  $('#btnLabels').setAttribute('aria-pressed', String(!!S.show.labels));
+  $('#btnScale').setAttribute('aria-pressed', String(!!S.show.scale));
+  $('#btnNet').setAttribute('aria-pressed', String(!!S.show.net));
+  $('#btnValues').setAttribute('aria-pressed', String(!S.show.values));
+  var iz = $('#inZoom'); if(iz && document.activeElement!==iz) iz.value = clamp(S.zoom, ZMIN, ZMAX);
+  var vz = $('#vZoom'); if(vz) vz.textContent = Math.round(clamp(S.zoom,ZMIN,ZMAX)*100)+'%';
+  var zf = $('#btnZoomFit'); if(zf) zf.setAttribute('aria-pressed', String(Math.abs(S.zoom-1)>0.01 || S.panX!==0 || S.panY!==0));
+}
+function wire(){
+  on('#modeExplore','click',function(){ setMode('explore'); });
+  on('#modeTest','click',function(){ setMode('test'); });
+  on('#modeEffect','click',function(){ setMode('effect'); });
+  on('#modePractice','click',function(){ setMode('practice'); });
+
+  on('#btnSplit','click',function(){ S.split = S.split>0.5? 0 : 1; syncControls(); refresh(); });
+  on('#btnPartner','click',function(){ toggleShow('partner'); });
+  on('#btnLabels','click',function(){ toggleShow('labels'); });
+  on('#btnScale','click',function(){ toggleShow('scale'); });
+  on('#btnNet','click',function(){ toggleShow('net'); });
+  on('#btnValues','click',function(){ toggleShow('values'); });
+  on('#btnZoomIn','click',function(){ zoomAbout(V.w/2, V.h/2, 1.3); syncControls(); refresh(); });
+  on('#btnZoomOut','click',function(){ zoomAbout(V.w/2, V.h/2, 1/1.3); syncControls(); refresh(); });
+  on('#btnZoomFit','click',function(){ resetView(); syncControls(); refresh(); toast('Back to a fitted view'); });
+  on('#inZoom','input',function(){
+    var z = parseFloat($('#inZoom').value);
+    zoomAbout(V.w/2, V.h/2, z/clamp(S.zoom,ZMIN,ZMAX));
+    syncControls(); refresh();
+  });
+
+  on('#inSplit','input',function(){ S.split = parseFloat($('#inSplit').value); syncControls(); refresh(); });
+  on('#inLiftA','input',function(){
+    S.liftA = parseFloat($('#inLiftA').value);
+    buildScene(); buildForceList(); refresh();
+  });
+  on('#inDec','input',function(){ S.dec = parseInt($('#inDec').value,10); buildForceList(); refresh(); });
+  on('#inG','input',function(){
+    S.g = parseFloat($('#inG').value);
+    buildScene(); buildForceList(); refresh();
+  });
+
+  on('#selBody','change',function(){ S.bodyFilter = $('#selBody').value; updateOneBody(); refresh(); });
+  on('#selF1','change',function(){ S.f1 = $('#selF1').value; updateTest(); refresh(); });
+  on('#selF2','change',function(){ S.f2 = $('#selF2').value; updateTest(); refresh(); });
+  on('#btnTryImpostor','click', loadImpostor);
+  on('#btnTryReal','click', loadRealPair);
+  on('#selPairE','change',function(){ S.effectPair = parseInt($('#selPairE').value,10); updateEffect(); });
+  ['#eF','#eMa','#eMb'].forEach(function(s){ on(s,'input', updateEffectCalc); });
+
+  on('#btnNewQ','click', newQuestion);
+  on('#btnShowAns','click', showAnswer);
+  on('#selQType','change',function(){ S.qType = $('#selQType').value; });
+  on('#selQLevel','change',function(){ S.qLevel = $('#selQLevel').value; });
+
+  ['cLabels:labels','cValues:values','cScale:scale','cPartner:partner','cNet:net',
+   'cGrid:grid','cBoxes:boxes','cAgent:agent'].forEach(function(pair){
+    var p = pair.split(':');
+    on('#'+p[0],'change',function(){ S.show[p[1]] = $('#'+p[0]).checked?1:0; syncControls(); buildForceList(); refresh(); });
+  });
+
+  $$('.tabs button').forEach(function(b){
+    b.addEventListener('click', function(){ showTab(b.id); });
+  });
+
+  on('#btnTheme','click',function(){ setTheme(ROOT.getAttribute('data-theme')==='dark'?'light':'dark'); });
+  on('#btnHelp','click',function(){ $('#modalHelp').setAttribute('open',''); });
+  on('#closeHelp','click',function(){ $('#modalHelp').removeAttribute('open'); });
+  on('#btnPresets','click',function(){ $('#modalPresets').setAttribute('open',''); });
+  on('#closePresets','click',function(){ $('#modalPresets').removeAttribute('open'); });
+  on('#btnPng','click', savePng);
+  on('#btnPng2','click', savePng);
+  on('#btnShare','click', shareLink);
+  on('#btnCopyState','click',function(){ copyText(encodeState(), 'Setup code copied'); });
+  on('#btnPasteState','click', pasteState);
+  on('#btnHardReset','click',function(){
+    S = defaults(); QU = null;
+    loadScene('book'); setMode('explore'); toast('Reset');
+  });
+  $$('.modal').forEach(function(m){
+    m.addEventListener('click', function(e){ if(e.target===m) m.removeAttribute('open'); });
+  });
+}
+function setTheme(t){ ROOT.setAttribute('data-theme', t); themeCheck(); buildKey(); refresh(); }
+function copyText(txt, msg){
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(function(){ toast(msg); }, function(){ fallbackCopy(txt,msg); });
+    } else fallbackCopy(txt,msg);
+  }catch(e){ fallbackCopy(txt,msg); }
+}
+function fallbackCopy(txt,msg){
+  var ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position='absolute'; ta.style.left='-9999px';
+  ROOT.appendChild(ta); ta.select();
+  try{ document.execCommand('copy'); toast(msg); }catch(e){ toast('Copy failed — select the text instead'); }
+  ROOT.removeChild(ta);
+}
+function savePng(){
+  try{
+    var a = document.createElement('a');
+    a.download = 'third-law-lab.png';
+    a.href = cv.toDataURL('image/png');
+    a.click();
+    toast('Image saved');
+  }catch(e){ toast('The image could not be saved here'); }
+}
+function encodeState(){
+  var o = { s:S.sceneId, m:S.mode, sp:S.split, la:S.liftA, g:S.g, sh:S.show, dc:S.dec, sel:S.sel,
+            z:S.zoom, px:S.panX, py:S.panY };
+  return 'N3L1'+btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+}
+function decodeState(code){
+  try{
+    if(code.indexOf('N3L1')!==0) return false;
+    var o = JSON.parse(decodeURIComponent(escape(atob(code.slice(4)))));
+    S = defaults();
+    S.sceneId = o.s; S.mode = o.m; S.split = o.sp; S.liftA = o.la; S.g = o.g; S.dec = o.dc; S.sel = o.sel||null;
+    if(o.z){ S.zoom = o.z; S.panX = o.px||0; S.panY = o.py||0; }
+    for(var k in o.sh) if(S.show.hasOwnProperty(k)) S.show[k] = o.sh[k];
+    buildScene();
+    return true;
+  }catch(e){ return false; }
+}
+function pasteState(){
+  var code = window.prompt('Paste a Third Law Lab setup code');
+  if(!code) return;
+  if(decodeState(code.trim())){
+    buildAll(); setMode(S.mode); toast('Setup restored');
+  } else toast('That code was not recognised');
+}
+function shareLink(){
+  copyText(location.href.split('#')[0]+'#'+encodeState(), 'Link copied — it restores this exact view');
+}
+
+/* ============================== SITUATIONS ============================== */
+function buildPresets(){
+  var h = '';
+  for(var i=0;i<SCENES.length;i++){
+    h += '<button data-s="'+SCENES[i].id+'"><b>'+esc(SCENES[i].name)+'</b><span>'+esc(SCENES[i].blurb)
+       + '</span><span class="pill tag">'+SCENES[i].tag+'</span></button>';
+  }
+  $('#presetList').innerHTML = h;
+  $$('#presetList button').forEach(function(b){
+    b.addEventListener('click', function(){
+      loadScene(b.getAttribute('data-s'));
+      $('#modalPresets').removeAttribute('open');
+      toast(sceneDef(S.sceneId).name+' loaded');
+    });
+  });
+}
+function loadScene(id){
+  S.sceneId = id;
+  S.sel = null; S.f1 = null; S.f2 = null; S.bodyFilter = ''; S.effectPair = null;
+  S.split = 0;
+  resetView();
+  if(!sceneDef(id).lift) S.liftA = 0;
+  buildScene();
+  buildAll();
+  refresh();
+  say(sceneDef(id).name+' loaded.');
+}
+function buildAll(){
+  buildKey();
+  buildForceList();
+  buildBodySelect();
+  buildForceSelects();
+  buildEffectSelect();
+  updateEffectCalc();
+  syncControls();
+}
+
+/* ================================ HELP ================================== */
+function buildHelp(){
+  $('#helpBody').innerHTML =
+   '<h4>The law, in the only wording that works</h4>'
+  +'<p>If body <b>A</b> exerts a force on body <b>B</b>, then <b>B</b> exerts an equal and opposite force on <b>A</b>. '
+  +'Say it any other way — "every action has an equal and opposite reaction" — and you lose the two things that matter: '
+  +'<em>which two bodies</em>, and <em>which way round</em>.</p>'
+  +'<p class="eq">force on B from A  =  &minus; ( force on A from B )</p>'
+
+  +'<h4>Why this app cannot draw it wrongly</h4>'
+  +'<p>Nothing here stores a single force. It stores <b>interactions</b> between two bodies, and reads each one out as two forces. '
+  +'A pair can therefore never come out unequal, however you change the masses, the acceleration or <em>g</em> &mdash; which is exactly '
+  +'the guarantee the law makes about the real world.</p>'
+
+  +'<h4>Pull it apart</h4>'
+  +'<p>The <b>Separate</b> slider is the heart of it. Every body slides into a box of its own carrying only the forces that act on it. '
+  +'A third law pair is then <b>split across two boxes</b>, always. Two forces that merely balance sit together in <b>one box</b>. '
+  +'If you can see which box a force belongs in, you can answer nearly every question on this topic.</p>'
+
+  +'<h4>The trap</h4>'
+  +'<p>A book rests on a table. Its weight pulls it down; the table pushes it up; the two are equal. Almost everyone calls that a third '
+  +'law pair, and it is not. Both act on the <em>book</em>, they are different kinds of force, and they are equal only because the book '
+  +'happens not to be accelerating. Open <b>A book in an accelerating lift</b> and move the slider: the genuine pair stays matched to the '
+  +'last decimal place while the impostor comes apart. That one demonstration is worth an entire lesson of assertion.</p>'
+
+  +'<h4>"If they cancel, how does anything move?"</h4>'
+  +'<p>They never cancel, because they act on <b>different bodies</b>. Only forces on the same body can be added together. '
+  +'The horse and cart make this plain: the cart really does pull back on the horse as hard as the horse pulls the cart, and the horse '
+  +'still accelerates &mdash; because of a completely different force, the grip of the ground on its hooves.</p>'
+
+  +'<h4>Equal forces, unequal effects</h4>'
+  +'<p>A lorry and a car push on each other with the same force. The car is thrown about far more, because a = F&#8202;/&#8202;m. '
+  +'Nothing in the third law mentions mass at all. Drop a ball and the ball pulls the Earth up just as hard as the Earth pulls the ball '
+  +'down &mdash; the Earth simply accelerates at about 10&#8315;&sup2;&#8309; m s&#8315;&sup2;.</p>'
+
+  +'<h4>Writing it in an exam</h4>'
+  +'<p>Name both bodies and the kind of force, every time:</p>'
+  +'<p class="eq">the gravitational force on the book from the Earth<br>&harr; the gravitational force on the Earth from the book</p>'
+  +'<p>Switch on <b>name the body doing the pushing</b> in the Display tab and every arrow on screen is labelled in that form.</p>'
+
+  +'<h4>Keyboard</h4>'
+  +'<ul>'
+  +'<li><kbd>S</kbd> separate or rejoin the diagrams &middot; <kbd>P</kbd> highlight the partner &middot; <kbd>N</kbd> resultant on each body</li>'
+  +'<li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> step through the forces &middot; <kbd>Esc</kbd> deselect</li>'
+  +'<li><kbd>L</kbd> labels &middot; <kbd>C</kbd> arrows to scale &middot; <kbd>H</kbd> hide the numbers &middot; <kbd>T</kbd> light or dark</li>'+'<li><kbd>+</kbd> <kbd>&minus;</kbd> zoom, <kbd>0</kbd> fit it back &mdash; or scroll on the diagram to zoom where the pointer is, and drag to move around</li>'
+  +'<li><kbd>1</kbd>&ndash;<kbd>4</kbd> switch mode</li>'
+  +'</ul>';
+}
+
+/* =============================== REFRESH ================================ */
+var rafId = 0;
+function refresh(){
+  if(rafId) return;
+  rafId = requestAnimationFrame(function(){
+    rafId = 0;
+    render();
+    updatePairBar();
+    updateVerdict();
+    updateSceneTab();
+    if(!$('#p-test').hidden) updateTest();
+    if(!$('#p-effect').hidden) updateEffect();
+    if(!$('#p-forces').hidden) updateOneBody();
+  });
+}
+
+/* ================================ INIT ================================== */
+function init(){
+  refreshColours();
+  buildPresets();
+  buildHelp();
+  buildPitfalls();
+  wire();
+
+  var restored = false;
+  try{
+    var h = (location.hash||'').replace(/^#/,'');
+    if(h.indexOf('N3L1')===0) restored = decodeState(h);
+  }catch(e){}
+  if(!restored){ buildScene(); }
+  buildAll();
+  setMode(S.mode);
+
+  if(window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ resize(); refresh(); });
+    ro.observe($('#stagewrap'));
+  }
+  window.addEventListener('resize', function(){ resize(); refresh(); });
+  resize();
+  refresh();
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+
+/* a small surface for automated checking */
+window.N3 = {
+  state:function(){ return S; },
+  scene:function(){ return SC; },
+  SCENES:SCENES, TYPES:TYPES,
+  build:buildScene, load:loadScene, mode:setMode, refresh:refresh,
+  forcesOn:forcesOn, resultantOn:resultantOn, accelOf:accelOf,
+  testPair:testPair, forceById:forceById, bodyById:bodyById,
+  sentence:forceSentence, formal:forceFormal,
+  newQuestion:newQuestion, question:function(){ return QU; },
+  encode:encodeState, decode:decodeState,
+  view:function(){ return {V:V, BOX:BOX}; },
+  zoom:function(z){ S.zoom=z; refresh(); },
+  fit:resetView, zoomAbout:zoomAbout
+};
+
+})();
+</script>
+</body>
+</html>
