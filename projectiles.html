@@ -1,0 +1,2650 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="description" content="Projectile Lab - an interactive projectile motion simulator for GCSE and A-Level Physics. Independence of horizontal and vertical motion, suvat working, range and time of flight, complementary angles, launch from a height, air resistance and the monkey and hunter demonstration.">
+<title>Projectile Lab &mdash; Projectile Motion for GCSE &amp; A&#8209;Level</title>
+<style>
+/* ---- standalone page only: delete these two rules when pasting #projlab as a fragment ---- */
+html,body{height:100%;margin:0;background:#eef3f8}
+body{overflow:hidden}
+/* ---------------------------------------------------------------------------------------- */
+
+#projlab{
+  --bg:#edf2f7;
+  --bg2:#e2e9f1;
+  --sky:#dcebfa;
+  --sky2:#f2f8fe;
+  --ground:#cfe0c4;
+  --ground2:#a9c39a;
+  --soil:#8a7256;
+  --panel:#ffffff;
+  --panel2:#f2f6fa;
+  --panel3:#e7edf4;
+  --ink:#0f1c26;
+  --ink2:#36485a;
+  --muted:#66798b;
+  --line:#d2dce6;
+  --line2:#bac7d5;
+  --accent:#0d7d72;
+  --accent-ink:#ffffff;
+  --accent-soft:#d3efeb;
+  --horiz:#0369a1;          /* horizontal component */
+  --horiz-soft:#d8ecfa;
+  --vert:#c02434;           /* vertical component */
+  --vert-soft:#fbdfe2;
+  --res:#0f172a;            /* resultant velocity */
+  --ball:#ea580c;
+  --ghost:#8fa2b4;
+  --energy:#047857;
+  --ok:#15803d;
+  --warn:#b45309;
+  --bad:#be123c;
+  --grid:#c3d3e2;
+  --grid2:#dde7f1;
+  --shadow:0 1px 2px rgba(15,28,38,.07), 0 8px 22px rgba(15,28,38,.09);
+  --shadow-sm:0 1px 2px rgba(15,28,38,.1);
+  --radius:12px;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+
+  color-scheme:light;
+  width:100%; height:100%; min-height:560px;
+  display:flex; flex-direction:column;
+  background:var(--bg); color:var(--ink);
+  font-family:var(--sans); font-size:14px; line-height:1.45;
+  -webkit-text-size-adjust:100%;
+  position:relative; overflow:hidden; contain:layout style;
+}
+#projlab[data-theme="dark"]{
+  --bg:#0a0f16;
+  --bg2:#0f151f;
+  --sky:#0f1b2e;
+  --sky2:#152740;
+  --ground:#15271b;
+  --ground2:#1d3524;
+  --soil:#2b2318;
+  --panel:#121a24;
+  --panel2:#19222f;
+  --panel3:#212c3c;
+  --ink:#e8eef5;
+  --ink2:#c0cbd8;
+  --muted:#8695a6;
+  --line:#25313f;
+  --line2:#35445a;
+  --accent:#2dd4bf;
+  --accent-ink:#062420;
+  --accent-soft:#123b37;
+  --horiz:#38bdf8;
+  --horiz-soft:#0c2f45;
+  --vert:#fb7185;
+  --vert-soft:#43141d;
+  --res:#e8eef5;
+  --ball:#fb923c;
+  --ghost:#5b6b7c;
+  --energy:#34d399;
+  --ok:#4ade80;
+  --warn:#fbbf24;
+  --bad:#fb7185;
+  --grid:#22303f;
+  --grid2:#18222e;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.55);
+  --shadow-sm:0 1px 2px rgba(0,0,0,.5);
+  color-scheme:dark;
+}
+
+#projlab *,#projlab *::before,#projlab *::after{box-sizing:border-box}
+#projlab button,#projlab input,#projlab select,#projlab textarea{font:inherit;color:inherit;margin:0}
+#projlab :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+#projlab [hidden]{display:none !important}
+#projlab .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+#projlab .topbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:8px 13px;background:var(--panel);border-bottom:1px solid var(--line);
+  flex:0 0 auto;z-index:5;box-shadow:var(--shadow-sm)
+}
+#projlab .brand{display:flex;align-items:center;gap:10px;min-width:0}
+#projlab .mark{
+  width:32px;height:32px;flex:0 0 auto;border-radius:9px;
+  background:linear-gradient(140deg,var(--accent),#0369a1);
+  display:grid;place-items:center;color:#fff;box-shadow:var(--shadow-sm)
+}
+#projlab .brand h1{font-size:16px;margin:0;letter-spacing:-.02em;font-weight:700;white-space:nowrap}
+#projlab .brand .sub{font-size:11.5px;color:var(--muted);margin-top:-2px;white-space:nowrap}
+
+#projlab .seg{display:flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+#projlab .seg button{
+  border:0;background:transparent;padding:6px 11px;border-radius:7px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);white-space:nowrap;transition:.14s
+}
+#projlab .seg button:hover{color:var(--ink)}
+#projlab .seg button[aria-pressed="true"]{background:var(--panel);color:var(--accent);box-shadow:var(--shadow-sm)}
+#projlab[data-theme="dark"] .seg button[aria-pressed="true"]{background:var(--panel3)}
+
+#projlab .spacer{flex:1 1 auto}
+#projlab .iconbtn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink2);
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;cursor:pointer;transition:.14s;flex:0 0 auto
+}
+#projlab .iconbtn:hover{background:var(--panel3);color:var(--ink)}
+#projlab .iconbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#projlab .btn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--ink);
+  padding:7px 12px;border-radius:9px;cursor:pointer;font-size:12.5px;font-weight:600;transition:.14s;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap
+}
+#projlab .btn:hover{background:var(--panel3)}
+#projlab .btn:active{transform:translateY(1px)}
+#projlab .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#projlab .btn.primary:hover{filter:brightness(1.08)}
+#projlab .btn.ghost{background:transparent}
+#projlab .btn.sm{padding:4px 9px;font-size:11.5px;border-radius:7px}
+#projlab .btn.danger{color:var(--bad)}
+#projlab .btn:disabled{opacity:.45;cursor:not-allowed}
+
+#projlab .main{display:flex;flex:1 1 auto;min-height:0;min-width:0}
+#projlab .stagewrap{position:relative;flex:1 1 auto;min-width:0;min-height:0;background:var(--sky);overflow:hidden}
+#projlab canvas.scene{display:block;width:100%;height:100%;touch-action:none}
+
+#projlab .tools{
+  position:absolute;left:11px;top:11px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:5px;
+  box-shadow:var(--shadow-sm);max-width:calc(100% - 22px);opacity:.96
+}
+#projlab .tools .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+#projlab .speedwrap{display:flex;align-items:center;gap:6px;padding:0 4px;font-size:11.5px;color:var(--muted)}
+#projlab .speedwrap input[type=range]{flex:0 0 74px;width:74px;margin:0 2px}
+
+#projlab .hud{position:absolute;right:11px;top:11px;display:flex;flex-direction:column;gap:7px;align-items:flex-end;pointer-events:none;max-width:46%}
+#projlab .chip{
+  background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12px;
+  box-shadow:var(--shadow-sm);font-variant-numeric:tabular-nums;opacity:.96
+}
+#projlab .chip b{font-family:var(--mono);font-size:12.5px}
+#projlab .chip.h{border-color:var(--horiz);background:var(--horiz-soft);color:var(--horiz)}
+#projlab .chip.v{border-color:var(--vert);background:var(--vert-soft);color:var(--vert)}
+
+#projlab .verdict{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:11px;width:min(680px,calc(100% - 22px));
+  background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:9px 12px 10px;box-shadow:var(--shadow);opacity:.97
+}
+#projlab .verdict .row1{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+#projlab .verdict .status{font-weight:700;font-size:13px;letter-spacing:-.01em}
+#projlab .verdict .num{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+#projlab .verdict .row2{display:flex;gap:14px;margin-top:6px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+#projlab .verdict .row2 b{color:var(--ink)}
+
+#projlab .panel{
+  flex:0 0 400px;max-width:400px;background:var(--panel);border-left:1px solid var(--line);
+  display:flex;flex-direction:column;min-height:0
+}
+#projlab .tabs{display:flex;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto;overflow-x:auto;scrollbar-width:none}
+#projlab .tabs::-webkit-scrollbar{display:none}
+#projlab .tabs button{
+  flex:1 1 auto;border:0;background:transparent;padding:10px 6px 9px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:.14s;white-space:nowrap
+}
+#projlab .tabs button:hover{color:var(--ink)}
+#projlab .tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);background:var(--panel)}
+#projlab .tabbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:13px}
+#projlab .tabbody::-webkit-scrollbar{width:10px}
+#projlab .tabbody::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;border:3px solid var(--panel)}
+#projlab .tabpanel[hidden]{display:none}
+
+#projlab .group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px;background:var(--panel);overflow:hidden}
+#projlab .group>h3{
+  margin:0;font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+  padding:9px 12px;background:var(--panel2);border-bottom:1px solid var(--line);font-weight:700;
+  display:flex;align-items:center;justify-content:space-between;gap:8px
+}
+#projlab .group .body{padding:11px 12px}
+
+#projlab .field{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+#projlab .field:last-child{margin-bottom:0}
+#projlab .field label{flex:0 0 106px;font-size:12.5px;color:var(--ink2);font-weight:600}
+#projlab .field .val{flex:0 0 82px;text-align:right;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+#projlab .field input[type=range]{flex:1 1 auto;min-width:0}
+#projlab .field.col{flex-direction:column;align-items:stretch;gap:6px}
+#projlab .field.col label{flex:none}
+
+#projlab input[type=range]{-webkit-appearance:none;appearance:none;height:22px;background:transparent;cursor:pointer}
+#projlab input[type=range]::-webkit-slider-runnable-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#projlab input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--panel);
+  border:2px solid var(--accent);margin-top:-7px;box-shadow:var(--shadow-sm);transition:.12s
+}
+#projlab input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+#projlab input[type=range]::-moz-range-track{height:5px;border-radius:3px;background:var(--panel3);border:1px solid var(--line)}
+#projlab input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--shadow-sm)}
+
+#projlab input[type=number],#projlab input[type=text],#projlab select{
+  background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px;
+  font-size:12.5px;min-width:0;width:100%;font-family:var(--mono)
+}
+#projlab select{font-family:var(--sans);cursor:pointer}
+#projlab input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto}
+#projlab .check{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink2);cursor:pointer;padding:3px 0}
+#projlab .checkgrid{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px}
+
+#projlab .hint{font-size:11.5px;color:var(--muted);line-height:1.5;margin:8px 0 0}
+#projlab .hint.warn{color:var(--warn)}
+#projlab .hint.bad{color:var(--bad)}
+#projlab .hint.ok{color:var(--ok)}
+#projlab .hint em{font-style:normal;color:var(--accent);font-weight:600}
+
+#projlab table.led{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+#projlab table.led th{text-align:right;font-size:11px;color:var(--muted);padding:5px 6px;border-bottom:1px solid var(--line);font-weight:700;white-space:nowrap}
+#projlab table.led th:first-child,#projlab table.led td:first-child{text-align:left}
+#projlab table.led td{padding:5px 6px;border-bottom:1px solid var(--line);font-family:var(--mono);text-align:right;white-space:nowrap}
+#projlab table.led td.nm{font-family:var(--sans);font-weight:600}
+#projlab table.led tr.tot td{font-weight:700;border-top:2px solid var(--line2);border-bottom:0}
+
+#projlab .kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:12.5px}
+#projlab .kv:last-child{border-bottom:0}
+#projlab .kv .k{color:var(--muted);font-weight:600}
+#projlab .kv .v{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums}
+
+#projlab .banner{
+  display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border-radius:10px;font-weight:600;font-size:13px;
+  background:var(--panel2);border:1px solid var(--line);margin-bottom:12px
+}
+#projlab .banner .ic{font-size:17px;line-height:1.1;flex:0 0 auto}
+#projlab .banner.ok{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+#projlab .banner.warn{background:var(--vert-soft);border-color:var(--warn);color:var(--warn)}
+
+#projlab .working{
+  font-family:var(--mono);font-size:12px;line-height:1.75;background:var(--panel2);
+  border:1px solid var(--line);border-radius:10px;padding:11px 12px;white-space:pre-wrap;
+  overflow-x:auto;color:var(--ink);min-height:60px
+}
+#projlab .working .step{display:block;padding:1px 0}
+#projlab .working .lbl{color:var(--muted)}
+#projlab .working .hi{background:var(--accent-soft);border-radius:3px;padding:0 2px}
+#projlab .working em{font-style:normal;color:var(--accent);font-weight:700}
+
+#projlab .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:700;background:var(--panel3);color:var(--muted)}
+#projlab .pill.ok{background:var(--accent-soft);color:var(--accent)}
+#projlab .pill.h{background:var(--horiz-soft);color:var(--horiz)}
+#projlab .pill.v{background:var(--vert-soft);color:var(--vert)}
+
+#projlab canvas.graph{width:100%;height:250px;display:block;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
+#projlab .graphtabs{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap}
+#projlab .graphtabs button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:7px;padding:4px 9px;
+  font-size:11.5px;font-weight:600;cursor:pointer;color:var(--muted)
+}
+#projlab .graphtabs button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+
+#projlab .modal{position:absolute;inset:0;background:rgba(8,14,20,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+#projlab .modal[open]{display:flex}
+#projlab .modal .sheet{
+  background:var(--panel);border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);
+  max-width:min(760px,100%);width:100%;max-height:100%;display:flex;flex-direction:column;overflow:hidden
+}
+#projlab .modal .dhead{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:1px solid var(--line);background:var(--panel2);flex:0 0 auto}
+#projlab .modal .dhead h2{margin:0;font-size:16px}
+#projlab .modal .dbody{padding:15px;overflow-y:auto;flex:1 1 auto}
+#projlab .modal h4{margin:16px 0 6px;font-size:13px;color:var(--accent)}
+#projlab .modal h4:first-child{margin-top:0}
+#projlab .modal p,#projlab .modal li{font-size:13px;color:var(--ink2);line-height:1.6}
+#projlab .modal ul{margin:6px 0;padding-left:20px}
+#projlab kbd{font-family:var(--mono);font-size:11px;background:var(--panel3);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:1px 5px;color:var(--ink)}
+#projlab .eq{font-family:var(--mono);background:var(--panel2);padding:8px 10px;border-radius:8px;border:1px solid var(--line);font-size:12.5px}
+#projlab .presetgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(228px,1fr));gap:9px}
+#projlab .presetgrid button{
+  border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 11px;cursor:pointer;
+  text-align:left;display:flex;flex-direction:column;gap:3px;transition:.14s
+}
+#projlab .presetgrid button:hover{background:var(--panel3);border-color:var(--accent)}
+#projlab .presetgrid b{font-size:13px}
+#projlab .presetgrid span{font-size:11.5px;color:var(--muted);line-height:1.45}
+#projlab .presetgrid .tag{align-self:flex-start;margin-top:3px}
+
+#projlab .ghostlist{display:flex;flex-direction:column;gap:6px}
+#projlab .ghostrow{display:flex;align-items:center;gap:8px;font-size:12px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+#projlab .ghostrow .sw{width:22px;height:3px;border-radius:2px;flex:0 0 auto}
+#projlab .ghostrow .t{flex:1 1 auto;font-family:var(--mono);font-size:11.5px}
+
+#projlab .toast{
+  position:absolute;left:50%;bottom:104px;transform:translate(-50%,12px);opacity:0;pointer-events:none;
+  background:var(--ink);color:var(--panel);padding:9px 15px;border-radius:10px;font-size:13px;font-weight:600;
+  transition:.22s;z-index:25;box-shadow:var(--shadow);max-width:80%;text-align:center
+}
+#projlab .toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1000px){
+  #projlab .main{flex-direction:column}
+  #projlab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:48%}
+  #projlab .stagewrap{flex:1 1 auto;min-height:220px}
+  #projlab .brand .sub{display:none}
+  #projlab .verdict{bottom:8px;padding:7px 10px}
+}
+@media (max-width:820px){
+  #projlab .seg{order:5;width:100%}
+  #projlab .seg button{flex:1 1 0;padding:7px 3px;font-size:11.5px}
+}
+@media (max-width:600px){
+  #projlab .topbar{gap:8px;padding:7px 10px}
+  #projlab .brand .txt{display:none}
+  #projlab .hud{display:none}
+  #projlab .iconbtn{width:28px;height:28px}
+  #projlab .tools{gap:4px;padding:4px;left:8px;top:8px}
+  #projlab .tools .divider{margin:0;height:18px}
+  #projlab .speedwrap label{display:none}
+  #projlab .speedwrap{padding:0 2px;gap:3px}
+  #projlab .speedwrap input[type=range]{flex:0 0 54px;width:54px}
+  #projlab .speedwrap span{min-width:32px !important;font-size:11px}
+}
+</style>
+</head>
+<body>
+<div id="projlab" data-theme="light">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark" aria-hidden="true">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 19c0-8 5-13 12-13"></path>
+          <path d="M15 6h4v4"></path>
+          <circle cx="19" cy="19" r="1.6"></circle>
+        </svg>
+      </div>
+      <div class="txt">
+        <h1>Projectile Lab</h1>
+        <div class="sub">Projectile motion &middot; GCSE &amp; A&#8209;Level Physics</div>
+      </div>
+    </div>
+
+    <div class="seg" role="group" aria-label="Simulation">
+      <button id="modeLaunch" aria-pressed="true" title="Launch a projectile and analyse it (1)">Launch</button>
+      <button id="modeSweep"  aria-pressed="false" title="Fire a family of angles at once (2)">Angle sweep</button>
+      <button id="modeDrop"   aria-pressed="false" title="Dropped and projected at the same instant (3)">Drop vs throw</button>
+      <button id="modeMonkey" aria-pressed="false" title="Monkey and hunter (4)">Monkey &amp; hunter</button>
+    </div>
+
+    <div class="spacer"></div>
+
+    <button class="btn sm" id="btnPresets" title="Load a ready-made question">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h10"></path></svg>
+      <span>Scenarios</span>
+    </button>
+    <button class="iconbtn" id="btnShare" title="Copy a link that restores this exact setup" aria-label="Copy share link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.5 1.5"></path><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.5-1.5"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnPng" title="Save the diagram as a PNG image" aria-label="Save image">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnTheme" title="Light or dark (T)" aria-label="Toggle theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+    </button>
+    <button class="iconbtn" id="btnHelp" title="Help, the physics and keyboard shortcuts" aria-label="Help">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M9.2 9.2a2.9 2.9 0 0 1 5.6 1c0 2-2.8 2.3-2.8 4"></path><path d="M12 17.6h.01"></path></svg>
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="stagewrap" id="stagewrap">
+      <canvas class="scene" id="scene" tabindex="0" aria-label="Projectile motion diagram. Drag the launcher or the target to change the setup."></canvas>
+
+      <div class="tools">
+        <button class="iconbtn" id="btnFire" title="Fire (Space)" aria-label="Fire">
+          <svg id="fireIcon" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4l13 8-13 8z"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnStep" title="Advance one small step (.)" aria-label="Step forward">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 5l9 7-9 7z"></path><path d="M18 5v14"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnReset" title="Clear the flight (R)" aria-label="Reset">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v6h6"></path><path d="M20 20v-6h-6"></path><path d="M20 9A8 8 0 0 0 6.3 6.3L4 10"></path><path d="M4 15a8 8 0 0 0 13.7 2.7L20 14"></path></svg>
+        </button>
+        <div class="divider"></div>
+        <div class="speedwrap">
+          <label for="inSpeed">Speed</label>
+          <input type="range" id="inSpeed" min="-1.4" max="0.3" step="0.01" value="-0.3">
+          <span id="vSpeed" style="font-family:var(--mono);min-width:38px;text-align:right">0.5&times;</span>
+        </div>
+        <div class="divider"></div>
+        <button class="iconbtn" id="btnComp" title="Show the horizontal and vertical components (C)" aria-pressed="true" aria-label="Toggle components">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 19h11"></path><path d="M5 19V8"></path><path d="M5 19l12-12"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnShadow" title="Show the horizontal and vertical shadows (S)" aria-pressed="true" aria-label="Toggle shadows">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="9" r="3"></circle><path d="M4 20h16"></path><ellipse cx="12" cy="20" rx="4" ry="1.2"></ellipse></svg>
+        </button>
+        <button class="iconbtn" id="btnStrobe" title="Strobe images at equal time intervals (B)" aria-pressed="true" aria-label="Toggle strobe">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="5" cy="17" r="1.4"></circle><circle cx="10" cy="10" r="1.4"></circle><circle cx="15" cy="8" r="1.4"></circle><circle cx="20" cy="13" r="1.4"></circle></svg>
+        </button>
+        <button class="iconbtn" id="btnKeep" title="Keep this trajectory for comparison (K)" aria-label="Keep trajectory">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4h12v16l-6-4-6 4z"></path></svg>
+        </button>
+        <button class="iconbtn" id="btnValues" title="Hide every number so students work them out (H)" aria-pressed="false" aria-label="Hide values">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="2.6"></circle><path d="M3 3l18 18"></path></svg>
+        </button>
+      </div>
+
+      <div class="hud" id="hud">
+        <div class="chip">Time <b id="hudT">0.00</b> s</div>
+        <div class="chip h">v<sub>x</sub> <b id="hudVx">0.00</b> m/s</div>
+        <div class="chip v">v<sub>y</sub> <b id="hudVy">0.00</b> m/s</div>
+        <div class="chip">Height <b id="hudY">0.00</b> m &nbsp; Range <b id="hudX">0.00</b> m</div>
+      </div>
+
+      <div class="verdict">
+        <div class="row1">
+          <span class="status" id="vStatus">Ready to fire</span>
+          <span class="num" id="vNum">&nbsp;</span>
+        </div>
+        <div class="row2" id="vRow2"></div>
+      </div>
+      <p class="sr" id="live" aria-live="polite"></p>
+      <div class="toast" id="toast"></div>
+    </div>
+
+    <div class="panel">
+      <div class="tabs" role="tablist" aria-label="Panels">
+        <button role="tab" id="tab-setup"   aria-selected="true"  aria-controls="p-setup">Set up</button>
+        <button role="tab" id="tab-analyse" aria-selected="false" aria-controls="p-analyse">Analyse</button>
+        <button role="tab" id="tab-solve"   aria-selected="false" aria-controls="p-solve">Solve</button>
+        <button role="tab" id="tab-graphs"  aria-selected="false" aria-controls="p-graphs">Graphs</button>
+        <button role="tab" id="tab-display" aria-selected="false" aria-controls="p-display">Display</button>
+      </div>
+      <div class="tabbody">
+
+        <!-- ================= SET UP ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-setup" aria-labelledby="tab-setup">
+          <div class="group">
+            <h3>The launch</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inU">Speed <i>u</i></label>
+                <input type="range" id="inU" min="1" max="80" step="0.1" value="20">
+                <span class="val" id="vU">20.0 m/s</span>
+              </div>
+              <div class="field" id="fAng">
+                <label for="inAng">Angle &theta;</label>
+                <input type="range" id="inAng" min="-85" max="90" step="0.5" value="40">
+                <span class="val" id="vAng">40.0&deg;</span>
+              </div>
+              <div class="field">
+                <label for="inH0">Launch height</label>
+                <input type="range" id="inH0" min="0" max="60" step="0.1" value="0">
+                <span class="val" id="vH0">0.0 m</span>
+              </div>
+              <p class="hint" id="launchHint"></p>
+            </div>
+          </div>
+
+          <div class="group" id="grpTarget">
+            <h3>The target</h3>
+            <div class="body">
+              <label class="check"><input type="checkbox" id="chkTarget" checked> <span>Show a target on the ground</span></label>
+              <div class="field" style="margin-top:9px">
+                <label for="inTx">Distance</label>
+                <input type="range" id="inTx" min="1" max="200" step="0.5" value="35">
+                <span class="val" id="vTx">35.0 m</span>
+              </div>
+              <div class="field">
+                <label for="inTy">Height</label>
+                <input type="range" id="inTy" min="0" max="60" step="0.5" value="0">
+                <span class="val" id="vTy">0.0 m</span>
+              </div>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm primary" id="btnAim">Find the angle that hits it</button>
+                <button class="btn sm" id="btnAimU">Find the speed instead</button>
+              </div>
+              <div id="aimOut"></div>
+            </div>
+          </div>
+
+          <div class="group" id="grpSweep" hidden>
+            <h3>Angle sweep</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inSwFrom">From</label>
+                <input type="range" id="inSwFrom" min="0" max="85" step="5" value="15">
+                <span class="val" id="vSwFrom">15&deg;</span>
+              </div>
+              <div class="field">
+                <label for="inSwTo">To</label>
+                <input type="range" id="inSwTo" min="5" max="90" step="5" value="75">
+                <span class="val" id="vSwTo">75&deg;</span>
+              </div>
+              <div class="field">
+                <label for="inSwStep">Step</label>
+                <input type="range" id="inSwStep" min="5" max="30" step="5" value="15">
+                <span class="val" id="vSwStep">15&deg;</span>
+              </div>
+              <label class="check"><input type="checkbox" id="chkPairs" checked> <span>Join the pairs of angles that land together</span></label>
+              <label class="check"><input type="checkbox" id="chkEnvelope"> <span>Draw the envelope of all the paths</span></label>
+            </div>
+          </div>
+
+          <div class="group" id="grpMonkey" hidden>
+            <h3>Monkey and hunter</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">The monkey lets go at the very instant the projectile is fired. Aim <em>straight at the monkey</em> and it is hit every time, whatever the launch speed &mdash; because both fall by exactly &frac12;<i>gt</i>&sup2; below where they would have been.</p>
+              <div class="field" style="margin-top:9px">
+                <label for="inMx">Distance</label>
+                <input type="range" id="inMx" min="5" max="120" step="0.5" value="30">
+                <span class="val" id="vMx">30.0 m</span>
+              </div>
+              <div class="field">
+                <label for="inMy">Height</label>
+                <input type="range" id="inMy" min="2" max="60" step="0.5" value="18">
+                <span class="val" id="vMy">18.0 m</span>
+              </div>
+              <label class="check"><input type="checkbox" id="chkAimLine" checked> <span>Draw the line of aim</span></label>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Conditions</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inG">g</label>
+                <input type="range" id="inG" min="1.6" max="25" step="0.01" value="9.81">
+                <span class="val" id="vG">9.81</span>
+              </div>
+              <div class="field">
+                <label for="selG">Preset g</label>
+                <select id="selG">
+                  <option value="9.81">9.81 N/kg (Earth, exact)</option>
+                  <option value="9.8">9.8 N/kg (most mark schemes)</option>
+                  <option value="10">10 N/kg (GCSE rounding)</option>
+                  <option value="1.62">1.62 N/kg (Moon)</option>
+                  <option value="3.72">3.72 N/kg (Mars)</option>
+                  <option value="24.8">24.8 N/kg (Jupiter)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="inMass">Mass</label>
+                <input type="range" id="inMass" min="0.01" max="10" step="0.01" value="0.15">
+                <span class="val" id="vMass">0.15 kg</span>
+              </div>
+              <label class="check"><input type="checkbox" id="chkDrag"> <span>Air resistance <span class="pill">A&#8209;Level extension</span></span></label>
+              <div class="field" id="fDrag" hidden style="margin-top:9px">
+                <label for="inDrag">Drag factor <i>k</i></label>
+                <input type="range" id="inDrag" min="0" max="0.06" step="0.0005" value="0.008">
+                <span class="val" id="vDrag">0.0080</span>
+              </div>
+              <p class="hint" id="dragHint" hidden>The model uses a drag acceleration of <em>k v&sup2;</em> opposing the motion, worked out step by step rather than from a formula. The ideal no&#8209;air parabola stays on screen as a faint line so the difference is obvious.</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Kept trajectories <span class="pill" id="ghostCount">0</span></h3>
+            <div class="body">
+              <div class="ghostlist" id="ghostList"></div>
+              <div style="display:flex;gap:6px;margin-top:9px;flex-wrap:wrap">
+                <button class="btn sm" id="btnKeep2">Keep this one</button>
+                <button class="btn sm ghost danger" id="btnClearGhosts">Clear all</button>
+              </div>
+              <p class="hint">Keep a shot, change one thing, fire again. The old path stays as a faint line so the two can be compared directly.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= ANALYSE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-analyse" aria-labelledby="tab-analyse" hidden>
+          <div class="banner" id="anBanner"><span class="ic">&#8599;</span><span id="anText">Fire the projectile to fill in the numbers.</span></div>
+
+          <div class="group">
+            <h3>Resolving the launch velocity</h3>
+            <div class="body" id="resBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>The whole flight</h3>
+            <div class="body" id="flightBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>At this instant <span class="pill" id="instTag">t = 0</span></h3>
+            <div class="body" id="instBody"></div>
+          </div>
+
+          <div class="group">
+            <h3>Energy</h3>
+            <div class="body" id="energyBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= SOLVE ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-solve" aria-labelledby="tab-solve" hidden>
+          <div class="group">
+            <h3>Predict, then check</h3>
+            <div class="body">
+              <p class="hint" style="margin-top:0">Work out the flight yourself, type your answers in, and see how you did.</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px">
+                <div><span style="font-size:10.5px;color:var(--muted);font-weight:700">time of flight /s</span><input type="number" id="pT" step="0.1"></div>
+                <div><span style="font-size:10.5px;color:var(--muted);font-weight:700">max height /m</span><input type="number" id="pH" step="0.1"></div>
+                <div><span style="font-size:10.5px;color:var(--muted);font-weight:700">range /m</span><input type="number" id="pR" step="0.1"></div>
+                <div style="align-self:end"><button class="btn sm primary" id="btnCheck" style="width:100%">Check</button></div>
+              </div>
+              <div id="checkOut" style="margin-top:9px"></div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Working <span class="pill" id="workTag">live</span></h3>
+            <div class="body">
+              <div class="working" id="workOut"></div>
+              <div style="display:flex;gap:6px;margin-top:9px;align-items:center;flex-wrap:wrap">
+                <button class="btn sm" id="btnWalk">&#9654; Walk through it</button>
+                <button class="btn sm" id="btnWalkPrev" disabled>&#8592;</button>
+                <button class="btn sm" id="btnWalkNext" disabled>&#8594;</button>
+                <button class="btn sm ghost" id="btnCopyWork">Copy</button>
+                <span class="hint" id="walkStatus" style="margin:0"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="group">
+            <h3>Useful results</h3>
+            <div class="body" id="resultsBody"></div>
+          </div>
+        </section>
+
+        <!-- ================= GRAPHS ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-graphs" aria-labelledby="tab-graphs" hidden>
+          <div class="group">
+            <h3>Graphs</h3>
+            <div class="body">
+              <div class="graphtabs" role="group" aria-label="Graph to show">
+                <button id="gTabPath" aria-pressed="true">Path</button>
+                <button id="gTabDisp" aria-pressed="false">Displacement</button>
+                <button id="gTabVel"  aria-pressed="false">Velocity</button>
+                <button id="gTabEn"   aria-pressed="false">Energy</button>
+              </div>
+              <canvas class="graph" id="graph" width="760" height="500"></canvas>
+              <div id="graphRead" style="margin-top:9px"></div>
+              <p class="hint" id="graphHint"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= DISPLAY ================= -->
+        <section class="tabpanel" role="tabpanel" id="p-display" aria-labelledby="tab-display" hidden>
+          <div class="group">
+            <h3>What to draw</h3>
+            <div class="body">
+              <div class="checkgrid">
+                <label class="check"><input type="checkbox" id="cGrid" checked> <span>Grid</span></label>
+                <label class="check"><input type="checkbox" id="cAxes" checked> <span>Axes &amp; scale</span></label>
+                <label class="check"><input type="checkbox" id="cPath" checked> <span>Path</span></label>
+                <label class="check"><input type="checkbox" id="cStrobe" checked> <span>Strobe images</span></label>
+                <label class="check"><input type="checkbox" id="cComp" checked> <span>Components</span></label>
+                <label class="check"><input type="checkbox" id="cRes" checked> <span>Resultant velocity</span></label>
+                <label class="check"><input type="checkbox" id="cShadow" checked> <span>Shadows</span></label>
+                <label class="check"><input type="checkbox" id="cApex" checked> <span>Apex &amp; landing</span></label>
+                <label class="check"><input type="checkbox" id="cIdeal" checked> <span>Ideal parabola</span></label>
+                <label class="check"><input type="checkbox" id="cLabels" checked> <span>Labels</span></label>
+              </div>
+              <div class="field" style="margin-top:11px">
+                <label for="inStrobeDt">Strobe interval</label>
+                <input type="range" id="inStrobeDt" min="0.05" max="1" step="0.05" value="0.2">
+                <span class="val" id="vStrobeDt">0.20 s</span>
+              </div>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Numbers</h3>
+            <div class="body">
+              <div class="field">
+                <label for="inDec">Decimals</label>
+                <input type="range" id="inDec" min="0" max="4" step="1" value="2">
+                <span class="val" id="vDec">2</span>
+              </div>
+              <label class="check"><input type="checkbox" id="cSig"> <span>Round to 3 significant figures in the working</span></label>
+            </div>
+          </div>
+          <div class="group">
+            <h3>Save &amp; share</h3>
+            <div class="body">
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button class="btn sm" id="btnCopyState">Copy setup code</button>
+                <button class="btn sm" id="btnPasteState">Paste setup code</button>
+                <button class="btn sm" id="btnPng2">Save PNG</button>
+                <button class="btn sm ghost danger" id="btnHardReset">Reset everything</button>
+              </div>
+              <p class="hint">A setup code holds the whole question in a short piece of text, so a pasted code rebuilds it exactly.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalHelp" role="dialog" aria-modal="true" aria-label="Help">
+    <div class="sheet">
+      <div class="dhead"><h2>Projectile Lab</h2><button class="iconbtn" id="closeHelp" aria-label="Close">&times;</button></div>
+      <div class="dbody" id="helpBody"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modalPresets" role="dialog" aria-modal="true" aria-label="Scenarios">
+    <div class="sheet">
+      <div class="dhead"><h2>Scenarios</h2><button class="iconbtn" id="closePresets" aria-label="Close">&times;</button></div>
+      <div class="dbody"><div class="presetgrid" id="presetList"></div></div>
+    </div>
+  </div>
+
+</div>
+<script>
+(function(){
+"use strict";
+/* ==========================================================================
+   PROJECTILE LAB
+   Projectile motion for GCSE and A-Level.
+   Axes: x to the right, y upwards from the ground. The horizontal and
+   vertical motions are treated completely separately, which is the whole
+   idea the app is built to make visible.
+   ========================================================================== */
+
+var ROOT = document.getElementById('projlab');
+function $(s){ return ROOT.querySelector(s); }
+function $$(s){ return Array.prototype.slice.call(ROOT.querySelectorAll(s)); }
+function clamp(v,a,b){ return v<a?a:(v>b?b:v); }
+var PI = Math.PI;
+var RAD = function(d){ return d*PI/180; }, DEG = function(r){ return r*180/PI; };
+var GHOSTC = ['#6d28d9','#0891b2','#b45309','#be123c','#15803d'];
+
+/* ------------------------------- state --------------------------------- */
+function defaults(){
+  return {
+    mode:'launch',
+    u:20, ang:40, h0:0, g:9.81, mass:0.15,
+    drag:false, k:0.008,
+    t:0, running:false, speed:0.5, flying:false, landed:false,
+    balls:[],
+    path:[], strobe:[], hist:[],
+    strobeDt:0.2, strobeClock:0,
+    ghosts:[],
+    target:{on:true, x:35, y:0},
+    sweep:{from:15, to:75, step:15, pairs:true, envelope:false},
+    monkey:{x:30, y:18, aimLine:true, fall:0, hit:false},
+    show:{grid:1,axes:1,path:1,strobe:1,comp:1,res:1,shadow:1,apex:1,ideal:1,labels:1,values:1},
+    dec:2, sig:false,
+    graph:'path',
+    dragging:null,
+    nextGhost:0
+  };
+}
+var S = defaults();
+
+/* ------------------------------ numbers -------------------------------- */
+function fmt(v,dp){
+  if(v===null||v===undefined||!isFinite(v)) return '–';
+  dp = (dp===undefined)? S.dec : dp;
+  var s = Math.abs(v) < 5e-13 ? 0 : v;
+  var out = s.toFixed(dp);
+  if(parseFloat(out)===0) out = (0).toFixed(dp);
+  return out;
+}
+function sig(v,n){
+  if(!isFinite(v)) return '–';
+  if(v===0) return '0';
+  return String(parseFloat(v.toPrecision(n||3)));
+}
+function w(v){ return S.sig ? sig(v,3) : fmt(v); }
+function esc(s){
+  return String(s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+  });
+}
+
+/* ======================== ANALYTIC PROJECTILE ===========================
+   With no air resistance the two motions are independent:
+
+     horizontal   constant velocity      x  = ux t
+     vertical     constant acceleration  y  = h + uy t - 1/2 g t^2
+                                         vy = uy - g t
+
+   Everything else - time of flight, greatest height, range - comes from
+   applying suvat to the vertical motion and then feeding the time into the
+   horizontal motion.
+   ======================================================================== */
+function comps(u, angDeg){
+  var a = RAD(angDeg);
+  return { ux: u*Math.cos(a), uy: u*Math.sin(a) };
+}
+function predictIdeal(u, angDeg, h0, g, landY){
+  landY = landY||0;
+  var c = comps(u, angDeg), ux=c.ux, uy=c.uy;
+  var disc = uy*uy + 2*g*(h0-landY);
+  var tFlight = disc>0 ? (uy + Math.sqrt(disc))/g : 0;
+  if(tFlight < 0) tFlight = 0;
+  var tApex = uy>0 ? uy/g : 0;
+  var rise = uy>0 ? uy*uy/(2*g) : 0;
+  var hMax = h0 + rise;
+  var range = ux*tFlight;
+  var vyLand = uy - g*tFlight;
+  var vLand = Math.hypot(ux, vyLand);
+  return {
+    ux:ux, uy:uy, tFlight:tFlight, tApex:tApex, rise:rise, hMax:hMax,
+    range:range, vyLand:vyLand, vLand:vLand,
+    angLand: DEG(Math.atan2(vyLand, ux)),
+    apexX: ux*tApex
+  };
+}
+function stateIdeal(t, u, angDeg, h0, g){
+  var c = comps(u, angDeg);
+  return {
+    x: c.ux*t,
+    y: h0 + c.uy*t - 0.5*g*t*t,
+    vx: c.ux,
+    vy: c.uy - g*t
+  };
+}
+
+/* ---- launch angles that hit a target at (X, Y) relative to the launch ----
+   Y = X tan(th) - g X^2 (1 + tan^2 th) / (2 u^2)
+   which is a quadratic in T = tan(th):
+        a T^2 - X T + (Y + a) = 0,   a = g X^2 / (2 u^2)
+   Two real roots means two ways to hit it: a low, flat shot and a high,
+   lobbed one. Equal roots means the target is exactly at the limit of the
+   range for that speed.                                                   */
+function solveAngles(X, Y, u, g){
+  if(X === 0) return null;
+  var a = g*X*X/(2*u*u);
+  var D = X*X - 4*a*(Y + a);
+  if(D < 0) return { ok:false, needed: minSpeed(X,Y,g) };
+  var r = Math.sqrt(D);
+  var t1 = (X - r)/(2*a), t2 = (X + r)/(2*a);
+  return { ok:true, low: DEG(Math.atan(t1)), high: DEG(Math.atan(t2)), equal: D < 1e-9 };
+}
+/* the smallest launch speed that can reach (X, Y):  u^2 = g(Y + sqrt(X^2+Y^2)) */
+function minSpeed(X, Y, g){ return Math.sqrt(g*(Y + Math.hypot(X,Y))); }
+/* the launch speed needed to hit (X, Y) at a given angle */
+function solveSpeed(X, Y, angDeg, g){
+  var a = RAD(angDeg), c = Math.cos(a);
+  var denom = 2*c*c*(X*Math.tan(a) - Y);
+  if(denom <= 0) return null;
+  return Math.sqrt(g*X*X/denom);
+}
+/* the angle giving the greatest range when launched from height h */
+function bestAngle(u, h, g){
+  var s = 1/Math.sqrt(2 + 2*g*h/(u*u));
+  return DEG(Math.asin(clamp(s,0,1)));
+}
+function bestRange(u, h, g){ return (u/g)*Math.sqrt(u*u + 2*g*h); }
+
+/* ========================= AIR RESISTANCE MODEL ==========================
+   An A-Level extension. The drag acceleration is taken as k v^2 opposing
+   the motion, so   a = -g j - k |v| v.  There is no neat formula for the
+   path, so it is worked out numerically with a fourth-order Runge-Kutta
+   step - which is exactly what "solve it step by step" means in practice.
+   ======================================================================== */
+function deriv(st, g, k){
+  var sp = Math.hypot(st.vx, st.vy);
+  return {
+    x: st.vx, y: st.vy,
+    vx: -k*sp*st.vx,
+    vy: -g - k*sp*st.vy
+  };
+}
+function rk4(st, h, g, k){
+  var a = deriv(st, g, k);
+  var s2 = { x:st.x+a.x*h/2, y:st.y+a.y*h/2, vx:st.vx+a.vx*h/2, vy:st.vy+a.vy*h/2 };
+  var b = deriv(s2, g, k);
+  var s3 = { x:st.x+b.x*h/2, y:st.y+b.y*h/2, vx:st.vx+b.vx*h/2, vy:st.vy+b.vy*h/2 };
+  var c = deriv(s3, g, k);
+  var s4 = { x:st.x+c.x*h, y:st.y+c.y*h, vx:st.vx+c.vx*h, vy:st.vy+c.vy*h };
+  var d = deriv(s4, g, k);
+  return {
+    x: st.x + h/6*(a.x + 2*b.x + 2*c.x + d.x),
+    y: st.y + h/6*(a.y + 2*b.y + 2*c.y + d.y),
+    vx: st.vx + h/6*(a.vx + 2*b.vx + 2*c.vx + d.vx),
+    vy: st.vy + h/6*(a.vy + 2*b.vy + 2*c.vy + d.vy)
+  };
+}
+/* integrate a whole drag flight and report the same quantities */
+function predictDrag(u, angDeg, h0, g, k, landY){
+  landY = landY||0;
+  var c = comps(u, angDeg);
+  var st = { x:0, y:h0, vx:c.ux, vy:c.uy };
+  var h = 0.001, t = 0, hMax = h0, tApex = 0, apexX = 0, prev = st, guard = 0;
+  while(guard++ < 400000){
+    var nx = rk4(st, h, g, k);
+    t += h;
+    if(nx.y > hMax){ hMax = nx.y; tApex = t; apexX = nx.x; }
+    if(nx.y <= landY && nx.vy < 0){
+      var f = (st.y - landY)/Math.max(st.y - nx.y, 1e-12);
+      var xL = st.x + (nx.x - st.x)*f;
+      var vxL = st.vx + (nx.vx - st.vx)*f, vyL = st.vy + (nx.vy - st.vy)*f;
+      return { ux:c.ux, uy:c.uy, tFlight:t - h + h*f, tApex:tApex, hMax:hMax,
+               rise:hMax-h0, range:xL, apexX:apexX,
+               vyLand:vyL, vLand:Math.hypot(vxL,vyL), angLand:DEG(Math.atan2(vyL,vxL)) };
+    }
+    prev = st; st = nx;
+    if(t > 600) break;
+  }
+  void prev;
+  return { ux:c.ux, uy:c.uy, tFlight:t, tApex:tApex, hMax:hMax, rise:hMax-h0,
+           range:st.x, apexX:apexX, vyLand:st.vy, vLand:Math.hypot(st.vx,st.vy),
+           angLand:DEG(Math.atan2(st.vy,st.vx)) };
+}
+/* the launch that is actually being simulated in the current mode */
+function EL(){
+  if(S.mode==='sweep'){
+    var a = trackedAngle();
+    return { u:S.u, ang:a, h0:S.h0 };
+  }
+  if(S.mode==='drop')   return { u:S.u, ang:0, h0:(S.h0>0?S.h0:12) };
+  if(S.mode==='monkey') return { u:S.u, ang:DEG(Math.atan2(S.monkey.y-S.h0, S.monkey.x)), h0:S.h0 };
+  return { u:S.u, ang:S.ang, h0:S.h0 };
+}
+function predict(){
+  var e = EL();
+  return S.drag ? predictDrag(e.u, e.ang, e.h0, S.g, S.k, 0)
+                : predictIdeal(e.u, e.ang, e.h0, S.g, 0);
+}
+/* in a sweep the numbers follow the longest-range trajectory, which is the
+   one the mode is about */
+function trackedAngle(){
+  if(S.balls && S.balls.length && S.track!==undefined && S.balls[S.track]) return S.balls[S.track].ang;
+  var lo = Math.min(S.sweep.from,S.sweep.to), hi = Math.max(S.sweep.from,S.sweep.to);
+  return clamp(bestAngle(S.u, S.h0, S.g), lo, hi);
+}
+
+/* the whole ideal path, as points, for drawing */
+function idealPath(u, angDeg, h0, g, n){
+  var P = predictIdeal(u, angDeg, h0, g, 0), pts = [];
+  n = n||160;
+  if(P.tFlight <= 0) return pts;
+  for(var i=0;i<=n;i++){
+    var t = P.tFlight*i/n, s = stateIdeal(t, u, angDeg, h0, g);
+    pts.push({x:s.x, y:s.y, t:t});
+  }
+  return pts;
+}
+/* the envelope ("parabola of safety") of every angle at a fixed speed */
+function envelopeY(x, u, h0, g){ return h0 + u*u/(2*g) - g*x*x/(2*u*u); }
+
+/* ============================== FLIGHT ================================== */
+function ballTemplate(o){
+  return {
+    id:o.id, label:o.label||'', colour:o.colour||'#ea580c',
+    u:o.u, ang:o.ang, h0:o.h0, x0:o.x0||0, landY:o.landY||0,
+    x:o.x0||0, y:o.h0, vx:0, vy:0,
+    st:null, path:[], strobe:[], landed:false, tLand:null, hit:false
+  };
+}
+function makeBalls(){
+  var list = [], i;
+  if(S.mode==='sweep'){
+    var a = Math.min(S.sweep.from, S.sweep.to), b = Math.max(S.sweep.from, S.sweep.to);
+    var st = Math.max(S.sweep.step, 1), n = 0;
+    for(var ang=a; ang<=b+1e-9 && n<24; ang+=st, n++){
+      list.push(ballTemplate({ id:n, u:S.u, ang:ang, h0:S.h0, colour:sweepColour(ang),
+                               label:fmt(ang,0)+'°' }));
+    }
+  } else if(S.mode==='drop'){
+    list.push(ballTemplate({ id:0, u:S.u, ang:0, h0:S.h0>0?S.h0:12, colour:'#ea580c', label:'projected' }));
+    list.push(ballTemplate({ id:1, u:0,   ang:0, h0:S.h0>0?S.h0:12, colour:'#0369a1', label:'dropped' }));
+  } else if(S.mode==='monkey'){
+    var ang = DEG(Math.atan2(S.monkey.y - S.h0, S.monkey.x));
+    list.push(ballTemplate({ id:0, u:S.u, ang:ang, h0:S.h0, colour:'#ea580c', label:'projectile' }));
+  } else {
+    list.push(ballTemplate({ id:0, u:S.u, ang:S.ang, h0:S.h0, colour:'#ea580c', label:'projectile' }));
+  }
+  S.track = 0;
+  if(S.mode==='sweep' && list.length){
+    var want = bestAngle(S.u, S.h0, S.g), bestD = Infinity;
+    for(i=0;i<list.length;i++){ var d2 = Math.abs(list[i].ang - want); if(d2 < bestD){ bestD = d2; S.track = i; } }
+  }
+  for(i=0;i<list.length;i++){
+    var c = comps(list[i].u, list[i].ang);
+    list[i].vx = c.ux; list[i].vy = c.uy;
+    list[i].st = { x:list[i].x0, y:list[i].h0, vx:c.ux, vy:c.uy };
+    list[i].tLand = predictIdeal(list[i].u, list[i].ang, list[i].h0, S.g, list[i].landY).tFlight;
+    list[i].path.push({x:list[i].x, y:list[i].y, t:0});
+  }
+  return list;
+}
+function sweepColour(ang){
+  var h = clamp((ang-0)/90, 0, 1);
+  var pal = ['#be123c','#ea580c','#ca8a04','#15803d','#0891b2','#4f46e5','#7c3aed'];
+  return pal[Math.min(pal.length-1, Math.round(h*(pal.length-1)))];
+}
+function fire(){
+  S.balls = makeBalls();
+  S.t = 0; S.flying = true; S.running = true; S.landed = false;
+  S.strobeClock = 0; S.hist = [];
+  S.monkey.fall = 0; S.monkey.hit = false;
+  recordHistory();
+  pushStrobe();
+}
+function resetFlight(){
+  S.balls = makeBalls();
+  S.t = 0; S.flying = false; S.running = false; S.landed = false;
+  S.hist = []; S.strobeClock = 0;
+  S.monkey.fall = 0; S.monkey.hit = false;
+  for(var i=0;i<S.balls.length;i++){ S.balls[i].path = [{x:S.balls[i].x0, y:S.balls[i].h0, t:0}]; S.balls[i].strobe=[]; }
+}
+function pushStrobe(){
+  for(var i=0;i<S.balls.length;i++){
+    var b = S.balls[i];
+    if(!b.landed) b.strobe.push({x:b.x, y:b.y, t:S.t});
+    if(b.strobe.length>400) b.strobe.shift();
+  }
+}
+function step(dt){
+  if(!S.flying) return false;
+  S.t += dt;
+  var alive = false, i;
+  for(i=0;i<S.balls.length;i++){
+    var b = S.balls[i];
+    if(b.landed) continue;
+    if(!S.drag){
+      if(S.t >= b.tLand){
+        var e = stateIdeal(b.tLand, b.u, b.ang, b.h0, S.g);
+        b.x = b.x0 + e.x; b.y = b.landY; b.vx = e.vx; b.vy = e.vy;
+        b.landed = true;
+        b.path.push({x:b.x, y:b.y, t:b.tLand});
+      } else {
+        var s = stateIdeal(S.t, b.u, b.ang, b.h0, S.g);
+        b.x = b.x0 + s.x; b.y = s.y; b.vx = s.vx; b.vy = s.vy;
+        b.path.push({x:b.x, y:b.y, t:S.t});
+        alive = true;
+      }
+    } else {
+      var h = 0.0008, n = Math.max(1, Math.ceil(dt/h)), hh = dt/n, k;
+      for(k=0;k<n;k++){
+        var prev = b.st;
+        b.st = rk4(b.st, hh, S.g, S.k);
+        if(b.st.y <= b.landY && b.st.vy < 0){
+          var f = (prev.y - b.landY)/Math.max(prev.y - b.st.y, 1e-12);
+          b.st = { x: prev.x + (b.st.x-prev.x)*f, y: b.landY,
+                   vx: prev.vx + (b.st.vx-prev.vx)*f, vy: prev.vy + (b.st.vy-prev.vy)*f };
+          b.landed = true; break;
+        }
+      }
+      b.x = b.st.x; b.y = b.st.y; b.vx = b.st.vx; b.vy = b.st.vy;
+      b.path.push({x:b.x, y:b.y, t:S.t});
+      if(!b.landed) alive = true;
+    }
+    if(b.path.length > 5000) b.path.shift();
+  }
+  if(S.mode==='monkey'){
+    S.monkey.fall = 0.5*S.g*S.t*S.t;
+    var my = S.monkey.y - S.monkey.fall;
+    var p0 = S.balls[0];
+    if(p0 && !S.monkey.hit && Math.hypot(p0.x - S.monkey.x, p0.y - my) < 0.6){
+      S.monkey.hit = true; S.monkey.hitAt = S.t;
+      p0.landed = true; alive = false;      /* freeze at the catch */
+    }
+    if(my <= 0 && !S.monkey.hit) S.monkey.grounded = true;
+  }
+  if(S.target.on && S.mode==='launch'){
+    var pb = S.balls[0];
+    if(pb && !pb.hit && Math.hypot(pb.x - S.target.x, pb.y - S.target.y) < 0.9){ pb.hit = true; pb.hitAt = S.t; }
+  }
+  S.strobeClock += dt;
+  if(S.strobeClock >= S.strobeDt){ S.strobeClock = 0; pushStrobe(); }
+  recordHistory();
+  if(!alive){ S.flying = false; S.running = false; S.landed = true; }
+  return alive;
+}
+function recordHistory(){
+  if(!S.balls || !S.balls.length) return;
+  var b = S.balls[S.track||0] || S.balls[0];
+  var sp = Math.hypot(b.vx, b.vy);
+  S.hist.push({ t:S.t, x:b.x, y:b.y, vx:b.vx, vy:b.vy, sp:sp,
+                ke:0.5*S.mass*sp*sp, pe:S.mass*S.g*b.y });
+  if(S.hist.length>6000) S.hist.shift();
+}
+
+/* ============================== VIEW ==================================== */
+var cv = $('#scene'), ctx = cv.getContext('2d');
+var V = { w:0, h:0, dpr:1, scale:10, ox:0, oy:0, top:70 };
+var C = {}, themeStamp = '';
+function cssVar(n){ return getComputedStyle(ROOT).getPropertyValue(n).trim(); }
+function refreshColours(){
+  C = {
+    sky:cssVar('--sky'), sky2:cssVar('--sky2'), ground:cssVar('--ground'), ground2:cssVar('--ground2'),
+    soil:cssVar('--soil'), grid:cssVar('--grid'), grid2:cssVar('--grid2'),
+    ink:cssVar('--ink'), ink2:cssVar('--ink2'), muted:cssVar('--muted'), line:cssVar('--line'),
+    accent:cssVar('--accent'), horiz:cssVar('--horiz'), vert:cssVar('--vert'), res:cssVar('--res'),
+    ball:cssVar('--ball'), ghost:cssVar('--ghost'), panel:cssVar('--panel'),
+    ok:cssVar('--ok'), bad:cssVar('--bad'), warn:cssVar('--warn'), energy:cssVar('--energy')
+  };
+}
+function themeCheck(){
+  var t = ROOT.getAttribute('data-theme')||'light';
+  if(t!==themeStamp){ themeStamp=t; refreshColours(); }
+}
+function resize(){
+  var r = cv.parentElement.getBoundingClientRect();
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  V.w = r.width; V.h = r.height; V.dpr = dpr;
+  cv.width = Math.max(1, Math.round(r.width*dpr));
+  cv.height = Math.max(1, Math.round(r.height*dpr));
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  layout();
+}
+function worldExtent(){
+  var maxX = 6, maxY = 3, i;
+  if(S.mode==='sweep'){
+    var a = Math.min(S.sweep.from,S.sweep.to), b2 = Math.max(S.sweep.from,S.sweep.to);
+    for(var ang=a; ang<=b2+1e-9; ang+=Math.max(S.sweep.step,1)){
+      var P = predictIdeal(S.u, ang, S.h0, S.g, 0);
+      maxX = Math.max(maxX, P.range); maxY = Math.max(maxY, P.hMax);
+    }
+    maxY = Math.max(maxY, S.h0 + S.u*S.u/(2*S.g));
+  } else if(S.mode==='monkey'){
+    maxX = Math.max(maxX, S.monkey.x*1.12);
+    maxY = Math.max(maxY, S.monkey.y*1.15, S.h0);
+  } else if(S.mode==='drop'){
+    var hh = S.h0>0?S.h0:12;
+    var Pd = predictIdeal(S.u, 0, hh, S.g, 0);
+    maxX = Math.max(maxX, Pd.range); maxY = Math.max(maxY, hh);
+  } else if(S.mode==='monkey'){
+    maxX = Math.max(maxX, S.monkey.x*1.12);
+    maxY = Math.max(maxY, S.monkey.y*1.15, S.h0);
+  } else {
+    var P2 = predict();
+    maxX = Math.max(maxX, P2.range, S.target.on? S.target.x:0);
+    maxY = Math.max(maxY, P2.hMax, S.h0, S.target.on? S.target.y:0);
+    if(S.drag && S.show.ideal){        /* keep the ideal parabola on screen too */
+      var e2 = EL(), Pi = predictIdeal(e2.u, e2.ang, e2.h0, S.g, 0);
+      maxX = Math.max(maxX, Pi.range); maxY = Math.max(maxY, Pi.hMax);
+    }
+  }
+  for(i=0;i<S.ghosts.length;i++){
+    maxX = Math.max(maxX, S.ghosts[i].range);
+    maxY = Math.max(maxY, S.ghosts[i].hMax);
+  }
+  return { x:maxX, y:maxY };
+}
+function layout(){
+  var tl = ROOT.querySelector('.tools');
+  V.top = (tl? tl.getBoundingClientRect().height : 44) + 20;
+  /* while something is being dragged the view is held still, otherwise moving
+     the launcher would rescale the picture and slide out from under the cursor */
+  if(V.freeze) return;
+  var e = worldExtent();
+  var padL = 66, padR = 58, padB = 104;
+  var padT = V.top + 24;
+  var sx = (V.w - padL - padR)/Math.max(e.x*1.06, 0.5);
+  var sy = (V.h - padT - padB)/Math.max(e.y*1.12, 0.5);
+  V.scale = clamp(Math.min(sx, sy), 0.2, 400);
+  V.ox = padL;
+  V.yTop = e.y*1.25;                 /* how far up the axes and grid are drawn */
+  /* lift the ground a little when the trajectory is much wider than it is tall,
+     so the picture is not squashed into the bottom of an empty sky */
+  var used = V.yTop*V.scale, avail = V.h - padT - padB;
+  var lift = clamp((avail - used)*0.25, 0, avail*0.42);
+  V.oy = V.h - padB - lift;
+}
+function X(x){ return V.ox + x*V.scale; }
+function Y(y){ return V.oy - y*V.scale; }
+function invX(px){ return (px - V.ox)/V.scale; }
+function invY(py){ return (V.oy - py)/V.scale; }
+
+/* ------------------------- drawing primitives --------------------------- */
+function ln(x1,y1,x2,y2,col,wd,dash){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=wd||1;
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke(); ctx.restore();
+}
+function arrow(x1,y1,x2,y2,col,wd,head){
+  var a = Math.atan2(y2-y1,x2-x1), hs = head||9;
+  if(Math.hypot(x2-x1,y2-y1) < 2.5) return;
+  ctx.save(); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=wd||2.4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-Math.cos(a)*hs*0.8, y2-Math.sin(a)*hs*0.8); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-Math.cos(a-0.42)*hs, y2-Math.sin(a-0.42)*hs);
+  ctx.lineTo(x2-Math.cos(a)*hs*0.66, y2-Math.sin(a)*hs*0.66);
+  ctx.lineTo(x2-Math.cos(a+0.42)*hs, y2-Math.sin(a+0.42)*hs);
+  ctx.closePath(); ctx.fill(); ctx.restore();
+}
+function rr(x,y,wd,h,r){
+  r = Math.min(r, Math.abs(wd)/2, Math.abs(h)/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+wd-r,y); ctx.quadraticCurveTo(x+wd,y,x+wd,y+r);
+  ctx.lineTo(x+wd,y+h-r); ctx.quadraticCurveTo(x+wd,y+h,x+wd-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+function tag(text,x,y,col,o){
+  o = o||{};
+  ctx.save();
+  ctx.font = (o.bold?'700 ':'600 ')+(o.size||11.5)+'px '+(o.mono?'ui-monospace,Menlo,Consolas,monospace':'system-ui,-apple-system,Segoe UI,sans-serif');
+  var m = ctx.measureText(text), pad=4, wd=m.width+pad*2, h=(o.size||11.5)+7;
+  var bx = x - (o.anchor==='l'?0:(o.anchor==='r'? wd : wd/2)), by = y-h/2;
+  bx = clamp(bx, 3, Math.max(3, V.w - wd - 3));
+  by = clamp(by, 2, Math.max(2, V.h - h - 2));
+  if(o.box!==false){
+    ctx.fillStyle = o.bg || cssVar('--panel'); ctx.globalAlpha = o.alpha===undefined?0.88:o.alpha;
+    rr(bx,by,wd,h,5); ctx.fill(); ctx.globalAlpha=1;
+    if(o.border){ ctx.strokeStyle=o.border; ctx.lineWidth=1; rr(bx,by,wd,h,5); ctx.stroke(); }
+  }
+  ctx.fillStyle = col||C.ink; ctx.textAlign='left'; ctx.textBaseline='middle';
+  ctx.fillText(text, bx+pad, by+h/2+0.5);
+  ctx.restore();
+  return {x:bx,y:by,w:wd,h:h};
+}
+function shade(hex,amt){
+  var c = hex.replace('#','');
+  if(c.length===3) c = c[0]+c[0]+c[1]+c[1]+c[2]+c[2];
+  var n = parseInt(c,16);
+  var r=clamp((n>>16)+amt,0,255), g=clamp(((n>>8)&255)+amt,0,255), b=clamp((n&255)+amt,0,255);
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+/* a tidy tick spacing for the axes */
+function niceStep(pxPerUnit, minPx){
+  var cands = [0.1,0.2,0.5,1,2,5,10,20,25,50,100,200,500];
+  for(var i=0;i<cands.length;i++) if(cands[i]*pxPerUnit >= (minPx||34)) return cands[i];
+  return 1000;
+}
+
+/* =============================== SCENE ================================== */
+function drawSky(){
+  var g = ctx.createLinearGradient(0,0,0,V.oy);
+  g.addColorStop(0, C.sky); g.addColorStop(1, C.sky2);
+  ctx.fillStyle=g; ctx.fillRect(0,0,V.w,V.h);
+}
+function drawGrid(){
+  if(!S.show.grid) return;
+  var st = niceStep(V.scale, 30);
+  ctx.save(); ctx.lineWidth=1; ctx.strokeStyle=C.grid2; ctx.beginPath();
+  var i, x, y;
+  var gTop = Math.max(V.top-6, Y(V.yTop));
+  for(i=0;i*st<=invX(V.w)+st;i++){ x=X(i*st); if(x>V.w+2) break; ctx.moveTo(Math.round(x)+0.5,gTop); ctx.lineTo(Math.round(x)+0.5,V.oy); }
+  for(i=1;i*st<=V.yTop;i++){ y=Y(i*st); if(y<V.top-6) break; ctx.moveTo(0,Math.round(y)+0.5); ctx.lineTo(V.w,Math.round(y)+0.5); }
+  ctx.stroke();
+  ctx.strokeStyle=C.grid; ctx.beginPath();
+  for(i=0;i*st*5<=invX(V.w)+st*5;i++){ x=X(i*st*5); if(x>V.w+2) break; ctx.moveTo(Math.round(x)+0.5,gTop); ctx.lineTo(Math.round(x)+0.5,V.oy); }
+  ctx.stroke(); ctx.restore();
+}
+function drawGround(){
+  var y = V.oy;
+  ctx.save();
+  var g = ctx.createLinearGradient(0,y,0,V.h);
+  g.addColorStop(0, C.ground); g.addColorStop(1, C.ground2);
+  ctx.fillStyle=g; ctx.fillRect(0,y,V.w,V.h-y);
+  ctx.strokeStyle=C.soil; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,y+0.5); ctx.lineTo(V.w,y+0.5); ctx.stroke();
+  ctx.restore();
+}
+function drawAxes(){
+  if(!S.show.axes) return;
+  var st = niceStep(V.scale, 62), i, x, y;
+  var topY = Math.max(V.top, Y(V.yTop));
+  ctx.save();
+  ctx.strokeStyle=C.muted; ctx.fillStyle=C.muted; ctx.globalAlpha=.9; ctx.lineWidth=1.2;
+  ctx.font='600 10px ui-monospace,Menlo,monospace'; ctx.textAlign='center'; ctx.textBaseline='top';
+  for(i=0;;i++){
+    x = X(i*st); if(x > V.w-4) break;
+    ctx.beginPath(); ctx.moveTo(x, V.oy); ctx.lineTo(x, V.oy+7); ctx.stroke();
+    ctx.fillText(String(Math.round(i*st*100)/100), x, V.oy+10);
+  }
+  ctx.textAlign='right'; ctx.textBaseline='middle';
+  ctx.beginPath(); ctx.moveTo(V.ox-18, V.oy); ctx.lineTo(V.ox-18, topY); ctx.stroke();
+  for(i=1; i*st<=V.yTop; i++){
+    y = Y(i*st); if(y < topY-2) break;
+    ctx.beginPath(); ctx.moveTo(V.ox-18, y); ctx.lineTo(V.ox-12, y); ctx.stroke();
+    ctx.fillText(String(Math.round(i*st*100)/100), V.ox-21, y);
+  }
+  ctx.restore();
+  tag('distance / m', V.w-58, V.oy+30, C.muted, {size:10, box:false, anchor:'r'});
+  ctx.save(); ctx.translate(13, (topY+V.oy)/2); ctx.rotate(-PI/2);
+  ctx.fillStyle=C.muted; ctx.font='600 10px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+  ctx.fillText('height / m', 0, 0); ctx.restore();
+}
+/* ------------------------------ launcher -------------------------------- */
+function drawLauncher(){
+  var bx = X(0), by = Y(S.h0), gy = V.oy;
+  ctx.save();
+  if(S.h0 > 0.01){
+    var g2 = ctx.createLinearGradient(bx-30, by, bx+6, gy);
+    g2.addColorStop(0, shade(C.soil, 40)); g2.addColorStop(1, C.soil);
+    ctx.fillStyle = g2;
+    rr(bx-24, by+4, 26, gy-by-4, 2); ctx.fill();          /* the column */
+    ctx.strokeStyle=shade(C.soil,-30); ctx.lineWidth=1.1; ctx.stroke();
+    ctx.fillStyle = shade(C.soil, 22);
+    rr(bx-36, by-4, 46, 8, 2); ctx.fill(); ctx.stroke();   /* the platform top */
+  }
+  var ang = (S.mode==='monkey')? DEG(Math.atan2(S.monkey.y-S.h0, S.monkey.x)) : (S.mode==='drop'? 0 : S.ang);
+  var a = -RAD(ang), L = 34, w3 = 9;
+  ctx.translate(bx, by); ctx.rotate(a);
+  ctx.fillStyle = shade(C.ink2, 30);
+  rr(-6, -w3/2, L, w3, 3); ctx.fill();
+  ctx.strokeStyle=C.ink2; ctx.lineWidth=1.2; ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  ctx.fillStyle = C.ink2;
+  ctx.beginPath(); ctx.arc(bx, by, 7, 0, 7); ctx.fill();
+  ctx.restore();
+  if(S.show.labels && S.h0>0.01 && S.show.values){
+    ln(bx-40, by, bx-40, gy, C.muted, 1.2, [4,3]);
+    ln(bx-45, by, bx-35, by, C.muted, 1.2);
+    ln(bx-45, gy, bx-35, gy, C.muted, 1.2);
+    tag(fmt(S.h0,1)+' m', bx-40, (by+gy)/2, C.muted, {size:10, mono:true});
+  }
+}
+
+/* ------------------------------- paths ---------------------------------- */
+function drawPolyline(pts, col, wd, dash, alpha){
+  if(!pts || pts.length<2) return;
+  ctx.save(); ctx.globalAlpha = alpha===undefined?1:alpha;
+  ctx.strokeStyle=col; ctx.lineWidth=wd||2; ctx.lineJoin='round'; ctx.lineCap='round';
+  if(dash) ctx.setLineDash(dash);
+  ctx.beginPath();
+  for(var i=0;i<pts.length;i++){
+    var px=X(pts[i].x), py=Y(pts[i].y);
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.stroke(); ctx.restore();
+}
+function drawPredictedPath(){
+  if(!S.show.path) return;
+  if(S.mode==='sweep'){
+    var a = Math.min(S.sweep.from,S.sweep.to), b = Math.max(S.sweep.from,S.sweep.to), n=0;
+    for(var ang=a; ang<=b+1e-9 && n<24; ang+=Math.max(S.sweep.step,1), n++){
+      drawPolyline(idealPath(S.u, ang, S.h0, S.g, 120), sweepColour(ang), 1.6, [5,5], 0.45);
+    }
+    if(S.sweep.envelope){
+      var pts=[], xmax = S.u*Math.sqrt(S.u*S.u + 2*S.g*S.h0)/S.g;
+      for(var i=0;i<=140;i++){
+        var xx = xmax*i/140, yy = envelopeY(xx, S.u, S.h0, S.g);
+        if(yy<0) break;
+        pts.push({x:xx,y:yy});
+      }
+      drawPolyline(pts, C.accent, 2.2, [8,5], 0.9);
+      if(S.show.labels) tag('envelope: nothing can be hit above this curve', X(xmax*0.42), Y(envelopeY(xmax*0.42,S.u,S.h0,S.g))-16, C.accent, {size:10.5});
+    }
+    return;
+  }
+  if(S.mode==='monkey') return;
+  var e = EL();
+  var ideal = idealPath(e.u, e.ang, e.h0, S.g, 150);
+  if(S.drag && S.show.ideal) drawPolyline(ideal, C.muted, 1.6, [6,5], 0.75);
+  else if(!S.flying || !S.drag) drawPolyline(ideal, C.ghost, 1.5, [5,5], S.flying?0.35:0.6);
+}
+function drawFlightPaths(){
+  if(!S.show.path || !S.balls) return;
+  for(var i=0;i<S.balls.length;i++) drawPolyline(S.balls[i].path, S.balls[i].colour, 2.4, null, 0.95);
+}
+function drawGhosts(){
+  for(var i=0;i<S.ghosts.length;i++){
+    var g = S.ghosts[i];
+    drawPolyline(g.pts, g.colour, 1.8, [7,4], 0.55);
+    if(S.show.labels && g.pts.length){
+      var e = g.pts[g.pts.length-1];
+      tag(g.label, X(e.x), Y(e.y)-13, g.colour, {size:10, mono:true, alpha:0.85});
+    }
+  }
+}
+function drawStrobe(){
+  if(!S.show.strobe || !S.balls) return;
+  for(var i=0;i<S.balls.length;i++){
+    var b = S.balls[i];
+    ctx.save();
+    for(var k=0;k<b.strobe.length;k++){
+      var s = b.strobe[k];
+      ctx.globalAlpha = 0.30 + 0.45*(k/Math.max(b.strobe.length-1,1));
+      ctx.fillStyle = b.colour;
+      ctx.beginPath(); ctx.arc(X(s.x), Y(s.y), 3.4, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+/* ------------------------------ shadows --------------------------------- */
+function drawShadows(){
+  if(!S.show.shadow || !S.balls || !S.balls.length) return;
+  var b = S.balls[0];
+  var px = X(b.x), py = Y(b.y);
+  var axisX = V.ox - 30;
+  ctx.save();
+  ctx.globalAlpha=.85;
+  ln(px, py, px, V.oy, C.horiz, 1.2, [4,4]);
+  ln(px, py, axisX, py, C.vert, 1.2, [4,4]);
+  ctx.restore();
+  /* strobe ticks: equal spacing on the ground, bunching near the top */
+  for(var k=0;k<b.strobe.length;k++){
+    var s = b.strobe[k];
+    ctx.save(); ctx.globalAlpha=.5;
+    ctx.fillStyle=C.horiz;
+    ctx.beginPath(); ctx.arc(X(s.x), V.oy+0.5, 2.6, 0, 7); ctx.fill();
+    ctx.fillStyle=C.vert;
+    ctx.beginPath(); ctx.arc(axisX, Y(s.y), 2.6, 0, 7); ctx.fill();
+    ctx.restore();
+  }
+  ctx.save();
+  ctx.fillStyle=C.horiz;
+  ctx.beginPath(); ctx.ellipse(px, V.oy+1, 8, 3.2, 0, 0, 7); ctx.fill();
+  ctx.fillStyle=C.vert;
+  ctx.beginPath(); ctx.arc(axisX, py, 5, 0, 7); ctx.fill();
+  ctx.restore();
+  if(S.show.labels && V.w >= 620){
+    tag('vertical shadow', axisX, Math.max(V.top+12, Y(V.yTop)-12), C.vert, {size:10});
+  }
+}
+
+/* --------------------------- the projectile ----------------------------- */
+function drawBalls(){
+  if(!S.balls) return;
+  for(var i=0;i<S.balls.length;i++){
+    var b = S.balls[i];
+    var px = X(b.x), py = Y(b.y);
+    var r = clamp(V.scale*0.16, 5, 11);
+    ctx.save();
+    ctx.globalAlpha=.2; ctx.fillStyle='#000';
+    ctx.beginPath(); ctx.ellipse(px, V.oy+1, r*1.1, r*0.4, 0, 0, 7); ctx.fill();
+    ctx.globalAlpha=1;
+    var g = ctx.createRadialGradient(px-r*0.35, py-r*0.35, r*0.1, px, py, r);
+    g.addColorStop(0, shade(b.colour, 55)); g.addColorStop(1, shade(b.colour,-18));
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(px,py,r,0,7); ctx.fill();
+    ctx.strokeStyle=shade(b.colour,-55); ctx.lineWidth=1.3; ctx.stroke();
+    ctx.restore();
+    if(S.show.labels && S.balls.length>1 && b.label && (S.flying||S.landed) && S.t>0.05)
+      tag(b.label, px, py - r - 12, b.colour, {size:10, bold:true});
+  }
+}
+function drawVectors(){
+  if(!S.balls || !S.balls.length) return;
+  var b = S.balls[0];
+  if(S.mode==='sweep') return;
+  var px = X(b.x), py = Y(b.y);
+  var vmax = Math.max(S.u, Math.hypot(b.vx,b.vy), 1);
+  var pxPer = clamp(V.w*0.16, 50, 130)/vmax;
+  var lx = b.vx*pxPer, ly = b.vy*pxPer;
+  if(S.show.comp){
+    arrow(px, py, px+lx, py, C.horiz, 2.6, 9);
+    arrow(px, py, px, py-ly, C.vert, 2.6, 9);
+    ctx.save(); ctx.globalAlpha=.5;
+    ln(px+lx, py, px+lx, py-ly, C.muted, 1, [3,3]);
+    ln(px, py-ly, px+lx, py-ly, C.muted, 1, [3,3]);
+    ctx.restore();
+    if(S.show.values){
+      tag(fmt(b.vx)+' m/s', px + lx/2, py + 15, C.horiz, {size:10.5, mono:true});
+      tag(fmt(b.vy)+' m/s', px - 34, py - ly/2, C.vert, {size:10.5, mono:true});
+    }
+  }
+  if(S.show.res){
+    arrow(px, py, px+lx, py-ly, C.res, 3, 10.5);
+    if(S.show.values){
+      var sp = Math.hypot(b.vx,b.vy);
+      tag(fmt(sp)+' m/s', px+lx+34, py-ly-10, C.res, {size:11, mono:true, bold:true});
+    }
+  }
+}
+function drawApexAndRange(){
+  if(!S.show.apex || S.mode==='sweep' || S.mode==='monkey') return;
+  var P = predict();
+  if(P.tFlight<=0) return;
+  var ax = X(P.apexX), ay = Y(P.hMax);
+  if(P.rise > 0.05){
+    ctx.save(); ctx.globalAlpha=.75;
+    ln(ax, ay, ax, V.oy, C.accent, 1.2, [4,4]);
+    ctx.restore();
+    ctx.save(); ctx.fillStyle=C.accent;
+    ctx.beginPath(); ctx.arc(ax, ay, 3.6, 0, 7); ctx.fill(); ctx.restore();
+    if(S.show.values) tag('greatest height '+fmt(P.hMax)+' m', ax, ay-24, C.accent, {size:10.5, mono:true});
+  }
+  var rx = X(P.range), ry = V.oy - 16;
+  ln(X(0), ry, rx, ry, C.accent, 1.6);
+  ln(X(0), ry-5, X(0), ry+5, C.accent, 1.6);
+  ln(rx, ry-5, rx, ry+5, C.accent, 1.6);
+  if(S.show.values) tag('range '+fmt(P.range)+' m', (X(0)+rx)/2, ry, C.accent, {size:10.5, mono:true});
+}
+function drawTarget(){
+  if(!S.target.on || S.mode!=='launch') return;
+  var tx = X(S.target.x), ty = Y(S.target.y);
+  ctx.save();
+  if(S.target.y > 0.05){
+    ctx.strokeStyle=C.soil; ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx, V.oy); ctx.stroke();
+  }
+  var hit = S.balls && S.balls[0] && S.balls[0].hit;
+  var r = clamp(V.scale*0.6, 9, 20);
+  var rings = [[r,'#be123c'],[r*0.66,'#ffffff'],[r*0.33,'#be123c']];
+  for(var i=0;i<rings.length;i++){
+    ctx.fillStyle = rings[i][1];
+    ctx.beginPath(); ctx.arc(tx,ty,rings[i][0],0,7); ctx.fill();
+  }
+  ctx.strokeStyle = hit? C.ok : '#7f1d1d'; ctx.lineWidth = hit?3:1.4;
+  ctx.beginPath(); ctx.arc(tx,ty,r,0,7); ctx.stroke();
+  ctx.restore();
+  if(S.show.labels) tag(hit? 'hit' : ('target '+fmt(S.target.x,1)+' m'), tx, ty - r - 13, hit? C.ok : C.muted, {size:10.5, bold:hit});
+}
+function drawMonkey(){
+  if(S.mode!=='monkey') return;
+  var my = S.monkey.y - (S.flying||S.landed ? S.monkey.fall : 0);
+  if(my < 0) my = 0;
+  var mx = X(S.monkey.x), myp = Y(my);
+  if(S.monkey.aimLine){
+    ctx.save(); ctx.globalAlpha=.6;
+    ln(X(0), Y(S.h0), X(S.monkey.x), Y(S.monkey.y), C.accent, 1.6, [7,5]);
+    ctx.restore();
+    if(S.show.labels && !S.flying) tag('aim straight at it', (X(0)+mx)/2, (Y(S.h0)+Y(S.monkey.y))/2 - 14, C.accent, {size:10.5});
+  }
+  if(!S.flying && !S.landed){
+    ctx.save(); ctx.strokeStyle=shade(C.soil,20); ctx.lineWidth=2.4;
+    ctx.beginPath(); ctx.moveTo(mx, myp-8); ctx.lineTo(mx, Math.max(V.top, myp-52)); ctx.stroke(); ctx.restore();
+  }
+  var rr2 = clamp(V.scale*0.35, 8, 16);
+  ctx.save();
+  ctx.fillStyle = S.monkey.hit? C.ok : '#78350f';
+  ctx.beginPath(); ctx.arc(mx, myp, rr2, 0, 7); ctx.fill();
+  ctx.fillStyle = '#fcd9a8';
+  ctx.beginPath(); ctx.arc(mx, myp+rr2*0.15, rr2*0.55, 0, 7); ctx.fill();
+  ctx.fillStyle = '#78350f';
+  ctx.beginPath(); ctx.arc(mx-rr2*0.85, myp-rr2*0.6, rr2*0.34, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(mx+rr2*0.85, myp-rr2*0.6, rr2*0.34, 0, 7); ctx.fill();
+  ctx.restore();
+  if(S.show.labels) tag(S.monkey.hit? 'caught' : 'monkey', mx, myp - rr2 - 13, S.monkey.hit? C.ok : C.muted, {size:10.5, bold:S.monkey.hit});
+}
+function drawSweepPairs(){
+  if(S.mode!=='sweep' || !S.sweep.pairs) return;
+  var seen = {}, a = Math.min(S.sweep.from,S.sweep.to), b = Math.max(S.sweep.from,S.sweep.to), n=0;
+  for(var ang=a; ang<=b+1e-9 && n<24; ang+=Math.max(S.sweep.step,1), n++){
+    var P = predictIdeal(S.u, ang, S.h0, S.g, 0);
+    var key = Math.round(P.range*100);
+    if(seen[key]!==undefined && Math.abs(seen[key]-ang)>0.5){
+      var rx = X(P.range);
+      ctx.save(); ctx.globalAlpha=.85; ctx.strokeStyle=C.accent; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(rx, V.oy, 9, PI, 2*PI); ctx.stroke(); ctx.restore();
+      if(S.show.labels && S.show.values)
+        tag(fmt(seen[key],0)+'° and '+fmt(ang,0)+'° land together', rx, V.oy+34, C.accent, {size:10});
+    } else seen[key] = ang;
+  }
+}
+
+/* -------- resolving the launch velocity, drawn to scale in the sky ------- */
+function drawLaunchTriangle(){
+  if(!S.show.comp || S.mode==='sweep') return;
+  if(V.h < 430 || V.w < 620) return;          /* no room on a small stage */
+  var e = EL(), a = RAD(e.ang);
+  if(e.u <= 0) return;
+  var L = clamp(V.w*0.11, 74, 128);
+  var ox = clamp(V.w*0.22, 110, 250), oy = V.top + 128;
+  if(oy > V.oy - 30) return;
+  var ux = Math.cos(a)*L, uy = Math.sin(a)*L;
+  var bw = Math.abs(ux)+96, bh = Math.abs(uy)+62;
+  ctx.save();
+  ctx.fillStyle = cssVar('--panel'); ctx.globalAlpha=.78;
+  rr(ox-16, oy-Math.max(uy,0)-40, bw, bh, 10); ctx.fill(); ctx.globalAlpha=1;
+  ctx.strokeStyle=cssVar('--line'); ctx.lineWidth=1; ctx.stroke();
+  ctx.restore();
+  tag('resolving the launch velocity', ox-16+bw/2, oy-Math.max(uy,0)-27, C.muted, {size:9.5, box:false});
+  ln(ox, oy, ox+ux, oy, C.muted, 1, [3,3]);
+  ln(ox+ux, oy, ox+ux, oy-uy, C.muted, 1, [3,3]);
+  arrow(ox, oy, ox+ux, oy, C.horiz, 2.4, 8.5);
+  arrow(ox, oy, ox, oy-uy, C.vert, 2.4, 8.5);
+  arrow(ox, oy, ox+ux, oy-uy, C.res, 2.8, 10);
+  ctx.save(); ctx.strokeStyle=C.accent; ctx.lineWidth=1.3; ctx.globalAlpha=.9;
+  ctx.beginPath(); ctx.arc(ox, oy, 22, Math.min(0,-a), Math.max(0,-a)); ctx.stroke(); ctx.restore();
+  if(S.show.values){
+    tag(fmt(e.u,1)+' m/s', ox+ux*0.55+16, oy-uy*0.55-14, C.res, {size:10, mono:true, bold:true});
+    tag(fmt(e.ang,1)+'°', ox+30, oy-Math.sign(uy||1)*12, C.accent, {size:10, mono:true});
+    tag('u cos θ = '+fmt(Math.cos(a)*e.u,1), ox+ux/2, oy+15, C.horiz, {size:10, mono:true});
+    tag('u sin θ = '+fmt(Math.sin(a)*e.u,1), ox+ux+44, oy-uy/2, C.vert, {size:10, mono:true});
+  }
+}
+
+/* ------------------------------- render --------------------------------- */
+function render(){
+  themeCheck();
+  layout();
+  drawSky();
+  drawGrid();
+  drawGround();
+  drawAxes();
+  drawGhosts();
+  drawPredictedPath();
+  drawSweepPairs();
+  drawFlightPaths();
+  drawStrobe();
+  if(S.mode!=='sweep') drawShadows();
+  drawTarget();
+  drawMonkey();
+  drawApexAndRange();
+  drawLauncher();
+  drawBalls();
+  drawVectors();
+  drawLaunchTriangle();
+}
+
+/* =============================== PANELS ================================= */
+var uiDirty = true, ghostDirty = true;
+function toast(msg){
+  var el=$('#toast'); el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove('show'); },1900);
+}
+function kv(k,v){ return '<div class="kv"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+function updateAll(){ uiDirty = true; }
+
+function updateHud(){
+  var b = (S.balls && (S.balls[S.track||0] || S.balls[0])) || {x:0,y:S.h0,vx:0,vy:0};
+  $('#hudT').textContent = fmt(S.t);
+  $('#hudVx').textContent = fmt(b.vx);
+  $('#hudVy').textContent = fmt(b.vy);
+  $('#hudY').textContent = fmt(b.y);
+  $('#hudX').textContent = fmt(b.x);
+
+  var P = predict();
+  var st = $('#vStatus'), num = $('#vNum'), row2 = $('#vRow2');
+  if(S.mode==='monkey'){
+    if(S.monkey.hit){ st.textContent = 'Caught — and it would be caught at any launch speed'; st.style.color = cssVar('--ok'); }
+    else if(S.flying){ st.textContent = 'In flight — both are falling ½gt² below where they would otherwise be'; st.style.color = cssVar('--ink'); }
+    else { st.textContent = 'Aim straight at the monkey and press fire'; st.style.color = cssVar('--ink'); }
+    num.textContent = 'aim '+fmt(DEG(Math.atan2(S.monkey.y-S.h0,S.monkey.x)),1)+'° above the horizontal';
+  } else if(S.mode==='drop'){
+    st.textContent = S.landed? 'Both land at the same instant — the horizontal motion changes nothing'
+                   : (S.flying? 'One is projected, one is simply dropped' : 'Press fire to release both together');
+    st.style.color = S.landed? cssVar('--ok') : cssVar('--ink');
+    var hh = S.h0>0?S.h0:12;
+    num.textContent = 'time to fall '+fmt(Math.sqrt(2*hh/S.g))+' s';
+  } else if(S.mode==='sweep'){
+    st.textContent = 'Every angle launched at '+fmt(S.u,1)+' m s⁻¹ — the numbers below follow the longest shot';
+    st.style.color = cssVar('--ink');
+    num.textContent = 'greatest range at '+fmt(bestAngle(S.u,S.h0,S.g),1)+'°';
+  } else if(S.landed){
+    var b0 = S.balls[0];
+    if(S.target.on){
+      if(b0.hit){ st.textContent = 'Hit the target'; st.style.color = cssVar('--ok'); }
+      else {
+        var miss = Math.abs(P.range - S.target.x);
+        st.textContent = 'Landed '+fmt(miss)+' m '+(P.range>S.target.x?'beyond':'short of')+' the target';
+        st.style.color = cssVar('--warn');
+      }
+    } else { st.textContent = 'Landed'; st.style.color = cssVar('--ink'); }
+    num.textContent = 'range '+fmt(P.range)+' m in '+fmt(P.tFlight)+' s';
+  } else if(S.flying){
+    st.textContent = 'In flight'; st.style.color = cssVar('--ink');
+    num.textContent = 't = '+fmt(S.t)+' s';
+  } else {
+    st.textContent = 'Ready to fire'; st.style.color = cssVar('--ink');
+    num.textContent = fmt(S.u,1)+' m s⁻¹ at '+fmt(S.ang,1)+'°'+(S.h0>0.01? ' from '+fmt(S.h0,1)+' m':'');
+  }
+  row2.innerHTML =
+    '<span>u<sub>x</sub> <b>'+fmt(P.ux)+'</b> m/s</span>'+
+    '<span>u<sub>y</sub> <b>'+fmt(P.uy)+'</b> m/s</span>'+
+    '<span>time of flight <b>'+fmt(P.tFlight)+'</b> s</span>'+
+    '<span>greatest height <b>'+fmt(P.hMax)+'</b> m</span>'+
+    '<span>range <b>'+fmt(P.range)+'</b> m</span>';
+  var live = $('#live');
+  if(live) live.textContent = 'Range '+fmt(P.range)+' metres, time of flight '+fmt(P.tFlight)+' seconds.';
+}
+
+function updateSetupTexts(){
+  $('#vU').textContent = fmt(S.u,1)+' m/s';
+  $('#vAng').textContent = fmt(S.ang,1)+'°';
+  $('#vH0').textContent = fmt(S.h0,1)+' m';
+  $('#vTx').textContent = fmt(S.target.x,1)+' m';
+  $('#vTy').textContent = fmt(S.target.y,1)+' m';
+  $('#vG').textContent = fmt(S.g,2);
+  $('#vDrag').textContent = fmt(S.k,4);
+  $('#vSpeed').textContent = fmt(S.speed, S.speed<0.1?2:1)+'×';
+  $('#vDec').textContent = S.dec;
+  $('#vStrobeDt').textContent = fmt(S.strobeDt,2)+' s';
+  $('#vSwFrom').textContent = fmt(S.sweep.from,0)+'°';
+  $('#vSwTo').textContent = fmt(S.sweep.to,0)+'°';
+  $('#vSwStep').textContent = fmt(S.sweep.step,0)+'°';
+  $('#vMx').textContent = fmt(S.monkey.x,1)+' m';
+  $('#vMy').textContent = fmt(S.monkey.y,1)+' m';
+  var mv = $('#vMass'); if(mv) mv.textContent = fmt(S.mass,2)+' kg';
+
+  var P = predict(), best = bestAngle(S.u, S.h0, S.g);
+  var h = '';
+  if(S.h0 < 0.01){
+    h = 'On level ground the range is <em>R = u² sin 2θ / g</em>, which is greatest at <em>45°</em>. Any two angles adding to 90° give the same range &mdash; try 30° and 60°.';
+  } else {
+    h = 'Launched from '+fmt(S.h0,1)+' m the best angle drops to <em>'+fmt(best,1)+'°</em>, because the extra height buys more time in the air for a flatter shot.';
+  }
+  if(S.ang < 0) h += ' A negative angle fires downwards, which is what a ball thrown down from a cliff does.';
+  $('#launchHint').innerHTML = h;
+  void P;
+}
+
+/* ------------------------------ analyse --------------------------------- */
+function updateAnalyse(){
+  var P = predict(), b = (S.balls && S.balls[0]) || {x:0,y:EL().h0,vx:P.ux,vy:P.uy};
+  var banner = $('#anBanner'), bt = $('#anText');
+  banner.className = 'banner';
+  if(S.landed){ banner.classList.add('ok'); bt.innerHTML = 'Flight complete: '+fmt(P.range)+' m in '+fmt(P.tFlight)+' s, reaching '+fmt(P.hMax)+' m.'; }
+  else if(S.flying) bt.textContent = 'In flight — the numbers below update as it goes.';
+  else bt.textContent = 'The whole flight is worked out in advance. Press fire to watch it happen.';
+
+  var EE = EL();
+  $('#resBody').innerHTML =
+    kv('Launch speed u', fmt(EE.u)+' m s⁻¹') +
+    kv('Launch angle θ', fmt(EE.ang,1)+'°') +
+    kv('<span style="color:'+cssVar('--horiz')+'">Horizontal u<sub>x</sub> = u cos θ</span>', fmt(P.ux)+' m s⁻¹') +
+    kv('<span style="color:'+cssVar('--vert')+'">Vertical u<sub>y</sub> = u sin θ</span>', fmt(P.uy)+' m s⁻¹') +
+    '<p class="hint">u<sub>x</sub> never changes: with no air resistance there is no horizontal force at all. Only u<sub>y</sub> is affected by gravity.</p>';
+
+  var fh = kv('Time to the top', fmt(P.tApex)+' s') +
+           kv('Rise above the launch', fmt(P.rise)+' m') +
+           kv('Greatest height above the ground', fmt(P.hMax)+' m') +
+           kv('Total time of flight', fmt(P.tFlight)+' s') +
+           kv('Range', fmt(P.range)+' m') +
+           kv('Landing speed', fmt(P.vLand)+' m s⁻¹') +
+           kv('Landing angle', fmt(Math.abs(P.angLand),1)+'° below the horizontal');
+  if(S.drag) fh += '<p class="hint warn">Air resistance is switched on, so these come from a step-by-step numerical solution rather than from suvat. The ideal parabola is drawn faintly for comparison.</p>';
+  else if(EE.h0 < 0.01) fh += '<p class="hint">Because the launch and landing heights are the same, the flight is symmetrical: it takes just as long to come down as to go up, and it lands at the same speed and angle it left with.</p>';
+  else fh += '<p class="hint">Launching from a height breaks the symmetry: the downward half of the flight is longer than the upward half, and it lands faster than it left.</p>';
+  $('#flightBody').innerHTML = fh;
+
+  $('#instTag').textContent = 't = '+fmt(S.t)+' s';
+  var sp = Math.hypot(b.vx,b.vy);
+  $('#instBody').innerHTML =
+    kv('Horizontal distance x', fmt(b.x)+' m') +
+    kv('Height y', fmt(b.y)+' m') +
+    kv('<span style="color:'+cssVar('--horiz')+'">v<sub>x</sub></span>', fmt(b.vx)+' m s⁻¹') +
+    kv('<span style="color:'+cssVar('--vert')+'">v<sub>y</sub></span>', fmt(b.vy)+' m s⁻¹') +
+    kv('Speed', fmt(sp)+' m s⁻¹') +
+    kv('Direction', fmt(DEG(Math.atan2(b.vy,b.vx)),1)+'° to the horizontal');
+
+  var ke = 0.5*S.mass*sp*sp, pe = S.mass*S.g*b.y;
+  var ke0 = 0.5*S.mass*EE.u*EE.u, pe0 = S.mass*S.g*EE.h0;
+  var eh = kv('Kinetic energy', fmt(ke)+' J') + kv('Gravitational potential energy', fmt(pe)+' J') +
+           kv('Total', fmt(ke+pe)+' J') + kv('Total at launch', fmt(ke0+pe0)+' J');
+  if(S.drag) eh += kv('Transferred to the air', fmt((ke0+pe0)-(ke+pe))+' J') +
+    '<p class="hint">With air resistance the total falls steadily: work is done against the drag force and the energy is transferred to the surroundings.</p>';
+  else eh += '<p class="hint ok">With no air resistance the total never changes. Kinetic energy is traded for potential energy on the way up and traded straight back on the way down &mdash; which is why the landing speed equals the launch speed on level ground.</p>';
+  $('#energyBody').innerHTML = eh;
+}
+
+/* ------------------------------- ghosts --------------------------------- */
+function buildGhostList(){
+  var wrap = $('#ghostList');
+  $('#ghostCount').textContent = S.ghosts.length;
+  if(!S.ghosts.length){ wrap.innerHTML = '<p class="hint" style="margin:2px 0 0">Nothing kept yet.</p>'; return; }
+  var h = '';
+  for(var i=0;i<S.ghosts.length;i++){
+    var g = S.ghosts[i];
+    h += '<div class="ghostrow"><span class="sw" style="background:'+g.colour+'"></span>'+
+         '<span class="t">'+esc(g.label)+'</span>'+
+         '<button class="qbtn btn sm ghost" data-gi="'+i+'" style="padding:1px 7px">remove</button></div>';
+  }
+  wrap.innerHTML = h;
+}
+function keepGhost(){
+  var P = predict();
+  if(P.tFlight<=0){ toast('Nothing to keep'); return; }
+  var pts = S.drag ? dragPathPoints() : idealPath(S.u,S.ang,S.h0,S.g,150);
+  S.ghosts.push({
+    pts:pts, range:P.range, hMax:P.hMax, colour:GHOSTC[S.nextGhost++ % GHOSTC.length],
+    label: fmt(S.u,1)+' m/s at '+fmt(S.ang,1)+'°'+(S.h0>0.01? ', h='+fmt(S.h0,1)+' m':'')+(S.drag?', with drag':'')
+  });
+  if(S.ghosts.length>6) S.ghosts.shift();
+  ghostDirty = true; updateAll();
+  toast('Trajectory kept');
+}
+function dragPathPoints(){
+  var c = comps(S.u,S.ang), st={x:0,y:S.h0,vx:c.ux,vy:c.uy}, pts=[{x:0,y:S.h0}], h=0.002, guard=0;
+  while(guard++<120000){
+    var nx = rk4(st,h,S.g,S.k);
+    if(nx.y<=0 && nx.vy<0){
+      var f=(st.y)/Math.max(st.y-nx.y,1e-12);
+      pts.push({x:st.x+(nx.x-st.x)*f, y:0}); break;
+    }
+    st = nx;
+    if(guard%5===0) pts.push({x:st.x,y:st.y});
+  }
+  return pts;
+}
+
+/* ============================ WORKING / SOLVE =========================== */
+var WORK = [], walkIdx = -1;
+
+function buildWorking(){
+  var st = [];
+  function push(h){ st.push({h:h}); }
+  var g = S.g, P = predictIdeal(S.u, S.ang, S.h0, g, 0);
+  var c = comps(S.u, S.ang);
+
+  if(S.mode==='drop'){
+    var hh = S.h0>0?S.h0:12;
+    push('<span class="lbl">Both balls leave at the same instant from a height of '+w(hh)+' m. Only the vertical motion decides when they land.</span>');
+    push('<span class="lbl">Vertical (both balls, u<sub>y</sub> = 0)</span>');
+    push('  s = u<sub>y</sub>t + ½at²  with u<sub>y</sub> = 0 and a = g downwards');
+    push('  '+w(hh)+' = ½ × '+w(g)+' × t²');
+    push('  t = √(2s/g) = √(2 × '+w(hh)+' / '+w(g)+') = <em>'+w(Math.sqrt(2*hh/g))+' s</em>');
+    push('  the answer contains no horizontal quantity at all, so <em>both balls land together</em>');
+    push('<span class="lbl">Horizontal (the projected ball only)</span>');
+    push('  x = u<sub>x</sub>t = '+w(S.u)+' × '+w(Math.sqrt(2*hh/g))+' = '+w(S.u*Math.sqrt(2*hh/g))+' m');
+    push('  this changes where it lands, never when.');
+    return st;
+  }
+  if(S.mode==='monkey'){
+    var aim = DEG(Math.atan2(S.monkey.y-S.h0, S.monkey.x));
+    var tMeet = S.monkey.x/(S.u*Math.cos(RAD(aim)));
+    push('<span class="lbl">Aim straight at the monkey: θ = tan⁻¹('+w(S.monkey.y-S.h0)+' / '+w(S.monkey.x)+') = '+w(aim)+'°</span>');
+    push('Without gravity the projectile would travel along that straight line and arrive at the monkey.');
+    push('<span class="lbl">With gravity, in a time t</span>');
+    push('  the projectile falls ½gt² below the line of aim');
+    push('  the monkey falls ½gt² below where it was let go');
+    push('  <em>both fall by exactly the same amount</em>, so they are still in line');
+    push('<span class="lbl">When do they meet?</span>');
+    push('  horizontally:  '+w(S.monkey.x)+' = u cos θ × t');
+    push('  t = '+w(S.monkey.x)+' / ('+w(S.u)+' × cos '+w(aim)+'°) = <em>'+w(tMeet)+' s</em>');
+    push('  the launch speed only changes <em>when</em> and <em>where</em> they meet, never <em>whether</em> they do.');
+    return st;
+  }
+  if(S.mode==='sweep'){
+    push('<span class="lbl">On level ground, putting the time of flight into the horizontal motion gives</span>');
+    push('  t = 2u sin θ / g,  so  R = u cos θ × 2u sin θ / g = <em>u² sin 2θ / g</em>');
+    push('  sin 2θ is greatest when 2θ = 90°, so the best angle is <em>45°</em>');
+    push('  greatest range = u²/g = '+w(S.u)+'² / '+w(g)+' = '+w(S.u*S.u/g)+' m');
+    push('<span class="lbl">Pairs of angles</span>');
+    push('  sin 2θ = sin (180° − 2θ), so θ and (90° − θ) give the <em>same range</em>');
+    push('  30° and 60°, 20° and 70°, 40° and 50° … each pair lands in the same place');
+    push('  the steeper one of each pair simply spends longer in the air and travels more slowly across the ground');
+    if(S.h0>0.01) push('<span class="lbl">From a height of '+w(S.h0)+' m the best angle is '+w(bestAngle(S.u,S.h0,g))+'°, not 45°.</span>');
+    return st;
+  }
+
+  push('<span class="lbl">Take upwards as positive. The acceleration is g = '+w(g)+' m s⁻² downwards, and there is no horizontal force.</span>');
+  push('<span class="lbl">Resolve the launch velocity</span>');
+  push('  u<sub>x</sub> = u cos θ = '+w(S.u)+' × cos '+w(S.ang)+'° = <b>'+w(c.ux)+'</b> m s⁻¹');
+  push('  u<sub>y</sub> = u sin θ = '+w(S.u)+' × sin '+w(S.ang)+'° = <b>'+w(c.uy)+'</b> m s⁻¹');
+
+  if(c.uy > 0){
+    push('<span class="lbl">Vertical motion — to the top</span>');
+    push('  at the highest point v<sub>y</sub> = 0, so  0 = u<sub>y</sub> − g t');
+    push('  t = u<sub>y</sub>/g = '+w(c.uy)+' / '+w(g)+' = <b>'+w(P.tApex)+'</b> s');
+    push('  v² = u² + 2as with v = 0:  s = u<sub>y</sub>²/(2g) = '+w(c.uy)+'² / (2 × '+w(g)+') = <b>'+w(P.rise)+'</b> m above the launch');
+    if(S.h0>0.01) push('  greatest height above the ground = '+w(S.h0)+' + '+w(P.rise)+' = <em>'+w(P.hMax)+' m</em>');
+  } else {
+    push('<span class="lbl">The launch is not upwards, so the projectile starts falling straight away.</span>');
+  }
+
+  push('<span class="lbl">Vertical motion — time of flight</span>');
+  if(S.h0 < 0.01){
+    push('  it lands at the same height, so the vertical displacement is zero:');
+    push('  0 = u<sub>y</sub>t − ½gt²  →  t = 2u<sub>y</sub>/g = 2 × '+w(c.uy)+' / '+w(g)+' = <em>'+w(P.tFlight)+' s</em>');
+  } else {
+    var a2 = 0.5*g;
+    push('  taking the ground as s = −'+w(S.h0)+' m:');
+    push('  −'+w(S.h0)+' = '+w(c.uy)+' t − '+w(a2)+' t²');
+    push('  '+w(a2)+' t² − '+w(c.uy)+' t − '+w(S.h0)+' = 0');
+    push('  t = [ '+w(c.uy)+' + √( '+w(c.uy)+'² + 4 × '+w(a2)+' × '+w(S.h0)+' ) ] / (2 × '+w(a2)+')');
+    push('  t = <em>'+w(P.tFlight)+' s</em>   (the negative root is before the launch, so it is discarded)');
+  }
+
+  push('<span class="lbl">Horizontal motion — constant velocity</span>');
+  push('  x = u<sub>x</sub> t = '+w(c.ux)+' × '+w(P.tFlight)+' = <em>'+w(P.range)+' m</em>');
+
+  push('<span class="lbl">Landing</span>');
+  push('  v<sub>y</sub> = u<sub>y</sub> − g t = '+w(c.uy)+' − '+w(g)+' × '+w(P.tFlight)+' = <b>'+w(P.vyLand)+'</b> m s⁻¹');
+  push('  speed = √(u<sub>x</sub>² + v<sub>y</sub>²) = √('+w(c.ux)+'² + '+w(P.vyLand)+'²) = <em>'+w(P.vLand)+' m s⁻¹</em>');
+  push('  direction = tan⁻¹(v<sub>y</sub>/u<sub>x</sub>) = '+w(Math.abs(P.angLand))+'° below the horizontal');
+
+  if(S.drag){
+    var D = predictDrag(S.u,S.ang,S.h0,g,S.k,0);
+    push('<span class="lbl">With air resistance</span>');
+    push('  there is no exact formula, so the motion is worked out in small steps');
+    push('  range falls from '+w(P.range)+' m to <em>'+w(D.range)+' m</em>, a drop of '+w((1-D.range/Math.max(P.range,1e-9))*100)+'%');
+    push('  the path is no longer symmetrical: it comes down more steeply than it went up');
+  }
+  return st;
+}
+
+function renderWorking(){
+  WORK = buildWorking();
+  var out = $('#workOut');
+  out.innerHTML = WORK.map(function(s,i){ return '<span class="step" data-i="'+i+'">'+s.h+'</span>'; }).join('');
+  walkIdx = -1;
+  $('#btnWalkPrev').disabled = true; $('#btnWalkNext').disabled = true; $('#walkStatus').textContent='';
+}
+var workLast = 0, workTimer = null;
+function renderWorkingThrottled(){
+  var now = (window.performance&&performance.now)? performance.now() : Date.now();
+  if(now-workLast > 280){ workLast=now; renderWorking(); return; }
+  if(workTimer) return;
+  workTimer = setTimeout(function(){ workTimer=null; workLast=(window.performance&&performance.now)?performance.now():Date.now(); renderWorking(); }, 280);
+}
+function walkTo(i){
+  walkIdx = clamp(i,0,WORK.length-1);
+  var spans = $$('#workOut .step');
+  for(var k=0;k<spans.length;k++) spans[k].classList.toggle('hi', k===walkIdx);
+  if(spans[walkIdx]) spans[walkIdx].scrollIntoView({block:'nearest'});
+  $('#walkStatus').textContent = 'step '+(walkIdx+1)+' of '+WORK.length;
+  $('#btnWalkPrev').disabled = walkIdx<=0;
+  $('#btnWalkNext').disabled = walkIdx>=WORK.length-1;
+}
+
+/* ---------------------------- useful results ---------------------------- */
+function updateResults(){
+  var g = S.g, e = EL(), P = predictIdeal(e.u,e.ang,e.h0,g,0);
+  var h = '';
+  if(e.h0 < 0.01){
+    h += kv('R = u² sin 2θ / g', fmt(e.u*e.u*Math.sin(RAD(2*e.ang))/g)+' m');
+    h += kv('Complementary angle', fmt(90-e.ang,1)+'° gives the same range');
+    h += kv('Best angle', '45°');
+    h += kv('Greatest possible range', fmt(e.u*e.u/g)+' m');
+  } else {
+    h += kv('Best angle from '+fmt(e.h0,1)+' m', fmt(bestAngle(e.u,e.h0,g),1)+'°');
+    h += kv('Greatest possible range', fmt(bestRange(e.u,e.h0,g))+' m');
+  }
+  if(S.target.on){
+    var X0 = S.target.x, Y0 = S.target.y - e.h0;
+    h += kv('Least speed that could reach the target', fmt(minSpeed(X0,Y0,g))+' m s⁻¹');
+    var sa = solveAngles(X0, Y0, e.u, g);
+    if(sa && sa.ok) h += kv('Angles that hit it', fmt(sa.low,1)+'° or '+fmt(sa.high,1)+'°');
+    else h += kv('Angles that hit it', '<span style="color:'+cssVar('--bad')+'">out of range</span>');
+  }
+  h += kv('Time to fall from the greatest height', fmt(Math.sqrt(2*P.rise/g))+' s');
+  h += '<p class="hint">The horizontal and vertical parts of a projectile question are solved completely separately, joined only by the <em>time</em>, which is the same for both.</p>';
+  $('#resultsBody').innerHTML = h;
+}
+
+/* ------------------------------- aiming --------------------------------- */
+function doAimAngle(){
+  var out = $('#aimOut');
+  var X0 = S.target.x, Y0 = S.target.y - S.h0;
+  var r = solveAngles(X0, Y0, S.u, S.g);
+  if(!r){ out.innerHTML = '<p class="hint bad" style="margin:8px 0 0">Move the target away from the launcher first.</p>'; return; }
+  if(!r.ok){
+    out.innerHTML = '<p class="hint bad" style="margin:8px 0 0">At '+fmt(S.u,1)+' m s⁻¹ the target is out of reach. The least speed that could get there is <b>'+fmt(r.needed)+' m s⁻¹</b>.</p>';
+    return;
+  }
+  out.innerHTML =
+    '<div class="working" style="margin-top:9px">'+
+    '<span class="step" class="lbl">Using  Y = X tan θ − gX²(1 + tan²θ)/(2u²)</span>'+
+    '<span class="step">  '+fmt(Y0)+' = '+fmt(X0)+' tan θ − '+fmt(S.g*X0*X0/(2*S.u*S.u))+' (1 + tan²θ)</span>'+
+    '<span class="step">  a quadratic in tan θ, so there are <em>two</em> answers</span>'+
+    '<span class="step">  <em>θ = '+fmt(r.low,2)+'°</em> (the low, flat shot)</span>'+
+    '<span class="step">  <em>θ = '+fmt(r.high,2)+'°</em> (the high, lobbed shot)</span>'+
+    '</div>'+
+    '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+
+      '<button class="btn sm" data-ang="'+r.low+'">Use '+fmt(r.low,1)+'°</button>'+
+      '<button class="btn sm" data-ang="'+r.high+'">Use '+fmt(r.high,1)+'°</button>'+
+    '</div>'+
+    (S.drag? '<p class="hint warn">These angles assume no air resistance. With drag switched on the shot will fall short.</p>' : '');
+}
+function doAimSpeed(){
+  var out = $('#aimOut');
+  var X0 = S.target.x, Y0 = S.target.y - S.h0;
+  var u = solveSpeed(X0, Y0, S.ang, S.g);
+  if(!u || !isFinite(u)){
+    out.innerHTML = '<p class="hint bad" style="margin:8px 0 0">At '+fmt(S.ang,1)+'° the target cannot be hit at any speed — the line of aim passes below it.</p>';
+    return;
+  }
+  out.innerHTML =
+    '<div class="working" style="margin-top:9px">'+
+    '<span class="step">  u² = gX² / (2cos²θ (X tan θ − Y))</span>'+
+    '<span class="step">  u² = '+fmt(S.g)+' × '+fmt(X0)+'² / (2 cos²'+fmt(S.ang,1)+'° × ('+fmt(X0*Math.tan(RAD(S.ang)))+' − '+fmt(Y0)+'))</span>'+
+    '<span class="step">  <em>u = '+fmt(u,2)+' m s⁻¹</em></span>'+
+    '</div>'+
+    '<div style="display:flex;gap:6px;margin-top:8px"><button class="btn sm" data-u="'+u+'">Use '+fmt(u,1)+' m/s</button></div>';
+}
+
+/* ================================ GRAPHS ================================ */
+function graphData(){
+  if(S.hist && S.hist.length > 4) return S.hist;
+  var out = [], g = S.g, n = 220;
+  var e0 = EL();
+  if(S.drag){
+    var c = comps(e0.u,e0.ang), st={x:0,y:e0.h0,vx:c.ux,vy:c.uy}, h=0.002, t=0, guard=0;
+    while(guard++<120000){
+      var sp = Math.hypot(st.vx,st.vy);
+      out.push({t:t, x:st.x, y:st.y, vx:st.vx, vy:st.vy, sp:sp, ke:0.5*S.mass*sp*sp, pe:S.mass*g*st.y});
+      var nx = rk4(st,h,g,S.k);
+      if(nx.y<=0 && nx.vy<0) break;
+      st = nx; t += h;
+    }
+    return out;
+  }
+  var P = predictIdeal(e0.u,e0.ang,e0.h0,g,0);
+  if(P.tFlight<=0) return out;
+  for(var i=0;i<=n;i++){
+    var tt = P.tFlight*i/n, s = stateIdeal(tt,e0.u,e0.ang,e0.h0,g);
+    var sp2 = Math.hypot(s.vx,s.vy);
+    out.push({t:tt, x:s.x, y:s.y, vx:s.vx, vy:s.vy, sp:sp2, ke:0.5*S.mass*sp2*sp2, pe:S.mass*g*s.y});
+  }
+  return out;
+}
+function drawGraph(){
+  var cvg = $('#graph'); if(!cvg) return;
+  var box = cvg.getBoundingClientRect(); if(box.width < 20) return;
+  var dpr = Math.min(window.devicePixelRatio||1, 2.5);
+  var bw = Math.round(box.width*dpr), bh = Math.round(box.height*dpr);
+  if(cvg.width!==bw || cvg.height!==bh){ cvg.width=bw; cvg.height=bh; }
+  var g = cvg.getContext('2d');
+  g.setTransform(dpr,0,0,dpr,0,0);
+  var W = box.width, H = box.height, padL=58, padB=40, padT=14, padR=16;
+  g.clearRect(0,0,W,H);
+  g.fillStyle = cssVar('--panel2'); g.fillRect(0,0,W,H);
+
+  var data = graphData();
+  if(!data.length){ g.fillStyle=C.muted; g.font='600 12px system-ui'; g.textAlign='center';
+    g.fillText('Nothing to plot yet', W/2, H/2); return; }
+
+  var mode = S.graph, xKey = 't', xLab = 'time / s', yLab = '', series = [];
+  if(mode==='path'){
+    xKey='x'; xLab='horizontal distance / m'; yLab='height / m';
+    series = [{c:C.ball, n:'path', wd:2.6, get:function(r){ return r.y; }}];
+  } else if(mode==='disp'){
+    yLab='displacement / m';
+    series = [{c:C.horiz, n:'x (horizontal)', wd:2.4, get:function(r){ return r.x; }},
+              {c:C.vert,  n:'y (vertical)',   wd:2.4, get:function(r){ return r.y; }}];
+  } else if(mode==='vel'){
+    yLab='velocity / m s⁻¹';
+    series = [{c:C.horiz, n:'vx', wd:2.6, get:function(r){ return r.vx; }},
+              {c:C.vert,  n:'vy', wd:2.6, get:function(r){ return r.vy; }}];
+  } else {
+    yLab='energy / J';
+    series = [{c:C.ball, n:'kinetic', wd:2.2, get:function(r){ return r.ke; }},
+              {c:C.horiz, n:'potential', wd:2.2, get:function(r){ return r.pe; }},
+              {c:C.energy, n:'total', wd:3.2, get:function(r){ return r.ke+r.pe; }}];
+  }
+
+  var x0=Infinity, x1=-Infinity, lo=Infinity, hi=-Infinity, i, s;
+  for(i=0;i<data.length;i++){
+    var xv = data[i][xKey];
+    if(xv<x0) x0=xv; if(xv>x1) x1=xv;
+    for(s=0;s<series.length;s++){
+      var yv = series[s].get(data[i]);
+      if(!isFinite(yv)) continue;
+      if(yv<lo) lo=yv; if(yv>hi) hi=yv;
+    }
+  }
+  if(!isFinite(x0)){ x0=0; x1=1; }
+  if(x1-x0<1e-9) x1=x0+1;
+  if(!isFinite(lo)){ lo=0; hi=1; }
+  var pad=(hi-lo)*0.14; lo-=pad; hi+=pad;
+  if(lo>0) lo=0; if(hi<0) hi=0;
+
+  var GX = function(v){ return padL + (v-x0)/(x1-x0)*(W-padL-padR); };
+  var GY = function(v){ return H-padB - (v-lo)/(hi-lo)*(H-padB-padT); };
+
+  g.strokeStyle=cssVar('--grid2'); g.lineWidth=1; g.beginPath();
+  for(i=0;i<=5;i++){ var yy=Math.round(padT+(H-padB-padT)*i/5)+0.5; g.moveTo(padL,yy); g.lineTo(W-padR,yy); }
+  for(i=0;i<=6;i++){ var xx=Math.round(padL+(W-padL-padR)*i/6)+0.5; g.moveTo(xx,padT); g.lineTo(xx,H-padB); }
+  g.stroke();
+  g.strokeStyle=cssVar('--line'); g.lineWidth=1.5;
+  g.beginPath(); g.moveTo(padL,padT); g.lineTo(padL,H-padB); g.lineTo(W-padR,H-padB); g.stroke();
+  if(lo<0&&hi>0){ g.strokeStyle=C.muted; g.setLineDash([5,4]); g.lineWidth=1.3;
+    g.beginPath(); g.moveTo(padL,GY(0)); g.lineTo(W-padR,GY(0)); g.stroke(); g.setLineDash([]); }
+
+  /* the area under the vy graph is the vertical displacement */
+  if(mode==='vel'){
+    g.save(); g.fillStyle=C.vert; g.globalAlpha=.14;
+    g.beginPath(); g.moveTo(GX(data[0].t), GY(0));
+    for(i=0;i<data.length;i++) g.lineTo(GX(data[i].t), GY(data[i].vy));
+    g.lineTo(GX(data[data.length-1].t), GY(0)); g.closePath(); g.fill(); g.restore();
+  }
+
+  g.fillStyle=C.muted; g.font='600 10.5px system-ui,sans-serif'; g.textAlign='right'; g.textBaseline='middle';
+  for(i=0;i<=5;i++){ var v2 = hi-(hi-lo)*i/5; g.fillText(fmt(v2, Math.abs(hi-lo)>100?0:1), padL-6, padT+(H-padB-padT)*i/5); }
+  g.textAlign='center'; g.textBaseline='top';
+  for(i=0;i<=6;i++){ var v3 = x0+(x1-x0)*i/6; g.fillText(fmt(v3, (x1-x0)<3?2:1), padL+(W-padL-padR)*i/6, H-padB+7); }
+  g.font='700 11.5px system-ui,sans-serif'; g.fillText(xLab, W/2, H-15);
+  g.save(); g.translate(11,H/2); g.rotate(-PI/2); g.textBaseline='top'; g.font='600 10.5px system-ui,sans-serif';
+  g.fillText(yLab,0,0); g.restore();
+
+  for(s=0;s<series.length;s++){
+    g.strokeStyle=series[s].c; g.lineWidth=series[s].wd; g.lineJoin='round';
+    g.beginPath();
+    for(i=0;i<data.length;i++){
+      var px=GX(data[i][xKey]), py=GY(series[s].get(data[i]));
+      if(i===0) g.moveTo(px,py); else g.lineTo(px,py);
+    }
+    g.stroke();
+  }
+  /* where the projectile is right now */
+  if(S.flying || S.landed){
+    var cur = data[data.length-1];
+    if(S.hist && S.hist.length>4) cur = S.hist[S.hist.length-1];
+    g.fillStyle=C.ink;
+    for(s=0;s<series.length;s++){
+      var cy = GY(series[s].get(cur));
+      g.beginPath(); g.arc(GX(cur[xKey]), cy, 4, 0, 7); g.fill();
+    }
+  }
+  g.font='700 10.5px system-ui,sans-serif'; g.textAlign='left'; g.textBaseline='middle';
+  var lx=padL+9, ly=padT+10;
+  for(s=0;s<series.length;s++){
+    g.fillStyle=series[s].c; g.fillRect(lx, ly-4, 13, 3);
+    g.fillText(series[s].n, lx+18, ly);
+    lx += 22 + g.measureText(series[s].n).width + 10;
+    if(lx > W-80){ lx=padL+9; ly+=15; }
+  }
+
+  var rd = $('#graphRead'), hint = $('#graphHint');
+  var P = predict();
+  if(mode==='path'){
+    rd.innerHTML = kv('Shape', 'a parabola') + kv('Range', fmt(P.range)+' m') + kv('Greatest height', fmt(P.hMax)+' m');
+    hint.innerHTML = 'This is the shape the projectile actually traces out. It is a parabola because <em>y</em> depends on <em>t</em>² while <em>x</em> depends on <em>t</em>.';
+  } else if(mode==='disp'){
+    rd.innerHTML = kv('Horizontal', 'straight line — constant velocity') + kv('Vertical', 'curved — constant acceleration');
+    hint.innerHTML = 'The horizontal graph is a straight line through the origin: equal distances in equal times. The vertical graph curves, because the vertical velocity is changing all the way through.';
+  } else if(mode==='vel'){
+    rd.innerHTML = kv('Gradient of v<sub>x</sub>', '0 — no horizontal force') +
+                   kv('Gradient of v<sub>y</sub>', fmt(-S.g)+' m s⁻²  ( = −g )') +
+                   kv('Area under v<sub>y</sub>', fmt(-S.h0)+' m — the vertical displacement');
+    hint.innerHTML = 'v<sub>x</sub> is a flat line: nothing pushes the projectile forwards or backwards. v<sub>y</sub> is a straight line of gradient −<em>g</em>, crossing zero at the top of the flight. The shaded area is the vertical displacement — positive above the axis, negative below.';
+  } else {
+    var last = data[data.length-1];
+    rd.innerHTML = kv('Total at launch', fmt(data[0].ke+data[0].pe)+' J') +
+                   kv('Total at landing', fmt(last.ke+last.pe)+' J');
+    hint.innerHTML = S.drag
+      ? 'With air resistance the total energy falls all the way through the flight: work is done against the drag force.'
+      : 'Kinetic and potential energy are exchanged, but the total is a flat line. That is conservation of energy in a picture.';
+  }
+}
+
+/* ============================ INTERACTION =============================== */
+var drag = null;
+function ptr(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+function barrelTip(){
+  var ang = (S.mode==='monkey')? DEG(Math.atan2(S.monkey.y-S.h0,S.monkey.x)) : (S.mode==='drop'?0:S.ang);
+  var a = -RAD(ang);
+  return { x: X(0) + Math.cos(a)*30, y: Y(S.h0) + Math.sin(a)*30 };
+}
+function hitTest(px,py){
+  if(S.mode==='launch' && S.target.on){
+    var t = {x:X(S.target.x), y:Y(S.target.y)};
+    if(Math.hypot(px-t.x,py-t.y) < 22) return {what:'target'};
+  }
+  if(S.mode==='monkey'){
+    var m = {x:X(S.monkey.x), y:Y(S.monkey.y - ((S.flying||S.landed)?S.monkey.fall:0))};
+    if(Math.hypot(px-m.x,py-m.y) < 24) return {what:'monkey'};
+  }
+  if(S.mode==='launch' || S.mode==='sweep'){
+    var tip = barrelTip();
+    if(Math.hypot(px-tip.x,py-tip.y) < 20) return {what:'angle'};
+  }
+  var base = {x:X(0), y:Y(S.h0)};
+  if(Math.hypot(px-base.x,py-base.y) < 18) return {what:'height'};
+  return null;
+}
+cv.addEventListener('pointerdown', function(e){
+  cv.setPointerCapture(e.pointerId);
+  var p = ptr(e), h = hitTest(p.x,p.y);
+  if(!h) return;
+  drag = h;
+  V.freeze = true;
+  if(h.what==='angle' || h.what==='height') resetFlight();
+});
+cv.addEventListener('pointermove', function(e){
+  var p = ptr(e);
+  if(!drag){
+    var h = hitTest(p.x,p.y);
+    cv.style.cursor = h? (h.what==='angle'?'crosshair':'grab') : 'default';
+    return;
+  }
+  if(drag.what==='target'){
+    S.target.x = clamp(Math.round(invX(p.x)*2)/2, 1, 400);
+    S.target.y = clamp(Math.round(invY(p.y)*2)/2, 0, 300);
+  } else if(drag.what==='monkey'){
+    S.monkey.x = clamp(Math.round(invX(p.x)*2)/2, 3, 400);
+    S.monkey.y = clamp(Math.round(invY(p.y)*2)/2, 1, 300);
+    resetFlight();
+  } else if(drag.what==='angle'){
+    var a = DEG(Math.atan2(Y(S.h0)-p.y, p.x-X(0)));
+    S.ang = clamp(Math.round(a*2)/2, -85, 90);
+    resetFlight();
+  } else if(drag.what==='height'){
+    S.h0 = clamp(Math.round(invY(p.y)*10)/10, 0, 200);
+    resetFlight();
+  }
+  syncControls(); updateAll();
+});
+function endDrag(e){
+  if(drag){ drag=null; V.freeze=false; updateAll(); }
+  if(e && e.pointerId!==undefined && cv.hasPointerCapture && cv.hasPointerCapture(e.pointerId)) cv.releasePointerCapture(e.pointerId);
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+ROOT.addEventListener('keydown', function(e){
+  var tg = (e.target.tagName||'').toLowerCase();
+  if(tg==='input'||tg==='select'||tg==='textarea') return;
+  switch(e.key){
+    case ' ': e.preventDefault(); doFire(); break;
+    case '.': e.preventDefault(); doStep(); break;
+    case 'r': case 'R': resetFlight(); updateAll(); break;
+    case 'c': case 'C': $('#btnComp').click(); break;
+    case 's': case 'S': $('#btnShadow').click(); break;
+    case 'b': case 'B': $('#btnStrobe').click(); break;
+    case 'k': case 'K': keepGhost(); break;
+    case 'h': case 'H': $('#btnValues').click(); break;
+    case 't': case 'T': toggleTheme(); break;
+    case '1': setMode('launch'); break;
+    case '2': setMode('sweep'); break;
+    case '3': setMode('drop'); break;
+    case '4': setMode('monkey'); break;
+    case 'ArrowLeft': case 'ArrowRight':
+      e.preventDefault(); S.ang = clamp(S.ang + (e.key==='ArrowRight'?1:-1)*(e.shiftKey?5:1), -85, 90);
+      resetFlight(); syncControls(); updateAll(); break;
+    case 'ArrowUp': case 'ArrowDown':
+      e.preventDefault(); S.u = clamp(S.u + (e.key==='ArrowUp'?1:-1)*(e.shiftKey?5:1), 1, 80);
+      resetFlight(); syncControls(); updateAll(); break;
+  }
+});
+
+/* ============================== CONTROLS ================================ */
+function doFire(){
+  if(S.flying){ S.running = !S.running; syncControls(); return; }
+  fire(); syncControls(); updateAll();
+}
+function doStep(){
+  if(!S.flying){ fire(); S.running=false; }
+  S.running = false;
+  step(0.02*Math.max(S.speed,0.2));
+  updateAll();
+}
+function setMode(m){
+  if(S.mode===m) return;
+  S.mode = m;
+  S.ghosts = []; ghostDirty = true;
+  resetFlight();
+  syncControls(); updateAll();
+}
+function toggleTheme(){
+  var cur = ROOT.getAttribute('data-theme')||'light';
+  ROOT.setAttribute('data-theme', cur==='light'?'dark':'light');
+  try{ localStorage.setItem('proj-theme', ROOT.getAttribute('data-theme')); }catch(err){}
+  refreshColours(); themeStamp = ROOT.getAttribute('data-theme'); drawGraph();
+}
+function syncControls(){
+  $('#modeLaunch').setAttribute('aria-pressed', S.mode==='launch');
+  $('#modeSweep').setAttribute('aria-pressed', S.mode==='sweep');
+  $('#modeDrop').setAttribute('aria-pressed', S.mode==='drop');
+  $('#modeMonkey').setAttribute('aria-pressed', S.mode==='monkey');
+  $('#grpTarget').hidden = (S.mode!=='launch');
+  $('#grpSweep').hidden  = (S.mode!=='sweep');
+  $('#grpMonkey').hidden = (S.mode!=='monkey');
+  $('#fAng').hidden = (S.mode==='drop' || S.mode==='monkey');
+  $('#inU').value=S.u; $('#inAng').value=S.ang; $('#inH0').value=S.h0;
+  $('#inTx').value=S.target.x; $('#inTy').value=S.target.y;
+  $('#chkTarget').checked=S.target.on;
+  $('#inG').value=S.g; $('#inDrag').value=S.k; $('#chkDrag').checked=S.drag;
+  /* keep the named-gravity list honest: it should show the Moon when g is the Moon's */
+  var gsel = $('#selG'), gmatch = '';
+  for(var gi=0; gi<gsel.options.length; gi++){
+    if(Math.abs(parseFloat(gsel.options[gi].value) - S.g) < 1e-9){ gmatch = gsel.options[gi].value; break; }
+  }
+  gsel.value = gmatch;
+  $('#fDrag').hidden = !S.drag; $('#dragHint').hidden = !S.drag;
+  $('#inSpeed').value = Math.log10(S.speed);
+  $('#inDec').value=S.dec; $('#inStrobeDt').value=S.strobeDt; $('#cSig').checked=S.sig;
+  $('#inSwFrom').value=S.sweep.from; $('#inSwTo').value=S.sweep.to; $('#inSwStep').value=S.sweep.step;
+  $('#chkPairs').checked=S.sweep.pairs; $('#chkEnvelope').checked=S.sweep.envelope;
+  $('#inMx').value=S.monkey.x; $('#inMy').value=S.monkey.y; $('#chkAimLine').checked=S.monkey.aimLine;
+  var mi = $('#inMass'); if(mi) mi.value = S.mass;
+  var map = {cGrid:'grid',cAxes:'axes',cPath:'path',cStrobe:'strobe',cComp:'comp',cRes:'res',
+             cShadow:'shadow',cApex:'apex',cIdeal:'ideal',cLabels:'labels'};
+  for(var k in map){ var el=$('#'+k); if(el) el.checked = !!S.show[map[k]]; }
+  $('#btnComp').setAttribute('aria-pressed', !!S.show.comp);
+  $('#btnShadow').setAttribute('aria-pressed', !!S.show.shadow);
+  $('#btnStrobe').setAttribute('aria-pressed', !!S.show.strobe);
+  $('#btnValues').setAttribute('aria-pressed', !S.show.values);
+  $('#fireIcon').innerHTML = (S.flying && S.running)
+    ? '<path d="M6 5h4v14H6zM14 5h4v14h-4z"></path>'
+    : '<path d="M7 4l13 8-13 8z"></path>';
+  $('#gTabPath').setAttribute('aria-pressed', S.graph==='path');
+  $('#gTabDisp').setAttribute('aria-pressed', S.graph==='disp');
+  $('#gTabVel').setAttribute('aria-pressed', S.graph==='vel');
+  $('#gTabEn').setAttribute('aria-pressed', S.graph==='en');
+  updateSetupTexts();
+}
+
+function rng(id, fn){
+  var el = $('#'+id); if(!el) return;
+  el.addEventListener('input', function(){ fn(parseFloat(el.value)); syncControls(); updateAll(); });
+}
+function chk(id, fn){
+  var el = $('#'+id); if(!el) return;
+  el.addEventListener('change', function(){ fn(el.checked); syncControls(); updateAll(); });
+}
+function wire(){
+  $('#modeLaunch').onclick=function(){ setMode('launch'); };
+  $('#modeSweep').onclick =function(){ setMode('sweep'); };
+  $('#modeDrop').onclick  =function(){ setMode('drop'); };
+  $('#modeMonkey').onclick=function(){ setMode('monkey'); };
+
+  rng('inU',   function(v){ S.u=v; resetFlight(); });
+  rng('inAng', function(v){ S.ang=v; resetFlight(); });
+  rng('inH0',  function(v){ S.h0=v; resetFlight(); });
+  rng('inTx',  function(v){ S.target.x=v; });
+  rng('inTy',  function(v){ S.target.y=v; });
+  rng('inG',   function(v){ S.g=v; resetFlight(); });
+  rng('inDrag',function(v){ S.k=v; resetFlight(); });
+  rng('inSpeed',function(v){ S.speed=Math.pow(10,v); });
+  rng('inDec', function(v){ S.dec=v|0; });
+  rng('inStrobeDt', function(v){ S.strobeDt=v; });
+  rng('inSwFrom', function(v){ S.sweep.from=v; resetFlight(); });
+  rng('inSwTo',   function(v){ S.sweep.to=v; resetFlight(); });
+  rng('inSwStep', function(v){ S.sweep.step=v; resetFlight(); });
+  rng('inMx', function(v){ S.monkey.x=v; resetFlight(); });
+  rng('inMy', function(v){ S.monkey.y=v; resetFlight(); });
+  rng('inMass', function(v){ S.mass=v; });
+
+  chk('chkTarget', function(b){ S.target.on=b; });
+  chk('chkDrag', function(b){ S.drag=b; resetFlight(); });
+  chk('chkPairs', function(b){ S.sweep.pairs=b; });
+  chk('chkEnvelope', function(b){ S.sweep.envelope=b; });
+  chk('chkAimLine', function(b){ S.monkey.aimLine=b; });
+  chk('cSig', function(b){ S.sig=b; });
+  var map = {cGrid:'grid',cAxes:'axes',cPath:'path',cStrobe:'strobe',cComp:'comp',cRes:'res',
+             cShadow:'shadow',cApex:'apex',cIdeal:'ideal',cLabels:'labels'};
+  Object.keys(map).forEach(function(k){ chk(k, function(b){ S.show[map[k]] = b?1:0; }); });
+  $('#selG').onchange = function(e){ S.g=parseFloat(e.target.value); resetFlight(); syncControls(); updateAll(); };
+
+  $('#btnFire').onclick = doFire;
+  $('#btnStep').onclick = doStep;
+  $('#btnReset').onclick = function(){ resetFlight(); syncControls(); updateAll(); };
+  $('#btnComp').onclick = function(){ S.show.comp = S.show.comp?0:1; syncControls(); updateAll(); };
+  $('#btnShadow').onclick = function(){ S.show.shadow = S.show.shadow?0:1; syncControls(); updateAll(); };
+  $('#btnStrobe').onclick = function(){ S.show.strobe = S.show.strobe?0:1; syncControls(); updateAll(); };
+  $('#btnKeep').onclick = $('#btnKeep2').onclick = keepGhost;
+  $('#btnClearGhosts').onclick = function(){ S.ghosts=[]; ghostDirty=true; updateAll(); };
+  $('#btnValues').onclick = function(){ S.show.values = S.show.values?0:1; syncControls(); updateAll();
+    toast(S.show.values? 'Values shown' : 'Values hidden — over to the students'); };
+  $('#ghostList').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    var i = parseInt(b.getAttribute('data-gi'),10);
+    if(isFinite(i)){ S.ghosts.splice(i,1); ghostDirty=true; updateAll(); }
+  });
+
+  $('#btnAim').onclick = doAimAngle;
+  $('#btnAimU').onclick = doAimSpeed;
+  $('#aimOut').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if(!b) return;
+    if(b.getAttribute('data-ang')!==null && b.getAttribute('data-ang')!==undefined && b.hasAttribute('data-ang')){
+      S.ang = Math.round(parseFloat(b.getAttribute('data-ang'))*10)/10;
+    }
+    if(b.hasAttribute('data-u')) S.u = Math.round(parseFloat(b.getAttribute('data-u'))*10)/10;
+    resetFlight(); syncControls(); updateAll(); fire(); syncControls();
+  });
+
+  [['gTabPath','path'],['gTabDisp','disp'],['gTabVel','vel'],['gTabEn','en']].forEach(function(p){
+    $('#'+p[0]).onclick = function(){ S.graph=p[1]; syncControls(); drawGraph(); };
+  });
+
+  $('#btnCheck').onclick = function(){
+    var P = predict(), out = $('#checkOut');
+    var gt = parseFloat($('#pT').value), gh = parseFloat($('#pH').value), gr = parseFloat($('#pR').value);
+    if(!isFinite(gt) && !isFinite(gh) && !isFinite(gr)){
+      out.innerHTML = '<p class="hint bad" style="margin:0">Type in at least one answer first.</p>'; return;
+    }
+    function row(name, guess, real, unit){
+      if(!isFinite(guess)) return '<div class="kv"><span class="k">'+name+'</span><span class="v" style="color:'+C.muted+'">—</span></div>';
+      var tol = Math.max(0.05, Math.abs(real)*0.02);
+      var ok = Math.abs(guess-real)<=tol;
+      return '<div class="kv"><span class="k">'+name+'</span><span class="v">'+
+        (ok? '<span style="color:'+cssVar('--ok')+'">✓ '+fmt(guess)+' '+unit+'</span>'
+           : '<span style="color:'+cssVar('--bad')+'">✗ you said '+fmt(guess)+', it is '+fmt(real)+' '+unit+'</span>')+
+        '</span></div>';
+    }
+    out.innerHTML = row('Time of flight', gt, P.tFlight, 's') +
+                    row('Greatest height', gh, P.hMax, 'm') +
+                    row('Range', gr, P.range, 'm') +
+                    '<p class="hint">Answers are marked correct within 2%. Open the working below to see every step.</p>';
+  };
+  $('#btnWalk').onclick = function(){ walkTo(0); };
+  $('#btnWalkNext').onclick = function(){ walkTo(walkIdx+1); };
+  $('#btnWalkPrev').onclick = function(){ walkTo(walkIdx-1); };
+  $('#btnCopyWork').onclick = function(){
+    var txt = WORK.map(function(s){ return s.h.replace(/<[^>]+>/g,''); }).join('\n');
+    if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ toast('Working copied'); },function(){ toast('Copy failed'); });
+  };
+
+  $$('.tabs button').forEach(function(btn){
+    btn.onclick = function(){
+      $$('.tabs button').forEach(function(b){ b.setAttribute('aria-selected', b===btn); });
+      $$('.tabpanel').forEach(function(p){ p.hidden = (p.id !== btn.getAttribute('aria-controls')); });
+      if(btn.id==='tab-solve'){ renderWorking(); updateResults(); }
+      if(btn.id==='tab-graphs') drawGraph();
+      updateAll();
+    };
+  });
+
+  $('#btnTheme').onclick = toggleTheme;
+  $('#btnHelp').onclick = function(){ $('#modalHelp').setAttribute('open',''); };
+  $('#closeHelp').onclick = function(){ $('#modalHelp').removeAttribute('open'); };
+  $('#btnPresets').onclick = function(){ $('#modalPresets').setAttribute('open',''); };
+  $('#closePresets').onclick = function(){ $('#modalPresets').removeAttribute('open'); };
+  $('#modalHelp').addEventListener('click', function(e){ if(e.target===this) this.removeAttribute('open'); });
+  $('#modalPresets').addEventListener('click', function(e){ if(e.target===this) this.removeAttribute('open'); });
+
+  $('#btnShare').onclick = function(){
+    var url = location.origin+location.pathname+'#p='+encodeState();
+    if(navigator.clipboard) navigator.clipboard.writeText(url).then(function(){ toast('Link copied'); },
+      function(){ location.hash='p='+encodeState(); toast('Setup saved to the address bar'); });
+    else { location.hash='p='+encodeState(); toast('Setup saved to the address bar'); }
+  };
+  $('#btnCopyState').onclick = function(){
+    if(navigator.clipboard) navigator.clipboard.writeText(encodeState()).then(function(){ toast('Setup code copied'); },function(){ toast('Copy failed'); });
+  };
+  $('#btnPasteState').onclick = function(){
+    function apply(txt){
+      if(!txt) return;
+      var o = decodeState(String(txt).trim().replace(/^.*#p=/,''));
+      if(o && deserialise(o)){ syncControls(); ghostDirty=true; updateAll(); toast('Setup loaded'); }
+      else toast('That is not a valid setup code');
+    }
+    if(navigator.clipboard && navigator.clipboard.readText) navigator.clipboard.readText().then(apply, function(){ apply(prompt('Paste the setup code:')); });
+    else apply(prompt('Paste the setup code:'));
+  };
+  $('#btnPng').onclick = $('#btnPng2').onclick = savePng;
+  $('#btnHardReset').onclick = function(){
+    var theme = ROOT.getAttribute('data-theme');
+    S = defaults(); resetFlight();
+    ROOT.setAttribute('data-theme', theme);
+    ghostDirty = true; syncControls(); updateAll();
+  };
+}
+function savePng(){
+  var off = document.createElement('canvas');
+  off.width = cv.width; off.height = cv.height;
+  var oc = off.getContext('2d');
+  oc.fillStyle = cssVar('--sky'); oc.fillRect(0,0,off.width,off.height);
+  oc.drawImage(cv,0,0);
+  off.toBlob(function(bl){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(bl); a.download='projectile-diagram.png'; a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    toast('Diagram saved');
+  });
+}
+
+/* --------------------------- save / restore ----------------------------- */
+function serialise(){
+  return { v:1, mode:S.mode, u:S.u, ang:S.ang, h0:S.h0, g:S.g, mass:S.mass,
+           drag:S.drag, k:S.k, dec:S.dec, sig:S.sig, strobeDt:S.strobeDt,
+           target:{on:S.target.on,x:S.target.x,y:S.target.y},
+           sweep:{from:S.sweep.from,to:S.sweep.to,step:S.sweep.step,pairs:S.sweep.pairs,envelope:S.sweep.envelope},
+           monkey:{x:S.monkey.x,y:S.monkey.y,aimLine:S.monkey.aimLine},
+           show:S.show };
+}
+function deserialise(o){
+  if(!o||typeof o!=='object') return false;
+  var d = defaults();
+  S.mode=o.mode||'launch';
+  S.u=+o.u||20; S.ang=(o.ang===undefined?40:+o.ang); S.h0=+o.h0||0;
+  S.g=+o.g||9.81; S.mass=+o.mass||0.15; S.drag=!!o.drag; S.k=(o.k===undefined?0.008:+o.k);
+  S.dec=(o.dec===undefined?2:+o.dec); S.sig=!!o.sig; S.strobeDt=+o.strobeDt||0.2;
+  S.target = Object.assign({}, d.target, o.target||{});
+  S.sweep  = Object.assign({}, d.sweep, o.sweep||{});
+  S.monkey = Object.assign({}, d.monkey, o.monkey||{});
+  S.show   = Object.assign({}, d.show, o.show||{});
+  S.ghosts = [];
+  resetFlight();
+  return true;
+}
+function encodeState(){
+  return btoa(unescape(encodeURIComponent(JSON.stringify(serialise())))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeState(str){
+  try{ return JSON.parse(decodeURIComponent(escape(atob(String(str).replace(/-/g,'+').replace(/_/g,'/'))))); }
+  catch(e){ return null; }
+}
+
+/* ============================== SCENARIOS =============================== */
+var PRESETS = [
+ { n:'The standard question', t:'A-Level', d:'20 m s⁻¹ at 40° from level ground. Resolve, find the time from the vertical motion, then use it horizontally.',
+   f:function(){ base(); S.mode='launch'; S.u=20; S.ang=40; S.h0=0; S.target.on=true; S.target.x=40; } },
+ { n:'Why 45° is best', t:'A-Level', d:'Every angle from 15° to 75° at the same speed. The pairs that land together are joined on the ground.',
+   f:function(){ base(); S.mode='sweep'; S.u=22; S.h0=0; S.sweep={from:15,to:75,step:15,pairs:true,envelope:false}; } },
+ { n:'The envelope of safety', t:'A-Level', d:'Fire at every angle at once. Nothing can be hit above the outer curve — that is the limit of the gun.',
+   f:function(){ base(); S.mode='sweep'; S.u=24; S.h0=0; S.sweep={from:5,to:85,step:5,pairs:false,envelope:true}; } },
+ { n:'Horizontal projection', t:'GCSE', d:'Rolled off a 45 m cliff at 15 m s⁻¹. The vertical motion is a plain free fall — the horizontal speed changes nothing about the time.',
+   f:function(){ base(); S.mode='launch'; S.u=15; S.ang=0; S.h0=45; S.target.on=false; } },
+ { n:'Drop versus throw', t:'GCSE', d:'One ball dropped, one projected sideways, released at the same instant. They land together, every time.',
+   f:function(){ base(); S.mode='drop'; S.u=9; S.ang=0; S.h0=14; S.strobeDt=0.15; } },
+ { n:'Monkey and hunter', t:'A-Level', d:'The monkey lets go at the moment of firing. Aim straight at it and it is always caught.',
+   f:function(){ base(); S.mode='monkey'; S.u=24; S.h0=1.5; S.monkey={x:34,y:20,aimLine:true,fall:0,hit:false}; } },
+ { n:'Hit the target', t:'A-Level', d:'A target 60 m away at 28 m s⁻¹. There are two angles that hit it — work out both.',
+   f:function(){ base(); S.mode='launch'; S.u=28; S.ang=25; S.h0=0; S.target={on:true,x:60,y:0}; } },
+ { n:'Hit it on a pole', t:'A-Level', d:'The target is 12 m up and 45 m away. Now the quadratic in tan θ really earns its keep.',
+   f:function(){ base(); S.mode='launch'; S.u=30; S.ang=45; S.h0=0; S.target={on:true,x:45,y:12}; } },
+ { n:'Shot put', t:'A-Level', d:'Released from 2.1 m at 13 m s⁻¹. Because it lands lower than it left, the best angle is under 45°.',
+   f:function(){ base(); S.mode='launch'; S.u=13; S.ang=42; S.h0=2.1; S.mass=7.26; S.target.on=false; } },
+ { n:'With air resistance', t:'A-Level', d:'A football struck at 26 m s⁻¹. The ideal parabola stays on screen so the shortfall is obvious.',
+   f:function(){ base(); S.mode='launch'; S.u=26; S.ang=35; S.h0=0; S.mass=0.43; S.drag=true; S.k=0.012; S.target.on=false; } },
+ { n:'On the Moon', t:'GCSE', d:'The same launch with g = 1.62 N/kg. Six times the range, and a very slow, high arc — so it opens at double speed.',
+   f:function(){ base(); S.mode='launch'; S.u=20; S.ang=45; S.h0=0; S.g=1.62; S.speed=2; S.target.on=false; } },
+ { n:'Thrown down from a cliff', t:'A-Level', d:'A negative launch angle from 30 m. The quadratic for the time of flight has to be solved properly.',
+   f:function(){ base(); S.mode='launch'; S.u=12; S.ang=-20; S.h0=30; S.target.on=false; } }
+];
+function base(){
+  var theme = ROOT.getAttribute('data-theme');
+  var show = Object.assign({}, S.show), dec = S.dec, sg = S.sig, sp = S.speed;
+  S = defaults();
+  S.show = show; S.dec = dec; S.sig = sg; S.speed = sp;
+  ROOT.setAttribute('data-theme', theme);
+}
+function buildPresetList(){
+  var wrap = $('#presetList'); wrap.innerHTML='';
+  PRESETS.forEach(function(p,i){
+    var b = document.createElement('button');
+    b.innerHTML = '<b>'+esc(p.n)+'</b><span>'+esc(p.d)+'</span><span class="pill tag '+(p.t==='GCSE'?'':'ok')+'">'+p.t+'</span>';
+    b.onclick = function(){
+      PRESETS[i].f();
+      resetFlight(); ghostDirty=true; syncControls(); updateAll();
+      $('#modalPresets').removeAttribute('open');
+      toast(p.n+' loaded');
+    };
+    wrap.appendChild(b);
+  });
+}
+
+/* ================================ HELP ================================== */
+var HELP = ''+
+'<h4>The one idea</h4>'+
+'<p>A projectile does two completely separate things at once. Horizontally nothing pushes it, so it keeps a constant velocity. Vertically gravity pulls it, so it has a constant acceleration. The only thing the two motions share is the <b>time</b>.</p>'+
+'<p class="eq">horizontal:  x = u cos&thinsp;&theta; &times; t &nbsp;&nbsp;(constant velocity)<br>vertical:    y = h + u sin&thinsp;&theta; &times; t &minus; &frac12;gt&sup2; &nbsp;&nbsp;(constant acceleration)</p>'+
+'<p>Press <kbd>S</kbd> to switch on the <b>shadows</b>. A dot runs along the ground directly beneath the projectile and another runs up the axis at its height. The strobe marks the ground dot leaves are evenly spaced &mdash; the horizontal motion never changes. The marks on the vertical axis bunch together near the top and spread out lower down &mdash; that is the acceleration. Two motions, one object, watched side by side.</p>'+
+
+'<h4>The four simulations</h4>'+
+'<ul>'+
+'<li><b>Launch</b> &mdash; the full sandbox. Drag the barrel to aim, drag the launcher up to fire from a cliff, drag the target anywhere. Keep a shot with <kbd>K</kbd>, change one thing, fire again, and compare the two paths directly.</li>'+
+'<li><b>Angle sweep</b> &mdash; every angle at once. The pairs that land in the same place are joined on the ground, and the <em>envelope</em> shows the boundary of everything the launcher can reach.</li>'+
+'<li><b>Drop versus throw</b> &mdash; one ball dropped, one projected sideways, released together. They land together. Nothing else makes the point so quickly.</li>'+
+'<li><b>Monkey and hunter</b> &mdash; the monkey lets go at the instant of firing. Aim straight at it and it is caught at any launch speed, because both fall &frac12;gt&sup2; below where they would otherwise have been.</li>'+
+'</ul>'+
+
+'<h4>Hitting a target</h4>'+
+'<p>Put the target where you like and press <b>Find the angle that hits it</b>. Substituting the horizontal equation into the vertical one gives</p>'+
+'<p class="eq">Y = X tan&thinsp;&theta; &minus; gX&sup2;(1 + tan&sup2;&theta;) / (2u&sup2;)</p>'+
+'<p>which is a <em>quadratic in tan&thinsp;&theta;</em>, so there are generally two answers: a low, flat shot and a high, lobbed one. When the two answers merge into one, the target is exactly at the limit of the range for that speed &mdash; and the app will tell you the least speed that could reach it.</p>'+
+
+'<h4>The graphs</h4>'+
+'<p>The <b>velocity</b> graph is the one worth projecting on the board: v<sub>x</sub> is a flat line, v<sub>y</sub> is a straight line of gradient &minus;<em>g</em> crossing zero at the top of the flight, and the shaded area under it is the vertical displacement. No calculus required &mdash; just gradients and areas.</p>'+
+
+'<h4>Air resistance</h4>'+
+'<p>An A&#8209;Level extension. The drag acceleration is taken as <em>kv&sup2;</em> opposing the motion, and because there is no neat formula the path is worked out numerically, step by step. The ideal no&#8209;air parabola stays on screen as a faint line, so the shorter range, the steeper descent and the loss of symmetry are all visible at once.</p>'+
+
+'<h4>Keyboard</h4>'+
+'<ul style="columns:2">'+
+'<li><kbd>Space</kbd> fire, or pause</li>'+
+'<li><kbd>.</kbd> one small step</li>'+
+'<li><kbd>R</kbd> back to the start</li>'+
+'<li><kbd>C</kbd> components</li>'+
+'<li><kbd>S</kbd> shadows</li>'+
+'<li><kbd>B</kbd> strobe images</li>'+
+'<li><kbd>K</kbd> keep this path</li>'+
+'<li><kbd>H</kbd> hide the numbers</li>'+
+'<li><kbd>T</kbd> light or dark</li>'+
+'<li><kbd>1</kbd>&hellip;<kbd>4</kbd> simulation</li>'+
+'<li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> change the angle</li>'+
+'<li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> change the speed</li>'+
+'</ul>'+
+
+'<h4>Scale</h4>'+
+'<p>The horizontal and vertical scales are always the same, so the path on screen is the real shape of the trajectory and the launch angle really is the angle you set. Trajectories genuinely are much longer than they are tall &mdash; a fact that is worth pointing out, because textbook diagrams almost always stretch them.</p>'+
+
+'<h4>Sharing</h4>'+
+'<p>The link button copies the whole question into a web address, so a pasted link rebuilds it exactly. <em>Save PNG</em> drops the diagram into a worksheet, and <kbd>H</kbd> hides every number so a class can work them out first.</p>';
+
+/* ================================ LOOP ================================== */
+var lastT = 0, raf = null;
+function loop(ts){
+  var real = Math.min(0.034, (ts-lastT)/1000 || 0.016); lastT = ts;
+  if(S.running && S.flying){
+    var dt = real*S.speed;
+    var maxh = 0.004, n = Math.max(1, Math.ceil(dt/maxh)), h = dt/n;
+    for(var i=0;i<n && S.flying;i++) step(h);
+    uiDirty = true;
+  }
+  render();
+  updateHud();
+  if(uiDirty){
+    uiDirty = false;
+    if(ghostDirty){ buildGhostList(); ghostDirty=false; }
+    if(!$('#p-analyse').hidden) updateAnalyse();
+    if(!$('#p-solve').hidden){ renderWorkingThrottled(); updateResults(); }
+    if(!$('#p-graphs').hidden) drawGraph();
+  }
+  raf = requestAnimationFrame(loop);
+}
+
+/* ================================ START ================================= */
+function init(){
+  try{ var th = localStorage.getItem('proj-theme'); if(th) ROOT.setAttribute('data-theme', th); }catch(e){}
+  if(!ROOT.getAttribute('data-theme')){
+    ROOT.setAttribute('data-theme', (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches)? 'dark':'light');
+  }
+  refreshColours(); themeStamp = ROOT.getAttribute('data-theme');
+  $('#helpBody').innerHTML = HELP;
+  buildPresetList();
+  wire();
+
+  var loaded = false;
+  if(location.hash && location.hash.indexOf('#p=')===0){
+    var o = decodeState(location.hash.slice(3));
+    if(o) loaded = deserialise(o);
+  }
+  if(!loaded) resetFlight();
+
+  syncControls();
+  resize();
+  ghostDirty = true; updateAll();
+  renderWorking();
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){ resize(); drawGraph(); updateAll(); }).observe(cv.parentElement);
+  } else {
+    window.addEventListener('resize', function(){ resize(); updateAll(); });
+  }
+  raf = requestAnimationFrame(loop);
+
+  window.PROJ = {
+    get S(){ return S; }, set S(v){ S=v; },
+    defaults:defaults, comps:comps, predictIdeal:predictIdeal, predictDrag:predictDrag, predict:predict,
+    stateIdeal:stateIdeal, solveAngles:solveAngles, solveSpeed:solveSpeed, minSpeed:minSpeed,
+    bestAngle:bestAngle, bestRange:bestRange, envelopeY:envelopeY, idealPath:idealPath, rk4:rk4,
+    fire:fire, step:step, resetFlight:resetFlight, setMode:setMode, syncControls:syncControls,
+    updateAll:updateAll, buildWorking:buildWorking, keepGhost:keepGhost,
+    encodeState:encodeState, decodeState:decodeState, deserialise:deserialise, serialise:serialise,
+    PRESETS:PRESETS, X:X, Y:Y, get V(){ return V; }, barrelTip:barrelTip, graphData:graphData
+  };
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+</script>
+</body>
+</html>
