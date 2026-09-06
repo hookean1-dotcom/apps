@@ -314,7 +314,7 @@ body{overflow:hidden}
 }
 #projlab .toast.show{opacity:1;transform:translate(-50%,0)}
 
-@media (max-width:1000px){
+@media (max-width:900px){
   #projlab .main{flex-direction:column}
   #projlab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:48%}
   #projlab .stagewrap{flex:1 1 auto;min-height:220px}
@@ -336,6 +336,19 @@ body{overflow:hidden}
   #projlab .speedwrap{padding:0 2px;gap:3px}
   #projlab .speedwrap input[type=range]{flex:0 0 54px;width:54px}
   #projlab .speedwrap span{min-width:32px !important;font-size:11px}
+}
+
+/* --- keep the top bar on a single row in a ~1000 px embed column --- */
+@media (max-width:1120px){
+  /* in a narrow embed the readout chips would sit on top of the toolbar */
+  #projlab .hud{top:60px}
+  #projlab .topbar{gap:8px;padding:7px 10px}
+  #projlab .brand .sub{display:none}
+  #projlab .brand h1{font-size:15px}
+  #projlab .seg{padding:2px}
+  #projlab .seg button{padding:6px 8px;font-size:12px}
+  #projlab .iconbtn{width:31px;height:31px}
+  #projlab .btn.sm{padding:5px 8px}
 }
 </style>
 </head>
