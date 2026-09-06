@@ -317,7 +317,7 @@ body{overflow:hidden}
 }
 #motlab .toast.show{opacity:1;transform:translate(-50%,0)}
 
-@media (max-width:1000px){
+@media (max-width:900px){
   #motlab .main{flex-direction:column}
   #motlab .panel{flex:0 0 auto;max-width:none;width:100%;border-left:0;border-top:1px solid var(--line);height:46%}
   #motlab .stagewrap{flex:1 1 auto;min-height:220px}
@@ -328,8 +328,12 @@ body{overflow:hidden}
   #motlab .seg{order:5;width:100%}
   #motlab .seg button{flex:1 1 0;padding:7px 3px;font-size:11.5px}
 }
-@media (max-width:700px){
+@media (max-width:1180px){
+  /* the stage is only ~600 px wide in a typical embed column; the four chips
+     do not fit there, and every value they carry is on the graphs anyway */
   #motlab .readouts{display:none}
+}
+@media (max-width:700px){
   #motlab .verdict .row2{display:none}
   #motlab .verdict{padding:6px 10px 7px}
   #motlab .transport .tread{font-size:11px;padding:3px 6px}
@@ -424,8 +428,12 @@ body{overflow:hidden}
 #motlab .tapekey i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 
 /* ------ small screens: these come last so they win over the rules above ---- */
-@media (max-width:700px){
+@media (max-width:1180px){
+  /* the stage is only ~600 px wide in a typical embed column; the four chips
+     do not fit there, and every value they carry is on the graphs anyway */
   #motlab .readouts{display:none}
+}
+@media (max-width:700px){
   #motlab .verdict .row2{display:none}
   #motlab .verdict{padding:6px 10px 7px;width:100%}
   #motlab .transport{padding:5px 8px;gap:6px}
@@ -433,6 +441,17 @@ body{overflow:hidden}
   #motlab .transport .tread{font-size:11px;padding:3px 6px}
   #motlab .bottomstack{left:8px;right:8px;bottom:8px;gap:6px}
   #motlab .suvat{grid-template-columns:repeat(3,1fr)}
+}
+
+/* --- keep the top bar on a single row in a ~1000 px embed column --- */
+@media (max-width:1120px){
+  #motlab .topbar{gap:8px;padding:7px 10px}
+  #motlab .brand .sub{display:none}
+  #motlab .brand h1{font-size:15px}
+  #motlab .seg{padding:2px}
+  #motlab .seg button{padding:6px 8px;font-size:12px}
+  #motlab .iconbtn{width:31px;height:31px}
+  #motlab .btn.sm{padding:5px 8px}
 }
 </style>
 </head>
@@ -1065,7 +1084,7 @@ function layout(){
   V.bot = (bs? bs.getBoundingClientRect().height : 110) + 20;
   V.rdW = rd? rd.getBoundingClientRect().width : 0;
   V.rdBottom = rd? (rd.getBoundingClientRect().height + 11) : 0;
-  V.narrow = V.w < 620;
+  V.narrow = V.w < 520;   /* one graph at a time only on a genuinely small screen */
   if(V.freeze) return;
 
   var top = V.top, bottom = Math.max(top+120, V.h - V.bot - 18);  /* 18 px for the shared time axis */
@@ -2084,6 +2103,11 @@ function randomMotion(level){
 }
 /* true when every stage boundary lands on a tenth of a second, so a question
    can quote the times exactly as the student will read them off the axis */
+/* the nearest tenth of a second, kept inside the motion */
+function snapTenth(t, T){
+  var v = Math.round(t*10)/10;
+  return clamp(v, 0, Math.round(T*10)/10);
+}
 function tidyTimes(m){
   var t = 0;
   for(var i=0;i<m.phases.length;i++){
@@ -2145,7 +2169,7 @@ function newQuestion(){
            + 'gradient = change in v ÷ change in t = ('+w(seg.v)+' − '+w(seg.u)+') ÷ ('+fmt(seg.t1,1)+' − '+fmt(seg.t0,1)+') = <b>'+w(seg.a)+' '+U_A+'</b>'
            + (seg.a<0? '<br>It is negative because the velocity is falling — read the sign straight off the slope.' : '') };
     } else if(whichG==='v-from-curve'){
-      var tq = rnd(T*0.25, T*0.75, 0.5);
+      var tq = snapTenth(rnd(T*0.25, T*0.75, 0.5), T);
       var st = at(tq);
       q = { kind:'num',
         text:'Find the <b>velocity at t = '+fmt(tq,1)+' s</b> from the <b>displacement–time</b> graph.',
@@ -2156,7 +2180,10 @@ function newQuestion(){
       var flat = null;
       for(var j=0;j<g.length;j++) if(Math.abs(g[j].a) < 1e-9 && Math.abs(g[j].u) > 1e-9){ flat = g[j]; break; }
       if(!flat) flat = g[0];
-      var tm = (flat.t0 + flat.t1)/2, stm = at(tm);
+      /* the mid-point of a stage need not land on a tenth of a second, and the
+         question quotes the time to 1 d.p. - so snap it before using it, or the
+         answer belongs to a moment the student was never told about */
+      var tm = snapTenth((flat.t0 + flat.t1)/2, T), stm = at(tm);
       q = { kind:'num',
         text:'Find the <b>velocity at t = '+fmt(tm,1)+' s</b> from the <b>displacement–time</b> graph.',
         unit:U_V, ans:stm.v,
