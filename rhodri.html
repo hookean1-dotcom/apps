@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit Conversion Practice / Ymarfer Trosi Unedau</title>
+  
+  <!-- MathJax Configuration and Script -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+  <style>
+    :root {
+      --bg-color: #f4f6f9;
+      --panel-bg: #ffffff;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --text: #1f2937;
+      --border: #d1d5db;
+      --accent: #059669;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto 20px auto;
+    }
+
+    h1 { margin: 0; font-size: 1.5rem; }
+
+    .lang-toggle {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    .col-left, .col-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--panel-bg);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border);
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      border-bottom: 2px solid var(--bg-color);
+      padding-bottom: 8px;
+    }
+
+    .form-group { margin-bottom: 15px; }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    select, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .canvas-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 10px 0;
+    }
+
+    canvas { display: block; background-color: #fafafa; }
+
+    .step-btn, .check-btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .step-btn:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    .step {
+      margin-top: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      color: #111827;
+      font-size: 0.95rem;
+      min-height: 24px;
+      overflow-x: auto;
+    }
+
+    .solution-panel {
+      margin-top: 15px;
+      padding: 12px;
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      border-radius: 6px;
+    }
+
+    .solution-panel h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      color: #991b1b;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .feedback.correct { color: var(--accent); }
+    .feedback.incorrect { color: #dc2626; }
+
+    /* Modal Styling */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      max-width: 450px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .modal-content h3 { margin-top: 0; color: var(--accent); }
+
+    .modal-close-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 id="title">Area & Volume Unit Conversions</h1>
+    <button class="lang-toggle" id="langBtn" onclick="toggleLanguage()">Cymraeg</button>
+  </header>
+
+  <div class="grid">
+    <div class="col-left">
+      <!-- Controls Panel -->
+      <div class="panel">
+        <h2 id="heading-controls">1. Controls & Inputs</h2>
+        
+        <div class="form-group">
+          <label id="lbl-prefix" for="prefixSelect">Unit Prefix</label>
+          <select id="prefixSelect" onchange="updateAll()">
+            <option value="micro">micro (µm)</option>
+            <option value="milli">milli (mm)</option>
+            <option value="centi" selected>centi (cm)</option>
+            <option value="kilo">kilo (km)</option>
+            <option value="mega">mega (Mm)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label id="lbl-shape" for="shapeSelect">Shape</label>
+          <select id="shapeSelect" onchange="onShapeChange()">
+            <option value="square">Square</option>
+            <option value="circle">Circle</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="cube">Cube</option>
+            <option value="cuboid">Cuboid</option>
+            <option value="sphere">Sphere</option>
+          </select>
+        </div>
+
+        <div id="param-container"></div>
+      </div>
+
+      <!-- Practice Panel -->
+      <div class="panel">
+        <h2 id="heading-practice">4. Practice Problem</h2>
+        <p id="problemStatement">Click generate to start a problem.</p>
+        <button class="step-btn" id="genProbBtn" onclick="generateProblem()">New Problem (Selected Shape)</button>
+        
+        <div class="form-group" style="margin-top: 15px;">
+          <label id="lbl-answer" for="userAnswer">Your Answer (in base m² or m³):</label>
+          <input type="number" id="userAnswer" step="any" placeholder="e.g. 0.05">
+        </div>
+        <button class="check-btn" id="checkBtn" onclick="checkAnswer()">Submit Answer</button>
+        <div id="feedback" class="feedback"></div>
+        
+        <div id="solutionContainer"></div>
+      </div>
+    </div>
+
+    <div class="col-right">
+      <!-- Visualization Panel -->
+      <div class="panel">
+        <h2 id="heading-visual">2. Shape Diagram</h2>
+        <div class="canvas-container">
+          <canvas id="shapeCanvas" width="300" height="240"></canvas>
+        </div>
+      </div>
+
+      <!-- Step-by-Step Panel -->
+      <div class="panel">
+        <h2 id="heading-steps">3. Step-by-Step Conversion</h2>
+        <button class="step-btn" id="nextStepBtn" onclick="revealNextStep()">Show Next Step</button>
+        <div id="stepsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Popup for Sig Fig Reminder -->
+  <div id="sigFigModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 id="modalTitle">Great Job!</h3>
+      <p id="modalBody">Correct calculation! Always remember to round your final numerical answer to match the lowest number of significant figures given in the question's original parameters.</p>
+      <button class="modal-close-btn" onclick="closeModal()">Got it!</button>
+    </div>
+  </div>
+
+  <script>
+    const i18n = {
+      en: {
+        title: "Area & Volume Unit Conversions",
+        langBtn: "Cymraeg",
+        controls: "1. Controls & Inputs",
+        visual: "2. Shape Diagram",
+        steps: "3. Step-by-Step Conversion",
+        practice: "4. Practice Problem",
+        prefix: "Unit Prefix",
+        shape: "Shape",
+        nextStep: "Show Next Step",
+        newProb: "New Values (Selected Shape)",
+        yourAns: "Your Answer (in base m² or m³):",
+        submit: "Submit Answer",
+        shapes: {
+          square: "Square",
+          circle: "Circle",
+          rectangle: "Rectangle",
+          cube: "Cube",
+          cuboid: "Cuboid",
+          sphere: "Sphere"
+        },
+        params: {
+          side: "Side Length",
+          radius: "Radius",
+          length: "Length",
+          height: "Height",
+          breadth: "Breadth",
+          width: "Width"
+        },
+        stepLabels: {
+          s1: "Step 1: Formula",
+          s2: "Step 2: Calculate in",
+          s3: "Step 3: Conversion Factor",
+          s4: "Step 4: Final Value",
+          s5: "Step 5: Significant Figures Explanation",
+          area: "Area",
+          volume: "Volume"
+        },
+        roundedText: (sf) => `Rounded to ${sf} SF`,
+        step5Text: (sf) => `Inputs have minimum ${sf} SF. Final result rounded to ${sf} SF.`,
+        correct: "Correct! Excellent work.",
+        incorrect: (left) => `Incorrect. You have ${left} attempt(s) remaining.`,
+        solutionTitle: "Worked Solution:",
+        probText: (shapeName, dimStr, unit, target) => `Calculate the ${target} of a ${shapeName} with ${dimStr} in ${unit}. Give your answer in standard base units (${target === 'area' ? 'm²' : 'm³'}).`,
+        modalTitle: "Correct!",
+        modalBody: (sf) => `Your calculation is correct! Note that the input value(s) with the fewest significant figures had ${sf} sig fig(s). Ensure your final written answer reflects this precision.`
+      },
+      cy: {
+        title: "Trosi Unedau Arwynebedd a Chyfaint",
+        langBtn: "English",
+        controls: "1. Rheolaethau ac Mewnbynnau",
+        visual: "2. Diagram o'r Siâp",
+        steps: "3. Trosi Gam-wrth-Gam",
+        practice: "4. Cwestiwn Ymarfer",
+        prefix: "Rhagddodiad Uned",
+        shape: "Siâp",
+        nextStep: "Dangos y Gam Nesaf",
+        newProb: "Gwerthoedd Newydd (Siâp Dewisol)",
+        yourAns: "Eich Ateb (mewn m² neu m³):",
+        submit: "Cyflwyno Ateb",
+        shapes: {
+          square: "Sgwâr",
+          circle: "Cylch",
+          rectangle: "Petryal",
+          cube: "Cwb",
+          cuboid: "Cwboid",
+          sphere: "Sffêr"
+        },
+        params: {
+          side: "Hyd yr Ochr",
+          radius: "Radiws",
+          length: "Hyd",
+          height: "Uchder",
+          breadth: "Lled",
+          width: "Dwfnder/Lled"
+        },
+        stepLabels: {
+          s1: "Cam 1: Fformiwla",
+          s2: "Cam 2: Cyfrifo yn",
+          s3: "Cam 3: Ffactor Trosi",
+          s4: "Cam 4: Gwerth Terfynol",
+          s5: "Cam 5: Eglurhad Ffigurau Ystyrlon",
+          area: "Arwynebedd",
+          volume: "Cyfaint"
+        },
+        roundedText: (sf) => `wedi ei rowndio i ${sf} ffig. yst.`,
+        step5Text: (sf) => `Mae gan y mewnbynnau o leiaf ${sf} ffig. yst. Mae'r canlyniad terfynol wedi ei rowndio i ${sf} ffig. yst.`,
+        correct: "Iawn! Gwaith gwych.",
+        incorrect: (left) => `Anghywir. Mae gennych ${left} cynnig ar ôl.`,
+        solutionTitle: "Ateb Cyflawn:",
+        probText: (shapeName, dimStr, unit, target) => `Cyfrifwch ${target === 'area' ? 'arwynebedd' : 'cyfaint'} ${shapeName} gyda ${dimStr} mewn ${unit}. Rhowch eich ateb mewn unedau sylfaenol (${target === 'area' ? 'm²' : 'm³'}).`,
+        modalTitle: "Iawn!",
+        modalBody: (sf) => `Mae eich cyfrifiad yn gywir! Nodwch fod gan y mewnbwn gyda'r ffigurau ystyrlon lleiaf ${sf} ffigur ystyrlon. Sicrhewch fod eich ateb terfynol yn adlewyrchu'r lefel hon o fanwl gywirdeb.`
+      }
+    };
+
+    let currentLang = 'en';
+    let currentStepIndex = 0;
+    let currentProblemData = null;
+    let attemptsCount = 0;
+
+    const prefixMap = {
+      micro: { name: 'µm', factor: 1e-6, tex: '10^{-6}' },
+      milli: { name: 'mm', factor: 1e-3, tex: '10^{-3}' },
+      centi: { name: 'cm', factor: 1e-2, tex: '10^{-2}' },
+      kilo:  { name: 'km', factor: 1e3,  tex: '10^{3}' },
+      mega:  { name: 'Mm', factor: 1e6,  tex: '10^{6}' }
+    };
+
+    function countSigFigs(strVal) {
+      let v = String(strVal).trim();
+      if (!v || isNaN(Number(v))) return 1;
+      v = v.toLowerCase().split('e')[0].replace('-', '');
+      if (v.includes('.')) {
+        v = v.replace(/^0+/, '');
+        v = v.replace('.', '');
+        return v.length || 1;
+      } else {
+        v = v.replace(/^0+/, '');
+        v = v.replace(/0+$/, '');
+        return v.length || 1;
+      }
+    }
+
+    function formatToSigFigs(num, sf) {
+      if (num === 0) return "0";
+      return num.toExponential(sf - 1);
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'cy' : 'en';
+      const lang = i18n[currentLang];
+
+      document.getElementById('title').innerText = lang.title;
+      document.getElementById('langBtn').innerText = lang.langBtn;
+      document.getElementById('heading-controls').innerText = lang.controls;
+      document.getElementById('heading-visual').innerText = lang.visual;
+      document.getElementById('heading-steps').innerText = lang.steps;
+      document.getElementById('heading-practice').innerText = lang.practice;
+      document.getElementById('lbl-prefix').innerText = lang.prefix;
+      document.getElementById('lbl-shape').innerText = lang.shape;
+      document.getElementById('nextStepBtn').innerText = lang.nextStep;
+      document.getElementById('genProbBtn').innerText = lang.newProb;
+      document.getElementById('lbl-answer').innerText = lang.yourAns;
+      document.getElementById('checkBtn').innerText = lang.submit;
+
+      const shapeSelect = document.getElementById('shapeSelect');
+      for (let opt of shapeSelect.options) {
+        opt.text = lang.shapes[opt.value];
+      }
+
+      onShapeChange();
+      if (currentProblemData) {
+        renderProblemText();
+        if (attemptsCount >= 3) {
+          showSolution();
+        }
+      }
+    }
+
+    function onShapeChange() {
+      const shape = document.getElementById('shapeSelect').value;
+      const container = document.getElementById('param-container');
+      container.innerHTML = '';
+
+      const paramConfigs = {
+        square: [{ id: 'side', label: 'side', default: '5.2' }],
+        circle: [{ id: 'radius', label: 'radius', default: '3.14' }],
+        rectangle: [
+          { id: 'length', label: 'length', default: '8.5' },
+          { id: 'height', label: 'height', default: '4.25' }
+        ],
+        cube: [{ id: 'side', label: 'side', default: '4.0' }],
+        cuboid: [
+          { id: 'length', label: 'length', default: '6.12' },
+          { id: 'breadth', label: 'breadth', default: '4.5' },
+          { id: 'width', label: 'width', default: '3.0' }
+        ],
+        sphere: [{ id: 'radius', label: 'radius', default: '5.00' }]
+      };
+
+      paramConfigs[shape].forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'form-group';
+        div.innerHTML = `
+          <label for="param_${p.id}">${i18n[currentLang].params[p.label]}</label>
+          <input type="text" id="param_${p.id}" value="${p.default}" oninput="updateAll()">
+        `;
+        container.appendChild(div);
+      });
+
+      updateAll();
+    }
+
+    function getParams() {
+      const shape = document.getElementById('shapeSelect').value;
+      const getStr = (id) => document.getElementById(`param_${id}`)?.value || '1';
+      
+      switch(shape) {
+        case 'square': return { side: getStr('side') };
+        case 'circle': return { radius: getStr('radius') };
+        case 'rectangle': return { length: getStr('length'), height: getStr('height') };
+        case 'cube': return { side: getStr('side') };
+        case 'cuboid': return { length: getStr('length'), breadth: getStr('breadth'), width: getStr('width') };
+        case 'sphere': return { radius: getStr('radius') };
+      }
+    }
+
+    function updateAll() {
+      drawShape();
+      resetSteps();
+      generateProblem();
+    }
+
+    function drawShape() {
+      const canvas = document.getElementById('shapeCanvas');
+      const ctx = canvas.getContext('2d');
+      const shape = document.getElementById('shapeSelect').value;
+      const prefixKey = document.getElementById('prefixSelect').value;
+      const unit = prefixMap[prefixKey].name;
+      const params = getParams();
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#1e3a8a';
+      ctx.fillStyle = '#93c5fd';
+      ctx.font = '13px sans-serif';
+
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2 - 10;
+
+      if (shape === 'square') {
+        const size = 110;
+        ctx.fillRect(cx - size/2, cy - size/2, size, size);
+        ctx.strokeRect(cx - size/2, cy - size/2, size, size);
+        ctx.fillStyle = '#000'; ctx.textAlign = 'center';
+        ctx.fillText(`${params.side} ${unit}`, cx, cy + size/2 + 22);
+      } 
+      else if (shape === 'circle') {
+        const r = 65;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + r, cy); ctx.strokeStyle = '#dc2626'; ctx.stroke();
+        ctx.fillStyle = '#000'; ctx.textAlign = 'left';
+        ctx.fillText(`r = ${params.radius} ${unit}`, cx + 10, cy - 8);
+      }
+      else if (shape === 'rectangle') {
+        const l = parseFloat(params.length)||1, h = parseFloat(params.height)||1;
+        const maxDim = Math.max(l, h) || 1;
+        const scale = 130 / maxDim;
+        const wPx = l * scale, hPx = h * scale;
+
+        ctx.fillRect(cx - wPx/2, cy - hPx/2, wPx, hPx);
+        ctx.strokeRect(cx - wPx/2, cy - hPx/2, wPx, hPx);
+        ctx.fillStyle = '#000'; ctx.textAlign = 'center';
+        ctx.fillText(`L: ${params.length} ${unit}`, cx, cy + hPx/2 + 20);
+        ctx.textAlign = 'left';
+        ctx.fillText(`H: ${params.height} ${unit}`, cx + wPx/2 + 8, cy + 4);
+      }
+      else if (shape === 'cube') {
+        const s = 70;
+        draw3DCube(ctx, cx - s/2, cy - s/2, s, s, s);
+        ctx.fillStyle = '#000'; ctx.textAlign = 'center';
+        ctx.fillText(`${params.side} ${unit}`, cx, cy + s/2 + 35);
+      }
+      else if (shape === 'cuboid') {
+        const l = parseFloat(params.length)||1, b = parseFloat(params.breadth)||1, w = parseFloat(params.width)||1;
+        const maxDim = Math.max(l, b, w) || 1;
+        const scale = 110 / maxDim;
+        const wPx = l * scale, hPx = b * scale, dPx = w * scale;
+
+        draw3DCube(ctx, cx - wPx/2, cy - hPx/2, wPx, hPx, dPx);
+        ctx.fillStyle = '#000'; ctx.textAlign = 'center';
+        ctx.fillText(`L:${params.length} B:${params.breadth} W:${params.width} ${unit}`, cx, cy + hPx/2 + 35);
+      }
+      else if (shape === 'sphere') {
+        const r = 65;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(cx, cy, r, r * 0.3, 0, 0, 2 * Math.PI); ctx.strokeStyle = '#1d4ed8'; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + r, cy); ctx.strokeStyle = '#dc2626'; ctx.stroke();
+        ctx.fillStyle = '#000'; ctx.textAlign = 'left';
+        ctx.fillText(`r = ${params.radius} ${unit}`, cx + 10, cy - 8);
+      }
+    }
+
+    function draw3DCube(ctx, x, y, wx, wy, wz) {
+      const offX = wz * 0.35, offY = -wz * 0.35;
+      ctx.fillRect(x, y, wx, wy); ctx.strokeRect(x, y, wx, wy);
+      ctx.beginPath();
+      ctx.moveTo(x, y); ctx.lineTo(x + offX, y + offY);
+      ctx.moveTo(x + wx, y); ctx.lineTo(x + wx + offX, y + offY);
+      ctx.moveTo(x + wx, y + wy); ctx.lineTo(x + wx + offX, y + wy + offY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x + offX, y + offY); ctx.lineTo(x + wx + offX, y + offY); ctx.lineTo(x + wx + offX, y + wy + offY);
+      ctx.stroke();
+    }
+
+    function resetSteps() {
+      currentStepIndex = 0;
+      document.getElementById('stepsContainer').innerHTML = '';
+      document.getElementById('nextStepBtn').disabled = false;
+    }
+
+    function revealNextStep() {
+      const shape = document.getElementById('shapeSelect').value;
+      const prefixKey = document.getElementById('prefixSelect').value;
+      const prefix = prefixMap[prefixKey];
+      const params = getParams();
+
+      const steps = generateStepLaTeX(shape, prefix, params);
+
+      if (currentStepIndex < steps.length) {
+        const div = document.createElement('div');
+        div.className = 'step';
+        div.innerHTML = `\\[${steps[currentStepIndex]}\\]`;
+        document.getElementById('stepsContainer').appendChild(div);
+
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise([div]);
+        }
+
+        currentStepIndex++;
+      }
+
+      if (currentStepIndex >= steps.length) {
+        document.getElementById('nextStepBtn').disabled = true;
+      }
+    }
+
+    function generateStepLaTeX(shape, prefix, p) {
+      const is3D = ['cube', 'cuboid', 'sphere'].includes(shape);
+      const power = is3D ? 3 : 2;
+      const unit = prefix.name;
+      const factor = prefix.factor;
+      const texFactor = prefix.tex;
+      const lang = i18n[currentLang];
+      const labels = lang.stepLabels;
+
+      const sfList = Object.values(p).map(v => countSigFigs(v));
+      const minSF = Math.min(...sfList);
+
+      const pNum = {};
+      for (let k in p) pNum[k] = parseFloat(p[k]) || 0;
+
+      let formulaLatex = '', rawCalc = '', rawResult = 0;
+      let targetLabel = is3D ? labels.volume : labels.area;
+
+      if (shape === 'square') {
+        formulaLatex = `\\text{${targetLabel}} = s^2`;
+        rawResult = pNum.side ** 2;
+        rawCalc = `${p.side}^2 = ${rawResult.toFixed(2)} \\text{ ${unit}}^2`;
+      } else if (shape === 'circle') {
+        formulaLatex = `\\text{${targetLabel}} = \\pi r^2`;
+        rawResult = Math.PI * (pNum.radius ** 2);
+        rawCalc = `\\pi \\times (${p.radius})^2 \\approx ${rawResult.toFixed(2)} \\text{ ${unit}}^2`;
+      } else if (shape === 'rectangle') {
+        formulaLatex = `\\text{${targetLabel}} = L \\times H`;
+        rawResult = pNum.length * pNum.height;
+        rawCalc = `${p.length} \\times ${p.height} = ${rawResult.toFixed(2)} \\text{ ${unit}}^2`;
+      } else if (shape === 'cube') {
+        formulaLatex = `\\text{${targetLabel}} = s^3`;
+        rawResult = pNum.side ** 3;
+        rawCalc = `${p.side}^3 = ${rawResult.toFixed(2)} \\text{ ${unit}}^3`;
+      } else if (shape === 'cuboid') {
+        formulaLatex = `\\text{${targetLabel}} = L \\times B \\times W`;
+        rawResult = pNum.length * pNum.breadth * pNum.width;
+        rawCalc = `${p.length} \\times ${p.breadth} \\times ${p.width} = ${rawResult.toFixed(2)} \\text{ ${unit}}^3`;
+      } else if (shape === 'sphere') {
+        formulaLatex = `\\text{${targetLabel}} = \\frac{4}{3} \\pi r^3`;
+        rawResult = (4/3) * Math.PI * (pNum.radius ** 3);
+        rawCalc = `\\frac{4}{3} \\pi (${p.radius})^3 \\approx ${rawResult.toFixed(2)} \\text{ ${unit}}^3`;
+      }
+
+      const totalFactor = Math.pow(factor, power);
+      const finalResultUnrounded = rawResult * totalFactor;
+      const expVal = Math.log10(totalFactor);
+      
+      const finalFormattedSF = formatToSigFigs(finalResultUnrounded, minSF);
+
+      return [
+        `\\text{${labels.s1}} \\rightarrow ${formulaLatex}`,
+        `\\text{${labels.s2}} \\text{ ${unit}}^{${power}} \\rightarrow ${rawCalc}`,
+        `\\text{${labels.s3}} \\rightarrow (1\\text{ ${unit}})^{${power}} = (${texFactor}\\text{ m})^{${power}} = 10^{${expVal}}\\text{ m}^{${power}}`,
+        `\\text{${labels.s4}} \\rightarrow ${rawResult.toFixed(2)} \\times 10^{${expVal}} = ${finalFormattedSF}\\text{ m}^{${power}} \\quad (\\text{${lang.roundedText(minSF)}})`,
+        `\\text{${labels.s5}} \\rightarrow \\text{${lang.step5Text(minSF)}}`
+      ];
+    }
+
+    function generateProblem() {
+      const selectedShape = document.getElementById('shapeSelect').value;
+      const prefixes = Object.keys(prefixMap);
+      const randomPrefixKey = prefixes[Math.floor(Math.random() * prefixes.length)];
+      const prefix = prefixMap[randomPrefixKey];
+
+      const randSFVal = () => {
+        const sf = Math.floor(Math.random() * 3) + 1;
+        const base = (Math.random() * 8.9 + 1.1);
+        if (sf === 1) return base.toFixed(0);
+        if (sf === 2) return base.toFixed(1);
+        return base.toFixed(2);
+      };
+
+      let p = {};
+      let is3D = ['cube', 'cuboid', 'sphere'].includes(selectedShape);
+      let targetType = is3D ? 'volume' : 'area';
+
+      if (selectedShape === 'square' || selectedShape === 'cube') p = { side: randSFVal() };
+      if (selectedShape === 'circle' || selectedShape === 'sphere') p = { radius: randSFVal() };
+      if (selectedShape === 'rectangle') p = { length: randSFVal(), height: randSFVal() };
+      if (selectedShape === 'cuboid') p = { length: randSFVal(), breadth: randSFVal(), width: randSFVal() };
+
+      const sfList = Object.values(p).map(v => countSigFigs(v));
+      const minSF = Math.min(...sfList);
+
+      const pNum = {};
+      for (let k in p) pNum[k] = parseFloat(p[k]);
+
+      let raw = 0;
+      if (selectedShape === 'square') raw = pNum.side ** 2;
+      if (selectedShape === 'circle') raw = Math.PI * (pNum.radius ** 2);
+      if (selectedShape === 'rectangle') raw = pNum.length * pNum.height;
+      if (selectedShape === 'cube') raw = pNum.side ** 3;
+      if (selectedShape === 'cuboid') raw = pNum.length * pNum.breadth * pNum.width;
+      if (selectedShape === 'sphere') raw = (4/3) * Math.PI * (pNum.radius ** 3);
+
+      const factor = Math.pow(prefix.factor, is3D ? 3 : 2);
+      
+      currentProblemData = {
+        shape: selectedShape,
+        params: p,
+        prefix: prefix,
+        targetType: targetType,
+        targetAnswer: raw * factor,
+        minSF: minSF
+      };
+
+      attemptsCount = 0;
+      document.getElementById('solutionContainer').innerHTML = '';
+      document.getElementById('feedback').innerText = '';
+      document.getElementById('userAnswer').value = '';
+      document.getElementById('checkBtn').disabled = false;
+
+      renderProblemText();
+    }
+
+    function renderProblemText() {
+      if (!currentProblemData) return;
+      const { shape, params, prefix, targetType } = currentProblemData;
+      const lang = i18n[currentLang];
+      const shapeTranslated = lang.shapes[shape];
+
+      let dimParts = [];
+      for (let k in params) {
+        dimParts.push(`${lang.params[k]} = ${params[k]}`);
+      }
+      const dimStr = dimParts.join(', ');
+
+      const text = lang.probText(shapeTranslated, dimStr, prefix.name, targetType);
+      document.getElementById('problemStatement').innerText = text;
+    }
+
+    function checkAnswer() {
+      const userVal = parseFloat(document.getElementById('userAnswer').value);
+      const feedback = document.getElementById('feedback');
+
+      if (isNaN(userVal) || !currentProblemData) return;
+
+      const diff = Math.abs(userVal - currentProblemData.targetAnswer) / currentProblemData.targetAnswer;
+
+      if (diff < 0.03) {
+        feedback.innerText = i18n[currentLang].correct;
+        feedback.className = "feedback correct";
+        document.getElementById('checkBtn').disabled = true;
+        
+        openModal(currentProblemData.minSF);
+      } else {
+        attemptsCount++;
+        if (attemptsCount >= 3) {
+          feedback.innerText = i18n[currentLang].incorrect(0);
+          feedback.className = "feedback incorrect";
+          document.getElementById('checkBtn').disabled = true;
+          showSolution();
+        } else {
+          feedback.innerText = i18n[currentLang].incorrect(3 - attemptsCount);
+          feedback.className = "feedback incorrect";
+        }
+      }
+    }
+
+    function showSolution() {
+      const container = document.getElementById('solutionContainer');
+      container.innerHTML = '';
+
+      const solBox = document.createElement('div');
+      solBox.className = 'solution-panel';
+
+      const heading = document.createElement('h3');
+      heading.innerText = i18n[currentLang].solutionTitle;
+      solBox.appendChild(heading);
+
+      const steps = generateStepLaTeX(
+        currentProblemData.shape, 
+        currentProblemData.prefix, 
+        currentProblemData.params
+      );
+
+      steps.forEach(stepLatex => {
+        const stepDiv = document.createElement('div');
+        stepDiv.className = 'step';
+        stepDiv.innerHTML = `\\[${stepLatex}\\]`;
+        solBox.appendChild(stepDiv);
+      });
+
+      container.appendChild(solBox);
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise([solBox]);
+      }
+    }
+
+    function openModal(minSF) {
+      const lang = i18n[currentLang];
+      document.getElementById('modalTitle').innerText = lang.modalTitle;
+      document.getElementById('modalBody').innerText = lang.modalBody(minSF);
+      document.getElementById('sigFigModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('sigFigModal').style.display = 'none';
+    }
+
+    window.onload = () => {
+      onShapeChange();
+    };
+  </script>
+</body>
+</html>
