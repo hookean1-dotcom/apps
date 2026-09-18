@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tangent Trainer</title>
+<meta name="description" content="Practise drawing tangents to curved physics graphs and finding the gradient at a point — with a mirror method, magnifier, scored challenges and your own data.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230c1b33'/%3E%3Cpath d='M8 12 C 20 44, 34 52, 58 54' stroke='%2327b3a9' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3Cpath d='M6 50 L 50 18' stroke='%23f5a524' stroke-width='5' stroke-linecap='round'/%3E%3Ccircle cx='27' cy='35' r='6' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f7; --surface:#ffffff; --surface-2:#f4f7fb; --ink:#13202f; --ink-2:#4b5b6d; --ink-3:#7b8a9b;
+  --line:#d6dee8; --brand:#0b7a75; --brand-2:#075a56; --brand-soft:#d8efed;
+  --amber:#d98300; --amber-soft:#fff0d4; --rose:#d6336c; --green:#1c8f4e; --green-soft:#dbf3e5;
+  --red:#c2362e; --red-soft:#fbe1de; --violet:#6848cf; --violet-soft:#ebe5fc;
+  --hero-1:#0b1830; --hero-2:#0b4d5a; --shadow:0 1px 2px rgba(16,32,48,.06),0 8px 24px rgba(16,32,48,.07);
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --display:"Space Grotesk","Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b121c; --surface:#131d2a; --surface-2:#192535; --ink:#e6edf5; --ink-2:#a3b3c5; --ink-3:#72849a;
+    --line:#2a3a4e; --brand:#2bb5aa; --brand-2:#79dad1; --brand-soft:#123838;
+    --amber:#f5a524; --amber-soft:#3a2a0d; --green:#3fcf7f; --green-soft:#10331f; --red:#ff6b61; --red-soft:#3d1715;
+    --violet:#a48bff; --violet-soft:#261d45; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b121c; --surface:#131d2a; --surface-2:#192535; --ink:#e6edf5; --ink-2:#a3b3c5; --ink-3:#72849a;
+  --line:#2a3a4e; --brand:#2bb5aa; --brand-2:#79dad1; --brand-soft:#123838;
+  --amber:#f5a524; --amber-soft:#3a2a0d; --green:#3fcf7f; --green-soft:#10331f; --red:#ff6b61; --red-soft:#3d1715;
+  --violet:#a48bff; --violet-soft:#261d45; --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-text-size-adjust:100%}
+button,input,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+
+/* ---------- hero ---------- */
+.hero{background:radial-gradient(1200px 400px at 85% -10%,rgba(43,181,170,.35),transparent 60%),linear-gradient(135deg,var(--hero-1),var(--hero-2));color:#fff;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:24px 24px;mask-image:linear-gradient(to bottom,#000,transparent 95%)}
+.hero-in{position:relative;display:flex;align-items:center;gap:20px;padding:22px 16px 0}
+.hero-logo{flex:0 0 auto;width:74px;height:74px}
+.hero-logo .tline{transform-origin:37px 40px;animation:settle 5s ease-in-out infinite}
+@keyframes settle{0%{transform:rotate(-24deg)}30%{transform:rotate(14deg)}55%{transform:rotate(-5deg)}72%,100%{transform:rotate(0)}}
+.hero h1{font-family:var(--display);font-size:clamp(26px,4vw,38px);line-height:1.05;margin:0;letter-spacing:-.02em}
+.hero p{margin:6px 0 0;color:#bfe3e0;font-size:14.5px;max-width:640px}
+.kicker{font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#7fe0d6;font-weight:600}
+.theme-btn{margin-left:auto;align-self:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;width:40px;height:40px;cursor:pointer;display:grid;place-items:center}
+.theme-btn:hover{background:rgba(255,255,255,.16)}
+.tabs{position:relative;display:flex;gap:4px;padding:18px 16px 0;overflow-x:auto}
+.tab{appearance:none;border:0;background:transparent;color:#cfe7e4;font-weight:600;font-size:14.5px;padding:11px 18px;border-radius:12px 12px 0 0;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.tab svg{width:17px;height:17px}
+.tab:hover{color:#fff;background:rgba(255,255,255,.06)}
+.tab[aria-selected="true"]{background:var(--bg);color:var(--ink)}
+.tab:focus-visible,.btn:focus-visible,.chip:focus-visible,canvas:focus-visible,.opt:focus-visible,.lvl:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+main{padding:18px 0 40px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.pad{padding:16px 18px}
+h2,h3{font-family:var(--display);letter-spacing:-.01em;margin:0}
+h2{font-size:20px} h3{font-size:16px}
+.muted{color:var(--ink-2)} .small{font-size:13px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:16px;align-items:start}
+@media (max-width:980px){.layout{grid-template-columns:1fr}}
+.side{display:flex;flex-direction:column;gap:16px}
+
+/* ---------- stage ---------- */
+.stage{padding:14px}
+.stage-top{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label,.lab{font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.in{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font-size:14px}
+.in:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+select.in{cursor:pointer}
+.scen-field{flex:1 1 320px}
+.canvas-wrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fffdf5}
+.canvas-wrap canvas{display:block;width:100%;aspect-ratio:16/10;max-height:72vh;min-height:300px;touch-action:none;cursor:grab}
+.canvas-wrap canvas.dragging{cursor:grabbing}
+@media (max-width:600px){.canvas-wrap canvas{aspect-ratio:4/4.2}}
+.hint-bar{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:12.5px;color:var(--ink-2);margin:8px 2px 0}
+.hint-bar kbd{font-family:var(--mono);font-size:11px;background:var(--surface-2);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+.toolbar .sep{flex:1 1 auto}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer;transition:.15s}
+.chip .dot{width:9px;height:9px;border-radius:50%;border:2px solid currentColor;transition:.15s}
+.chip:hover{border-color:var(--brand);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--brand-soft);border-color:var(--brand);color:var(--brand-2)}
+.chip[aria-pressed="true"] .dot{background:currentColor}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chip .cost{font-weight:500;font-size:11px;opacity:.8}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:11px;border:1px solid transparent;background:var(--brand);color:#fff;font-weight:600;font-size:14px;cursor:pointer;transition:.15s;text-decoration:none}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn:active{transform:none}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.ghost{background:transparent;color:var(--brand-2);border-color:var(--brand)}
+.btn.ghost:hover{background:var(--brand-soft)}
+.btn.amber{background:var(--amber);color:#1b1200}
+.btn.small{padding:7px 11px;font-size:13px;border-radius:9px}
+.btn.big{padding:13px 22px;font-size:15.5px}
+.btn.wide{width:100%}
+.iconbtn{width:38px;height:38px;padding:0;border-radius:10px}
+.iconbtn svg{width:18px;height:18px}
+.chordctl{display:flex;align-items:center;gap:10px;margin-top:10px;padding:8px 12px;background:var(--violet-soft);border-radius:10px;font-size:13px;color:var(--ink)}
+.chordctl input{flex:1;accent-color:var(--violet)}
+
+/* ---------- readout ---------- */
+.ro-lab{font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+.ro-big{font-family:var(--mono);font-size:30px;font-weight:600;letter-spacing:-.02em;line-height:1.15;margin:4px 0 2px;color:var(--ink);word-break:break-word}
+.ro-big .u{font-size:16px;color:var(--ink-2);font-weight:400;margin-left:4px}
+.ro-alias{font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+.meaning{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--brand-soft);color:var(--ink);font-size:14px}
+.meaning b{color:var(--brand-2)}
+.meaning .eq{font-family:var(--mono);font-size:13px;color:var(--ink-2);display:block;margin-top:2px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13px;margin-top:12px}
+.kv dt{color:var(--ink-3)} .kv dd{margin:0;font-family:var(--mono);text-align:right}
+.divider{height:1px;background:var(--line);margin:14px 0}
+.meter{margin-top:8px}
+.meter-bar{position:relative;height:12px;border-radius:99px;background:linear-gradient(90deg,var(--green) 0 13.3%,#9ccf3f 13.3% 26.6%,var(--amber) 26.6% 53.3%,var(--red) 53.3% 100%);opacity:.9}
+.meter-pin{position:absolute;top:-5px;width:4px;height:22px;border-radius:3px;background:var(--ink);box-shadow:0 0 0 2px var(--surface);transform:translateX(-2px);transition:left .15s}
+.meter-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-3);font-family:var(--mono);margin-top:3px}
+.verdict{font-weight:700;margin-top:8px;font-size:14px}
+.good{color:var(--green)} .ok{color:var(--amber)} .bad{color:var(--red)}
+.tipcard h3{display:flex;align-items:center;gap:8px}
+.tipcard p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
+.tipcard ul{margin:8px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
+.tipcard li{margin:3px 0}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2)}
+
+/* ---------- data panel ---------- */
+details.data-card{margin-top:16px}
+details.data-card>summary{list-style:none;cursor:pointer;padding:14px 18px;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:600;font-size:16px}
+details.data-card>summary::-webkit-details-marker{display:none}
+details.data-card>summary .chev{margin-left:auto;transition:.2s}
+details.data-card[open]>summary .chev{transform:rotate(180deg)}
+.data-body{padding:0 18px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px}
+@media (max-width:780px){.data-body{grid-template-columns:1fr}}
+.axis-grid{display:grid;grid-template-columns:1fr 90px;gap:10px}
+.axis-grid .full{grid-column:1/-1}
+.tbl-wrap{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+table.dt{width:100%;border-collapse:collapse;font-size:13px}
+table.dt th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);padding:7px 8px;border-bottom:1px solid var(--line)}
+table.dt td{padding:3px 4px}
+table.dt .in{padding:6px 8px;font-family:var(--mono);font-size:13px;min-width:64px}
+.xbtn{background:none;border:0;color:var(--rose);font-size:20px;line-height:1;cursor:pointer;padding:2px 8px;border-radius:6px}
+.xbtn:hover{background:var(--red-soft)}
+.io{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.status{font-size:12.5px;color:var(--ink-2);font-style:italic}
+
+/* ---------- challenge ---------- */
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+@media (max-width:820px){.levels{grid-template-columns:1fr}}
+.lvl{text-align:left;border:2px solid var(--line);border-radius:16px;background:var(--surface-2);padding:16px;cursor:pointer;transition:.15s;display:flex;flex-direction:column;gap:6px}
+.lvl:hover{border-color:var(--brand);transform:translateY(-2px)}
+.lvl[aria-checked="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.lvl .num{font-family:var(--display);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--brand-2)}
+.lvl h3{font-size:19px}
+.lvl p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.lvl .best{margin-top:auto;padding-top:8px;font-size:12.5px;font-family:var(--mono);color:var(--ink-3)}
+.start-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;align-items:center}
+@media (max-width:820px){.start-grid{grid-template-columns:1fr}}
+.start-art{width:100%;max-width:420px;justify-self:center}
+.hud{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.hud .stat{display:flex;flex-direction:column;line-height:1.1}
+.hud .stat b{font-family:var(--mono);font-size:22px}
+.hud .stat span{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.dots{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap}
+.dots i{width:14px;height:14px;border-radius:50%;background:var(--surface-2);border:2px solid var(--line)}
+.dots i.cur{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.dots i.r3{background:var(--green);border-color:var(--green)}
+.dots i.r2{background:#9ccf3f;border-color:#9ccf3f}
+.dots i.r1{background:var(--amber);border-color:var(--amber)}
+.dots i.r0{background:var(--red);border-color:var(--red)}
+.streak{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-weight:600;color:var(--amber);padding:4px 10px;border-radius:99px;background:var(--amber-soft);transition:.2s}
+.streak svg{width:16px;height:16px}
+.streak.cold{color:var(--ink-3);background:var(--surface-2)}
+.steps{display:flex;gap:6px;margin:12px 0 4px}
+.steps span{flex:1;font-size:11.5px;font-weight:600;text-align:center;padding:5px 4px;border-radius:8px;background:var(--surface-2);color:var(--ink-3);border:1px solid var(--line)}
+.steps span.on{background:var(--brand);border-color:var(--brand);color:#fff}
+.steps span.done{background:var(--brand-soft);color:var(--brand-2);border-color:transparent}
+.task-title{font-size:18px;margin-top:4px}
+.task-ctx{font-size:13.5px;color:var(--ink-2);margin:6px 0 0}
+.prompt{margin-top:12px;padding:12px 14px;border-left:4px solid var(--amber);background:var(--amber-soft);border-radius:0 12px 12px 0;font-weight:600;font-size:14.5px}
+.prompt .mono{font-family:var(--mono)}
+.ansrow{display:flex;gap:8px;align-items:center;margin-top:10px}
+.ansrow .in{font-family:var(--mono);font-size:16px}
+.ansrow .unit{font-family:var(--mono);color:var(--ink-2);white-space:nowrap}
+.opts{display:grid;gap:8px;margin-top:10px}
+.opt{text-align:left;padding:10px 12px;border-radius:11px;border:1.5px solid var(--line);background:var(--surface-2);cursor:pointer;font-weight:600;font-size:14px;transition:.12s}
+.opt:hover:not(:disabled){border-color:var(--brand)}
+.opt.right{border-color:var(--green);background:var(--green-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.opt:disabled{cursor:default}
+.fb{border-radius:14px;padding:14px 16px;border:1px solid var(--line);animation:pop .35s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.fb.g{background:var(--green-soft);border-color:transparent}
+.fb.o{background:var(--amber-soft);border-color:transparent}
+.fb.b{background:var(--red-soft);border-color:transparent}
+.fb h3{font-size:18px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fb .pts{font-family:var(--mono);font-size:16px}
+.fb p{margin:6px 0 0;font-size:13.5px}
+.fb ul{margin:6px 0 0;padding-left:18px;font-size:13.5px}
+.linkbtn{background:none;border:0;color:var(--brand-2);text-decoration:underline;cursor:pointer;padding:0;font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink-2);margin-top:8px}
+.legend i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:5px}
+.burst{position:absolute;left:0;top:0;width:10px;height:10px;border-radius:2px;pointer-events:none;z-index:5}
+
+.modal{position:fixed;inset:0;background:rgba(5,12,22,.6);backdrop-filter:blur(4px);display:grid;place-items:center;z-index:50;padding:16px}
+.modal .card{max-width:460px;width:100%;padding:26px;text-align:center;animation:pop .4s cubic-bezier(.2,1.4,.4,1)}
+.stars{display:flex;justify-content:center;gap:8px;margin:10px 0}
+.stars svg{width:46px;height:46px}
+.sumgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 18px}
+.sumgrid div{background:var(--surface-2);border-radius:12px;padding:10px 6px}
+.sumgrid b{display:block;font-family:var(--mono);font-size:20px}
+.sumgrid span{font-size:11px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+
+/* ---------- guide ---------- */
+.guide{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+@media (max-width:900px){.guide{grid-template-columns:1fr}}
+.stepsl{counter-reset:s;list-style:none;padding:0;margin:12px 0 0}
+.stepsl li{counter-increment:s;position:relative;padding:0 0 14px 44px;font-size:14.5px}
+.stepsl li::before{content:counter(s);position:absolute;left:0;top:-2px;width:30px;height:30px;border-radius:9px;background:var(--brand);color:#fff;font-family:var(--display);font-weight:700;display:grid;place-items:center}
+.stepsl li b{display:block;font-family:var(--display);font-size:15.5px}
+.stepsl li span{color:var(--ink-2);font-size:14px}
+table.gt{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px}
+table.gt th,table.gt td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+table.gt th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+table.gt td:last-child{font-weight:600;color:var(--brand-2)}
+.pitfalls li{margin:6px 0;font-size:14px}
+.fig{width:100%;height:auto;background:#fffdf5;border-radius:12px;border:1px solid var(--line)}
+@media (max-width:600px){
+  .hero-logo{display:none}
+  .hero-in{padding-top:16px}
+  .hero p{font-size:13px}
+  .tabs{padding-top:12px}
+  .tab{padding:10px 12px;font-size:14px}
+  .tab .long{display:none}
+}
+@media (hover:none){.hint-bar kbd{display:none}}
+footer{text-align:center;color:var(--ink-3);font-size:12.5px;padding:10px 16px 28px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-in">
+      <svg class="hero-logo" viewBox="0 0 74 74" aria-hidden="true">
+        <rect x="1" y="1" width="72" height="72" rx="18" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.18)"/>
+        <path d="M10 12 C 20 38, 36 50, 66 58" stroke="#2bb5aa" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <g class="tline"><path d="M8 58 L 66 22" stroke="#f5a524" stroke-width="4" stroke-linecap="round"/></g>
+        <circle cx="26.6" cy="40.6" r="5" fill="#fff"/>
+      </svg>
+      <div>
+        <div class="kicker">Physics practical skills</div>
+        <h1>Tangent Trainer</h1>
+        <p>Curved graph? The gradient changes from point to point. Learn to draw an accurate tangent, read a large triangle and say what the gradient means physically.</p>
+      </div>
+      <button class="theme-btn" id="themeBtn" aria-label="Switch light or dark theme" title="Switch theme">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="tab-explore" aria-controls="panel-explore" aria-selected="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 20c5-2 8-7 10-16"/><path d="M4 11l16 4"/></svg>Explore</button>
+      <button class="tab" role="tab" id="tab-challenge" aria-controls="panel-challenge" aria-selected="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>Challenge</button>
+      <button class="tab" role="tab" id="tab-guide" aria-controls="panel-guide" aria-selected="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M8 7h7M8 11h5"/></svg>Guide</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- ======================= EXPLORE ======================= -->
+<section id="panel-explore" role="tabpanel" aria-labelledby="tab-explore">
+  <div class="layout">
+    <div class="card stage">
+      <div class="stage-top">
+        <div class="field scen-field">
+          <label for="ex-scen">Experiment</label>
+          <select id="ex-scen" class="in"></select>
+        </div>
+        <button class="btn ghost small" id="ex-random" title="Pick a random point on the curve">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>New point</button>
+      </div>
+      <div class="canvas-wrap"><canvas id="ex-canvas" tabindex="0" aria-label="Graph. Drag the line or its round ends to rotate the tangent; drag P along the curve. Arrow keys rotate; comma and full stop move P."></canvas></div>
+      <div class="hint-bar">
+        <span><b>Rotate:</b> drag the line or its round ends · <kbd>←</kbd><kbd>→</kbd></span>
+        <span><b>Move P:</b> drag P or tap the curve · <kbd>,</kbd><kbd>.</kbd></span>
+        <span><b>Triangle:</b> drag its corners along the line</span>
+      </div>
+      <div class="toolbar">
+        <button class="chip" id="ex-lens" aria-pressed="true"><span class="dot"></span>Magnifier</button>
+        <button class="chip" id="ex-mirror" aria-pressed="false"><span class="dot"></span>Mirror method</button>
+        <button class="chip" id="ex-tri" aria-pressed="true"><span class="dot"></span>Gradient triangle</button>
+        <button class="chip" id="ex-chord" aria-pressed="false"><span class="dot"></span>Chord</button>
+        <button class="chip" id="ex-truth" aria-pressed="false"><span class="dot"></span>Reveal true tangent</button>
+        <span class="sep"></span>
+        <button class="btn ghost iconbtn" id="ex-rotl" title="Rotate anticlockwise" aria-label="Rotate anticlockwise"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+        <button class="btn ghost iconbtn" id="ex-rotr" title="Rotate clockwise" aria-label="Rotate clockwise"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+        <button class="btn ghost small" id="ex-snap">Snap to true tangent</button>
+      </div>
+      <div class="chordctl" id="ex-chordctl" hidden>
+        <span>Chord width</span>
+        <input type="range" id="ex-chordw" min="1" max="45" value="25" aria-label="Chord width">
+        <span id="ex-chordwv" style="font-family:var(--mono);min-width:88px;text-align:right"></span>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="card pad" id="ex-readout" aria-live="polite"></div>
+      <div class="card pad tipcard" id="ex-tip"></div>
+    </aside>
+  </div>
+
+  <details class="card data-card" id="ex-data">
+    <summary>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/></svg>
+      Use your own results
+      <span class="pill">table · CSV · save</span>
+      <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+    </summary>
+    <div class="data-body">
+      <div>
+        <p class="small muted" style="margin:0 0 12px">Type in your own readings (or import a CSV). The curve of best fit updates as you type, then find the gradient at any point just as before.</p>
+        <div class="axis-grid">
+          <div class="field"><label for="ex-xlab">x-axis quantity</label><input id="ex-xlab" class="in"></div>
+          <div class="field"><label for="ex-xunit">x unit</label><input id="ex-xunit" class="in"></div>
+          <div class="field"><label for="ex-ylab">y-axis quantity</label><input id="ex-ylab" class="in"></div>
+          <div class="field"><label for="ex-yunit">y unit</label><input id="ex-yunit" class="in"></div>
+          <div class="field full"><label for="ex-model">Curve of best fit</label><select id="ex-model" class="in"></select></div>
+        </div>
+        <p class="small muted" style="margin:10px 0 0">Units: type superscripts as <code>s⁻¹</code> or <code>s^-1</code>. The gradient's unit is worked out for you.</p>
+      </div>
+      <div>
+        <div class="tbl-wrap">
+          <table class="dt"><thead><tr><th>x</th><th>y</th><th>± x</th><th>± y</th><th></th></tr></thead><tbody id="ex-tbody"></tbody></table>
+        </div>
+        <div class="io">
+          <button class="btn small" id="ex-add">+ Add row</button>
+          <button class="btn ghost small" id="ex-save">Save</button>
+          <button class="btn ghost small" id="ex-load">Load saved</button>
+          <button class="btn ghost small" id="ex-csv">Export CSV</button>
+          <button class="btn ghost small" id="ex-imp-btn">Import CSV</button>
+          <input type="file" id="ex-imp" accept=".csv,text/csv" hidden>
+        </div>
+        <div class="status" id="ex-status" aria-live="polite"></div>
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- ======================= CHALLENGE ======================= -->
+<section id="panel-challenge" role="tabpanel" aria-labelledby="tab-challenge" hidden>
+  <div class="card pad" id="ch-start" style="padding:24px">
+    <div class="start-grid">
+      <div>
+        <span class="pill">10 rounds</span>
+        <h2 style="font-size:28px;margin-top:8px">Can you find the gradient at a point?</h2>
+        <p class="muted">Each round gives you a different experiment and a point P. Rotate the line until it just touches the curve at P. You score more for a better tangent. Get three good ones in a row to build a streak.</p>
+        <div class="levels" role="radiogroup" aria-label="Level">
+          <button class="lvl" role="radio" aria-checked="true" data-lvl="1"><span class="num">Level 1</span><h3>Draw it</h3><p>Rotate the line about P to draw the tangent. Scored on how close your angle is.</p><span class="best" data-best="1"></span></button>
+          <button class="lvl" role="radio" aria-checked="false" data-lvl="2"><span class="num">Level 2</span><h3>Measure it</h3><p>Draw the tangent, then read a large triangle off the grid and calculate the gradient yourself.</p><span class="best" data-best="2"></span></button>
+          <button class="lvl" role="radio" aria-checked="false" data-lvl="3"><span class="num">Level 3</span><h3>Exam ready</h3><p>Draw, measure <i>and</i> say what the gradient means physically. The magnifier starts off.</p><span class="best" data-best="3"></span></button>
+        </div>
+        <div style="margin-top:18px"><button class="btn big" id="ch-go">Start challenge
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+      <svg class="start-art" viewBox="0 0 400 300" aria-hidden="true">
+        <rect width="400" height="300" rx="16" fill="#fffdf5"/>
+        <g stroke="#cfe6dc" stroke-width="1">
+          <path d="M40 0v300M80 0v300M120 0v300M160 0v300M200 0v300M240 0v300M280 0v300M320 0v300M360 0v300"/>
+          <path d="M0 40h400M0 80h400M0 120h400M0 160h400M0 200h400M0 240h400M0 280h400"/>
+        </g>
+        <path d="M40 30 C 90 180, 170 240, 370 262" stroke="#0b7a75" stroke-width="4" fill="none"/>
+        <path d="M40 60 L 330 290" stroke="#1c8f4e" stroke-width="3" stroke-dasharray="9 7" opacity=".85"/>
+        <g><path d="M30 80 L 340 262" stroke="#333" stroke-width="2.5"/>
+          <animateTransform attributeName="transform" type="rotate" values="-14 118 160; 9 118 160; -4 118 160; 0 118 160; 0 118 160" keyTimes="0;.3;.55;.75;1" dur="5s" repeatCount="indefinite"/></g>
+        <circle cx="118" cy="160" r="9" fill="#0b7a75" stroke="#fff" stroke-width="3"/>
+        <text x="132" y="150" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="18" fill="#0b4d5a">P</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="layout" id="ch-game" hidden>
+    <div class="card stage" style="position:relative">
+      <div class="hud">
+        <div class="stat"><span>Round</span><b id="ch-round">1/10</b></div>
+        <div class="stat"><span>Score</span><b id="ch-score">0</b></div>
+        <span class="streak cold" id="ch-streak" title="Streak of good tangents">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3.5 2-4.5 0 2 1 3 2 3-1-3 0-6 1-9.5z"/></svg><span id="ch-streakn">0</span></span>
+        <div class="dots" id="ch-dots" aria-hidden="true"></div>
+      </div>
+      <div class="canvas-wrap"><canvas id="ch-canvas" tabindex="0" aria-label="Challenge graph. Drag the line to rotate it about P. Arrow keys rotate. Enter checks."></canvas></div>
+      <div class="legend" id="ch-legend"></div>
+      <div class="toolbar">
+        <button class="chip" id="ch-lens" aria-pressed="true"><span class="dot"></span>Magnifier</button>
+        <button class="chip" id="ch-mirror" aria-pressed="false"><span class="dot"></span>Mirror method <span class="cost">−30% pts</span></button>
+        <span class="sep"></span>
+        <button class="btn ghost iconbtn" id="ch-rotl" title="Rotate anticlockwise" aria-label="Rotate anticlockwise"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+        <button class="btn ghost iconbtn" id="ch-rotr" title="Rotate clockwise" aria-label="Rotate clockwise"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg></button>
+        <button class="btn ghost small" id="ch-quit">End game</button>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card pad" id="ch-task"></div>
+      <div class="card pad" id="ch-action"></div>
+      <div id="ch-fb" aria-live="polite"></div>
+    </aside>
+  </div>
+
+  <div class="modal" id="ch-summary" hidden role="dialog" aria-modal="true" aria-labelledby="sum-title">
+    <div class="card">
+      <span class="pill" id="sum-level"></span>
+      <h2 id="sum-title" style="font-size:26px;margin-top:8px"></h2>
+      <div class="stars" id="sum-stars"></div>
+      <div class="sumgrid">
+        <div><b id="sum-score"></b><span>Score</span></div>
+        <div><b id="sum-err"></b><span>Avg angle error</span></div>
+        <div><b id="sum-streak"></b><span>Best streak</span></div>
+      </div>
+      <p class="muted small" id="sum-msg"></p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn" id="sum-again">Play again</button>
+        <button class="btn ghost" id="sum-levels">Change level</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= GUIDE ======================= -->
+<section id="panel-guide" role="tabpanel" aria-labelledby="tab-guide" hidden>
+  <div class="guide">
+    <div class="card pad">
+      <span class="pill">Method</span>
+      <h2 style="margin-top:8px">Drawing a tangent, step by step</h2>
+      <p class="muted" style="margin:6px 0 0">On a straight-line graph the gradient is the same everywhere. On a curve it changes, so you find the gradient <b>at one point</b> by drawing a tangent there: a straight line that touches the curve at that point and has the same slope as the curve there.</p>
+      <ol class="stepsl">
+        <li><b>Mark the point</b><span>Go up from the required x-value (e.g. t = 4.0 s) to the curve and mark it clearly with a small cross. Call it P.</span></li>
+        <li><b>Lay the ruler against P</b><span>Rotate a clear ruler about P until it touches the curve there without cutting through it. Near P, the curve should sit on the same side of the ruler on both sides of the point.</span></li>
+        <li><b>Check it</b><span>Look along the ruler from both ends. The gaps between the ruler and the curve should open up evenly on each side of P. For extra accuracy use the mirror method (below).</span></li>
+        <li><b>Draw it long</b><span>Draw a thin, sharp pencil line right across the grid. A longer line is easier to read accurately.</span></li>
+        <li><b>Draw a large triangle</b><span>Use a triangle whose sloping side is at least half the length of your line. Choose corners where the line crosses grid lines, so you can read them exactly.</span></li>
+        <li><b>Calculate and interpret</b><span>gradient = Δy ÷ Δx. Keep the sign (a falling line has a negative gradient), give the unit (y-unit ÷ x-unit) and say what it means.</span></li>
+      </ol>
+      <div class="divider"></div>
+      <h3>The mirror method</h3>
+      <p class="muted small" style="margin:6px 0 0">Stand a flat mirror upright across the curve at P. Turn it until the curve and its reflection join up smoothly, with no sharp corner at P. The mirror is then along the <b>normal</b> (at 90° to the curve). Draw along the mirror, then draw the tangent at right angles to that line. Try it with the <i>Mirror method</i> button in Explore: a kink in the dashed purple reflection means your tangent is off.</p>
+    </div>
+    <div class="side">
+      <div class="card pad">
+        <span class="pill">Tangent or chord?</span>
+        <svg class="fig" viewBox="0 0 360 230" style="margin-top:10px" role="img" aria-label="A curve with a correct tangent touching at P, and a chord that cuts the curve at two points">
+          <g stroke="#dcebe4"><path d="M30 0v230M60 0v230M90 0v230M120 0v230M150 0v230M180 0v230M210 0v230M240 0v230M270 0v230M300 0v230M330 0v230M0 30h360M0 60h360M0 90h360M0 120h360M0 150h360M0 180h360M0 210h360"/></g>
+          <path d="M28 18 C 70 140, 150 190, 340 205" stroke="#0b7a75" stroke-width="3.5" fill="none"/>
+          <path d="M14.6 43.2 L 194.6 231.9" stroke="#1c8f4e" stroke-width="3"/>
+          <path d="M19.9 39.4 L 244.7 214.5" stroke="#6848cf" stroke-width="2.5" stroke-dasharray="7 5"/>
+          <circle cx="44.9" cy="58.9" r="4" fill="#fff" stroke="#6848cf" stroke-width="2"/>
+          <circle cx="204.7" cy="183.4" r="4" fill="#fff" stroke="#6848cf" stroke-width="2"/>
+          <circle cx="84.6" cy="116.6" r="7" fill="#0b7a75" stroke="#fff" stroke-width="2.5"/>
+          <text x="68" y="140" font-family="Space Grotesk,sans-serif" font-weight="700" font-size="15" fill="#0b4d5a">P</text>
+          <rect x="150" y="18" width="200" height="56" rx="8" fill="#fffdf5" stroke="#cfe3d8"/>
+          <path d="M160 36h22" stroke="#1c8f4e" stroke-width="3"/>
+          <text x="190" y="40" font-family="Inter,sans-serif" font-weight="600" font-size="12" fill="#1c8f4e">tangent: touches at P</text>
+          <path d="M160 58h22" stroke="#6848cf" stroke-width="2.5" stroke-dasharray="7 5"/>
+          <text x="190" y="62" font-family="Inter,sans-serif" font-weight="600" font-size="12" fill="#6848cf">chord: cuts curve twice</text>
+        </svg>
+        <p class="small muted" style="margin:10px 0 0">A chord between two points gives the <b>average</b> gradient over that interval. It only matches the tangent as the two points close in on P. Turn on <i>Chord</i> in Explore and shrink it to watch this happen.</p>
+      </div>
+      <div class="card pad">
+        <span class="pill">What does the gradient mean?</span>
+        <table class="gt">
+          <thead><tr><th>Graph</th><th>Gradient gives</th></tr></thead>
+          <tbody>
+            <tr><td>displacement–time</td><td>velocity</td></tr>
+            <tr><td>velocity–time</td><td>acceleration</td></tr>
+            <tr><td>momentum–time</td><td>resultant force</td></tr>
+            <tr><td>work done–distance</td><td>force</td></tr>
+            <tr><td>charge–time</td><td>current</td></tr>
+            <tr><td>undecayed nuclei–time</td><td>−(activity)</td></tr>
+            <tr><td>temperature–time</td><td>rate of heating or cooling</td></tr>
+            <tr><td>energy–time</td><td>power</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card pad">
+        <span class="pill">Common mistakes</span>
+        <ul class="pitfalls">
+          <li>Drawing a line between two data points (a chord), not a tangent.</li>
+          <li>Using a small triangle, so reading errors become a large fraction of Δx and Δy.</li>
+          <li>Counting squares instead of reading values off the axis scales, especially when an axis doesn't start at zero.</li>
+          <li>Leaving out the minus sign or the unit.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Tangent Trainer · Physics practical skills · Curves are fitted to the data shown, and the “true” tangent is the exact gradient of that fitted curve.</footer>
+<script>
+(function(){
+'use strict';
+const $ = id => document.getElementById(id);
+const DEG = Math.PI/180;
+const dpr = () => Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const lsGet = k => { try { return localStorage.getItem(k); } catch(e){ return null; } };
+const lsSet = (k,v) => { try { localStorage.setItem(k,v); return true; } catch(e){ return false; } };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- number & unit formatting ---------- */
+const SUP = {'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+const UNSUP = {}; Object.keys(SUP).forEach(k => UNSUP[SUP[k]] = k);
+const sup = n => String(n).split('').map(c => SUP[c] || c).join('');
+const minus = s => String(s).replace(/-/g, '−');
+function fmt(x, sig){
+  sig = sig || 3;
+  if(!isFinite(x)) return '—';
+  if(Math.abs(x) < 1e-12) return '0';
+  const a = Math.abs(x);
+  if(a >= 1e5 || a < 1e-3){
+    const e = Math.floor(Math.log10(a));
+    let mant = +(x/Math.pow(10,e)).toPrecision(sig);
+    return minus(mant + '×10' + sup(e));
+  }
+  return minus(String(+x.toPrecision(sig)));
+}
+const fmtTick = x => fmt(+x.toPrecision(10), 6);
+function parseUnit(u){
+  const out = [];
+  String(u||'').trim().split(/\s+/).filter(Boolean).forEach(tok => {
+    let base = tok, e = 1, m = tok.match(/^(.*?)([⁻⁰¹²³⁴⁵⁶⁷⁸⁹]+)$/);
+    if(m && m[1]){ const n = parseInt(m[2].split('').map(c => UNSUP[c]).join(''), 10); if(!isNaN(n)){ base = m[1]; e = n; } }
+    else { m = tok.match(/^(.*?)\^\(?(-?\d+)\)?$/); if(m && m[1]){ base = m[1]; e = +m[2]; } }
+    const f = out.find(o => o.b === base); if(f) f.e += e; else out.push({b:base, e:e});
+  });
+  return out;
+}
+function divUnit(yu, xu){
+  const a = parseUnit(yu);
+  parseUnit(xu).forEach(t => { const f = a.find(o => o.b === t.b); if(f) f.e -= t.e; else a.push({b:t.b, e:-t.e}); });
+  const k = a.filter(o => o.e !== 0);
+  k.sort((p,q) => (q.e>0) - (p.e>0));
+  return k.map(o => o.b + (o.e === 1 ? '' : sup(o.e))).join(' ');
+}
+const ALIAS = {'kg m s⁻²':'N', 'J m⁻¹':'N', 'µC s⁻¹':'µA', 'μC s⁻¹':'μA', 'C s⁻¹':'A', 'mC s⁻¹':'mA', 'J s⁻¹':'W'};
+const niceUnit = s => s ? s : '(no unit)';
+
+/* ---------- fitting ---------- */
+function linReg(xs, ys){
+  const n = xs.length; let sx=0, sy=0, sxy=0, sxx=0;
+  for(let i=0;i<n;i++){ sx+=xs[i]; sy+=ys[i]; sxy+=xs[i]*ys[i]; sxx+=xs[i]*xs[i]; }
+  const d = n*sxx - sx*sx, m = d ? (n*sxy - sx*sy)/d : 0;
+  return {m:m, c:n ? (sy - m*sx)/n : 0};
+}
+function solve3(A, b){
+  const M = A.map((r,i) => r.concat([b[i]]));
+  for(let c=0;c<3;c++){
+    let p = c; for(let r=c+1;r<3;r++) if(Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    [M[c], M[p]] = [M[p], M[c]];
+    if(Math.abs(M[c][c]) < 1e-14) return null;
+    for(let r=0;r<3;r++){ if(r===c) continue; const f = M[r][c]/M[c][c]; for(let k=c;k<4;k++) M[r][k] -= f*M[c][k]; }
+  }
+  return [M[0][3]/M[0][0], M[1][3]/M[1][1], M[2][3]/M[2][2]];
+}
+function sortD(d){ return d.slice().sort((a,b) => a.x-b.x); }
+function fitAsym(d, dir, fixedR){
+  // dir 'up': y = R − B e^(−kx) (rises to R);  'down': y = R + B e^(−kx) (falls to R)
+  const ys = d.map(p => p.y), mx = Math.max.apply(null, ys), mn = Math.min.apply(null, ys), span = (mx-mn) || 1;
+  function trial(R){
+    const xs = [], ls = [];
+    d.forEach(p => { const v = dir === 'up' ? R - p.y : p.y - R; if(v > 0){ xs.push(p.x); ls.push(Math.log(v)); } });
+    if(xs.length < 2) return null;
+    const r = linReg(xs, ls), B = Math.exp(r.c), k = -r.m;
+    let sse = 0;
+    d.forEach(p => { const e = (dir === 'up' ? R - B*Math.exp(-k*p.x) : R + B*Math.exp(-k*p.x)) - p.y; sse += e*e; });
+    return {R:R, B:B, k:k, sse:sse, dir:dir};
+  }
+  if(fixedR !== undefined) return trial(fixedR) || {R:0,B:0,k:0,dir:dir};
+  const Rof = f => dir === 'up' ? mx + span*f : mn - span*f;
+  const fOf = i => 0.0005 + Math.pow(i/240, 2)*4;
+  let best = null, bi = 0;
+  for(let i=0;i<=240;i++){ const t = trial(Rof(fOf(i))); if(t && (!best || t.sse < best.sse)){ best = t; bi = i; } }
+  if(!best) return {R:mx, B:0, k:0, dir:dir};
+  let lo = fOf(Math.max(0, bi-1)), hi = fOf(Math.min(240, bi+1));
+  for(let it=0; it<40; it++){
+    const a = lo + (hi-lo)/3, b = hi - (hi-lo)/3, ta = trial(Rof(a)), tb = trial(Rof(b));
+    if(!ta || (tb && tb.sse < ta.sse)) lo = a; else hi = b;
+  }
+  const t = trial(Rof((lo+hi)/2));
+  return (t && t.sse <= best.sse) ? t : best;
+}
+function buildSpline(pts){
+  const s = sortD(pts), dd = [];
+  s.forEach(p => { if(!dd.length || Math.abs(p.x - dd[dd.length-1].x) > 1e-9) dd.push(p); });
+  const xs = dd.map(p => p.x), ys = dd.map(p => p.y), n = xs.length;
+  if(n < 2) return {xs:xs, ys:ys, m:[0]};
+  const d = []; for(let i=0;i<n-1;i++) d.push((ys[i+1]-ys[i])/(xs[i+1]-xs[i]));
+  const m = new Array(n);
+  m[0] = d[0]; m[n-1] = d[n-2];
+  // three-point end slopes give a more natural finish than copying the end chord
+  if(n > 2){
+    const h0 = xs[1]-xs[0], h1 = xs[2]-xs[1];
+    let e = ((2*h0+h1)*d[0] - h0*d[1])/(h0+h1); if(Math.sign(e) !== Math.sign(d[0])) e = 0; else if(Math.sign(d[0]) !== Math.sign(d[1]) && Math.abs(e) > Math.abs(3*d[0])) e = 3*d[0]; m[0] = e;
+    const g0 = xs[n-1]-xs[n-2], g1 = xs[n-2]-xs[n-3];
+    let f = ((2*g0+g1)*d[n-2] - g0*d[n-3])/(g0+g1); if(Math.sign(f) !== Math.sign(d[n-2])) f = 0; else if(Math.sign(d[n-2]) !== Math.sign(d[n-3]) && Math.abs(f) > Math.abs(3*d[n-2])) f = 3*d[n-2]; m[n-1] = f;
+  }
+  for(let i=1;i<n-1;i++){
+    if(d[i-1] === 0 || d[i] === 0 || (d[i-1] > 0) !== (d[i] > 0)) m[i] = 0;
+    else { const w1 = 2*(xs[i+1]-xs[i]) + (xs[i]-xs[i-1]), w2 = (xs[i+1]-xs[i]) + 2*(xs[i]-xs[i-1]); m[i] = (w1+w2)/(w1/d[i-1] + w2/d[i]); }
+  }
+  return {xs:xs, ys:ys, m:m};
+}
+function splineSeg(S, x){
+  const xs = S.xs, n = xs.length;
+  x = clamp(x, xs[0], xs[n-1]);
+  let i = 0; while(i < n-2 && x > xs[i+1]) i++;
+  const h = xs[i+1]-xs[i];
+  return {i:i, h:h, t:(x-xs[i])/h};
+}
+function splineY(S, x){
+  if(S.xs.length < 2) return S.ys[0] || 0;
+  const g = splineSeg(S,x), i = g.i, t = g.t, h = g.h, t2 = t*t, t3 = t2*t;
+  return (2*t3-3*t2+1)*S.ys[i] + (t3-2*t2+t)*h*S.m[i] + (-2*t3+3*t2)*S.ys[i+1] + (t3-t2)*h*S.m[i+1];
+}
+function splineS(S, x){
+  if(S.xs.length < 2) return 0;
+  const g = splineSeg(S,x), i = g.i, t = g.t, h = g.h, t2 = t*t;
+  return ((6*t2-6*t)*S.ys[i] + (3*t2-4*t+1)*h*S.m[i] + (-6*t2+6*t)*S.ys[i+1] + (3*t2-2*t)*h*S.m[i+1]) / h;
+}
+const asymY = (p,x) => p.dir === 'up' ? p.R - p.B*Math.exp(-p.k*x) : p.R + p.B*Math.exp(-p.k*x);
+const asymS = (p,x) => p.dir === 'up' ? p.B*p.k*Math.exp(-p.k*x) : -p.B*p.k*Math.exp(-p.k*x);
+
+const MODELS = {
+  spline:{label:'Smooth curve through every point', fit:d => buildSpline(d), y:splineY, s:splineS},
+  quad:{label:'Quadratic: y = a + bx + cx²',
+    fit:d => {
+      if(d.length < 3){ const r = linReg(d.map(p=>p.x), d.map(p=>p.y)); return {a:r.c, b:r.m, c:0}; }
+      const S = [0,0,0,0,0], T = [0,0,0];
+      d.forEach(p => { let q = 1; for(let k=0;k<5;k++){ S[k] += q; if(k<3) T[k] += p.y*q; q *= p.x; } });
+      const r = solve3([[S[0],S[1],S[2]],[S[1],S[2],S[3]],[S[2],S[3],S[4]]], T) || [0,0,0];
+      return {a:r[0], b:r[1], c:r[2]};
+    },
+    y:(p,x) => p.a + p.b*x + p.c*x*x, s:(p,x) => p.b + 2*p.c*x},
+  expdecay:{label:'Exponential decay: y = A e^(−kx)', fit:d => fitAsym(d, 'down', 0), y:asymY, s:asymS},
+  plateau:{label:'Rise to a plateau: y = A − B e^(−kx)', fit:d => fitAsym(d, 'up'), y:asymY, s:asymS},
+  cooling:{label:'Fall to a steady value: y = C + B e^(−kx)', fit:d => fitAsym(d, 'down'), y:asymY, s:asymS},
+  power:{label:'Power law: y = k xⁿ',
+    fit:d => { const q = d.filter(p => p.x > 0 && p.y > 0); const r = linReg(q.map(p=>Math.log(p.x)), q.map(p=>Math.log(p.y))); return {k:Math.exp(r.c), n:r.m}; },
+    y:(p,x) => x <= 0 ? 0 : p.k*Math.pow(x, p.n), s:(p,x) => p.k*p.n*Math.pow(Math.max(x, 1e-9), p.n-1)},
+  inv:{label:'Inverse: y = k / x',
+    fit:d => { let a=0, b=0; d.filter(p=>p.x).forEach(p => { a += p.y/p.x; b += 1/(p.x*p.x); }); return {k:b ? a/b : 0}; },
+    y:(p,x) => p.k/x, s:(p,x) => -p.k/(x*x)},
+  invsq:{label:'Inverse square: y = k / x²',
+    fit:d => { let a=0, b=0; d.filter(p=>p.x).forEach(p => { const u = 1/(p.x*p.x); a += p.y*u; b += u*u; }); return {k:b ? a/b : 0}; },
+    y:(p,x) => p.k/(x*x), s:(p,x) => -2*p.k/(x*x*x)}
+};
+
+/* ---------- physics experiments ---------- */
+const SCEN = [
+  {id:'trolley', topic:'Mechanics', title:'Trolley rolling down a ramp',
+   ctx:'A trolley is released from rest on a ramp. A motion sensor records its displacement every second.',
+   model:'quad', f:t => 0.36*t*t + 0.08*t, x0:0, x1:6, step:0.5, ex:0.05, ey:0.1,
+   xl:'Time t', xu:'s', yl:'Displacement s', yu:'m', xw:'t', pr:[0.2,0.9],
+   mean:{q:'velocity', sym:'v', eq:'v = Δs ÷ Δt', sign:1}, note:'The line gets steeper as time goes on, so the trolley is speeding up.'},
+  {id:'ball', topic:'Mechanics', title:'Ball thrown straight up',
+   ctx:'A ball is thrown vertically upwards. Its height above the ground is found from video analysis.',
+   model:'quad', f:t => 1.2 + 11*t - 4.9*t*t, x0:0, x1:2.25, step:0.25, ex:0.01, ey:0.1,
+   xl:'Time t', xu:'s', yl:'Height h', yu:'m', xw:'t', pr:[0.1,0.9],
+   mean:{q:'vertical velocity', sym:'v', eq:'v = Δh ÷ Δt', sign:1}, note:'At the top of the flight the tangent is horizontal, so the velocity is momentarily zero. After that the gradient is negative: the ball is moving downwards.'},
+  {id:'sky', topic:'Mechanics', title:'Skydiver reaching terminal velocity',
+   ctx:'A skydiver’s downward velocity is logged by a GPS unit from the moment she leaves the aircraft.',
+   model:'plateau', f:t => 52*(1 - Math.exp(-t/6)), x0:0, x1:30, step:3, ex:0.2, ey:1,
+   xl:'Time t', xu:'s', yl:'Velocity v', yu:'m s⁻¹', xw:'t', pr:[0.1,0.7],
+   mean:{q:'acceleration', sym:'a', eq:'a = Δv ÷ Δt', sign:1}, note:'Air resistance grows with speed, so the resultant force (and the acceleration) falls towards zero as she approaches terminal velocity.'},
+  {id:'bungee', topic:'Mechanics', title:'Bungee jump',
+   ctx:'A data logger on a bungee jumper records velocity. The cord starts to stretch at about 2.5 s.',
+   model:'spline', data:[[0,0],[0.5,4.9],[1,9.7],[1.5,14.4],[2,18.9],[2.5,22.6],[3,23.6],[3.5,20.8],[4,14.6],[4.5,6.9],[5,0.6]], ex:0.05, ey:0.4,
+   xl:'Time t', xu:'s', yl:'Velocity v', yu:'m s⁻¹', xw:'t', pr:[0.45,0.95],
+   mean:{q:'acceleration', sym:'a', eq:'a = Δv ÷ Δt', sign:1}, note:'Before the cord tightens the gradient is about 9.8 m s⁻² (free fall). Once it stretches, the gradient becomes negative: the jumper is decelerating.'},
+  {id:'rocket', topic:'Mechanics', title:'Model rocket burn',
+   ctx:'The momentum of a model rocket is calculated from its measured mass and velocity during the engine burn.',
+   model:'quad', f:t => 0.9*t + 0.12*t*t, x0:0, x1:8, step:1, ex:0.05, ey:0.2,
+   xl:'Time t', xu:'s', yl:'Momentum p', yu:'kg m s⁻¹', xw:'t', pr:[0.15,0.9],
+   mean:{q:'resultant force', sym:'F', eq:'F = Δp ÷ Δt', sign:1}, note:'Newton’s second law: resultant force = rate of change of momentum. The unit kg m s⁻² is the newton.'},
+  {id:'winch', topic:'Mechanics', title:'Dragging a load through mud',
+   ctx:'A tractor drags a load across ground that gets muddier. The work done is recorded against distance.',
+   model:'power', f:x => 40*Math.pow(x,1.5), x0:0, x1:8, step:1, ex:0.05, ey:15,
+   xl:'Distance x', xu:'m', yl:'Work done W', yu:'J', xw:'x', pr:[0.25,0.9],
+   mean:{q:'force', sym:'F', eq:'F = ΔW ÷ Δx', sign:1}, note:'Work done = force × distance, so the gradient of a W–x graph is the force at that point. J m⁻¹ is the same as N.'},
+  {id:'capdis', topic:'Electricity', title:'Capacitor discharging',
+   ctx:'A charged capacitor discharges through a resistor. The charge on it is found from p.d. readings.',
+   model:'expdecay', f:t => 470*Math.exp(-t/2.2), x0:0, x1:10, step:1, ex:0.1, ey:8,
+   xl:'Time t', xu:'s', yl:'Charge Q', yu:'µC', xw:'t', pr:[0.05,0.6],
+   mean:{q:'current', sym:'I', eq:'I = −ΔQ ÷ Δt', sign:-1}, note:'The gradient is negative because charge is leaving the capacitor. Its size is the current. µC s⁻¹ is the same as µA.'},
+  {id:'capchg', topic:'Electricity', title:'Capacitor charging',
+   ctx:'A capacitor charges through a resistor from a 6.0 V supply. A data logger records the p.d. across it.',
+   model:'plateau', f:t => 6*(1 - Math.exp(-t/4)), x0:0, x1:20, step:2, ex:0.1, ey:0.1,
+   xl:'Time t', xu:'s', yl:'p.d. V', yu:'V', xw:'t', pr:[0.05,0.6],
+   mean:{q:'rate of change of p.d.', sym:'ΔV/Δt', eq:'ΔV ÷ Δt (current = C × ΔV/Δt)', sign:1}, note:'The p.d. rises quickly at first, then more slowly, because the charging current falls as the capacitor fills.'},
+  {id:'decay', topic:'Nuclear & thermal', title:'Radioactive decay',
+   ctx:'The number of undecayed nuclei in a sample is worked out from count-rate measurements.',
+   model:'expdecay', f:t => 8000*Math.exp(-t*Math.LN2/30), x0:0, x1:120, step:15, ex:0.5, ey:150,
+   xl:'Time t', xu:'min', yl:'Undecayed nuclei N', yu:'', xw:'t', pr:[0.05,0.6],
+   mean:{q:'activity', sym:'A', eq:'A = −ΔN ÷ Δt', sign:-1}, note:'The gradient is negative because nuclei are decaying. Its size is the activity, here in decays per minute. It halves every half-life (30 min).'},
+  {id:'cool', topic:'Nuclear & thermal', title:'Cooling of hot water',
+   ctx:'A beaker of hot water cools in a room at about 20 °C. A thermometer is read every 4 minutes.',
+   model:'cooling', f:t => 21 + 68*Math.exp(-t/11), x0:0, x1:40, step:4, ex:0.1, ey:0.5,
+   xl:'Time t', xu:'min', yl:'Temperature θ', yu:'°C', xw:'t', pr:[0.05,0.7],
+   mean:{q:'rate of cooling', sym:'Δθ/Δt', eq:'Δθ ÷ Δt', sign:1}, note:'The hotter the water, the faster it loses energy, so the curve is steepest at the start.'},
+  {id:'boyle', topic:'Other', title:'Boyle’s law (pressure against volume)', explore:true,
+   ctx:'A fixed mass of air is compressed slowly at constant temperature.',
+   model:'inv', f:V => 6000/V, x0:20, x1:100, step:10, ex:0.5, ey:3,
+   xl:'Volume V', xu:'cm³', yl:'Pressure p', yu:'kPa', xw:'V', pr:[0.1,0.8],
+   mean:{q:'rate of change of pressure with volume', sym:'Δp/ΔV', eq:'Δp ÷ ΔV', sign:1}, note:'pV = constant, so the curve gets steeper at small volumes.'},
+  {id:'invsq', topic:'Other', title:'Intensity against distance', explore:true,
+   ctx:'A light meter is moved away from a small bright lamp.',
+   model:'invsq', f:d => 50/(d*d), x0:1, x1:6, step:0.5, ex:0.02, ey:0.5,
+   xl:'Distance d', xu:'m', yl:'Intensity I', yu:'W m⁻²', xw:'d', pr:[0.1,0.8],
+   mean:{q:'rate of change of intensity with distance', sym:'ΔI/Δd', eq:'ΔI ÷ Δd', sign:1}, note:'An inverse-square law: doubling the distance quarters the intensity.'}
+];
+const DISTRACT = ['velocity','acceleration','displacement','resultant force','momentum','current','charge','activity','rate of cooling','power','work done','resistance','kinetic energy','rate of change of p.d.'];
+
+function genData(s){
+  if(s.data) return s.data.map(p => ({x:p[0], y:p[1], ex:s.ex, ey:s.ey}));
+  const out = [];
+  const n = Math.round((s.x1 - s.x0)/s.step);
+  for(let i=0;i<=n;i++){
+    const x = +(s.x0 + i*s.step).toFixed(6);
+    const y = s.f(x);
+    out.push({x:x, y:Math.abs(y) < 1e-9 ? 0 : +y.toPrecision(3), ex:s.ex, ey:s.ey});
+  }
+  return out;
+}
+
+/* ---------- graph view ---------- */
+function niceAxis(lo, hi, target){
+  if(lo === hi){ lo -= 1; hi += 1; }
+  const raw = (hi-lo)/(target || 6);
+  let step = Math.pow(10, Math.floor(Math.log10(raw)));
+  const e = raw/step; let lead = 1;
+  if(e >= 7.5){ step *= 10; } else if(e >= 3.5){ step *= 5; lead = 5; } else if(e >= 1.5){ step *= 2; lead = 2; }
+  return {lo:Math.floor(lo/step + 1e-9)*step, hi:Math.ceil(hi/step - 1e-9)*step, step:step, minor:lead === 2 ? step/4 : step/5};
+}
+
+function View(canvas){
+  this.cv = canvas; this.ctx = canvas.getContext('2d');
+  this.W = 0; this.H = 0; this.T = null;
+  this.data = []; this.model = 'quad'; this.P = null; this.px = 0; this.m = 0;
+  this.fr = [0.08, 0.92];
+  this.lab = {xl:'', xu:'', yl:'', yu:''};
+  this.show = {lens:true, mirror:false, tri:true, triVals:true, truth:false, chord:false, ruler:true};
+  this.chordW = 0.25; this.snapTri = false;
+  this.can = {rot:true, P:true, tri:true};
+  this.drag = null; this.onChange = function(){}; this.onEnter = null;
+  this._raf = 0;
+  this.bind();
+}
+const VP = View.prototype;
+VP.refit = function(){ this.P = MODELS[this.model].fit(this.data); };
+VP.y = function(x){ return MODELS[this.model].y(this.P, x); };
+VP.s = function(x){ return MODELS[this.model].s(this.P, x); };
+VP.ext = function(){ const xs = this.data.map(d => d.x); return {min:Math.min.apply(null,xs), max:Math.max.apply(null,xs)}; };
+VP.yP = function(){ return this.y(this.px); };
+VP.request = function(){ if(this._raf) return; this._raf = requestAnimationFrame(() => { this._raf = 0; this.draw(); }); };
+VP.changed = function(){ this.request(); this.onChange(); };
+VP.resize = function(){
+  const r = this.cv.getBoundingClientRect();
+  if(r.width < 10) return false;
+  const d = dpr(), w = Math.round(r.width), h = Math.round(r.height);
+  if(this.cv.width !== Math.round(w*d) || this.cv.height !== Math.round(h*d)){ this.cv.width = Math.round(w*d); this.cv.height = Math.round(h*d); }
+  this.W = w; this.H = h;
+  return true;
+};
+VP.layout = function(){
+  const small = this.W < 520;
+  const L = small ? 52 : 66, R = this.W - (small ? 10 : 16), Tp = small ? 12 : 16, B = this.H - (small ? 44 : 50);
+  let xlo=Infinity, xhi=-Infinity, ylo=Infinity, yhi=-Infinity;
+  this.data.forEach(d => { xlo = Math.min(xlo, d.x-d.ex); xhi = Math.max(xhi, d.x+d.ex); ylo = Math.min(ylo, d.y-d.ey); yhi = Math.max(yhi, d.y+d.ey); });
+  const e = this.ext();
+  for(let i=0;i<=60;i++){ const x = e.min + (e.max-e.min)*i/60, y = this.y(x); if(isFinite(y)){ ylo = Math.min(ylo, y); yhi = Math.max(yhi, y); } }
+  if(!isFinite(xlo)){ xlo = 0; xhi = 1; ylo = 0; yhi = 1; }
+  if(xlo > 0 && xlo < 0.4*xhi) xlo = 0;
+  if(xlo < 0 && e.min >= 0 && xlo > -0.05*(xhi-xlo)) xlo = 0;
+  if(ylo > 0 && ylo < 0.6*yhi) ylo = 0;
+  if(ylo < 0 && Math.min.apply(null, this.data.map(d => d.y)) >= 0 && ylo > -0.05*(yhi-ylo)) ylo = 0;
+  const ax = niceAxis(xlo, xhi, small ? 5 : 7), ay = niceAxis(ylo, yhi, small ? 5 : 6);
+  const x0 = ax.lo, x1 = ax.hi, y0 = ay.lo, y1 = ay.hi;
+  const kx = (R-L)/(x1-x0), ky = (B-Tp)/(y1-y0);
+  this.T = {L:L, R:R, Tp:Tp, B:B, x0:x0, x1:x1, y0:y0, y1:y1, ax:ax, ay:ay, kx:kx, ky:ky, small:small,
+    sx:x => L + (x-x0)*kx, sy:y => B - (y-y0)*ky, ix:X => x0 + (X-L)/kx, iy:Y => y0 + (B-Y)/ky};
+};
+VP.angleOf = function(m){ return Math.atan2(m*this.T.ky, this.T.kx); };
+VP.setAngle = function(a){ a = clamp(a, -89.6*DEG, 89.6*DEG); this.m = Math.tan(a)*this.T.kx/this.T.ky; };
+VP.angle = function(){ return this.angleOf(this.m); };
+VP.trueAngle = function(){ return this.angleOf(this.s(this.px)); };
+VP.lineGeom = function(m){
+  const T = this.T, X = T.sx(this.px), Y = T.sy(this.yP());
+  const dx = T.kx, dy = -m*T.ky, n = Math.hypot(dx, dy), u = [dx/n, dy/n];
+  let t0 = -1e9, t1 = 1e9;
+  if(Math.abs(u[0]) > 1e-12){ const a = (T.L-X)/u[0], b = (T.R-X)/u[0]; t0 = Math.max(t0, Math.min(a,b)); t1 = Math.min(t1, Math.max(a,b)); }
+  if(Math.abs(u[1]) > 1e-12){ const a = (T.Tp-Y)/u[1], b = (T.B-Y)/u[1]; t0 = Math.max(t0, Math.min(a,b)); t1 = Math.min(t1, Math.max(a,b)); }
+  return {X:X, Y:Y, u:u, n:[-u[1], u[0]], t0:Math.min(t0, 0), t1:Math.max(t1, 0)};
+};
+// the two triangle corners, in data units, sorted left to right
+VP.triPts = function(){
+  const g = this.lineGeom(this.m), T = this.T, yP = this.yP();
+  const a = g.t0 + 4, b = g.t1 - 4;
+  const pts = this.fr.map(f => {
+    const t = a + (b-a)*clamp(f,0,1);
+    const Xs = g.X + t*g.u[0];
+    let x = T.ix(Xs), y = yP + this.m*(x - this.px);
+    if(this.snapTri){
+      const steep = Math.abs(g.u[1]) > Math.abs(g.u[0]);
+      let x2 = x, y2 = y;
+      if(!steep || Math.abs(this.m) < 1e-12){ x2 = Math.round(x/T.ax.minor)*T.ax.minor; y2 = yP + this.m*(x2 - this.px); }
+      else { y2 = Math.round(y/T.ay.minor)*T.ay.minor; x2 = this.px + (y2 - yP)/this.m; }
+      x2 = +x2.toPrecision(12); y2 = +y2.toPrecision(12);
+      if(x2 >= T.x0 && x2 <= T.x1 && y2 >= T.y0 && y2 <= T.y1){ x = x2; y = y2; }
+    }
+    return {x:x, y:y, f:f};
+  });
+  return pts;
+};
+VP.curveSide = function(){
+  // which side (along normal n) the curve lies near P, so labels can sit on the other side
+  const g = this.lineGeom(this.m), T = this.T, e = this.ext(), dlt = (T.x1-T.x0)*0.05;
+  let s = 0;
+  [-1,1].forEach(k => {
+    const x = clamp(this.px + k*dlt, e.min, e.max); if(Math.abs(x - this.px) < 1e-12) return;
+    const X = T.sx(x), Y = T.sy(this.y(x));
+    s += (X-g.X)*g.n[0] + (Y-g.Y)*g.n[1];
+  });
+  return s >= 0 ? 1 : -1;
+};
+VP.handles = function(){
+  const g = this.lineGeom(this.m), T = this.T;
+  const half = Math.min((T.R-T.L)*0.36, 260);
+  const a = Math.min(Math.max(g.t0 + 12, -half), -24), b = Math.max(Math.min(g.t1 - 12, half), 24);
+  return {g:g, a:a, b:b, A:[g.X + a*g.u[0], g.Y + a*g.u[1]], B:[g.X + b*g.u[0], g.Y + b*g.u[1]]};
+};
+
+const COL = {paper:'#fffdf5', minor:'#e4efe8', major:'#c3dccd', axis:'#23313f', tick:'#4b5b6d', curve:'#0b7a75', curveFaint:'rgba(11,122,117,.28)',
+  pencil:'#2a2f36', handle:'#d98300', truth:'#1c8f4e', tri:'#c26a00', triFill:'rgba(217,131,0,.12)',
+  chord:'#6848cf', mirror:'#6848cf', data:'#d6336c', P:'#0b7a75'};
+const FONT = '"Inter",system-ui,sans-serif', MONO = '"JetBrains Mono",ui-monospace,monospace';
+
+VP.curvePts = function(n){
+  const e = this.ext(), T = this.T, pts = [];
+  n = n || 260;
+  for(let i=0;i<=n;i++){ const x = e.min + (e.max-e.min)*i/n, y = this.y(x); if(isFinite(y)) pts.push([T.sx(x), T.sy(y)]); }
+  return pts;
+};
+VP.fullLine = function(ctx, m, color, width, dash){
+  const g = this.lineGeom(m);
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash || []); ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(g.X + g.t0*g.u[0], g.Y + g.t0*g.u[1]); ctx.lineTo(g.X + g.t1*g.u[0], g.Y + g.t1*g.u[1]); ctx.stroke();
+  ctx.restore();
+};
+VP.draw = function(){
+  if(!this.resize() || !this.data.length) return;
+  const ctx = this.ctx, d = dpr();
+  ctx.setTransform(d,0,0,d,0,0);
+  this.layout();
+  const T = this.T, W = this.W, H = this.H, sm = T.small;
+  ctx.fillStyle = COL.paper; ctx.fillRect(0,0,W,H);
+
+  // graph paper
+  const grid = (ax, horiz, col, w) => {
+    ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath();
+    const n = Math.round((ax.hi-ax.lo)/ax.step_);
+    for(let i=0;i<=n;i++){
+      const v = ax.lo + i*ax.step_;
+      if(horiz){ const Y = Math.round(T.sy(v))+.5; ctx.moveTo(T.L, Y); ctx.lineTo(T.R, Y); }
+      else { const X = Math.round(T.sx(v))+.5; ctx.moveTo(X, T.Tp); ctx.lineTo(X, T.B); }
+    }
+    ctx.stroke();
+  };
+  grid({lo:T.x0, hi:T.x1, step_:T.ax.minor}, false, COL.minor, 1);
+  grid({lo:T.y0, hi:T.y1, step_:T.ay.minor}, true, COL.minor, 1);
+  grid({lo:T.x0, hi:T.x1, step_:T.ax.step}, false, COL.major, 1.2);
+  grid({lo:T.y0, hi:T.y1, step_:T.ay.step}, true, COL.major, 1.2);
+
+  // axes (drawn along x = 0 / y = 0 where those are on the grid)
+  ctx.strokeStyle = COL.axis; ctx.lineWidth = 1.6; ctx.beginPath();
+  ctx.moveTo(T.L, T.Tp); ctx.lineTo(T.L, T.B); ctx.lineTo(T.R, T.B);
+  if(T.y0 < 0 && T.y1 > 0){ ctx.moveTo(T.L, T.sy(0)); ctx.lineTo(T.R, T.sy(0)); }
+  ctx.stroke();
+  ctx.fillStyle = COL.tick; ctx.font = (sm ? '10px ' : '11.5px ') + MONO;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  const nx = Math.round((T.x1-T.x0)/T.ax.step), ny = Math.round((T.y1-T.y0)/T.ay.step);
+  for(let i=0;i<=nx;i++){ const v = T.x0 + i*T.ax.step; ctx.fillText(fmtTick(v), T.sx(v), T.B + 6); }
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for(let i=0;i<=ny;i++){ const v = T.y0 + i*T.ay.step; ctx.fillText(fmtTick(v), T.L - 6, T.sy(v)); }
+  ctx.fillStyle = COL.axis; ctx.font = '600 ' + (sm ? '12px ' : '13px ') + FONT;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+  const xt = this.lab.xl + (this.lab.xu ? ' / ' + this.lab.xu : ''), yt = this.lab.yl + (this.lab.yu ? ' / ' + this.lab.yu : '');
+  ctx.fillText(xt, (T.L+T.R)/2, H - 4);
+  ctx.save(); ctx.translate(sm ? 12 : 14, (T.Tp+T.B)/2); ctx.rotate(-Math.PI/2); ctx.textBaseline = 'middle'; ctx.fillText(yt, 0, 0); ctx.restore();
+
+  // ---- inside the plot ----
+  ctx.save(); ctx.beginPath(); ctx.rect(T.L, T.Tp, T.R-T.L, T.B-T.Tp); ctx.clip();
+  const g = this.lineGeom(this.m);
+  const cps = this.curvePts();
+  const mir = this.show.mirror;
+  // curve (the half behind the mirror is faded)
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  if(mir){
+    const side = p => (p[0]-g.X)*g.u[0] + (p[1]-g.Y)*g.u[1];
+    [[q => side(q) <= 0, COL.curve], [q => side(q) >= 0, COL.curveFaint]].forEach(pair => {
+      ctx.strokeStyle = pair[1]; ctx.lineWidth = 3; ctx.beginPath(); let on = false;
+      cps.forEach(p => { if(pair[0](p)){ if(on) ctx.lineTo(p[0],p[1]); else { ctx.moveTo(p[0],p[1]); on = true; } } else on = false; });
+      ctx.stroke();
+    });
+    // reflection of the visible half in the mirror (which lies along the normal)
+    ctx.strokeStyle = COL.mirror; ctx.lineWidth = 2.6; ctx.setLineDash([7,5]); ctx.beginPath(); let on = false;
+    cps.forEach(p => {
+      const rx = p[0]-g.X, ry = p[1]-g.Y, a = rx*g.u[0] + ry*g.u[1];
+      if(a <= 0){
+        const b = rx*g.n[0] + ry*g.n[1];
+        const q = [g.X - a*g.u[0] + b*g.n[0], g.Y - a*g.u[1] + b*g.n[1]];
+        if(on) ctx.lineTo(q[0],q[1]); else { ctx.moveTo(q[0],q[1]); on = true; }
+      } else on = false;
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+    // the mirror itself
+    const ml = Math.min(T.R-T.L, T.B-T.Tp)*0.42;
+    const grd = ctx.createLinearGradient(g.X - 6*g.u[0], g.Y - 6*g.u[1], g.X + 6*g.u[0], g.Y + 6*g.u[1]);
+    grd.addColorStop(0,'rgba(104,72,207,.05)'); grd.addColorStop(.5,'rgba(104,72,207,.35)'); grd.addColorStop(1,'rgba(104,72,207,.05)');
+    ctx.strokeStyle = grd; ctx.lineWidth = 12; ctx.lineCap = 'butt';
+    ctx.beginPath(); ctx.moveTo(g.X - ml*g.n[0], g.Y - ml*g.n[1]); ctx.lineTo(g.X + ml*g.n[0], g.Y + ml*g.n[1]); ctx.stroke();
+    ctx.strokeStyle = COL.mirror; ctx.lineWidth = 1.5; ctx.setLineDash([2,4]); ctx.stroke(); ctx.setLineDash([]); ctx.lineCap = 'round';
+    ctx.fillStyle = COL.mirror; ctx.font = '600 11.5px ' + FONT; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    const up = g.n[1] < 0 ? 1 : -1, lx = g.X + up*ml*0.92*g.n[0], ly = g.Y + up*ml*0.92*g.n[1];
+    ctx.fillText('mirror (normal)', clamp(lx + 8, T.L + 4, T.R - 100), clamp(ly, T.Tp + 10, T.B - 10));
+  } else {
+    ctx.strokeStyle = COL.curve; ctx.lineWidth = 3; ctx.beginPath();
+    cps.forEach((p,i) => i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1])); ctx.stroke();
+  }
+
+  // chord
+  if(this.show.chord){
+    const c = this.chord();
+    const A = [T.sx(c.xa), T.sy(c.ya)], B = [T.sx(c.xb), T.sy(c.yb)];
+    const dx = B[0]-A[0], dy = B[1]-A[1], L = Math.hypot(dx,dy) || 1, ex = 40;
+    ctx.strokeStyle = COL.chord; ctx.lineWidth = 2.2; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(A[0]-dx/L*ex, A[1]-dy/L*ex); ctx.lineTo(B[0]+dx/L*ex, B[1]+dy/L*ex); ctx.stroke(); ctx.setLineDash([]);
+    [A,B].forEach(p => { ctx.beginPath(); ctx.arc(p[0],p[1],5,0,7); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = COL.chord; ctx.lineWidth = 2.2; ctx.stroke(); });
+  }
+
+  // true tangent
+  if(this.show.truth) this.fullLine(ctx, this.s(this.px), COL.truth, 2.6, [10,6]);
+
+  // student's line
+  const side = -this.curveSide();
+  this.fullLine(ctx, this.m, COL.pencil, 2.4);
+
+  // gradient triangle
+  if(this.show.tri){
+    const p = this.triPts(), A = p[0].x <= p[1].x ? p[0] : p[1], C = p[0].x <= p[1].x ? p[1] : p[0];
+    const Bc = this.m >= 0 ? {x:C.x, y:A.y} : {x:A.x, y:C.y};
+    const sA = [T.sx(A.x), T.sy(A.y)], sB = [T.sx(Bc.x), T.sy(Bc.y)], sC = [T.sx(C.x), T.sy(C.y)];
+    ctx.beginPath(); ctx.moveTo(sA[0],sA[1]); ctx.lineTo(sB[0],sB[1]); ctx.lineTo(sC[0],sC[1]); ctx.closePath();
+    ctx.fillStyle = COL.triFill; ctx.fill();
+    ctx.strokeStyle = COL.tri; ctx.lineWidth = 1.8; ctx.setLineDash([6,4]);
+    ctx.beginPath(); ctx.moveTo(sA[0],sA[1]); ctx.lineTo(sB[0],sB[1]); ctx.lineTo(sC[0],sC[1]); ctx.stroke(); ctx.setLineDash([]);
+    // right-angle mark
+    const k = 8, gx = Math.sign((sA[0]+sC[0])/2 - sB[0]) || 1, gy = Math.sign((sA[1]+sC[1])/2 - sB[1]) || 1;
+    ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(sB[0]+gx*k, sB[1]); ctx.lineTo(sB[0]+gx*k, sB[1]+gy*k); ctx.lineTo(sB[0], sB[1]+gy*k); ctx.stroke();
+    // labels on the outside of each leg
+    const hz = this.m >= 0 ? [sA, sB] : [sB, sC], vt = this.m >= 0 ? [sB, sC] : [sA, sB];
+    const dxv = C.x - A.x, dyv = this.m >= 0 ? C.y - A.y : C.y - A.y;
+    const hzY = hz[0][1], below = (sA[1]+sC[1])/2 < hzY; // interior is above the horizontal leg
+    const vtX = vt[0][0], interiorLeft = (sA[0]+sC[0])/2 < vtX;
+    ctx.font = '700 ' + (sm ? '11.5px ' : '12.5px ') + FONT; ctx.fillStyle = COL.tri;
+    const tx1 = this.show.triVals ? 'Δx = ' + fmt(dxv, 3) + (this.lab.xu ? ' ' + this.lab.xu : '') : 'Δx';
+    const tx2 = this.show.triVals ? 'Δy = ' + fmt(dyv, 3) + (this.lab.yu ? ' ' + this.lab.yu : '') : 'Δy';
+    this.tag(ctx, tx1, (hz[0][0]+hz[1][0])/2, hzY + (below ? 14 : -14), 'center');
+    this.tag(ctx, tx2, vtX + (interiorLeft ? 10 : -10), (vt[0][1]+vt[1][1])/2, interiorLeft ? 'left' : 'right');
+    this._tri = [sA, sC];
+  } else this._tri = null;
+  ctx.restore(); // end clip
+
+  // data points and error bars
+  this.data.forEach(p => {
+    const X = T.sx(p.x), Y = T.sy(p.y);
+    ctx.strokeStyle = 'rgba(35,49,63,.55)'; ctx.lineWidth = 1.2; ctx.beginPath();
+    if(p.ey){ const a = T.sy(p.y+p.ey), b = T.sy(p.y-p.ey); if(Math.abs(a-b) > 3){ ctx.moveTo(X,a); ctx.lineTo(X,b); ctx.moveTo(X-4,a); ctx.lineTo(X+4,a); ctx.moveTo(X-4,b); ctx.lineTo(X+4,b); } }
+    if(p.ex){ const a = T.sx(p.x+p.ex), b = T.sx(p.x-p.ex); if(Math.abs(a-b) > 3){ ctx.moveTo(a,Y); ctx.lineTo(b,Y); ctx.moveTo(a,Y-4); ctx.lineTo(a,Y+4); ctx.moveTo(b,Y-4); ctx.lineTo(b,Y+4); } }
+    ctx.stroke();
+    ctx.strokeStyle = COL.data; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(X-4,Y-4); ctx.lineTo(X+4,Y+4); ctx.moveTo(X+4,Y-4); ctx.lineTo(X-4,Y+4); ctx.stroke();
+  });
+
+  // triangle corner handles
+  if(this._tri && this.can.tri){
+    this._tri.forEach(p => { ctx.beginPath(); ctx.rect(p[0]-6, p[1]-6, 12, 12); ctx.fillStyle = '#fff'; ctx.fill(); ctx.strokeStyle = COL.tri; ctx.lineWidth = 2.2; ctx.stroke(); });
+  } else if(this._tri){
+    this._tri.forEach(p => { ctx.beginPath(); ctx.arc(p[0], p[1], 3.5, 0, 7); ctx.fillStyle = COL.tri; ctx.fill(); });
+  }
+
+  // rotation handles at the ends of the line
+  if(this.show.ruler && this.can.rot){
+    const h = this.handles();
+    [h.A, h.B].forEach(p => {
+      ctx.beginPath(); ctx.arc(p[0], p[1], 11, 0, 7); ctx.fillStyle = COL.handle; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.8; ctx.beginPath(); ctx.arc(p[0], p[1], 5, -2.4, 1.6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p[0]-0.2, p[1]+5); ctx.lineTo(p[0]+2.8, p[1]+6.8); ctx.stroke();
+    });
+    this._handles = [h.A, h.B];
+  } else this._handles = [];
+
+  // point P
+  const PX = g.X, PY = g.Y;
+  if(this.can.P){ ctx.beginPath(); ctx.arc(PX, PY, 14, 0, 7); ctx.fillStyle = 'rgba(11,122,117,.16)'; ctx.fill(); }
+  ctx.beginPath(); ctx.arc(PX, PY, 7, 0, 7); ctx.fillStyle = COL.P; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke();
+  // guide lines from the axes to P
+  ctx.save(); ctx.setLineDash([3,4]); ctx.strokeStyle = 'rgba(11,122,117,.55)'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(PX, T.B); ctx.lineTo(PX, PY + 8); ctx.stroke(); ctx.restore();
+  ctx.font = '700 15px "Space Grotesk",' + FONT; ctx.fillStyle = '#0b4d5a';
+  const off = 16, lx = PX + side*g.n[0]*off, ly = PY + side*g.n[1]*off;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('P', clamp(lx, T.L + 8, T.R - 8), clamp(ly, T.Tp + 8, T.B - 8));
+  // x-value flag on axis
+  ctx.font = '600 11px ' + MONO; const xs = (this.lab.xl.split(' ').pop() || 'x') + ' = ' + fmt(this.px, 3);
+  const tw = ctx.measureText(xs).width + 10;
+  ctx.fillStyle = COL.P; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(PX - tw/2, T.B - 20, tw, 17, 5) : ctx.rect(PX - tw/2, T.B - 20, tw, 17); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.fillText(xs, PX, T.B - 11.5);
+
+  if(this.show.lens) this.drawLens(ctx, g);
+};
+VP.tag = function(ctx, text, x, y, align){
+  const T = this.T, w = ctx.measureText(text).width, pad = 4;
+  let left = align === 'center' ? x - w/2 : align === 'left' ? x : x - w;
+  left = clamp(left, T.L + 3, T.R - w - 3); y = clamp(y, T.Tp + 10, T.B - 32);
+  ctx.fillStyle = 'rgba(255,253,245,.9)'; ctx.fillRect(left - pad, y - 9, w + 2*pad, 18);
+  ctx.fillStyle = COL.tri; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(text, left, y);
+};
+VP.chord = function(){
+  const e = this.ext(), h = this.chordW*(e.max-e.min);
+  // a forward chord from P (like an average velocity from t to t + Δt); backwards if P is near the end
+  let xa = this.px, xb = this.px + h;
+  if(xb > e.max){ xb = this.px; xa = Math.max(e.min, this.px - h); }
+  if(xb - xa < 1e-9){ xa = Math.max(e.min, this.px - 1e-3); xb = xa + 2e-3; }
+  const ya = this.y(xa), yb = this.y(xb);
+  return {xa:xa, xb:xb, ya:ya, yb:yb, m:(yb-ya)/(xb-xa)};
+};
+VP.drawLens = function(ctx, g){
+  const T = this.T, r = T.small ? 42 : 74, Z = 4, pad = 8;
+  const corners = [[T.R - r - pad, T.Tp + r + pad], [T.L + r + pad, T.Tp + r + pad], [T.R - r - pad, T.B - r - pad - 22], [T.L + r + pad, T.B - r - pad - 22]];
+  // pick the corner farthest from P
+  let best = corners[0], bd = -1;
+  corners.forEach(c => { const dd = Math.hypot(c[0]-g.X, c[1]-g.Y); if(dd > bd){ bd = dd; best = c; } });
+  const cx = best[0], cy = best[1], X = g.X, Y = g.Y;
+  const map = (x, y) => [cx + (x - X)*Z, cy + (y - Y)*Z];
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, r + 4, 0, 7); ctx.fillStyle = 'rgba(19,32,47,.18)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.clip();
+  ctx.fillStyle = COL.paper; ctx.fillRect(cx - r, cy - r, 2*r, 2*r);
+  // local grid
+  const span = r/Z;
+  [[T.ax.minor, false], [T.ay.minor, true]].forEach(pair => {
+    const st = pair[0], hz = pair[1];
+    ctx.strokeStyle = COL.minor; ctx.lineWidth = 1; ctx.beginPath();
+    if(!hz){
+      const a = T.ix(X - span), b = T.ix(X + span);
+      for(let v = Math.floor(a/st)*st; v <= b; v += st){ const p = map(T.sx(v), 0); ctx.moveTo(p[0], cy - r); ctx.lineTo(p[0], cy + r); }
+    } else {
+      const a = T.iy(Y + span), b = T.iy(Y - span);
+      for(let v = Math.floor(a/st)*st; v <= b; v += st){ const p = map(0, T.sy(v)); ctx.moveTo(cx - r, p[1]); ctx.lineTo(cx + r, p[1]); }
+    }
+    ctx.stroke();
+  });
+  // curve near P
+  const e = this.ext(), xa = clamp(T.ix(X - span*1.5), e.min, e.max), xb = clamp(T.ix(X + span*1.5), e.min, e.max);
+  ctx.strokeStyle = COL.curve; ctx.lineWidth = 3; ctx.beginPath();
+  for(let i=0;i<=80;i++){ const x = xa + (xb-xa)*i/80, p = map(T.sx(x), T.sy(this.y(x))); i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1]); }
+  ctx.stroke();
+  const seg = (m, col, w, dash) => {
+    const gg = this.lineGeom(m), L = span*1.6, a = map(X - L*gg.u[0], Y - L*gg.u[1]), b = map(X + L*gg.u[0], Y + L*gg.u[1]);
+    ctx.strokeStyle = col; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.setLineDash([]);
+  };
+  if(this.show.truth) seg(this.s(this.px), COL.truth, 2.4, [8,5]);
+  seg(this.m, COL.pencil, 2);
+  ctx.beginPath(); ctx.arc(cx, cy, 4.5, 0, 7); ctx.fillStyle = COL.P; ctx.fill();
+  ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.strokeStyle = '#23313f'; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.font = '700 11px ' + MONO; const t = '×' + Z + ' near P', w = ctx.measureText(t).width + 12;
+  ctx.fillStyle = '#23313f'; ctx.beginPath(); ctx.rect(cx - w/2, cy + r - 9, w, 17); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(t, cx, cy + r - 0.5);
+  this._lens = {cx:cx, cy:cy, r:r};
+};
+
+/* ---------- pointer & keyboard ---------- */
+VP.bind = function(){
+  const cv = this.cv;
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const near = (p, q, r) => q && Math.hypot(p[0]-q[0], p[1]-q[1]) <= r;
+  cv.addEventListener('pointerdown', e => {
+    if(!this.T) return;
+    const p = pos(e), hr = e.pointerType === 'touch' ? 26 : 15;
+    const g = this.lineGeom(this.m);
+    let hit = null;
+    if(this.can.tri && this._tri){ this._tri.forEach((q,i) => { if(!hit && near(p, q, hr)) hit = {k:'tri', i:i}; }); }
+    if(!hit && this.can.rot){ this._handles.forEach(q => { if(!hit && near(p, q, hr + 2)) hit = {k:'rot'}; }); }
+    if(!hit && this.can.P && near(p, [g.X, g.Y], hr + 2)) hit = {k:'P'};
+    if(!hit && this.can.P){ const c = this.nearestOnCurve(p); if(c.d <= hr){ hit = {k:'P'}; this.px = c.x; this.changed(); } }
+    if(!hit && this.can.rot){
+      const T = this.T;
+      if(p[0] >= T.L && p[0] <= T.R && p[1] >= T.Tp && p[1] <= T.B) hit = {k:'rot', free:true};
+    }
+    if(!hit) return;
+    this.drag = hit; this.drag.moved = false;
+    try { cv.setPointerCapture(e.pointerId); } catch(err){}
+    cv.classList.add('dragging');
+    e.preventDefault();
+  });
+  cv.addEventListener('pointermove', e => {
+    if(!this.T) return;
+    const p = pos(e);
+    if(!this.drag){
+      const g = this.lineGeom(this.m), hr = 15;
+      let c = 'default';
+      if(this.can.rot && this._handles.some(q => near(p, q, hr + 2))) c = 'grab';
+      else if(this.can.tri && this._tri && this._tri.some(q => near(p, q, hr))) c = 'move';
+      else if(this.can.P && near(p, [g.X, g.Y], hr + 2)) c = 'move';
+      else if(this.can.P && this.nearestOnCurve(p).d <= hr) c = 'pointer';
+      else if(this.can.rot) c = 'grab';
+      cv.style.cursor = c;
+      return;
+    }
+    this.drag.moved = true;
+    const g = this.lineGeom(this.m);
+    if(this.drag.k === 'rot'){
+      const dx = p[0] - g.X, dy = p[1] - g.Y;
+      if(Math.hypot(dx, dy) < 18) return;
+      let a = Math.atan2(-dy, dx);
+      if(a > Math.PI/2) a -= Math.PI; if(a < -Math.PI/2) a += Math.PI;
+      this.setAngle(a);
+    } else if(this.drag.k === 'P'){
+      this.px = this.nearestOnCurve(p).x;
+    } else if(this.drag.k === 'tri'){
+      const t = (p[0]-g.X)*g.u[0] + (p[1]-g.Y)*g.u[1];
+      const a = g.t0 + 4, b = g.t1 - 4;
+      this.fr[this.drag.i] = clamp((t - a)/(b - a), 0, 1);
+    }
+    this.changed();
+  });
+  const end = () => { if(this.drag){ this.drag = null; cv.classList.remove('dragging'); this.onChange(); } };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('keydown', e => {
+    const step = e.shiftKey ? 0.1 : e.altKey ? 2 : 0.5;
+    if(this.can.rot && (e.key === 'ArrowLeft' || e.key === 'ArrowUp')){ this.rotate(step); e.preventDefault(); }
+    else if(this.can.rot && (e.key === 'ArrowRight' || e.key === 'ArrowDown')){ this.rotate(-step); e.preventDefault(); }
+    else if(this.can.P && (e.key === ',' || e.key === '.')){ const ex = this.ext(); this.px = clamp(this.px + (e.key === ',' ? -1 : 1)*(ex.max-ex.min)/100, ex.min, ex.max); this.changed(); e.preventDefault(); }
+    else if(e.key === 'Enter' && this.onEnter){ this.onEnter(); e.preventDefault(); }
+  });
+};
+VP.rotate = function(deg){ if(!this.T) return; this.setAngle(this.angle() + deg*DEG); this.changed(); };
+VP.nearestOnCurve = function(p){
+  const e = this.ext(), T = this.T; let best = {d:Infinity, x:this.px};
+  for(let i=0;i<=400;i++){
+    const x = e.min + (e.max-e.min)*i/400, y = this.y(x);
+    if(!isFinite(y)) continue;
+    const d = Math.hypot(T.sx(x) - p[0], T.sy(y) - p[1]);
+    if(d < best.d) best = {d:d, x:x};
+  }
+  return best;
+};
+function holdRepeat(btn, fn){
+  let t1 = 0, t2 = 0;
+  const stop = () => { clearTimeout(t1); clearInterval(t2); };
+  btn.addEventListener('pointerdown', e => { e.preventDefault(); fn(); t1 = setTimeout(() => { t2 = setInterval(fn, 60); }, 350); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev => btn.addEventListener(ev, stop));
+  btn.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fn(); } });
+}
+function chip(btn, get, set){
+  const sync = () => btn.setAttribute('aria-pressed', get() ? 'true' : 'false');
+  btn.addEventListener('click', () => { set(!get()); sync(); });
+  sync(); return sync;
+}
+const gradUnitOf = v => divUnit(v.lab.yu, v.lab.xu);
+const aliasOf = u => ALIAS[u] || '';
+
+/* ======================= EXPLORE ======================= */
+const ex = new View($('ex-canvas'));
+let exScen = SCEN[0], exCustom = false;
+(function buildSelect(){
+  const sel = $('ex-scen'), groups = {};
+  SCEN.forEach(s => { (groups[s.topic] = groups[s.topic] || []).push(s); });
+  Object.keys(groups).forEach(k => {
+    const og = document.createElement('optgroup'); og.label = k;
+    groups[k].forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = s.title; og.appendChild(o); });
+    sel.appendChild(og);
+  });
+  const o = document.createElement('option'); o.value = '__own'; o.textContent = 'My own results (blank table)';
+  const og = document.createElement('optgroup'); og.label = 'Your data'; og.appendChild(o); sel.appendChild(og);
+  const ms = $('ex-model');
+  Object.keys(MODELS).forEach(k => { const o2 = document.createElement('option'); o2.value = k; o2.textContent = MODELS[k].label; ms.appendChild(o2); });
+})();
+
+function randomAngleOffset(){ return (Math.random() < .5 ? -1 : 1) * (12 + Math.random()*16) * DEG; }
+function exLoad(id){
+  if(id === '__own'){
+    exCustom = true; exScen = null;
+    ex.data = [{x:0,y:0,ex:0,ey:0},{x:1,y:1,ex:0,ey:0},{x:2,y:4,ex:0,ey:0},{x:3,y:9,ex:0,ey:0}];
+    ex.model = 'spline'; ex.lab = {xl:'x', xu:'', yl:'y', yu:''};
+    $('ex-data').open = true;
+  } else {
+    exCustom = false; exScen = SCEN.find(s => s.id === id);
+    ex.data = genData(exScen); ex.model = exScen.model;
+    ex.lab = {xl:exScen.xl, xu:exScen.xu, yl:exScen.yl, yu:exScen.yu};
+  }
+  ex.refit();
+  const e = ex.ext();
+  const pr = exScen ? exScen.pr : [0.2, 0.8];
+  ex.px = e.min + (e.max-e.min)*((pr[0]+pr[1])/2);
+  ex.fr = [0.08, 0.92];
+  ex.resize(); ex.layout();
+  ex.setAngle(ex.trueAngle() + randomAngleOffset());
+  exSetTruth(false);
+  syncDataPanel();
+  ex.changed();
+}
+function exNewPoint(){
+  const e = ex.ext(), pr = exScen ? exScen.pr : [0.1, 0.9];
+  ex.px = e.min + (e.max-e.min)*(pr[0] + Math.random()*(pr[1]-pr[0]));
+  ex.resize(); ex.layout();
+  ex.setAngle(ex.trueAngle() + randomAngleOffset());
+  exSetTruth(false);
+  ex.changed();
+}
+let syncTruth = null;
+function exSetTruth(v){ ex.show.truth = v; if(syncTruth) syncTruth(); }
+$('ex-scen').addEventListener('change', function(){ exLoad(this.value); });
+$('ex-random').addEventListener('click', exNewPoint);
+chip($('ex-lens'), () => ex.show.lens, v => { ex.show.lens = v; ex.changed(); });
+chip($('ex-mirror'), () => ex.show.mirror, v => { ex.show.mirror = v; ex.changed(); });
+chip($('ex-tri'), () => ex.show.tri, v => { ex.show.tri = v; ex.can.tri = v; ex.changed(); });
+chip($('ex-chord'), () => ex.show.chord, v => { ex.show.chord = v; $('ex-chordctl').hidden = !v; ex.changed(); });
+syncTruth = chip($('ex-truth'), () => ex.show.truth, v => { ex.show.truth = v; ex.changed(); });
+holdRepeat($('ex-rotl'), () => ex.rotate(0.25));
+holdRepeat($('ex-rotr'), () => ex.rotate(-0.25));
+$('ex-snap').addEventListener('click', () => { ex.m = ex.s(ex.px); exSetTruth(true); ex.changed(); });
+$('ex-chordw').addEventListener('input', function(){ ex.chordW = this.value/100; ex.changed(); });
+
+function meter(errDeg){
+  const pct = clamp(errDeg/15*100, 0, 100);
+  const cls = errDeg <= 2 ? 'good' : errDeg <= 4 ? 'good' : errDeg <= 8 ? 'ok' : 'bad';
+  const txt = errDeg <= 2 ? 'Excellent — that’s a tangent.' : errDeg <= 4 ? 'Good — very close.' : errDeg <= 8 ? 'Close — keep adjusting.' : 'Not yet a tangent.';
+  return '<div class="meter"><div class="meter-bar"><div class="meter-pin" style="left:' + pct + '%"></div></div>' +
+    '<div class="meter-scale"><span>0°</span><span>2°</span><span>4°</span><span>8°</span><span>15°+</span></div></div>' +
+    '<div class="verdict ' + cls + '">' + txt + '</div>';
+}
+function steerText(v){
+  const aS = v.angle(), aT = v.trueAngle(), d = (aS - aT)/DEG;
+  if(Math.abs(d) < 1) return '';
+  return d > 0 ? 'Rotate clockwise a little.' : 'Rotate anticlockwise a little.';
+}
+function exReadout(){
+  if(!ex.T) return;
+  const gu = gradUnitOf(ex), al = aliasOf(gu), m = ex.m;
+  const xsym = ex.lab.xl.split(' ').pop(), ysym = ex.lab.yl.split(' ').pop();
+  let h = '<div class="ro-lab">Gradient of your tangent</div>' +
+    '<div class="ro-big">' + fmt(m, 3) + '<span class="u">' + esc(gu) + '</span></div>' +
+    (al ? '<div class="ro-alias">(' + esc(gu) + ' = ' + al + ')</div>' : '');
+  if(exScen && !exCustom){
+    const M = exScen.mean, val = M.sign*m;
+    h += '<div class="meaning">This gradient tells you the <b>' + esc(M.q) + '</b> at ' + esc(xsym) + ' = ' + fmt(ex.px, 3) + ' ' + esc(ex.lab.xu) +
+      '<span class="eq">' + esc(M.eq) + (M.sign < 0 ? ' = ' + fmt(val, 3) + ' ' + esc(al || gu) : '') + '</span></div>';
+  } else {
+    h += '<div class="meaning">Rate of change of <b>' + esc(ex.lab.yl || 'y') + '</b> with <b>' + esc(ex.lab.xl || 'x') + '</b> at P.</div>';
+  }
+  h += '<dl class="kv"><dt>P</dt><dd>(' + fmt(ex.px, 3) + ', ' + fmt(ex.yP(), 3) + ')</dd>';
+  if(ex.show.tri){
+    const p = ex.triPts(), A = p[0].x <= p[1].x ? p[0] : p[1], C = p[0].x <= p[1].x ? p[1] : p[0];
+    h += '<dt>Δ' + esc(ysym) + '</dt><dd>' + fmt(C.y - A.y, 3) + ' ' + esc(ex.lab.yu) + '</dd>' +
+         '<dt>Δ' + esc(xsym) + '</dt><dd>' + fmt(C.x - A.x, 3) + ' ' + esc(ex.lab.xu) + '</dd>';
+  }
+  if(ex.show.chord){ const c = ex.chord(); $('ex-chordwv').textContent = 'Δ' + xsym + ' = ' + fmt(c.xb - c.xa, 2) + ' ' + ex.lab.xu; h += '<dt style="color:var(--violet)">Chord gradient</dt><dd>' + fmt(c.m, 3) + '</dd>'; }
+  h += '</dl>';
+  if(ex.show.chord){
+    const c = ex.chord(), tr = ex.s(ex.px);
+    h += '<p class="small muted" style="margin:8px 0 0">The chord from ' + esc(xsym) + ' = ' + fmt(c.xa,3) + ' to ' + fmt(c.xb,3) + ' gives the <i>average</i> gradient over that interval, ' + fmt(Math.abs((c.m - tr)/(tr || 1))*100, 2) + '% away from the tangent. ' +
+      (Math.abs(c.m - tr) <= 0.03*Math.abs(tr) + 1e-12 ? 'The chord is now short enough to be very close to the tangent.' : 'Make the chord narrower and watch it approach the tangent.') + '</p>';
+  }
+  if(ex.show.mirror){
+    const k = 2*Math.abs(ex.angle() - ex.trueAngle())/DEG;
+    h += '<div class="divider"></div><div class="ro-lab" style="color:var(--violet)">Mirror check</div><p class="small" style="margin:4px 0 0">' +
+      (k < 2 ? 'The reflection joins the curve smoothly — no kink. Your tangent is at 90° to the mirror.' : 'There is a kink of about ' + fmt(k, 2) + '° where the reflection meets the curve at P. Rotate until it disappears.') + '</p>';
+  }
+  if(ex.show.truth){
+    const tr = ex.s(ex.px), err = Math.abs(ex.angle() - ex.trueAngle())/DEG;
+    const pc = Math.abs(tr) > 1e-12 ? Math.abs((m - tr)/tr)*100 : NaN;
+    h += '<div class="divider"></div><div class="ro-lab" style="color:var(--green)">True tangent (dashed green)</div>' +
+      '<div style="font-family:var(--mono);font-size:18px;margin-top:2px">' + fmt(tr, 3) + ' <span class="muted" style="font-size:13px">' + esc(gu) + '</span></div>' +
+      '<div class="small muted">Your line is ' + fmt(err, 2) + '° out' + (isFinite(pc) ? ' · gradient ' + fmt(pc, 2) + '% different' : '') + '. ' + steerText(ex) + '</div>' + meter(err);
+  }
+  $('ex-readout').innerHTML = h;
+}
+function exTip(){
+  let h = '';
+  if(exScen && !exCustom){
+    h = '<span class="pill">' + esc(exScen.topic) + '</span><h3 style="margin-top:8px">' + esc(exScen.title) + '</h3><p>' + esc(exScen.ctx) + '</p><p><b>Physics:</b> ' + esc(exScen.note) + '</p>';
+  } else {
+    h = '<span class="pill">Your data</span><h3 style="margin-top:8px">Your own results</h3><p>Edit the table below. Choose the curve of best fit that matches the physics, or use a smooth curve through every point.</p>';
+  }
+  h += '<div class="divider"></div><h3>Things to try</h3><ul>' +
+    '<li>Rotate until the curve sits on <b>one side</b> of the line near P, then press <i>Reveal</i> to check.</li>' +
+    '<li>Turn on the <b>mirror method</b>. Rotate until the dashed reflection carries on smoothly from the curve.</li>' +
+    '<li>Drag the triangle corners in close to P: Δx and Δy get small, so reading errors matter more.</li></ul>';
+  $('ex-tip').innerHTML = h;
+}
+ex.onChange = () => { exReadout(); if(!ex.drag) exTipMaybe(); };
+let lastTipKey = '';
+function exTipMaybe(){ const k = (exScen ? exScen.id : 'own') + exCustom; if(k !== lastTipKey){ lastTipKey = k; exTip(); } }
+
+/* ---- data panel ---- */
+function syncDataPanel(){
+  $('ex-xlab').value = ex.lab.xl; $('ex-xunit').value = ex.lab.xu;
+  $('ex-ylab').value = ex.lab.yl; $('ex-yunit').value = ex.lab.yu;
+  $('ex-model').value = ex.model;
+  renderTable();
+}
+function toCustom(){
+  if(!exCustom){ exCustom = true; lastTipKey = ''; }
+}
+function afterDataEdit(){
+  toCustom();
+  if(ex.data.length < 2) return;
+  ex.refit();
+  const e = ex.ext(); ex.px = clamp(ex.px, e.min, e.max);
+  ex.changed();
+}
+function renderTable(){
+  const tb = $('ex-tbody'); tb.innerHTML = '';
+  ex.data.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = ['x','y','ex','ey'].map(k => '<td><input class="in" type="number" step="any" data-k="' + k + '" value="' + r[k] + '" aria-label="' + k + ' row ' + (i+1) + '"></td>').join('') +
+      '<td><button class="xbtn" title="Remove row" aria-label="Remove row ' + (i+1) + '">×</button></td>';
+    tr.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+      const v = parseFloat(inp.value); if(!isFinite(v)) return;
+      r[inp.dataset.k] = (inp.dataset.k === 'ex' || inp.dataset.k === 'ey') ? Math.abs(v) : v;
+      afterDataEdit();
+    }));
+    tr.querySelector('.xbtn').addEventListener('click', () => {
+      if(ex.data.length <= 3){ flash('Keep at least three points so a curve can be drawn.'); return; }
+      ex.data.splice(i, 1); renderTable(); afterDataEdit();
+    });
+    tb.appendChild(tr);
+  });
+}
+$('ex-add').addEventListener('click', () => {
+  const s = sortD(ex.data), last = s[s.length-1], prev = s[s.length-2];
+  const dx = last.x - prev.x || 1, nx = +(last.x + dx).toPrecision(6);
+  ex.data.push({x:nx, y:+(+ex.y(nx)).toPrecision(3) || 0, ex:last.ex, ey:last.ey});
+  renderTable(); afterDataEdit();
+  const w = document.querySelector('#ex-data .tbl-wrap'); w.scrollTop = w.scrollHeight;
+});
+['xlab','xunit','ylab','yunit'].forEach(k => $('ex-' + k).addEventListener('input', () => {
+  ex.lab = {xl:$('ex-xlab').value, xu:$('ex-xunit').value, yl:$('ex-ylab').value, yu:$('ex-yunit').value};
+  toCustom(); ex.changed();
+}));
+$('ex-model').addEventListener('change', function(){ ex.model = this.value; ex.refit(); ex.changed(); });
+let flashT = 0;
+function flash(msg){ const el = $('ex-status'); el.textContent = msg; clearTimeout(flashT); flashT = setTimeout(() => el.textContent = '', 6000); }
+const SAVE_KEY = 'tangent-trainer-data-v1';
+$('ex-save').addEventListener('click', () => {
+  const ok = lsSet(SAVE_KEY, JSON.stringify({data:ex.data, lab:ex.lab, model:ex.model, at:new Date().toISOString()}));
+  flash(ok ? 'Saved ' + ex.data.length + ' points in this browser.' : 'Could not save: this browser has storage switched off.');
+});
+$('ex-load').addEventListener('click', () => {
+  const raw = lsGet(SAVE_KEY);
+  if(!raw){ flash('Nothing saved in this browser yet.'); return; }
+  try{
+    const p = JSON.parse(raw);
+    if(!p.data || p.data.length < 2) throw 0;
+    ex.data = p.data.map(d => ({x:+d.x||0, y:+d.y||0, ex:Math.abs(+d.ex||0), ey:Math.abs(+d.ey||0)}));
+    ex.lab = p.lab || ex.lab; if(MODELS[p.model]) ex.model = p.model;
+    exCustom = true; exScen = null; lastTipKey = ''; $('ex-scen').value = '__own';
+    ex.refit(); const e = ex.ext(); ex.px = (e.min+e.max)/2;
+    syncDataPanel(); ex.changed();
+    flash('Loaded ' + ex.data.length + ' points saved ' + (p.at ? new Date(p.at).toLocaleString('en-GB') : 'earlier') + '.');
+  } catch(err){ flash('Could not read the saved data.'); }
+});
+function csvCell(v){ v = String(v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+$('ex-csv').addEventListener('click', () => {
+  const L = ex.lab;
+  const rows = [[L.xl + (L.xu ? ' / ' + L.xu : ''), L.yl + (L.yu ? ' / ' + L.yu : ''), '± ' + (L.xu || 'x'), '± ' + (L.yu || 'y')]];
+  ex.data.forEach(d => rows.push([d.x, d.y, d.ex, d.ey]));
+  const blob = new Blob(['﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n')], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tangent-data.csv';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+  flash('Downloaded tangent-data.csv');
+});
+function parseCSV(text){
+  const rows = []; let row = [], f = '', q = false;
+  text = text.replace(/^﻿/, '');
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(q){ if(c === '"'){ if(text[i+1] === '"'){ f += '"'; i++; } else q = false; } else f += c; }
+    else if(c === '"') q = true;
+    else if(c === ','){ row.push(f); f = ''; }
+    else if(c === '\n'){ row.push(f); rows.push(row); row = []; f = ''; }
+    else if(c !== '\r') f += c;
+  }
+  if(f.length || row.length){ row.push(f); rows.push(row); }
+  return rows.filter(r => !(r.length <= 1 && !(r[0]||'').trim()));
+}
+const splitLU = c => { const m = /^(.*?)\s*\/\s*([^\/]+)$/.exec((c||'').trim()); return m ? {l:m[1].trim(), u:m[2].trim()} : {l:(c||'').trim(), u:''}; };
+$('ex-imp-btn').addEventListener('click', () => $('ex-imp').click());
+$('ex-imp').addEventListener('change', function(){
+  const file = this.files && this.files[0]; if(!file) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    const rows = parseCSV(String(rd.result)); let start = 0;
+    if(rows.length && !(isFinite(parseFloat(rows[0][0])) && isFinite(parseFloat(rows[0][1])))){
+      const a = splitLU(rows[0][0]), b = splitLU(rows[0][1]);
+      ex.lab = {xl:a.l || 'x', xu:a.u, yl:b.l || 'y', yu:b.u}; start = 1;
+    }
+    const pts = [];
+    for(let i=start;i<rows.length;i++){
+      const r = rows[i], x = parseFloat(r[0]), y = parseFloat(r[1]);
+      if(!isFinite(x) || !isFinite(y)) continue;
+      const e1 = parseFloat(r[2]), e2 = parseFloat(r[3]);
+      pts.push({x:x, y:y, ex:isFinite(e1) ? Math.abs(e1) : 0, ey:isFinite(e2) ? Math.abs(e2) : 0});
+    }
+    if(pts.length < 3){ flash('That CSV needs at least three rows of x, y numbers.'); }
+    else {
+      ex.data = pts; exCustom = true; exScen = null; lastTipKey = ''; $('ex-scen').value = '__own';
+      ex.refit(); const e = ex.ext(); ex.px = (e.min+e.max)/2;
+      syncDataPanel(); ex.changed();
+      flash('Imported ' + pts.length + ' points from ' + file.name + '.');
+    }
+    this.value = '';
+  };
+  rd.readAsText(file);
+});
+ex.onEnter = () => { exSetTruth(!ex.show.truth); ex.changed(); };
+
+/* ======================= CHALLENGE ======================= */
+const ch = new View($('ch-canvas'));
+const G = {level:1, total:10, round:0, score:0, streak:0, best:0, errs:[], results:[], bag:[], last:null, sc:null, step:'draw', usedMirror:false, usedHint:false, roundPts:0, busy:false};
+const BEST_KEY = 'tangent-trainer-best-v1';
+const MAXR = {1:100, 2:150, 3:180};
+function bests(){ try { return JSON.parse(lsGet(BEST_KEY) || '{}') || {}; } catch(e){ return {}; } }
+function showBests(){
+  const b = bests();
+  document.querySelectorAll('[data-best]').forEach(el => { const v = b[el.dataset.best]; el.textContent = v ? 'Best: ' + v + ' pts' : 'Not played yet'; });
+}
+document.querySelectorAll('.lvl').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.lvl').forEach(b => b.setAttribute('aria-checked', b === btn ? 'true' : 'false'));
+  G.level = +btn.dataset.lvl;
+}));
+const syncChLens = chip($('ch-lens'), () => ch.show.lens, v => { ch.show.lens = v; ch.changed(); });
+const syncChMirror = chip($('ch-mirror'), () => ch.show.mirror, v => {
+  if(G.step !== 'draw') return;
+  ch.show.mirror = v; if(v) G.usedMirror = true; ch.changed();
+});
+holdRepeat($('ch-rotl'), () => { if(ch.can.rot) ch.rotate(0.25); });
+holdRepeat($('ch-rotr'), () => { if(ch.can.rot) ch.rotate(-0.25); });
+ch.onEnter = () => { const b = document.querySelector('#ch-action [data-primary], #ch-fb [data-primary]'); if(b && !b.disabled) b.click(); };
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function nextScen(){
+  if(!G.bag.length) G.bag = shuffle(SCEN.filter(s => !s.explore).slice());
+  let s = G.bag.pop();
+  if(G.last && s.id === G.last.id && G.bag.length){ G.bag.unshift(s); s = G.bag.pop(); }
+  G.last = s; return s;
+}
+function startGame(){
+  Object.assign(G, {round:0, score:0, streak:0, best:0, errs:[], results:[], bag:[], last:null});
+  $('ch-start').hidden = true; $('ch-game').hidden = false; $('ch-summary').hidden = true;
+  ch.show.lens = G.level < 3; syncChLens();
+  $('ch-mirror').disabled = G.level === 3;
+  $('ch-mirror').title = G.level === 3 ? 'Not available at Level 3' : 'Shows a mirror along the normal. Costs 30% of the drawing points.';
+  newRound();
+  $('ch-game').scrollIntoView({behavior:'smooth', block:'start'});
+}
+$('ch-go').addEventListener('click', startGame);
+$('sum-again').addEventListener('click', startGame);
+$('sum-levels').addEventListener('click', () => { $('ch-summary').hidden = true; $('ch-game').hidden = true; $('ch-start').hidden = false; showBests(); });
+$('ch-quit').addEventListener('click', () => { if(G.results.length) finish(); else { $('ch-game').hidden = true; $('ch-start').hidden = false; } });
+
+function xSym(v){ return v.lab.xl.split(' ').pop(); }
+function ySym(v){ return v.lab.yl.split(' ').pop(); }
+function hud(){
+  $('ch-round').textContent = Math.min(G.round+1, G.total) + '/' + G.total;
+  $('ch-score').textContent = G.score;
+  $('ch-streakn').textContent = G.streak;
+  $('ch-streak').classList.toggle('cold', G.streak < 2);
+  $('ch-dots').innerHTML = Array.from({length:G.total}, (_, i) => '<i class="' + (i < G.results.length ? 'r' + G.results[i] : i === G.round ? 'cur' : '') + '"></i>').join('');
+}
+function stepsHTML(){
+  const names = G.level === 1 ? ['Draw'] : G.level === 2 ? ['Draw','Measure'] : ['Draw','Measure','Interpret'];
+  const idx = {draw:0, measure:1, interpret:2, done:names.length}[G.step];
+  return names.length > 1 ? '<div class="steps">' + names.map((n,i) => '<span class="' + (i < idx ? 'done' : i === idx ? 'on' : '') + '">' + (i+1) + '. ' + n + '</span>').join('') + '</div>' : '';
+}
+function taskCard(){
+  const s = G.sc, xs = xSym(ch);
+  let prompt = 'Draw the tangent to the curve at <span class="mono">' + esc(xs) + ' = ' + fmt(ch.px, 3) + ' ' + esc(ch.lab.xu) + '</span>.';
+  if(G.level === 1) prompt += ' Its gradient gives the <b>' + esc(s.mean.q) + '</b>.';
+  else if(G.level === 2) prompt += ' Then use it to find the <b>' + esc(s.mean.q) + '</b>.';
+  else prompt += ' Then find its gradient and say what it tells you.';
+  $('ch-task').innerHTML = '<span class="pill">' + esc(s.topic) + '</span><h3 class="task-title">' + esc(s.title) + '</h3><p class="task-ctx">' + esc(s.ctx) + '</p><div class="prompt">' + prompt + '</div>' + stepsHTML();
+}
+function legend(){
+  const items = [['#0b7a75','solid','Curve of best fit'], ['var(--ink)','solid','Your line (pencil)']];
+  if(ch.show.truth) items.push(['#1c8f4e','dashed','True tangent']);
+  if(ch.show.tri) items.push(['#c26a00','dashed','Your triangle']);
+  $('ch-legend').innerHTML = items.map(i => '<span><i style="border-top-color:' + i[0] + ';border-top-style:' + i[1] + '"></i>' + i[2] + '</span>').join('');
+}
+function newRound(){
+  const s = G.sc = nextScen();
+  G.step = 'draw'; G.usedMirror = false; G.usedHint = false; G.roundPts = 0;
+  ch.data = genData(s); ch.model = s.model; ch.lab = {xl:s.xl, xu:s.xu, yl:s.yl, yu:s.yu};
+  ch.refit();
+  ch.resize(); ch.layout();
+  const e = ch.ext(), st = ch.T.ax.minor;
+  const lo = e.min + (e.max-e.min)*s.pr[0], hi = e.min + (e.max-e.min)*s.pr[1];
+  let px = lo + Math.random()*(hi-lo);
+  px = Math.round(px/st)*st; px = clamp(+px.toPrecision(10), e.min, e.max);
+  ch.px = px;
+  ch.setAngle(ch.trueAngle() + (Math.random() < .5 ? -1 : 1)*(14 + Math.random()*18)*DEG);
+  Object.assign(ch.show, {mirror:false, tri:false, triVals:false, truth:false, chord:false, ruler:true});
+  ch.can = {rot:true, P:false, tri:false};
+  ch.snapTri = true; ch.fr = [0.1, 0.9];
+  syncChMirror(); $('ch-mirror').disabled = G.level === 3;
+  taskCard(); legend(); hud();
+  $('ch-action').innerHTML = '<h3>Rotate the line</h3><p class="small muted" style="margin:6px 0 12px">Drag anywhere on the graph (or the orange ends) to turn the line about P. Stop when it just touches the curve at P without cutting across it.</p>' +
+    '<button class="btn wide big" data-primary id="ch-check">Check my tangent</button><p class="small muted" style="margin:8px 0 0;text-align:center">or press <kbd style="font-family:var(--mono)">Enter</kbd></p>';
+  $('ch-check').addEventListener('click', submitDraw);
+  $('ch-fb').innerHTML = '';
+  ch.changed();
+  try { ch.cv.focus({preventScroll:true}); } catch(e){}
+}
+function rateDraw(err){
+  if(err <= 1.5) return {pts:100, t:'Spot on!', c:'g', r:3};
+  if(err <= 3) return {pts:85, t:'Excellent', c:'g', r:3};
+  if(err <= 5) return {pts:65, t:'Good', c:'g', r:2};
+  if(err <= 8) return {pts:40, t:'Close', c:'o', r:1};
+  if(err <= 15) return {pts:15, t:'Not quite', c:'o', r:1};
+  return {pts:0, t:'Missed it', c:'b', r:0};
+}
+function submitDraw(){
+  if(G.step !== 'draw') return;
+  const aS = ch.angle(), aT = ch.trueAngle(), err = Math.abs(aS - aT)/DEG;
+  const mS = ch.m, mT = ch.s(ch.px), R = rateDraw(err);
+  let pts = R.pts; if(G.usedMirror) pts = Math.round(pts*0.7);
+  let bonus = 0;
+  if(err <= 5){ G.streak++; G.best = Math.max(G.best, G.streak); if(G.streak >= 2) bonus = Math.min(50, 10*(G.streak-1)); }
+  else G.streak = 0;
+  G.errs.push(err); G.roundPts = pts + bonus; G.drawRate = R.r;
+  const gu = gradUnitOf(ch);
+  const tips = [];
+  if(err > 1.5){
+    if(Math.sign(mS) !== Math.sign(mT) && Math.abs(mT) > 1e-9 && Math.abs(aT/DEG) > 3) tips.push('Your line slopes the wrong way: the curve is ' + (mT > 0 ? 'rising' : 'falling') + ' at P.');
+    else tips.push('Your line is too ' + (Math.abs(aS) > Math.abs(aT) ? 'steep' : 'shallow') + '. Rotate ' + (aS > aT ? 'clockwise' : 'anticlockwise') + ' by about ' + fmt(err, 2) + '°.');
+    if(err > 3) tips.push('A true tangent does not cut through the curve at P. Near P, the curve stays on one side of it.');
+  }
+  if(G.usedMirror) tips.push('Mirror method used: drawing points × 0.7.');
+  const pc = Math.abs(mT) > 1e-12 ? Math.abs((mS-mT)/mT)*100 : NaN;
+  $('ch-fb').innerHTML = '<div class="fb ' + R.c + '"><h3>' + R.t + '<span class="pts">+' + pts + (bonus ? ' <span style="color:var(--amber)">+' + bonus + ' streak</span>' : '') + '</span></h3>' +
+    '<dl class="kv" style="margin-top:8px"><dt>Angle error</dt><dd>' + fmt(err, 2) + '°</dd>' +
+    '<dt>Your gradient</dt><dd>' + fmt(mS, 3) + ' ' + esc(gu) + '</dd><dt>True gradient</dt><dd>' + fmt(mT, 3) + ' ' + esc(gu) + '</dd>' +
+    (isFinite(pc) ? '<dt>Difference</dt><dd>' + fmt(pc, 2) + '%</dd>' : '') + '</dl>' +
+    (tips.length ? '<ul>' + tips.map(t => '<li>' + t + '</li>').join('') + '</ul>' : '') + '</div>';
+  G.score += G.roundPts;
+  if(R.pts >= 85) burst();
+  // lock the line and show the truth
+  ch.can.rot = false; ch.show.ruler = false; ch.show.mirror = false; ch.show.truth = true; syncChMirror();
+  if(G.level === 1){ G.step = 'done'; nextButton(); }
+  else startMeasure();
+  taskCard(); legend(); hud(); ch.changed();
+}
+function nextButton(where){
+  const last = G.round + 1 >= G.total;
+  const html = '<button class="btn wide big" data-primary id="ch-next">' + (last ? 'See my results' : 'Next round') + ' <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>';
+  $('ch-action').innerHTML = '<h3>Round complete</h3><p class="small muted" style="margin:6px 0 12px">Round score: <b style="font-family:var(--mono)">' + G.roundPts + '</b>. Compare your line (solid) with the true tangent (dashed green).</p>' + html;
+  $('ch-next').addEventListener('click', nextRound);
+  $('ch-next').focus({preventScroll:true});
+}
+function nextRound(){
+  G.results.push(G.roundRate !== undefined ? G.roundRate : G.drawRate);
+  G.roundRate = undefined;
+  G.round++;
+  if(G.round >= G.total) finish(); else newRound();
+}
+function startMeasure(){
+  G.step = 'measure';
+  ch.show.tri = true; ch.show.triVals = false; ch.can.tri = true; ch.snapTri = true; ch.fr = [0.12, 0.88];
+  const gu = gradUnitOf(ch);
+  $('ch-action').innerHTML = '<h3>Now measure your line</h3><p class="small muted" style="margin:6px 0 4px">Your line is fixed. Drag the orange corners of the triangle (they click onto grid lines). Read Δ' + esc(ySym(ch)) + ' and Δ' + esc(xSym(ch)) + ' off the axis scales, then work out the gradient.</p>' +
+    '<p class="small" style="margin:4px 0 0">Tip: make the triangle <b>large</b>, at least half the length of your line.</p>' +
+    '<label class="lab" for="ch-ans" style="display:block;margin-top:12px">Gradient = Δ' + esc(ySym(ch)) + ' ÷ Δ' + esc(xSym(ch)) + '</label>' +
+    '<div class="ansrow"><input id="ch-ans" class="in" inputmode="decimal" autocomplete="off" placeholder="e.g. −1.25"><span class="unit">' + esc(gu) + '</span></div>' +
+    '<button class="btn wide" data-primary id="ch-mcheck" style="margin-top:10px">Check gradient</button>' +
+    '<p style="margin:10px 0 0;text-align:center"><button class="linkbtn" id="ch-hint">Show the triangle readings (half marks)</button></p>';
+  $('ch-mcheck').addEventListener('click', submitMeasure);
+  $('ch-hint').addEventListener('click', () => { G.usedHint = true; ch.show.triVals = true; ch.changed(); $('ch-hint').outerHTML = '<span class="small muted">Readings shown on the graph. Half marks for this step.</span>'; });
+  $('ch-ans').addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); submitMeasure(); } });
+}
+function parseAns(s){
+  s = String(s).trim().replace(/−|–/g, '-').replace(/\s/g, '').replace(/[x×]10\^?\(?(-?\d+)\)?/i, 'e$1').replace(/,/g, '.');
+  const v = parseFloat(s);
+  return /^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s) ? v : NaN;
+}
+function submitMeasure(){
+  if(G.step !== 'measure') return;
+  const g = parseAns($('ch-ans').value);
+  if(!isFinite(g)){ $('ch-ans').focus(); $('ch-ans').style.borderColor = 'var(--red)'; return; }
+  const T = ch.T, p = ch.triPts(), A = p[0].x <= p[1].x ? p[0] : p[1], C = p[0].x <= p[1].x ? p[1] : p[0];
+  const dx = C.x - A.x, dy = C.y - A.y, mS = ch.m, mT = ch.s(ch.px);
+  const gu = gradUnitOf(ch);
+  if(Math.abs(dx) < 1e-12){ $('ch-ans').style.borderColor = 'var(--red)'; return; }
+  const tol = 0.6*T.ay.minor/Math.abs(dx) + Math.abs(mS)*0.6*T.ax.minor/Math.abs(dx) + 0.02*Math.abs(mS);
+  const ok = Math.abs(g - mS) <= tol;
+  const geo = ch.lineGeom(mS), segLen = geo.t1 - geo.t0;
+  const hyp = Math.hypot(T.sx(C.x) - T.sx(A.x), T.sy(C.y) - T.sy(A.y));
+  const big = hyp >= 0.5*segLen;
+  let pts = ok ? 40 + (big ? 10 : 0) : 0;
+  if(G.usedHint) pts = Math.round(pts/2);
+  const tips = [];
+  if(!ok){
+    if(Math.sign(g) !== Math.sign(mS) && Math.abs(Math.abs(g) - Math.abs(mS)) <= tol) tips.push('Check the sign: your line slopes ' + (mS < 0 ? 'downwards, so the gradient is negative.' : 'upwards, so the gradient is positive.'));
+    else if(Math.abs(g) > 1e-12 && Math.abs(1/g - mS) <= tol) tips.push('It looks like you worked out Δx ÷ Δy. The gradient is Δy ÷ Δx (up ÷ along).');
+    else {
+      const r = Math.abs(g/mS), k = Math.round(Math.log10(r));
+      if(k !== 0 && Math.abs(r/Math.pow(10,k) - 1) < 0.1) tips.push('Out by a factor of ' + Math.pow(10, Math.abs(k)) + '. Check the axis scales and any powers of ten.');
+      else tips.push('Read the values where your corners sit from the axis numbers, not by counting squares.');
+    }
+  }
+  if(!big) tips.push('Your triangle is small. A larger triangle keeps reading errors a small fraction of Δx and Δy.');
+  const accurate = Math.abs(mT) > 1e-12 ? Math.abs(g - mT) <= 0.1*Math.abs(mT) : Math.abs(g) < tol;
+  G.roundPts += pts; G.score += pts;
+  if(G.level === 2){ G.roundRate = ok && accurate ? Math.max(G.drawRate, 2) : ok ? G.drawRate : Math.min(G.drawRate, 1); }
+  else G.measureOK = ok;
+  ch.show.triVals = true; ch.can.tri = false;
+  const cls = ok ? (big ? 'g' : 'o') : 'b';
+  $('ch-fb').innerHTML += '<div class="fb ' + cls + '" style="margin-top:12px"><h3>' + (ok ? 'Correct calculation' : 'Not quite') + '<span class="pts">+' + pts + '</span></h3>' +
+    '<dl class="kv" style="margin-top:8px"><dt>Δ' + esc(ySym(ch)) + '</dt><dd>' + fmt(dy, 3) + ' ' + esc(ch.lab.yu) + '</dd><dt>Δ' + esc(xSym(ch)) + '</dt><dd>' + fmt(dx, 3) + ' ' + esc(ch.lab.xu) + '</dd>' +
+    '<dt>Your line’s gradient</dt><dd>' + fmt(mS, 3) + ' ' + esc(gu) + '</dd><dt>You wrote</dt><dd>' + fmt(g, 3) + '</dd></dl>' +
+    '<p>' + (big ? '&#10003; Large triangle. ' : '') + (accurate ? '&#10003; Within 10% of the true gradient.' : 'Your answer is more than 10% from the true gradient (' + fmt(mT, 3) + ').') + '</p>' +
+    (tips.length ? '<ul>' + tips.map(t => '<li>' + t + '</li>').join('') + '</ul>' : '') + '</div>';
+  if(G.level === 2){ G.step = 'done'; nextButton(); }
+  else startInterpret();
+  taskCard(); legend(); hud(); ch.changed();
+}
+function startInterpret(){
+  G.step = 'interpret';
+  const s = G.sc, right = s.mean.q;
+  let pool = (s.mean.wrong || []).slice();
+  shuffle(DISTRACT.filter(d => d !== right && pool.indexOf(d) < 0)).forEach(d => { if(pool.length < 3) pool.push(d); });
+  const opts = shuffle([right].concat(pool.slice(0, 3)));
+  $('ch-action').innerHTML = '<h3>What does the gradient tell you?</h3><p class="small muted" style="margin:6px 0 0">The gradient of this ' + esc(ySym(ch)) + '–' + esc(xSym(ch)) + ' graph at P gives…</p>' +
+    '<div class="opts">' + opts.map((o, i) => '<button class="opt" data-o="' + esc(o) + '">' + String.fromCharCode(65+i) + '. ' + esc(o) + '</button>').join('') + '</div>';
+  $('ch-action').querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => submitInterpret(b)));
+}
+function submitInterpret(btn){
+  if(G.step !== 'interpret') return;
+  const s = G.sc, ok = btn.dataset.o === s.mean.q, pts = ok ? 30 : 0;
+  $('ch-action').querySelectorAll('.opt').forEach(b => { b.disabled = true; if(b.dataset.o === s.mean.q) b.classList.add('right'); else if(b === btn) b.classList.add('wrong'); });
+  G.roundPts += pts; G.score += pts;
+  const good = G.measureOK && ok;
+  G.roundRate = good ? G.drawRate : Math.min(G.drawRate, 1);
+  const gu = gradUnitOf(ch), al = aliasOf(gu);
+  $('ch-fb').innerHTML += '<div class="fb ' + (ok ? 'g' : 'b') + '" style="margin-top:12px"><h3>' + (ok ? 'Right' : 'Not this time') + '<span class="pts">+' + pts + '</span></h3>' +
+    '<p><b>' + esc(s.mean.q[0].toUpperCase() + s.mean.q.slice(1)) + '</b>: ' + esc(s.mean.eq) + (al ? ' (unit ' + esc(gu) + ' = ' + al + ')' : '') + '.</p><p>' + esc(s.note) + '</p></div>';
+  G.step = 'done';
+  const act = $('ch-action'), keep = act.innerHTML;
+  nextButton();
+  $('ch-action').insertAdjacentHTML('afterbegin', '<div style="margin-bottom:14px">' + keep.replace(/<button class="opt/g, '<button disabled class="opt') + '</div>');
+  taskCard(); hud();
+}
+function starSVG(on){ return '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3 6.1 20.6l1.3-6.6L2.5 9.4l6.6-.8z" fill="' + (on ? '#f5a524' : 'none') + '" stroke="' + (on ? '#d98300' : 'var(--line)') + '" stroke-width="1.5" stroke-linejoin="round"/></svg>'; }
+function finish(){
+  const n = G.results.length || 1;
+  const frac = Math.min(1, G.score/(n*MAXR[G.level]));
+  const stars = frac >= 0.8 ? 3 : frac >= 0.55 ? 2 : frac >= 0.3 ? 1 : 0;
+  const avg = G.errs.length ? G.errs.reduce((a,b) => a+b, 0)/G.errs.length : 0;
+  const b = bests(), prev = b[G.level] || 0, isBest = G.results.length === G.total && G.score > prev;
+  if(isBest){ b[G.level] = G.score; lsSet(BEST_KEY, JSON.stringify(b)); }
+  $('sum-level').textContent = 'Level ' + G.level + (G.results.length < G.total ? ' · ' + G.results.length + ' of ' + G.total + ' rounds' : '');
+  $('sum-title').textContent = ['Keep practising', 'Getting there', 'Great tangents', 'Tangent master'][stars];
+  $('sum-stars').innerHTML = [0,1,2].map(i => starSVG(i < stars)).join('');
+  $('sum-score').textContent = G.score;
+  $('sum-err').textContent = fmt(avg, 2) + '°';
+  $('sum-streak').textContent = G.best;
+  $('sum-msg').textContent = (isBest ? 'New best score for this level! ' : prev ? 'Your best for this level: ' + Math.max(prev, G.score) + '. ' : '') +
+    (avg <= 3 ? 'Your tangents are consistently accurate.' : avg <= 6 ? 'Close. Try the mirror method in Explore to sharpen your eye.' : 'Use Explore with the magnifier and Reveal to practise, then come back.');
+  $('ch-summary').hidden = false;
+  if(stars === 3) burst(document.querySelector('#ch-summary .card'));
+  hud(); showBests();
+  $('sum-again').focus();
+}
+function burst(host){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  host = host || document.querySelector("#ch-game .stage");
+  const r = host.getBoundingClientRect(), cols = ['#f5a524','#2bb5aa','#d6336c','#6848cf','#1c8f4e'];
+  for(let i=0;i<36;i++){
+    const el = document.createElement('i'); el.className = 'burst';
+    el.style.background = cols[i % cols.length];
+    el.style.position = 'fixed'; el.style.left = (r.left + r.width/2) + 'px'; el.style.top = (r.top + Math.min(r.height, 400)/2) + 'px';
+    document.body.appendChild(el);
+    const a = Math.random()*Math.PI*2, d = 90 + Math.random()*180;
+    el.animate([{transform:'translate(0,0) rotate(0)', opacity:1}, {transform:'translate(' + Math.cos(a)*d + 'px,' + (Math.sin(a)*d + 120) + 'px) rotate(' + (Math.random()*720) + 'deg)', opacity:0}],
+      {duration:900 + Math.random()*500, easing:'cubic-bezier(.2,.7,.4,1)'}).onfinish = () => el.remove();
+  }
+}
+
+/* ======================= shell ======================= */
+const tabs = ['explore','challenge','guide'];
+function showTab(k){
+  tabs.forEach(t => { $('tab-' + t).setAttribute('aria-selected', t === k ? 'true' : 'false'); $('panel-' + t).hidden = t !== k; });
+  try { history.replaceState(null, '', '#' + k); } catch(e){}
+  if(k === 'explore') ex.changed();
+  if(k === 'challenge') { showBests(); if(!$('ch-game').hidden) ch.changed(); }
+}
+tabs.forEach(t => $('tab-' + t).addEventListener('click', () => showTab(t)));
+document.querySelector('.tabs').addEventListener('keydown', e => {
+  const i = tabs.findIndex(t => $('tab-' + t).getAttribute('aria-selected') === 'true');
+  if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ const j = (i + (e.key === 'ArrowRight' ? 1 : tabs.length-1)) % tabs.length; showTab(tabs[j]); $('tab-' + tabs[j]).focus(); }
+});
+$('themeBtn').addEventListener('click', () => {
+  const root = document.documentElement, cur = root.getAttribute('data-theme');
+  const dark = cur ? cur === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  lsSet('tangent-trainer-theme', dark ? 'light' : 'dark');
+});
+(function(){ const t = lsGet('tangent-trainer-theme'); if(t) document.documentElement.setAttribute('data-theme', t); })();
+
+new ResizeObserver(() => { ex.request(); ch.request(); }).observe(document.body);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(() => { ex.request(); ch.request(); });
+exLoad(SCEN[0].id);
+exTip();
+showBests();
+const h0 = (location.hash || '').slice(1);
+if(tabs.indexOf(h0) >= 0) showTab(h0);
+})();
+</script>
+</body>
+</html>
