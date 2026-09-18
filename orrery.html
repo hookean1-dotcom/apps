@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Orrery — Gravity &amp; the Barycentre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --space:#080b16;
+    --space-2:#0b1020;
+    --panel:#101a30;
+    --panel-2:#0d1526;
+    --glass:rgba(18,28,50,.82);
+    --ink:#e9edf7;
+    --muted:#8794b2;
+    --faint:#5b6683;
+    --line:rgba(255,255,255,.09);
+    --line-2:rgba(255,255,255,.05);
+    --brass:#f0c674;
+    --brass-dim:#c8a24e;
+    --brass-glow:rgba(240,198,116,.25);
+    --good:#7fd6a2;
+    --warn:#e6a15a;
+    --sel:#f0c674;
+    --radius:12px;
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:var(--space);
+    color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .app{position:fixed;inset:0;display:flex;flex-direction:column}
+
+  /* ---- top bar ---- */
+  .topbar{
+    display:flex;align-items:center;gap:14px;
+    padding:10px 16px;
+    background:linear-gradient(180deg,var(--space-2),rgba(11,16,32,.4));
+    border-bottom:1px solid var(--line);
+    flex:0 0 auto;z-index:20;
+  }
+  .brand{display:flex;align-items:center;gap:11px;min-width:0}
+  .brand .mark{
+    width:30px;height:30px;flex:0 0 auto;border-radius:50%;
+    background:radial-gradient(circle at 38% 34%,#fff3cf,#f0c674 42%,#b7862e 78%,#7c5610);
+    box-shadow:0 0 14px var(--brass-glow), inset -2px -2px 4px rgba(0,0,0,.35);
+  }
+  .brand h1{
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;
+    letter-spacing:.2px;white-space:nowrap;
+  }
+  .brand .sub{color:var(--faint);font-size:12px;white-space:nowrap}
+  .spacer{flex:1 1 auto}
+
+  .clock{
+    font-family:'Space Grotesk',sans-serif;
+    font-variant-numeric:tabular-nums;
+    display:flex;flex-direction:column;align-items:flex-end;line-height:1.15;
+  }
+  .clock .t{font-size:17px;font-weight:600;color:var(--ink)}
+  .clock .lbl{font-size:10.5px;color:var(--faint);letter-spacing:.4px}
+
+  .transport{display:flex;align-items:center;gap:6px}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    background:var(--panel);border:1px solid var(--line);
+    color:var(--ink);border-radius:9px;cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:13px;font-weight:500;
+    padding:8px 11px;transition:background .12s,border-color .12s,transform .05s;
+    user-select:none;
+  }
+  .btn:hover{background:#16223c;border-color:rgba(255,255,255,.16)}
+  .btn:active{transform:translateY(1px)}
+  .btn.icon{padding:8px;width:38px;height:38px}
+  .btn.primary{background:var(--brass);color:#241a04;border-color:transparent;font-weight:600}
+  .btn.primary:hover{background:#f6d189}
+  .btn svg{width:16px;height:16px;display:block}
+  .speedwrap{display:flex;align-items:center;gap:9px;padding-left:6px}
+  .speedwrap label{font-size:11px;color:var(--muted);white-space:nowrap}
+  .speedval{font-variant-numeric:tabular-nums;font-size:12px;color:var(--brass);min-width:42px;text-align:right}
+
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;height:4px;border-radius:3px;
+    background:rgba(255,255,255,.14);outline:none;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:15px;border-radius:50%;
+    background:var(--brass);border:2px solid #2a2208;box-shadow:0 0 8px var(--brass-glow);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:15px;height:15px;border-radius:50%;background:var(--brass);border:2px solid #2a2208;
+  }
+
+  /* ---- stage ---- */
+  .stage{flex:1 1 auto;display:flex;min-height:0;position:relative}
+  .canvas-wrap{flex:1 1 auto;position:relative;min-width:0}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+  canvas.grabbing{cursor:grabbing}
+  canvas.adding{cursor:crosshair}
+
+  .overlay-hint{
+    position:absolute;left:50%;bottom:16px;transform:translateX(-50%);
+    background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(8px);
+    color:var(--muted);font-size:12px;padding:7px 13px;border-radius:20px;
+    pointer-events:none;opacity:0;transition:opacity .3s;white-space:nowrap;
+  }
+  .overlay-hint.show{opacity:1}
+  .scalebar{
+    position:absolute;left:16px;bottom:16px;
+    font-variant-numeric:tabular-nums;color:var(--muted);font-size:11.5px;
+    pointer-events:none;user-select:none;
+  }
+  .scalebar .line{height:3px;border:1px solid var(--muted);border-top:none;margin-top:3px}
+  .notscale{
+    position:absolute;right:14px;bottom:14px;color:var(--faint);font-size:10.5px;
+    pointer-events:none;user-select:none;letter-spacing:.2px;
+  }
+  .zoomcol{
+    position:absolute;right:14px;top:14px;display:flex;flex-direction:column;gap:6px;z-index:5;
+  }
+
+  /* ---- console ---- */
+  .console{
+    flex:0 0 320px;width:320px;background:var(--panel-2);
+    border-left:1px solid var(--line);overflow-y:auto;overflow-x:hidden;
+    padding:4px 0 24px;z-index:15;
+  }
+  .console::-webkit-scrollbar{width:9px}
+  .console::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:5px}
+  .sec{padding:16px 18px;border-bottom:1px solid var(--line-2)}
+  .sec-head{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+  .sec-head .tick{width:14px;height:2px;background:var(--brass);border-radius:2px;flex:0 0 auto}
+  .sec-head h2{
+    font-family:'Space Grotesk',sans-serif;font-size:13.5px;font-weight:600;
+    letter-spacing:.3px;color:var(--ink);
+  }
+
+  .presets{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .preset{
+    text-align:left;background:var(--panel);border:1px solid var(--line);
+    border-radius:9px;padding:9px 10px;cursor:pointer;color:var(--ink);
+    font-family:'Inter',sans-serif;transition:border-color .12s,background .12s;
+  }
+  .preset:hover{background:#16223c;border-color:rgba(255,255,255,.18)}
+  .preset.active{border-color:var(--brass);background:rgba(240,198,116,.08)}
+  .preset .pname{font-size:12.5px;font-weight:600;display:block;line-height:1.25}
+  .preset .pmeta{font-size:10.5px;color:var(--faint);display:block;margin-top:2px}
+  .preset.wide{grid-column:1 / -1}
+
+  .toggles{display:flex;flex-direction:column;gap:2px}
+  .tog{
+    display:flex;align-items:center;gap:11px;padding:8px 6px;border-radius:8px;
+    cursor:pointer;user-select:none;transition:background .1s;
+  }
+  .tog:hover{background:rgba(255,255,255,.03)}
+  .tog .sw{
+    width:34px;height:19px;border-radius:11px;background:rgba(255,255,255,.13);
+    position:relative;flex:0 0 auto;transition:background .15s;
+  }
+  .tog .sw::after{
+    content:"";position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;
+    background:#cfd6e6;transition:transform .16s,background .15s;
+  }
+  .tog.on .sw{background:var(--brass)}
+  .tog.on .sw::after{transform:translateX(15px);background:#2a2208}
+  .tog .tlabel{font-size:13px;color:var(--ink)}
+  .tog .tsub{font-size:10.5px;color:var(--faint);display:block;margin-top:1px}
+  .tog .swatch{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+
+  .segwrap{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:3px;gap:3px}
+  .seg{
+    flex:1;text-align:center;padding:7px 4px;border-radius:6px;cursor:pointer;
+    font-size:11.5px;color:var(--muted);transition:background .12s,color .12s;user-select:none;
+  }
+  .seg.on{background:var(--brass);color:#241a04;font-weight:600}
+  .seg-lead{font-size:11px;color:var(--muted);margin-bottom:8px;display:block}
+
+  /* readout */
+  .readout .empty{color:var(--faint);font-size:12.5px;line-height:1.6}
+  .rd-body{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .rd-body .dot{width:16px;height:16px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 8px rgba(0,0,0,.4)}
+  .rd-body .rname{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600}
+  .rd-body .rtag{font-size:10.5px;color:var(--faint)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}
+  .stat{display:flex;flex-direction:column;gap:2px}
+  .stat .k{font-size:10.5px;color:var(--faint);letter-spacing:.2px}
+  .stat .v{font-family:'Space Grotesk',sans-serif;font-variant-numeric:tabular-nums;font-size:14px;font-weight:500}
+  .stat .v small{font-size:10.5px;color:var(--muted);font-weight:400;margin-left:3px}
+  .masswrap{margin-top:13px}
+  .masswrap .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .masswrap .row .k{font-size:11px;color:var(--muted)}
+  .masswrap .row .v{font-variant-numeric:tabular-nums;font-size:12px;color:var(--brass)}
+  .rd-actions{display:flex;gap:7px;margin-top:13px}
+  .rd-actions .btn{flex:1;font-size:12px;padding:7px}
+
+  .datalist{display:flex;flex-direction:column;gap:9px}
+  .drow{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .drow .k{font-size:12px;color:var(--muted)}
+  .drow .v{font-family:'Space Grotesk',sans-serif;font-variant-numeric:tabular-nums;font-size:13.5px;font-weight:500;text-align:right}
+  .drow .v small{color:var(--muted);font-size:10.5px;font-weight:400}
+  .bary-note{
+    margin-top:11px;padding:9px 11px;border-radius:9px;font-size:11.5px;line-height:1.5;
+    background:rgba(240,198,116,.07);border:1px solid rgba(240,198,116,.2);color:#f3d494;
+  }
+  .bary-note b{color:var(--brass);font-weight:600}
+  .econserve{font-size:10.5px;color:var(--faint);margin-top:8px;line-height:1.5}
+
+  .addhint{font-size:11.5px;color:var(--muted);line-height:1.55;margin-top:10px}
+  .kepler-tbl{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;margin-top:2px}
+  .kepler-tbl th{font-size:10px;color:var(--faint);font-weight:500;text-align:right;padding:4px 4px;letter-spacing:.2px}
+  .kepler-tbl th:first-child{text-align:left}
+  .kepler-tbl td{font-size:11.5px;padding:4px 4px;text-align:right;border-top:1px solid var(--line-2)}
+  .kepler-tbl td:first-child{text-align:left;color:var(--muted)}
+  .kepler-tbl td .ratio{color:var(--good)}
+
+  /* mobile console as sheet */
+  .sheet-handle{display:none}
+  @media (max-width:820px){
+    .console{
+      position:fixed;left:0;right:0;bottom:0;width:auto;height:62vh;max-height:62vh;
+      border-left:none;border-top:1px solid var(--line);
+      border-radius:16px 16px 0 0;transform:translateY(calc(100% - 46px));
+      transition:transform .28s cubic-bezier(.4,0,.2,1);
+      box-shadow:0 -14px 40px rgba(0,0,0,.5);background:var(--panel-2);
+    }
+    .console.open{transform:translateY(0)}
+    .sheet-handle{
+      display:flex;align-items:center;justify-content:center;gap:10px;
+      height:46px;cursor:pointer;position:sticky;top:0;z-index:2;
+      background:var(--panel-2);border-radius:16px 16px 0 0;
+    }
+    .sheet-handle .bar{width:38px;height:4px;border-radius:3px;background:rgba(255,255,255,.25)}
+    .sheet-handle .lbl{font-size:12px;color:var(--muted);font-family:'Space Grotesk',sans-serif}
+    .brand h1{font-size:15px}
+    .brand .sub{display:none}
+    .speedwrap label{display:none}
+    .topbar{gap:8px;padding:9px 12px}
+    .transport .btn.icon{width:34px;height:34px;padding:6px}
+    .presets{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:480px){
+    .clock .t{font-size:15px}
+    .btn.hide-xs{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:.001ms !important}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark"></div>
+      <div>
+        <h1>Orrery</h1>
+        <div class="sub">Gravity, orbits &amp; the barycentre</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="clock">
+      <span class="t" id="clock">0.00 yr</span>
+      <span class="lbl" id="clockSub">paused</span>
+    </div>
+    <div class="transport">
+      <button class="btn icon" id="stepBack" title="Step back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
+      </button>
+      <button class="btn primary icon" id="playPause" title="Play / pause">
+        <svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      </button>
+      <button class="btn icon" id="stepFwd" title="Step forward">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+      </button>
+      <button class="btn icon" id="resetBtn" title="Reset to preset">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+      </button>
+    </div>
+    <div class="speedwrap">
+      <label for="speed">Speed</label>
+      <input type="range" id="speed" min="-1" max="1.9" step="0.01" value="0.4" style="width:110px">
+      <span class="speedval" id="speedVal">1.0×</span>
+    </div>
+  </header>
+
+  <!-- STAGE -->
+  <div class="stage">
+    <div class="canvas-wrap">
+      <canvas id="sky"></canvas>
+      <div class="zoomcol">
+        <button class="btn icon" id="zoomIn" title="Zoom in">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <button class="btn icon" id="zoomOut" title="Zoom out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <button class="btn icon" id="fitBtn" title="Frame everything">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/></svg>
+        </button>
+      </div>
+      <div class="scalebar" id="scalebar"><span id="scaleText">1 AU</span><div class="line" id="scaleLine" style="width:80px"></div></div>
+      <div class="notscale">Bodies not shown to scale · distances are</div>
+      <div class="overlay-hint" id="hint"></div>
+    </div>
+
+    <!-- CONSOLE -->
+    <aside class="console" id="console">
+      <div class="sheet-handle" id="sheetHandle"><span class="bar"></span><span class="lbl">Controls</span></div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="tick"></span><h2>Scenarios</h2></div>
+        <div class="presets" id="presets"></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="tick"></span><h2>What to show</h2></div>
+        <div class="toggles" id="toggles"></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head"><span class="tick"></span><h2>Follow the camera on</h2></div>
+        <div class="segwrap" id="followSeg">
+          <div class="seg on" data-follow="free">Free</div>
+          <div class="seg" data-follow="barycentre">Barycentre</div>
+          <div class="seg" data-follow="primary">Sun / star</div>
+          <div class="seg" data-follow="selected">Selection</div>
+        </div>
+      </div>
+
+      <div class="sec readout" id="readoutSec">
+        <div class="sec-head"><span class="tick"></span><h2>Selected body</h2></div>
+        <div id="readout">
+          <div class="empty">Tap or click any body to read off its distance, speed and orbital period — or drag it to a new position while paused.</div>
+        </div>
+      </div>
+
+      <div class="sec" id="barySec">
+        <div class="sec-head"><span class="tick"></span><h2>Barycentre &amp; energy</h2></div>
+        <div class="datalist" id="baryData"></div>
+        <div class="bary-note" id="baryNote"></div>
+        <div class="econserve" id="econserve"></div>
+      </div>
+
+      <div class="sec" id="keplerSec">
+        <div class="sec-head"><span class="tick"></span><h2>Kepler&rsquo;s third law</h2></div>
+        <span class="seg-lead" style="display:block;margin-bottom:8px">Measured live as each orbit completes. For any Sun-centred orbit, T&sup2;/a&sup3; should equal 1 (yr&sup2;/AU&sup3;).</span>
+        <table class="kepler-tbl" id="keplerTbl"></table>
+      </div>
+
+      <div class="sec" id="buildSec">
+        <div class="sec-head"><span class="tick"></span><h2>Build your own</h2></div>
+        <div class="segwrap" id="modeSeg" style="margin-bottom:8px">
+          <div class="seg on" data-mode="explore">Explore</div>
+          <div class="seg" data-mode="add">Add a body</div>
+        </div>
+        <div class="addhint" id="addHint">Switch to <b>Add a body</b>, then on the sky: a quick <b>tap</b> drops a planet into a clean circular orbit around the central body. <b>Press &amp; drag</b> to aim it and set the launch speed — the readout shows the speed as a multiple of the circular speed (1× orbits, below 1 plunges in, above 1.41× escapes).</div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+"use strict";
+(function(){
+/* ============================================================
+   ORRERY — N-body gravity sim
+   Units: AU (distance), years (time), solar masses (mass)
+   In these units the gravitational constant G = 4*pi^2,
+   so a circular orbit at 1 AU takes exactly 1 year.
+   Integrator: velocity Verlet (symplectic — conserves energy well)
+   ============================================================ */
+
+  const G = 4 * Math.PI * Math.PI;
+  const SOFT2 = 1e-8;                 // softening, avoids singular close approaches
+  const R_SUN_AU = 0.00465047;        // solar radius in AU
+  const R_EARTH_AU = 4.2635e-5;       // Earth radius in AU
+  const AUYR_TO_KMS = 4.74057;        // 1 AU/yr in km/s
+  const MSUN_KG = 1.989e30;
+  const MEARTH_KG = 5.972e24;
+
+  /* ---------- planetary data (real) ----------
+     a: semi-major axis (AU), e: eccentricity, m: mass (Msun) */
+  // r = minimum on-screen radius (px) for visibility; rAU = true physical radius (AU).
+  // Drawn radius = max(r, rAU*scale), so bodies grow into real discs as you zoom in
+  // and shrink to small dots when zoomed out (the Sun no longer swallows inner orbits).
+  const PLANETS = {
+    Mercury:{a:0.38710,e:0.20563,m:1.6515e-7,c:'#b7b2a8',r:2.3,rAU:1.63e-5},
+    Venus  :{a:0.72333,e:0.00677,m:2.4478e-6,c:'#e3c07a',r:2.8,rAU:4.05e-5},
+    Earth  :{a:1.00000,e:0.01671,m:3.0035e-6,c:'#4a90d9',r:2.9,rAU:4.26e-5},
+    Mars   :{a:1.52368,e:0.09340,m:3.2271e-7,c:'#d1603a',r:2.5,rAU:2.27e-5},
+    Jupiter:{a:5.20260,e:0.04849,m:9.5459e-4,c:'#d8a878',r:3.3,rAU:4.78e-4},
+    Saturn :{a:9.55491,e:0.05551,m:2.8580e-4,c:'#e3d3a0',r:3.1,rAU:4.00e-4},
+    Uranus :{a:19.2184,e:0.04630,m:4.3662e-5,c:'#a8dbe0',r:2.9,rAU:1.70e-4},
+    Neptune:{a:30.1104,e:0.00899,m:5.1514e-5,c:'#4f6dd6',r:2.9,rAU:1.65e-4}
+  };
+  const SUN = {c:'#ffce54', r:3.4, rAU:R_SUN_AU};
+  const MOON = {a:0.00257, e:0.0549, m:3.6929e-8, c:'#cfcfcf', r:2.2, rAU:1.16e-5};
+
+  /* ---------- Body ---------- */
+  let UID = 1;
+  function Body(o){
+    this.id = UID++;
+    this.name = o.name;
+    this.m = o.m;
+    this.x = o.x; this.y = o.y;
+    this.vx = o.vx; this.vy = o.vy;
+    this.ax = 0; this.ay = 0;
+    this.c = o.c || '#cfcfcf';
+    this.r = o.r || 4;          // minimum display radius (px)
+    this.radiusAU = o.radiusAU || 0;  // true physical radius (AU); drawn = max(r, radiusAU*scale)
+    this.isPrimary = !!o.isPrimary;
+    this.trail = [];
+    this.glow = !!o.glow;
+    // kepler tracking
+    this.rmin = Infinity; this.rmax = 0;
+    this.lastAngle = null; this.angleAccum = 0; this.orbitStartT = null;
+    this.measT = null; this.measA = null;
+  }
+
+  /* ---------- system builders (all in barycentric frame) ---------- */
+  // place a planet at perihelion, rotated by theta, with vis-viva perihelion speed
+  function planetBody(name, theta){
+    const p = PLANETS[name];
+    const rp = p.a*(1-p.e);
+    const vp = Math.sqrt(G*1*(1+p.e)/(p.a*(1-p.e)));
+    return new Body({name, m:p.m, c:p.c, r:p.r, radiusAU:p.rAU,
+      x:rp*Math.cos(theta), y:rp*Math.sin(theta),
+      vx:-vp*Math.sin(theta), vy:vp*Math.cos(theta)});
+  }
+  function zeroMomentum(bodies){
+    // give the primary (first body) the velocity that makes total momentum zero
+    let px=0,py=0,mp=bodies[0].m;
+    for(let i=1;i<bodies.length;i++){px+=bodies[i].m*bodies[i].vx;py+=bodies[i].m*bodies[i].vy;}
+    bodies[0].vx = -px/mp; bodies[0].vy = -py/mp;
+  }
+  function sunSystem(names, spread){
+    const sun = new Body({name:'Sun', m:1, c:SUN.c, r:SUN.r, radiusAU:SUN.rAU, x:0,y:0,vx:0,vy:0, isPrimary:true, glow:true});
+    const bodies=[sun];
+    let i=0;
+    for(const n of names){ bodies.push(planetBody(n, i*spread)); i++; }
+    zeroMomentum(bodies);
+    return bodies;
+  }
+  // generic two-body barycentric pair
+  function binary(m1,m2,sep,e,opt){
+    opt=opt||{};
+    const M=m1+m2;
+    const rp = sep*(1-e);
+    const vrel = Math.sqrt(G*M*(1+e)/(sep*(1-e)));  // relative speed at perihelion
+    const d1 = rp*m2/M, d2 = rp*m1/M;
+    const v1 = vrel*m2/M, v2 = vrel*m1/M;
+    const b1=new Body({name:opt.n1||'A', m:m1, c:opt.c1||'#ffce54', r:opt.r1||10, radiusAU:opt.rAU1||0,
+      x:-d1,y:0, vx:0, vy:-v1, isPrimary:true, glow:opt.glow1});
+    const b2=new Body({name:opt.n2||'B', m:m2, c:opt.c2||'#9fc6ff', r:opt.r2||8, radiusAU:opt.rAU2||0,
+      x:d2,y:0, vx:0, vy:v2, glow:opt.glow2});
+    return [b1,b2];
+  }
+
+  /* ---------- presets ---------- */
+  const PRESETS = {
+    full:{ name:'Solar System', meta:'Sun + 8 planets', dt:5e-4, view:68,
+      build:()=> sunSystem(['Mercury','Venus','Earth','Mars','Jupiter','Saturn','Uranus','Neptune'], 0.86) },
+    inner:{ name:'Inner planets', meta:'Mercury → Mars', dt:3e-4, view:3.4,
+      build:()=> sunSystem(['Mercury','Venus','Earth','Mars'], 1.25) },
+    outer:{ name:'Outer planets', meta:'Jupiter → Neptune', dt:3e-3, view:65,
+      build:()=> sunSystem(['Jupiter','Saturn','Uranus','Neptune'], 1.1) },
+    sunEarth:{ name:'Sun &amp; Earth', meta:'the simplest orbit', dt:2e-4, view:2.6,
+      build:()=> sunSystem(['Earth'], 0) },
+    sunJup:{ name:'Sun &amp; Jupiter', meta:'the biggest wobble', dt:1e-3, view:12,
+      build:()=> sunSystem(['Jupiter'],0) },
+    sem:{ name:'Sun, Earth &amp; Moon', meta:'nested orbits', dt:1.2e-4, view:2.6,
+      build:()=>{
+        const b = sunSystem(['Earth'], 0);
+        const earth = b[1];
+        // moon offset from earth, sharing earth's orbital velocity + orbital vel about earth
+        const md = MOON.a, mv = Math.sqrt(G*earth.m/md);
+        const moon = new Body({name:'Moon', m:MOON.m, c:MOON.c, r:MOON.r,
+          x:earth.x+md, y:earth.y, vx:earth.vx, vy:earth.vy+mv});
+        b.push(moon);
+        zeroMomentum(b);
+        return b;
+      } },
+    earthMoon:{ name:'Earth &amp; Moon', meta:'barycentre inside Earth', dt:6e-5, view:0.007,
+      build:()=> binary(PLANETS.Earth.m, MOON.m, MOON.a, MOON.e,
+        {n1:'Earth', n2:'Moon', c1:'#4a90d9', c2:'#cfcfcf', r1:10, r2:5}) },
+    kepler:{ name:'Kepler ellipse', meta:'e = 0.6, watch it speed up', dt:2e-4, view:4.2,
+      build:()=>{
+        const sun=new Body({name:'Sun',m:1,c:SUN.c,r:SUN.r,radiusAU:SUN.rAU,x:0,y:0,vx:0,vy:0,isPrimary:true,glow:true});
+        const a=1.6,e=0.6, rp=a*(1-e), vp=Math.sqrt(G*1*(1+e)/(a*(1-e)));
+        const p=new Body({name:'Planet',m:3e-6,c:'#7fd6a2',r:4,radiusAU:3e-5,x:rp,y:0,vx:0,vy:vp});
+        const b=[sun,p]; zeroMomentum(b); return b;
+      } },
+    binary:{ name:'Binary stars', meta:'equal masses, one barycentre', dt:6e-4, view:5.5,
+      build:()=> binary(0.9,0.6,3.2,0.4,
+        {n1:'Star A', n2:'Star B', c1:'#ffce54', c2:'#9fc6ff', r1:5, r2:5, rAU1:0.02, rAU2:0.016, glow1:true, glow2:true}) },
+    figure8:{ name:'Figure-eight', meta:'three-body choreography', dt:3e-4, view:2.6,
+      build:()=>{
+        // Chenciner–Montgomery figure-eight (G=1,m=1); rescale velocities by 2π for G=4π²
+        const k=2*Math.PI, s=1.0;
+        const P=[[-0.97000436,0.24308753],[0.97000436,-0.24308753],[0,0]];
+        const V3=[0.93240737,0.86473146];
+        const V=[[-V3[0]/2,-V3[1]/2],[-V3[0]/2,-V3[1]/2],V3];
+        const cols=['#ffce54','#9fc6ff','#f0a0c0'];
+        const b=[];
+        for(let i=0;i<3;i++) b.push(new Body({name:'Body '+(i+1),m:1,c:cols[i],r:9,glow:true,
+          x:P[i][0]*s,y:P[i][1]*s,vx:V[i][0]*k*Math.sqrt(s?1:1),vy:V[i][1]*k}));
+        // fix vx scale (both components by k)
+        for(let i=0;i<3;i++){b[i].vx=V[i][0]*k;b[i].vy=V[i][1]*k;}
+        return b;
+      } }
+  };
+  const PRESET_ORDER = ['full','inner','outer','sunEarth','sunJup','sem','earthMoon','kepler','binary','figure8'];
+  const WIDE = new Set(['full']);
+
+  /* ---------- simulation state ---------- */
+  const state = {
+    bodies: [],
+    presetKey: 'full',
+    dt: 5e-4,
+    time: 0,
+    running: false,
+    speed: 1,            // multiplier
+    E0: null,            // initial total energy
+    view: { scale: 1, cx:0, cy:0 },  // scale = px per AU; cx,cy world centre
+    follow: 'free',
+    mode: 'explore',
+    selected: null,
+    toggles: {
+      trails:true, velocity:false, gravity:false, barycentre:true,
+      grid:true, labels:true, glow:true
+    }
+  };
+
+  /* ---------- physics ---------- */
+  function computeAccel(bodies){
+    const n=bodies.length;
+    for(let i=0;i<n;i++){ bodies[i].ax=0; bodies[i].ay=0; }
+    for(let i=0;i<n;i++){
+      const bi=bodies[i];
+      for(let j=i+1;j<n;j++){
+        const bj=bodies[j];
+        const dx=bj.x-bi.x, dy=bj.y-bi.y;
+        const r2=dx*dx+dy*dy+SOFT2;
+        const inv=1/Math.sqrt(r2);
+        const inv3=inv*inv*inv;
+        const gm=G*inv3;
+        bi.ax+=gm*bj.m*dx; bi.ay+=gm*bj.m*dy;
+        bj.ax-=gm*bi.m*dx; bj.ay-=gm*bi.m*dy;
+      }
+    }
+  }
+  function integrate(dt){
+    const b=state.bodies, n=b.length;
+    // velocity Verlet: assumes ax,ay already current
+    for(let i=0;i<n;i++){
+      b[i].x += b[i].vx*dt + 0.5*b[i].ax*dt*dt;
+      b[i].y += b[i].vy*dt + 0.5*b[i].ay*dt*dt;
+      b[i]._pax=b[i].ax; b[i]._pay=b[i].ay;
+    }
+    computeAccel(b);
+    for(let i=0;i<n;i++){
+      b[i].vx += 0.5*(b[i]._pax+b[i].ax)*dt;
+      b[i].vy += 0.5*(b[i]._pay+b[i].ay)*dt;
+    }
+    state.time += dt;
+  }
+
+  function barycentre(){
+    let M=0,x=0,y=0,vx=0,vy=0;
+    for(const b of state.bodies){ M+=b.m; x+=b.m*b.x; y+=b.m*b.y; vx+=b.m*b.vx; vy+=b.m*b.vy; }
+    return {x:x/M,y:y/M,vx:vx/M,vy:vy/M,M};
+  }
+  function energy(){
+    let ke=0,pe=0;
+    const b=state.bodies;
+    for(const x of b) ke+=0.5*x.m*(x.vx*x.vx+x.vy*x.vy);
+    for(let i=0;i<b.length;i++)for(let j=i+1;j<b.length;j++){
+      const dx=b[j].x-b[i].x, dy=b[j].y-b[i].y;
+      pe+=-G*b[i].m*b[j].m/Math.sqrt(dx*dx+dy*dy+SOFT2);
+    }
+    return {ke,pe,tot:ke+pe};
+  }
+  function primaryBody(){
+    for(const b of state.bodies) if(b.isPrimary) return b;
+    // else most massive
+    let m=state.bodies[0];
+    for(const b of state.bodies) if(b.m>m.m) m=b;
+    return m;
+  }
+  // Cancel any net momentum by shifting every velocity by -v_com.
+  // This is a change of reference frame only: relative orbits are unchanged,
+  // but the barycentre stops drifting off-screen after you add/edit a body.
+  function recenterMomentum(){
+    const bc=barycentre();
+    for(const b of state.bodies){ b.vx-=bc.vx; b.vy-=bc.vy; }
+  }
+  // circular-orbit speed about the primary at world point (x,y)
+  function circInfoAt(x,y){
+    const prim=primaryBody();
+    const rx=x-prim.x, ry=y-prim.y;
+    const r=Math.hypot(rx,ry);
+    const v=r>1e-9?Math.sqrt(G*prim.m/r):0;
+    return {prim,rx,ry,r,v};
+  }
+
+  /* ---------- kepler tracking (measure period & a per orbit) ---------- */
+  function trackKepler(){
+    const prim = primaryBody();
+    for(const b of state.bodies){
+      if(b===prim) continue;
+      const dx=b.x-prim.x, dy=b.y-prim.y;
+      const r=Math.hypot(dx,dy);
+      if(r<b.rmin)b.rmin=r; if(r>b.rmax)b.rmax=r;
+      const ang=Math.atan2(dy,dx);
+      if(b.lastAngle===null){ b.lastAngle=ang; b.orbitStartT=state.time; continue; }
+      let d=ang-b.lastAngle;
+      if(d>Math.PI)d-=2*Math.PI; else if(d<-Math.PI)d+=2*Math.PI;
+      b.angleAccum+=d;
+      b.lastAngle=ang;
+      if(Math.abs(b.angleAccum)>=2*Math.PI){
+        b.measT=state.time-b.orbitStartT;
+        b.measA=(b.rmin+b.rmax)/2;
+        b.orbitStartT=state.time; b.angleAccum=0; b.rmin=Infinity; b.rmax=0;
+      }
+    }
+  }
+
+  /* ---------- load preset ---------- */
+  function loadPreset(key){
+    const p=PRESETS[key];
+    UID=1;
+    state.presetKey=key;
+    state.bodies=p.build();
+    state.dt=p.dt;
+    state.time=0;
+    state.selected=null;
+    computeAccel(state.bodies);
+    state.E0=energy().tot;
+    for(const b of state.bodies) b.trail=[];
+    // fit view to the preset
+    frameAll(p.view);
+    savePrefs();
+    renderConsole();
+  }
+
+  /* ---------- camera ---------- */
+  function frameAll(hintSpan){
+    const bc=barycentre();
+    let span=hintSpan;
+    if(!span){
+      let mx=0;
+      for(const b of state.bodies){ mx=Math.max(mx, Math.hypot(b.x-bc.x,b.y-bc.y)); }
+      span=Math.max(mx*2.3, 0.001);
+    }
+    let w=cv.clientWidth, h=cv.clientHeight;
+    if(!w||!h){ const r=cv.getBoundingClientRect(); w=w||r.width||window.innerWidth; h=h||r.height||(window.innerHeight-56); }
+    const usable=Math.min(w,h)*0.86;
+    let s=usable/span;
+    if(!isFinite(s)||s<=0) s=(Math.min(w,h)||600)/Math.max(span,0.001);
+    state.view.scale=s;
+    state.view.cx=bc.x; state.view.cy=bc.y;
+  }
+  function w2s(x,y){
+    const w=cv.clientWidth, h=cv.clientHeight;
+    return [ (x-state.view.cx)*state.view.scale + w/2,
+             (y-state.view.cy)*state.view.scale + h/2 ];
+  }
+  function s2w(sx,sy){
+    const w=cv.clientWidth, h=cv.clientHeight;
+    return [ (sx-w/2)/state.view.scale + state.view.cx,
+             (sy-h/2)/state.view.scale + state.view.cy ];
+  }
+  function applyFollow(){
+    if(state.follow==='free') return;
+    let t=null;
+    if(state.follow==='barycentre') t=barycentre();
+    else if(state.follow==='primary') t=primaryBody();
+    else if(state.follow==='selected') t=state.selected;
+    if(t){ state.view.cx=t.x; state.view.cy=t.y; }
+  }
+
+  /* ---------- canvas ---------- */
+  const cv=document.getElementById('sky');
+  const ctx=cv.getContext('2d');
+  let DPR=Math.min(window.devicePixelRatio||1,2);
+  let stars=[];
+  function resize(){
+    DPR=Math.min(window.devicePixelRatio||1,2);
+    const w=cv.clientWidth, h=cv.clientHeight;
+    cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    // regenerate stars
+    stars=[];
+    const N=Math.round(w*h/9000);
+    for(let i=0;i<N;i++) stars.push([Math.random()*w,Math.random()*h,Math.random()*1.2+0.2,Math.random()*0.5+0.25]);
+  }
+
+  function niceStep(rawAU){
+    if(!isFinite(rawAU)||rawAU<=0) return 1;
+    const p=Math.pow(10,Math.floor(Math.log10(rawAU)));
+    const n=rawAU/p;
+    let step;
+    if(n<1.5)step=1; else if(n<3.5)step=2; else if(n<7.5)step=5; else step=10;
+    return step*p;
+  }
+  function fmtAU(v){
+    const a=Math.abs(v);
+    if(a===0)return '0';
+    if(a>=1000)return v.toFixed(0);
+    if(a>=100)return v.toFixed(0);
+    if(a>=10)return v.toFixed(1);
+    if(a>=1)return v.toFixed(2);
+    if(a>=0.01)return v.toFixed(3);
+    return v.toExponential(1);
+  }
+
+  function draw(){
+    const w=cv.clientWidth, h=cv.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    // background
+    const bg=ctx.createRadialGradient(w*0.5,h*0.42,0,w*0.5,h*0.42,Math.max(w,h)*0.75);
+    bg.addColorStop(0,'#0c1122'); bg.addColorStop(1,'#070a14');
+    ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+    // stars
+    for(const s of stars){ ctx.globalAlpha=s[3]; ctx.fillStyle='#c9d4ef';
+      ctx.beginPath(); ctx.arc(s[0],s[1],s[2],0,7); ctx.fill(); }
+    ctx.globalAlpha=1;
+
+    if(state.toggles.grid) drawGrid(w,h);
+
+    // trails
+    if(state.toggles.trails){
+      for(const b of state.bodies){
+        if(b.trail.length<2)continue;
+        ctx.lineWidth=1.4; ctx.strokeStyle=hexA(b.c,0.5);
+        ctx.beginPath();
+        for(let i=0;i<b.trail.length;i++){
+          const p=w2s(b.trail[i][0],b.trail[i][1]);
+          if(i===0)ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // bodies
+    for(const b of state.bodies){
+      const p=w2s(b.x,b.y);
+      drawBody(b,p[0],p[1]);
+    }
+
+    // vectors
+    if(state.toggles.velocity||state.toggles.gravity) drawVectors(w,h);
+
+    // barycentre — drawn ON TOP so it's visible even when it sits inside a body
+    if(state.toggles.barycentre){
+      const bc=barycentre();
+      const p=w2s(bc.x,bc.y);
+      drawBarycentre(p[0],p[1]);
+    }
+
+    // selection ring
+    if(state.selected && state.bodies.includes(state.selected)){
+      const p=w2s(state.selected.x,state.selected.y);
+      ctx.strokeStyle=hexA('#f0c674',0.9); ctx.lineWidth=1.6;
+      ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.arc(p[0],p[1],dispR(state.selected)+8,0,7); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // add-mode drag preview
+    if(dragAdd.active){
+      const a=w2s(dragAdd.x0,dragAdd.y0);
+      ctx.fillStyle='#7fd6a2'; ctx.beginPath(); ctx.arc(a[0],a[1],5,0,7); ctx.fill();
+      ctx.strokeStyle=hexA('#7fd6a2',0.85); ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(dragAdd.sx,dragAdd.sy); ctx.stroke();
+      arrowHead(a[0],a[1],dragAdd.sx,dragAdd.sy,'#7fd6a2');
+      const info=circInfoAt(dragAdd.x0,dragAdd.y0);
+      const dpx=Math.hypot(dragAdd.sx-a[0],dragAdd.sy-a[1]);
+      const mag=(dpx<12)?info.v:(info.v||1)*(dpx/90);
+      const mult=info.v>0?mag/info.v:0;
+      ctx.font='12px "Space Grotesk", sans-serif';
+      const txt=(dpx<12)
+        ? 'release → circular orbit ('+info.v.toFixed(2)+' AU/yr)'
+        : mag.toFixed(2)+' AU/yr · '+mult.toFixed(2)+'× circular'+(mult>=1.414?' (escape)':'');
+      ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillText(txt, dragAdd.sx+9, dragAdd.sy-7);
+      ctx.fillStyle='#dfffe9'; ctx.fillText(txt, dragAdd.sx+8, dragAdd.sy-8);
+    }
+
+    updateScalebar(w);
+  }
+
+  function drawGrid(w,h){
+    const sc=state.view.scale;
+    if(!isFinite(sc)||sc<=0||!isFinite(w)||!isFinite(h)||w<=0||h<=0) return;
+    const stepAU=niceStep(140/sc);
+    const stepPx=stepAU*sc;
+    if(!isFinite(stepPx)||stepPx<24||stepAU<=0) return;
+    const [wx0,wy0]=s2w(0,0);
+    const startX=Math.ceil(wx0/stepAU)*stepAU;
+    const startY=Math.floor(wy0/stepAU)*stepAU;
+    if(!isFinite(startX)||!isFinite(startY)) return;
+    ctx.lineWidth=1;
+    ctx.font='11px Inter, sans-serif';
+    for(let gx=startX,gi=0; gi<4000; gx+=stepAU,gi++){
+      const sx=w2s(gx,0)[0]; if(!isFinite(sx)||sx>w)break;
+      const axis=Math.abs(gx)<stepAU*1e-6;
+      ctx.strokeStyle=axis?'rgba(255,255,255,.14)':'rgba(255,255,255,.045)';
+      ctx.beginPath(); ctx.moveTo(sx,0); ctx.lineTo(sx,h); ctx.stroke();
+      if(!axis){ ctx.fillStyle='rgba(139,148,178,.55)'; ctx.fillText(fmtAU(gx),sx+3,h-6); }
+    }
+    for(let gy=startY,gi=0; gi<4000; gy-=stepAU,gi++){
+      const sy=w2s(0,gy)[1]; if(!isFinite(sy)||sy>h)break;
+      const axis=Math.abs(gy)<stepAU*1e-6;
+      ctx.strokeStyle=axis?'rgba(255,255,255,.14)':'rgba(255,255,255,.045)';
+      ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(w,sy); ctx.stroke();
+    }
+  }
+
+  // on-screen radius: grows with true size when zoomed in, floors at b.r when zoomed out
+  function dispR(b){
+    const sc=state.view.scale;
+    const rr = (isFinite(sc)&&sc>0) ? (b.radiusAU||0)*sc : 0;
+    return Math.min(Math.max(b.r||3, rr), 600);
+  }
+
+  function drawBody(b,x,y){
+    const r=dispR(b);
+    if(b.glow && state.toggles.glow){
+      const gr=r*2.4;
+      const g=ctx.createRadialGradient(x,y,r*0.6,x,y,gr);
+      g.addColorStop(0,hexA(b.c,0.5)); g.addColorStop(1,hexA(b.c,0));
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,gr,0,7); ctx.fill();
+    }
+    // subtle shaded sphere
+    const sg=ctx.createRadialGradient(x-r*0.35,y-r*0.35,r*0.1,x,y,r);
+    sg.addColorStop(0,lighten(b.c,0.4)); sg.addColorStop(1,b.c);
+    ctx.fillStyle=sg;
+    ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill();
+    if(state.toggles.labels){
+      ctx.fillStyle='rgba(233,237,247,.85)';
+      ctx.font='11.5px "Space Grotesk", sans-serif';
+      ctx.fillText(b.name, x+r+5, y+4);
+    }
+  }
+
+  function drawBarycentre(x,y){
+    const s=9;
+    ctx.save();
+    ctx.lineCap='round';
+    // dark backing pass so the red marker reads on top of a bright star too
+    for(let pass=0;pass<2;pass++){
+      if(pass===0){ ctx.strokeStyle='rgba(0,0,0,.6)'; ctx.lineWidth=4; }
+      else { ctx.strokeStyle='#ff3b3b'; ctx.lineWidth=1.7; }
+      ctx.beginPath();
+      ctx.moveTo(x-s,y); ctx.lineTo(x-3,y);
+      ctx.moveTo(x+3,y); ctx.lineTo(x+s,y);
+      ctx.moveTo(x,y-s); ctx.lineTo(x,y-3);
+      ctx.moveTo(x,y+3); ctx.lineTo(x,y+s);
+      ctx.stroke();
+    }
+    ctx.fillStyle='#ff3b3b';
+    ctx.strokeStyle='rgba(0,0,0,.6)'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(x,y,2.4,0,7); ctx.fill(); ctx.stroke();
+    ctx.globalAlpha=0.55; ctx.strokeStyle='#ff3b3b'; ctx.lineWidth=1.4;
+    ctx.beginPath(); ctx.arc(x,y,s,0,7); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawVectors(w,h){
+    // auto-scale
+    let vmax=1e-9, amax=1e-12;
+    for(const b of state.bodies){
+      vmax=Math.max(vmax,Math.hypot(b.vx,b.vy));
+      amax=Math.max(amax,Math.hypot(b.ax,b.ay));
+    }
+    const vScale=46/vmax, aScale=46/amax;
+    for(const b of state.bodies){
+      const p=w2s(b.x,b.y);
+      if(state.toggles.velocity){
+        const ex=p[0]+b.vx*vScale, ey=p[1]+b.vy*vScale;
+        ctx.strokeStyle='#7fd6a2'; ctx.lineWidth=1.8;
+        ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(ex,ey); ctx.stroke();
+        arrowHead(p[0],p[1],ex,ey,'#7fd6a2');
+      }
+      if(state.toggles.gravity){
+        const ex=p[0]+b.ax*aScale, ey=p[1]+b.ay*aScale;
+        ctx.strokeStyle='#e0796a'; ctx.lineWidth=1.8;
+        ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(ex,ey); ctx.stroke();
+        arrowHead(p[0],p[1],ex,ey,'#e0796a');
+      }
+    }
+  }
+  function arrowHead(x0,y0,x1,y1,col){
+    const a=Math.atan2(y1-y0,x1-x0), L=6;
+    ctx.fillStyle=col;
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x1-L*Math.cos(a-0.4),y1-L*Math.sin(a-0.4));
+    ctx.lineTo(x1-L*Math.cos(a+0.4),y1-L*Math.sin(a+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function updateScalebar(w){
+    const sc=state.view.scale;
+    if(!isFinite(sc)||sc<=0) return;
+    const target=90;
+    const stepAU=niceStep(target/sc);
+    const px=stepAU*sc;
+    document.getElementById('scaleLine').style.width=px+'px';
+    let label;
+    if(stepAU>=1) label=fmtAU(stepAU)+' AU';
+    else {
+      const km=stepAU*1.496e8;
+      label = km>=1e6 ? (km/1e6).toFixed(1)+'M km' : fmtAU(stepAU)+' AU';
+    }
+    document.getElementById('scaleText').textContent=label;
+  }
+
+  /* ---------- colour helpers ---------- */
+  function hexA(hex,a){
+    hex=hex.replace('#','');
+    if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+    const r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  function lighten(hex,f){
+    hex=hex.replace('#','');
+    if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');
+    let r=parseInt(hex.slice(0,2),16),g=parseInt(hex.slice(2,4),16),b=parseInt(hex.slice(4,6),16);
+    r=Math.round(r+(255-r)*f); g=Math.round(g+(255-g)*f); b=Math.round(b+(255-b)*f);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  /* ---------- main loop ---------- */
+  let trailTick=0;
+  function stepPhysics(){
+    // number of substeps scales with speed; keep dt fixed for accuracy
+    let sub=Math.max(1,Math.round(state.speed));
+    // for speed<1, we instead advance every Nth frame
+    let effDt=state.dt;
+    if(state.speed<1){ sub=1; }
+    sub=Math.min(sub,4000);
+    for(let s=0;s<sub;s++){
+      integrate(effDt);
+    }
+    trailTick++;
+    if(trailTick>= (state.speed<1?2:1) ){
+      trailTick=0;
+      pushTrails();
+      trackKepler();
+    }
+  }
+  let slowAccum=0;
+  function pushTrails(){
+    const maxLen=state.presetKey==='outer'?900:600;
+    for(const b of state.bodies){
+      const last=b.trail[b.trail.length-1];
+      if(!last || Math.hypot(b.x-last[0],b.y-last[1])>0){
+        b.trail.push([b.x,b.y]);
+        if(b.trail.length>maxLen)b.trail.shift();
+      }
+    }
+  }
+
+  let lastFrame=performance.now();
+  function frame(now){
+    const dtReal=Math.min((now-lastFrame)/1000,0.05); lastFrame=now;
+    if(state.running){
+      if(state.speed<1){
+        slowAccum+=state.speed;
+        if(slowAccum>=1){ slowAccum-=1; integrate(state.dt); trailTick++;
+          if(trailTick>=1){trailTick=0;pushTrails();trackKepler();} }
+      } else {
+        stepPhysics();
+      }
+    }
+    applyFollow();
+    draw();
+    updateClock();
+    updateReadout();
+    updateBary();
+    updateKepler();
+    requestAnimationFrame(frame);
+  }
+
+  /* ---------- UI: console rendering ---------- */
+  function renderConsole(){ renderPresets(); renderToggles(); syncFollow(); syncMode(); }
+
+  function renderPresets(){
+    const el=document.getElementById('presets'); el.innerHTML='';
+    for(const key of PRESET_ORDER){
+      const p=PRESETS[key];
+      const d=document.createElement('div');
+      d.className='preset'+(key===state.presetKey?' active':'')+(WIDE.has(key)?' wide':'');
+      d.innerHTML=`<span class="pname">${p.name}</span><span class="pmeta">${p.meta}</span>`;
+      d.onclick=()=>{ loadPreset(key); if(!state.running) setRunning(true); flashHint(p.name.replace(/&amp;/g,'&')+' loaded'); };
+      el.appendChild(d);
+    }
+  }
+
+  const TOGGLE_DEFS=[
+    {k:'trails',   label:'Orbital paths',   sub:'trace where each body has been'},
+    {k:'barycentre',label:'Barycentre',     sub:'the centre of mass (✛)', swatch:'#ff3b3b'},
+    {k:'velocity', label:'Velocity arrows', sub:'direction &amp; speed of motion', swatch:'#7fd6a2'},
+    {k:'gravity',  label:'Gravity arrows',  sub:'net gravitational pull', swatch:'#e0796a'},
+    {k:'grid',     label:'Distance grid',   sub:'spacing labelled in AU'},
+    {k:'labels',   label:'Names',           sub:'label each body'},
+    {k:'glow',     label:'Star glow',       sub:'soft light around suns'}
+  ];
+  function renderToggles(){
+    const el=document.getElementById('toggles'); el.innerHTML='';
+    for(const t of TOGGLE_DEFS){
+      const on=state.toggles[t.k];
+      const d=document.createElement('div');
+      d.className='tog'+(on?' on':'');
+      const sw = t.swatch ? `<span class="swatch" style="background:${t.swatch}"></span>` : '';
+      d.innerHTML=`<span class="sw"></span>${sw}<span><span class="tlabel">${t.label}</span><span class="tsub">${t.sub}</span></span>`;
+      d.onclick=()=>{ state.toggles[t.k]=!state.toggles[t.k]; d.classList.toggle('on'); savePrefs(); };
+      el.appendChild(d);
+    }
+  }
+  function syncFollow(){
+    document.querySelectorAll('#followSeg .seg').forEach(s=>{
+      s.classList.toggle('on', s.dataset.follow===state.follow);
+    });
+  }
+  function syncMode(){
+    document.querySelectorAll('#modeSeg .seg').forEach(s=>{
+      s.classList.toggle('on', s.dataset.mode===state.mode);
+    });
+    cv.classList.toggle('adding', state.mode==='add');
+  }
+
+  function updateClock(){
+    const t=state.time;
+    let txt;
+    if(t<1) txt=(t*365.25).toFixed(1)+' d';
+    else if(t<1000) txt=t.toFixed(2)+' yr';
+    else txt=t.toFixed(0)+' yr';
+    document.getElementById('clock').textContent=txt;
+    document.getElementById('clockSub').textContent = state.running
+      ? (fmtSpeed(state.speed)+' · '+state.bodies.length+' bodies')
+      : 'paused';
+  }
+
+  function updateReadout(){
+    const el=document.getElementById('readout');
+    const b=state.selected;
+    if(!b || !state.bodies.includes(b)){
+      if(!el.dataset.empty){
+        el.innerHTML='<div class="empty">Tap or click any body to read off its distance, speed and orbital period — or drag it to a new position while paused.</div>';
+        el.dataset.empty='1';
+      }
+      return;
+    }
+    el.dataset.empty='';
+    const prim=primaryBody();
+    const bc=barycentre();
+    const rP=Math.hypot(b.x-prim.x,b.y-prim.y);
+    const rB=Math.hypot(b.x-bc.x,b.y-bc.y);
+    const v=Math.hypot(b.vx,b.vy);
+    const isPrim = (b===prim);
+    const massEarth=b.m*MSUN_KG/MEARTH_KG;
+    const massTxt = b.m>=0.02 ? (b.m).toFixed(3)+' M<small>☉</small>'
+                   : massEarth>=0.1 ? massEarth.toFixed(massEarth<10?2:0)+' M<small>⊕</small>'
+                   : (b.m*MSUN_KG).toExponential(2)+' <small>kg</small>';
+    let kepler='';
+    if(b.measT && b.measA && !isPrim){
+      const ratio=(b.measT*b.measT)/(b.measA**3);
+      kepler=`<div class="stat"><span class="k">Period (measured)</span><span class="v">${b.measT.toFixed(b.measT<1?3:2)}<small>yr</small></span></div>
+              <div class="stat"><span class="k">Semi-major axis a</span><span class="v">${b.measA.toFixed(3)}<small>AU</small></span></div>
+              <div class="stat"><span class="k">T²/a³</span><span class="v" style="color:var(--good)">${ratio.toFixed(3)}</span></div>`;
+    }
+    el.innerHTML=`
+      <div class="rd-body">
+        <span class="dot" style="background:${b.c}"></span>
+        <div><div class="rname">${b.name}</div><div class="rtag">${isPrim?'central body':'orbiting '+prim.name}</div></div>
+      </div>
+      <div class="grid2">
+        <div class="stat"><span class="k">Distance from ${prim.name}</span><span class="v">${isPrim?'—':fmtAU(rP)+' <small>AU</small>'}</span></div>
+        <div class="stat"><span class="k">Distance from barycentre</span><span class="v">${fmtAU(rB)} <small>AU</small></span></div>
+        <div class="stat"><span class="k">Speed</span><span class="v">${(v*AUYR_TO_KMS).toFixed(2)}<small>km/s</small></span></div>
+        <div class="stat"><span class="k">Speed</span><span class="v">${v.toFixed(3)}<small>AU/yr</small></span></div>
+        <div class="stat"><span class="k">Mass</span><span class="v">${massTxt}</span></div>
+        ${kepler}
+      </div>
+      <div class="masswrap">
+        <div class="row"><span class="k">Adjust mass ${isPrim?'(central body)':''}</span><span class="v" id="massLbl"></span></div>
+        <input type="range" id="massSlider" min="-3" max="3" step="0.01" style="width:100%">
+      </div>
+      <div class="rd-actions">
+        <button class="btn" id="delBtn">Remove body</button>
+        <button class="btn" id="deselBtn">Deselect</button>
+      </div>`;
+    // mass slider maps log10 factor around current
+    const ms=document.getElementById('massSlider');
+    const base=b._massBase||(b._massBase=b.m);
+    ms.value=Math.log10(b.m/base);
+    const upd=()=>{ document.getElementById('massLbl').textContent=(b.m/base).toFixed(2)+'×'; };
+    upd();
+    ms.oninput=()=>{ b.m=base*Math.pow(10,parseFloat(ms.value)); recenterMomentum(); computeAccel(state.bodies); state.E0=energy().tot; upd(); };
+    document.getElementById('delBtn').onclick=()=>{ removeBody(b); };
+    document.getElementById('deselBtn').onclick=()=>{ state.selected=null; };
+  }
+
+  function updateBary(){
+    const bc=barycentre();
+    const prim=primaryBody();
+    const off=Math.hypot(bc.x-prim.x,bc.y-prim.y);
+    const E=energy();
+    const drift = state.E0!==null && state.E0!==0 ? (E.tot-state.E0)/Math.abs(state.E0)*100 : 0;
+    const dl=document.getElementById('baryData');
+    dl.innerHTML=`
+      <div class="drow"><span class="k">Barycentre position</span><span class="v">${fmtAU(bc.x)}, ${fmtAU(bc.y)} <small>AU</small></span></div>
+      <div class="drow"><span class="k">Offset from ${prim.name}&rsquo;s centre</span><span class="v">${fmtAU(off)} <small>AU</small></span></div>
+      <div class="drow"><span class="k">Total kinetic energy</span><span class="v">${E.ke.toExponential(2)}</span></div>
+      <div class="drow"><span class="k">Total potential energy</span><span class="v">${E.pe.toExponential(2)}</span></div>
+      <div class="drow"><span class="k">Total energy</span><span class="v">${E.tot.toExponential(2)}</span></div>`;
+    // barycentre note relative to primary radius
+    const note=document.getElementById('baryNote');
+    let radAU, radName, radR;
+    if(prim.name==='Sun'){ radAU=R_SUN_AU; radName='the Sun'; radR='R☉'; }
+    else if(prim.name==='Earth'){ radAU=R_EARTH_AU; radName='Earth'; radR='R⊕'; }
+    else { radAU=null; }
+    if(radAU){
+      const inR=off/radAU;
+      const inside=off<radAU;
+      note.style.display='block';
+      note.innerHTML=`The barycentre sits <b>${inR.toFixed(2)} ${radR}</b> from ${radName}&rsquo;s centre — <b>${inside?'inside':'outside'}</b> ${radName}. ${inside?'Even the central body only wobbles a little; the barycentre never leaves it.':'The central body actually loops right around this point in empty space.'}`;
+    } else {
+      note.style.display='none';
+    }
+    document.getElementById('econserve').textContent =
+      `Energy drift since reset: ${drift>=0?'+':''}${drift.toExponential(2)} %  —  a symplectic (velocity-Verlet) integrator keeps this tiny, so the orbits stay honest.`;
+  }
+
+  function updateKepler(){
+    const sec=document.getElementById('keplerSec');
+    const prim=primaryBody();
+    // only meaningful for sun-centred solar presets
+    const show = prim.name==='Sun' && state.bodies.length>=2 && state.bodies.some(b=>b!==prim);
+    sec.style.display = show?'block':'none';
+    if(!show) return;
+    const tbl=document.getElementById('keplerTbl');
+    let rows='<tr><th>Body</th><th>a /AU</th><th>T /yr</th><th>T²/a³</th></tr>';
+    for(const b of state.bodies){
+      if(b===prim) continue;
+      if(b.measT&&b.measA){
+        const ratio=(b.measT*b.measT)/(b.measA**3);
+        rows+=`<tr><td>${b.name}</td><td>${b.measA.toFixed(3)}</td><td>${b.measT.toFixed(b.measT<1?3:2)}</td><td class="ratio">${ratio.toFixed(3)}</td></tr>`;
+      } else {
+        rows+=`<tr><td>${b.name}</td><td colspan="3" style="color:var(--faint)">measuring…</td></tr>`;
+      }
+    }
+    tbl.innerHTML=rows;
+  }
+
+  /* ---------- interaction ---------- */
+  function bodyAt(sx,sy){
+    let best=null,bd=18;
+    for(const b of state.bodies){
+      const p=w2s(b.x,b.y);
+      const d=Math.hypot(p[0]-sx,p[1]-sy);
+      if(d<Math.max(dispR(b)+8,14) && d<bd){ bd=d; best=b; }
+    }
+    return best;
+  }
+  function removeBody(b){
+    const i=state.bodies.indexOf(b);
+    if(i>=0 && !b.isPrimary){ state.bodies.splice(i,1); if(state.selected===b)state.selected=null;
+      computeAccel(state.bodies); state.E0=energy().tot; }
+    else if(b.isPrimary){ flashHint('The central body anchors the scene — reset to change it'); }
+  }
+
+  let pointer={down:false,moved:false,px:0,py:0,dragBody:null};
+  let dragAdd={active:false,x0:0,y0:0,sx:0,sy:0};
+
+  function onDown(sx,sy){
+    if(state.mode==='add'){
+      const wpt=s2w(sx,sy);
+      dragAdd={active:true,x0:wpt[0],y0:wpt[1],sx:sx,sy:sy};
+      return;
+    }
+    const b=bodyAt(sx,sy);
+    pointer={down:true,moved:false,px:sx,py:sy,dragBody:b};
+    if(b){ state.selected=b; }
+  }
+  function onMove(sx,sy){
+    if(dragAdd.active){ dragAdd.sx=sx; dragAdd.sy=sy; return; }
+    if(!pointer.down) return;
+    const dx=sx-pointer.px, dy=sy-pointer.py;
+    if(Math.abs(dx)>2||Math.abs(dy)>2)pointer.moved=true;
+    if(pointer.dragBody){
+      // move body (position); keep velocity
+      const wpt=s2w(sx,sy);
+      pointer.dragBody.x=wpt[0]; pointer.dragBody.y=wpt[1];
+      pointer.dragBody.trail=[];
+      computeAccel(state.bodies); state.E0=energy().tot;
+    } else {
+      // pan
+      state.view.cx-=dx/state.view.scale; state.view.cy-=dy/state.view.scale;
+      if(state.follow!=='free'){ state.follow='free'; syncFollow(); }
+      cv.classList.add('grabbing');
+    }
+    pointer.px=sx; pointer.py=sy;
+  }
+  function onUp(sx,sy){
+    cv.classList.remove('grabbing');
+    if(dragAdd.active){
+      const x0=dragAdd.x0, y0=dragAdd.y0;
+      const info=circInfoAt(x0,y0);
+      const a=w2s(x0,y0);
+      const dragPx=Math.hypot(sx-a[0], sy-a[1]);
+      let vx,vy;
+      if(dragPx<12 && info.r>1e-6){
+        // tap → prograde circular orbit about the primary (relative to its motion)
+        const ux=-info.ry/info.r, uy=info.rx/info.r;   // counter-clockwise unit tangent
+        vx=info.prim.vx + info.v*ux;
+        vy=info.prim.vy + info.v*uy;
+      } else {
+        // drag → aim direction; speed = circular × (dragPx / 90)
+        const wEnd=s2w(sx,sy);
+        let dx=wEnd[0]-x0, dy=wEnd[1]-y0; const dl=Math.hypot(dx,dy)||1; dx/=dl; dy/=dl;
+        const mag=(info.v||1)*(dragPx/90);
+        vx=info.prim.vx + mag*dx;
+        vy=info.prim.vy + mag*dy;
+      }
+      const nb=new Body({name:'New body', m:3e-6, c:'#7fd6a2', r:4, radiusAU:3e-5, x:x0, y:y0, vx, vy});
+      state.bodies.push(nb);
+      state.selected=nb;
+      recenterMomentum();
+      computeAccel(state.bodies); state.E0=energy().tot;
+      dragAdd.active=false;
+      state.mode='explore'; syncMode();
+      flashHint('Added — a quick tap gives a circular orbit; drag to aim &amp; set the speed');
+      return;
+    }
+    if(pointer.down && !pointer.moved && !pointer.dragBody){
+      const b=bodyAt(sx,sy);
+      if(!b) state.selected=null;
+    }
+    pointer.down=false; pointer.dragBody=null;
+  }
+
+  // mouse
+  cv.addEventListener('mousedown',e=>{ const r=cv.getBoundingClientRect(); onDown(e.clientX-r.left,e.clientY-r.top); });
+  window.addEventListener('mousemove',e=>{ const r=cv.getBoundingClientRect(); onMove(e.clientX-r.left,e.clientY-r.top); });
+  window.addEventListener('mouseup',e=>{ const r=cv.getBoundingClientRect(); onUp(e.clientX-r.left,e.clientY-r.top); });
+  // touch
+  cv.addEventListener('touchstart',e=>{ if(e.touches.length===1){ const r=cv.getBoundingClientRect(); onDown(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top);} else if(e.touches.length===2){ startPinch(e);} },{passive:true});
+  cv.addEventListener('touchmove',e=>{ if(e.touches.length===1&&!pinch.active){ const r=cv.getBoundingClientRect(); onMove(e.touches[0].clientX-r.left,e.touches[0].clientY-r.top);} else if(e.touches.length===2){ movePinch(e);} },{passive:true});
+  cv.addEventListener('touchend',e=>{ if(pinch.active&&e.touches.length<2){pinch.active=false;} if(e.touches.length===0){ const r=cv.getBoundingClientRect(); const t=e.changedTouches[0]; onUp(t.clientX-r.left,t.clientY-r.top);} },{passive:true});
+
+  // wheel zoom (about cursor)
+  cv.addEventListener('wheel',e=>{ e.preventDefault();
+    const r=cv.getBoundingClientRect(); const sx=e.clientX-r.left, sy=e.clientY-r.top;
+    zoomAt(sx,sy, e.deltaY<0?1.12:1/1.12);
+  },{passive:false});
+  function zoomAt(sx,sy,f){
+    const before=s2w(sx,sy);
+    state.view.scale*=f;
+    state.view.scale=Math.max(1e-3, Math.min(state.view.scale, 5e6));
+    const after=s2w(sx,sy);
+    state.view.cx+=before[0]-after[0]; state.view.cy+=before[1]-after[1];
+  }
+  let pinch={active:false,d0:0,cx:0,cy:0};
+  function startPinch(e){ const r=cv.getBoundingClientRect();
+    const a=e.touches[0],b=e.touches[1];
+    pinch={active:true,d0:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),
+      cx:(a.clientX+b.clientX)/2-r.left,cy:(a.clientY+b.clientY)/2-r.top};
+  }
+  function movePinch(e){ if(!pinch.active)return; const r=cv.getBoundingClientRect();
+    const a=e.touches[0],b=e.touches[1];
+    const d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+    zoomAt(pinch.cx,pinch.cy, d/pinch.d0); pinch.d0=d;
+  }
+
+  /* ---------- controls wiring ---------- */
+  function setRunning(v){
+    state.running=v;
+    document.getElementById('iconPlay').outerHTML = v
+      ? '<svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>'
+      : '<svg id="iconPlay" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>';
+  }
+  document.getElementById('playPause').onclick=()=>setRunning(!state.running);
+  document.getElementById('resetBtn').onclick=()=>{ loadPreset(state.presetKey); };
+  document.getElementById('stepFwd').onclick=()=>{ integrate(state.dt); pushTrails(); trackKepler(); };
+  document.getElementById('stepBack').onclick=()=>{ integrate(-state.dt); trackKepler(); };
+  const speedEl=document.getElementById('speed');
+  function fmtSpeed(s){ return s>=1? s.toFixed(0)+'×' : s.toFixed(2)+'×'; }
+  function applySpeed(){
+    const val=Math.pow(10, parseFloat(speedEl.value)); // -1..1.9 → 0.1 .. ~79
+    state.speed=val;
+    document.getElementById('speedVal').textContent=fmtSpeed(val);
+  }
+  speedEl.addEventListener('input',applySpeed);
+  document.getElementById('zoomIn').onclick=()=>zoomAt(cv.clientWidth/2,cv.clientHeight/2,1.25);
+  document.getElementById('zoomOut').onclick=()=>zoomAt(cv.clientWidth/2,cv.clientHeight/2,1/1.25);
+  document.getElementById('fitBtn').onclick=()=>{ frameAll(); if(state.follow==='free'){} };
+  document.querySelectorAll('#followSeg .seg').forEach(s=>{
+    s.onclick=()=>{ state.follow=s.dataset.follow; syncFollow(); savePrefs(); };
+  });
+  document.querySelectorAll('#modeSeg .seg').forEach(s=>{
+    s.onclick=()=>{ state.mode=s.dataset.mode; syncMode();
+      if(state.mode==='add')flashHint('Press &amp; drag on the sky to launch a body'); };
+  });
+
+  // mobile sheet
+  const consoleEl=document.getElementById('console');
+  document.getElementById('sheetHandle').onclick=()=>consoleEl.classList.toggle('open');
+
+  // keyboard
+  window.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT')return;
+    if(e.code==='Space'){ e.preventDefault(); setRunning(!state.running); }
+    else if(e.key==='ArrowRight'){ integrate(state.dt); pushTrails(); trackKepler(); }
+    else if(e.key==='ArrowLeft'){ integrate(-state.dt); trackKepler(); }
+    else if(e.key==='r'||e.key==='R'){ loadPreset(state.presetKey); }
+    else if(e.key==='f'||e.key==='F'){ frameAll(); }
+  });
+
+  let hintT=null;
+  function flashHint(msg){
+    const h=document.getElementById('hint');
+    h.innerHTML=msg; h.classList.add('show');
+    clearTimeout(hintT); hintT=setTimeout(()=>h.classList.remove('show'),2200);
+  }
+
+  /* ---------- prefs (per-viewer convenience only) ---------- */
+  function savePrefs(){
+    try{ localStorage.setItem('orrery.prefs', JSON.stringify({
+      toggles:state.toggles, follow:state.follow, preset:state.presetKey
+    })); }catch(e){}
+  }
+  function loadPrefs(){
+    try{
+      const p=JSON.parse(localStorage.getItem('orrery.prefs')||'null');
+      if(p){
+        if(p.toggles) Object.assign(state.toggles,p.toggles);
+        if(p.follow) state.follow=p.follow;
+        if(p.preset && PRESETS[p.preset]) state.presetKey=p.preset;
+      }
+    }catch(e){}
+  }
+
+  /* ---------- boot ---------- */
+  function boot(){
+    loadPrefs();
+    resize();
+    loadPreset(state.presetKey);
+    applySpeed();
+    renderConsole();
+    setRunning(true);
+    requestAnimationFrame(frame);
+    setTimeout(()=>flashHint('Scroll to zoom · drag to pan · tap a body to inspect it'),500);
+  }
+  window.addEventListener('resize',()=>{ resize(); });
+  window.addEventListener('load',()=>{ resize(); frameAll(PRESETS[state.presetKey].view); });
+  boot();
+
+})();
+</script>
+</body>
+</html>
