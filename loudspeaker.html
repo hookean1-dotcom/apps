@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loudspeaker Simulator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+#lsp{--ink:#14213d;--mut:#4d5b74;--bg:#e8efed;--pan:#ffffff;--line:#d3dde0;--acc:#0b7a75;--acc2:#e4572e;--cur:#1d4ed8;--frc:#0b8f47;--fld:#7c3aed;
+  font-family:Lexend,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;box-sizing:border-box;padding:14px;line-height:1.45;font-size:14px}
+#lsp *{box-sizing:border-box}
+#lsp .hd{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:6px 16px;margin:0 2px 12px}
+#lsp .hd h1{font-size:23px;line-height:1.15;margin:0;font-weight:700;letter-spacing:-.015em}
+#lsp .hd h1 span{color:var(--acc)}
+#lsp .hd p{margin:3px 0 0;color:var(--mut);font-size:13px}
+#lsp .pill{font-size:12px;font-weight:600;color:var(--acc);background:#d5ebe8;border-radius:99px;padding:4px 11px;white-space:nowrap}
+#lsp .wrap{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+#lsp .stage{flex:3 1 600px;min-width:0;display:flex;flex-direction:column;gap:12px}
+#lsp .side{flex:1 1 270px;min-width:0;display:flex;flex-direction:column;gap:12px}
+#lsp .card{background:var(--pan);border-radius:14px;padding:12px 14px;border:1px solid var(--line)}
+#lsp .card.cv{padding:8px}
+#lsp canvas{display:block;width:100%;border-radius:9px;touch-action:none}
+#lsp .note{font-size:12px;color:var(--mut);margin:6px 4px 0}
+#lsp h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:0 0 9px;font-weight:600}
+#lsp .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#lsp .seg{display:flex;background:#edf2f3;border-radius:10px;padding:3px;gap:3px;flex:1}
+#lsp .seg button{flex:1;border:0;background:transparent;font:600 13px Lexend,system-ui,sans-serif;color:var(--mut);padding:7px 6px;border-radius:8px;cursor:pointer}
+#lsp .seg button.on{background:var(--ink);color:#fff}
+#lsp .btn{border:0;font:600 13px Lexend,system-ui,sans-serif;background:var(--acc);color:#fff;padding:8px 13px;border-radius:9px;cursor:pointer}
+#lsp .btn.alt{background:#edf2f3;color:var(--ink)}
+#lsp .btn.warm{background:var(--acc2)}
+#lsp .btn:hover{filter:brightness(1.08)}
+#lsp .sl{margin-top:11px}
+#lsp .sl label{display:flex;justify-content:space-between;font-size:13px;font-weight:500}
+#lsp .sl label b{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--acc)}
+#lsp input[type=range]{width:100%;accent-color:var(--acc);margin:5px 0 0}
+#lsp .sub{font-size:11.5px;color:var(--mut)}
+#lsp .tg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+#lsp .tg label{display:flex;align-items:center;gap:7px;font-size:12.5px;background:#f3f6f7;border-radius:8px;padding:6px 8px;cursor:pointer;user-select:none}
+#lsp .tg input{accent-color:var(--acc);margin:0}
+#lsp .ro{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:13px}
+#lsp .ro dt{color:var(--mut)}
+#lsp .ro dd{margin:0;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:12.5px;text-align:right}
+#lsp .ro dd.c{color:var(--cur)}#lsp .ro dd.f{color:var(--frc)}#lsp .ro dd.w{color:var(--acc2)}
+#lsp .steps{margin:0;padding-left:20px;font-size:13px}
+#lsp .steps li{margin-bottom:5px;padding:2px 4px;border-radius:6px;transition:background .25s}
+#lsp .steps li.hi{background:#fff1c7}
+#lsp .quiz{margin-top:14px}
+#lsp .qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+#lsp .qhead h2{margin:0}
+#lsp .score{font-family:"JetBrains Mono",monospace;font-weight:700;color:var(--acc)}
+#lsp .qq{font-weight:600;font-size:15px;margin:4px 0 10px}
+#lsp .qo{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:7px}
+#lsp .qo button{text-align:left;border:2px solid var(--line);background:#fff;border-radius:10px;padding:9px 11px;font:500 13.5px Lexend,system-ui,sans-serif;color:var(--ink);cursor:pointer}
+#lsp .qo button:hover{border-color:var(--acc)}
+#lsp .qo button.ok{border-color:var(--frc);background:#e3f6ea}
+#lsp .qo button.no{border-color:#d33b3b;background:#fde8e8}
+#lsp .qo button:disabled{cursor:default}
+#lsp .fb{margin-top:10px;font-size:13.5px;min-height:20px}
+#lsp .fb b{color:var(--frc)}
+#lsp .fb b.x{color:#c62f2f}
+#lsp .qnav{display:flex;justify-content:flex-end;margin-top:8px}
+</style>
+</head>
+<body style="margin:0">
+<div id="lsp">
+  <div class="hd">
+    <div>
+      <h1>How a <span>Loudspeaker</span> Works</h1>
+      <p>The motor effect turns an alternating current into a vibrating cone — and a longitudinal sound wave.</p>
+    </div>
+    <div class="pill">GCSE · IGCSE Physics</div>
+  </div>
+
+  <div class="wrap">
+    <div class="stage">
+      <div class="card cv">
+        <canvas id="lsp-main" aria-label="Cross-section of a moving-coil loudspeaker producing sound waves"></canvas>
+        <div class="note">Cross-section view. Not to scale — the vibration is slowed down about <span id="lsp-slow">×250</span> and exaggerated so you can see it. Grab the cone and push it yourself!</div>
+      </div>
+      <div class="card cv">
+        <canvas id="lsp-scope" aria-label="Graph of current and cone position against time"></canvas>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="card">
+        <h2>Power supply</h2>
+        <div class="row">
+          <div class="seg" id="lsp-mode"><button data-m="ac" class="on">a.c.</button><button data-m="dc">d.c.</button><button data-m="off">Off</button></div>
+        </div>
+        <div class="sl"><label>Frequency <b id="lsp-fv">200 Hz</b></label><input id="lsp-f" type="range" min="100" max="500" step="10" value="200"><div class="sub">Higher frequency → higher pitch, shorter wavelength</div></div>
+        <div class="sl"><label>Current (peak) <b id="lsp-iv">0.60 A</b></label><input id="lsp-i" type="range" min="0.1" max="1" step="0.05" value="0.6"><div class="sub">Bigger current → bigger force → louder sound</div></div>
+        <div class="sl"><label>Slow-motion speed <b id="lsp-sv">×1.0</b></label><input id="lsp-s" type="range" min="0.25" max="1.5" step="0.05" value="1"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="lsp-play">Pause</button>
+          <button class="btn alt" id="lsp-flip">Reverse magnet</button>
+          <button class="btn warm" id="lsp-snd">Hear it</button>
+          <button class="btn alt" id="lsp-reset">Reset</button>
+        </div>
+        <div class="sub" id="lsp-sndmsg" style="margin-top:6px"></div>
+      </div>
+
+      <div class="card">
+        <h2>Live readings</h2>
+        <dl class="ro">
+          <dt>Current in coil</dt><dd class="c" id="lsp-rI">–</dd>
+          <dt>Force on coil</dt><dd class="f" id="lsp-rF">–</dd>
+          <dt>Cone is</dt><dd class="w" id="lsp-rC">–</dd>
+          <dt>Frequency / period</dt><dd id="lsp-rT">–</dd>
+          <dt>Wavelength (v = 340 m/s)</dt><dd id="lsp-rL">–</dd>
+        </dl>
+      </div>
+
+      <div class="card">
+        <h2>Show</h2>
+        <div class="tg">
+          <label><input type="checkbox" data-k="field" checked>Magnetic field</label>
+          <label><input type="checkbox" data-k="force" checked>Force arrows</label>
+          <label><input type="checkbox" data-k="charges" checked>Current flow</label>
+          <label><input type="checkbox" data-k="shade" checked>Shade pressure</label>
+          <label><input type="checkbox" data-k="pgraph" checked>Pressure graph</label>
+          <label><input type="checkbox" data-k="labels" checked>C / R labels</label>
+          <label><input type="checkbox" data-k="track" checked>Track a particle</label>
+          <label><input type="checkbox" data-k="insets" checked>Side diagrams</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap" style="margin-top:14px">
+    <div class="card" style="flex:1 1 360px">
+      <h2>What's happening — step by step</h2>
+      <ol class="steps" id="lsp-steps">
+        <li>An <b>alternating current</b> flows through the coil, which is wound on a tube attached to the cone.</li>
+        <li>The coil sits in the <b>radial magnetic field</b> between the N and S poles of a permanent magnet.</li>
+        <li>A current-carrying wire in a magnetic field feels a <b>force</b> — the <b>motor effect</b> (F = BIL). Fleming's left-hand rule gives its direction.</li>
+        <li>The a.c. keeps <b>reversing direction</b>, so the force keeps reversing: the coil and cone <b>vibrate in and out</b> at the supply frequency.</li>
+        <li>The cone pushes and pulls the air, making <b>compressions</b> and <b>rarefactions</b> — a <b>longitudinal</b> sound wave. Air particles vibrate <b>parallel</b> to the direction the wave travels.</li>
+      </ol>
+    </div>
+    <div class="card quiz" style="flex:1 1 420px;margin-top:0">
+      <div class="qhead"><h2>Exam check</h2><span class="score" id="lsp-score">0 / 0</span></div>
+      <div class="sub" id="lsp-qn"></div>
+      <div class="qq" id="lsp-qq"></div>
+      <div class="qo" id="lsp-qo"></div>
+      <div class="fb" id="lsp-fb"></div>
+      <div class="qnav"><button class="btn" id="lsp-next">Next question</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('lsp');
+function $(s){return root.querySelector(s);}
+var cv=$('#lsp-main'),cx=cv.getContext('2d'),sv=$('#lsp-scope'),sx=sv.getContext('2d');
+var W=1000,H=560,SW=1000,SH=190;
+var SLOW=250,PXM=110,VPX=340*PXM/SLOW,K=14,AIR=0.6,RIM=440;
+var C={ink:'#14213d',mut:'#4d5b74',cur:'#1d4ed8',frc:'#0b8f47',fld:'#7c3aed',N:'#d93a3a',S:'#2a66d9',cu:'#c2681b',acc:'#0b7a75',warm:'#e4572e',bg:'#f7faf9',cone:'#34435e'};
+var st={play:true,mode:'ac',f:200,I0:0.6,spd:1,flip:false,field:true,force:true,charges:true,pgraph:true,labels:true,shade:true,track:true,insets:true,sound:false};
+var t=0,phase=0,Ival=0,rampD=0,rampT=0,o=0,prevO=0,oVel=0,chOff=0,dragging=false,dragOff=0,dragX0=0,dragO0=0,dragT=0,dragged=false;
+var scale=1,sscale=1,dpr=1;
+
+/* ---------- sizing ---------- */
+function fit(){
+  dpr=window.devicePixelRatio||1;
+  var w=cv.parentElement.clientWidth-16; if(w<200)w=200;
+  scale=w/W; cv.width=Math.round(w*dpr); cv.height=Math.round(w*H/W*dpr); cv.style.height=(w*H/W)+'px';
+  var w2=sv.parentElement.clientWidth-16; if(w2<200)w2=200;
+  var h2=Math.max(110,Math.min(210,w2*0.19));
+  sscale=w2/SW; sv.width=Math.round(w2*dpr); sv.height=Math.round(h2*dpr); sv.style.height=h2+'px'; SH=h2/sscale;
+  if(!st.play){draw();drawScope();}
+}
+if(window.ResizeObserver){new ResizeObserver(fit).observe(cv.parentElement);}else{window.addEventListener('resize',fit);}
+
+/* ---------- current ---------- */
+function Iideal(){return st.mode==='ac'?st.I0*Math.sin(phase):(st.mode==='dc'?st.I0:0);}
+function rebase(){rampD=Ival-Iideal();rampT=t;}
+function pol(){return st.flip?-1:1;}
+
+/* ---------- displacement history (for wave propagation) ---------- */
+var HN=1024,Hh=0.01,hist=new Float32Array(HN),kLast=0,tPrev=0;
+function record(){
+  while((kLast+1)*Hh<=t){
+    kLast++;var tk=kLast*Hh,a=(t>tPrev)?(tk-tPrev)/(t-tPrev):1;
+    hist[kLast%HN]=prevO+(o-prevO)*a;
+  }
+}
+function getH(tau){
+  if(tau<=0)return 0;
+  var kf=tau/Hh,k0=Math.floor(kf);
+  if(k0>=kLast)return o;
+  if(k0<kLast-HN+2)return hist[(kLast-HN+2)%HN];
+  var fr=kf-k0,a=hist[k0%HN],b=hist[(k0+1)%HN];return a+(b-a)*fr;
+}
+/* air in front of AND inside the cone: fronts start cone-shaped at the cone surface and flatten into plane waves */
+var NECK=530,LB=150;
+function coneX(y){var d=Math.abs(y-280);if(d<30)return NECK-11*(1-(d/30)*(d/30));if(d<38)return NECK;var v=440+(210-d)*90/172;return v<440?440:v;}
+function u(x0,xs){if(xs===undefined)xs=NECK;var gg=1-(xs-x0)/LB;if(gg<0)gg=0;var tau=((NECK-x0)-gg*(NECK-xs))/VPX;return (AIR+(1-AIR)*gg)*getH(t-tau);}
+function strain(x0,xs){return -(u(x0+2,xs)-u(x0-2,xs))/4;}
+
+/* ---------- air particles ---------- */
+var seed=7;function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+var PX=[],PY=[],PS=[];
+for(var c=0;c<47;c++){for(var r=0;r<33;r++){var x=16+c*11+(rnd()-0.5)*6,y=70+r*13+(rnd()-0.5)*8,xe=coneX(y);if(x<xe-8){PX.push(x);PY.push(y);PS.push(xe);}}}
+var trk=0,bd=1e9;for(var i=0;i<PX.length;i++){var d=(PX[i]-250)*(PX[i]-250)+(PY[i]-282)*(PY[i]-282);if(d<bd){bd=d;trk=i;}}
+var SHADES=['#c3cddd','#a3b1c7','#8392ae','#627391','#465676','#2c3a58','#14213d'];
+
+/* ---------- scope buffer ---------- */
+var SN=900,scT=new Float32Array(SN),scI=new Float32Array(SN),scO=new Float32Array(SN),scK=0,scN=0;
+function scopePush(){scT[scK]=t;scI[scK]=Ival;scO[scK]=-o;scK=(scK+1)%SN;if(scN<SN)scN++;}
+
+/* ---------- helpers ---------- */
+function arrow(g,x1,y1,x2,y2,col,w,hd){
+  var a=Math.atan2(y2-y1,x2-x1),L=Math.hypot(x2-x1,y2-y1);if(L<1)return;hd=Math.min(hd,L*0.8);
+  g.strokeStyle=col;g.fillStyle=col;g.lineWidth=w;g.lineCap='round';
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2-Math.cos(a)*hd*0.7,y2-Math.sin(a)*hd*0.7);g.stroke();
+  g.beginPath();g.moveTo(x2,y2);g.lineTo(x2-hd*Math.cos(a-0.45),y2-hd*Math.sin(a-0.45));g.lineTo(x2-hd*Math.cos(a+0.45),y2-hd*Math.sin(a+0.45));g.closePath();g.fill();
+}
+function txt(s,x,y,col,sz,wt,al){cx.fillStyle=col;cx.font=(wt||500)+' '+sz+'px Lexend,system-ui,sans-serif';cx.textAlign=al||'left';cx.textBaseline='middle';cx.fillText(s,x,y);}
+function rrect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function symbol(g,x,y,r,out,col,alpha){
+  g.globalAlpha=alpha;g.strokeStyle=col;g.fillStyle=col;g.lineWidth=2.2;
+  if(out){g.beginPath();g.arc(x,y,r*0.38,0,6.2832);g.fill();}
+  else{var q=r*0.55;g.beginPath();g.moveTo(x-q,y-q);g.lineTo(x+q,y+q);g.moveTo(x+q,y-q);g.lineTo(x-q,y+q);g.stroke();}
+  g.globalAlpha=1;
+}
+function polyLen(p){var L=[0];for(var i=1;i<p.length;i++)L.push(L[i-1]+Math.hypot(p[i][0]-p[i-1][0],p[i][1]-p[i-1][1]));return L;}
+function polyAt(p,L,s){for(var i=1;i<p.length;i++){if(s<=L[i]){var f=(s-L[i-1])/(L[i]-L[i-1]||1);return [p[i-1][0]+(p[i][0]-p[i-1][0])*f,p[i-1][1]+(p[i][1]-p[i-1][1])*f];}}return p[p.length-1];}
+
+/* ---------- main drawing ---------- */
+function draw(){
+  var g=cx;g.setTransform(scale*dpr,0,0,scale*dpr,0,0);
+  g.fillStyle=C.bg;g.fillRect(0,0,W,H);
+  g.strokeStyle='#e6edf0';g.lineWidth=1;g.beginPath();
+  for(var x=0;x<=W;x+=40){g.moveTo(x,0);g.lineTo(x,H);}for(var y=0;y<=H;y+=40){g.moveTo(0,y);g.lineTo(W,y);}g.stroke();
+  var I=Ival,aI=Math.abs(I),p=pol(),Fs=-Math.sign(I)*p;
+
+  /* pressure strip */
+  var xs=[],ss=[];for(var sx0=14;sx0<=424;sx0+=2){xs.push(sx0);ss.push(strain(sx0));}
+  if(st.pgraph){
+    g.fillStyle='rgba(255,255,255,.85)';rrect(g,10,6,420,56,8);g.fill();g.strokeStyle='#d3dde0';g.lineWidth=1;g.stroke();
+    g.setLineDash([4,4]);g.strokeStyle='#9aa7b8';g.beginPath();g.moveTo(14,36);g.lineTo(426,36);g.stroke();g.setLineDash([]);
+    g.strokeStyle=C.warm;g.lineWidth=2.4;g.beginPath();
+    for(var k=0;k<xs.length;k++){var yy=36-Math.max(-1,Math.min(1,ss[k]))*24;if(k)g.lineTo(xs[k],yy);else g.moveTo(xs[k],yy);}g.stroke();
+    txt('air pressure'+(st.labels?'   ·   C = compression, R = rarefaction':''),16,14,C.mut,10.5,600);txt('high',424,15,C.mut,9.5,500,'right');txt('low',424,56,C.mut,9.5,500,'right');
+  }
+
+  /* particles */
+  var paths=[];for(var b=0;b<7;b++)paths.push([]);
+  var n=PX.length,TX=0,TY=0,TU=0;
+  for(var q=0;q<n;q++){
+    var x0=PX[q],xe=PS[q],uu=u(x0,xe),bi=3;
+    if(st.shade){var s_=strain(x0,xe);bi=Math.round((s_+0.55)/1.1*6);if(bi<0)bi=0;if(bi>6)bi=6;}
+    if(st.track&&q===trk){TX=x0;TY=PY[q];TU=uu;continue;}
+    paths[bi].push(x0+uu,PY[q]);
+  }
+  for(b=0;b<7;b++){var arr=paths[b];if(!arr.length)continue;g.fillStyle=st.shade?SHADES[b]:'#4a5a78';g.beginPath();
+    for(var j=0;j<arr.length;j+=2){g.moveTo(arr[j]+2.4,arr[j+1]);g.arc(arr[j],arr[j+1],2.4,0,6.2832);}g.fill();}
+  if(st.track){
+    g.setLineDash([3,3]);g.strokeStyle=C.warm;g.lineWidth=1.3;g.beginPath();g.moveTo(TX,TY-18);g.lineTo(TX,TY+18);g.stroke();g.setLineDash([]);
+    var amp=AIR*K*st.I0;if(st.mode==='ac'){arrow(g,TX,TY+24,TX-amp-4,TY+24,C.warm,1.5,5);arrow(g,TX,TY+24,TX+amp+4,TY+24,C.warm,1.5,5);}
+    g.fillStyle='#fff';g.beginPath();g.arc(TX+TU,TY,6,0,6.2832);g.fill();
+    g.fillStyle=C.warm;g.beginPath();g.arc(TX+TU,TY,4.6,0,6.2832);g.fill();
+    g.fillStyle='rgba(255,255,255,.88)';rrect(g,TX-62,TY-42,124,20,6);g.fill();
+    txt('one air particle',TX,TY-32,C.warm,11,600,'center');
+  }
+
+  /* C / R labels & wavelength */
+  if(st.labels){
+    var mx=[],mn=[];
+    for(k=2;k<ss.length-2;k++){
+      if(ss[k]>0.1&&ss[k]>=ss[k-1]&&ss[k]>ss[k+1]&&ss[k]>=ss[k-2]&&ss[k]>ss[k+2]&&(!mx.length||xs[k]-mx[mx.length-1]>24))mx.push(xs[k]);
+      if(ss[k]<-0.1&&ss[k]<=ss[k-1]&&ss[k]<ss[k+1]&&ss[k]<=ss[k-2]&&ss[k]<ss[k+2]&&(!mn.length||xs[k]-mn[mn.length-1]>24))mn.push(xs[k]);
+    }
+    mx.forEach(function(xx){g.fillStyle=C.ink;g.beginPath();g.arc(xx,512,10,0,6.2832);g.fill();txt('C',xx,512.5,'#fff',11.5,700,'center');});
+    mn.forEach(function(xx){g.fillStyle='#fff';g.strokeStyle='#8392ae';g.lineWidth=1.6;g.beginPath();g.arc(xx,512,10,0,6.2832);g.fill();g.stroke();txt('R',xx,512.5,C.mut,11.5,700,'center');});
+    if(mx.length>=2&&st.mode==='ac'){
+      var a1=mx[mx.length-1],a0=mx[mx.length-2];
+      g.strokeStyle=C.acc;g.lineWidth=1.6;g.beginPath();g.moveTo(a0,532);g.lineTo(a0,550);g.moveTo(a1,532);g.lineTo(a1,550);g.stroke();
+      arrow(g,(a0+a1)/2,541,a0+1,541,C.acc,1.6,6);arrow(g,(a0+a1)/2,541,a1-1,541,C.acc,1.6,6);
+      var lt='λ = '+(340/st.f).toFixed(2)+' m';g.font='700 11px Lexend,system-ui';var tw=g.measureText(lt).width+10;
+      g.fillStyle=C.bg;g.fillRect((a0+a1)/2-tw/2,533,tw,16);txt(lt,(a0+a1)/2,541,C.acc,11,700,'center');
+    }
+  }
+
+  /* casing & surround */
+  g.strokeStyle='#2b3a55';g.lineWidth=4;g.lineCap='round';g.beginPath();g.moveTo(440,58);g.lineTo(575,120);g.moveTo(440,502);g.lineTo(575,440);g.stroke();
+  g.fillStyle='#2b3a55';g.fillRect(432,50,14,12);g.fillRect(432,498,14,12);
+  g.strokeStyle='#6b7a93';g.lineWidth=3;g.beginPath();g.moveTo(440,62);g.quadraticCurveTo(428+o/2,64,440+o,70);g.moveTo(440,498);g.quadraticCurveTo(428+o/2,496,440+o,490);g.stroke();
+
+  /* magnet */
+  var gr=g.createLinearGradient(560,120,790,440);gr.addColorStop(0,'#b3bccb');gr.addColorStop(1,'#7d889c');
+  g.fillStyle=gr;g.beginPath();
+  var M=[[575,120],[790,120],[790,440],[575,440],[575,342],[730,342],[730,314],[560,314],[560,246],[730,246],[730,218],[575,218]];
+  g.moveTo(M[0][0],M[0][1]);for(k=1;k<M.length;k++)g.lineTo(M[k][0],M[k][1]);g.closePath();g.fill();g.strokeStyle='#4a5568';g.lineWidth=2;g.stroke();
+  var outer=st.flip?C.S:C.N,inner=st.flip?C.N:C.S,oL=st.flip?'S':'N',iL=st.flip?'N':'S';
+  g.globalAlpha=0.28;g.fillStyle=outer;g.fillRect(576,121,154,96);g.fillRect(576,343,154,96);g.fillStyle=inner;g.fillRect(561,247,169,66);g.globalAlpha=1;
+  function badge(x,y,L,col){g.fillStyle='#fff';g.beginPath();g.arc(x,y,12,0,6.2832);g.fill();g.strokeStyle=col;g.lineWidth=2.5;g.stroke();txt(L,x,y+0.5,col,14,700,'center');}
+  badge(700,168,oL,outer);badge(700,392,oL,outer);badge(708,280,iL,inner);
+
+  /* field lines in gap */
+  if(st.field){
+    var dn=st.flip?-1:1;g.globalAlpha=0.8;
+    for(var fx=584;fx<=722;fx+=17){
+      if(dn>0){arrow(g,fx,219,fx,245,C.fld,1.6,6);arrow(g,fx,341,fx,315,C.fld,1.6,6);}
+      else{arrow(g,fx,245,fx,219,C.fld,1.6,6);arrow(g,fx,315,fx,341,C.fld,1.6,6);}
+    }g.globalAlpha=1;
+  }
+
+  /* cone */
+  g.strokeStyle=C.cone;g.lineWidth=5;g.lineCap='round';g.beginPath();g.moveTo(440+o,70);g.lineTo(530+o,242);g.moveTo(440+o,490);g.lineTo(530+o,318);g.stroke();
+  /* tube */
+  g.strokeStyle='#8a6a3c';g.lineWidth=3.5;g.beginPath();g.moveTo(675+o,242);g.lineTo(530+o,242);g.lineTo(530+o,318);g.lineTo(675+o,318);g.stroke();
+  g.fillStyle='rgba(160,178,205,.5)';g.beginPath();g.moveTo(530+o,250);g.quadraticCurveTo(508+o,280,530+o,310);g.closePath();g.fill();
+
+  /* coil turns */
+  var al=Math.min(1,aI/Math.max(0.12,st.I0*0.8));
+  for(k=0;k<4;k++){
+    var ccx=590+17*k+o;
+    [229,331].forEach(function(cy,idx){
+      if(aI>0.02){g.strokeStyle='rgba(29,78,216,'+(0.55*al)+')';g.lineWidth=3;g.beginPath();g.arc(ccx,cy,11.5,0,6.2832);g.stroke();}
+      var rg=g.createRadialGradient(ccx-3,cy-3,1,ccx,cy,9);rg.addColorStop(0,'#f0a760');rg.addColorStop(1,C.cu);
+      g.fillStyle=rg;g.beginPath();g.arc(ccx,cy,8.5,0,6.2832);g.fill();g.strokeStyle='#7a3e0c';g.lineWidth=1.2;g.stroke();
+      if(aI>0.02){var out=(idx===0)?(I<0):(I>0);symbol(g,ccx,cy,8.5,out,'#fff',0.35+0.65*al);}
+    });
+  }
+
+  /* force arrows */
+  if(st.force&&aI>0.02){
+    var L=Math.max(14,78*aI),cxm=615+o;
+    [204,356].forEach(function(cy){g.fillStyle='rgba(255,255,255,.75)';rrect(g,cxm-L/2-22,cy-10,L+44,20,8);g.fill();arrow(g,cxm-Fs*L/2,cy,cxm+Fs*L/2,cy,C.frc,4.5,13);txt('F',cxm+Fs*(L/2+11),cy,C.frc,14,700,'center');});
+  }
+
+  /* wires */
+  var P1=[[960,430],[960,40],[566,40],[566,196],[586+o,221]],P2=[[586+o,339],[566,362],[566,535],[900,535],[900,505]];
+  [P1,P2].forEach(function(P){
+    g.lineJoin='round';g.strokeStyle='#2b3a55';g.lineWidth=6;g.beginPath();g.moveTo(P[0][0],P[0][1]);for(var m=1;m<P.length;m++)g.lineTo(P[m][0],P[m][1]);g.stroke();
+    g.strokeStyle='#e9eef5';g.lineWidth=2;g.stroke();
+  });
+  if(st.charges){
+    var L1=polyLen(P1),L2=polyLen(P2),T1=L1[L1.length-1],TT=T1+L2[L2.length-1],sp=26;
+    var off=((chOff%sp)+sp)%sp;g.fillStyle=C.cur;
+    for(var sd=off;sd<TT;sd+=sp){var pt=sd<T1?polyAt(P1,L1,sd):polyAt(P2,L2,sd-T1);g.beginPath();g.arc(pt[0],pt[1],3.3,0,6.2832);g.fill();}
+    if(aI>0.02){var sg=Math.sign(I);arrow(g,760-sg*16,26,760+sg*16,26,C.cur,2.5,8);txt('current',800,26,C.cur,11,600);}
+  }
+
+  /* supply */
+  g.fillStyle=C.ink;rrect(g,840,430,140,75,10);g.fill();
+  var mlab=st.mode==='ac'?'a.c. supply':(st.mode==='dc'?'d.c. supply':'supply off');
+  txt(mlab,910,448,'#fff',13,600,'center');
+  txt('I = '+(I>=0?'+':'−')+Math.abs(I).toFixed(2)+' A',910,470,'#9fc1ff',12,600,'center');
+  txt(st.mode==='ac'?('f = '+st.f+' Hz'):(st.mode==='dc'?'steady current':'no current'),910,490,'#b9c4d6',11,500,'center');
+  var tp=I>0.005?'+':(I<-0.005?'−':''),bp=I>0.005?'−':(I<-0.005?'+':'');
+  txt(tp,975,420,'#d93a3a',16,700,'center');txt(bp,915,518,C.S,16,700,'center');
+
+  /* insets */
+  if(st.insets){drawFLHR(Fs,aI,I);drawFront(Fs,aI,I);}
+
+  /* labels */
+  g.strokeStyle='#6b7a93';g.lineWidth=1;g.beginPath();
+  g.moveTo(488,524);g.lineTo(466+o,442);g.moveTo(628,470);g.lineTo(607+o,340);g.moveTo(655,96);g.lineTo(640,128);g.stroke();
+  txt('paper cone',450,532,C.ink,12.5,500);txt('coil on tube',606,480,C.ink,12.5,500);txt('permanent magnet',606,88,C.ink,12.5,500);
+  if(!dragged){g.fillStyle='rgba(255,255,255,.9)';rrect(g,452+o,160,64,20,7);g.fill();txt('drag me ⇆',484+o,170,C.mut,10,600,'center');}
+}
+
+function panel(x,y,w,h){cx.fillStyle='rgba(255,255,255,.95)';rrect(cx,x,y,w,h,9);cx.fill();cx.strokeStyle='#d3dde0';cx.lineWidth=1;cx.stroke();}
+function drawFLHR(Fs,aI,I){
+  var g=cx;panel(805,58,143,184);
+  txt("Fleming's left-hand",876,72,C.ink,10.5,700,'center');txt('rule · top of coil',876,85,C.mut,9.5,500,'center');
+  var ox=876,oy=142,dn=st.flip?-1:1;
+  arrow(g,ox,oy,ox,oy+dn*40,C.fld,2.8,9);txt('B',ox+10,oy+dn*36,C.fld,12,700);
+  if(aI>0.02){arrow(g,ox,oy,ox+Fs*52,oy,C.frc,3.2,10);txt('F',ox+Fs*60,oy,C.frc,12,700,'center');}
+  g.fillStyle='#fff';g.beginPath();g.arc(ox,oy,10,0,6.2832);g.fill();g.strokeStyle=C.cur;g.lineWidth=2;g.stroke();
+  if(aI>0.02)symbol(g,ox,oy,10,I<0,C.cur,1);
+  txt('I',ox-16,oy-12,C.cur,12,700,'center');
+  txt('Thumb → Force',812,200,C.frc,9.5,600);txt('First finger → Field',812,213,C.fld,9.5,600);txt('seCond finger → Current',812,226,C.cur,9.5,600);
+}
+function drawFront(Fs,aI,I){
+  var g=cx;panel(805,250,143,172);
+  txt('Front view',876,264,C.ink,10.5,700,'center');txt('(as the listener sees it)',876,277,C.mut,9,500,'center');
+  var ox=876,oy=340,outer=st.flip?C.S:C.N,inner=st.flip?C.N:C.S;
+  g.fillStyle='#aab3c2';g.beginPath();g.arc(ox,oy,52,0,6.2832);g.fill();g.globalAlpha=.3;g.fillStyle=outer;g.beginPath();g.arc(ox,oy,52,0,6.2832);g.fill();g.globalAlpha=1;
+  g.fillStyle='#fff';g.beginPath();g.arc(ox,oy,42,0,6.2832);g.fill();
+  g.fillStyle='#aab3c2';g.beginPath();g.arc(ox,oy,22,0,6.2832);g.fill();g.globalAlpha=.3;g.fillStyle=inner;g.beginPath();g.arc(ox,oy,22,0,6.2832);g.fill();g.globalAlpha=1;
+  if(st.field){for(var a=0;a<8;a++){var an=a*Math.PI/4+Math.PI/8,c=Math.cos(an),s=Math.sin(an);
+    if(st.flip)arrow(g,ox+c*24,oy+s*24,ox+c*41,oy+s*41,C.fld,1.5,5);else arrow(g,ox+c*41,oy+s*41,ox+c*24,oy+s*24,C.fld,1.5,5);}}
+  g.strokeStyle=C.cu;g.lineWidth=5;g.beginPath();g.arc(ox,oy,32,0,6.2832);g.stroke();
+  if(aI>0.02){var cw=I<0;g.fillStyle=C.cur;
+    for(a=0;a<4;a++){var th=a*Math.PI/2+Math.PI/4,px=ox+Math.cos(th)*32,py=oy+Math.sin(th)*32,dx=-Math.sin(th)*(cw?1:-1),dy=Math.cos(th)*(cw?1:-1);
+      g.beginPath();g.moveTo(px+dx*7,py+dy*7);g.lineTo(px-dx*4-dy*5,py-dy*4+dx*5);g.lineTo(px-dx*4+dy*5,py-dy*4-dx*5);g.closePath();g.fill();}}
+  txt(st.flip?'S':'N',ox,oy-47,'#fff',10,700,'center');txt(st.flip?'N':'S',ox,oy+0.5,'#fff',12,700,'center');
+  var fl=aI<0.02?'Force: none':(Fs>0?'Force: into magnet':'Force: out to listener');
+  txt(fl,876,408,aI<0.02?C.mut:C.frc,9.5,600,'center');
+}
+
+/* ---------- oscilloscope ---------- */
+function drawScope(){
+  var g=sx;g.setTransform(sscale*dpr,0,0,sscale*dpr,0,0);var h=SH,mid=h/2+6,amp=h/2-30,x0=64,x1=SW-16,span=4;
+  g.fillStyle='#fff';g.fillRect(0,0,SW,h);
+  g.strokeStyle='#eef2f4';g.lineWidth=1;g.beginPath();for(var i=0;i<=8;i++){var gx=x0+(x1-x0)*i/8;g.moveTo(gx,mid-amp);g.lineTo(gx,mid+amp);}g.stroke();
+  g.strokeStyle='#b8c3cf';g.beginPath();g.moveTo(x0,mid);g.lineTo(x1,mid);g.moveTo(x0,mid-amp);g.lineTo(x0,mid+amp);g.stroke();
+  g.fillStyle=C.mut;g.font='500 11px Lexend,system-ui';g.textAlign='right';g.textBaseline='middle';g.fillText('+',x0-8,mid-amp+6);g.fillText('0',x0-8,mid);g.fillText('−',x0-8,mid+amp-6);
+  g.textAlign='right';g.fillText('time →',x1,mid+amp+13);
+  function plot(arr,sc,col,dash){g.strokeStyle=col;g.lineWidth=2.4;g.setLineDash(dash);g.beginPath();var st0=true;
+    for(var k=0;k<scN;k++){var id=(scK-scN+k+SN)%SN,tt=scT[id];if(tt<t-span)continue;var xx=x0+(tt-(t-span))/span*(x1-x0),yy=mid-arr[id]*sc*amp;if(st0){g.moveTo(xx,yy);st0=false;}else g.lineTo(xx,yy);}
+    g.stroke();g.setLineDash([]);}
+  plot(scI,1,C.cur,[]);plot(scO,1/22,C.warm,[7,5]);
+  g.textAlign='left';g.font='600 11.5px Lexend,system-ui';
+  g.fillStyle=C.cur;g.fillRect(x0+6,10,18,3);g.fillText('current in coil',x0+30,12);
+  g.fillStyle=C.warm;g.fillRect(x0+150,10,6,3);g.fillRect(x0+160,10,6,3);g.fillText('cone position (outwards = +)',x0+174,12);
+  g.fillStyle=C.mut;g.font='500 11px Lexend,system-ui';g.textAlign='right';g.fillText(st.mode==='ac'?'Same frequency: cone vibrates in step with the a.c.':(st.mode==='dc'?'d.c.: cone moves once, then stays put — no sound':'No current → no force → no sound'),x1,12);
+}
+
+/* ---------- loop ---------- */
+var last=performance.now(),roT=0;
+function frame(now){
+  var dtr=Math.min(0.05,(now-last)/1000);last=now;
+  if(st.play&&dtr>0){
+    var dt=dtr*st.spd;tPrev=t;phase+=2*Math.PI*(st.f/SLOW)*dt;t+=dt;
+    Ival=Iideal()+rampD*Math.exp(-(t-rampT)/0.1);
+    var base=-K*Ival*pol();
+    if(dragging)dragOff=dragT-base;else dragOff*=Math.exp(-dt/0.12);
+    prevO=o;o=Math.max(-22,Math.min(22,base+dragOff));oVel=(o-prevO)/dt;
+    chOff+=Ival*95*dt;record();scopePush();
+  }
+  draw();drawScope();
+  if(now-roT>120){roT=now;readouts();}
+  requestAnimationFrame(frame);
+}
+
+/* ---------- readouts ---------- */
+var steps=root.querySelectorAll('#lsp-steps li');
+function readouts(){
+  var I=Ival,aI=Math.abs(I),Fs=-Math.sign(I)*pol();
+  $('#lsp-rI').textContent=(I>=0?'+':'−')+aI.toFixed(2)+' A';
+  $('#lsp-rF').textContent=aI<0.02?'none':(Fs>0?'inwards':'outwards');
+  var cs;if(Math.abs(oVel)<2)cs=Math.abs(o)>2?'held still':'at rest';else cs=oVel<0?'out → compression':'in → rarefaction';
+  $('#lsp-rC').textContent=cs;
+  $('#lsp-rT').textContent=st.mode==='ac'?(st.f+' Hz / '+(1000/st.f).toFixed(1)+' ms'):'—';
+  $('#lsp-rL').textContent=st.mode==='ac'?((340/st.f).toFixed(2)+' m'):'—';
+  var hi=-1;if(st.mode!=='off'){var cyc=(t*0.5)%5;hi=Math.floor(cyc);}
+  if(!st.play)hi=-1;
+  for(var i=0;i<steps.length;i++)steps[i].classList.toggle('hi',i===hi);
+}
+
+/* ---------- controls ---------- */
+root.querySelectorAll('#lsp-mode button').forEach(function(b){b.addEventListener('click',function(){
+  root.querySelectorAll('#lsp-mode button').forEach(function(x){x.classList.remove('on');});b.classList.add('on');
+  var prev=st.mode;st.mode=b.getAttribute('data-m');rebase();
+  if(st.sound&&(prev==='dc'||st.mode==='dc')&&prev!==st.mode)click();soundUpd();
+});});
+function slider(id,key,fmt,after){var el=$(id);el.addEventListener('input',function(){st[key]=parseFloat(el.value);fmt();if(after)after();});}
+function fmtAll(){$('#lsp-fv').textContent=st.f+' Hz';$('#lsp-iv').textContent=st.I0.toFixed(2)+' A';$('#lsp-sv').textContent='×'+st.spd.toFixed(2).replace(/0$/,'');$('#lsp-slow').textContent='×'+Math.round(SLOW/st.spd);}
+slider('#lsp-f','f',fmtAll,soundUpd);slider('#lsp-i','I0',fmtAll,function(){rebase();soundUpd();});slider('#lsp-s','spd',fmtAll);
+$('#lsp-play').addEventListener('click',function(){st.play=!st.play;this.textContent=st.play?'Pause':'Play';last=performance.now();soundUpd();});
+$('#lsp-flip').addEventListener('click',function(){st.flip=!st.flip;this.textContent=st.flip?'Magnet: reversed':'Reverse magnet';});
+$('#lsp-reset').addEventListener('click',function(){t=0;phase=0;Ival=0;rampD=0;rampT=0;o=0;prevO=0;tPrev=0;kLast=0;hist.fill(0);scN=0;scK=0;dragOff=0;chOff=0;rebase();});
+root.querySelectorAll('.tg input').forEach(function(el){el.addEventListener('change',function(){st[el.getAttribute('data-k')]=el.checked;});});
+
+/* ---------- drag the cone ---------- */
+function lp(e){var r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H];}
+cv.addEventListener('pointerdown',function(e){var p=lp(e);if(p[0]>425&&p[0]<690&&p[1]>60&&p[1]<500){dragging=true;dragged=true;dragX0=p[0];dragO0=o;dragT=o;cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing';if(!st.play){st.play=true;$('#lsp-play').textContent='Pause';last=performance.now();}}});
+cv.addEventListener('pointermove',function(e){var p=lp(e);if(dragging){dragT=Math.max(-22,Math.min(22,dragO0+(p[0]-dragX0)));}else{cv.style.cursor=(p[0]>425&&p[0]<690&&p[1]>60&&p[1]<500)?'grab':'default';}});
+function endDrag(){if(dragging){dragging=false;cv.style.cursor='grab';}}
+cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
+
+/* ---------- sound ---------- */
+var ac=null,osc=null,gn=null,vg=null,msg=$('#lsp-sndmsg'),PEAK=0.02,sndTimer=null;
+function ensureAudio(){
+  if(ac)return true;var A=window.AudioContext||window.webkitAudioContext;if(!A){msg.textContent='Sorry — this browser does not support Web Audio.';return false;}
+  ac=new A();osc=ac.createOscillator();gn=ac.createGain();gn.gain.value=0;
+  /* fundamental plus a few quiet harmonics: same pitch, but audible on small laptop/tablet speakers */
+  var re=new Float32Array([0,1,0.55,0.32,0.18,0.1]),im=new Float32Array(re.length);osc.setPeriodicWave(ac.createPeriodicWave(re,im));
+  /* safety chain: output can never exceed 2% of full scale (-34 dBFS), whatever the settings */
+  vg=ac.createGain();vg.gain.value=PEAK;
+  var clamp=ac.createWaveShaper(),cv2=new Float32Array(1025);for(var k=0;k<1025;k++){var xk=k/512-1;cv2[k]=Math.max(-PEAK,Math.min(PEAK,xk));}clamp.curve=cv2;
+  osc.connect(gn);gn.connect(vg);vg.connect(clamp);clamp.connect(ac.destination);osc.start();
+  /* unlock on iOS/Safari: play a silent buffer inside the click */
+  var sb=ac.createBufferSource();sb.buffer=ac.createBuffer(1,1,22050);sb.connect(ac.destination);sb.start(0);
+  return true;
+}
+function sndMsg(){
+  if(!st.sound){msg.textContent='Sound is played at a fixed low level (2%). Keep your device volume moderate, especially with headphones. Switches off after 60 s.';return;}
+  if(!ac||ac.state!=='running'){msg.textContent='Your browser is blocking audio here. Open the page directly in Chrome, Edge or Safari and click “Hear it” again.';return;}
+  msg.textContent=!st.play?'Sound paused.':st.mode==='ac'?('Playing '+st.f+' Hz — louder with more current.'):st.mode==='dc'?'d.c.: the cone does not vibrate, so there is no sound.':'Supply off: no current, no sound.';
+}
+function soundUpd(){if(ac){var g=(st.sound&&st.play&&st.mode==='ac')?st.I0:0,n=ac.currentTime;osc.frequency.setTargetAtTime(st.f,n,0.02);gn.gain.cancelScheduledValues(n);gn.gain.setTargetAtTime(g,n,0.12);}sndMsg();}
+function click(){if(!ac)return;var n=Math.floor(ac.sampleRate*0.04),b=ac.createBuffer(1,n,ac.sampleRate),d=b.getChannelData(0);for(var i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(n/6))*0.5;var s=ac.createBufferSource();s.buffer=b;s.connect(vg);s.start();}
+$('#lsp-snd').addEventListener('click',function(){
+  var btn=this;if(!ensureAudio())return;st.sound=!st.sound;btn.textContent=st.sound?'Mute':'Hear it';
+  if(st.sound&&st.mode!=='ac'){root.querySelectorAll('#lsp-mode button').forEach(function(x){x.classList.toggle('on',x.getAttribute('data-m')==='ac');});st.mode='ac';rebase();}
+  if(st.sound&&!st.play){st.play=true;$('#lsp-play').textContent='Pause';last=performance.now();}
+  clearTimeout(sndTimer);if(st.sound)sndTimer=setTimeout(function(){if(st.sound){st.sound=false;btn.textContent='Hear it';soundUpd();msg.textContent='Sound switched off automatically after 60 s. Click “Hear it” to play again.';}},60000);
+  var p=ac.state!=='running'?ac.resume():null;
+  if(p&&p.then)p.then(soundUpd,soundUpd);soundUpd();setTimeout(soundUpd,400);
+});
+
+/* ---------- quiz ---------- */
+var QS=[
+ {q:'Which effect makes the coil of a loudspeaker move?',o:['The motor effect','The generator effect','Electrostatic attraction','Thermal expansion'],a:0,w:'A current-carrying coil in a magnetic field experiences a force — the motor effect (F = BIL).'},
+ {q:'Why does the cone vibrate in and out rather than moving just once?',o:['The magnet keeps changing its poles','The a.c. keeps reversing, so the force keeps reversing','The cone is springy','The sound wave pushes it back'],a:1,w:'Each time the alternating current reverses, the force on the coil reverses, so the cone moves the other way.'},
+ {q:'The loudspeaker is connected to a d.c. supply instead. What happens?',o:['A continuous note is produced','The cone moves once and stays there — no continuous sound','The cone vibrates faster','The magnet becomes demagnetised'],a:1,w:'A steady current gives a steady force: the cone moves once (a click) and then stays put. Switch to d.c. above and watch!'},
+ {q:'The frequency of the a.c. supply is increased. The sound produced has…',o:['a higher pitch and a shorter wavelength','a higher pitch and a longer wavelength','a greater amplitude','a greater speed'],a:0,w:'The cone vibrates at the supply frequency, so pitch rises. v = fλ with v fixed, so λ gets shorter.'},
+ {q:'The peak current is increased. What changes about the sound?',o:['It becomes louder','Its pitch rises','Its speed increases','Its wavelength increases'],a:0,w:'Bigger current → bigger force → bigger amplitude of vibration → louder sound. Frequency is unchanged.'},
+ {q:'How do the air particles move as the sound passes?',o:['Perpendicular to the direction of travel of the wave','Parallel to the direction of travel of the wave','They travel with the wave from the speaker to the ear','They do not move at all'],a:1,w:'Sound is longitudinal: particles vibrate back and forth parallel to the energy transfer, about a fixed position. Watch the orange particle.'},
+ {q:'The magnet is reversed (N and S swapped). What happens to the force on the coil at any instant?',o:['It is unchanged','It reverses direction','It becomes zero','It doubles'],a:1,w:'Reversing the magnetic field reverses the force (Fleming\'s left-hand rule). Try the “Reverse magnet” button.'},
+ {q:'Which change would NOT increase the size of the force on the coil?',o:['Using a stronger magnet','Increasing the current','Adding more turns to the coil','Increasing the frequency of the a.c.'],a:3,w:'F = BIL: force depends on field strength, current and length of wire in the field (more turns). Frequency only changes how often it reverses.'}
+];
+var qi=0,sc=0,tried=0,order=[];
+function shuffle(){order=QS.map(function(_,i){return i;});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=order[i];order[i]=order[j];order[j]=tmp;}}
+function showQ(){
+  var Q=QS[order[qi]];$('#lsp-qn').textContent='Question '+(qi+1)+' of '+QS.length;$('#lsp-qq').textContent=Q.q;$('#lsp-fb').innerHTML='';
+  var box=$('#lsp-qo');box.innerHTML='';
+  Q.o.forEach(function(op,k){var b=document.createElement('button');b.textContent=op;b.addEventListener('click',function(){
+    var bs=box.querySelectorAll('button');bs.forEach(function(x){x.disabled=true;});bs[Q.a].classList.add('ok');tried++;
+    if(k===Q.a){sc++;$('#lsp-fb').innerHTML='<b>Correct.</b> '+Q.w;}else{b.classList.add('no');$('#lsp-fb').innerHTML='<b class="x">Not quite.</b> '+Q.w;}
+    $('#lsp-score').textContent=sc+' / '+tried;
+    $('#lsp-next').textContent=qi===QS.length-1?'Start again':'Next question';
+  });box.appendChild(b);});
+}
+$('#lsp-next').addEventListener('click',function(){qi++;if(qi>=QS.length){qi=0;sc=0;tried=0;shuffle();$('#lsp-score').textContent='0 / 0';}$('#lsp-next').textContent='Next question';showQ();});
+shuffle();showQ();
+
+fmtAll();fit();readouts();sndMsg();requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
