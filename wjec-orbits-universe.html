@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orbits and the wider Universe: WJEC A2 Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#14213A;--sky2:#1E3152;--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep3{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep3 *,#ep3 *::before,#ep3 *::after{box-sizing:border-box}
+#ep3 button,#ep3 input,#ep3 select{font:inherit;color:inherit}
+#ep3 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep3 sup{font-size:.72em;line-height:0}
+#ep3 sub{font-size:.72em;line-height:0}
+#ep3 .h,#ep3 h1,#ep3 h2,#ep3 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep3 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep3 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep3 p{margin:.45em 0 .7em;max-width:72ch}
+#ep3 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep3 li{margin:.2em 0}
+#ep3 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep3 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep3 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep3 .brand{flex:1 1 320px;min-width:0}
+#ep3 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep3 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep3 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep3 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep3 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep3 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep3 .lcd.pulse{animation:ep3pulse .5s ease}
+@keyframes ep3pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep3 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep3 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep3 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep3 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep3 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep3 .tab:hover{color:var(--ink)}
+#ep3 main{padding:22px 0 40px}
+#ep3 .sec{display:none}
+#ep3 .sec.on{display:block}
+#ep3 .lead{color:var(--muted);margin-top:.3em}
+
+#ep3 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep3 .panel + .panel{margin-top:16px}
+#ep3 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep3 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep3 .grid2{grid-template-columns:1fr}}
+#ep3 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep3 .sp{flex:1}
+
+#ep3 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep3 .btn:hover{filter:brightness(1.15)}
+#ep3 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep3 .btn.alt:hover{border-color:var(--ink)}
+#ep3 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep3 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep3 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep3 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep3 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep3 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep3 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep3 input[type=text],#ep3 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep3 input[type=text]:focus,#ep3 input[type=number]:focus{border-color:var(--focus)}
+#ep3 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep3 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep3 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep3 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep3 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep3 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep3 .work{font-size:.96rem}
+#ep3 .work div{padding:1px 0}
+#ep3 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep3 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep3 .muted{color:var(--muted)}
+#ep3 .small{font-size:.88rem}
+#ep3 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep3 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep3 .rv{grid-template-columns:1fr}}
+#ep3 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep3 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep3 .toc button{white-space:nowrap}}
+#ep3 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep3 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep3 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep3 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep3 .card h2{margin-bottom:.35em}
+#ep3 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep3 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep3 .check summary{cursor:pointer;font-weight:700}
+#ep3 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep3 .fig svg{max-width:100%;height:auto;display:block}
+#ep3 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep3 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep3 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep3 .cv{display:block;width:100%;height:100%}
+#ep3 .cvbox{position:relative;width:100%;height:230px}
+#ep3 .mini{height:150px}
+#ep3 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep3 table.t th,#ep3 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep3 table.t th{font-weight:700;color:var(--muted)}
+#ep3 table.t td:first-child,#ep3 table.t th:first-child{text-align:left}
+#ep3 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep3 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep3 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep3 .qcard{font-size:1.1rem}
+#ep3 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep3 .opts{display:grid;gap:8px;margin-top:8px}
+#ep3 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep3 .opt:hover{border-color:var(--ink)}
+#ep3 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep3 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep3 .opt:disabled{cursor:default}
+#ep3 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep3 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep3 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep3 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep3 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep3 .mcell.sel{border-color:var(--neg)}
+#ep3 .mcell.right{border-color:var(--ok)}
+#ep3 .mcell.wrong{border-color:var(--bad)}
+#ep3 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep3 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep3 .pool .chip.used{opacity:.35}
+#ep3 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep3 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep3 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep3 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep3 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep3 .dmm .lcd{min-width:130px}
+#ep3 .dmm .lcd .v{font-size:2rem}
+#ep3 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep3 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep3 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep3 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep3 .task:first-of-type{border-top:0;padding-top:4px}
+#ep3 .task .tq{font-weight:700;margin-bottom:6px}
+#ep3 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep3 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep3 .apbox{position:relative;width:100%;height:280px}
+#ep3 .loupebox{position:relative;width:100%;height:92px}
+#ep3 .microbox{position:relative;width:100%;height:170px}
+#ep3 .thermobox{position:relative;width:100%;height:260px}
+#ep3 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep3 .warn{color:var(--bad);font-weight:700}
+#ep3 .steps{counter-reset:s}
+#ep3 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep3 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep3 .step:hover{border-color:var(--ink)}
+#ep3 .dz .step{background:var(--panel)}
+#ep3 .dz.good{border-color:var(--ok)}
+#ep3 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep3 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep3 .brand h1{font-size:1.6rem}#ep3 .wrap{padding:0 12px}#ep3 .panel{padding:14px}#ep3 .bezel .lcd{min-width:88px}#ep3 .lcd .v{font-size:1.5rem}}
+#ep3 .top{background:var(--sky);color:#F1F4FA;border-bottom:0}
+#ep3 .brand p{color:#C3CEE3}
+#ep3 .themebtn{color:#F1F4FA;border-color:#8FA2C6}
+#ep3 .bezel{background:#0B1322;box-shadow:inset 0 -3px 0 #060B14}
+#ep3 .specstrip{position:relative;height:14px;background:linear-gradient(90deg,#5B1FA8 0%,#3240D6 12%,#1E7FE0 24%,#19B3B0 36%,#3DBE46 48%,#C9D52A 60%,#F2B21B 70%,#EE6A1A 82%,#C8241C 100%);overflow:hidden}
+#ep3 .specstrip i{position:absolute;top:0;bottom:0;width:3px;background:#0A0E18;animation:ep3shift 2.4s cubic-bezier(.2,.7,.2,1) .4s both}
+@keyframes ep3shift{from{transform:translateX(0)}to{transform:translateX(26px)}}
+#ep3 .sky{background:#0E1628;border-radius:8px}
+#ep3 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep3 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep3 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep3 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep3 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep3 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+</style>
+</head>
+<body>
+<div id="ep3">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Orbits and the wider Universe</h1>
+   <p>WJEC A2 Physics 4.3: Kepler’s laws, binary systems, exoplanets, dark matter, Hubble’s law and the critical density.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">points banked</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+ <div class="specstrip" aria-hidden="true"><i style="left:14%"></i><i style="left:19%"></i><i style="left:33%"></i><i style="left:47%"></i><i style="left:68%"></i><i style="left:83%"></i></div>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="graphs" aria-selected="false">Graph match</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Exoplanet hunter</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Galaxy rotation</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Hubble’s law</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+
+<section class="sec on" id="sec-revise">
+ <div class="rv">
+  <div class="toc" id="toc"></div>
+  <div class="panel card" id="card"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Use G = 6.67 × 10<sup>−11</sup> N m<sup>2</sup> kg<sup>−2</sup> and c = 3.00 × 10<sup>8</sup> m s<sup>−1</sup>. Type standard form as 2.0e30 or 2.0x10^30.</p>
+ <div class="panel">
+  <div class="row" id="drTopics"></div>
+  <div class="row" style="margin-top:10px">
+   <span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span>
+   <span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span>
+  </div>
+ </div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+
+<section class="sec" id="sec-quiz">
+ <h2>Concept quiz</h2>
+ <p class="lead">Twelve questions drawn from a bank covering the whole topic. Every answer comes with the reason.</p>
+ <div class="panel qcard" id="qzCard"></div>
+</section>
+
+<section class="sec" id="sec-graphs">
+ <h2>Graph match</h2>
+ <p class="lead">Examiners love these graphs. Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+ <div class="panel">
+  <div class="pool" id="gmPool"></div>
+  <div class="mgrid" id="gmGrid"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div>
+  <div class="fb" id="gmFb"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Exoplanet hunter: the radial velocity method</h2>
+ <p class="lead">Take spectra of a star on different nights, measure the Doppler shift of its H-alpha line (656.28000 nm in the lab) and uncover the planet. Observatory code <span class="kit" id="kitA"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="kv" id="l1Card"></div>
+   <div class="apbox" style="height:170px;margin-top:10px"><canvas class="cv" id="l1Sp"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="l1Day">Night of observation</label><span id="l1Dayo"></span></div><input type="range" id="l1Day" min="0" max="120" step="0.25" value="0"></div>
+    <div class="row"><div class="dmm"><div class="nm">Spectrograph: measured λ′</div><div class="lcd"><span class="v" id="l1L" style="font-size:1.6rem">–</span><span class="u">nm</span></div></div><span class="sp"></span><button class="btn go" id="l1Obs" type="button">Take spectrum</button></div>
+   </div>
+   <div class="fb" id="l1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Observing log</strong><span class="sp"></span><button class="btn alt" id="l1Clr" type="button">Clear log</button></div>
+   <div class="tscroll" style="margin-top:8px;max-height:330px"><table class="t"><thead><tr><th>day</th><th>λ′ / nm</th><th>Δλ / nm</th><th>v<sub>rad</sub> / m s<sup>−1</sup></th><th></th></tr></thead><tbody id="l1Tb"></tbody></table></div>
+   <p class="small muted" id="l1Hint">The v<sub>rad</sub> column unlocks once you calculate the first value yourself (task 1 below).</p>
+  </div>
+ </div>
+ <div class="panel">
+  <strong>Radial velocity against time</strong> <span class="small muted">(positive = moving away from us)</span>
+  <div class="graphbox" style="margin-top:8px;height:320px"><canvas class="cv" id="l1G"></canvas></div>
+ </div>
+ <div class="panel" id="l1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Galaxy rotation and dark matter</h2>
+ <p class="lead">Place the spectrograph slit at a distance r either side of the galaxy’s centre. Side A is turning towards us, side B away. Observatory code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="apbox sky" style="height:250px"><canvas class="cv" id="l2Gx"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="l2R">Slit distance from the centre, r</label><span id="l2Ro"></span></div><input type="range" id="l2R" min="0.5" max="12" step="0.1" value="1"></div>
+    <div class="meters">
+     <div class="dmm"><div class="nm">λ′ at A</div><div class="lcd"><span class="v" id="l2A" style="font-size:1.5rem">–</span><span class="u">nm</span></div></div>
+     <div class="dmm"><div class="nm">λ′ at B</div><div class="lcd"><span class="v" id="l2B" style="font-size:1.5rem">–</span><span class="u">nm</span></div></div>
+    </div>
+    <div class="row"><span class="small muted">Laboratory wavelength of the line: 656.28 nm</span><span class="sp"></span><button class="btn go" id="l2Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="l2Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="l2Card"></div>
+   <div class="row" style="margin-top:8px"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="l2Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px;max-height:300px"><table class="t"><thead><tr><th>r / 10<sup>20</sup> m</th><th>λ′<sub>A</sub> / nm</th><th>λ′<sub>B</sub> / nm</th><th>v<sub>rot</sub> / km s<sup>−1</sup></th><th></th></tr></thead><tbody id="l2Tb"></tbody></table></div>
+   <p class="small muted">The v<sub>rot</sub> column unlocks once you complete task 1.</p>
+  </div>
+ </div>
+ <div class="panel">
+  <strong>Rotation curve</strong> <span class="small muted">(dashed: prediction from the visible matter alone)</span>
+  <div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="l2G"></canvas></div>
+ </div>
+ <div class="panel" id="l2Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Measuring the Hubble constant</h2>
+ <p class="lead">Twelve galaxies with distances measured independently. Measure the redshift of the calcium K line (393.37 nm in the lab), build the Hubble diagram and estimate the age of the Universe. Observatory code <span class="kit" id="kitC"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row" id="l3Gal"></div>
+   <div class="apbox" style="height:150px;margin-top:10px"><canvas class="cv" id="l3Sp"></canvas></div>
+   <div class="row" style="margin-top:8px">
+    <div class="dmm"><div class="nm">Distance D</div><div class="lcd"><span class="v" id="l3D" style="font-size:1.5rem">–</span><span class="u">× 10<sup>24</sup> m</span></div></div>
+    <div class="dmm"><div class="nm">Measured λ′</div><div class="lcd"><span class="v" id="l3L" style="font-size:1.5rem">–</span><span class="u">nm</span></div></div>
+    <span class="sp"></span><button class="btn go" id="l3Rec" type="button">Record</button>
+   </div>
+   <div class="fb" id="l3Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="l3Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px;max-height:330px"><table class="t"><thead><tr><th>galaxy</th><th>D / 10<sup>24</sup> m</th><th>λ′ / nm</th><th>v / 10<sup>6</sup> m s<sup>−1</sup></th><th></th></tr></thead><tbody id="l3Tb"></tbody></table></div>
+   <p class="small muted">The v column unlocks once you complete task 1.</p>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="row"><strong>Hubble diagram</strong><span class="sp"></span><button class="btn alt" id="l3Line" type="button">Reset best-fit line</button></div>
+  <div class="graphbox" style="margin-top:8px"><canvas class="cv" id="l3G"></canvas></div>
+  <div class="readout" id="l3Ro"></div>
+ </div>
+ <div class="panel" id="l3Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall">
+ <h2>Challenge</h2>
+ <p class="lead">Rebuild the derivations the specification expects, work through classic exam problems, then race the clock.</p>
+ <div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Derivation builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div>
+ <div class="panel" id="chBox"></div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep3');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep3-wjec-orbits-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+const G=6.67e-11,CL=3.00e8,H0=2.2e-18,DAY=86400,YEAR=365*24*3600;
+/* ---------- tabs ---------- */
+const onShow={};
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- colour of light ---------- */
+function wlRGB(l){let r=0,g=0,b=0;
+ if(l<440){r=-(l-440)/60;b=1}else if(l<490){g=(l-440)/50;b=1}else if(l<510){g=1;b=-(l-510)/20}else if(l<580){r=(l-510)/70;g=1}else if(l<645){r=1;g=-(l-645)/65}else r=1;
+ let f=l<420?0.35+0.65*(l-380)/40:l>700?0.35+0.65*(780-l)/80:1;f=Math.max(0.25,Math.min(1,f));
+ return 'rgb('+Math.round(255*Math.pow(r*f,0.8))+','+Math.round(255*Math.pow(g*f,0.8))+','+Math.round(255*Math.pow(b*f,0.8))+')'}
+function strip(c,x,y,w,h,l0,l1,lines){ // draws spectrum strip between l0..l1 with absorption lines
+ for(let i=0;i<w;i++){c.fillStyle=wlRGB(l0+(l1-l0)*i/w);c.fillRect(x+i,y,1.2,h)}
+ c.fillStyle='#070A12';lines.forEach(L=>{if(L<l0||L>l1)return;const X=x+(L-l0)/(l1-l0)*w;c.fillRect(X-1.2,y,2.4,h)});
+}
+
+/* ---------- widgets ---------- */
+function loop(cv,draw){let last=performance.now(),t=0;function f(now){if(!cv.isConnected)return;const dt=Math.min(0.05,(now-last)/1000);last=now;if(!RM)t+=dt;draw(t);requestAnimationFrame(f)}requestAnimationFrame(f)}
+function wKepler(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="cvbox" style="height:270px"><canvas class="cv" id="kCv"></canvas></div><div class="row"><label class="sm" for="kE" style="min-width:110px">Eccentricity</label><input type="range" id="kE" min="0" max="0.8" step="0.01" value="0.6" style="flex:1;min-width:140px"><span id="kEo" class="small" style="min-width:40px"></span></div><div class="kv" id="kKv"></div></div>');
+ let e=0.6;const upd=()=>{e=+$('#kE').value;$('#kEo').textContent=e.toFixed(2);$('#kKv').innerHTML='<span>speed at perihelion ÷ speed at aphelion = (1 + e)/(1 − e) = <b>'+((1+e)/(1-e)).toFixed(2)+'</b></span><span>The two shaded areas are swept out in equal times.</span>'};$('#kE').addEventListener('input',upd);upd();
+ const cv=$('#kCv');const solve=M=>{let E=M+e*Math.sin(M);for(let i=0;i<12;i++)E-=(E-e*Math.sin(E)-M)/(1-e*Math.cos(E));return E};
+ loop(cv,t=>{const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const sq=Math.sqrt(1-e*e);const a=Math.min((w-40)/2,(h-40)/2/sq),b=a*sq,cx=w/2,cy=h/2,sx=cx+a*e;
+  const P=M=>{const E=solve(M);return [cx+a*Math.cos(E),cy-b*Math.sin(E)]};
+  const sec=(m0,m1,col)=>{c.fillStyle=col;c.beginPath();c.moveTo(sx,cy);for(let i=0;i<=30;i++){const p=P(m0+(m1-m0)*i/30);c.lineTo(p[0],p[1])}c.closePath();c.fill()};
+  sec(-0.3,0.3,'rgba(242,193,46,.45)');sec(Math.PI-0.3,Math.PI+0.3,'rgba(242,193,46,.45)');
+  c.strokeStyle=cssv('--ink');c.lineWidth=1.5;c.beginPath();c.ellipse(cx,cy,a,b,0,0,7);c.stroke();
+  c.setLineDash([4,4]);c.strokeStyle=cssv('--muted');c.beginPath();c.moveTo(cx-a,cy);c.lineTo(cx+a,cy);c.stroke();c.setLineDash([]);
+  c.strokeStyle=cssv('--muted');c.lineWidth=1.5;const fx=cx-a*e;c.beginPath();c.moveTo(fx-5,cy-5);c.lineTo(fx+5,cy+5);c.moveTo(fx+5,cy-5);c.lineTo(fx-5,cy+5);c.stroke();
+  c.fillStyle='#F2C12E';c.beginPath();c.arc(sx,cy,10,0,7);c.fill();
+  const p=P(2*Math.PI*t/7);c.fillStyle=cssv('--neg');c.beginPath();c.arc(p[0],p[1],6,0,7);c.fill();
+  c.fillStyle=cssv('--muted');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText('Sun',sx,cy-16);c.fillText('empty focus',fx,cy-12);
+  c.textAlign='right';c.fillText('perihelion',cx+a-6,cy+18);c.textAlign='left';c.fillText('aphelion',cx-a+6,cy+18);
+ });
+}
+function wBinary(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="cvbox" style="height:250px"><canvas class="cv" id="bCv"></canvas></div><div class="row"><label class="sm" for="bQ" style="min-width:150px">Mass ratio m₂ / m₁</label><input type="range" id="bQ" min="0.05" max="1" step="0.01" value="0.4" style="flex:1;min-width:140px"><span id="bQo" class="small" style="min-width:40px"></span></div><div class="kv" id="bKv"></div></div>');
+ let q=0.4;const upd=()=>{q=+$('#bQ').value;$('#bQo').textContent=q.toFixed(2);$('#bKv').innerHTML='<span>r₁ = m₂d/(m₁ + m₂) = <b>'+(q/(1+q)).toFixed(2)+' d</b></span><span>r₂ = m₁d/(m₁ + m₂) = <b>'+(1/(1+q)).toFixed(2)+' d</b></span><span>Both have the same period.</span>'};$('#bQ').addEventListener('input',upd);upd();
+ const cv=$('#bCv');loop(cv,t=>{const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const d=Math.min(w*0.5,h*0.8),cx=w/2,cy=h/2,r1=d*q/(1+q),r2=d/(1+q),th=t*1.1;
+  c.strokeStyle=cssv('--line');c.lineWidth=1.2;c.setLineDash([4,4]);c.beginPath();c.arc(cx,cy,r1,0,7);c.stroke();c.beginPath();c.arc(cx,cy,r2,0,7);c.stroke();c.setLineDash([]);
+  const x1=cx-r1*Math.cos(th),y1=cy-r1*Math.sin(th),x2=cx+r2*Math.cos(th),y2=cy+r2*Math.sin(th);
+  c.strokeStyle=cssv('--muted');c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+  c.fillStyle='#F2C12E';c.beginPath();c.arc(x1,y1,15,0,7);c.fill();c.fillStyle='#E48A3A';c.beginPath();c.arc(x2,y2,Math.max(4,15*Math.cbrt(q)),0,7);c.fill();
+  c.fillStyle=cssv('--ink');c.beginPath();c.arc(cx,cy,3.5,0,7);c.fill();c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('centre of mass',cx+8,cy-8);c.fillText('m₁',x1-6,y1-20);c.fillText('m₂',x2-6,y2-18);
+ });
+}
+function wDoppler(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="cvbox" style="height:130px"><canvas class="cv" id="dCv"></canvas></div><div class="row"><label class="sm" for="dV" style="min-width:150px">Velocity of the star</label><input type="range" id="dV" min="-30000" max="30000" step="500" value="12000" style="flex:1;min-width:140px"><span id="dVo" class="small" style="min-width:110px"></span></div><div class="kv" id="dKv"></div></div>');
+ const L=[410.2,434.0,486.1,656.3];const cv=$('#dCv');
+ const draw=()=>{if(!cv.isConnected||!$('#dV'))return;const v=+$('#dV').value*1000;$('#dVo').textContent=(v/1000)+' km s⁻¹ '+(v>0?'(away)':v<0?'(towards)':'');
+  const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);c.fillStyle=cssv('--ink');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';
+  c.fillText('laboratory',4,14);strip(c,4,20,w-8,34,390,710,L);c.fillText('star',4,76);strip(c,4,82,w-8,34,390,710,L.map(l=>l*(1+v/CL)));
+  const d=656.3*v/CL;$('#dKv').innerHTML='<span>Δλ/λ = v/c = <b>'+sci(v/CL,3)+'</b></span><span>H-alpha shift Δλ = <b>'+(d>=0?'+':'')+d.toFixed(1)+' nm</b></span><span><b>'+(v>0?'red shift':v<0?'blue shift':'no shift')+'</b></span>'};
+ $('#dV').addEventListener('input',draw);watch(cv,draw);draw();
+}
+function wRadial(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="cvbox" style="height:260px"><canvas class="cv" id="rCv"></canvas></div><div class="row"><label class="sm" for="rRec" style="min-width:170px">Recessional velocity of the system</label><input type="range" id="rRec" min="0" max="1" step="0.05" value="0" style="flex:1;min-width:140px"><span id="rReco" class="small" style="min-width:60px"></span></div></div>');
+ const cv=$('#rCv');loop(cv,t=>{const vr=+$('#rRec').value;$('#rReco').textContent=vr.toFixed(2)+' v₀';
+  const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';
+  const L=Math.min(w*0.34,210),cx=L/2+10,cy=h/2-18,R=Math.min(L/2-14,80),ph=t*0.9;
+  c.strokeStyle=mut;c.setLineDash([4,4]);c.beginPath();c.arc(cx,cy,R,0,7);c.stroke();c.setLineDash([]);
+  c.fillStyle=ink;c.beginPath();c.arc(cx,cy,3,0,7);c.fill();
+  const sx=cx+R*Math.cos(ph),sy=cy-R*Math.sin(ph);c.fillStyle='#F2C12E';c.beginPath();c.arc(sx,sy,9,0,7);c.fill();
+  [['B',0],['C',Math.PI/2],['A',Math.PI],['D',3*Math.PI/2]].forEach(p=>{c.fillStyle=mut;c.fillText(p[0],cx+(R+14)*Math.cos(p[1])-4,cy-(R+14)*Math.sin(p[1])+4)});
+  c.fillStyle=mut;c.textAlign='center';c.fillText('to distant observer',cx,h-8);c.strokeStyle=mut;c.beginPath();c.moveTo(cx,cy+R+22);c.lineTo(cx,h-22);c.stroke();c.beginPath();c.moveTo(cx,h-18);c.lineTo(cx-4,h-26);c.lineTo(cx+4,h-26);c.fill();c.textAlign='left';
+  const v=Math.cos(ph);const vx=-Math.sin(ph),vy=-Math.cos(ph);c.strokeStyle=cssv('--pos');c.lineWidth=2;c.beginPath();c.moveTo(sx,sy);c.lineTo(sx+vx*28,sy+vy*28);c.stroke();c.lineWidth=1;
+  const gx=L+30,gw=w-gx-10,gy=20,gh=h-50,zy=gy+gh/2,sc=gh/2/2.1;
+  c.strokeStyle=ink;c.beginPath();c.moveTo(gx,gy);c.lineTo(gx,gy+gh);c.moveTo(gx,zy);c.lineTo(gx+gw,zy);c.stroke();
+  c.fillStyle=ink;c.fillText('v_rad',gx+4,gy+2);c.fillText('t',gx+gw-8,zy-6);c.fillText('0',gx-12,zy+4);
+  c.strokeStyle=cssv('--neg');c.lineWidth=2.4;c.beginPath();for(let i=0;i<=gw;i++){const tt=i/gw*4*Math.PI,y=zy-(Math.cos(tt)+vr)*sc;i?c.lineTo(gx+i,y):c.moveTo(gx+i,y)}c.stroke();c.lineWidth=1;
+  if(vr>0){c.setLineDash([4,4]);c.strokeStyle=mut;c.beginPath();c.moveTo(gx,zy-vr*sc);c.lineTo(gx+gw,zy-vr*sc);c.stroke();c.setLineDash([]);c.fillStyle=mut;c.fillText('v_rec',gx+gw-40,zy-vr*sc-6)}
+  const tt=ph%(4*Math.PI),mx=gx+tt/(4*Math.PI)*gw;c.fillStyle=cssv('--pos');c.beginPath();c.arc(mx,zy-(v+vr)*sc,6,0,7);c.fill();
+  c.fillStyle=mut;c.fillText(v+vr>0.02?'red shift':v+vr<-0.02?'blue shift':'',mx+8,zy-(v+vr)*sc-8);
+ });
+}
+function wRot(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div id="rotP"></div><div class="row"><label class="sm" for="rotH" style="min-width:150px">Dark matter halo</label><input type="range" id="rotH" min="0" max="1" step="0.02" value="1" style="flex:1;min-width:140px"><span id="rotHo" class="small" style="min-width:60px"></span></div></div>');
+ const upd=()=>{const hm=+$('#rotH').value;$('#rotHo').textContent=Math.round(hm*100)+'%';
+  const X=r=>40+r/100*340,Y=v=>170-v/1.25*150;const vis=r=>{const a=12;return Math.sqrt(1.9*r*r/Math.pow(r*r+a*a,1.5)*a)*1.0},halo=r=>{const rc=15;return 0.95*Math.sqrt(Math.max(0,1-rc/r*Math.atan(r/rc)))};
+  let pv='',pm='';for(let i=1;i<=100;i++){const r=i,v1=vis(r),v2=Math.sqrt(v1*v1+hm*halo(r)*halo(r));pv+=X(r).toFixed(1)+','+Y(v1).toFixed(1)+' ';pm+=X(r).toFixed(1)+','+Y(v2).toFixed(1)+' '}
+  let s=ln(40,170,390,170)+ln(40,170,40,12)+tx(390,190,'distance from centre, r',{a:'end',fs:12})+tx(46,18,'v',{a:'start',fs:13})+'<polyline points="'+pv+'" fill="none" stroke="var(--muted)" stroke-width="2.4" stroke-dasharray="6 5"></polyline><polyline points="'+pm+'" fill="none" stroke="var(--pos)" stroke-width="2.8"></polyline>';
+  s+=tx(385,Y(vis(95))-8,'predicted from visible matter',{a:'end',fs:11,fill:'var(--muted)'})+tx(385,Math.min(Y(Math.sqrt(vis(95)**2+hm*halo(95)**2))-8,150),hm>0.05?'measured':'',{a:'end',fs:11,fill:'var(--pos)'});
+  $('#rotP').innerHTML=svgWrap('0 0 400 200',s,'galaxy rotation curve')};
+ $('#rotH').addEventListener('input',upd);upd();
+}
+function figFate(){
+ let s=ln(20,170,390,170)+ln(230,190,230,10)+tx(226,18,'scale of the Universe',{a:'end',fs:11})+tx(390,188,'time',{a:'end',fs:11})+tx(230,186,'now',{fs:11});
+ const cur=(f,col)=>{let p='';for(let i=0;i<=240;i++){const t=-1.1+i*0.01;const y=f(t);if(y===null||y<0)continue;p+=(230+t*110).toFixed(1)+','+(170-y*120).toFixed(1)+' '}return '<polyline points="'+p+'" fill="none" stroke="'+col+'" stroke-width="2.4"></polyline>'};
+ s+=cur(t=>0.5+0.5*t,'var(--muted)')+cur(t=>t<=-0.667?null:0.655*Math.pow(t+0.667,2/3),'var(--ok)')+cur(t=>{const u=1.2*(t+0.73);return u<0||u>Math.PI?null:0.651*Math.sin(u)},'var(--pos)');
+ s+=tx(372,58,'empty, ρ = 0',{fs:11,fill:'var(--muted)',a:'end'})+tx(372,96,'flat, ρ = ρc',{fs:11,fill:'var(--ok)',a:'end'})+tx(372,150,'closed, ρ > ρc',{fs:11,fill:'var(--pos)',a:'end'})+tx(118,186,'1/H₀ ago',{fs:11,fill:'var(--muted)'});
+ return svgWrap('0 0 400 200',s,'fate of the Universe');
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'Kepler’s first and second laws',h:()=>`
+<h2>Kepler’s first and second laws</h2>
+<p><strong>Law 1 (ellipses):</strong> each planet moves in an ellipse with the Sun at one focus.</p>
+<p>An ellipse has two foci. The <strong>semi-major axis</strong> is the distance from the centre (halfway between the foci) to the widest part; the <strong>semi-minor axis</strong> goes from the centre to the narrowest part. You need to understand ellipses qualitatively: calculations assume circular orbits.</p>
+<p><strong>Law 2 (equal areas):</strong> the line joining a planet to the centre of the Sun sweeps out equal areas in equal times.</p>
+<p>So as the planet gets closer to the Sun its orbital speed increases. Speed is greatest at <strong>perihelion</strong> (closest) and least at <strong>aphelion</strong> (furthest).</p>`,
+after:el=>wKepler(el.querySelector('.wslot')),
+chk:[['Halley’s comet moves at 0.91 km s⁻¹ at aphelion (35.1 AU from the Sun). Estimate its speed at perihelion (0.59 AU).','Equal areas in a short time Δt: ½ × v Δt × 0.59 = ½ × 0.91 Δt × 35.1, so v = 0.91 × 35.1 / 0.59 = 54 km s⁻¹.'],['Where is a planet moving fastest?','At perihelion, its closest point to the Sun.']]},
+
+{t:'Kepler’s third law',h:()=>`
+<h2>Kepler’s third law</h2>
+<p><strong>Law 3:</strong> T², the square of the orbital period, is proportional to r³, where r is the semi-major axis (for nearly circular orbits, the mean distance from the Sun).</p>
+<div class="eqbig">T² ∝ r³ &nbsp; so &nbsp; T<sub>A</sub>² / r<sub>A</sub>³ = T<sub>B</sub>² / r<sub>B</sub>³</div>
+<p>The ratio is the same for every planet round the Sun, and it also applies to moons and satellites orbiting the same planet. When you use ratios, any units will do as long as you use them consistently.</p>
+<h3>Worked example</h3>
+<div class="work"><div>Io orbits Jupiter at 422 000 km with a period of 1.77 days. Europa’s period is 3.55 days.</div><div>(1.77/3.55)² = (422 000 / r<sub>E</sub>)³</div><div>r<sub>E</sub> = 422 000 × (3.55/1.77)<sup>2/3</sup> = 671 000 km</div></div>`,
+chk:[['A moon has four times the orbital radius of another moon of the same planet. How do their periods compare?','T ∝ r^(3/2), so the period is 4^1.5 = 8 times longer.']]},
+
+{t:'Gravity and Kepler’s third law',h:()=>`
+<h2>Newton’s law of gravitation and Kepler’s third law</h2>
+<div class="eqbig">F = GM₁M₂ / r²</div>
+<p>For a circular orbit, gravity provides the centripetal force. For a planet of mass m orbiting mass M:</p>
+<div class="work"><div>mrω² = GMm / r², so ω² = GM / r³</div><div>With ω = 2π/T: (2π/T)² = GM / r³</div><div><strong>T² / r³ = 4π² / GM</strong>, so T² ∝ r³</div></div>
+<h3>Mass of the central object</h3>
+<p>Rearranging gives <span class="eq">M = 4π²r³ / GT²</span>. So measuring a satellite’s period and orbital radius gives the mass of what it orbits. A graph of T² against r³ is a straight line through the origin of gradient 4π²/GM.</p>
+<h3>Worked example</h3>
+<div class="work"><div>For the inner planets, the gradient of T² against r³ is 10 × 10¹⁴ / 33 × 10³² = 3.03 × 10⁻¹⁹ s² m⁻³.</div><div>M = 4π² / (G × gradient) = 4π² / (6.67 × 10⁻¹¹ × 3.03 × 10⁻¹⁹) = 2.0 × 10³⁰ kg</div><div>Mars (r = 2.28 × 10¹¹ m): T² = 3.03 × 10⁻¹⁹ × (2.28 × 10¹¹)³, so T = 6.0 × 10⁷ s ≈ 690 days</div></div>`,
+chk:[['What does the gradient of a T² against r³ graph equal?','4π²/GM, where M is the mass of the central body.']]},
+
+{t:'Orbital speed and energy',h:()=>`
+<h2>Orbital speed and total energy</h2>
+<div class="work"><div>mv²/r = GMm/r², so</div></div>
+<div class="eqbig">v = √(GM / r)</div>
+<p>The total energy of an orbiting mass is the sum of its kinetic and potential energies:</p>
+<div class="work"><div>E<sub>T</sub> = ½mv² − GMm/r</div><div>Substitute v² = GM/r: E<sub>T</sub> = ½GMm/r − GMm/r = <strong>−½ GMm/r</strong></div><div>Since E<sub>P</sub> = −GMm/r, <strong>E<sub>T</sub> = ½E<sub>P</sub></strong>. The total energy is negative: the mass is bound.</div></div>
+<h3>Moving to a higher orbit</h3>
+<p>A Hohmann transfer uses a burn at A to enter an elliptical orbit, then another at B to circularise at the larger radius. The work done by the engine equals the gain in total energy:</p>
+<div class="eqbig" style="font-size:1.1rem">W = ΔE<sub>T</sub> = −½GMm (1/r₂ − 1/r₁)</div>
+<p class="small muted">Your notes point out that E<sub>T</sub> = −½GMm/r is not on the WJEC data sheet, so be ready to derive it.</p>`,
+chk:[['A satellite moves to a higher circular orbit. What happens to its speed, kinetic energy and total energy?','Speed and kinetic energy decrease (v = √(GM/r)); total energy increases (becomes less negative).']]},
+
+{t:'Binary systems',h:()=>`
+<h2>Binary systems and the centre of mass</h2>
+<p>A binary system is two masses orbiting their <strong>common centre of mass</strong>. Both have the same angular velocity, so the <strong>same period</strong>. Planets and stars do this too.</p>
+<p>The centre of mass is the balance point: m₁r₁ = m₂r₂ and d = r₁ + r₂, giving</p>
+<div class="eqbig">r₁ = m₂d / (m₁ + m₂) &nbsp;&nbsp; r₂ = m₁d / (m₁ + m₂)</div>
+<p>If m₁ ≫ m₂, then r₂ ≈ d: the small body orbits almost around the big one’s centre.</p>
+<h3>Period of a binary</h3>
+<div class="work"><div>For m₁: Gm₁m₂/d² = m₁r₁ω², so r₁ω² = Gm₂/d²</div><div>Substitute r₁ = m₂d/(m₁ + m₂): ω² = G(m₁ + m₂)/d³</div><div>With ω = 2π/T: <strong>T²/d³ = 4π² / G(m₁ + m₂)</strong></div></div>
+<p>For a planet (m) and star (M) with m ≪ M this becomes T²/d³ ≈ 4π²/GM, the earlier result.</p>`,
+after:el=>wBinary(el.querySelector('.wslot')),
+chk:[['Where is the Earth–Sun centre of mass? (M = 2.0 × 10³⁰ kg, m = 6.0 × 10²⁴ kg, d = 1.496 × 10¹¹ m)','r<sub>M</sub> = md/(M + m) = 449 km from the Sun’s centre: well inside the Sun (radius 696 000 km).']]},
+
+{t:'Stars that wobble',h:()=>`
+<h2>A planet orbiting a star</h2>
+<p>The star and planet both orbit their common centre of mass. Because the planet is so light, the centre of mass is usually inside the star, and the star appears to <strong>wobble</strong> in a small circle of radius r<sub>M</sub>.</p>
+<div class="eqbig" style="font-size:1.1rem">r<sub>M</sub> = md / (M + m) &nbsp;&nbsp; v<sub>star</sub> = 2πr<sub>M</sub> / T</div>
+<h3>Worked example: Saturn and the Sun</h3>
+<div class="work"><div>r<sub>M</sub> = (5.68 × 10²⁶ × 1.432 × 10¹²) / (1.99 × 10³⁰ + 5.68 × 10²⁶) = 4.09 × 10⁸ m</div><div>T² = (1.432 × 10¹²)³ × 4π² / G(M + m), so T = 9.34 × 10⁸ s = 29.6 years</div><div>Sun’s orbital speed = 2π × 4.09 × 10⁸ / 9.34 × 10⁸ = 2.75 m s⁻¹</div></div>
+<h3>Finding the planet</h3>
+<div class="work"><div>A star (M = 3.5 × 10³⁰ kg) wobbles at 20 m s⁻¹ with period 1500 days.</div><div>r<sub>M</sub> = vT/2π = 20 × 1.296 × 10⁸ / 2π = 4.13 × 10⁸ m</div><div>d³ ≈ GMT²/4π² gives d = 4.63 × 10¹¹ m</div><div>r<sub>M</sub> = md/(M + m) gives m = 3.1 × 10²⁷ kg, about 1.6 Jupiter masses</div></div>`,
+chk:[['Why is it easier to detect heavy planets close to their stars?','A larger m gives a larger r<sub>M</sub>, and a shorter period gives a larger wobble speed, so a bigger Doppler shift.']]},
+
+{t:'Doppler shift',h:()=>`
+<h2>The Doppler effect for light</h2>
+<p>A source moving <strong>towards</strong> us: measured wavelength decreases, absorption lines move towards the blue end: <strong>blue shift</strong>. Moving <strong>away</strong>: wavelength increases: <strong>red shift</strong>. Each line has a specific laboratory wavelength, so its shift can be measured.</p>
+<div class="eqbig">Δλ / λ = v / c &nbsp;&nbsp; or &nbsp;&nbsp; Δf / f = v / c</div>
+<p>λ and f are the unshifted (emitted) values; v is the relative speed along the line of sight.</p>
+<h3>Radial velocity</h3>
+<p>The <strong>radial velocity</strong> v<sub>rad</sub> is the component of a star’s velocity along the line joining it to the observer: v<sub>rad</sub> = v cos θ. The shift is largest when the star moves directly towards or away from us, and zero when it moves at right angles.</p>`,
+after:el=>wDoppler(el.querySelector('.wslot')),
+chk:[['A 656.28 nm line is observed at 656.30 nm. Find the radial velocity.','v = cΔλ/λ = 3.00 × 10⁸ × 0.02 / 656.28 = 9.1 × 10³ m s⁻¹, moving away (red shift).']]},
+
+{t:'Radial velocity curves',h:()=>`
+<h2>Radial velocity of a wobbling star</h2>
+<p>Viewed edge-on, a star orbiting the centre of mass with orbital speed v₀ has <span class="eq">v<sub>rad</sub> = v₀ cos ωt</span>. Positive values mean moving away (red shift); negative, towards us (blue shift).</p>
+<ul><li>At B, v<sub>rad</sub> = +v₀: maximum red shift. At A, v<sub>rad</sub> = −v₀: maximum blue shift.</li><li>At C and D the star moves at right angles to the line of sight: no shift.</li></ul>
+<p>From the graph of measured wavelength λ′ = λ + Δλ you can find the <strong>orbital period</strong>, the <strong>maximum radial velocity</strong> and so the <strong>star’s orbital speed</strong>. The mean of λ′ is the unshifted wavelength.</p>
+<h3>A receding system</h3>
+<p>If the whole system also moves away at v<sub>rec</sub>, the curve is lifted by v<sub>rec</sub>:</p>
+<div class="eqbig" style="font-size:1.1rem">v<sub>rec</sub> = (v<sub>max</sub> + v<sub>min</sub>) / 2 &nbsp;&nbsp; v₀ = v<sub>max</sub> − v<sub>rec</sub></div>`,
+after:el=>wRadial(el.querySelector('.wslot')),
+chk:[['Maximum and minimum shifts of a 650 nm line are +3.0 × 10⁻¹⁴ m and −1.5 × 10⁻¹⁴ m. Find v<sub>rec</sub> and v₀.','v<sub>max</sub> = (3.0 × 10⁸/650 × 10⁻⁹) × 3.0 × 10⁻¹⁴ = 13.8 m s⁻¹; v<sub>min</sub> = −6.9 m s⁻¹. v<sub>rec</sub> = (13.8 − 6.9)/2 = 3.45 m s⁻¹; v₀ = 13.8 − 3.45 = 10.4 m s⁻¹.']]},
+
+{t:'Life on exoplanets',h:()=>`
+<h2>The search for life on exoplanets</h2>
+<p>For life as we know it, a planet needs:</p>
+<ul><li>an atmosphere</li><li>water</li><li>a surface temperature around 300 K</li><li>a mass large enough to hold an atmosphere, but not so large that the gravitational field strength is too high</li></ul>
+<p>Measure the star’s intensity I at Earth and its distance r, then use the inverse square law to find its luminosity: <span class="eq">L = 4πr²I</span>. The intensity at the planet is then <span class="eq">I<sub>planet</sub> = L / 4πd²</span>, and Stefan’s law gives an estimate of the surface temperature.</p>
+<p>It is only an estimate: cloud cover reflects some starlight (the <strong>albedo</strong> effect) and greenhouse gases raise the temperature (the <strong>greenhouse effect</strong>).</p>
+<h3>Worked example</h3>
+<div class="work"><div>A star has 9 times the Sun’s luminosity; its planet is 3 times as far from it as Earth is from the Sun.</div><div>I ∝ L/d², so I<sub>planet</sub> ∝ 9L/(3d)² = L/d²: the same intensity as at Earth, so a comparable temperature.</div></div>`,
+chk:[['A star has 4 times the Sun’s luminosity. How far away must a planet be to receive the same intensity as Earth?','I ∝ L/d², so d must be √4 = 2 times the Earth–Sun distance.']]},
+
+{t:'Galaxies and dark matter',h:()=>`
+<h2>Galaxy rotation and dark matter</h2>
+<p>A galaxy is a gravitationally bound system of 10⁹ to 10¹⁴ stars rotating about its centre of mass. The Milky Way is a spiral about 100 000 light years across; the Sun takes about 230 million years to go round once.</p>
+<h3>Inside the dense central region: v ∝ r</h3>
+<div class="work"><div>Constant density ρ: enclosed mass M = (4/3)πr³ρ</div><div>v² = GM/r = (4/3)Gπρr², so v ∝ r</div></div>
+<h3>Beyond the visible matter: v ∝ 1/√r</h3>
+<p>If ρ ≈ 0 outside, M is constant, so v² = GM/r and v should fall as 1/√r.</p>
+<h3>What is measured</h3>
+<p>Beyond about 50 000 light years the measured speed stays roughly <strong>constant</strong>. There must be much more mass than we can see, extending well beyond the visible galaxy. This is <strong>dark matter</strong>: it does not emit or interact with electromagnetic radiation, and is inferred only from its gravitational effects. It makes up about 27% of the mass–energy of the Universe.</p>
+<p>“Observed” matter includes dark gas clouds too: their speeds are measured from absorption lines in light passing through them.</p>
+<p><strong>The Higgs boson</strong> is linked to how particles, possibly including dark matter, get their mass. It has been proposed that a Higgs particle could decay into two dark matter particles, and experiments at the Large Hadron Collider may reveal the link.</p>`,
+after:el=>wRot(el.querySelector('.wslot')),
+chk:[['Measured speed at 40 kpc is 150 km s⁻¹; the visible matter predicts 50 km s⁻¹. What percentage of the mass is dark matter?','M ∝ v² at fixed r: (150² − 50²)/150² × 100 = 89%.']]},
+
+{t:'Hubble’s law',h:()=>`
+<h2>Hubble’s law</h2>
+<p>Hubble measured the red shifts of galaxies at known distances. Recessional speed against distance gave a straight line through the origin.</p>
+<p><strong>Hubble’s law:</strong> the recessional speed of a galaxy is directly proportional to its distance from Earth.</p>
+<div class="eqbig">v = H₀D</div>
+<p>H₀ is the gradient of the graph. In SI units <strong>H₀ ≈ 2.2 × 10⁻¹⁸ s⁻¹</strong>, the value the WJEC normally gives you.</p>
+<p>Close to Earth there is lots of scatter. Galaxies in a cluster attract each other and have extra “residual” velocities. At large distances these are small compared with the recessional velocity.</p>
+<p>The whole Universe is expanding: the speed at which any two points separate is proportional to their separation, with the same H₀ everywhere.</p>
+<p class="small muted">You will often see H₀ ≈ 70 km s⁻¹ Mpc⁻¹, but parsecs are not in the WJEC syllabus: 70 × 10³ / (10⁶ × 3.086 × 10¹⁶) = 2.3 × 10⁻¹⁸ s⁻¹.</p>`,
+chk:[['A galaxy is 4.0 × 10²⁴ m away. Estimate its recessional speed.','v = H₀D = 2.2 × 10⁻¹⁸ × 4.0 × 10²⁴ = 8.8 × 10⁶ m s⁻¹']]},
+
+{t:'Age of the Universe',h:()=>`
+<h2>Estimating the age of the Universe</h2>
+<p>If every galaxy has always receded at a constant speed, they were all together at time t ago:</p>
+<div class="work"><div>t = D / v = D / H₀D</div></div>
+<div class="eqbig">t ≈ 1 / H₀</div>
+<div class="work"><div>t = 1 / 2.2 × 10⁻¹⁸ = 4.5 × 10¹⁷ s ≈ 14 billion years (the Hubble time)</div></div>
+<p>It is only an approximation because:</p>
+<ul><li>galaxies have not moved at constant speed: gravity has slowed them, so their mean speed was greater and the true age is <em>less</em>;</li><li>H₀ itself is uncertain;</li><li>galaxies formed some time after the Big Bang.</li></ul>`,
+chk:[['Why does gravitational attraction make 1/H₀ an overestimate of the age?','Galaxies were moving faster in the past, so they took less time to reach their present distances.']]},
+
+{t:'Critical density and fate',h:()=>`
+<h2>Critical density and the fate of the Universe</h2>
+<p>Treat a thin shell of galaxies of mass m at radius r, moving at v = H₀r, with the Universe inside of uniform density ρ, so M = (4/3)πr³ρ.</p>
+<div class="work"><div>E = ½mv² − GMm/r = ½m(H₀r)² − G(4/3 πr³ρ)m / r</div><div>For a flat Universe the shell just reaches infinity: E = 0</div><div>½H₀²r² = (4/3)πGρr², so</div></div>
+<div class="eqbig">ρ<sub>c</sub> = 3H₀² / 8πG</div>
+<div class="work"><div>With H₀ = 2.3 × 10⁻¹⁸ s⁻¹: ρ<sub>c</sub> = 9.5 × 10⁻²⁷ kg m⁻³, about 6 protons per cubic metre</div></div>
+<ul><li><strong>ρ &gt; ρ<sub>c</sub>:</strong> expansion slows to zero, then contraction (closed Universe).</li><li><strong>ρ = ρ<sub>c</sub>:</strong> expansion slows to zero only at infinite size (flat Universe).</li><li><strong>ρ &lt; ρ<sub>c</sub>:</strong> expansion continues forever (open Universe).</li></ul>
+<div class="fig" style="max-width:460px">${figFate()}</div>
+<p>All the curves have the same gradient now, but started at different times. Including dark matter, the Universe appears very close to the critical density, and observations suggest the expansion is currently accelerating.</p>`,
+chk:[['If H₀ doubled, what would happen to ρ<sub>c</sub>?','ρ<sub>c</sub> ∝ H₀², so it would be four times larger.']]}
+];
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+
+/* ---------- calculation drills ---------- */
+function Q(text,ans,unit,work,pts,tol){return {text,ans,unit,work,pts:pts||1,tol:tol||0.015}}
+const f3=x=>sci(x,3);
+const PI2=4*Math.PI*Math.PI;
+const BODIES=[['Earth',6.0e24,()=>rint(7,42)*1e6],['Mars',6.4e23,()=>rint(6,25)*1e6],['Jupiter',1.9e27,()=>rint(4,20)*1e8],['the Sun',2.0e30,()=>rint(5,60)*1e10]];
+const DR={
+ k3:{n:'Kepler’s third law',g(s){
+  if(!s){const rA=rint(2,9)*1e5,TA=rint(10,60)/10,f=pick([1.5,2,2.5,3,4]);
+   if(R()<0.5){const TB=TA*f,rB=rA*Math.pow(f,2/3);return Q(`A moon orbits a planet at ${f3(rA)} km with a period of ${TA} days. Another moon of the same planet has a period of ${f3(TB)} days. Find its orbital radius in km.`,rB,'km',[`T<sub>A</sub>²/r<sub>A</sub>³ = T<sub>B</sub>²/r<sub>B</sub>³, so r<sub>B</sub> = r<sub>A</sub>(T<sub>B</sub>/T<sub>A</sub>)<sup>2/3</sup>`,`= ${f3(rA)} × (${f3(TB)}/${TA})<sup>2/3</sup>`,`= ${f3(rB)} km (any units work in a ratio)`])}
+   const k=pick([1.5,2,3,4]),rB=rA*k,TB=TA*Math.pow(k,1.5);return Q(`A moon orbits at ${f3(rA)} km with a period of ${TA} days. Find the period of a moon of the same planet orbiting at ${f3(rB)} km, in days.`,TB,'days',[`T<sub>B</sub> = T<sub>A</sub>(r<sub>B</sub>/r<sub>A</sub>)<sup>3/2</sup>`,`= ${TA} × (${k})<sup>1.5</sup>`,`= ${f3(TB)} days`])}
+  const P=pick([['Mars',1.52],['Jupiter',5.20],['Saturn',9.58],['Uranus',19.2],['Neptune',30.1]]);
+  if(R()<0.5)return Q(`Earth orbits the Sun at 1.00 AU in 1.00 year. ${P[0]} orbits at ${P[1]} AU. Find its orbital period in years.`,Math.pow(P[1],1.5),'years',[`T² ∝ r³ with T in years and r in AU: T² = r³`,`T = ${P[1]}<sup>1.5</sup> = ${f3(Math.pow(P[1],1.5))} years`],2);
+  const T=Math.pow(P[1],1.5);return Q(`${P[0]} takes ${f3(T)} years to orbit the Sun. Find its mean distance from the Sun in AU.`,P[1],'AU',[`r³ = T² (years, AU)`,`r = (${f3(T)})<sup>2/3</sup> = ${f3(P[1])} AU`],2)}},
+ mass:{n:'Mass of the central body',g(s){
+  const B=pick(BODIES),r=B[2]();
+  if(!s){const T=Number((2*Math.PI*Math.sqrt(r*r*r/(G*B[1]))).toPrecision(3)),M=PI2*r*r*r/(G*T*T);return Q(`A satellite orbits ${B[0]} with orbital radius ${f3(r)} m and period ${f3(T)} s. Calculate the mass of ${B[0]}.`,M,'kg',[`T²/r³ = 4π²/GM, so M = 4π²r³/GT²`,`= 4π² × (${f3(r)})³ / (6.67 × 10<sup>−11</sup> × (${f3(T)})²)`,`= ${f3(M)} kg`])}
+  const v=Number(Math.sqrt(G*B[1]/r).toPrecision(3)),M=v*v*r/G;return Q(`A moon orbits ${B[0]} at ${f3(r)} m from its centre with an orbital speed of ${f3(v)} m s<sup>−1</sup>. Calculate the mass of ${B[0]}.`,M,'kg',[`mv²/r = GMm/r², so M = v²r/G`,`= (${f3(v)})² × ${f3(r)} / 6.67 × 10<sup>−11</sup>`,`= ${f3(M)} kg`],2)}},
+ orb:{n:'Orbital speed and energy',g(s){
+  const B=pick(BODIES.slice(0,3)),r=B[2]();
+  if(!s){if(R()<0.5){const v=Math.sqrt(G*B[1]/r);return Q(`Calculate the orbital speed of a satellite orbiting ${B[0]} (mass ${f3(B[1])} kg) at a radius of ${f3(r)} m.`,v,'m s⁻¹',[`v = √(GM/r)`,`= √(6.67 × 10<sup>−11</sup> × ${f3(B[1])} / ${f3(r)})`,`= ${f3(v)} m s<sup>−1</sup>`])}
+   const Fm=rint(2,9)*100,F=G*B[1]*Fm/(r*r);return Q(`Calculate the gravitational force on a ${Fm} kg satellite orbiting ${B[0]} (mass ${f3(B[1])} kg) at a radius of ${f3(r)} m.`,F,'N',[`F = GMm/r²`,`= 6.67 × 10<sup>−11</sup> × ${f3(B[1])} × ${Fm} / (${f3(r)})²`,`= ${f3(F)} N`])}
+  const m=rint(2,9)*100;
+  if(R()<0.5){const E=-G*B[1]*m/(2*r);return Q(`A ${m} kg satellite is in a circular orbit of radius ${f3(r)} m around ${B[0]} (mass ${f3(B[1])} kg). Calculate its total energy.`,E,'J',[`E<sub>T</sub> = ½mv² − GMm/r = −GMm/2r (since v² = GM/r)`,`= −6.67 × 10<sup>−11</sup> × ${f3(B[1])} × ${m} / (2 × ${f3(r)})`,`= ${f3(E)} J (negative: bound)`],2)}
+  const r2=r*pick([1.5,2,3]),W=-0.5*G*B[1]*m*(1/r2-1/r);return Q(`A ${m} kg satellite moves from a circular orbit of radius ${f3(r)} m to one of radius ${f3(r2)} m around ${B[0]} (mass ${f3(B[1])} kg). Calculate the work done by its engine.`,W,'J',[`W = ΔE<sub>T</sub> = −½GMm(1/r₂ − 1/r₁)`,`= −½ × 6.67 × 10<sup>−11</sup> × ${f3(B[1])} × ${m} × (1/${f3(r2)} − 1/${f3(r)})`,`= ${f3(W)} J`],2)}},
+ com:{n:'Centre of mass and binaries',g(s){
+  if(!s){if(R()<0.5){const M=rint(12,40)/10*1e30,m=rint(1,9)*Math.pow(10,rint(24,27)),d=rint(5,300)/10*1e10,rM=m*d/(M+m);return Q(`A star of mass ${f3(M)} kg and a planet of mass ${f3(m)} kg are ${f3(d)} m apart. How far is the centre of mass from the centre of the star?`,rM,'m',[`r<sub>M</sub> = md/(M + m)`,`= ${f3(m)} × ${f3(d)} / (${f3(M)} + ${f3(m)})`,`= ${f3(rM)} m`])}
+   const m1=rint(10,40)/10,m2=rint(5,30)/10,d=rint(2,20)*1e11,r1=m2*d/(m1+m2);return Q(`Two stars of masses ${m1} × 10<sup>30</sup> kg (star 1) and ${m2} × 10<sup>30</sup> kg (star 2) are ${f3(d)} m apart. Find the radius of star 1’s orbit about the centre of mass.`,r1,'m',[`r₁ = m₂d/(m₁ + m₂)`,`= ${m2} × ${f3(d)} / (${m1} + ${m2})`,`= ${f3(r1)} m`])}
+  const m1=rint(10,40)/10*1e30,m2=rint(5,30)/10*1e30,d=rint(2,20)*1e11,T=2*Math.PI*Math.sqrt(d*d*d/(G*(m1+m2)));return Q(`Two stars of masses ${f3(m1)} kg and ${f3(m2)} kg orbit their common centre of mass ${f3(d)} m apart. Calculate their orbital period in years. (1 year = 3.15 × 10<sup>7</sup> s)`,T/3.15e7,'years',[`T²/d³ = 4π²/G(m₁ + m₂)`,`T = 2π√(d³/G(m₁ + m₂)) = ${f3(T)} s`,`= ${f3(T/3.15e7)} years`],2)}},
+ dop:{n:'Doppler shift',g(s){
+  const l0=pick([393.37,486.13,589.0,656.28]);
+  if(!s){if(R()<0.5){const v=pick([1,2,5,8,12,20,35])*1e3*(R()<0.5?-1:1),dl=l0*v/CL;return Q(`A star moves ${v>0?'away from':'towards'} Earth at ${Math.abs(v/1000)} km s<sup>−1</sup>. Find the change in wavelength of a ${l0} nm line, in nm. (Give a negative value for a blue shift.)`,dl,'nm',[`Δλ = λv/c`,`= ${l0} × ${v>0?'':'−'}${f3(Math.abs(v))} / 3.00 × 10<sup>8</sup>`,`= ${f3(dl)} nm (${v>0?'red':'blue'} shift)`])}
+   const dl=pick([0.004,0.008,0.012,0.02,0.035,0.06]),v=CL*dl/l0;return Q(`A ${l0} nm line in a star’s spectrum is observed at ${(l0+dl).toFixed(3)} nm. Find the star’s radial velocity.`,v,'m s⁻¹',[`Δλ = ${(l0+dl).toFixed(3)} − ${l0} = ${dl} nm`,`v = cΔλ/λ = 3.00 × 10<sup>8</sup> × ${dl} / ${l0}`,`= ${f3(v)} m s<sup>−1</sup>, away (red shift)`])}
+  const vr=rint(2,40)*100,v0=rint(2,30)*100,lmax=l0*(1+(vr+v0)/CL),lmin=l0*(1+(vr-v0)/CL);
+  if(R()<0.5)return Q(`Over a planet’s orbit the ${l0} nm line of a star varies between ${lmin.toFixed(5)} nm and ${lmax.toFixed(5)} nm. Find the recessional velocity of the system.`,vr,'m s⁻¹',[`v<sub>max</sub> = cΔλ<sub>max</sub>/λ = ${f3(vr+v0)} m s<sup>−1</sup>, v<sub>min</sub> = ${f3(vr-v0)} m s<sup>−1</sup>`,`v<sub>rec</sub> = (v<sub>max</sub> + v<sub>min</sub>)/2 = ${f3(vr)} m s<sup>−1</sup>`],2,0.03);
+  return Q(`Over a planet’s orbit the ${l0} nm line of a star varies between ${lmin.toFixed(5)} nm and ${lmax.toFixed(5)} nm. Find the orbital speed of the star.`,v0,'m s⁻¹',[`v<sub>max</sub> = ${f3(vr+v0)} m s<sup>−1</sup>, v<sub>min</sub> = ${f3(vr-v0)} m s<sup>−1</sup>`,`v<sub>rec</sub> = ${f3(vr)} m s<sup>−1</sup>`,`v₀ = v<sub>max</sub> − v<sub>rec</sub> = ${f3(v0)} m s<sup>−1</sup>`],2,0.03)}},
+ exo:{n:'Exoplanet masses',g(s){
+  const M=rint(10,35)/10*1e30,Td=rint(3,90)*10,T=Td*DAY,v0=rint(5,200)*10;
+  if(!s){const rM=v0*T/(2*Math.PI);return Q(`A star wobbles with an orbital speed of ${v0} m s<sup>−1</sup> and a period of ${Td} days. Find the radius of its orbit about the centre of mass.`,rM,'m',[`v = 2πr<sub>M</sub>/T, so r<sub>M</sub> = vT/2π`,`= ${v0} × ${Td} × 86400 / 2π`,`= ${f3(rM)} m`])}
+  const d=Math.cbrt(G*M*T*T/PI2);
+  if(R()<0.5)return Q(`A planet orbits a star of mass ${f3(M)} kg with a period of ${Td} days. Assuming m ≪ M, find the star–planet distance.`,d,'m',[`T²/d³ ≈ 4π²/GM, so d³ = GMT²/4π²`,`= 6.67 × 10<sup>−11</sup> × ${f3(M)} × (${f3(T)})² / 4π²`,`d = ${f3(d)} m`],2);
+  const rM=v0*T/(2*Math.PI),m=M*rM/(d-rM);return Q(`A star of mass ${f3(M)} kg wobbles at ${v0} m s<sup>−1</sup> with period ${Td} days. The planet is ${f3(d)} m from the star. Estimate the planet’s mass.`,m,'kg',[`r<sub>M</sub> = vT/2π = ${f3(rM)} m`,`r<sub>M</sub> = md/(M + m) ≈ md/M`,`m ≈ Mr<sub>M</sub>/d = ${f3(M*rM/d)} kg`],2,0.03)}},
+ hub:{n:'Hubble’s law and cosmology',g(s){
+  if(!s){if(R()<0.5){const D=rint(2,40)/10*1e24,v=H0*D;return Q(`A galaxy is ${f3(D)} m away. Using H₀ = 2.2 × 10<sup>−18</sup> s<sup>−1</sup>, find its recessional speed.`,v,'m s⁻¹',[`v = H₀D`,`= 2.2 × 10<sup>−18</sup> × ${f3(D)}`,`= ${f3(v)} m s<sup>−1</sup>`])}
+   const v=rint(5,90)*1e5,D=v/H0;return Q(`A galaxy recedes at ${f3(v)} m s<sup>−1</sup>. Using H₀ = 2.2 × 10<sup>−18</sup> s<sup>−1</sup>, find its distance.`,D,'m',[`D = v/H₀`,`= ${f3(v)} / 2.2 × 10<sup>−18</sup>`,`= ${f3(D)} m`])}
+  const v2=rint(0,2);const H=pick([2.1,2.2,2.3,2.4])*1e-18;
+  if(v2===0)return Q(`Taking H₀ = ${f3(H)} s<sup>−1</sup>, estimate the age of the Universe in years. (1 year = 3.15 × 10<sup>7</sup> s)`,1/H/3.15e7,'years',[`t ≈ 1/H₀ = 1/${f3(H)} = ${f3(1/H)} s`,`= ${f3(1/H/3.15e7)} years`],2);
+  if(v2===1)return Q(`Taking H₀ = ${f3(H)} s<sup>−1</sup>, calculate the critical density of the Universe.`,3*H*H/(8*Math.PI*G),'kg m⁻³',[`ρ<sub>c</sub> = 3H₀²/8πG`,`= 3 × (${f3(H)})² / (8π × 6.67 × 10<sup>−11</sup>)`,`= ${f3(3*H*H/(8*Math.PI*G))} kg m<sup>−3</sup>`],2);
+  const dl=rint(5,60),l0=393.37,v=CL*dl/l0,D=v/H0;return Q(`The calcium K line (393.37 nm) in a galaxy’s spectrum is red-shifted by ${dl} nm. Using H₀ = 2.2 × 10<sup>−18</sup> s<sup>−1</sup>, estimate the galaxy’s distance.`,D,'m',[`v = cΔλ/λ = 3.00 × 10<sup>8</sup> × ${dl} / 393.37 = ${f3(v)} m s<sup>−1</sup>`,`D = v/H₀ = ${f3(D)} m`],2)}},
+ life:{n:'Exoplanet habitability',g(s){
+  const k=pick([2,4,9,16,0.25]),dd=pick([1.5,2,3,4,0.5]),ratio=k/(dd*dd);
+  if(!s)return Q(`A star has ${k} times the Sun’s luminosity. A planet orbits it at ${dd} times the Earth–Sun distance. Find the ratio (intensity at the planet) ÷ (intensity at Earth).`,ratio,'',[`I = L/4πd², so I ∝ L/d²`,`ratio = ${k} / ${dd}² = ${f3(ratio)}`]);
+  const I=rint(2,90)/10*1e-9,r=rint(2,60)*1e16,L=4*Math.PI*r*r*I;return Q(`The intensity of a star’s light at Earth is ${f3(I)} W m<sup>−2</sup> and it is ${f3(r)} m away. Calculate its luminosity.`,L,'W',[`L = 4πr²I`,`= 4π × (${f3(r)})² × ${f3(I)}`,`= ${f3(L)} W`],2)}}
+};
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 2.0e30 or 1.5x10^-3.');return}
+  const ok=close(v,drQ.ans,drQ.tol);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+wk());
+  else{let hint='';const r=v/drQ.ans,lg=Math.log10(Math.abs(r));
+   if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check your unit conversions.';else if(r<0&&close(-v,drQ.ans,drQ.tol))hint=' Check the sign.';
+   fb(out,'no','<strong>Not quite.</strong>'+hint+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.'+wk())}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+
+/* ---------- concept quiz ---------- */
+const QB=[
+['Kepler’s first law states that each planet moves in:',['an ellipse with the Sun at one focus','a circle with the Sun at the centre','an ellipse with the Sun at the centre','a parabola'],0,'The Sun is at one focus; the other focus is empty.'],
+['Kepler’s second law states that:',['the line from the Sun to a planet sweeps out equal areas in equal times','all planets move at the same speed','T² ∝ r³','planets move fastest at aphelion'],0,'Equal areas in equal times means faster when closer.'],
+['A planet in an elliptical orbit moves fastest at:',['perihelion','aphelion','the ends of the semi-minor axis','it moves at constant speed'],0,'Closest to the Sun, it must cover more distance to sweep the same area.'],
+['Kepler’s third law states that:',['T² ∝ r³','T ∝ r','T³ ∝ r²','T² ∝ r'],0,'r is the semi-major axis (the mean distance for nearly circular orbits).'],
+['In Kepler’s third law, r is:',['the semi-major axis of the ellipse','the semi-minor axis','the distance at perihelion','the radius of the planet'],0,'For a nearly circular orbit, r can be taken as the mean distance.'],
+['For WJEC calculations, orbits are assumed to be:',['circular','parabolic','elliptical with e = 0.5','hyperbolic'],0,'You need to understand ellipses qualitatively only.'],
+['In deriving Kepler’s third law, the centripetal force on a planet is provided by:',['the gravitational attraction of the Sun','the planet’s momentum','the Sun’s radiation pressure','the planet’s rotation'],0,'Setting GMm/r² = mrω² gives T²/r³ = 4π²/GM.'],
+['The gradient of a graph of T² against r³ for planets orbiting a star is:',['4π²/GM','GM/4π²','2π/GM','4π²M/G'],0,'T² = (4π²/GM)r³.'],
+['Measuring a moon’s orbital radius and period allows you to find:',['the mass of the planet it orbits','the mass of the moon','the planet’s radius','the moon’s density'],0,'M = 4π²r³/GT². The moon’s own mass cancels.'],
+['The orbital speed of a satellite in a circular orbit of radius r around mass M is:',['√(GM/r)','GM/r','√(GMr)','GM/r²'],0,'From mv²/r = GMm/r².'],
+['A satellite moves to a larger circular orbit. Its orbital speed:',['decreases','increases','stays the same','doubles'],0,'v ∝ 1/√r.'],
+['The total energy of a satellite in a circular orbit equals:',['half its gravitational potential energy','its kinetic energy','twice its potential energy','zero'],0,'E<sub>T</sub> = −GMm/2r = ½E<sub>P</sub>, which is negative.'],
+['The work needed to move a satellite to a higher orbit equals:',['the increase in its total energy','the increase in its kinetic energy','its potential energy in the new orbit','zero, because orbits are stable'],0,'W = ΔE<sub>T</sub> = −½GMm(1/r₂ − 1/r₁).'],
+['In a binary star system, the two stars have the same:',['orbital period','orbital speed','orbital radius','mass'],0,'They stay on opposite sides of the centre of mass, so they share the same ω and T.'],
+['In a binary system, the more massive star:',['orbits closer to the centre of mass','orbits further from the centre of mass','is at rest','has a longer period'],0,'m₁r₁ = m₂r₂.'],
+['The centre of mass of the Earth–Sun system is:',['inside the Sun, about 450 km from its centre','exactly at the Sun’s centre','halfway between them','at the Earth’s centre'],0,'r<sub>M</sub> = md/(M + m) ≈ 449 km.'],
+['A star is observed to “wobble” because:',['it orbits the centre of mass it shares with its planets','its planets reflect its light','it is rotating on its axis','of the Doppler effect'],0,'The planet pulls the star round a small orbit.'],
+['A star moving away from Earth shows:',['red shift: wavelengths increase','blue shift: wavelengths decrease','no change in wavelength','a change in the pattern of lines'],0,'The same pattern of lines appears, shifted to longer wavelengths.'],
+['The radial velocity of a star is:',['the component of its velocity along the line of sight','its orbital speed','its speed round the galaxy','its rotation speed'],0,'v<sub>rad</sub> = v cos θ.'],
+['A star moving at right angles to our line of sight shows:',['no Doppler shift','maximum red shift','maximum blue shift','a doubled shift'],0,'There is no component of velocity towards or away from us.'],
+['In the radial velocity graph of a wobbling star, positive values mean the star is:',['moving away from the observer','moving towards the observer','at the centre of mass','at its maximum distance'],0,'Positive = receding = red shift.'],
+['A star–planet system is also moving away from us. Its radial velocity graph is:',['shifted upwards by the recessional velocity','inverted','unchanged','stretched to a longer period'],0,'v<sub>rec</sub> = (v<sub>max</sub> + v<sub>min</sub>)/2.'],
+['The orbital speed of the star in a receding system is:',['v<sub>max</sub> − v<sub>rec</sub>','v<sub>max</sub> + v<sub>min</sub>','v<sub>rec</sub>','v<sub>max</sub>'],0,'It is the amplitude of the curve.'],
+['The radial velocity method assumes the orbit is edge-on. If it is tilted, the calculated planet mass is:',['too small: it is a minimum mass','too large','unaffected','zero'],0,'Only part of the star’s velocity is along our line of sight, so the measured v₀ is smaller than the real speed.'],
+['Which is NOT a condition for life as we know it on an exoplanet?',['A very strong gravitational field','An atmosphere','Water','A surface temperature around 300 K'],0,'Too strong a field is a problem; the mass must be large enough to hold an atmosphere, but not too large.'],
+['A star is 9 times as luminous as the Sun, and its planet is 3 times further from it than Earth is from the Sun. The intensity at the planet compared with Earth is:',['the same','3 times greater','9 times greater','one third'],0,'I ∝ L/d² = 9/3² = 1.'],
+['Outside the visible part of a galaxy, the predicted orbital speed from the visible mass alone should:',['fall as 1/√r','stay constant','rise as r','rise as r²'],0,'The enclosed mass is constant, so v² = GM/r.'],
+['In the dense central region of a galaxy (constant density), orbital speed:',['is proportional to r','is proportional to 1/√r','is constant','is zero'],0,'M ∝ r³ so v² ∝ r².'],
+['The flat measured rotation curves of spiral galaxies suggest:',['there is much more mass than we can see: dark matter','the visible mass is overestimated','Newton’s law of gravitation fails at small distances','galaxies are not rotating'],0,'The extra mass must extend well beyond the visible galaxy.'],
+['Dark matter is called “dark” because it:',['does not emit or interact with electromagnetic radiation','is black in colour','absorbs all light','is found only in black holes'],0,'Its presence is inferred only from gravitational effects.'],
+['How might the Higgs boson relate to dark matter?',['It gives particles mass, and has been proposed to decay into dark matter particles','It is dark matter','It causes galaxies to rotate','It explains red shift'],0,'Experiments at the LHC may reveal a link.'],
+['Hubble’s law states that:',['the recessional speed of a galaxy is directly proportional to its distance','galaxies move at the same speed','nearer galaxies recede faster','the Universe is contracting'],0,'v = H₀D.'],
+['The scatter in the Hubble diagram at small distances is caused by:',['residual velocities of galaxies in clusters attracting each other','errors in the speed of light','the Doppler effect failing','dark energy'],0,'At large distances these are small compared with the recessional velocity.'],
+['The age of the Universe is estimated as:',['1/H₀','H₀','H₀²','3H₀²/8πG'],0,'t = D/v = D/H₀D.'],
+['1/H₀ overestimates the age of the Universe because:',['gravity has slowed the galaxies, so they moved faster in the past','the Universe is accelerating','H₀ is too large','galaxies formed before the Big Bang'],0,'A larger mean speed means less time to reach the present distances.'],
+['If the mean density of the Universe is greater than the critical density, the Universe will:',['stop expanding and then contract','expand forever','reach infinite size with zero speed','stay the same size'],0,'This is a closed Universe.'],
+['The critical density depends on:',['H₀²','H₀','1/H₀','H₀³'],0,'ρ<sub>c</sub> = 3H₀²/8πG.'],
+['The critical density is derived by setting which quantity to zero for a shell of galaxies?',['total energy','kinetic energy','potential energy','momentum'],0,'The shell just reaches infinity: ½m(H₀r)² = GMm/r.']
+];
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+
+/* ---------- graph match ---------- */
+const CURVES={
+ t2r3:{xl:'r³',yl:'T²',f:x=>0.9*x},
+ vrad:{xl:'t',yl:'v_rad',mid:1,f:x=>0.8*Math.cos(x*4*Math.PI)},
+ vrec:{xl:'t',yl:'v_rad',mid:1,f:x=>0.35+0.5*Math.cos(x*4*Math.PI),dash:0.35},
+ rotm:{xl:'r',yl:'v',f:x=>0.8*(1-Math.exp(-x*9))},
+ rotc:{xl:'r',yl:'v',f:x=>{const a=0.12;return 2.1*x*Math.sqrt(a)/Math.pow(x*x+a*a,0.75)*0.55}},
+ hub:{xl:'D',yl:'v',f:x=>0.85*x,dots:1},
+ closed:{xl:'time',yl:'scale',f:x=>{const u=(x-0.08)*3.3;return u<0||u>Math.PI?null:0.85*Math.sin(u)}}
+};
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg');const C=CURVES[type];
+ const x0=40,xw=W-60,y0=C.mid?H/2+6:H-28,ytop=16,sc=C.mid?(H/2-26):(y0-ytop);
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,C.mid?H-10:y0);c.lineTo(x0,ytop-4);c.stroke();
+ c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();c.beginPath();c.moveTo(x0,ytop-6);c.lineTo(x0-4,ytop+1);c.lineTo(x0+4,ytop+1);c.fill();
+ c.font='bold 14px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText(C.xl,x0+xw+6,y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,ytop+8);
+ c.fillStyle=mut;c.font='13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('0',x0-6,y0+4+(C.mid?0:10));
+ if(C.dash!==undefined){c.setLineDash([4,4]);c.strokeStyle=mut;c.lineWidth=1;c.beginPath();c.moveTo(x0,y0-C.dash*sc);c.lineTo(x0+xw,y0-C.dash*sc);c.stroke();c.setLineDash([])}
+ c.strokeStyle=neg;c.lineWidth=2.6;c.beginPath();let st=false;
+ for(let i=0;i<=200;i++){const x=i/200,y=C.f(x);if(y===null){st=false;continue}const X=x0+x*xw,Y=y0-y*sc;if(!st){c.moveTo(X,Y);st=true}else c.lineTo(X,Y)}c.stroke();
+ if(C.dots){c.fillStyle=ink;const pts=[[0.05,0.12],[0.08,0.02],[0.12,0.16],[0.2,0.14],[0.33,0.3],[0.47,0.38],[0.6,0.52],[0.74,0.62],[0.9,0.78]];pts.forEach(p=>{c.beginPath();c.arc(x0+p[0]*xw,y0-p[1]*sc,3,0,7);c.fill()})}
+}
+const GM=[['t2r3','Kepler’s third law for planets'],['vrad','Star with a planet, system not receding'],['vrec','Star with a planet, system receding'],['rotm','Measured galaxy rotation curve'],['rotc','Rotation curve predicted from visible matter'],['hub','Hubble’s law data'],['closed','A closed Universe (ρ > ρc)']];
+let gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ gmOrder=shuffle(GM.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ $('#gmPool').innerHTML=shuffle(GM).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}else if(gmPlace[i]!==undefined)delete gmPlace[i];gmPaint()}));
+ gmPaint();
+}
+function gmPaint(){
+ const used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?GM.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+$('#gmCheck').addEventListener('click',()=>{let n=0;$$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<GM.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===GM.length){award(GM.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong>')}else{miss();fb($('#gmFb'),'no',n+' of '+GM.length+' correct. Move the labels with red borders and check again.')}});
+$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p){this.p=p.slice();this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  if(this.p.length){const xs=this.p.map(q=>q[0]),ys=this.p.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(o.curve){c.strokeStyle=cssv('--muted');c.setLineDash([6,5]);c.lineWidth=2;c.beginPath();for(let i=0;i<=200;i++){const x=X[0]+(X[1]-X[0])*i/200,y=o.curve(x);if(!isFinite(y))continue;const P=px(x,y);i?c.lineTo(P[0],P[1]):c.moveTo(P[0],P[1])}c.stroke();c.setLineDash([])}
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+function gauss(){let u=0,v=0;while(u===0)u=R();while(v===0)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function lockMsg(){return 'Complete task 1 to unlock'}
+
+/* ============ LAB 1: exoplanet hunter ============ */
+const LA=656.28;
+const E1={day:0,data:[],unl:false};
+(function(){const g=kitRng(21);
+ E1.M=[1.6,2.0,2.4,3.0][Math.floor(g()*4)]*1e30;E1.m=(2+g()*8)*1.9e27;E1.Td=Math.round((4+g()*26)*10)/10;E1.T=E1.Td*DAY;
+ E1.d=Math.cbrt(G*(E1.M+E1.m)*E1.T*E1.T/PI2);E1.rM=E1.m*E1.d/(E1.M+E1.m);E1.v0=2*Math.PI*E1.rM/E1.T;
+ E1.vrec=(5+g()*30)*1e3*(g()<0.2?-1:1);E1.ph=g()*2*Math.PI;E1.off=(g()-0.5)*0.0008;E1.sig=0.00003;
+ E1.vrecObs=E1.vrec+CL*E1.off/LA;E1.max=Math.ceil(E1.Td*3.2);})();
+function e1Lam(t){return LA*(1+(E1.vrec+E1.v0*Math.cos(2*Math.PI*t/E1.Td+E1.ph))/CL)+E1.off}
+function e1Spec(lam){
+ const cv=$('#l1Sp');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';
+ const l0=LA-0.12,l1=LA+0.12;c.fillStyle=ink;c.fillText('laboratory',4,14);strip(c,4,20,w-8,40,l0,l1,[LA]);
+ c.fillStyle=ink;c.fillText('star, tonight',4,84);strip(c,4,90,w-8,40,l0,l1,lam?[lam]:[]);
+ c.fillStyle=cssv('--muted');c.textAlign='center';[-0.1,-0.05,0,0.05,0.1].forEach(dv=>{const x=4+(dv+0.12)/0.24*(w-8);c.fillRect(x,132,1,6);c.fillText((LA+dv).toFixed(2),x,152)});c.textAlign='left';
+ if(!lam){c.fillStyle='rgba(20,33,58,.75)';c.fillRect(4,90,w-8,40);c.fillStyle='#fff';c.fillText('No spectrum yet',w/2-40,114)}
+}
+function e1Card(){$('#l1Card').innerHTML='<span>Star mass (from its spectral type): <b>'+sci(E1.M,2)+' kg</b></span><span>Observable for <b>'+E1.max+' nights</b></span>'}
+function e1Day(){$('#l1Dayo').textContent='day '+E1.day.toFixed(2)}
+$('#l1Day').max=E1.max;
+$('#l1Day').addEventListener('input',e=>{E1.day=+e.target.value;e1Day();$('#l1L').textContent='–';e1Spec(null)});
+$('#l1Obs').addEventListener('click',()=>{
+ const m=$('#l1Msg');if(E1.data.some(r=>Math.abs(r[0]-E1.day)<1e-6)){fb(m,'info','You already observed on that night. Move to another night.');return}
+ if(R()<0.15){fb(m,'no','Cloud cover tonight: no spectrum. Try another night.');$('#l1L').textContent='cloud';e1Spec(null);return}
+ const lam=e1Lam(E1.day)+gauss()*E1.sig,lr=Math.round(lam*1e5)/1e5;E1.data.push([E1.day,lr]);E1.data.sort((a,b)=>a[0]-b[0]);$('#l1L').textContent=lr.toFixed(5);e1Spec(lr);e1Table();e1Plot();
+ fb(m,'ok','Spectrum recorded. '+(E1.data.length<10?'Spread your observations over at least two orbits.':'Good coverage. Keep going if the curve is not clear yet.'));
+});
+$('#l1Clr').addEventListener('click',()=>{E1.data=[];e1Table();e1Plot()});
+function e1v(l){return CL*(l-LA)/LA}
+function e1Table(){
+ $('#l1Tb').innerHTML=E1.data.length?E1.data.map((r,i)=>'<tr><td>'+r[0].toFixed(2)+'</td><td>'+r[1].toFixed(5)+'</td><td>'+(r[1]-LA).toFixed(5)+'</td><td>'+(E1.unl?Math.round(e1v(r[1])):'<span class="muted small">locked</span>')+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No observations yet</td></tr>';
+ $$('#l1Tb .x').forEach(b=>b.addEventListener('click',()=>{E1.data.splice(+b.dataset.i,1);e1Table();e1Plot()}));
+ $('#l1Hint').innerHTML=E1.unl?'v<sub>rad</sub> = cΔλ/λ is now calculated for you.':'The v<sub>rad</sub> column unlocks once you calculate the first value yourself (task 1 below).';
+}
+const p1=new Plot($('#l1G'),{xl:'time / days',yl:'Δλ / nm',bx:[0,10],by:[-0.01,0.01],fitY:true,line:false});
+function e1Plot(){Object.assign(p1.o,{yl:E1.unl?'v_rad / m s⁻¹':'Δλ / nm',bx:[0,Math.min(E1.max,Math.max(10,...E1.data.map(r=>r[0])))]});p1.set(E1.data.map(r=>[r[0],E1.unl?e1v(r[1]):r[1]-LA]))}
+function e1Tasks(){
+ const el=$('#l1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">Use c = 3.00 × 10<sup>8</sup> m s<sup>−1</sup>, G = 6.67 × 10<sup>−11</sup> N m<sup>2</sup> kg<sup>−2</sup>, λ = 656.28000 nm.</p>';
+ const S={};
+ numTask(el,'1. Calculate v<sub>rad</sub> for your first observation, using v<sub>rad</sub> = cΔλ/λ.','m s⁻¹',v=>{if(!E1.data.length)return {info:1,msg:'Take a spectrum first.'};const t=e1v(E1.data[0][1]);
+  if(close(v,t,0.01)){E1.unl=true;e1Table();e1Plot();return {ok:true,msg:'<strong>Correct:</strong> '+Math.round(t)+' m s<sup>−1</sup>. The v<sub>rad</sub> column and graph are now unlocked.'}}
+  if(close(v,t*1e-9,0.02)||close(v,t*1e9,0.02))return {ok:false,msg:'Check your units: Δλ and λ must be in the same unit, and c in m s⁻¹.'};return {ok:false,msg:'v<sub>rad</sub> = 3.00 × 10<sup>8</sup> × Δλ / 656.28 with Δλ in nm.'}},2);
+ const enough=()=>{if(!E1.unl)return {info:1,msg:'Complete task 1 first.'};if(E1.data.length<8)return {info:1,msg:'Take at least 8 spectra spread over two or more orbits.'};return null};
+ numTask(el,'2. Use your graph to find the orbital period of the star.','days',v=>{const e=enough();if(e)return e;const span=E1.data[E1.data.length-1][0]-E1.data[0][0];if(span<E1.Td*1.1)return {info:1,msg:'Your observations cover too short a time to see a full orbit. Observe over more nights.'};
+  if(close(v,E1.Td,0.06)){S.T=v;return {ok:true,msg:'<strong>Good:</strong> the star repeats every '+E1.Td.toFixed(1)+' days, give or take your sampling. The planet has the same period.'}}return {ok:false,msg:'Measure the time between two successive peaks (or across several cycles and divide).'}},3);
+ const vx=E1.vrecObs+E1.v0,vn=E1.vrecObs-E1.v0,tol=Math.max(0.1*E1.v0,60);
+ numTask(el,'3. Read the maximum radial velocity, v<sub>max</sub>, from your graph.','m s⁻¹',v=>{const e=enough();if(e)return e;if(Math.abs(v-vx)<=tol){S.vx=v;return {ok:true,msg:'<strong>Good.</strong> Estimate the peak of the smooth curve, not just your single highest point.'}}return {ok:false,msg:'Find the top of the curve through your points.'}},2);
+ numTask(el,'4. Read the minimum radial velocity, v<sub>min</sub>.','m s⁻¹',v=>{const e=enough();if(e)return e;if(Math.abs(v-vn)<=tol){S.vn=v;return {ok:true,msg:'<strong>Good.</strong>'}}return {ok:false,msg:'Find the bottom of the curve.'}},2);
+ numTask(el,'5. Calculate the recessional velocity of the system, v<sub>rec</sub> = (v<sub>max</sub> + v<sub>min</sub>)/2.','m s⁻¹',v=>{if(S.vx===undefined||S.vn===undefined)return {info:1,msg:'Complete tasks 3 and 4.'};const t=(S.vx+S.vn)/2;
+  if(Math.abs(v-t)<=Math.max(1,0.01*Math.abs(t))){S.vr=t;return {ok:true,msg:'<strong>Correct.</strong> The whole system is moving '+(t>0?'away from':'towards')+' us at '+Math.round(Math.abs(t))+' m s<sup>−1</sup>.'}}return {ok:false,msg:'Average your two values, keeping the signs.'}},2);
+ numTask(el,'6. Calculate the orbital speed of the star, v₀ = v<sub>max</sub> − v<sub>rec</sub>.','m s⁻¹',v=>{if(S.vr===undefined)return {info:1,msg:'Complete task 5.'};const t=S.vx-S.vr;if(Math.abs(v-t)<=Math.max(1,0.01*t)){S.v0=t;return {ok:true,msg:'<strong>Correct.</strong>'}}return {ok:false,msg:'v₀ = '+Math.round(S.vx)+' − '+Math.round(S.vr)+'.'}},2);
+ numTask(el,'7. Calculate the radius of the star’s orbit about the centre of mass, r<sub>M</sub> = v₀T/2π.','m',v=>{if(S.v0===undefined||S.T===undefined)return {info:1,msg:'Complete tasks 2 and 6.'};const t=S.v0*S.T*DAY/(2*Math.PI);if(close(v,t,0.02)){S.rM=t;return {ok:true,msg:'<strong>Correct:</strong> '+sci(t,3)+' m. That is '+(t/6.96e8<1?'smaller than':'about')+' the radius of the Sun.'}}if(close(v,t/DAY,0.02))return {ok:false,msg:'Convert the period to seconds.'};return {ok:false,msg:'Use T in seconds: T = days × 86 400.'}},3);
+ numTask(el,'8. Assuming m ≪ M, find the star–planet distance d from T²/d³ ≈ 4π²/GM.','m',v=>{if(S.T===undefined)return {info:1,msg:'Complete task 2.'};const T=S.T*DAY,t=Math.cbrt(G*E1.M*T*T/PI2);if(close(v,t,0.02)){S.d=t;return {ok:true,msg:'<strong>Correct:</strong> d = '+sci(t,3)+' m, which is '+(t/1.496e11).toFixed(3)+' times the Earth–Sun distance.'}}return {ok:false,msg:'d³ = GMT²/4π² with M = '+sci(E1.M,2)+' kg and T in seconds.'}},3);
+ numTask(el,'9. Estimate the mass of the planet using r<sub>M</sub> = md/(M + m).','kg',v=>{if(S.d===undefined||S.rM===undefined)return {info:1,msg:'Complete tasks 7 and 8.'};const a=E1.M*S.rM/S.d,b=E1.M*S.rM/(S.d-S.rM);
+  if(close(v,a,0.03)||close(v,b,0.03))return {ok:true,msg:'<strong>Planet found:</strong> about '+sci(v,2)+' kg, or '+(v/1.9e27).toFixed(1)+' Jupiter masses. A massive planet in a tight orbit: a “hot Jupiter”.'};return {ok:false,msg:'With m ≪ M, m ≈ Mr<sub>M</sub>/d.'}},4);
+ mcq(el,'The method assumes we see the orbit edge-on. If the orbit is tilted, the mass you calculate is:',['a minimum: the true mass is larger','exactly right','too large','zero'],0,'Only part of the star’s velocity lies along our line of sight, so the measured v₀ is too small.');
+ mcq(el,'Your spectrograph’s wavelength scale has a small constant calibration error. Which result does it affect?',['Only the recessional velocity','Only the orbital period','Only the orbital speed of the star','All of them equally'],0,'A constant offset shifts the whole curve up or down: the amplitude and period are unchanged.');
+ mcq(el,'Why do astronomers need observations spread over more than one orbit?',['To find the period reliably and see the full range of v<sub>rad</sub>','Because the planet changes mass','To average out the star’s temperature','Because the Doppler equation only works over long times'],0,'Several cycles pin down the period and the peaks despite cloudy nights and random errors.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l1Deb">Reveal the true system</button><div class="fb" id="l1DebO"></div></div>');
+ $('#l1Deb').addEventListener('click',()=>fb($('#l1DebO'),'info','<strong>Observatory '+kitCode()+'</strong><br>Planet mass: '+sci(E1.m,3)+' kg ('+(E1.m/1.9e27).toFixed(2)+' Jupiter masses). Period: '+E1.Td.toFixed(1)+' days. Separation: '+sci(E1.d,3)+' m.<br>Star’s orbital speed: '+E1.v0.toFixed(0)+' m s<sup>−1</sup>. True recessional velocity: '+Math.round(E1.vrec)+' m s<sup>−1</sup>.<br>Spectrograph calibration error: '+(E1.off>=0?'+':'')+E1.off.toFixed(5)+' nm, shifting v<sub>rec</sub> by '+Math.round(CL*E1.off/LA)+' m s<sup>−1</sup>.<br>Random noise on each spectrum: about ±'+(E1.sig).toFixed(5)+' nm (±'+Math.round(CL*E1.sig/LA)+' m s<sup>−1</sup>). About 15% of nights were cloudy.'));
+}
+
+/* ============ LAB 2: galaxy rotation ============ */
+const E2={r:1,data:[],unl:false,shown:null};
+(function(){const g=kitRng(22);
+ E2.D=(1+g()*4)*1e22;E2.vrec=H0*E2.D;E2.vF=(150+g()*100)*1e3;E2.a=(0.8+g()*0.6)*1e20;
+ E2.Mv=Math.pow(0.85*E2.vF,2)*E2.a/(0.385*G);const vv=r=>Math.sqrt(G*E2.Mv*r*r/Math.pow(r*r+E2.a*E2.a,1.5));
+ E2.rc=1.5*E2.a;const rr=12e20,need=E2.vF*E2.vF-Math.pow(vv(rr),2);E2.Vi2=need/(1-(E2.rc/rr)*Math.atan(rr/E2.rc));
+ E2.vis=vv;E2.off=(g()-0.5)*0.02;E2.sig=0.004;E2.arms=g()*6.283;})();
+function e2v(r){const vh2=E2.Vi2*(1-(E2.rc/r)*Math.atan(r/E2.rc));return Math.sqrt(Math.pow(E2.vis(r),2)+Math.max(0,vh2))}
+function e2Meas(){const r=E2.r*1e20*(1+(R()-0.5)*0.02),v=e2v(r);
+ const A=LA*(1+(E2.vrec-v)/CL)+E2.off+gauss()*E2.sig,B=LA*(1+(E2.vrec+v)/CL)+E2.off+gauss()*E2.sig;return [Math.round(A*1000)/1000,Math.round(B*1000)/1000]}
+function e2Draw(){
+ const cv=$('#l2Gx');const {c,w,h}=fitCanvas(cv);c.fillStyle='#0E1628';c.fillRect(0,0,w,h);
+ const rnd=mulberry32(store.kit+5);for(let i=0;i<120;i++){c.fillStyle='rgba(255,255,255,'+(0.2+rnd()*0.6)+')';c.fillRect(rnd()*w,rnd()*h,1.2,1.2)}
+ const cx=w/2,cy=h/2,sc=Math.min(w*0.45,200)/12;c.save();c.translate(cx,cy);c.scale(1,0.42);
+ const gr=c.createRadialGradient(0,0,0,0,0,sc*3);gr.addColorStop(0,'rgba(255,240,200,.95)');gr.addColorStop(1,'rgba(255,240,200,0)');c.fillStyle=gr;c.beginPath();c.arc(0,0,sc*3,0,7);c.fill();
+ for(let arm=0;arm<2;arm++)for(let i=0;i<260;i++){const t=i/260*3.4,rr=sc*(0.8+t*3.2),th=E2.arms+arm*Math.PI+t*1.9+(rnd()-0.5)*0.35,x=Math.cos(th)*rr,y=Math.sin(th)*rr;c.fillStyle='rgba(180,200,255,'+(0.25+rnd()*0.5)+')';c.beginPath();c.arc(x,y,1+rnd()*1.6,0,7);c.fill()}
+ c.restore();
+ const xr=E2.r*sc;[[-1,'A','#7EA8FF'],[1,'B','#FF8C82']].forEach(s=>{const x=cx+s[0]*xr;c.strokeStyle=s[2];c.lineWidth=2;c.strokeRect(x-4,cy-18,8,36);c.fillStyle=s[2];c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText(s[1],x-4,cy-24)});
+ c.fillStyle='#C3CEE3';c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('A: turning towards us   B: turning away',10,h-12);
+ c.strokeStyle='#C3CEE3';c.beginPath();c.moveTo(w-10-sc*4,h-16);c.lineTo(w-10,h-16);c.stroke();c.fillText('4 × 10²⁰ m',w-10-sc*4,h-22);
+}
+function e2Upd(){$('#l2Ro').textContent=E2.r.toFixed(1)+' × 10²⁰ m';const m=e2Meas();E2.shown=m;$('#l2A').textContent=m[0].toFixed(3);$('#l2B').textContent=m[1].toFixed(3);e2Draw()}
+$('#l2R').addEventListener('input',e=>{E2.r=+e.target.value;e2Upd()});
+watch($('#l2Gx'),e2Draw);
+$('#l2Rec').addEventListener('click',()=>{E2.data=E2.data.filter(d=>Math.abs(d[0]-E2.r)>0.05);E2.data.push([E2.r,E2.shown[0],E2.shown[1]]);E2.data.sort((a,b)=>a[0]-b[0]);e2Table();e2Plot();fb($('#l2Msg'),'ok','Recorded at r = '+E2.r.toFixed(1)+' × 10²⁰ m. Cover the full range out to 12 × 10²⁰ m.');e2Upd()});
+$('#l2Clr').addEventListener('click',()=>{E2.data=[];e2Table();e2Plot()});
+const vrot=d=>CL*(d[2]-d[1])/(2*LA)/1000,vrecOf=d=>CL*((d[1]+d[2])/2-LA)/LA/1000;
+function e2Table(){
+ $('#l2Tb').innerHTML=E2.data.length?E2.data.map((d,i)=>'<tr><td>'+d[0].toFixed(1)+'</td><td>'+d[1].toFixed(3)+'</td><td>'+d[2].toFixed(3)+'</td><td>'+(E2.unl?vrot(d).toFixed(0):'<span class="muted small">locked</span>')+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No readings yet</td></tr>';
+ $$('#l2Tb .x').forEach(b=>b.addEventListener('click',()=>{E2.data.splice(+b.dataset.i,1);e2Table();e2Plot()}));
+}
+const p2=new Plot($('#l2G'),{xl:'r / 10²⁰ m',yl:'v_rot / km s⁻¹',bx:[0,12],by:[0,300],line:false,curve:r=>r>0.05?Math.sqrt(G*E2.Mv*Math.pow(r*1e20,2)/Math.pow(Math.pow(r*1e20,2)+E2.a*E2.a,1.5))/1000:0});
+function e2Plot(){p2.set(E2.unl?E2.data.map(d=>[d[0],vrot(d)]):[])}
+function e2CardF(){$('#l2Card').innerHTML='<span>Visible mass (stars and gas, from their light): <b>'+sci(E2.Mv,3)+' kg</b></span><span>H₀ = <b>2.2 × 10<sup>−18</sup> s<sup>−1</sup></b></span>'}
+function e2Tasks(){
+ const el=$('#l2Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">A is turning towards us and B away, while the whole galaxy recedes. So λ′<sub>A</sub> = λ(1 + (v<sub>rec</sub> − v<sub>rot</sub>)/c) and λ′<sub>B</sub> = λ(1 + (v<sub>rec</sub> + v<sub>rot</sub>)/c), with λ = 656.28 nm.</p>';const S={};
+ numTask(el,'1a. For your first reading, find the galaxy’s recessional velocity: v<sub>rec</sub> = c × ((λ′<sub>A</sub> + λ′<sub>B</sub>)/2 − λ)/λ.','km s⁻¹',v=>{if(!E2.data.length)return {info:1,msg:'Record a reading first.'};const t=vrecOf(E2.data[0]);if(Math.abs(v-t)<=Math.max(0.5,0.02*t)){S.vr=v;return {ok:true,msg:'<strong>Correct:</strong> '+t.toFixed(1)+' km s<sup>−1</sup>. Both sides share this shift.'}}return {ok:false,msg:'Average the two wavelengths, subtract 656.28 nm, divide by 656.28 and multiply by c. Answer in km s<sup>−1</sup>.'}},2);
+ numTask(el,'1b. Now find the rotation speed at that radius: v<sub>rot</sub> = c(λ′<sub>B</sub> − λ′<sub>A</sub>)/2λ.','km s⁻¹',v=>{if(!E2.data.length)return {info:1,msg:'Record a reading first.'};const t=vrot(E2.data[0]);if(Math.abs(v-t)<=Math.max(1,0.02*t)){E2.unl=true;e2Table();e2Plot();return {ok:true,msg:'<strong>Correct:</strong> '+t.toFixed(0)+' km s<sup>−1</sup>. The v<sub>rot</sub> column and graph are now unlocked.'}}if(Math.abs(v-2*t)<=0.04*t)return {ok:false,msg:'Divide by 2: the difference between A and B is twice the rotation speed.'};return {ok:false,msg:'Use the difference between the two wavelengths.'}},2);
+ numTask(el,'2. Use Hubble’s law to find the distance to this galaxy.','m',v=>{if(S.vr===undefined)return {info:1,msg:'Complete task 1a.'};const t=S.vr*1000/H0;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> D = v/H₀ = '+sci(t,3)+' m.'};if(close(v,t/1000,0.02))return {ok:false,msg:'Convert km s⁻¹ to m s⁻¹ first.'};return {ok:false,msg:'D = v<sub>rec</sub>/H₀ with v in m s<sup>−1</sup>.'}},2);
+ numTask(el,'3. What is the rotation speed at your largest radius (at least 10 × 10²⁰ m)?','km s⁻¹',v=>{if(!E2.unl)return {info:1,msg:'Complete task 1b.'};const d=E2.data[E2.data.length-1];if(!d||d[0]<10)return {info:1,msg:'Take a reading at 10 × 10²⁰ m or further out.'};const t=vrot(d);if(Math.abs(v-t)<=Math.max(2,0.03*t)){S.v=v;S.r=d[0]*1e20;return {ok:true,msg:'<strong>Good.</strong> The dashed prediction from the visible matter is far lower out here.'}}return {ok:false,msg:'Use your reading at r = '+d[0].toFixed(1)+' × 10²⁰ m.'}},2);
+ numTask(el,'4. Calculate the total mass enclosed within that radius, M = v²r/G.','kg',v=>{if(S.v===undefined)return {info:1,msg:'Complete task 3.'};const t=Math.pow(S.v*1000,2)*S.r/G;if(close(v,t,0.02)){S.M=t;return {ok:true,msg:'<strong>Correct:</strong> '+sci(t,3)+' kg.'}}if(close(v,t/1e6,0.02))return {ok:false,msg:'Convert v to m s⁻¹ before squaring.'};return {ok:false,msg:'M = v²r/G with v in m s<sup>−1</sup> and r in m.'}},3);
+ numTask(el,'5. What percentage of that mass is dark matter?','%',v=>{if(S.M===undefined)return {info:1,msg:'Complete task 4.'};const t=(S.M-E2.Mv)/S.M*100;if(Math.abs(v-t)<=2)return {ok:true,msg:'<strong>Yes:</strong> about '+t.toFixed(0)+'% of the mass within that radius is dark: it does not emit light.'};return {ok:false,msg:'(total mass − visible mass) ÷ total mass × 100.'}},3);
+ mcq(el,'Why is the dashed prediction from the visible matter so low far from the centre?',['Almost all the visible mass is enclosed, so v² = GM/r falls as 1/r','The stars there are moving towards us','Dark matter slows the stars down','The Doppler effect is weaker at large r'],0,'With M constant, v ∝ 1/√r. The measured curve stays flat, so M must keep growing with r.');
+ mcq(el,'Why are the lines at A shifted less than those at B?',['A is turning towards us, which partly cancels the galaxy’s recession','A is further away from us','The galaxy is more massive at A','A has a different chemical composition'],0,'Rotation adds to the recession at B and subtracts at A.');
+ mcq(el,'A small constant calibration error in the spectrograph would affect:',['v<sub>rec</sub> and the distance, but not v<sub>rot</sub>','v<sub>rot</sub> only','nothing','the visible mass'],0,'v<sub>rot</sub> comes from the difference λ′<sub>B</sub> − λ′<sub>A</sub>, so a constant offset cancels.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l2Deb">Reveal the true galaxy</button><div class="fb" id="l2DebO"></div></div>');
+ $('#l2Deb').addEventListener('click',()=>fb($('#l2DebO'),'info','<strong>Observatory '+kitCode()+'</strong><br>True distance: '+sci(E2.D,3)+' m; recessional velocity '+(E2.vrec/1000).toFixed(1)+' km s<sup>−1</sup>.<br>Spectrograph calibration error: '+(E2.off>=0?'+':'')+E2.off.toFixed(4)+' nm (shifts v<sub>rec</sub> by '+(CL*E2.off/LA/1000).toFixed(1)+' km s<sup>−1</sup>).<br>Random noise ±'+E2.sig+' nm on each wavelength; slit position ±1%.<br>Flat rotation speed about '+(E2.vF/1000).toFixed(0)+' km s<sup>−1</sup>.'));
+}
+
+/* ============ LAB 3: Hubble's law ============ */
+const LK=393.37;
+const E3={sel:0,data:[],unl:false};
+(function(){const g=kitRng(23);const names='ABCDEFGHJKLM'.split('');E3.cal=1+(g()-0.5)*0.14;
+ E3.gal=names.map((n,i)=>{const D=i<3?(0.1+g()*0.5)*1e24:(1+g()*13)*1e24;const v=H0*D+(g()+g()+g()-1.5)*3.5e5;return {n:'Galaxy '+n,D,v,Dm:D*E3.cal*(1+(g()-0.5)*0.06),lam:LK*(1+v/CL)+(g()-0.5)*0.01}});
+ E3.gal=shuffle(E3.gal);})();
+function e3Spec(){
+ const G3=E3.gal[E3.sel],cv=$('#l3Sp');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';
+ const l0=385,l1=450,sh=G3.lam/LK;c.fillStyle=ink;c.fillText('laboratory',4,14);strip(c,4,20,w-8,36,l0,l1,[LK,396.85,410.2,434.0]);c.fillText(G3.n,4,76);strip(c,4,82,w-8,36,l0,l1,[LK*sh,396.85*sh,410.2*sh,434.0*sh]);
+ c.fillStyle=cssv('--muted');c.textAlign='center';[390,400,410,420,430,440,450].forEach(L=>{const x=4+(L-l0)/(l1-l0)*(w-8);c.fillRect(x,120,1,6);c.fillText(L+' nm',x,140)});c.textAlign='left';
+ $('#l3D').textContent=(G3.Dm/1e24).toFixed(2);$('#l3L').textContent=G3.lam.toFixed(2);
+}
+function e3Btns(){$('#l3Gal').innerHTML=E3.gal.map((g,i)=>'<button type="button" class="chip" data-i="'+i+'" aria-pressed="'+(i===E3.sel)+'">'+g.n.replace('Galaxy ','')+(E3.data.some(d=>d.i===i)?' ✓':'')+'</button>').join('');$$('#l3Gal .chip').forEach(b=>b.addEventListener('click',()=>{E3.sel=+b.dataset.i;e3Btns();e3Spec()}))}
+watch($('#l3Sp'),e3Spec);
+$('#l3Rec').addEventListener('click',()=>{const g=E3.gal[E3.sel];if(E3.data.some(d=>d.i===E3.sel)){fb($('#l3Msg'),'info','Already recorded. Choose another galaxy.');return}
+ E3.data.push({i:E3.sel,n:g.n,D:Math.round(g.Dm/1e22)/100,lam:Math.round(g.lam*100)/100});E3.data.sort((a,b)=>a.D-b.D);e3Table();e3Plot();e3Btns();fb($('#l3Msg'),'ok',g.n+' recorded. '+(E3.data.length<12?'Record them all.':'All twelve recorded.'))});
+$('#l3Clr').addEventListener('click',()=>{E3.data=[];e3Table();e3Plot();e3Btns()});
+const e3v=d=>CL*(d.lam-LK)/LK/1e6;
+function e3Table(){
+ $('#l3Tb').innerHTML=E3.data.length?E3.data.map((d,i)=>'<tr><td>'+d.n.replace('Galaxy ','')+'</td><td>'+d.D.toFixed(2)+'</td><td>'+d.lam.toFixed(2)+'</td><td>'+(E3.unl?e3v(d).toFixed(2):'<span class="muted small">locked</span>')+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No galaxies recorded yet</td></tr>';
+ $$('#l3Tb .x').forEach(b=>b.addEventListener('click',()=>{E3.data.splice(+b.dataset.i,1);e3Table();e3Plot();e3Btns()}));
+}
+const p3=new Plot($('#l3G'),{xl:'D / 10²⁴ m',yl:'v / 10⁶ m s⁻¹',bx:[0,15],by:[0,32],line:true,onDraw:()=>{const f=p3.line();$('#l3Ro').innerHTML=f&&E3.unl?'Your line: gradient = <strong>'+sci(f.m,3)+'</strong> (10<sup>6</sup> m s<sup>−1</sup> per 10<sup>24</sup> m), intercept = '+sci(f.c,2)+'. Drag the red handles.':(E3.unl?'':'Complete task 1 to plot your data.')}});
+function e3Plot(){p3.lineOn=E3.unl;p3.set(E3.unl?E3.data.map(d=>[d.D,e3v(d)]):[])}
+$('#l3Line').addEventListener('click',()=>p3.reset(false));
+function e3Tasks(){
+ const el=$('#l3Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const S={};
+ numTask(el,'1. Calculate the recessional speed of the first galaxy in your table, v = cΔλ/λ, in units of 10⁶ m s⁻¹.','× 10⁶ m s⁻¹',v=>{if(!E3.data.length)return {info:1,msg:'Record a galaxy first.'};const t=e3v(E3.data[0]);if(Math.abs(v-t)<=Math.max(0.02,0.02*t)){E3.unl=true;e3Table();e3Plot();return {ok:true,msg:'<strong>Correct:</strong> '+t.toFixed(2)+' × 10<sup>6</sup> m s<sup>−1</sup>. The v column and Hubble diagram are unlocked.'}}if(close(v,t*1e6,0.02))return {ok:false,msg:'Give the answer in units of 10⁶ m s⁻¹, e.g. 3.45 for 3.45 × 10⁶ m s⁻¹.'};return {ok:false,msg:'Δλ = λ′ − 393.37 nm; v = 3.00 × 10<sup>8</sup> × Δλ / 393.37.'}},2);
+ numTask(el,'2. Use the gradient of your best-fit line to find H₀ in s⁻¹.','s⁻¹',v=>{if(!E3.unl)return {info:1,msg:'Complete task 1.'};const pts=E3.data.map(d=>[d.D,e3v(d)]);if(pts.length<8)return {info:1,msg:'Record at least 8 galaxies.'};const f=p3.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};
+  if(pct(f.m,ls.m)>8)return {ok:false,msg:'Your line’s gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend of your points. It should go through (or very near) the origin.'};const t=f.m*1e-18;
+  if(close(v,t,0.03)){S.H=v;return {ok:true,msg:'<strong>Good:</strong> H₀ = '+sci(t,3)+' s<sup>−1</sup>. The accepted value is about 2.2 × 10<sup>−18</sup> s<sup>−1</sup>.'}}if(close(v,f.m,0.03))return {ok:false,msg:'Convert: the gradient is in (10⁶ m s⁻¹)/(10²⁴ m) = 10⁻¹⁸ s⁻¹.'};return {ok:false,msg:'H₀ = gradient × 10<sup>−18</sup> s<sup>−1</sup>.'}},3);
+ numTask(el,'3. Estimate the age of the Universe in years, t ≈ 1/H₀. (1 year = 3.15 × 10⁷ s)','years',v=>{if(S.H===undefined)return {info:1,msg:'Complete task 2.'};const t=1/S.H/3.15e7;if(close(v,t,0.02)){S.age=t;return {ok:true,msg:'<strong>Correct:</strong> about '+(t/1e9).toFixed(1)+' billion years.'}}if(close(v,1/S.H,0.02))return {ok:false,msg:'That is in seconds. Divide by 3.15 × 10⁷.'};return {ok:false,msg:'t = 1/H₀, then convert seconds to years.'}},2);
+ numTask(el,'4. Calculate the critical density using your H₀: ρ<sub>c</sub> = 3H₀²/8πG.','kg m⁻³',v=>{if(S.H===undefined)return {info:1,msg:'Complete task 2.'};const t=3*S.H*S.H/(8*Math.PI*G);if(close(v,t,0.02)){S.rc=t;return {ok:true,msg:'<strong>Correct:</strong> '+sci(t,3)+' kg m<sup>−3</sup>.'}}return {ok:false,msg:'Square H₀ first, then multiply by 3 and divide by 8πG.'}},2);
+ numTask(el,'5. How many protons per cubic metre is that? (m<sub>p</sub> = 1.67 × 10⁻²⁷ kg)','m⁻³',v=>{if(S.rc===undefined)return {info:1,msg:'Complete task 4.'};const t=S.rc/1.67e-27;if(close(v,t,0.03))return {ok:true,msg:'<strong>Yes:</strong> only about '+t.toFixed(1)+' protons in every cubic metre.'};return {ok:false,msg:'Divide ρ<sub>c</sub> by the mass of a proton.'}},2);
+ mcq(el,'Why do the nearest galaxies scatter so much about your line?',['Their residual (peculiar) velocities from local gravitational attraction are large compared with their recession','Nearby distances are measured perfectly','The Doppler equation fails at low speeds','They are older galaxies'],0,'For distant galaxies these extra velocities are small compared with v = H₀D.');
+ mcq(el,'Why should the best-fit line pass through the origin?',['A galaxy at zero distance has zero recessional speed','All graphs must pass through the origin','Because H₀ is small','Because the scatter cancels out'],0,'v = H₀D is direct proportionality.');
+ mcq(el,'Your distance scale is calibrated a few per cent too high for every galaxy. How does that affect your age of the Universe?',['It makes the age too large','It makes the age too small','No effect','It changes the sign of H₀'],0,'Larger distances give a smaller gradient H₀, so a larger 1/H₀.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l3Deb">Reveal the survey’s hidden errors</button><div class="fb" id="l3DebO"></div></div>');
+ $('#l3Deb').addEventListener('click',()=>fb($('#l3DebO'),'info','<strong>Observatory '+kitCode()+'</strong><br>This survey’s distance calibration reads '+((E3.cal-1)*100).toFixed(1)+'% '+(E3.cal>1?'high':'low')+' for every galaxy, plus ±3% random error each.<br>Each galaxy has a peculiar velocity of up to a few hundred km s<sup>−1</sup>.<br>The simulated Universe used H₀ = 2.2 × 10<sup>−18</sup> s<sup>−1</sup>, so the best possible H₀ from this survey is about '+sci(2.2e-18/E3.cal,3)+' s<sup>−1</sup>.'));
+}
+/* ============ CHALLENGE ============ */
+const DER=[
+ {t:'Derive Kepler’s third law for a circular orbit',s:['Gravity provides the centripetal force: GMm/r² = mrω²','Cancel m and divide by r: ω² = GM/r³','Substitute ω = 2π/T: 4π²/T² = GM/r³','Rearrange: T²/r³ = 4π²/GM, so T² ∝ r³']},
+ {t:'Derive the orbital speed of a satellite',s:['Gravity provides the centripetal force: GMm/r² = mv²/r','Cancel m and one factor of r: v² = GM/r','So v = √(GM/r)']},
+ {t:'Show that the total energy in orbit is half the potential energy',s:['E<sub>T</sub> = ½mv² − GMm/r','For a circular orbit, v² = GM/r','So the kinetic energy ½mv² = ½GMm/r','E<sub>T</sub> = ½GMm/r − GMm/r = −½GMm/r = ½E<sub>P</sub>']},
+ {t:'Derive the period of a binary system',s:['For m₁: Gm₁m₂/d² = m₁r₁ω², so r₁ω² = Gm₂/d²','Taking moments about the centre of mass, r₁ = m₂d/(m₁ + m₂)','Substitute for r₁: ω² = G(m₁ + m₂)/d³','With ω = 2π/T: T²/d³ = 4π²/G(m₁ + m₂)']},
+ {t:'Show that v ∝ r in the central region of a galaxy',s:['Constant density ρ: enclosed mass M = (4/3)πr³ρ','Orbital speed: v² = GM/r','Substitute for M: v² = (4/3)Gπρr²','So v ∝ r']},
+ {t:'Show that 1/H₀ approximates the age of the Universe',s:['Assume each galaxy has always receded at a constant speed v','The time to reach distance D is t = D/v','Hubble’s law: v = H₀D','So t = D/H₀D = 1/H₀']},
+ {t:'Derive the critical density of a flat Universe',s:['A shell of mass m at radius r recedes at v = H₀r','The mass inside the shell is M = (4/3)πr³ρ','For a flat Universe the total energy is zero: ½m(H₀r)² = GMm/r','Substitute for M: ½H₀²r² = (4/3)πGρr², so ρ<sub>c</sub> = 3H₀²/8πG']}
+];
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+const EXAM=[
+ {t:'T² against r³',intro:'NASA data for Mercury, Venus and Earth give a straight line through the origin on a graph of T² against r³, with gradient 10 × 10¹⁴ s² ÷ 33 × 10³² m³.',p:[
+  ['Calculate the gradient.',10e14/33e32,'s² m⁻³','3.03 × 10<sup>−19</sup> s² m<sup>−3</sup>. A straight line through the origin verifies Kepler’s third law.'],
+  ['Determine the mass of the Sun.',PI2/(G*10e14/33e32),'kg','gradient = 4π²/GM, so M = 4π² / (6.67 × 10<sup>−11</sup> × 3.03 × 10<sup>−19</sup>) = 2.0 × 10<sup>30</sup> kg'],
+  ['Mars orbits at 2.28 × 10¹¹ m. Find its period in Earth days.',Math.sqrt(10e14/33e32*Math.pow(2.28e11,3))/DAY,'days','T² = 3.03 × 10<sup>−19</sup> × (2.28 × 10<sup>11</sup>)³, T = 6.0 × 10<sup>7</sup> s = 690 days']]},
+ {t:'Io and Europa',intro:'Io orbits Jupiter at 422 000 km with a period of 1.77 days. Europa’s period is 3.55 days.',p:[
+  ['Find Europa’s distance from Jupiter in km.',422000*Math.pow(3.55/1.77,2/3),'km','(1.77/3.55)² = (422 000/r)³ gives r = 671 000 km. Ratios mean any consistent units will do.']]},
+ {t:'Halley’s comet',intro:'At aphelion, 35.1 AU from the Sun, Halley’s comet moves at 0.91 km s⁻¹. Its perihelion distance is 0.59 AU.',p:[
+  ['Use Kepler’s second law to estimate its speed at perihelion.',0.91*35.1/0.59,'km s⁻¹','Equal areas in a short time Δt: ½ × vΔt × 0.59 = ½ × 0.91Δt × 35.1, so v = 54 km s<sup>−1</sup>']]},
+ {t:'Earth and Sun',intro:'Mass of Sun 2.0 × 10³⁰ kg, mass of Earth 6.0 × 10²⁴ kg, Earth–Sun distance 149.6 million km, radius of Sun 696 × 10³ km.',p:[
+  ['How far is the centre of mass from the centre of the Sun, in km?',6e24*149.6e6/(2e30+6e24),'km','r<sub>M</sub> = md/(M + m) = 449 km: well inside the Sun.'],
+  ['Using T²/d³ ≈ 4π²/GM, find the orbital period of Earth in days.',2*Math.PI*Math.sqrt(Math.pow(149.6e9,3)/(G*2e30))/DAY,'days','T² ≈ (149.6 × 10<sup>9</sup>)³ × 4π²/(6.67 × 10<sup>−11</sup> × 2.0 × 10<sup>30</sup>), T ≈ 364 days: a good approximation.']]},
+ {t:'Saturn and the Sun',intro:'Sun: 1.99 × 10³⁰ kg. Saturn: 5.68 × 10²⁶ kg. Separation 1.432 × 10¹² m.',p:[
+  ['Calculate r<sub>M</sub>, the distance from the Sun’s centre to the centre of mass.',5.68e26*1.432e12/(5.68e26+1.99e30),'m','r<sub>M</sub> = md/(M + m) = 4.09 × 10<sup>8</sup> m'],
+  ['Find Saturn’s orbital period in years (1 year = 3.15 × 10⁷ s).',2*Math.PI*Math.sqrt(Math.pow(1.432e12,3)/(G*(5.68e26+1.99e30)))/3.15e7,'years','T² = d³ × 4π²/G(M + m) = 8.73 × 10<sup>17</sup> s², T = 9.34 × 10<sup>8</sup> s = 29.6 years'],
+  ['Find the orbital speed of the Sun about the centre of mass.',2*Math.PI*4.09e8/9.34e8,'m s⁻¹','v = 2πr<sub>M</sub>/T = 2π × 4.09 × 10<sup>8</sup> / 9.34 × 10<sup>8</sup> = 2.75 m s<sup>−1</sup>']]},
+ {t:'A wobbling star',intro:'A star of mass 3.5 × 10³⁰ kg and its planet orbit their centre of mass with a period of 1500 days. The star’s orbital speed is 20 m s⁻¹. Assume m ≪ M.',p:[
+  ['Find r<sub>M</sub>, the radius of the star’s orbit.',20*1500*DAY/(2*Math.PI),'m','r<sub>M</sub> = vT/2π = 20 × 1500 × 86 400 / 2π = 4.13 × 10<sup>8</sup> m'],
+  ['Find the star–planet distance.',Math.cbrt(G*3.5e30*Math.pow(1500*DAY,2)/PI2),'m','d³ = GMT²/4π², d = 4.63 × 10<sup>11</sup> m'],
+  ['Estimate the mass of the planet.',3.13e27,'kg','r<sub>M</sub> = md/(M + m): m = 3.1 × 10<sup>27</sup> kg',0.03]]},
+ {t:'Radial velocity graph',intro:'A radial velocity curve for a star of mass 2.5 × 10³⁰ kg has amplitude 1750 m s⁻¹ and period 350 days.',p:[
+  ['Find the radius of the star’s orbit about the centre of mass.',1750*350*DAY/(2*Math.PI),'m','r<sub>M</sub> = vT/2π = 1750 × 350 × 86 400 / 2π = 8.42 × 10<sup>9</sup> m'],
+  ['Assuming m ≪ M, find the star–planet distance.',Math.cbrt(G*2.5e30*Math.pow(350*DAY,2)/PI2),'m','d³ = GMT²/4π² with T = 350 days gives d = 1.57 × 10<sup>11</sup> m. (Your notes use 365 days at this step, giving 1.61 × 10<sup>11</sup> m.)'],
+  ['Estimate the mass of the planet.',1.38e29,'kg','r<sub>M</sub> = md/(M + m) gives m ≈ 1.4 × 10<sup>29</sup> kg',0.05]]},
+ {t:'Receding star',intro:'A 650 nm line in a star’s spectrum has a maximum shift of +3.0 × 10⁻¹⁴ m and a minimum of −1.5 × 10⁻¹⁴ m. The two spectra were taken 5 years apart.',p:[
+  ['Find v<sub>max</sub>.',3e8/650e-9*3e-14,'m s⁻¹','v<sub>max</sub> = (c/λ)Δλ = (3.0 × 10<sup>8</sup>/650 × 10<sup>−9</sup>) × 3.0 × 10<sup>−14</sup> = 13.8 m s<sup>−1</sup>'],
+  ['Find the recessional velocity of the system.',(13.846-6.923)/2,'m s⁻¹','v<sub>min</sub> = −6.9 m s<sup>−1</sup>; v<sub>rec</sub> = (13.8 − 6.9)/2 = 3.45 m s<sup>−1</sup>',0.02],
+  ['Find the orbital speed of the star.',13.846-3.4615,'m s⁻¹','v₀ = v<sub>max</sub> − v<sub>rec</sub> = 10.4 m s<sup>−1</sup>',0.02],
+  ['Find the orbital period in years.',10,'years','Maximum red shift to maximum blue shift is half an orbit, so T = 2 × 5 = 10 years.']]},
+ {t:'Dark matter in a galaxy',intro:'A galaxy recedes at 44.7 km s⁻¹. At 40 kpc from its centre, material rotates at 150 km s⁻¹, while the visible mass alone predicts 50 km s⁻¹. The unshifted line is at 650 nm.',p:[
+  ['Find the largest observed wavelength of the line, in nm.',650*(1+194.7/3e5),'nm','v<sub>max</sub> = 44.7 + 150 = 195 km s<sup>−1</sup>; Δλ = (195/3.0 × 10<sup>5</sup>) × 650 = 0.42 nm, so 650.42 nm'],
+  ['Find the smallest observed wavelength, in nm.',650*(1-105.3/3e5),'nm','v<sub>min</sub> = 44.7 − 150 = −105 km s<sup>−1</sup>; Δλ = −0.23 nm, so 649.77 nm'],
+  ['What percentage of the mass within 40 kpc is dark matter?',(150*150-50*50)/(150*150)*100,'%','At fixed r, M ∝ v²: (150² − 50²)/150² × 100 = 89%']]},
+ {t:'Changing orbit',intro:'A 500 kg satellite moves from a circular orbit of radius 7.0 × 10⁶ m to one of 4.2 × 10⁷ m around Earth (mass 6.0 × 10²⁴ kg).',p:[
+  ['Find its orbital speed in the lower orbit.',Math.sqrt(G*6e24/7e6),'m s⁻¹','v = √(GM/r) = 7.56 × 10<sup>3</sup> m s<sup>−1</sup>'],
+  ['Find its total energy in the lower orbit.',-G*6e24*500/(2*7e6),'J','E<sub>T</sub> = −GMm/2r = −1.43 × 10<sup>10</sup> J'],
+  ['Find the work done by the engine.',0.5*G*6e24*500*(1/7e6-1/4.2e7),'J','W = −½GMm(1/r₂ − 1/r₁) = 1.19 × 10<sup>10</sup> J']]},
+ {t:'Age and density',intro:'Take H₀ = 2.3 × 10⁻¹⁸ s⁻¹ (equivalent to 70 km s⁻¹ Mpc⁻¹).',p:[
+  ['Estimate the age of the Universe in years (1 year = 3.15 × 10⁷ s).',1/2.3e-18/3.1536e7,'years','t = 1/H₀ = 4.35 × 10<sup>17</sup> s = 1.38 × 10<sup>10</sup> years',0.02],
+  ['Calculate the critical density.',3*2.3e-18*2.3e-18/(8*Math.PI*G),'kg m⁻³','ρ<sub>c</sub> = 3H₀²/8πG = 9.47 × 10<sup>−27</sup> kg m<sup>−3</sup>'],
+  ['How many protons per cubic metre is that? (m<sub>p</sub> = 1.67 × 10⁻²⁷ kg)',3*2.3e-18*2.3e-18/(8*Math.PI*G)/1.67e-27,'m⁻³','9.47 × 10<sup>−27</sup>/1.67 × 10<sup>−27</sup> ≈ 6 protons per m³',0.05]]},
+ {t:'A habitable world?',intro:'An exoplanet orbits a star 9 times as luminous as the Sun, at 3 times the Earth–Sun distance.',p:[
+  ['Find the intensity of starlight at the planet divided by the intensity of sunlight at Earth.',1,'','I ∝ L/d² = 9/3² = 1. The same intensity, so a comparable surface temperature, though albedo and the greenhouse effect could change it.']]}
+];
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],p[4]||0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let GT=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){GT={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!GT)return;const left=Math.max(0,(GT.end-performance.now())/1000),el=$('#gT');if(!el){GT=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=GT.score;GT=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+GT.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){GT.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(GT)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){GT.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(GT)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{GT=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+
+/* ---------- start-up ---------- */
+function kitButtons(){
+ ['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode();const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New observatory';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all your data';setTimeout(()=>{armed=false;b.textContent='New observatory'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();gmStart();kitButtons();
+e1Card();e1Day();e1Spec(null);e1Table();e1Plot();e1Tasks();
+e2CardF();e2Upd();e2Table();e2Plot();e2Tasks();
+e3Btns();e3Spec();e3Table();e3Plot();e3Tasks();
+derStart(0);
+})();
+</script>
+</body>
+</html>
