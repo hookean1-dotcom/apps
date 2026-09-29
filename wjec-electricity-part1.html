@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Electricity part 1: WJEC AS Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep1{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep1 *,#ep1 *::before,#ep1 *::after{box-sizing:border-box}
+#ep1 button,#ep1 input,#ep1 select{font:inherit;color:inherit}
+#ep1 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep1 sup{font-size:.72em;line-height:0}
+#ep1 sub{font-size:.72em;line-height:0}
+#ep1 .h,#ep1 h1,#ep1 h2,#ep1 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep1 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep1 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep1 p{margin:.45em 0 .7em;max-width:72ch}
+#ep1 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep1 li{margin:.2em 0}
+#ep1 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep1 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep1 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep1 .brand{flex:1 1 320px;min-width:0}
+#ep1 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep1 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep1 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep1 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep1 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep1 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep1 .lcd.pulse{animation:ep1pulse .5s ease}
+@keyframes ep1pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep1 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep1 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep1 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep1 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep1 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep1 .tab:hover{color:var(--ink)}
+#ep1 main{padding:22px 0 40px}
+#ep1 .sec{display:none}
+#ep1 .sec.on{display:block}
+#ep1 .lead{color:var(--muted);margin-top:.3em}
+
+#ep1 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep1 .panel + .panel{margin-top:16px}
+#ep1 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep1 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep1 .grid2{grid-template-columns:1fr}}
+#ep1 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep1 .sp{flex:1}
+
+#ep1 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep1 .btn:hover{filter:brightness(1.15)}
+#ep1 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep1 .btn.alt:hover{border-color:var(--ink)}
+#ep1 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep1 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep1 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep1 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep1 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep1 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep1 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep1 input[type=text],#ep1 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep1 input[type=text]:focus,#ep1 input[type=number]:focus{border-color:var(--focus)}
+#ep1 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep1 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep1 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep1 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep1 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep1 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep1 .work{font-size:.96rem}
+#ep1 .work div{padding:1px 0}
+#ep1 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep1 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep1 .muted{color:var(--muted)}
+#ep1 .small{font-size:.88rem}
+#ep1 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep1 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep1 .rv{grid-template-columns:1fr}}
+#ep1 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep1 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep1 .toc button{white-space:nowrap}}
+#ep1 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep1 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep1 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep1 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep1 .card h2{margin-bottom:.35em}
+#ep1 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep1 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep1 .check summary{cursor:pointer;font-weight:700}
+#ep1 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep1 .fig svg{max-width:100%;height:auto;display:block}
+#ep1 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep1 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep1 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep1 .cv{display:block;width:100%;height:100%}
+#ep1 .cvbox{position:relative;width:100%;height:230px}
+#ep1 .mini{height:150px}
+#ep1 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep1 table.t th,#ep1 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep1 table.t th{font-weight:700;color:var(--muted)}
+#ep1 table.t td:first-child,#ep1 table.t th:first-child{text-align:left}
+#ep1 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep1 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep1 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep1 .qcard{font-size:1.1rem}
+#ep1 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep1 .opts{display:grid;gap:8px;margin-top:8px}
+#ep1 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep1 .opt:hover{border-color:var(--ink)}
+#ep1 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep1 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep1 .opt:disabled{cursor:default}
+#ep1 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep1 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep1 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep1 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep1 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep1 .mcell.sel{border-color:var(--neg)}
+#ep1 .mcell.right{border-color:var(--ok)}
+#ep1 .mcell.wrong{border-color:var(--bad)}
+#ep1 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep1 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep1 .pool .chip.used{opacity:.35}
+#ep1 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep1 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep1 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep1 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep1 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep1 .dmm .lcd{min-width:130px}
+#ep1 .dmm .lcd .v{font-size:2rem}
+#ep1 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep1 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep1 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep1 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep1 .task:first-of-type{border-top:0;padding-top:4px}
+#ep1 .task .tq{font-weight:700;margin-bottom:6px}
+#ep1 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep1 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep1 .apbox{position:relative;width:100%;height:280px}
+#ep1 .loupebox{position:relative;width:100%;height:92px}
+#ep1 .microbox{position:relative;width:100%;height:170px}
+#ep1 .thermobox{position:relative;width:100%;height:260px}
+#ep1 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep1 .warn{color:var(--bad);font-weight:700}
+#ep1 .steps{counter-reset:s}
+#ep1 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep1 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep1 .step:hover{border-color:var(--ink)}
+#ep1 .dz .step{background:var(--panel)}
+#ep1 .dz.good{border-color:var(--ok)}
+#ep1 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep1 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep1 .brand h1{font-size:1.6rem}#ep1 .wrap{padding:0 12px}#ep1 .panel{padding:14px}#ep1 .bezel .lcd{min-width:88px}#ep1 .lcd .v{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<div id="ep1">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Electricity, part 1</h1>
+   <p>WJEC AS Physics: charge carriers, current, p.d., power, resistance, resistivity and the three required practicals.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">charge banked / C</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="graphs" aria-selected="false">Graphs and symbols</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Practical: I–V</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Practical: resistivity</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Practical: R and θ</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+
+<section class="sec on" id="sec-revise">
+ <div class="rv">
+  <div class="toc" id="toc"></div>
+  <div class="panel card" id="card"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Write the equation, substitute in SI units, then give the answer in the unit asked for. Standard form can be typed as 3.2e-4 or 3.2x10^-4.</p>
+ <div class="panel">
+  <div class="row" id="drTopics"></div>
+  <div class="row" style="margin-top:10px">
+   <span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span>
+   <span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span>
+  </div>
+ </div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+
+<section class="sec" id="sec-quiz">
+ <h2>Concept quiz</h2>
+ <p class="lead">Twelve questions drawn from a bank of definitions, explanations and graph reasoning. Every answer comes with the reason.</p>
+ <div class="panel qcard" id="qzCard"></div>
+</section>
+
+<section class="sec" id="sec-graphs">
+ <h2>Graphs and symbols</h2>
+ <p class="lead">Examiners expect you to sketch these characteristics from memory and to recognise every symbol instantly.</p>
+ <div class="panel">
+  <div class="row"><span class="seg" id="gmRound"><button type="button" aria-pressed="true" data-r="0">I–V characteristics</button><button type="button" aria-pressed="false" data-r="1">Resistance graphs</button></span></div>
+  <p class="small muted" style="margin-top:10px">Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+  <div class="pool" id="gmPool"></div>
+  <div class="mgrid" id="gmGrid"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div>
+  <div class="fb" id="gmFb"></div>
+ </div>
+ <div class="panel">
+  <h3 style="margin-top:0">Symbol sprint</h3>
+  <p class="small muted">Ten symbols against the clock. Wrong answers add 3 seconds.</p>
+  <div id="spBox"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Practical: I–V characteristics of a metal wire and a filament lamp</h2>
+ <p class="lead">Your bench has its own quirks, just like a real lab. Take readings, plot them, then analyse. Kit code <span class="kit" id="kitA"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row"><span class="seg" id="l1Comp"><button type="button" aria-pressed="true" data-c="wire">1.00 m constantan wire</button><button type="button" aria-pressed="false" data-c="lamp">12 V, 24 W filament lamp</button></span></div>
+   <div class="svgc" id="l1Circ" style="margin-top:10px"></div>
+   <div class="meters" style="margin-top:8px">
+    <div class="dmm"><div class="nm">Voltmeter</div><div class="lcd"><span class="v" id="l1V">0.00</span><span class="u">V</span></div></div>
+    <div class="dmm"><div class="nm">Ammeter</div><div class="lcd"><span class="v" id="l1I">0.00</span><span class="u">A</span></div></div>
+   </div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="l1E">Supply setting</label><span id="l1Eo">0.0 V</span></div><input type="range" id="l1E" min="0" max="12" step="0.1" value="0"></div>
+    <div class="row">
+     <button class="btn alt" id="l1Sw" type="button" aria-pressed="false">Close switch</button>
+     <button class="btn alt" id="l1Rev" type="button" aria-pressed="false">Reverse the supply</button>
+     <span class="sp"></span>
+     <button class="btn go" id="l1Rec" type="button">Record reading</button>
+    </div>
+   </div>
+   <div class="fb" id="l1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong id="l1TabT">Results: wire</strong><span class="sp"></span><button class="btn alt" id="l1Clr" type="button">Clear these results</button></div>
+   <div class="tscroll" style="margin-top:8px"><table class="t"><thead><tr><th>#</th><th>V / V</th><th>I / A</th><th></th></tr></thead><tbody id="l1Tb"></tbody></table></div>
+   <p class="small muted">Aim for at least 8 readings spread across the range. Reverse the supply to get negative values too.</p>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="row"><strong>Graph of I against V</strong><span class="sp"></span><button class="btn alt" id="l1Line" type="button">Reset best-fit line</button></div>
+  <div class="graphbox" style="margin-top:8px"><canvas class="cv" id="l1G"></canvas></div>
+  <div class="readout" id="l1Ro"></div>
+ </div>
+ <div class="panel" id="l1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Practical: resistivity of nichrome wire</h2>
+ <p class="lead">Measure the diameter, then move the crocodile clip along the wire in 10 cm steps up to 1 m. Kit code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="svgc" id="l2Circ"></div>
+   <div class="apbox" style="height:120px"><canvas class="cv" id="l2Rule"></canvas></div>
+   <div class="loupebox"><canvas class="cv" id="l2Loupe"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="l2P">Crocodile clip position (drag the clip or use the slider)</label><span id="l2Po"></span></div><input type="range" id="l2P" min="0" max="100" step="0.1" value="10"></div>
+    <div class="row"><button class="btn alt" type="button" data-n="-1">−1 cm</button><button class="btn alt" type="button" data-n="-0.1">−1 mm</button><button class="btn alt" type="button" data-n="0.1">+1 mm</button><button class="btn alt" type="button" data-n="1">+1 cm</button></div>
+    <div class="meters">
+     <div class="dmm"><div class="nm">Voltmeter</div><div class="lcd"><span class="v" id="l2V">0.00</span><span class="u">V</span></div></div>
+     <div class="dmm"><div class="nm">Ammeter</div><div class="lcd"><span class="v" id="l2I">0.00</span><span class="u">A</span></div></div>
+    </div>
+    <div class="row"><button class="btn alt" id="l2Sw" type="button" aria-pressed="false">Close switch</button><span class="small muted" id="l2Heat"></span><span class="sp"></span><button class="btn go" id="l2Rec" type="button">Record reading</button></div>
+   </div>
+   <div class="fb" id="l2Msg"></div>
+  </div>
+  <div class="panel">
+   <h3 style="margin-top:0">Micrometer</h3>
+   <p class="small muted">Close the jaws first to check for a zero error. Then measure at different places along the wire and in different orientations. Read to 0.01 mm.</p>
+   <div class="row"><button class="btn alt" id="mcZero" type="button">Close jaws (check zero)</button><button class="btn alt" id="mcMeas" type="button">Measure the wire at a new place</button></div>
+   <div class="microbox" style="margin-top:8px"><canvas class="cv" id="mcCv"></canvas></div>
+   <div class="row" style="margin-top:8px"><label for="mcIn" class="sm" id="mcLbl">Your reading / mm</label><input type="text" id="mcIn" inputmode="decimal" autocomplete="off"><button class="btn" id="mcOk" type="button">Enter reading</button></div>
+   <div class="fb" id="mcFb"></div>
+   <div class="small" id="mcList" style="margin-top:8px"></div>
+  </div>
+ </div>
+ <div class="grid2" style="margin-top:16px">
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="l2Clr" type="button">Clear results</button></div>
+   <div class="tscroll" style="margin-top:8px"><table class="t"><thead><tr><th>l / cm</th><th>V / V</th><th>I / A</th><th>R / Ω</th><th></th></tr></thead><tbody id="l2Tb"></tbody></table></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Graph of R against l</strong><span class="sp"></span><button class="btn alt" id="l2Line" type="button">Reset best-fit line</button></div>
+   <div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="l2G"></canvas></div>
+   <div class="readout" id="l2Ro"></div>
+  </div>
+ </div>
+ <div class="panel" id="l2Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Practical: variation of resistance with temperature for a copper wire</h2>
+ <p class="lead">The copper coil sits in a boiling tube of oil inside a water bath. Heat, stir, remove the heat, then read. Kit code <span class="kit" id="kitC"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="apbox" style="height:300px"><canvas class="cv" id="l3Ap"></canvas></div>
+   <div class="row" style="margin-top:8px">
+    <button class="btn alt" id="l3Heat" type="button" aria-pressed="false">Light the Bunsen</button>
+    <button class="btn alt" id="l3Stir" type="button" aria-pressed="false">Start stirring</button>
+    <button class="btn alt" id="l3Ice" type="button">Reset: ice–water mixture</button>
+   </div>
+   <div class="row" style="margin-top:8px"><span class="small muted">Time speed</span><span class="seg" id="l3Spd"><button type="button" aria-pressed="false" data-s="1">×1</button><button type="button" aria-pressed="true" data-s="10">×10</button><button type="button" aria-pressed="false" data-s="40">×40</button></span><span class="sp"></span><span class="small muted" id="l3Clock"></span></div>
+  </div>
+  <div class="panel">
+   <div class="row" style="align-items:flex-start;gap:14px">
+    <div style="flex:1 1 150px">
+     <div class="dmm"><div class="nm">Multimeter on 20 Ω range</div><div class="lcd"><span class="v" id="l3R">0.00</span><span class="u">Ω</span></div></div>
+     <button class="btn alt" id="l3Short" type="button" aria-pressed="false" style="margin-top:10px">Touch the probes together</button>
+     <p class="small muted">The thermometer close-up is on the right. Each small division is 1 °C: read it to the nearest 0.5 °C.</p>
+    </div>
+    <div style="flex:0 0 120px"><div class="thermobox"><canvas class="cv" id="l3Th"></canvas></div></div>
+   </div>
+   <div class="row" style="margin-top:6px"><label for="l3T" class="sm">Thermometer reading / °C</label><input type="text" id="l3T" inputmode="decimal" autocomplete="off" style="width:110px"><button class="btn go" id="l3Rec" type="button">Record reading</button></div>
+   <div class="fb" id="l3Msg"></div>
+  </div>
+ </div>
+ <div class="grid2" style="margin-top:16px">
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="l3Clr" type="button">Clear results</button></div>
+   <div class="tscroll" style="margin-top:8px"><table class="t"><thead><tr><th>θ / °C</th><th>R reading / Ω</th><th>R corrected / Ω</th><th>notes</th><th></th></tr></thead><tbody id="l3Tb"></tbody></table></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Graph of R against θ</strong><span class="sp"></span><button class="btn alt" id="l3Line" type="button">Reset best-fit line</button></div>
+   <div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="l3G"></canvas></div>
+   <div class="readout" id="l3Ro"></div>
+  </div>
+ </div>
+ <div class="panel" id="l3Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall">
+ <h2>Challenge</h2>
+ <p class="lead">Three ways to push yourself: rebuild the derivations the specification expects, crack multi-step exam problems, then race the clock.</p>
+ <div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Derivation builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div>
+ <div class="panel" id="chBox"></div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep1');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep1-wjec-elec1-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+/* ---------- characteristic curves (canvas) ---------- */
+const CURVES={
+ wire:{iv:1,f:x=>x/3*0.85},
+ lamp:{iv:1,f:x=>Math.sign(x)*0.92*(1-Math.exp(-Math.abs(x)/0.95))/(1-Math.exp(-3/0.95))},
+ therm:{iv:1,f:x=>{const u=x/3;return 0.92*u*(0.28+0.72*u*u)}},
+ diode:{iv:1,f:x=>x<0.55?(x<0?-0.012:0):Math.min(1.2,Math.pow((x-0.55)*2.4,2))},
+ led:{iv:1,f:x=>x<1.55?(x<0?-0.012:0):Math.min(1.2,Math.pow((x-1.55)*2.4,2))},
+ ldr:{iv:1,two:[x=>x/3*0.95,x=>x/3*0.35],names:['bright','dim']},
+ metal:{iv:0,xl:'θ / °C',yl:'R',xr:[0,100],f:x=>0.34+0.56*x/100},
+ ntc:{iv:0,xl:'θ / °C',yl:'R',xr:[0,100],f:x=>0.07+0.86*Math.exp(-x/26)},
+ sc:{iv:0,xl:'T / K',yl:'ρ',xr:[0,30],f:x=>x<9?0:0.5+0.012*(x-9),tc:9},
+ ldrR:{iv:0,xl:'light intensity',yl:'R',xr:[0,10],f:x=>0.06+0.86/(1+0.9*x)}
+};
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg'),pos=cssv('--pos');
+ const C=CURVES[type];c.lineCap='round';c.lineJoin='round';
+ c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';
+ if(C.iv){
+  const ox=W/2,oy=H/2,sx=(W/2-22)/3.2,sy=(H/2-18)/1.05;
+  c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(14,oy);c.lineTo(W-10,oy);c.moveTo(ox,H-8);c.lineTo(ox,8);c.stroke();
+  c.fillStyle=ink;c.beginPath();c.moveTo(W-8,oy);c.lineTo(W-15,oy-4);c.lineTo(W-15,oy+4);c.fill();c.beginPath();c.moveTo(ox,6);c.lineTo(ox-4,13);c.lineTo(ox+4,13);c.fill();
+  c.fillStyle=mut;c.textAlign='center';
+  for(let v=-3;v<=3;v++){if(!v)continue;const X=ox+v*sx;c.strokeStyle=mut;c.beginPath();c.moveTo(X,oy-3);c.lineTo(X,oy+3);c.stroke();c.fillText(String(v),X,oy+15)}
+  c.fillStyle=ink;c.textAlign='right';c.fillText('V / V',W-8,oy-8);c.textAlign='left';c.fillText('I',ox+7,16);
+  const fs=C.two?C.two:[C.f];
+  fs.forEach((f,k)=>{c.strokeStyle=k?pos:neg;c.lineWidth=2.6;c.beginPath();let first=true;
+   for(let px=16;px<=W-12;px+=1){const x=(px-ox)/sx;let y=f(x);if(y>1.12||y<-1.12){first=true;continue}const Y=oy-y*sy;if(first){c.moveTo(px,Y);first=false}else c.lineTo(px,Y)}c.stroke();
+   if(C.names){c.fillStyle=k?pos:neg;c.textAlign='left';c.fillText(C.names[k],ox+2.6*sx-18,oy-f(2.6)*sy-8)}
+  });
+ } else {
+  const x0=34,y0=H-26,xw=W-48,yh=H-44;
+  c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,y0);c.lineTo(x0,y0-yh-6);c.stroke();
+  c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();c.beginPath();c.moveTo(x0,y0-yh-8);c.lineTo(x0-4,y0-yh-1);c.lineTo(x0+4,y0-yh-1);c.fill();
+  c.textAlign='right';c.fillText(C.xl,x0+xw+6,y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,y0-yh+4);c.textAlign='center';c.fillStyle=mut;c.fillText('0',x0-8,y0+14);
+  c.strokeStyle=neg;c.lineWidth=2.6;c.beginPath();
+  const [a,b]=C.xr;
+  if(type==='sc'){const X=t=>x0+(t-a)/(b-a)*xw;c.moveTo(x0,y0-1.5);c.lineTo(X(C.tc),y0-1.5);c.lineTo(X(C.tc),y0-C.f(C.tc+0.001)*yh);c.lineTo(x0+xw,y0-C.f(b)*yh);c.stroke();c.fillStyle=mut;c.fillText('T',X(C.tc)-3,y0+14);c.font='9px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('c',X(C.tc)+4,y0+17)}
+  else{for(let i=0;i<=200;i++){const t=a+(b-a)*i/200,X=x0+i/200*xw,Y=y0-C.f(t)*yh;i?c.lineTo(X,Y):c.moveTo(X,Y)}c.stroke();
+  }
+ }
+}
+
+/* ---------- tabs ---------- */
+const onShow={};
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ if(onShow[name])onShow[name]();
+ lab3Active=(name==='lab3');
+ if(lab3Active)lab3Kick();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+let lab3Active=false,lab3Kick=()=>{};
+
+/* ---------- small note figures ---------- */
+function figIt(){
+ let s=ln(40,150,190,150)+ln(40,150,40,20)+'<rect x="40" y="70" width="110" height="80" fill="var(--meter)" stroke="none" opacity=".55"></rect>'+ln(40,70,150,70,2.6)+ln(150,70,150,150,1)+tx(95,115,'area = Q',{fs:13,fw:700})+tx(190,168,'t',{a:'end'})+tx(30,28,'I',{a:'end'});
+ let s2=ln(240,150,390,150)+ln(240,150,240,20)+ln(240,150,370,40,2.6)+path([[300,99],[340,99],[340,65]])+tx(348,88,'gradient = I',{a:'start',fs:13,fw:700})+tx(390,168,'t',{a:'end'})+tx(230,28,'Q',{a:'end'});
+ return svgWrap('0 0 520 180',s+s2,'current-time and charge-time graphs');
+}
+function figPot(){
+ let s=ln(50,165,470,165)+ln(50,165,50,20)+tx(40,28,'V',{a:'end'})+tx(470,183,'distance round circuit',{a:'end',fs:12});
+ s+='<polyline points="70,40 150,72 270,72 400,163" fill="none" stroke="var(--neg)" stroke-width="3"></polyline>';
+ [[70,40,'B'],[150,72,'C'],[270,72,'D'],[400,163,'E']].forEach(p=>{s+=dot(p[0],p[1])+tx(p[0]+2,p[1]-10,p[2],{fw:700})});
+ s+=tx(112,110,'drop across r',{fs:11})+tx(372,112,'bigger drop across R',{fs:11,a:'end'})+tx(210,95,'wire: no drop',{fs:11});
+ return svgWrap('0 0 500 195',s,'potential against distance round a circuit');
+}
+function figSC(){
+ let s=ln(40,150,300,150)+ln(40,150,40,20)+tx(32,28,'ρ',{a:'end',fs:14})+tx(300,170,'T / K',{a:'end'});
+ s+='<polyline points="40,149 120,149 120,70 280,55" fill="none" stroke="var(--neg)" stroke-width="3"></polyline>'+tx(120,168,'T<tspan font-size="9" dy="3">c</tspan>',{fs:13})+tx(34,166,'0',{a:'end'});
+ s+=tx(190,50,'normal metal',{fs:11})+tx(80,140,'zero resistivity',{fs:11});
+ return svgWrap('0 0 320 180',s,'resistivity against temperature for a superconductor');
+}
+function figRT(){
+ let s=ln(40,150,250,150)+ln(40,150,40,20)+tx(32,28,'R',{a:'end'})+tx(250,170,'θ',{a:'end'})+'<polyline points="40,110 240,45" fill="none" stroke="var(--neg)" stroke-width="3"></polyline>'+tx(145,40,'metal: R rises steadily',{fs:11});
+ let s2=ln(290,150,500,150)+ln(290,150,290,20)+tx(282,28,'R',{a:'end'})+tx(500,170,'θ',{a:'end'});
+ let pts=[];for(let i=0;i<=40;i++){const x=290+i*5,y=150-(8+105*Math.exp(-i/9));pts.push([x,y.toFixed(1)])}
+ s2+='<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none" stroke="var(--pos)" stroke-width="3"></polyline>'+tx(420,70,'thermistor: R falls quickly',{fs:11});
+ return svgWrap('0 0 520 180',s+s2,'resistance against temperature for a metal and a thermistor');
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'Charge carriers',h:()=>`
+<h2>Charge carriers</h2>
+<p>Electric current is the rate of flow of electric charge. The charge is carried by charged particles called <strong>charge carriers</strong>.</p>
+<ul>
+<li><strong>Metals:</strong> the carriers are negatively charged <strong>free (conduction) electrons</strong>. They move about randomly inside the metal, repeatedly colliding with each other and with the fixed positive ions.</li>
+<li><strong>Acids, molten salts and low-pressure gases:</strong> the carriers are <strong>positive and negative ions</strong>, moving in opposite directions.</li>
+<li><strong>Good conductors</strong> have many charge carriers that are free to move; <strong>insulators</strong> have very few.</li>
+<li><strong>Semiconductors</strong> (such as silicon): raising the temperature releases more charge carriers, so the material changes from behaving like an insulator towards being a conductor.</li>
+</ul>`,chk:[['What are the charge carriers in molten salt?','Both positive and negative ions.'],['Why does a warm piece of silicon conduct better than a cold one?','Heating produces more free charge carriers.']]},
+
+{t:'Conventional current',h:()=>`
+<h2>Conventional current</h2>
+<p>In circuit diagrams, current is taken to flow <strong>out of the positive terminal</strong> of the supply, round the circuit and <strong>back to the negative terminal</strong>.</p>
+<p>This convention is kept even though the conduction electrons in a metal actually move the other way, from negative to positive. In a cell, positive and negative carriers move in both directions at once.</p>
+<p class="eqbig" style="font-size:1.05rem"><span style="color:var(--pos)">conventional current: + to −</span>&nbsp;&nbsp;&nbsp;<span style="color:var(--neg)">electron flow: − to +</span></p>`,
+chk:[['A copper wire carries a conventional current from left to right. Which way do its electrons drift?','Right to left.']]},
+
+{t:'Current and charge',h:()=>`
+<h2>Current, charge and time</h2>
+<div class="eqbig">I = ΔQ / Δt</div>
+<p>Current in amperes (A), charge in coulombs (C), time in seconds (s). So <strong>1 A = 1 C s<sup>−1</sup></strong>. Rearranged: ΔQ = IΔt and Δt = ΔQ / I.</p>
+<p>Each electron carries a charge of −1.60 × 10<sup>−19</sup> C, so the number of electrons carrying a charge Q is <span class="eq">N = Q / e</span>.</p>
+<div class="fig">${figIt()}</div>
+<p>The <strong>area under an I–t graph</strong> is the charge that has flowed. The <strong>gradient of a Q–t graph</strong> is the current.</p>
+<h3>Worked example</h3>
+<div class="work"><div>A current of 3 A flows for 10 s. How many electrons pass a point?</div><div>ΔQ = IΔt = 3 × 10 = 30 C</div><div>N = 30 / 1.60 × 10<sup>−19</sup> = 1.88 × 10<sup>20</sup> electrons</div></div>`,
+chk:[['60 C flows past a point in 2 minutes. Find the current.','I = 60 / 120 = 0.50 A (500 mA). Remember to convert minutes to seconds.'],['Charge of 9.6 × 10⁻³ C flows at 8 μA. How long does it take?','Δt = ΔQ / I = 9.6 × 10⁻³ / 8 × 10⁻⁶ = 1200 s = 20 minutes.']]},
+
+{t:'Drift velocity: I = nAve',h:()=>`
+<h2>Drift velocity</h2>
+<p>With no p.d., free electrons move randomly at high speed but get nowhere on average. Apply a p.d. and they gain a small <strong>drift velocity</strong> along the wire on top of this random motion.</p>
+<div class="eqbig">I = nAve</div>
+<p>n = number of free electrons per unit volume (m<sup>−3</sup>), A = cross-sectional area (m<sup>2</sup>), v = drift velocity (m s<sup>−1</sup>), e = electronic charge (C).</p>
+<div class="cvbox" style="height:210px;margin:8px 0"><canvas class="cv" id="drCv"></canvas></div>
+<div class="row"><label class="sm" for="drI" style="min-width:90px">Current</label><input type="range" id="drI" min="0" max="3" step="0.1" value="1.5" style="flex:1;min-width:140px"><span id="drIo" class="small" style="min-width:60px">1.5 A</span></div>
+<div class="row"><label class="sm" for="drT" style="min-width:90px">Temperature</label><input type="range" id="drT" min="0" max="1" step="0.05" value="0.3" style="flex:1;min-width:140px"><span class="small" style="min-width:60px" id="drTo">cool</span></div>
+<div class="row" style="margin-top:4px"><span class="seg" id="drA"><button type="button" aria-pressed="true" data-a="1">A = 1.0 mm²</button><button type="button" aria-pressed="false" data-a="0.5">A = 0.50 mm²</button></span><span class="sp"></span><span class="tag" id="drV"></span></div>
+<p class="small muted">Copper, n = 8.5 × 10<sup>28</sup> m<sup>−3</sup>. Halve the area and the drift velocity doubles for the same current. Hotter ions vibrate more, so collisions are more frequent.</p>
+<h3>Derivation</h3>
+<div class="work">
+<div>In time t, electrons to the right of point P move a distance vt, so the volume of wire they occupy is <strong>vtA</strong>.</div>
+<div>Number of free electrons in that volume = <strong>vtAn</strong>.</div>
+<div>Charge passing P = <strong>vtAne</strong>.</div>
+<div>Current = charge / time = vtAne / t, so <strong>I = nAve</strong>.</div></div>`,
+after:initDrift,
+chk:[['A copper wire (n = 8.5 × 10²⁸ m⁻³) of area 1.0 mm² carries 2.0 A. Find v.','v = I / nAe = 2.0 / (8.5 × 10²⁸ × 1.0 × 10⁻⁶ × 1.60 × 10⁻¹⁹) = 1.5 × 10⁻⁴ m s⁻¹, about 0.15 mm s⁻¹.'],['A wire narrows to half its area. The current is the same everywhere. What happens to the drift velocity in the narrow part?','It doubles, because v = I / nAe and I, n and e are unchanged.']]},
+
+{t:'Potential difference',h:()=>`
+<h2>Potential difference</h2>
+<p>The battery gives charge carriers electrical potential energy (transferred from chemical energy). Work has to be done to push them through a device such as a bulb, where that energy is transferred as thermal energy and light.</p>
+<p><strong>Definition:</strong> the potential difference across a component is the energy transferred (work done) per unit charge passing through it.</p>
+<div class="eqbig">V = W / Q</div>
+<p>So <strong>1 V = 1 J C<sup>−1</sup></strong>. Rearranged: W = VQ and Q = W / V.</p>
+<div class="fig">${figPot()}</div>
+<p class="small muted">Potential falls across each resistor in a series circuit. The larger resistance has the larger p.d. across it. Connecting wires have negligible resistance, so there is almost no drop along them.</p>`,
+chk:[['2 kJ of work pushes 250 C through a bulb. What is the p.d.?','V = W / Q = 2000 / 250 = 8.0 V'],['How much energy does a 12 V supply give to 300 mC of charge?','W = VQ = 12 × 0.300 = 3.6 J'],['How much energy does one electron gain passing through a p.d. of 6.0 V?','W = Ve = 6.0 × 1.60 × 10⁻¹⁹ = 9.6 × 10⁻¹⁹ J']]},
+
+{t:'Electrical power',h:()=>`
+<h2>Electrical power</h2>
+<div class="work"><div>From V = W / Q: &nbsp; W = VQ</div><div>From I = ΔQ / Δt: &nbsp; Q = IΔt</div><div>So the work done is W = VIΔt</div><div>Power = work done / time, so P = VIΔt / Δt</div></div>
+<div class="eqbig">P = IV</div>
+<p>Combining with V = IR gives two more forms. You must be able to <strong>derive</strong> these:</p>
+<div class="row"><span class="eqbig">P = I<sup>2</sup>R</span><span class="eqbig">P = V<sup>2</sup>/R</span></div>
+<div class="work"><div>Substitute V = IR into P = IV: P = I(IR) = I<sup>2</sup>R</div><div>Substitute I = V/R into P = IV: P = V(V/R) = V<sup>2</sup>/R</div></div>
+<h3>Worked example</h3>
+<div class="work"><div>An iron element has resistance 36 Ω and power 1.5 kW. Find the current.</div><div>I<sup>2</sup> = P / R = 1500 / 36 = 41.7</div><div>I = √41.7 = 6.45 A</div></div>`,
+chk:[['A kettle element of 18 Ω draws 13 A. Find its power.','P = I²R = 13² × 18 = 3042 W ≈ 3.04 kW'],['Current drawn by a 60 W device from a 12 V battery?','I = P / V = 60 / 12 = 5.0 A']]},
+
+{t:'Resistance and Ohm’s law',h:()=>`
+<h2>Resistance and Ohm’s law</h2>
+<div class="eqbig">R = V / I</div>
+<p><strong>Resistance</strong> is the p.d. across a component divided by the current through it. Units: ohms, where <strong>1 Ω = 1 V A<sup>−1</sup></strong>. Resistance is caused by collisions between the free electrons and the positive ions of the material.</p>
+<p><strong>Ohm’s law:</strong> the current through a metallic conductor is directly proportional to the p.d. across it, provided the physical conditions (such as temperature) stay constant.</p>
+<p>An <strong>ohmic</strong> conductor has constant resistance: its I–V graph is a straight line through the origin. On a V–I graph the gradient is R; on an I–V graph a steeper line means a <em>lower</em> resistance.</p>
+<p class="fb info" style="display:block">For a component that does not obey Ohm’s law, find R at a point using R = V / I with that point’s values. Do not use the gradient of the tangent.</p>
+<h3>Measuring resistance</h3>
+<div class="fig">${circSeries('res','resistor')}</div>
+<p>Read I on the ammeter and V on the voltmeter, then calculate R = V / I. Change the variable resistor to get more pairs of readings and find an average, or better, plot a graph. The voltmeter should have a very high resistance so that the ammeter reads only the current through the resistor.</p>`,
+chk:[['250 mA flows when 6 V is applied. Find R.','R = V / I = 6 / 0.250 = 24 Ω'],['Find the current through 4 MΩ with 60 V across it.','I = V / R = 60 / 4 × 10⁶ = 1.5 × 10⁻⁵ A = 15 μA']]},
+
+{t:'Resistivity',h:()=>`
+<h2>Resistivity</h2>
+<p>Experiments show that the resistance of a uniform conductor is proportional to its length L and inversely proportional to its cross-sectional area A. The constant of proportionality is the <strong>resistivity</strong> ρ.</p>
+<div class="eqbig">R = ρL / A</div>
+<p>Resistivity is measured in <strong>ohm metres (Ω m)</strong>. Resistance is a property of a particular <em>object</em>; resistivity is a property of the <em>material</em>.</p>
+<table class="t" style="max-width:420px"><thead><tr><th>Material</th><th>ρ / Ω m</th></tr></thead><tbody>
+<tr><td>copper (good conductor)</td><td>1.7 × 10<sup>−8</sup></td></tr>
+<tr><td>silicon (semiconductor)</td><td>2.3 × 10<sup>3</sup></td></tr>
+<tr><td>PVC (insulator)</td><td>1.0 × 10<sup>14</sup></td></tr></tbody></table>
+<p style="margin-top:10px">For a wire of diameter d, the area is <span class="eq">A = πd<sup>2</sup>/4</span>. Convert mm to m before squaring: 0.40 mm = 4.0 × 10<sup>−4</sup> m.</p>
+<h3>Worked example</h3>
+<div class="work"><div>A 25 cm length of wire, diameter 0.40 mm, has resistance 6.0 Ω. Find ρ.</div><div>A = π(4.0 × 10<sup>−4</sup>)<sup>2</sup>/4 = 1.26 × 10<sup>−7</sup> m<sup>2</sup></div><div>ρ = RA / L = 6.0 × 1.26 × 10<sup>−7</sup> / 0.25 = 3.0 × 10<sup>−6</sup> Ω m</div></div>`,
+chk:[['Resistance of 0.30 m of copper wire with A = 5 × 10⁻⁶ m²?','R = ρL/A = 1.7 × 10⁻⁸ × 0.30 / 5 × 10⁻⁶ = 1.02 × 10⁻³ Ω'],['The same size piece of silicon?','R = 2300 × 0.30 / 5 × 10⁻⁶ = 1.38 × 10⁸ Ω (138 MΩ)'],['A wire is replaced by one of the same metal, twice as long and twice the diameter. How does R change?','Length ×2 doubles R; diameter ×2 makes the area ×4, quartering R. Overall R halves.']]},
+
+{t:'Superconductivity',h:()=>`
+<h2>Superconductivity</h2>
+<p><strong>Superconductivity</strong> is the state in which a material has <strong>zero resistivity</strong>. It happens at and below the material’s <strong>superconducting transition temperature</strong>, T<sub>c</sub>.</p>
+<div class="fig">${figSC()}</div>
+<ul>
+<li>Most metals that superconduct have transition temperatures a few degrees above absolute zero (−273 °C).</li>
+<li><strong>High-temperature superconductors</strong> have transition temperatures above the boiling point of nitrogen (−196 °C), so cheap liquid nitrogen can cool them.</li>
+<li>Uses: the very strong electromagnets in <strong>MRI scanners</strong> and <strong>particle accelerators</strong> (such as the LHC), and power cables. With ordinary wire too much power would be dissipated as heat; with zero resistance no energy is wasted heating the wire.</li>
+</ul>`,
+chk:[['Sketch the graph of resistivity against temperature for a superconductor.','Resistivity is zero up to the transition temperature Tc, then jumps up to a normal value that rises gently with temperature.'],['Why do MRI scanners use superconducting coils?','Very large currents are needed for strong magnetic fields; with zero resistance, no power is dissipated in the coils.']]},
+
+{t:'Components and symbols',h:()=>`
+<h2>Components and symbols</h2>
+<div class="figs">
+${[['cell','Cell: source of chemical energy'],['batt','Battery: a combination of cells'],['lamp','Indicator or filament lamp'],['res','Resistor: designed to have resistance'],['var','Variable resistor'],['therm','Thermistor: R falls as temperature rises'],['ldr','LDR: R falls as light intensity rises'],['diode','Diode: current in one direction only'],['led','LED: emits light when it conducts'],['A','Ammeter: in series'],['V','Voltmeter: in parallel'],['M','Motor']].map(p=>'<figure><div style="color:var(--ink)">'+symSVG(p[0])+'</div><figcaption>'+p[1]+'</figcaption></figure>').join('')}
+</div>
+<p class="small muted">The arrow on the diode symbol points in the allowed (forward) direction of conventional current.</p>`,
+chk:[['Which way can current pass through a diode?','Only in the direction the triangle points (forward direction).']]},
+
+{t:'Characteristic curves',h:()=>`
+<h2>I–V characteristic curves</h2>
+<p>Graphs of current against p.d. show how a component behaves. Plot negative values too: some components (such as the diode) behave differently when the current is reversed.</p>
+<div class="figs">
+${[['wire','Metal wire or resistor at constant temperature: straight line through the origin, obeys Ohm’s law.'],['lamp','Filament lamp: resistance rises as the filament heats up, so the gradient falls. Near zero it is roughly ohmic.'],['therm','Thermistor: as current heats it, R falls, so the curve bends upwards. Ohmic if kept at constant temperature.'],['ldr','LDR: straight lines, steeper in bright light because R is lower.'],['diode','Silicon diode: tiny current (below 1 μA) in reverse; conducts above about 0.6 V forward.'],['led','LED: like a diode but switches on at about 1.5 V.']].map(p=>'<figure><canvas class="cvC" data-c="'+p[0]+'" style="width:100%;height:auto;display:block"></canvas><figcaption>'+p[1]+'</figcaption></figure>').join('')}
+</div>
+<h3>Circuits for taking the readings</h3>
+<div class="grid2">
+<div><div class="fig">${circSeries('lamp','component')}</div><p class="small"><strong>Variable resistor control:</strong> simpler, but the p.d. across the component can never be taken down to zero, so the range is smaller.</p></div>
+<div><div class="fig">${circDivider()}</div><p class="small"><strong>Potential divider control:</strong> the p.d. can be varied all the way from zero to the full supply p.d. Better, but more complicated.</p></div>
+</div>
+<p class="small muted">With a diode, put a protective resistor in series so the current cannot rise too far once it conducts.</p>`,
+after:el=>$$('canvas.cvC',el).forEach(cv=>drawCurve(cv,cv.dataset.c)),
+chk:[['Why does the gradient of a filament lamp’s I–V graph decrease at higher p.d.?','A larger current heats the filament; its ions vibrate more, there are more collisions, so resistance rises and current rises less for each extra volt.'],['What is the turn-on voltage of a silicon diode?','About 0.6 V (LEDs are about 1.5 V).']]},
+
+{t:'Resistance and temperature',h:()=>`
+<h2>Resistance and temperature</h2>
+<div class="fig">${figRT()}</div>
+<h3>Metals: positive temperature coefficient</h3>
+<ul><li>Resistance increases fairly slowly and <strong>almost linearly</strong> with temperature over a wide range.</li>
+<li>The positive ions vibrate with greater amplitude, so the free electrons collide with them more often and pass through less easily.</li>
+<li>Collisions between free electrons and ions increase the random vibration energy of the ions, so a current-carrying metal warms up.</li></ul>
+<h3>Semiconductors: negative temperature coefficient</h3>
+<ul><li>Resistance decreases rapidly as temperature rises.</li>
+<li>The number of charge carriers increases far faster than the extra hindrance from the faster-vibrating ions.</li>
+<li>Application: the thermistor, used to sense temperature changes. Most are ntc (negative temperature coefficient).</li></ul>`,
+chk:[['Why does a copper wire’s resistance rise when it is heated?','The ions vibrate with larger amplitude, so free electrons collide with them more often.'],['Why does a thermistor’s resistance fall when heated, even though its ions vibrate more too?','Many more charge carriers are released; this effect is much bigger than the extra collisions.']]},
+
+{t:'Real ammeters and voltmeters',h:()=>`
+<h2>Real ammeters and voltmeters</h2>
+<p>In almost every exam question you can assume the meters are perfect:</p>
+<ul><li>A <strong>perfect ammeter</strong> has zero resistance, so adding it in series does not change the circuit.</li>
+<li>A <strong>perfect voltmeter</strong> has infinite resistance, so no current flows through it when it is connected in parallel.</li></ul>
+<p>An <strong>imperfect ammeter</strong> has some resistance: it behaves like an extra resistor in series and reduces the current.</p>
+<p>An <strong>imperfect voltmeter</strong> takes some current. The current splits at the junction, I<sub>1</sub> = I<sub>2</sub> + I<sub>3</sub>, so the ammeter in the main circuit no longer measures only the current through the component.</p>`,
+chk:[['Why should a voltmeter have a very high resistance?','So it draws negligible current and does not change the circuit it is measuring.']]}
+];
+
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');
+ store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);
+ renderToc();
+}
+redrawers.push(()=>{if($('#sec-revise').classList.contains('on')){const c=CARDS[cardIx];if(c.after&&c.after!==initDrift)c.after($('#card'))}});
+
+/* drift velocity animation */
+function initDrift(){
+ const cv=$('#drCv');if(!cv)return;
+ const rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ let I=1.5,T=0.3,A=1;
+ const els=[];for(let i=0;i<70;i++)els.push({x:R(),y:R(),vx:0,vy:0,tc:0});
+ function upd(){I=+$('#drI').value;T=+$('#drT').value;$('#drIo').textContent=I.toFixed(1)+' A';$('#drTo').textContent=T<0.35?'cool':T<0.7?'warm':'hot';
+  const v=I/(8.5e28*A*1e-6*E_CH);$('#drV').innerHTML='v = '+(v*1000).toFixed(3)+' mm s<sup>−1</sup>'}
+ $('#drI').addEventListener('input',upd);$('#drT').addEventListener('input',upd);
+ $$('#drA button').forEach(b=>b.addEventListener('click',()=>{$$('#drA button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));A=+b.dataset.a;upd()}));
+ upd();
+ let last=performance.now(),t=0;
+ function frame(now){
+  if(!cv.isConnected)return;
+  const dt=Math.min(0.05,(now-last)/1000);last=now;t+=dt;
+  const {c,w,h}=fitCanvas(cv);
+  const thick=A===1?1:0.62,wh=(h-70)*thick,y0=(h-wh)/2+6,x0=40,ww=w-80;
+  c.clearRect(0,0,w,h);
+  c.fillStyle=cssv('--panel2');c.strokeStyle=cssv('--line');c.lineWidth=1.5;c.beginPath();c.rect(x0,y0,ww,wh);c.fill();c.stroke();
+  const neg=cssv('--neg'),pos=cssv('--pos'),ink=cssv('--ink'),mut=cssv('--muted');
+  const amp=1+T*4.5,sp=26;
+  c.fillStyle=mut;
+  for(let gx=x0+sp/2;gx<x0+ww;gx+=sp)for(let gy=y0+sp/2;gy<y0+wh;gy+=sp){const jx=Math.sin(t*23+gx*1.7+gy)*amp,jy=Math.cos(t*19+gy*2.3+gx)*amp;c.beginPath();c.arc(gx+jx,gy+jy,4.2,0,7);c.fill()}
+  c.fillStyle='#fff';c.font='bold 8px Arial';c.textAlign='center';
+  for(let gx=x0+sp/2;gx<x0+ww;gx+=sp)for(let gy=y0+sp/2;gy<y0+wh;gy+=sp){const jx=Math.sin(t*23+gx*1.7+gy)*amp,jy=Math.cos(t*19+gy*2.3+gx)*amp;c.fillText('+',gx+jx,gy+jy+3)}
+  const vd=I/(8.5e28*A*1e-6*E_CH)*1000;
+  const drift=vd*0.55*(1-0.35*T);
+  els.forEach(e=>{
+   e.tc-=dt;if(e.tc<=0){const a=R()*6.283;const s=0.35;e.vx=Math.cos(a)*s;e.vy=Math.sin(a)*s;e.tc=0.12+R()*0.25*(1.2-T)}
+   if(!rm){e.x+=(e.vx+drift)*dt;e.y+=e.vy*dt*ww/wh}
+   if(e.x>1)e.x-=1;if(e.x<0)e.x+=1;if(e.y<0.03){e.y=0.03;e.vy=-e.vy}if(e.y>0.97){e.y=0.97;e.vy=-e.vy}
+   c.fillStyle=neg;c.beginPath();c.arc(x0+e.x*ww,y0+e.y*wh,3,0,7);c.fill();
+  });
+  c.font='bold 18px Archivo, Arial';c.fillStyle=neg;c.fillText('−',x0-18,h/2+7);c.fillStyle=pos;c.fillText('+',x0+ww+18,h/2+7);
+  c.font='13px Atkinson Hyperlegible, Verdana';c.textAlign='left';
+  const ay=y0-14;c.strokeStyle=neg;c.fillStyle=neg;c.lineWidth=2;c.beginPath();c.moveTo(x0+10,ay);c.lineTo(x0+60,ay);c.stroke();c.beginPath();c.moveTo(x0+66,ay);c.lineTo(x0+58,ay-4);c.lineTo(x0+58,ay+4);c.fill();c.fillText('electron drift',x0+72,ay+4);
+  const by=y0+wh+18;c.strokeStyle=pos;c.fillStyle=pos;c.beginPath();c.moveTo(x0+ww-10,by);c.lineTo(x0+ww-60,by);c.stroke();c.beginPath();c.moveTo(x0+ww-66,by);c.lineTo(x0+ww-58,by-4);c.lineTo(x0+ww-58,by+4);c.fill();c.textAlign='right';c.fillText('conventional current',x0+ww-72,by+4);
+  requestAnimationFrame(frame);
+ }
+ requestAnimationFrame(frame);
+}
+
+/* ---------- calculation drills ---------- */
+function uPick(x,base){const P=[[1e9,'G'],[1e6,'M'],[1e3,'k'],[1,''],[1e-3,'m'],[1e-6,'μ'],[1e-9,'n']];for(const [f,p] of P){if(Math.abs(x)>=f*0.9995)return [f,p+base]}return [1e-9,'n'+base]}
+function Q(text,ans,unit,work,pts){return {text,ans,unit,work,pts:pts||1}}
+const f3=x=>sci(x,3);
+const DR={
+ cur:{n:'Current and charge',g(s){
+  const v=s?rint(0,3):rint(0,2);
+  if(v===0){const q=rint(3,40)*5,t=pick([4,5,8,10,20,25,40,50]),I=q/t;return Q(`A charge of ${q} C flows past a point in ${t} s. Calculate the current.`,I,'A',[`I = ΔQ / Δt`,`= ${q} / ${t}`,`= ${f3(I)} A`])}
+  if(v===1){const I=pick([0.2,0.5,1.5,2.0,2.5,4.0]),t=rint(2,12)*5,q=I*t;return Q(`A current of ${I} A flows for ${t} s. How much charge flows?`,q,'C',[`ΔQ = IΔt`,`= ${I} × ${t}`,`= ${f3(q)} C`])}
+  if(v===2&&!s){const q=rint(2,30)*10,I=pick([0.5,2,4,5,8]),t=q/I;return Q(`How long does it take for ${q} C to flow when the current is ${I} A?`,t,'s',[`Δt = ΔQ / I`,`= ${q} / ${I}`,`= ${f3(t)} s`])}
+  if(v===2){const q=rint(12,96),m=rint(2,9),I=q*1e-3/(m*60);return Q(`A charge of ${q} mC flows in ${m} minutes. Calculate the current in μA.`,I*1e6,'μA',[`Convert: ΔQ = ${q} × 10<sup>−3</sup> C, Δt = ${m} × 60 = ${m*60} s`,`I = ΔQ / Δt = ${q} × 10<sup>−3</sup> / ${m*60}`,`= ${f3(I)} A = ${f3(I*1e6)} μA`],2)}
+  if(rint(0,1)){const I=rint(1,16)*50,t=rint(1,12)*5,q=I*1e-3*t,N=q/E_CH;return Q(`A current of ${I} mA flows for ${t} s. How many electrons pass a point? (e = 1.60 × 10<sup>−19</sup> C)`,N,'electrons',[`ΔQ = IΔt = ${I} × 10<sup>−3</sup> × ${t} = ${f3(q)} C`,`N = ΔQ / e = ${f3(q)} / 1.60 × 10<sup>−19</sup>`,`= ${f3(N)} electrons`],2)}
+  const m=rint(2,9),ex=rint(15,18),N=m*Math.pow(10,ex),t=rint(2,20),I=N*E_CH/t,[fa,ua]=uPick(I,'A');return Q(`${m} × 10<sup>${ex}</sup> electrons pass a point in ${t} s. Calculate the current in ${ua}.`,I/fa,ua,[`ΔQ = Ne = ${m} × 10<sup>${ex}</sup> × 1.60 × 10<sup>−19</sup> = ${f3(N*E_CH)} C`,`I = ΔQ / Δt = ${f3(N*E_CH)} / ${t}`,`= ${f3(I)} A = ${f3(I/fa)} ${ua}`],2)}},
+ pd:{n:'Potential difference',g(s){
+  if(!s){const v=rint(0,2),q=pick([5,10,20,25,50,100,250]),V=pick([1.5,3,4.5,6,9,12,24,230]),W=V*q;
+   if(v===0)return Q(`${W} J of energy is transferred when ${q} C of charge passes through a component. Find the p.d. across it.`,V,'V',[`V = W / Q`,`= ${W} / ${q}`,`= ${f3(V)} V`]);
+   if(v===1)return Q(`How much energy is transferred when ${q} C passes through a p.d. of ${V} V?`,W,'J',[`W = VQ`,`= ${V} × ${q}`,`= ${f3(W)} J`]);
+   return Q(`A supply of ${V} V transfers ${W} J. How much charge has passed?`,q,'C',[`Q = W / V`,`= ${W} / ${V}`,`= ${f3(q)} C`])}
+  const v=rint(0,2);
+  if(v===0){const V=pick([1.5,3.0,4.5,6.0,9.0,12]),W=V*E_CH;return Q(`Calculate the energy gained by one electron accelerated through a p.d. of ${V} V.`,W,'J',[`W = VQ = Ve`,`= ${V} × 1.60 × 10<sup>−19</sup>`,`= ${f3(W)} J`],2)}
+  if(v===1){const q=rint(2,9)*100,V=pick([6,9,12,24]),W=V*q*1e-3;return Q(`A ${V} V battery drives ${q} mC of charge round a circuit. How much energy does it supply?`,W,'J',[`W = VQ`,`= ${V} × ${q} × 10<sup>−3</sup>`,`= ${f3(W)} J`],2)}
+  const W=rint(2,9),q=rint(2,8)*10,V=W*1e9/(q*1e3);return Q(`A lightning strike transfers ${W} GJ of energy with ${q} kC of charge. Calculate the p.d. in kV.`,V/1e3,'kV',[`V = W / Q`,`= ${W} × 10<sup>9</sup> / ${q} × 10<sup>3</sup>`,`= ${f3(V)} V = ${f3(V/1e3)} kV`],2)}},
+ pow:{n:'Power',g(s){
+  if(!s){const v=rint(0,2),V=pick([6,12,24,230]),I=pick([0.5,1.5,2,2.5,3,4,5]),P=I*V;
+   if(v===0)return Q(`A device on a ${V} V supply draws ${I} A. Calculate its power.`,P,'W',[`P = IV`,`= ${I} × ${V}`,`= ${f3(P)} W`]);
+   if(v===1)return Q(`A ${P} W device runs from a ${V} V supply. What current does it draw?`,I,'A',[`I = P / V`,`= ${P} / ${V}`,`= ${f3(I)} A`]);
+   return Q(`A component dissipates ${P} W when ${I} A flows through it. What is the p.d. across it?`,V,'V',[`V = P / I`,`= ${P} / ${I}`,`= ${f3(V)} V`])}
+  const v=rint(0,2);
+  if(v===0){const I=rint(2,19)*10,V=230,P=I*1e-3*V;return Q(`A bulb on the 230 V mains takes ${I} mA. Calculate its power.`,P,'W',[`P = IV`,`= ${I} × 10<sup>−3</sup> × 230`,`= ${f3(P)} W`],2)}
+  if(v===1){const P=pick([1.2,2.0,2.2,2.8,3.0]),I=P*1e3/230;return Q(`A ${P} kW kettle runs on 230 V mains. Calculate the current.`,I,'A',[`I = P / V`,`= ${P*1000} / 230`,`= ${f3(I)} A`],2)}
+  const I=pick([2,2.5,4,5]),V=12,m=rint(2,15),W=I*V*m*60;return Q(`A ${V} V heater takes ${I} A for ${m} minutes. How much energy does it transfer, in kJ?`,W/1e3,'kJ',[`W = IVΔt`,`= ${I} × ${V} × ${m*60}`,`= ${f3(W)} J = ${f3(W/1e3)} kJ`],2)}},
+ res:{n:'Resistance',g(s){
+  if(!s){const v=rint(0,2),R0=pick([2,4,5,6,8,12,15,20,24,30]),I=pick([0.25,0.5,1.5,2,3]),V=I*R0;
+   if(v===0)return Q(`A p.d. of ${V} V drives ${I} A through a resistor. Find its resistance.`,R0,'Ω',[`R = V / I`,`= ${V} / ${I}`,`= ${f3(R0)} Ω`]);
+   if(v===1)return Q(`${I} A flows through a ${R0} Ω resistor. What is the p.d. across it?`,V,'V',[`V = IR`,`= ${I} × ${R0}`,`= ${f3(V)} V`]);
+   return Q(`A p.d. of ${V} V is applied across a ${R0} Ω resistor. Find the current.`,I,'A',[`I = V / R`,`= ${V} / ${R0}`,`= ${f3(I)} A`])}
+  const v=rint(0,2);
+  if(v===0){const V=pick([6,9,12,20,60]),Rk=pick([2,4,5,10,20]),I=V/(Rk*1e6);return Q(`Find the current through a ${Rk} MΩ resistor with ${V} V across it, in μA.`,I*1e6,'μA',[`I = V / R`,`= ${V} / ${Rk} × 10<sup>6</sup>`,`= ${f3(I)} A = ${f3(I*1e6)} μA`],2)}
+  if(v===1){const I=pick([4,5,8,12,20]),Rk=pick([1.5,2.2,4.7,10]),V=I*1e-3*Rk*1e3;return Q(`A current of ${I} mA flows through a ${Rk} kΩ resistor. Find the p.d. across it.`,V,'V',[`V = IR`,`= ${I} × 10<sup>−3</sup> × ${Rk} × 10<sup>3</sup>`,`= ${f3(V)} V`],2)}
+  const V=pick([3,6,12,230]),I=pick([300,150,60,4]),Rr=V/(I*1e-6),[fa,ua]=uPick(Rr,'Ω');return Q(`A p.d. of ${V} V drives ${I} μA through a component. Find its resistance in ${ua}.`,Rr/fa,ua,[`R = V / I`,`= ${V} / ${I} × 10<sup>−6</sup>`,`= ${f3(Rr)} Ω = ${f3(Rr/fa)} ${ua}`],2)}},
+ pr:{n:'Power and resistance',g(s){
+  const v=s?rint(0,4):rint(0,2);
+  if(v===0){const I=pick([2,3,5,8,13]),Rr=pick([4,6,10,18,24]),P=I*I*Rr;return Q(`A heating element of ${Rr} Ω carries ${I} A. Calculate its power.`,P,'W',[`P = I<sup>2</sup>R`,`= ${I}<sup>2</sup> × ${Rr}`,`= ${f3(P)} W`])}
+  if(v===1){const V=pick([6,12,24,230]),Rr=pick([2,4,8,12,48,53]),P=V*V/Rr;return Q(`A ${Rr} Ω resistor has ${V} V across it. Calculate the power dissipated.`,P,'W',[`P = V<sup>2</sup> / R`,`= ${V}<sup>2</sup> / ${Rr}`,`= ${f3(P)} W`])}
+  if(v===2){const P=pick([500,1000,1500,2000,3000]),Rr=pick([18,24,30,36,48]),I=Math.sqrt(P/Rr);return Q(`An element of resistance ${Rr} Ω has a power of ${P} W. Calculate the current.`,I,'A',[`P = I<sup>2</sup>R, so I<sup>2</sup> = P / R`,`I<sup>2</sup> = ${P} / ${Rr} = ${f3(P/Rr)}`,`I = √${f3(P/Rr)} = ${f3(I)} A`],s?2:1)}
+  if(v===3){const P=pick([36,60,100,2000,2500]),V=pick([12,230]),Rr=V*V/P;return Q(`A lamp is rated ${V} V, ${P} W. Calculate its resistance when working normally.`,Rr,'Ω',[`P = V<sup>2</sup> / R, so R = V<sup>2</sup> / P`,`= ${V}<sup>2</sup> / ${P}`,`= ${f3(Rr)} Ω`],2)}
+  const P=pick([0.25,0.5,2,5]),Rr=pick([100,220,470,1000]),V=Math.sqrt(P*Rr);return Q(`A ${Rr} Ω resistor is rated at ${P} W. What is the largest p.d. that can safely be put across it?`,V,'V',[`P = V<sup>2</sup> / R, so V<sup>2</sup> = PR`,`V<sup>2</sup> = ${P} × ${Rr} = ${f3(P*Rr)}`,`V = ${f3(V)} V`],2)}},
+ rho:{n:'Resistivity',g(s){
+  const M=pick([['copper',1.7e-8],['nichrome',1.1e-6],['constantan',4.9e-7]]);
+  const v=s?rint(0,3):rint(0,1);
+  if(v===0){const L=pick([0.25,0.5,0.8,1.5,2.0,5.0]),Am=rint(2,9)*Math.pow(10,-rint(6,8)),Rr=M[1]*L/Am;return Q(`Calculate the resistance of ${L} m of ${M[0]} wire of cross-sectional area ${sci(Am,1)} m<sup>2</sup>. (ρ = ${sci(M[1],2)} Ω m)`,Rr,'Ω',[`R = ρL / A`,`= ${sci(M[1],2)} × ${L} / ${sci(Am,1)}`,`= ${f3(Rr)} Ω`])}
+  if(v===1){const L=pick([0.5,1.0,1.5,2.0]),Am=rint(2,9)*1e-8,Rr=M[1]*L/Am;return Q(`A wire of length ${L} m and cross-sectional area ${sci(Am,1)} m<sup>2</sup> has a resistance of ${f3(Rr)} Ω. Calculate the resistivity of the metal.`,M[1],'Ω m',[`ρ = RA / L`,`= ${f3(Rr)} × ${sci(Am,1)} / ${L}`,`= ${f3(M[1])} Ω m (${M[0]})`])}
+  const d=pick([0.20,0.25,0.32,0.40,0.45,0.56]),Am=Math.PI*Math.pow(d*1e-3,2)/4;
+  if(v===2){const L=pick([0.25,0.5,1.0]),Rr=M[1]*L/Am;return Q(`A ${L*100} cm length of wire of diameter ${d.toFixed(2)} mm has a resistance of ${f3(Rr)} Ω. Calculate the resistivity.`,M[1],'Ω m',[`A = πd<sup>2</sup>/4 = π × (${d.toFixed(2)} × 10<sup>−3</sup>)<sup>2</sup> / 4 = ${f3(Am)} m<sup>2</sup>`,`ρ = RA / L = ${f3(Rr)} × ${f3(Am)} / ${L}`,`= ${f3(M[1])} Ω m`],2)}
+  const Rr=pick([2,5,10,20,50]),L=Rr*Am/M[1];return Q(`What length of ${M[0]} wire of diameter ${d.toFixed(2)} mm has a resistance of ${Rr} Ω? (ρ = ${sci(M[1],2)} Ω m)`,L,'m',[`A = πd<sup>2</sup>/4 = ${f3(Am)} m<sup>2</sup>`,`L = RA / ρ = ${Rr} × ${f3(Am)} / ${sci(M[1],2)}`,`= ${f3(L)} m`],2)}},
+ drift:{n:'Drift velocity',g(s){
+  const n=8.5e28,v=s?rint(0,2):0;
+  if(v===0){const I=pick([0.5,1.0,2.0,3.0,5.0]),Amm=pick([0.5,1.0,1.5,2.5]),vd=I/(n*Amm*1e-6*E_CH);return Q(`A copper wire of cross-sectional area ${Amm} mm<sup>2</sup> carries ${I} A. Calculate the drift velocity in mm s<sup>−1</sup>. (n = 8.5 × 10<sup>28</sup> m<sup>−3</sup>)`,vd*1e3,'mm s⁻¹',[`A = ${Amm} mm<sup>2</sup> = ${Amm} × 10<sup>−6</sup> m<sup>2</sup>`,`v = I / nAe = ${I} / (8.5 × 10<sup>28</sup> × ${Amm} × 10<sup>−6</sup> × 1.60 × 10<sup>−19</sup>)`,`= ${f3(vd)} m s<sup>−1</sup> = ${f3(vd*1e3)} mm s<sup>−1</sup>`])}
+  if(v===1){const d=pick([0.50,0.80,1.0,1.2]),I=pick([1.0,2.0,4.0]),Am=Math.PI*Math.pow(d*1e-3,2)/4,vd=I/(n*Am*E_CH);return Q(`A copper wire of diameter ${d.toFixed(2)} mm carries ${I} A. Calculate the drift velocity in mm s<sup>−1</sup>. (n = 8.5 × 10<sup>28</sup> m<sup>−3</sup>)`,vd*1e3,'mm s⁻¹',[`A = πd<sup>2</sup>/4 = ${f3(Am)} m<sup>2</sup>`,`v = I / nAe = ${I} / (8.5 × 10<sup>28</sup> × ${f3(Am)} × 1.60 × 10<sup>−19</sup>)`,`= ${f3(vd)} m s<sup>−1</sup> = ${f3(vd*1e3)} mm s<sup>−1</sup>`],2)}
+  const nn=pick([5.9e28,8.5e28,1.8e29]),I=pick([0.2,0.5,1.0]),Amm=pick([0.2,0.5]),vd=I/(nn*Amm*1e-6*E_CH);return Q(`A metal wire of cross-sectional area ${Amm} mm<sup>2</sup> carries ${I} A. The drift velocity is ${f3(vd)} m s<sup>−1</sup>. Calculate n, the number of free electrons per unit volume, in m<sup>−3</sup>.`,nn,'m⁻³',[`n = I / Ave`,`= ${I} / (${Amm} × 10<sup>−6</sup> × ${f3(vd)} × 1.60 × 10<sup>−19</sup>)`,`= ${f3(nn)} m<sup>−3</sup>`],2)}}
+};
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;
+ const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 0.25 or 1.6e-19.');return}
+  const ok=close(v,drQ.ans,0.015);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>');
+  else{let hint='';const r=v/drQ.ans;const lg=Math.log10(Math.abs(r));if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check your unit prefixes.';else if(r<0)hint=' Check the sign.';
+   fb(out,'no','<strong>Not quite.</strong>'+hint+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>')}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info','<div class="work">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>')});
+ $('#drNext').addEventListener('click',newDrill);
+}
+
+/* ---------- concept quiz ---------- */
+const QB=[
+['What is electric current?',['The rate of flow of charge','The energy transferred per unit charge','The charge on each electron','The force pushing electrons along'],0,'Current is the rate of flow of charge, I = ΔQ/Δt.'],
+['In a metal, the charge carriers are:',['free (conduction) electrons','positive ions','both positive and negative ions','protons'],0,'The positive ions in a metal are fixed in the lattice; only the free electrons move through it.'],
+['In an acid or a molten salt, the charge carriers are:',['positive and negative ions','free electrons only','protons only','neutral atoms'],0,'Electrolytes conduct by ions moving in opposite directions.'],
+['Conventional current flows:',['from the positive terminal round the circuit to the negative terminal','in the same direction as electrons in a metal','from negative to positive','only in a.c. circuits'],0,'It is a convention: out of +, back into −. Electrons in metals move the opposite way.'],
+['Which unit is equivalent to the ampere?',['C s⁻¹','J C⁻¹','V A⁻¹','C s'],0,'I = ΔQ/Δt, so 1 A = 1 C s⁻¹.'],
+['Which unit is equivalent to the volt?',['J C⁻¹','C s⁻¹','J s⁻¹','A Ω⁻¹'],0,'V = W/Q, so 1 V = 1 J C⁻¹.'],
+['Which unit is equivalent to the ohm?',['V A⁻¹','A V⁻¹','J C⁻¹','W A⁻¹'],0,'R = V/I, so 1 Ω = 1 V A⁻¹.'],
+['The unit of resistivity is:',['Ω m','Ω m⁻¹','Ω m²','Ω'],0,'ρ = RA/L has units Ω × m² / m = Ω m.'],
+['The potential difference across a component is defined as:',['the energy transferred per unit charge passing through it','the current per unit resistance','the charge per unit time','the force per unit charge'],0,'V = W/Q: work done (energy transferred) per coulomb.'],
+['On the gradient of a Q against t graph you would find:',['the current','the p.d.','the resistance','the power'],0,'Current is the rate of flow of charge, so it is the gradient of Q–t.'],
+['The area under a graph of current against time gives:',['the charge that has flowed','the energy transferred','the p.d.','the resistance'],0,'ΔQ = IΔt, which is the area under an I–t graph.'],
+['In I = nAve, n is:',['the number of free electrons per unit volume','the number of electrons in the wire','the number of ions per unit length','the number of collisions per second'],0,'n is measured in m⁻³.'],
+['A wire narrows to half its cross-sectional area. In the narrow section the drift velocity is:',['doubled','halved','the same','four times as big'],0,'The same current flows everywhere in series, so v ∝ 1/A.'],
+['Two copper wires carry the same current. Wire X has twice the diameter of wire Y. The drift velocity in X is:',['a quarter of that in Y','half that in Y','twice that in Y','the same'],0,'Double the diameter gives four times the area, so v is a quarter.'],
+['Which statement of Ohm’s law is correct?',['Current through a metallic conductor is proportional to the p.d. across it, provided physical conditions such as temperature stay constant','Resistance equals p.d. divided by current','Current is always proportional to p.d.','Resistance is proportional to temperature'],0,'R = V/I is the definition of resistance, not Ohm’s law. The condition about temperature matters.'],
+['What causes electrical resistance in a metal?',['Collisions between free electrons and the positive ions','Electrons repelling each other only','The insulation around the wire','Electrons being destroyed'],0,'Collisions transfer energy to the ions, which is why resistors warm up.'],
+['Why does a filament lamp’s resistance rise as the current increases?',['The filament gets hotter so the ions vibrate more and collisions are more frequent','More free electrons are released','The filament gets longer','The voltmeter takes more current'],0,'Higher temperature means larger ion vibrations and more collisions.'],
+['The I–V graph for a filament lamp:',['has a decreasing gradient as the p.d. increases','is a straight line through the origin','shows zero current in reverse','has an increasing gradient as the p.d. increases'],0,'As R rises, each extra volt produces less extra current.'],
+['On an I–V graph, a steeper straight line means:',['a lower resistance','a higher resistance','a higher temperature','a larger area'],0,'Gradient of I–V is 1/R.'],
+['For a non-ohmic component, the resistance at a particular p.d. is found from:',['V / I at that point','the gradient of the tangent at that point','the area under the graph','the intercept'],0,'Resistance is defined as V/I. The tangent gradient is not the resistance.'],
+['A silicon diode in forward bias starts to conduct significantly at about:',['0.6 V','0.06 V','1.5 V','6 V'],0,'Silicon diodes turn on at about 0.6 V. LEDs are nearer 1.5 V.'],
+['In reverse bias, a silicon diode:',['has a very high resistance and passes less than about 1 μA','conducts easily','behaves like a lamp','emits light'],0,'Very high resistance in reverse.'],
+['The resistance of an ntc thermistor:',['falls as temperature rises','rises as temperature rises','does not depend on temperature','falls as light intensity rises'],0,'Negative temperature coefficient: more charge carriers are released when hot.'],
+['The resistance of an LDR:',['falls as light intensity increases','rises as light intensity increases','depends only on temperature','is always zero in the dark'],0,'On an I–V graph, the bright-light line is steeper than the dim-light line.'],
+['Why is a potential divider better than a variable resistor for taking I–V readings?',['The p.d. across the component can be varied from zero up to the full supply p.d.','It uses less energy','It makes the meters more precise','It stops the component heating up'],0,'With a series variable resistor the p.d. can never be reduced to zero.'],
+['Why should a voltmeter have a very high resistance?',['So it draws negligible current and does not change the circuit','So it can measure large p.d.s','So it does not heat up','So the ammeter reads zero'],0,'A perfect voltmeter has infinite resistance.'],
+['A perfect ammeter has:',['zero resistance','infinite resistance','a resistance equal to the circuit’s','a resistance of 1 Ω'],0,'It must not change the current it measures.'],
+['Resistivity is a property of:',['the material','the shape of the object','the length of the wire only','the current'],0,'Resistance depends on shape and size; resistivity depends only on the material (and temperature).'],
+['A wire is stretched to twice its length. Its volume stays the same. Its resistance becomes:',['four times as large','twice as large','the same','half as large'],0,'Length ×2 and area ×½, so R = ρL/A becomes ×4.'],
+['Copper has a resistivity of about:',['1.7 × 10⁻⁸ Ω m','1.7 × 10⁸ Ω m','2.3 × 10³ Ω m','1.0 × 10¹⁴ Ω m'],0,'Metals have very low resistivities; PVC is about 10¹⁴ Ω m.'],
+['Superconductivity is:',['the state of zero resistivity at and below the transition temperature','very low but non-zero resistance at room temperature','the conduction of electricity by ions','resistance that falls as temperature rises'],0,'Below T꜀ the resistivity is exactly zero.'.replace('T꜀','Tc')],
+['High-temperature superconductors have transition temperatures:',['above the boiling point of nitrogen, −196 °C','above 0 °C','above room temperature','just above absolute zero'],0,'That means cheap liquid nitrogen can be used to cool them.'],
+['Which is a use of superconductors?',['The electromagnets in MRI scanners','The filament in a lamp','Kettle heating elements','Fuses'],0,'Strong magnets need large currents; zero resistance means no energy is wasted as heat.'],
+['Over a wide range of temperature, the resistance of a metal:',['increases almost linearly with temperature','decreases rapidly','stays exactly constant','increases exponentially'],0,'Metals have a small positive temperature coefficient.'],
+['Why does the resistance of a semiconductor fall when it is heated?',['The number of charge carriers increases much faster than the effect of increased ion vibration','The ions stop vibrating','The electrons slow down','Its length decreases'],0,'More carriers dominate.'],
+['Starting from P = IV and V = IR, which result follows?',['P = I²R','P = V/R','P = I/R','P = IR'],0,'Substitute V = IR: P = I × IR = I²R.'],
+['A current flows through a resistor. Collisions between electrons and ions:',['increase the random vibration energy of the ions, so the resistor warms up','decrease the temperature of the resistor','increase the number of free electrons','stop the current'],0,'This is why current-carrying metals get hot.']
+];
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){
+  const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';
+  $('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{
+  if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true});
+ }));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+
+/* ---------- graph matching ---------- */
+const GM=[
+ [['wire','Metal wire at constant temperature'],['lamp','Filament lamp'],['therm','Thermistor'],['diode','Silicon diode'],['led','LED'],['ldr','LDR in bright and dim light']],
+ [['metal','Metal: R against θ'],['ntc','Thermistor: R against θ'],['sc','Superconductor: ρ against T'],['ldrR','LDR: R against light intensity']]
+];
+let gmRound=0,gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ const set=GM[gmRound];gmOrder=shuffle(set.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ gmPool();
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{
+  const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}
+  else if(gmPlace[i]!==undefined)delete gmPlace[i];
+  gmPaint();
+ }));
+ gmPaint();
+}
+function gmPool(){
+ const set=GM[gmRound];
+ $('#gmPool').innerHTML=shuffle(set).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+}
+function gmPaint(){
+ const set=GM[gmRound],used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?set.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+function gmCheck(){
+ const set=GM[gmRound];let n=0;
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<set.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===set.length){award(set.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong> Try the other set, or shuffle and go again.')}
+ else{miss();fb($('#gmFb'),'no',n+' of '+set.length+' correct. Red borders show the mismatches: move those labels and check again.')}
+}
+$$('#gmRound button').forEach(b=>b.addEventListener('click',()=>{gmRound=+b.dataset.r;$$('#gmRound button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));gmStart()}));
+$('#gmCheck').addEventListener('click',gmCheck);$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+
+/* ---------- symbol sprint ---------- */
+const SYM=[['cell','Cell'],['batt','Battery'],['lamp','Filament lamp'],['res','Resistor'],['var','Variable resistor'],['therm','Thermistor'],['ldr','Light-dependent resistor'],['diode','Diode'],['led','Light-emitting diode'],['A','Ammeter'],['V','Voltmeter'],['M','Motor'],['sw','Switch (open)']];
+let sp=null;
+function spIntro(){
+ $('#spBox').innerHTML='<div class="row"><button class="btn go" type="button" id="spGo">Start the sprint</button><span class="tally">'+(store.sprint?'Best time '+store.sprint.toFixed(1)+' s':'No best time yet')+'</span></div>';
+ $('#spGo').addEventListener('click',spStart);
+}
+function spStart(){sp={list:shuffle(SYM).slice(0,10),i:0,t0:performance.now(),pen:0};spQ()}
+function spQ(){
+ if(sp.i>=sp.list.length){
+  const t=(performance.now()-sp.t0)/1000+sp.pen,best=!store.sprint||t<store.sprint;if(best){store.sprint=t;save()}award(3);
+  $('#spBox').innerHTML='<div class="big">'+t.toFixed(1)+' s</div><p>'+(best?'A new best time.':'Best time: '+store.sprint.toFixed(1)+' s')+'</p><button class="btn go" type="button" id="spGo">Go again</button>';
+  $('#spGo').addEventListener('click',spStart);return}
+ const cur=sp.list[sp.i],opts=shuffle([cur].concat(shuffle(SYM.filter(s=>s!==cur)).slice(0,3)));
+ $('#spBox').innerHTML='<div class="row"><span class="tally">'+(sp.i+1)+' / 10</span><span class="sp"></span><span class="tally" id="spT"></span></div><div class="sym" style="color:var(--ink)">'+symSVG(cur[0])+'</div><div class="opts" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">'+opts.map(o=>'<button type="button" class="opt" data-k="'+o[0]+'">'+o[1]+'</button>').join('')+'</div>';
+ $$('#spBox .opt').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.k===cur[0]){b.classList.add('right');sp.i++;setTimeout(spQ,180)}
+  else{b.classList.add('wrong');b.disabled=true;sp.pen+=3}
+ }));
+ const tick=()=>{const el=$('#spT');if(!el||!sp)return;el.textContent=((performance.now()-sp.t0)/1000+sp.pen).toFixed(1)+' s';if(sp.i<sp.list.length)setTimeout(tick,100)};tick();
+}
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p){this.p=p.slice();this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  if(this.p.length){const xs=this.p.map(q=>q[0]),ys=this.p.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+/* ============ LAB 1: I-V characteristics ============ */
+const L1={comp:'wire',E:0,on:false,rev:false,data:{wire:[],lamp:[]},shown:{V:0,I:0}};
+(function(){
+ const g=kitRng(1);
+ L1.gV=1+(g()-0.5)*0.03;L1.gA=1+(g()-0.5)*0.02;
+ L1.zA=[-0.02,-0.01,0.01,0.02,0.01,-0.01,0][Math.floor(g()*7)];
+ const rho=4.9e-7*(1+(g()-0.5)*0.04),d=0.315e-3*(1+(g()-0.5)*0.03);L1.Rw=rho*1.0/(Math.PI*d*d/4);
+ L1.Rh=6.0*(1+(g()-0.5)*0.08);L1.R0=0.60*(1+(g()-0.5)*0.16);L1.b=0.75+(g()-0.5)*0.06;L1.a=(L1.Rh-L1.R0)/Math.pow(12,L1.b);
+})();
+function l1Solve(){
+ const E=L1.on?L1.E:0,rs=0.15;if(E<=0)return {V:0,I:0,R:L1.comp==='wire'?L1.Rw:L1.R0};
+ if(L1.comp==='wire'){const V=E*L1.Rw/(L1.Rw+rs);return {V,I:V/L1.Rw,R:L1.Rw}}
+ let V=E*0.8,Rl=L1.R0;for(let i=0;i<60;i++){Rl=L1.R0+L1.a*Math.pow(Math.abs(V),L1.b);const Vn=E*Rl/(Rl+rs);V=0.5*V+0.5*Vn}
+ return {V,I:V/Rl,R:Rl};
+}
+function l1Circuit(){
+ const s=l1Solve(),bright=L1.comp==='lamp'?clamp(Math.pow(s.I/2.0,3),0,1):0;
+ const top=L1.rev?'−':'+',bot=L1.rev?'+':'−';
+ let g=place('cell',40,100,90)+arr(18,128,62,72)+path([[40,70],[40,40],[80,40]])+(L1.on?ln(80,40,140,40)+dot(110,40)+dot(122,40):place('sw',110,40))+ln(140,40,170,40)+place('A',200,40)+path([[230,40],[330,40],[330,70]]);
+ if(L1.comp==='lamp')g+='<circle cx="330" cy="100" r="'+(14+22*bright)+'" fill="var(--meter)" stroke="none" opacity="'+(0.15+0.7*bright).toFixed(2)+'"></circle>'+place('lamp',330,100,90);
+ else g+=place('res',330,100,90);
+ g+=path([[330,130],[330,160],[40,160],[40,130]]);
+ g+=path([[330,55],[390,55],[390,70]])+place('V',390,100,90)+path([[390,130],[390,145],[330,145]])+dot(330,55)+dot(330,145);
+ g+=tx(58,82,top,{fs:16,fw:700,fill:L1.rev?'var(--neg)':'var(--pos)'})+tx(58,128,bot,{fs:16,fw:700,fill:L1.rev?'var(--pos)':'var(--neg)'})+tx(12,195,'variable d.c. supply',{fs:11,a:'start'})+tx(110,68,'switch',{fs:11})+tx(305,100,L1.comp==='wire'?'constantan':'lamp',{fs:11,a:'end'});
+ $('#l1Circ').innerHTML=svgWrap('0 0 420 205',g,'circuit for I–V characteristics');
+}
+function l1Read(){
+ const s=l1Solve(),sg=L1.rev?-1:1;
+ const V=Math.round((sg*s.V*L1.gV)*100+(L1.on&&L1.E>0?jit():0))/100;
+ const I=Math.round((sg*s.I*L1.gA+L1.zA)*100+(L1.on&&L1.E>0?jit():0))/100;
+ L1.shown={V,I};lcdSet($('#l1V'),V,2);lcdSet($('#l1I'),I,2);
+}
+const p1=new Plot($('#l1G'),{xl:'V / V',yl:'I / A',bx:[0,2],by:[0,0.4],line:true,onDraw:l1Ro});
+function l1Ro(){
+ const d=L1.data[L1.comp],el=$('#l1Ro');
+ if(L1.comp==='lamp'){el.innerHTML='The lamp graph is a curve, so no straight best-fit line. Use R = V / I at individual points.';return}
+ const f=p1.line();if(!f){el.textContent='';return}
+ el.innerHTML='Your line: gradient = <strong>'+sci(f.m,3)+' A V<sup>−1</sup></strong>, intercept on the I axis = '+sci(f.c,2)+' A. Drag the two red handles so the line runs through the middle of your points.';
+}
+function l1Table(){
+ const d=L1.data[L1.comp];$('#l1TabT').textContent='Results: '+(L1.comp==='wire'?'constantan wire':'filament lamp');
+ $('#l1Tb').innerHTML=d.length?d.map((r,i)=>'<tr><td>'+(i+1)+'</td><td>'+r[0].toFixed(2)+'</td><td>'+r[1].toFixed(2)+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="4" class="muted">No readings yet</td></tr>';
+ $$('#l1Tb .x').forEach(b=>b.addEventListener('click',()=>{d.splice(+b.dataset.i,1);l1Table();l1Plot()}));
+}
+function l1Plot(){p1.lineOn=L1.comp==='wire';p1.set(L1.data[L1.comp]);}
+function l1Update(){$('#l1Eo').textContent=L1.E.toFixed(1)+' V';l1Circuit();l1Read()}
+$('#l1E').addEventListener('input',e=>{L1.E=+e.target.value;l1Update()});
+$('#l1Sw').addEventListener('click',e=>{L1.on=!L1.on;e.target.textContent=L1.on?'Open switch':'Close switch';e.target.setAttribute('aria-pressed',L1.on);l1Update()});
+$('#l1Rev').addEventListener('click',e=>{L1.rev=!L1.rev;e.target.setAttribute('aria-pressed',L1.rev);e.target.textContent=L1.rev?'Supply reversed: set it back':'Reverse the supply';l1Update()});
+$$('#l1Comp button').forEach(b=>b.addEventListener('click',()=>{L1.comp=b.dataset.c;$$('#l1Comp button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));l1Update();l1Table();l1Plot();$('#l1Msg').className='fb'}));
+$('#l1Rec').addEventListener('click',()=>{
+ const m=$('#l1Msg');
+ if(!L1.on){fb(m,'info','Close the switch first, otherwise there is nothing to measure.');return}
+ const d=L1.data[L1.comp];
+ if(d.some(r=>r[0]===L1.shown.V&&r[1]===L1.shown.I)){fb(m,'info','You already have that reading. Change the supply setting to get a new one.');return}
+ d.push([L1.shown.V,L1.shown.I]);d.sort((a,b)=>a[0]-b[0]);l1Table();l1Plot();
+ let tip='Reading recorded.';
+ if(L1.comp==='lamp'&&Math.abs(L1.shown.V)>12.3)tip+=' <span class="warn">That is above the lamp’s 12 V rating.</span>';
+ if(L1.comp==='wire'&&Math.abs(L1.shown.I)>1.2)tip+=' Large currents warm the wire: open the switch between readings.';
+ fb(m,'ok',tip);
+});
+$('#l1Clr').addEventListener('click',()=>{L1.data[L1.comp]=[];l1Table();l1Plot()});
+$('#l1Line').addEventListener('click',()=>p1.reset(false));
+setInterval(()=>{if($('#sec-lab1').classList.contains('on')&&L1.on)l1Read()},450);
+function l1Tasks(){
+ const el=$('#l1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';
+ numTask(el,'Constantan wire: use the gradient of your best-fit line to find the resistance of the wire.','Ω',v=>{
+  const d=L1.data.wire;if(d.length<6)return {info:1,msg:'Take at least 6 readings for the wire first (switch to the wire above).'};
+  const f=p1.line(),ls=linfit(d);if(L1.comp!=='wire')return {info:1,msg:'Switch the graph to the wire so your best-fit line is shown.'};
+  if(!f||f.m<=0)return {info:1,msg:'Drag the red handles to draw your best-fit line first.'};
+  const Rline=1/f.m,Rls=1/ls.m;
+  if(pct(Rline,Rls)>6)return {ok:false,msg:'Your line does not follow your points closely enough: its gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend. Aim for points scattered evenly either side of the line.'};
+  if(close(v,Rline,0.03))return {ok:true,msg:'<strong>Good.</strong> R = 1 / gradient = 1 / '+sci(f.m,3)+' = '+sci(Rline,3)+' Ω. On an I–V graph the gradient is 1/R, not R.'};
+  if(close(v,f.m,0.03))return {ok:false,msg:'That is the gradient itself. On an I–V graph the gradient is I/V, which is 1/R.'};
+  return {ok:false,msg:'Not quite. Use R = 1 / gradient of your line.'};
+ },3);
+ numTask(el,'Filament lamp: calculate the resistance of the lamp at your reading with the largest p.d.','Ω',v=>{
+  const d=L1.data.lamp;if(d.length<6)return {info:1,msg:'Take at least 6 readings for the lamp first, up to about 12 V.'};
+  const r=d.reduce((a,b)=>Math.abs(b[0])>Math.abs(a[0])?b:a),Rt=r[0]/r[1];
+  if(Math.abs(r[0])<9)return {info:1,msg:'Your largest p.d. is only '+r[0].toFixed(2)+' V. Take readings up to about 12 V.'};
+  if(close(v,Rt,0.02))return {ok:true,msg:'<strong>Correct.</strong> R = V / I = '+r[0].toFixed(2)+' / '+r[1].toFixed(2)+' = '+sci(Rt,3)+' Ω'};
+  return {ok:false,msg:'Use R = V / I with the values in that row ('+r[0].toFixed(2)+' V). Do not use the gradient.'};
+ },2);
+ numTask(el,'Filament lamp: now calculate its resistance at your smallest non-zero p.d.','Ω',v=>{
+  const d=L1.data.lamp.filter(r=>Math.abs(r[0])>0.05&&Math.abs(r[1])>0.03);if(d.length<3)return {info:1,msg:'You need some low-voltage lamp readings (below 1 V).'};
+  const r=d.reduce((a,b)=>Math.abs(b[0])<Math.abs(a[0])?b:a),Rt=r[0]/r[1];
+  if(close(v,Rt,0.03)){const big=L1.data.lamp.reduce((a,b)=>Math.abs(b[0])>Math.abs(a[0])?b:a);return {ok:true,msg:'<strong>Correct:</strong> '+sci(Rt,3)+' Ω. Compare this with '+sci(big[0]/big[1],3)+' Ω at the top of the range: the hot filament’s resistance is several times larger.'}}
+  return {ok:false,msg:'Use R = V / I for the row at '+r[0].toFixed(2)+' V.'};
+ },2);
+ mcq(el,'Why does the gradient of the lamp’s I–V graph decrease at higher p.d.?',['The filament gets hotter, its ions vibrate more, collisions increase and the resistance rises','The lamp runs out of free electrons','The voltmeter becomes less accurate at high readings','The filament becomes a superconductor'],0,'Higher current, higher temperature, more vigorous ion vibration, more collisions, more resistance.');
+ mcq(el,'If your wire’s best-fit line cuts the current axis slightly above or below the origin, the most likely cause is:',['a zero error on the ammeter','the wire obeying Ohm’s law','a random error in one reading','the wire being too long'],0,'A zero error shifts every reading by the same amount, moving the line up or down without changing its gradient. Check what the ammeter reads with the switch open.');
+ mcq(el,'Why is constantan used for the metal wire?',['Its resistance hardly changes with temperature, so the wire stays at constant resistance','It is a superconductor','It has the lowest resistivity of any metal','It glows when hot'],0,'The specification graph is for a metal wire at constant temperature; constantan’s resistance barely changes even if it warms slightly.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l1Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="l1DebO"></div></div>');
+ $('#l1Deb').addEventListener('click',()=>fb($('#l1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Ammeter zero error: '+(L1.zA>=0?'+':'')+L1.zA.toFixed(2)+' A (it reads this with no current).<br>Voltmeter calibration: reads '+((L1.gV-1)*100).toFixed(1)+'% '+(L1.gV>=1?'high':'low')+'. Ammeter calibration: '+((L1.gA-1)*100).toFixed(1)+'%.<br>True resistance of your constantan wire: '+L1.Rw.toFixed(2)+' Ω.<br>Your lamp: about '+L1.R0.toFixed(2)+' Ω cold, '+L1.Rh.toFixed(2)+' Ω at 12 V.<br>Every reading also flickers by ±0.01 in the last digit.'));
+}
+
+/* ============ LAB 2: resistivity ============ */
+const L2={p:10,on:false,heat:0,err:0,data:[],mic:{mode:'zero',k:0,cur:0,zeroIn:null,reads:[]},shown:{V:0,I:0}};
+(function(){
+ const g=kitRng(2);
+ L2.rho=1.10e-6*(1+(g()-0.5)*0.06);L2.d=0.376e-3*(1+(g()-0.5)*0.016);
+ L2.dl=[0,1,2,3,4,5,6].map(()=>L2.d+(g()-0.5)*0.009e-3);
+ L2.zM=[-0.02,-0.01,0.01,0.02,0.03,0.02,-0.01][Math.floor(g()*7)];
+ L2.x0=(g()-0.35)*0.8;L2.Rc=0.05+g()*0.15;L2.E=1.5*(1+(g()-0.5)*0.06);L2.r=0.4+g()*0.3;
+ L2.gV=1+(g()-0.5)*0.02;L2.gA=1+(g()-0.5)*0.02;
+})();
+function l2Solve(){
+ if(!L2.on)return {V:0,I:0};
+ const A=Math.PI*L2.d*L2.d/4,Lm=Math.max(0,(L2.p+L2.err-L2.x0))/100;
+ const Rw=L2.rho*Lm/A*(1+0.012*L2.heat)+L2.Rc;const I=L2.E/(Rw+L2.r+0.15);return {V:I*Rw,I};
+}
+function l2Read(){const s=l2Solve();const V=Math.round(s.V*L2.gV*100+(L2.on?jit():0))/100,I=Math.round(s.I*L2.gA*100+(L2.on?jit():0))/100;L2.shown={V,I};lcdSet($('#l2V'),V,2);lcdSet($('#l2I'),I,2)}
+function l2Circuit(){
+ let g=path([[70,30],[40,30],[40,150],[150,150]])+place('cell',100,30)+(L2.on?ln(130,30,190,30)+dot(160,30)+dot(172,30):place('sw',160,30))+ln(190,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[290,150]]);
+ g+='<rect x="170" y="143" width="100" height="14" fill="none"></rect>'+ln(150,150,170,150)+ln(270,150,290,150);
+ g+=path([[150,150],[150,205],[190,205]])+place('V',220,205)+path([[250,205],[290,205],[290,150]])+dot(150,150)+dot(290,150);
+ g+=tx(100,62,'1.5 V cell',{fs:11})+tx(220,135,'nichrome wire, length l',{fs:11})+tx(150,140,'clip',{fs:10,a:'end'})+tx(292,140,'clip',{fs:10,a:'start'});
+ $('#l2Circ').innerHTML=svgWrap('0 0 440 232',g,'resistivity circuit');
+}
+function l2Draw(){
+ const cv=$('#l2Rule');const {c,w,h}=fitCanvas(cv);const x0=30,x1=w-30,sc=(x1-x0)/100,X=cm=>x0+cm*sc;
+ const ink=cssv('--ink'),mut=cssv('--muted');c.clearRect(0,0,w,h);
+ c.fillStyle='#E7C98A';c.fillRect(x0-12,58,x1-x0+24,40);c.strokeStyle='#8C6A2A';c.lineWidth=1;c.strokeRect(x0-12,58,x1-x0+24,40);
+ c.strokeStyle='#3B2B0E';c.fillStyle='#3B2B0E';c.font='10px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+ for(let i=0;i<=100;i++){const x=X(i);c.beginPath();c.moveTo(x,58);c.lineTo(x,58+(i%10===0?14:i%5===0?10:6));c.stroke();if(i%10===0)c.fillText(String(i),x,84)}
+ c.fillText('cm',x1+2,95);
+ c.strokeStyle='#7B7F86';c.lineWidth=2;c.beginPath();c.moveTo(X(-4),46);c.lineTo(X(104),46);c.stroke();
+ const clip=(cm,col)=>{const x=X(cm);c.fillStyle=col;c.beginPath();c.moveTo(x,46);c.lineTo(x-7,22);c.lineTo(x+7,22);c.closePath();c.fill();c.fillRect(x-4,8,8,15);c.strokeStyle=col;c.lineWidth=2;c.beginPath();c.moveTo(x,8);c.lineTo(x,0);c.stroke()};
+ clip(0,'#222');clip(L2.p,'#C4302A');
+ c.fillStyle=ink;c.textAlign='left';c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';
+ L2.ruleMap={x0,sc};
+}
+function l2Loupe(){
+ const cv=$('#l2Loupe');const {c,w,h}=fitCanvas(cv);const pan=cssv('--panel2'),ink=cssv('--ink'),mut=cssv('--muted');
+ c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+ const scale=w/7,mid=w/2,X=cm=>mid+(cm-L2.p)*scale;
+ c.fillStyle='#E7C98A';c.fillRect(0,30,w,50);c.strokeStyle='#3B2B0E';c.fillStyle='#3B2B0E';c.lineWidth=1;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+ for(let mm=Math.floor((L2.p-4)*10);mm<=Math.ceil((L2.p+4)*10);mm++){if(mm<0||mm>1000)continue;const x=X(mm/10);const L=mm%10===0?22:mm%5===0?15:9;c.beginPath();c.moveTo(x,30);c.lineTo(x,30+L);c.stroke();if(mm%10===0)c.fillText(String(mm/10),x,68)}
+ c.strokeStyle='#C4302A';c.lineWidth=2;c.beginPath();c.moveTo(mid,4);c.lineTo(mid,44);c.stroke();c.fillStyle='#C4302A';c.beginPath();c.moveTo(mid,44);c.lineTo(mid-5,34);c.lineTo(mid+5,34);c.fill();
+ c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='left';c.fillText('magnified: clip contact',8,16);
+}
+function l2SetP(v){const old=L2.p;L2.p=clamp(Math.round(v*10)/10,0,100);if(L2.p!==old)L2.err=(R()-0.5)*0.3;$('#l2P').value=L2.p;$('#l2Po').textContent=L2.p.toFixed(1)+' cm';l2Draw();l2Loupe();l2Read()}
+$('#l2P').addEventListener('input',e=>l2SetP(+e.target.value));
+$$('#sec-lab2 [data-n]').forEach(b=>b.addEventListener('click',()=>l2SetP(L2.p+(+b.dataset.n))));
+(function(){const cv=$('#l2Rule');cv.style.touchAction='none';let drag=false;
+ const at=e=>{const r=cv.getBoundingClientRect(),m=L2.ruleMap;if(!m)return;l2SetP((e.clientX-r.left-m.x0)/m.sc)};
+ cv.addEventListener('pointerdown',e=>{drag=true;try{cv.setPointerCapture(e.pointerId)}catch(err){}at(e)});cv.addEventListener('pointermove',e=>{if(drag)at(e)});cv.addEventListener('pointerup',()=>drag=false);cv.addEventListener('pointercancel',()=>drag=false)})();
+watch($('#l2Rule'),l2Draw);watch($('#l2Loupe'),l2Loupe);
+$('#l2Sw').addEventListener('click',e=>{L2.on=!L2.on;e.target.textContent=L2.on?'Open switch':'Close switch';e.target.setAttribute('aria-pressed',L2.on);l2Circuit();l2Read()});
+setInterval(()=>{if(L2.on)L2.heat=Math.min(1,L2.heat+0.45/25);else L2.heat=Math.max(0,L2.heat-0.45/12);
+ const el=$('#l2Heat');if(el)el.textContent=L2.heat>0.35?'The wire is warming up':'';
+ if($('#sec-lab2').classList.contains('on')&&L2.on)l2Read()},450);
+const p2=new Plot($('#l2G'),{xl:'l / m',yl:'R / Ω',bx:[0,1],by:[0,2],line:true,onDraw:()=>{const f=p2.line();$('#l2Ro').innerHTML=f?'Your line: gradient = <strong>'+sci(f.m,3)+' Ω m<sup>−1</sup></strong>, intercept = '+sci(f.c,2)+' Ω':''}});
+function l2Table(){
+ const d=L2.data;
+ $('#l2Tb').innerHTML=d.length?d.map((r,i)=>'<tr><td>'+r[0].toFixed(1)+'</td><td>'+r[1].toFixed(2)+'</td><td>'+r[2].toFixed(2)+'</td><td>'+(r[1]/r[2]).toFixed(2)+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No readings yet</td></tr>';
+ $$('#l2Tb .x').forEach(b=>b.addEventListener('click',()=>{d.splice(+b.dataset.i,1);l2Table();p2.set(d.map(r=>[r[0]/100,r[1]/r[2]]))}));
+}
+$('#l2Rec').addEventListener('click',()=>{
+ const m=$('#l2Msg');if(!L2.on){fb(m,'info','Close the switch to take a reading.');return}
+ if(L2.shown.I<=0){fb(m,'info','No current: move the clip further along the wire.');return}
+ L2.data=L2.data.filter(r=>Math.abs(r[0]-L2.p)>0.05);L2.data.push([L2.p,L2.shown.V,L2.shown.I]);L2.data.sort((a,b)=>a[0]-b[0]);l2Table();p2.set(L2.data.map(r=>[r[0]/100,r[1]/r[2]]));
+ let msg='Recorded at l = '+L2.p.toFixed(1)+' cm.';if(L2.heat>0.35)msg+=' <span class="warn">The wire had warmed up, so this resistance is slightly high.</span> Open the switch between readings.';
+ const n=L2.data.length;if(n>=10)msg+=' That is a full set: move on to the graph.';
+ fb(m,'ok',msg);
+});
+$('#l2Clr').addEventListener('click',()=>{L2.data=[];l2Table();p2.set([])});
+$('#l2Line').addEventListener('click',()=>p2.reset(false));
+/* micrometer */
+function micReading(){const M=L2.mic;return M.mode==='zero'?L2.zM+M.jz:L2.dl[M.k]*1000+L2.zM+M.jz}
+function micDraw(){
+ const cv=$('#mcCv');const {c,w,h}=fitCanvas(cv);const r=micReading();
+ const ink=cssv('--ink'),pan=cssv('--panel2');c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+ const mid=h/2,ppm=Math.min(260,w*0.55),z=w*0.22,xe=z+r*ppm;
+ c.fillStyle='#C9CDD2';c.fillRect(8,mid-24,xe-8,48);c.strokeStyle='#6B7078';c.lineWidth=1;c.strokeRect(8,mid-24,xe-8,48);
+ c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.lineWidth=1.3;c.beginPath();c.moveTo(8,mid);c.lineTo(xe,mid);c.stroke();
+ c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+ for(let k=-2;k<=4;k++){const x=z+k*0.5*ppm;if(x>xe-1||x<10)continue;c.beginPath();if(k%2===0){c.moveTo(x,mid);c.lineTo(x,mid-16);c.stroke();c.fillText(String(k/2),x,mid-19)}else{c.moveTo(x,mid);c.lineTo(x,mid+14);c.stroke()}}
+ const tw=Math.min(190,w-xe-10);c.fillStyle='#B7BCC3';c.fillRect(xe,mid-58,tw,116);c.fillStyle='#D8DCE0';c.fillRect(xe,mid-58,12,116);c.strokeStyle='#6B7078';c.strokeRect(xe,mid-58,tw,116);
+ let t=(((r%0.5)+0.5)%0.5)/0.01;
+ c.save();c.beginPath();c.rect(xe,mid-56,tw,112);c.clip();c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='left';
+ for(let k=Math.floor(t)-8;k<=Math.ceil(t)+8;k++){const ang=(k-t)*0.105;if(Math.abs(ang)>1.45)continue;const y=mid+Math.sin(ang)*58;const kk=((k%50)+50)%50;const long=kk%5===0;c.lineWidth=long?1.5:1;c.beginPath();c.moveTo(xe,y);c.lineTo(xe+(long?22:13),y);c.stroke();if(long)c.fillText(String(kk),xe+26,y+4)}
+ c.restore();
+ c.fillStyle=ink;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='left';c.fillText('sleeve',12,h-8);c.fillText('thimble',xe+18,Math.min(h-4,mid+72));
+ c.fillStyle=cssv('--muted');c.fillText(L2.mic.mode==='zero'?'jaws closed, nothing between them':'measuring the wire, place '+(L2.mic.n||1),12,14);
+}
+L2.mic.jz=0;
+$('#mcZero').addEventListener('click',()=>{L2.mic.mode='zero';L2.mic.jz=(R()-0.5)*0.002;$('#mcLbl').textContent='Zero reading / mm';micDraw();$('#mcFb').className='fb'});
+$('#mcMeas').addEventListener('click',()=>{L2.mic.mode='wire';L2.mic.k=(L2.mic.k+1+Math.floor(R()*3))%7;L2.mic.n=(L2.mic.n||0)+1;L2.mic.jz=(R()-0.5)*0.003;$('#mcLbl').textContent='Diameter reading / mm';micDraw();$('#mcFb').className='fb'});
+function micList(){
+ const M=L2.mic;let s='';
+ if(M.zeroIn!==null)s+='Zero reading: <strong>'+M.zeroIn.toFixed(2)+' mm</strong>. ';
+ if(M.reads.length)s+='Diameter readings: '+M.reads.map(x=>x.toFixed(2)).join(', ')+' mm (mean '+(M.reads.reduce((a,b)=>a+b,0)/M.reads.length).toFixed(3)+' mm).';
+ $('#mcList').innerHTML=s;
+}
+$('#mcOk').addEventListener('click',()=>{
+ const v=parseNum($('#mcIn').value),out=$('#mcFb'),r=micReading();
+ if(isNaN(v)){fb(out,'info','Type the reading in mm, for example 0.38.');return}
+ if(Math.abs(v-r)<=0.0101){
+  if(L2.mic.mode==='zero'){L2.mic.zeroIn=Math.round(v*100)/100;fb(out,'ok','Zero reading recorded. '+(Math.abs(v)<0.005?'No zero error.':'That is a zero error of '+(v>0?'+':'')+v.toFixed(2)+' mm: subtract it from every reading.'))}
+  else{if(L2.mic.reads.length>=8){fb(out,'info','Eight readings is plenty.');return}L2.mic.reads.push(Math.round(v*100)/100);award(1);fb(out,'ok','Reading accepted. Take readings at several places along the wire, rotating it each time.')}
+  $('#mcIn').value='';micList();
+ } else {miss();
+  let hint=L2.mic.mode==='zero'&&r<0?' The thimble edge has gone past the zero on the sleeve, so this reading is negative: 0.50 − thimble value.':' Sleeve reading first (whole and half millimetres showing), then add the thimble division on the datum line × 0.01 mm.';
+  fb(out,'no','Look again.'+hint);
+ }
+});
+watch($('#mcCv'),micDraw);
+function l2Tasks(){
+ const el=$('#l2Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';
+ numTask(el,'Mean diameter of the wire, corrected for any zero error:','mm',v=>{
+  const M=L2.mic;if(M.zeroIn===null)return {info:1,msg:'Check the micrometer’s zero reading first.'};if(M.reads.length<3)return {info:1,msg:'Take at least 3 diameter readings.'};
+  const mean=M.reads.reduce((a,b)=>a+b,0)/M.reads.length,cor=mean-M.zeroIn;L2.dStu=cor;
+  if(Math.abs(v-cor)<=0.0035)return {ok:true,msg:'<strong>Correct.</strong> Mean '+mean.toFixed(3)+' − ('+M.zeroIn.toFixed(2)+') = '+cor.toFixed(3)+' mm.'};
+  if(Math.abs(v-mean)<=0.0035&&Math.abs(M.zeroIn)>0.004)return {ok:false,msg:'That is the mean before correction. Subtract the zero reading of '+M.zeroIn.toFixed(2)+' mm.'};
+  if(Math.abs(v-(mean+M.zeroIn))<=0.0035)return {ok:false,msg:'You added the zero error. Corrected reading = reading − zero reading.'};
+  return {ok:false,msg:'Find the mean of your diameter readings, then subtract the zero reading.'};
+ },3);
+ numTask(el,'Cross-sectional area of the wire, A = πd²/4:','m²',v=>{
+  if(!L2.dStu)return {info:1,msg:'Get the corrected diameter right first.'};const A=Math.PI*Math.pow(L2.dStu*1e-3,2)/4;L2.AStu=A;
+  if(close(v,A,0.015))return {ok:true,msg:'<strong>Correct.</strong> A = π × ('+(L2.dStu).toFixed(3)+' × 10<sup>−3</sup>)<sup>2</sup> / 4 = '+sci(A,3)+' m<sup>2</sup>'};
+  if(close(v,A*1e6,0.015))return {ok:false,msg:'Convert the diameter to metres before squaring. Your answer is in mm².'};
+  if(close(v,A*4,0.015))return {ok:false,msg:'Did you use d as the radius? A = πd²/4 or πr² with r = d/2.'};
+  return {ok:false,msg:'Use A = π d² / 4 with d in metres.'};
+ },2);
+ numTask(el,'Gradient of your R against l graph:','Ω m⁻¹',v=>{
+  const d=L2.data.map(r=>[r[0]/100,r[1]/r[2]]);if(d.length<6)return {info:1,msg:'Take readings at 10 cm intervals first (at least 6).'};
+  const f=p2.line(),ls=linfit(d);if(!f)return {info:1,msg:'Drag the red handles to fit your line.'};
+  if(pct(f.m,ls.m)>6)return {ok:false,msg:'Your line’s gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend of your points. Adjust it so the points are balanced either side. The line does not have to pass through the origin.'};
+  L2.gStu=f.m;
+  if(close(v,f.m,0.03))return {ok:true,msg:'<strong>Good.</strong> Gradient = '+sci(f.m,3)+' Ω m<sup>−1</sup>. Use a large triangle when doing this on paper.'};
+  if(close(v,f.m/100,0.03))return {ok:false,msg:'Check units: the graph uses l in metres, so the gradient is in Ω m⁻¹.'};
+  return {ok:false,msg:'Read the gradient of your line: '+(f.m>0?'rise ÷ run':'check the direction')+'.'};
+ },3);
+ numTask(el,'Resistivity of nichrome, ρ = gradient × A:','Ω m',v=>{
+  if(!L2.gStu||!L2.AStu)return {info:1,msg:'Complete the area and gradient first.'};const rho=L2.gStu*L2.AStu;
+  if(close(v,rho,0.03)){const pd=pct(rho,1.10e-6);return {ok:true,msg:'<strong>Correct:</strong> ρ = '+sci(rho,3)+' Ω m. The accepted value for nichrome is about 1.10 × 10<sup>−6</sup> Ω m, a '+pd.toFixed(1)+'% difference.'}}
+  return {ok:false,msg:'Multiply your gradient ('+sci(L2.gStu,3)+' Ω m<sup>−1</sup>) by your area ('+sci(L2.AStu,3)+' m<sup>2</sup>).'};
+ },3);
+ mcq(el,'Your line does not pass exactly through the origin. What is the best explanation?',['Contact resistance at the crocodile clips, or the fixed clip not being exactly at the zero mark','The resistivity of nichrome changes with length','The micrometer zero error','Random errors in the ammeter'],0,'Both add the same amount to every resistance (or length), shifting the line without changing its gradient. That is why ρ comes from the gradient, not from one reading.');
+ mcq(el,'Why measure the diameter at several places along the wire, rotating it each time?',['The wire may not be perfectly uniform or circular, so an average reduces random error','To find the zero error','To make the wire straighter','Because the micrometer is not precise'],0,'An average of several readings gives a more reliable diameter.');
+ mcq(el,'Why open the switch between readings?',['To stop the wire heating up, which would increase its resistance','To save the cell for later','To reset the ammeter','Because the voltmeter needs time to reach zero'],0,'Heating raises the resistance of a metal, adding a systematic error to later readings.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l2Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="l2DebO"></div></div>');
+ $('#l2Deb').addEventListener('click',()=>fb($('#l2DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Micrometer zero error: '+(L2.zM>0?'+':'')+L2.zM.toFixed(2)+' mm.<br>True mean diameter: '+(L2.d*1000).toFixed(3)+' mm (it varies by a few thousandths along the wire).<br>Contact resistance at the clips: '+L2.Rc.toFixed(2)+' Ω. Fixed clip contact at '+L2.x0.toFixed(1)+' cm on the rule.<br>Each time you move the clip it lands up to 1.5 mm from where you meant.<br>True resistivity of this reel of nichrome: '+sci(L2.rho,3)+' Ω m.<br>Cell e.m.f. '+L2.E.toFixed(2)+' V.'));
+}
+
+/* ============ LAB 3: resistance and temperature ============ */
+const L3={Tw:0,ice:1,s:0,Tc:0,Tth:0,heat:false,stir:false,speed:10,time:0,short:false,data:[],zeroIn:null,bub:[],shownR:0};
+(function(){const g=kitRng(3);L3.R0=4.0*(1+(g()-0.5)*0.1);L3.al=0.00427*(1+(g()-0.5)*0.02);L3.lead=0.10+g()*0.25;L3.off=Math.round((g()-0.5)*1.6*10)/10})();
+function l3Reset(){Object.assign(L3,{Tw:0,ice:1,s:0,Tc:0,Tth:0,time:0});}
+function l3Step(dt){
+ const room=20,hin=L3.heat?0.25:0;
+ if(L3.ice>0){L3.ice-=(hin/60+0.0004)*dt;L3.Tw=0;if(L3.ice<0)L3.ice=0}
+ else{L3.Tw+=(hin-0.0008*(L3.Tw-room))*dt;if(L3.Tw>100)L3.Tw=100}
+ if(L3.heat&&!L3.stir)L3.s=Math.min(5,L3.s+0.04*dt);else if(L3.stir)L3.s-=L3.s*Math.min(1,dt/3);else L3.s-=L3.s*Math.min(1,dt/90);
+ L3.Tc+=((L3.Tw-0.5*L3.s)-L3.Tc)*Math.min(1,dt/25);
+ L3.Tth+=((L3.Tw+0.5*L3.s)-L3.Tth)*Math.min(1,dt/4);
+ L3.time+=dt;
+}
+function l3ThRead(){return L3.Tth+L3.off}
+function l3Ohm(){const v=L3.short?L3.lead:L3.R0*(1+L3.al*L3.Tc)+L3.lead;L3.shownR=Math.round(v*100+jit())/100;lcdSet($('#l3R'),L3.shownR,2)}
+function l3DrawAp(t){
+ const cv=$('#l3Ap');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);
+ const ink=cssv('--ink'),mut=cssv('--muted');
+ const cx=w*0.42,bw=Math.min(210,w*0.5),top=60,bot=212,wl=86;
+ // tripod, bunsen
+ c.strokeStyle=mut;c.lineWidth=3;c.beginPath();c.moveTo(cx-bw/2-12,bot+2);c.lineTo(cx+bw/2+12,bot+2);c.moveTo(cx-bw/2,bot+2);c.lineTo(cx-bw/2-18,h-6);c.moveTo(cx+bw/2,bot+2);c.lineTo(cx+bw/2+18,h-6);c.stroke();
+ c.fillStyle='#8A8F96';c.fillRect(cx-8,h-52,16,46);c.fillRect(cx-26,h-8,52,6);
+ if(L3.heat){const f=1+0.12*Math.sin(t*20);c.fillStyle='rgba(60,120,255,.85)';c.beginPath();c.moveTo(cx-8,h-52);c.quadraticCurveTo(cx,h-52-40*f,cx+8,h-52);c.fill();c.fillStyle='rgba(140,200,255,.9)';c.beginPath();c.moveTo(cx-4,h-52);c.quadraticCurveTo(cx,h-52-20*f,cx+4,h-52);c.fill()}
+ // beaker
+ const warm=clamp(L3.Tw/100,0,1);c.fillStyle='rgba('+Math.round(150+80*warm)+','+Math.round(200-40*warm)+','+Math.round(235-90*warm)+',.55)';c.fillRect(cx-bw/2,wl,bw,bot-wl);
+ c.strokeStyle=ink;c.lineWidth=2;c.beginPath();c.moveTo(cx-bw/2-6,top);c.lineTo(cx-bw/2,top+4);c.lineTo(cx-bw/2,bot);c.lineTo(cx+bw/2,bot);c.lineTo(cx+bw/2,top);c.stroke();
+ if(L3.ice>0){c.fillStyle='rgba(235,248,255,.95)';c.strokeStyle='#9CC3DA';const n=Math.ceil(L3.ice*5);for(let i=0;i<n;i++){const s=10+8*L3.ice;const x=cx-bw/2+14+i*((bw-40)/5),y=wl-s*0.35+Math.sin(t*2+i)*1.5;c.fillRect(x,y,s,s);c.strokeRect(x,y,s,s)}}
+ if(L3.heat&&L3.Tw>96){if(R()<0.5)L3.bub.push({x:cx-bw/2+10+R()*(bw-20),y:bot-6});}
+ L3.bub=L3.bub.filter(b=>{b.y-=2.2;c.strokeStyle='rgba(255,255,255,.9)';c.lineWidth=1;c.beginPath();c.arc(b.x,b.y,2.5,0,7);c.stroke();return b.y>wl});
+ // boiling tube with oil and coil
+ const tx0=cx-40,tw=28;c.fillStyle='rgba(214,170,60,.55)';c.fillRect(tx0,108,tw,bot-22-108);c.beginPath();c.arc(tx0+tw/2,bot-22,tw/2,0,Math.PI);c.fill();
+ c.strokeStyle=ink;c.lineWidth=1.6;c.beginPath();c.moveTo(tx0,28);c.lineTo(tx0,bot-22);c.arc(tx0+tw/2,bot-22,tw/2,Math.PI,0,true);c.lineTo(tx0+tw,28);c.stroke();
+ c.strokeStyle='#B06A2C';c.lineWidth=2;c.beginPath();for(let i=0;i<=14;i++){const y=128+i*4.5,x=tx0+5+(i%2?tw-10:0);i?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(tx0+8,128);c.lineTo(tx0+8,14);c.lineTo(w-10,14);c.moveTo(tx0+tw-8,191);c.lineTo(tx0+tw-8,22);c.lineTo(w-10,22);c.stroke();
+ c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('to multimeter',w-10,40);
+ // thermometer
+ const thx=cx+30;c.fillStyle='rgba(255,255,255,.75)';c.strokeStyle=ink;c.lineWidth=1.2;c.fillRect(thx-4,12,8,bot-26);c.strokeRect(thx-4,12,8,bot-26);c.fillStyle='#C4302A';c.beginPath();c.arc(thx,bot-12,6,0,7);c.fill();
+ const ty=bot-16-clamp(l3ThRead()+5,0,110)/110*(bot-40);c.fillRect(thx-1.6,ty,3.2,bot-12-ty);
+ // stirrer
+ const sx=cx+62,so=L3.stir?Math.sin(t*7)*12:0;c.strokeStyle=mut;c.lineWidth=2.5;c.beginPath();c.moveTo(sx,20+so);c.lineTo(sx,bot-24+so);c.lineTo(sx-18,bot-24+so);c.stroke();
+ c.fillStyle=mut;c.textAlign='left';c.fillText(L3.ice>0.01?'ice melting':L3.Tw>=99.9&&L3.heat?'boiling':'',cx-bw/2+4,bot-6);
+}
+function l3DrawTh(){
+ const cv=$('#l3Th');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);
+ const r=l3ThRead(),ppc=18,mid=h/2,Y=T=>mid-(T-r)*ppc;
+ c.fillStyle='#F4F6F8';c.fillRect(8,0,w-16,h);c.strokeStyle='#8A9099';c.strokeRect(8,0,w-16,h);
+ c.fillStyle='#C4302A';c.fillRect(w/2+8,mid,6,h-mid);
+ c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.lineWidth=1;
+ for(let T=Math.floor(r-8);T<=Math.ceil(r+8);T++){if(T<-10||T>110)continue;const y=Math.round(Y(T))+0.5;const L=T%5===0?22:12;c.beginPath();c.moveTo(w/2+4,y);c.lineTo(w/2+4-L,y);c.stroke();if(T%5===0)c.fillText(String(T),w/2-22,y+4)}
+ c.fillStyle='#55626C';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText('°C',w/2+11,14);
+}
+let l3Run=false,l3Last=0,l3Acc=0;
+function l3Frame(now){
+ if(!lab3Active){l3Run=false;return}
+ const real=Math.min(0.1,(now-l3Last)/1000);l3Last=now;let simdt=real*L3.speed;
+ while(simdt>0){const d=Math.min(0.5,simdt);l3Step(d);simdt-=d}
+ l3Acc+=real;if(l3Acc>0.4){l3Acc=0;l3Ohm()}
+ l3DrawAp(now/1000);l3DrawTh();
+ const m=Math.floor(L3.time/60),s=Math.floor(L3.time%60);$('#l3Clock').textContent='Time elapsed '+String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+ requestAnimationFrame(l3Frame);
+}
+lab3Kick=()=>{if(!l3Run){l3Run=true;l3Last=performance.now();requestAnimationFrame(l3Frame)}};
+$('#l3Heat').addEventListener('click',e=>{L3.heat=!L3.heat;e.target.textContent=L3.heat?'Remove the Bunsen':'Light the Bunsen';e.target.setAttribute('aria-pressed',L3.heat)});
+$('#l3Stir').addEventListener('click',e=>{L3.stir=!L3.stir;e.target.textContent=L3.stir?'Stop stirring':'Start stirring';e.target.setAttribute('aria-pressed',L3.stir)});
+$('#l3Ice').addEventListener('click',()=>{l3Reset();fb($('#l3Msg'),'info','Fresh ice–water mixture. Stir it and read the resistance at 0 °C before heating.')});
+$('#l3Short').addEventListener('click',e=>{L3.short=!L3.short;e.target.textContent=L3.short?'Reconnect the probes to the coil':'Touch the probes together';e.target.setAttribute('aria-pressed',L3.short);l3Ohm()});
+$$('#l3Spd button').forEach(b=>b.addEventListener('click',()=>{L3.speed=+b.dataset.s;$$('#l3Spd button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'))}));
+const p3=new Plot($('#l3G'),{xl:'θ / °C',yl:'R / Ω',bx:[0,100],by:[3,6],fitY:true,line:true,onDraw:()=>{const f=p3.line();$('#l3Ro').innerHTML=f?'Your line: gradient = <strong>'+sci(f.m,3)+' Ω °C<sup>−1</sup></strong>, intercept at θ = 0: <strong>'+sci(f.c,3)+' Ω</strong>':''}});
+function l3Pts(){return L3.data.map(r=>[r[0],L3.zeroIn!==null?r[1]-L3.zeroIn:r[1]])}
+function l3Table(){
+ const d=L3.data;
+ $('#l3Tb').innerHTML=d.length?d.map((r,i)=>'<tr><td>'+r[0].toFixed(1)+'</td><td>'+r[1].toFixed(2)+'</td><td>'+(L3.zeroIn!==null?(r[1]-L3.zeroIn).toFixed(2):'–')+'</td><td class="small">'+(r[2]||'')+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No readings yet</td></tr>';
+ $$('#l3Tb .x').forEach(b=>b.addEventListener('click',()=>{d.splice(+b.dataset.i,1);l3Table();p3.set(l3Pts())}));
+}
+$('#l3Rec').addEventListener('click',()=>{
+ const m=$('#l3Msg'),v=parseNum($('#l3T').value),th=l3ThRead();
+ if(L3.short){fb(m,'info','The probes are touching each other, not the coil. Reconnect them first.');return}
+ if(isNaN(v)){fb(m,'info','Type the thermometer reading first, to the nearest 0.5 °C.');return}
+ if(Math.abs(v-th)>0.55){miss();fb(m,'no','Check the thermometer again. Find the top of the red column and count the 1 °C divisions from the nearest numbered mark.');return}
+ const notes=[];if(L3.heat)notes.push('heating');if(L3.s>1)notes.push('not stirred');
+ L3.data.push([v,L3.shownR,notes.join(', ')]);L3.data.sort((a,b)=>a[0]-b[0]);l3Table();p3.set(l3Pts());$('#l3T').value='';
+ let msg='Recorded: θ = '+v.toFixed(1)+' °C, R = '+L3.shownR.toFixed(2)+' Ω.';
+ if(L3.heat)msg+=' <span class="warn">The Bunsen was still heating.</span> The coil lags behind the water, so this R is probably low for that temperature.';
+ else if(L3.s>1)msg+=' <span class="warn">The water was not stirred</span>, so the thermometer and the coil may be at different temperatures.';
+ fb(m,L3.heat||L3.s>1?'info':'ok',msg);
+});
+$('#l3T').addEventListener('keydown',e=>{if(e.key==='Enter')$('#l3Rec').click()});
+$('#l3Clr').addEventListener('click',()=>{L3.data=[];l3Table();p3.set([])});
+$('#l3Line').addEventListener('click',()=>p3.reset(false));
+function l3Tasks(){
+ const el=$('#l3Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';
+ numTask(el,'Touch the multimeter probes together. What does it read? (This is the zero error from the leads.)','Ω',v=>{
+  if(Math.abs(v-L3.lead)<=0.015){L3.zeroIn=Math.round(v*100)/100;l3Table();p3.set(l3Pts());return {ok:true,msg:'<strong>Recorded.</strong> '+L3.zeroIn.toFixed(2)+' Ω is subtracted from each reading in the corrected column.'}}
+  return {ok:false,msg:'Press “Touch the probes together” and read the display.'};
+ },2);
+ numTask(el,'Gradient of your R against θ line:','Ω °C⁻¹',v=>{
+  const d=l3Pts();if(d.length<6)return {info:1,msg:'Take at least 6 readings covering 0 °C to near 100 °C.'};
+  const span=d[d.length-1][0]-d[0][0];if(span<50)return {info:1,msg:'Your readings only cover '+span.toFixed(0)+' °C. Spread them over a wider range.'};
+  const f=p3.line(),ls=linfit(d);if(!f)return {info:1,msg:'Fit your line first.'};
+  if(pct(f.m,ls.m)>6)return {ok:false,msg:'Your line’s gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend of your points. Adjust it.'};
+  L3.mStu=f.m;if(close(v,f.m,0.03))return {ok:true,msg:'<strong>Good:</strong> '+sci(f.m,3)+' Ω °C<sup>−1</sup>. A straight line confirms that the resistance of a metal varies almost linearly with temperature.'};
+  return {ok:false,msg:'Read the gradient from your line: change in R ÷ change in θ.'};
+ },3);
+ numTask(el,'Intercept of your line: the resistance at 0 °C.','Ω',v=>{
+  const f=p3.line();if(!L3.mStu||!f)return {info:1,msg:'Find the gradient first.'};L3.cStu=f.c;
+  if(close(v,f.c,0.02))return {ok:true,msg:'<strong>Correct:</strong> '+sci(f.c,3)+' Ω. Note it is <em>not</em> zero: the line does not pass through the origin on a Celsius scale.'};
+  return {ok:false,msg:'Where does your line cross θ = 0?'};
+ },2);
+ numTask(el,'Stretch: extrapolate your line. At what temperature would the resistance fall to zero?','°C',v=>{
+  if(!L3.cStu)return {info:1,msg:'Find the gradient and intercept first.'};const T0=-L3.cStu/L3.mStu;
+  if(close(v,T0,0.03))return {ok:true,msg:'<strong>Yes:</strong> θ = −intercept ÷ gradient = '+T0.toFixed(0)+' °C. Real copper does not follow this line all the way down, but the calculation is a classic graph skill.'};
+  if(close(v,-T0,0.03))return {ok:false,msg:'Check the sign: the line reaches R = 0 below 0 °C.'};
+  return {ok:false,msg:'Set R = 0 in R = mθ + c, so θ = −c / m.'};
+ },3);
+ mcq(el,'Why is the water stirred before each reading?',['So the water, coil and thermometer are all at the same temperature','To cool the water down','To stop the ice melting','To reduce the resistance of the leads'],0,'Without stirring, hot water collects at the top near the thermometer bulb while the coil sits lower down.');
+ mcq(el,'Why remove the Bunsen and wait before taking a reading?',['The coil in its oil-filled tube lags behind the water temperature, so it needs time to reach the same temperature','Flames interfere with the multimeter','The thermometer only works when cooling','To save gas'],0,'Readings taken while heating show the coil at a lower temperature than the thermometer suggests. Compare heating and cooling readings to check.');
+ mcq(el,'Why is the copper coil placed in a boiling tube of oil rather than directly in the water?',['Oil is an electrical insulator, so no current passes through the water, but heat still reaches the coil','Oil boils at 100 °C','Water has too high a resistance','Oil makes the copper a superconductor'],0,'The water bath must not provide a parallel conduction path.');
+ mcq(el,'Why does the resistance of the copper increase with temperature?',['The ions vibrate with larger amplitude, so free electrons collide with them more often','More free electrons are released','The copper expands a lot, making it much longer','The oil conducts better'],0,'Metals have a positive temperature coefficient. (More carriers being released is the semiconductor explanation.)');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l3Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="l3DebO"></div></div>');
+ $('#l3Deb').addEventListener('click',()=>fb($('#l3DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Resistance of the multimeter leads: '+L3.lead.toFixed(2)+' Ω (adds to every reading).<br>Thermometer calibration: reads '+(L3.off>=0?'+':'')+L3.off.toFixed(1)+' °C from the true temperature. That shifts your line sideways but leaves the gradient unchanged.<br>True coil resistance at 0 °C: '+L3.R0.toFixed(2)+' Ω; true gradient '+sci(L3.R0*L3.al,3)+' Ω °C<sup>−1</sup>.'));
+}
+
+/* ============ CHALLENGE ============ */
+const DER=[
+ {t:'Derive P = I²R, starting from P = IV',s:['P = IV','From the definition of resistance, V = IR','Substitute for V: P = I × IR','So P = I²R']},
+ {t:'Derive P = V²/R, starting from P = IV',s:['P = IV','From R = V / I, the current is I = V / R','Substitute for I: P = V × V / R','So P = V²/R']},
+ {t:'Derive P = IV from the definitions of p.d. and current',s:['V = W / Q, so the work done is W = VQ','I = ΔQ / Δt, so the charge is Q = IΔt','Substitute for Q: W = VIΔt','Power = work done ÷ time, so P = VIΔt / Δt = IV']},
+ {t:'Derive I = nAve',s:['In time t, each free electron drifts a distance vt','So the electrons passing point P in time t occupy a volume vtA','Number of free electrons in that volume = nvtA','Charge passing P = nvtAe','Current = charge ÷ time = nvtAe / t, so I = nAve']},
+ {t:'Show how ρ is found from a graph of R against l',s:['R = ρl / A','Compare with y = mx + c, plotting R on the y-axis and l on the x-axis','The graph is a straight line of gradient ρ / A','So ρ = gradient × A']}
+];
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+const EXAM=[
+ {t:'Kettle element',intro:'A kettle rated at 2.0 kW runs from the 230 V mains. Its element is made of nichrome wire of diameter 0.45 mm (resistivity of nichrome = 1.10 × 10<sup>−6</sup> Ω m).',p:[
+  ['Calculate the current in the element.',2000/230,'A','I = P / V = 2000 / 230 = 8.70 A'],
+  ['Calculate the resistance of the element.',230*230/2000,'Ω','R = V<sup>2</sup> / P = 230<sup>2</sup> / 2000 = 26.5 Ω (or V / I)'],
+  ['Calculate the length of nichrome wire needed.',(230*230/2000)*(Math.PI*Math.pow(0.45e-3,2)/4)/1.10e-6,'m','A = π(0.45 × 10<sup>−3</sup>)<sup>2</sup>/4 = 1.59 × 10<sup>−7</sup> m<sup>2</sup>; L = RA / ρ = 26.45 × 1.59 × 10<sup>−7</sup> / 1.10 × 10<sup>−6</sup> = 3.82 m']]},
+ {t:'Slow electrons',intro:'A copper wire of diameter 1.2 mm carries a current of 3.0 A. For copper, n = 8.5 × 10<sup>28</sup> m<sup>−3</sup>.',p:[
+  ['Calculate the cross-sectional area of the wire.',Math.PI*Math.pow(1.2e-3,2)/4,'m²','A = πd<sup>2</sup>/4 = π(1.2 × 10<sup>−3</sup>)<sup>2</sup>/4 = 1.13 × 10<sup>−6</sup> m<sup>2</sup>'],
+  ['Calculate the drift velocity of the free electrons.',3/(8.5e28*Math.PI*Math.pow(1.2e-3,2)/4*E_CH),'m s⁻¹','v = I / nAe = 3.0 / (8.5 × 10<sup>28</sup> × 1.13 × 10<sup>−6</sup> × 1.60 × 10<sup>−19</sup>) = 1.95 × 10<sup>−4</sup> m s<sup>−1</sup>'],
+  ['How long would an electron take to drift 1.0 m along the wire?',1/(3/(8.5e28*Math.PI*Math.pow(1.2e-3,2)/4*E_CH)),'s','t = distance / v = 1.0 / 1.95 × 10<sup>−4</sup> = 5.1 × 10<sup>3</sup> s, well over an hour. The lamp still lights instantly because free electrons all along the wire start drifting together.']]},
+ {t:'Switch-on surge',intro:'A car headlamp is rated 12 V, 24 W. When cold, its filament has a resistance of 0.60 Ω.',p:[
+  ['Calculate the current when the lamp works normally.',2,'A','I = P / V = 24 / 12 = 2.0 A'],
+  ['Calculate its resistance when working normally.',6,'Ω','R = V / I = 12 / 2.0 = 6.0 Ω'],
+  ['Estimate the current at the instant it is switched on at 12 V.',20,'A','I = V / R = 12 / 0.60 = 20 A: ten times the working current, which is why filaments usually fail at switch-on.'],
+  ['How many electrons pass through the lamp in 5.0 minutes of normal use?',2*300/E_CH,'electrons','Q = IΔt = 2.0 × 300 = 600 C; N = Q / e = 600 / 1.60 × 10<sup>−19</sup> = 3.75 × 10<sup>21</sup>']]},
+ {t:'Superconducting cable',intro:'A copper cable 2.0 km long has a cross-sectional area of 5.0 × 10<sup>−4</sup> m<sup>2</sup> and carries 1500 A (resistivity of copper = 1.7 × 10<sup>−8</sup> Ω m).',p:[
+  ['Calculate the resistance of the cable.',1.7e-8*2000/5e-4,'Ω','R = ρL / A = 1.7 × 10<sup>−8</sup> × 2000 / 5.0 × 10<sup>−4</sup> = 0.068 Ω'],
+  ['Calculate the power wasted heating the cable.',1500*1500*0.068,'W','P = I<sup>2</sup>R = 1500<sup>2</sup> × 0.068 = 1.53 × 10<sup>5</sup> W'],
+  ['The cable is replaced by a superconducting one below its transition temperature. How much power is wasted in it?',0,'W','Zero: below T<sub>c</sub> the resistivity is zero, so P = I<sup>2</sup>R = 0.']]},
+ {t:'Same metal, new shape',intro:'A wire has a resistance of 8.0 Ω.',p:[
+  ['A second wire of the same metal is twice as long and has half the diameter. Find its resistance.',64,'Ω','Length ×2 doubles R. Half the diameter gives a quarter of the area, ×4. R = 8.0 × 2 × 4 = 64 Ω'],
+  ['The original wire is stretched to twice its length. Its volume stays the same. Find its new resistance.',32,'Ω','Length ×2 and, with constant volume, area ×½. R = 8.0 × 2 × 2 = 32 Ω'],
+  ['The original wire is cut into four equal lengths. Find the resistance of one piece.',2,'Ω','R ∝ L, so one quarter of the length has one quarter of the resistance: 2.0 Ω']]},
+ {t:'Phone battery',intro:'A phone battery has a p.d. of 3.7 V and can deliver 1.08 × 10<sup>4</sup> C of charge when fully charged.',p:[
+  ['How much energy does it store?',3.7*1.08e4,'J','W = VQ = 3.7 × 1.08 × 10<sup>4</sup> = 4.0 × 10<sup>4</sup> J'],
+  ['The phone draws an average current of 0.25 A. How long will the charge last, in hours?',1.08e4/0.25/3600,'hours','Δt = Q / I = 1.08 × 10<sup>4</sup> / 0.25 = 43 200 s = 12 hours'],
+  ['What is the average power of the phone?',0.25*3.7,'W','P = IV = 0.25 × 3.7 = 0.93 W']]}
+];
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let G=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){G={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!G)return;const left=Math.max(0,(G.end-performance.now())/1000),el=$('#gT');if(!el){G=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=G.score;G=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+G.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){G.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(G)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){G.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(G)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{G=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+/* ---------- start-up ---------- */
+function kitButtons(){
+ ['#kitA','#kitB','#kitC'].forEach(s=>{const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New kit';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all practical results';setTimeout(()=>{armed=false;b.textContent='New kit'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();gmStart();spIntro();
+setKitLabels();kitButtons();
+l1Update();l1Table();l1Plot();l1Tasks();
+l2Circuit();l2SetP(10);l2Table();p2.set([]);l2Tasks();micDraw();micList();
+l3Table();p3.set([]);l3Tasks();l3Ohm();
+derStart(0);
+})();
+</script>
+</body>
+</html>
