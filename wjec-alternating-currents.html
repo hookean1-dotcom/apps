@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alternating currents: WJEC A2 Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#101A14;--sky2:#1B2A20;--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep13{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep13 *,#ep13 *::before,#ep13 *::after{box-sizing:border-box}
+#ep13 button,#ep13 input,#ep13 select{font:inherit;color:inherit}
+#ep13 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep13 sup{font-size:.72em;line-height:0}
+#ep13 sub{font-size:.72em;line-height:0}
+#ep13 .h,#ep13 h1,#ep13 h2,#ep13 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep13 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep13 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep13 p{margin:.45em 0 .7em;max-width:72ch}
+#ep13 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep13 li{margin:.2em 0}
+#ep13 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep13 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep13 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep13 .brand{flex:1 1 320px;min-width:0}
+#ep13 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep13 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep13 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep13 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep13 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep13 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep13 .lcd.pulse{animation:ep13pulse .5s ease}
+@keyframes ep13pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep13 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep13 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep13 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep13 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep13 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep13 .tab:hover{color:var(--ink)}
+#ep13 main{padding:22px 0 40px}
+#ep13 .sec{display:none}
+#ep13 .sec.on{display:block}
+#ep13 .lead{color:var(--muted);margin-top:.3em}
+
+#ep13 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep13 .panel + .panel{margin-top:16px}
+#ep13 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep13 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep13 .grid2{grid-template-columns:1fr}}
+#ep13 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep13 .sp{flex:1}
+
+#ep13 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep13 .btn:hover{filter:brightness(1.15)}
+#ep13 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep13 .btn.alt:hover{border-color:var(--ink)}
+#ep13 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep13 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep13 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep13 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep13 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep13 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep13 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep13 input[type=text],#ep13 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep13 input[type=text]:focus,#ep13 input[type=number]:focus{border-color:var(--focus)}
+#ep13 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep13 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep13 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep13 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep13 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep13 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep13 .work{font-size:.96rem}
+#ep13 .work div{padding:1px 0}
+#ep13 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep13 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep13 .muted{color:var(--muted)}
+#ep13 .small{font-size:.88rem}
+#ep13 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep13 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep13 .rv{grid-template-columns:1fr}}
+#ep13 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep13 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep13 .toc button{white-space:nowrap}}
+#ep13 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep13 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep13 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep13 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep13 .card h2{margin-bottom:.35em}
+#ep13 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep13 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep13 .check summary{cursor:pointer;font-weight:700}
+#ep13 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep13 .fig svg{max-width:100%;height:auto;display:block}
+#ep13 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep13 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep13 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep13 .cv{display:block;width:100%;height:100%}
+#ep13 .cvbox{position:relative;width:100%;height:230px}
+#ep13 .mini{height:150px}
+#ep13 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep13 table.t th,#ep13 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep13 table.t th{font-weight:700;color:var(--muted)}
+#ep13 table.t td:first-child,#ep13 table.t th:first-child{text-align:left}
+#ep13 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep13 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep13 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep13 .qcard{font-size:1.1rem}
+#ep13 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep13 .opts{display:grid;gap:8px;margin-top:8px}
+#ep13 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep13 .opt:hover{border-color:var(--ink)}
+#ep13 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep13 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep13 .opt:disabled{cursor:default}
+#ep13 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep13 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep13 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep13 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep13 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep13 .mcell.sel{border-color:var(--neg)}
+#ep13 .mcell.right{border-color:var(--ok)}
+#ep13 .mcell.wrong{border-color:var(--bad)}
+#ep13 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep13 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep13 .pool .chip.used{opacity:.35}
+#ep13 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep13 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep13 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep13 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep13 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep13 .dmm .lcd{min-width:130px}
+#ep13 .dmm .lcd .v{font-size:2rem}
+#ep13 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep13 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep13 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep13 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep13 .task:first-of-type{border-top:0;padding-top:4px}
+#ep13 .task .tq{font-weight:700;margin-bottom:6px}
+#ep13 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep13 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep13 .apbox{position:relative;width:100%;height:280px}
+#ep13 .loupebox{position:relative;width:100%;height:92px}
+#ep13 .microbox{position:relative;width:100%;height:170px}
+#ep13 .thermobox{position:relative;width:100%;height:260px}
+#ep13 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep13 .warn{color:var(--bad);font-weight:700}
+#ep13 .steps{counter-reset:s}
+#ep13 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep13 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep13 .step:hover{border-color:var(--ink)}
+#ep13 .dz .step{background:var(--panel)}
+#ep13 .dz.good{border-color:var(--ok)}
+#ep13 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep13 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep13 .brand h1{font-size:1.6rem}#ep13 .wrap{padding:0 12px}#ep13 .panel{padding:14px}#ep13 .bezel .lcd{min-width:88px}#ep13 .lcd .v{font-size:1.5rem}}
+#ep13 .top{background:var(--sky);color:#F1F4FA;border-bottom:0}
+#ep13 .brand p{color:#C3CEE3}
+#ep13 .themebtn{color:#F1F4FA;border-color:#8FA2C6}
+#ep13 .bezel{background:#0B1322;box-shadow:inset 0 -3px 0 #060B14}
+#ep13 .fieldstrip{display:block;width:100%;height:46px;background:#101A14}
+#ep13 .specstrip{position:relative;height:14px;background:linear-gradient(90deg,#5B1FA8 0%,#3240D6 12%,#1E7FE0 24%,#19B3B0 36%,#3DBE46 48%,#C9D52A 60%,#F2B21B 70%,#EE6A1A 82%,#C8241C 100%);overflow:hidden}
+#ep13 .specstrip i{position:absolute;top:0;bottom:0;width:3px;background:#0A0E18;animation:ep13shift 2.4s cubic-bezier(.2,.7,.2,1) .4s both}
+@keyframes ep13shift{from{transform:translateX(0)}to{transform:translateX(26px)}}
+#ep13 .sky{background:#0F1D26;border-radius:8px}
+#ep13 .grat{background:#0B1A12;border-radius:8px}
+#ep13 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep13 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep13 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep13 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep13 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep13 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+</style>
+</head>
+<body>
+<div id="ep13">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Alternating currents</h1>
+   <p>WJEC A2 Physics Option A: rotating coils, rms values, the oscilloscope, reactance, phasors, impedance and resonance.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">cycles banked</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+ <canvas class="fieldstrip" id="hdrCv" aria-hidden="true"></canvas>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="graphs" aria-selected="false">Graph match</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Oscilloscope</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Reactance lab</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Resonance lab</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+<section class="sec on" id="sec-revise"><div class="rv"><div class="toc" id="toc"></div><div class="panel card" id="card"></div></div></section>
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Remember ω = 2πf and that meters read rms values. Type standard form as 4.7e-6 or 4.7x10^-6.</p>
+ <div class="panel"><div class="row" id="drTopics"></div><div class="row" style="margin-top:10px"><span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span><span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span></div></div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+<section class="sec" id="sec-quiz"><h2>Concept quiz</h2><p class="lead">Twelve questions drawn from a bank covering the whole option. Every answer comes with the reason.</p><div class="panel qcard" id="qzCard"></div></section>
+<section class="sec" id="sec-graphs"><h2>Graph match</h2><p class="lead">Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+ <div class="panel"><div class="pool" id="gmPool"></div><div class="mgrid" id="gmGrid"></div><div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div><div class="fb" id="gmFb"></div></div></section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Using an oscilloscope</h2>
+ <p class="lead">Connect each source, adjust the Y-gain and time base for a clear trace, then read the peak value and the period. Kit code <span class="kit" id="kitA"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row" id="c1Src"></div>
+   <div class="apbox" style="height:280px;margin-top:10px;background:#0B1A12;border-radius:10px"><canvas class="cv" id="c1Sc"></canvas></div>
+   <div class="row" style="margin-top:8px"><label class="sm">Y-gain</label><span class="seg" id="c1Y"></span><span class="small muted">V/div</span></div>
+   <div class="row" style="margin-top:6px"><label class="sm">Time base</label><span class="seg" id="c1X"></span><span class="small muted">ms/div</span></div>
+   <div class="row" style="margin-top:6px"><label class="small"><input type="checkbox" id="c1Off"> time base off</label><label class="small"><input type="checkbox" id="c1Cen"> centre the trace at 0 V (Y-shift)</label></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="c1Card"></div>
+   <div class="row" style="margin-top:8px"><label class="sm" for="c1Pk" id="c1PkL">Peak p.d. / V</label><input type="text" id="c1Pk" inputmode="decimal" style="width:90px"><label class="sm" for="c1Per">Period / ms</label><input type="text" id="c1Per" inputmode="decimal" style="width:90px"><button class="btn go" id="c1Rec" type="button">Record</button></div>
+   <div class="fb" id="c1Msg"></div>
+   <div class="tscroll" style="margin-top:8px"><table class="t"><thead><tr><th>source</th><th>peak / V</th><th>period / ms</th><th></th></tr></thead><tbody id="c1Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel" id="c1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Investigating reactance</h2>
+ <p class="lead">A signal generator drives an a.c. current through a single component. An a.c. ammeter and voltmeter (both reading rms) give X = V<sub>rms</sub>/I<sub>rms</sub>. Change the frequency and see how the reactance changes. Kit code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row"><span class="seg" id="x2C"><button type="button" aria-pressed="true" data-c="C">capacitor</button><button type="button" aria-pressed="false" data-c="L">inductor (coil)</button></span></div>
+   <div class="circ" id="x2Circ" style="margin-top:8px"></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="x2F">Signal generator frequency</label><span id="x2Fo"></span></div><input type="range" id="x2F" min="20" max="2000" step="10" value="200"></div>
+    <div class="meters"><div class="dmm"><div class="nm">a.c. voltmeter (rms)</div><div class="lcd"><span class="v" id="x2V">0.000</span><span class="u">V</span></div></div><div class="dmm"><div class="nm">a.c. ammeter (rms)</div><div class="lcd"><span class="v" id="x2I">0.00</span><span class="u">mA</span></div></div></div>
+    <div class="row"><span class="sp"></span><button class="btn go" id="x2Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="x2Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="x2Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px;max-height:330px"><table class="t"><thead><tr><th></th><th>f / Hz</th><th>V / V</th><th>I / mA</th><th>X / Ω</th><th></th></tr></thead><tbody id="x2Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel"><div class="row"><strong id="x2GT">Graph</strong><span class="sp"></span><button class="btn alt" id="x2Line" type="button">Reset line</button></div><div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="x2G"></canvas></div><div class="readout" id="x2Ro"></div></div>
+ <div class="panel" id="x2Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Resonance in a series RCL circuit</h2>
+ <p class="lead">A 100 mH coil, an unknown capacitor and a resistor in series with a signal generator (1.00 V rms). Sweep the frequency to find resonance. Kit code <span class="kit" id="kitC"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="circ" id="r3Circ"></div>
+   <div class="row" style="margin-top:6px"><label class="sm">Resistor</label><span class="seg" id="r3R"><button type="button" aria-pressed="false" data-r="10">10 Ω</button><button type="button" aria-pressed="true" data-r="22">22 Ω</button><button type="button" aria-pressed="false" data-r="47">47 Ω</button><button type="button" aria-pressed="false" data-r="100">100 Ω</button></span></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="r3F">Frequency</label><span id="r3Fo"></span></div><input type="range" id="r3F" min="50" max="2000" step="1" value="400"></div>
+    <div class="row"><button class="btn alt" type="button" data-n="-10">−10 Hz</button><button class="btn alt" type="button" data-n="-1">−1 Hz</button><button class="btn alt" type="button" data-n="1">+1 Hz</button><button class="btn alt" type="button" data-n="10">+10 Hz</button></div>
+    <div class="meters"><div class="dmm"><div class="nm">I (rms)</div><div class="lcd"><span class="v" id="r3I">0</span><span class="u">mA</span></div></div><div class="dmm"><div class="nm">V<sub>R</sub></div><div class="lcd"><span class="v" id="r3VR">0</span><span class="u">V</span></div></div><div class="dmm"><div class="nm">V<sub>L</sub></div><div class="lcd"><span class="v" id="r3VL">0</span><span class="u">V</span></div></div><div class="dmm"><div class="nm">V<sub>C</sub></div><div class="lcd"><span class="v" id="r3VC">0</span><span class="u">V</span></div></div></div>
+    <div class="row"><span class="sp"></span><button class="btn go" id="r3Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="r3Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="r3Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px;max-height:330px"><table class="t"><thead><tr><th>R / Ω</th><th>f / Hz</th><th>I / mA</th><th>V<sub>R</sub></th><th>V<sub>L</sub></th><th>V<sub>C</sub></th><th></th></tr></thead><tbody id="r3Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel"><div class="row"><strong>Graph of I against f</strong> <span class="small muted">(× current resistor, ○ other resistors)</span></div><div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="r3G"></canvas></div></div>
+ <div class="panel" id="r3Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall"><h2>Challenge</h2><p class="lead">Rebuild the derivations, work through classic exam problems, then race the clock.</p><div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Derivation builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div><div class="panel" id="chBox"></div></section>
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep13');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep13-wjec-ac-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+/* ---------- tabs ---------- */
+const onShow={};let labActive='revise';
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ labActive=name;if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(cv,draw){let last=performance.now();function f(now){if(!cv.isConnected)return;const dt=Math.min(0.05,(now-last)/1000);last=now;draw(RM?0:dt);requestAnimationFrame(f)}requestAnimationFrame(f)}
+function carr(x1,y1,x2,y2,col,w){return arr(x1,y1,x2,y2).replace('<line ','<line stroke="'+col+'" stroke-width="'+(w||2.5)+'" ').replace('fill="currentColor"','fill="'+col+'"')}
+function gauss(){let u=0,v=0;while(u===0)u=R();while(v===0)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function Q(text,ans,unit,work,pts,tol){return {text,ans,unit,work,pts:pts||1,tol:tol||0.015}}
+const f3=x=>sci(x,3);
+
+/* ---------- header: a sine wave with phasors ---------- */
+function hdr(){const cv=$('#hdrCv');if(!cv)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#101A14';c.fillRect(0,0,w,h);
+ c.strokeStyle='rgba(160,230,190,.12)';for(let x=0;x<w;x+=22){c.beginPath();c.moveTo(x+.5,0);c.lineTo(x+.5,h);c.stroke()}
+ const P=190,A=h*0.36;[['#5CFF9D',0],['#FFD666',-Math.PI/2]].forEach(s=>{c.strokeStyle=s[0];c.lineWidth=1.8;c.beginPath();for(let x=0;x<=w;x++){const y=h/2-A*Math.sin(2*Math.PI*x/P+s[1]);x?c.lineTo(x,y):c.moveTo(x,y)}c.stroke()});
+ for(let x=P/2;x<w;x+=P*2){c.strokeStyle='rgba(255,255,255,.5)';c.beginPath();c.arc(x,h/2,A,0,7);c.stroke()}}
+watch($('#hdrCv'),hdr);
+
+/* ---------- circuit symbols ---------- */
+function capG(){return ln(-30,0,-4,0)+ln(-4,-13,-4,13,3)+ln(4,-13,4,13,3)+ln(4,0,30,0)}
+function indG(){let p='M-30 0 L-20 0';for(let i=0;i<4;i++)p+=' A5 5 0 0 1 '+(-20+(i+1)*10)+' 0';p+=' L30 0';return '<path d="'+p+'" fill="none"></path>'}
+function acG(){return ln(-30,0,-12,0)+'<circle cx="0" cy="0" r="12" fill="none"></circle><path d="M-7 0 Q-3.5 -7 0 0 T7 0" fill="none"></path>'+ln(12,0,30,0)}
+function plc(g,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+g+'</g>'}
+
+/* ---------- widgets ---------- */
+function wGen(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wgW" style="min-width:110px">Rotation rate</label><input type="range" id="wgW" min="0.3" max="2" step="0.05" value="1" style="flex:1;min-width:140px"><span id="wgWo" class="small" style="min-width:50px"></span></div><div class="cvbox" style="height:240px;margin-top:6px"><canvas class="cv" id="wgCv"></canvas></div><div class="kv" id="wgK"></div></div>');
+ let TT=0,th=0,hist=[];const cv=$('#wgCv');loop(cv,dt=>{const wr=+$('#wgW').value;$('#wgWo').textContent=wr.toFixed(2)+' ω₀';TT+=dt;th+=dt*2*wr;const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted');
+  const cx=70,cy=h/2;c.fillStyle='#C8453B';c.fillRect(cx-62,cy-50,14,100);c.fillStyle='#3E6FD8';c.fillRect(cx+48,cy-50,14,100);const hx=Math.cos(th)*36;c.strokeStyle='#B87333';c.lineWidth=4;c.beginPath();c.moveTo(cx-hx,cy+Math.sin(th)*10);c.lineTo(cx+hx,cy-Math.sin(th)*10);c.stroke();
+  hist.push([TT,Math.cos(th),wr*Math.sin(th)]);while(hist.length&&hist[0][0]<TT-2*Math.PI)hist.shift();const gx=150,gw=w-gx-10,gh=(h-40)/2,X=a=>gx+(a-(TT-2*Math.PI))/(2*Math.PI)*gw;
+  [14,24+gh].forEach(gy=>{c.strokeStyle=ink;c.lineWidth=1;c.beginPath();c.moveTo(gx,gy+gh/2);c.lineTo(gx+gw,gy+gh/2);c.stroke()});c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('flux linkage BAN cos ωt',gx+4,22);c.fillText('e.m.f. ωBAN sin ωt',gx+4,gh+32);
+  c.strokeStyle=cssv('--neg');c.lineWidth=2;c.beginPath();hist.forEach((p,i)=>{const y=14+gh/2-p[1]*(gh/2-6);i?c.lineTo(X(p[0]),y):c.moveTo(X(p[0]),y)});c.stroke();c.strokeStyle=cssv('--pos');c.beginPath();hist.forEach((p,i)=>{const y=24+gh+gh/2-p[2]/2*(gh/2-6);i?c.lineTo(X(p[0]),y):c.moveTo(X(p[0]),y)});c.stroke();
+  $('#wgK').innerHTML='<span>θ = ωt</span><span>peak e.m.f. V₀ = ωBAN: <b>'+wr.toFixed(2)+' × </b>the original</span><span>faster rotation: bigger <em>and</em> more frequent</span>'});
+}
+function wRms(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wrV" style="min-width:110px">Peak p.d. V₀</label><input type="range" id="wrV" min="1" max="10" step="0.5" value="5" style="flex:1;min-width:140px"><span id="wrVo" class="small" style="min-width:50px"></span></div><div id="wrS" style="margin-top:6px"></div><div class="kv" id="wrK"></div><p class="small muted" style="margin:6px 0 0">Power in a resistor ∝ V². The mean of V² over a cycle is V₀²/2 (dashed), so the steady d.c. p.d. giving the same power is V₀/√2.</p></div>');
+ const upd=()=>{const V0=+$('#wrV').value;$('#wrVo').textContent=V0+' V';const X=t=>40+t*340,Y=v=>90-v*7,Y2=v=>200-v*1.1;let s=ln(40,90,390,90)+ln(40,20,40,160)+tx(46,24,'V',{a:'start',fs:12})+ln(40,200,390,200)+ln(40,120,40,200)+tx(46,132,'V²',{a:'start',fs:12});
+  let p='',q='';for(let i=0;i<=200;i++){const t=i/200,v=V0*Math.sin(4*Math.PI*t);p+=X(t)+','+Y(v)+' ';q+=X(t)+','+Y2(v*v)+' '}
+  s+='<polyline points="'+p+'" fill="none" stroke="var(--neg)" stroke-width="2.2"></polyline><polyline points="'+q+'" fill="none" stroke="var(--pos)" stroke-width="2.2"></polyline>'+ln(40,Y2(V0*V0/2),390,Y2(V0*V0/2),1.4).replace('<line ','<line stroke-dasharray="5 4" ')+ln(40,Y(V0/Math.SQRT2),390,Y(V0/Math.SQRT2),1.4).replace('<line ','<line stroke-dasharray="3 3" stroke="var(--ok)" ')+tx(392,Y(V0/Math.SQRT2)+4,'V_rms',{a:'start',fs:10});
+  $('#wrS').innerHTML=svgWrap('0 0 430 210',s,'rms value');$('#wrK').innerHTML='<span>V₀ = <b>'+V0+' V</b></span><span>V<sub>rms</sub> = V₀/√2 = <b>'+(V0/Math.SQRT2).toFixed(2)+' V</b></span><span>peak-to-peak = <b>'+(2*V0)+' V</b></span>'};
+ $('#wrV').addEventListener('input',upd);upd();
+}
+function wPhase(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><span class="seg" id="wpC"><button type="button" aria-pressed="false" data-c="R">resistor</button><button type="button" aria-pressed="true" data-c="L">inductor</button><button type="button" aria-pressed="false" data-c="C">capacitor</button></span></div><div class="cvbox" style="height:220px;margin-top:6px"><canvas class="cv" id="wpCv"></canvas></div><p class="small muted" id="wpT" style="margin:6px 0 0"></p></div>');
+ let comp='L',t=0;$$('#wpC button').forEach(b=>b.addEventListener('click',()=>{comp=b.dataset.c;$$('#wpC button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'))}));
+ const cv=$('#wpCv');loop(cv,dt=>{t+=dt*1.5;const ph=comp==='R'?0:comp==='L'?-Math.PI/2:Math.PI/2;const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const cx=90,cy=h/2,Rr=70;
+  c.strokeStyle=cssv('--line');c.beginPath();c.arc(cx,cy,Rr,0,7);c.stroke();const vec=(a,col,L)=>{c.strokeStyle=col;c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(cx+L*Math.cos(a),cy-L*Math.sin(a));c.stroke()};
+  vec(t,cssv('--neg'),Rr);vec(t+ph,cssv('--pos'),Rr*0.75);const gx=190,gw=w-200;c.strokeStyle=cssv('--ink');c.lineWidth=1;c.beginPath();c.moveTo(gx,cy);c.lineTo(gx+gw,cy);c.stroke();
+  [[0,cssv('--neg'),Rr],[ph,cssv('--pos'),Rr*0.75]].forEach(s=>{c.strokeStyle=s[1];c.lineWidth=2.2;c.beginPath();for(let i=0;i<=gw;i++){const a=t-i/gw*4*Math.PI;const y=cy-s[2]*Math.sin(a+s[0]);i?c.lineTo(gx+i,y):c.moveTo(gx+i,y)}c.stroke()});
+  c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillStyle=cssv('--neg');c.fillText('V',gx+4,20);c.fillStyle=cssv('--pos');c.fillText('I',gx+24,20);
+  $('#wpT').innerHTML=comp==='R'?'Resistor: I and V are <strong>in phase</strong>.':comp==='L'?'Inductor: the current <strong>lags</strong> the p.d. by 90° (a quarter of a cycle). X<sub>L</sub> = ωL.':'Capacitor: the current <strong>leads</strong> the p.d. by 90°. X<sub>C</sub> = 1/ωC.'});
+}
+function wPhasor(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wfR" style="min-width:90px">R</label><input type="range" id="wfR" min="10" max="200" step="5" value="60" style="flex:1;min-width:120px"><span id="wfRo" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wfL" style="min-width:90px">L</label><input type="range" id="wfL" min="0" max="500" step="10" value="200" style="flex:1;min-width:120px"><span id="wfLo" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wfC" style="min-width:90px">C</label><input type="range" id="wfC" min="1" max="20" step="0.5" value="5" style="flex:1;min-width:120px"><span id="wfCo" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wfF" style="min-width:90px">f</label><input type="range" id="wfF" min="20" max="500" step="5" value="100" style="flex:1;min-width:120px"><span id="wfFo" class="small" style="min-width:60px"></span></div><div id="wfS"></div><div class="kv" id="wfK"></div><p class="small muted" style="margin:6px 0 0">Current I = 10 mA rms (the same in every series component) is the reference phasor.</p></div>');
+ const upd=()=>{const Rv=+$('#wfR').value,L=+$('#wfL').value/1000,C=+$('#wfC').value*1e-6,f=+$('#wfF').value,w=2*Math.PI*f,XL=w*L,XC=1/(w*C),I=0.01,VR=I*Rv,VL=I*XL,VC=I*XC,Z=Math.sqrt(Rv*Rv+(XL-XC)*(XL-XC)),phi=Math.atan2(XL-XC,Rv);
+  $('#wfRo').textContent=Rv+' Ω';$('#wfLo').textContent=(L*1000)+' mH';$('#wfCo').textContent=(C*1e6)+' μF';$('#wfFo').textContent=f+' Hz';
+  const m=Math.max(VR,VL,VC,I*Z,0.2),sc=110/m,ox=90,oy=130;let s=carr(ox,oy,ox+VR*sc,oy,'var(--neg)',3)+tx(ox+VR*sc/2,oy+16,'V_R',{fs:11});
+  s+=carr(ox+VR*sc,oy,ox+VR*sc,oy-VL*sc,'#2E9E5B',3)+tx(ox+VR*sc+6,oy-VL*sc/2,'V_L',{a:'start',fs:11})+carr(ox+VR*sc+14,oy,ox+VR*sc+14,oy+VC*sc,'#3E7BFA',3)+tx(ox+VR*sc+20,oy+VC*sc/2,'V_C',{a:'start',fs:11});
+  s+=carr(ox,oy,ox+VR*sc,oy-(VL-VC)*sc,'var(--ink)',2)+tx(ox+VR*sc/2-6,oy-(VL-VC)*sc/2-8,'V',{fs:12,fw:700,a:'end'})+carr(ox,oy,ox+60,oy,'var(--pos)',1.5)+tx(ox-4,oy+4,'I',{a:'end',fs:11});
+  $('#wfS').innerHTML=svgWrap('0 0 400 260',s,'phasor diagram');
+  $('#wfK').innerHTML='<span>X<sub>L</sub> = ωL = <b>'+XL.toFixed(1)+' Ω</b></span><span>X<sub>C</sub> = 1/ωC = <b>'+XC.toFixed(1)+' Ω</b></span><span>Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²) = <b>'+Z.toFixed(1)+' Ω</b></span><span>φ = <b>'+(phi*180/Math.PI).toFixed(1)+'°</b> ('+(phi>0.01?'V leads I: inductive':phi<-0.01?'V lags I: capacitive':'in phase: resonance')+')</span><span>resonance at f₀ = 1/2π√(LC) = <b>'+(L>0?(1/(2*Math.PI*Math.sqrt(L*C))).toFixed(0):'–')+' Hz</b></span>'};
+ ['#wfR','#wfL','#wfC','#wfF'].forEach(s=>$(s).addEventListener('input',upd));upd();
+}
+function wRes(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wqR" style="min-width:110px">Resistance R</label><input type="range" id="wqR" min="5" max="200" step="5" value="30" style="flex:1;min-width:140px"><span id="wqRo" class="small" style="min-width:50px"></span></div><div id="wqS" style="margin-top:6px"></div><div class="kv" id="wqK"></div><p class="small muted" style="margin:6px 0 0">L = 100 mH, C = 1.0 μF, supply 1.0 V rms.</p></div>');
+ const L=0.1,C=1e-6,V=1,f0=1/(2*Math.PI*Math.sqrt(L*C));const upd=()=>{const Rv=+$('#wqR').value;$('#wqRo').textContent=Rv+' Ω';const I=f=>{const w=2*Math.PI*f;return V/Math.sqrt(Rv*Rv+Math.pow(w*L-1/(w*C),2))};
+  const X=f=>40+(f-100)/900*350,Imax=V/5,Y=i=>190-i/Imax*170;let s=ln(40,190,395,190)+ln(40,10,40,190)+tx(395,204,'f / Hz',{a:'end',fs:11})+tx(46,18,'I',{a:'start',fs:12});let p='';for(let f=100;f<=1000;f+=2)p+=X(f).toFixed(1)+','+Y(I(f)).toFixed(1)+' ';
+  s+='<polyline points="'+p+'" fill="none" stroke="var(--neg)" stroke-width="2.4"></polyline>'+ln(X(f0),10,X(f0),190,1).replace('<line ','<line stroke-dasharray="4 4" ')+tx(X(f0)+4,24,'f₀ = '+f0.toFixed(0)+' Hz',{a:'start',fs:11});[200,400,600,800,1000].forEach(f=>{s+=tx(X(f),204,String(f),{fs:10})});
+  $('#wqS').innerHTML=svgWrap('0 0 400 210',s,'resonance curve');const Qf=2*Math.PI*f0*L/Rv;$('#wqK').innerHTML='<span>peak current V/R = <b>'+(V/Rv*1000).toFixed(1)+' mA</b></span><span>Q = V<sub>L</sub>/V<sub>R</sub> = ω₀L/R = <b>'+Qf.toFixed(1)+'</b></span><span>'+(Qf>8?'high Q: sharp resonance':Qf>2?'moderate Q':'low Q: broad resonance')+'</span>'};
+ $('#wqR').addEventListener('input',upd);upd();
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'The rotating coil',h:()=>`
+<h2>Generating a.c.: the rotating coil</h2>
+<p>A flat coil of N turns and area A rotates at angular velocity ω in a uniform field B. The angle between the coil’s normal and the field is θ = ωt, so the flux linkage is</p>
+<div class="eqbig">NΦ = BAN cos ωt</div>
+<p>By Faraday’s law the induced e.m.f. is the rate of change of flux linkage:</p>
+<div class="eqbig">V = ωBAN sin ωt</div>
+<p>(Given on the data sheet; the calculus derivation is not required.) The peak e.m.f. is V₀ = ωBAN. The e.m.f. is greatest when the coil’s plane is parallel to the field (flux linkage zero but changing fastest).</p>`,
+after:el=>wGen(el.querySelector('.wslot')),
+chk:[['A 100-turn coil of area 4.0 × 10⁻³ m² spins at 50 Hz in 0.20 T. Peak e.m.f.?','V₀ = ωBAN = 2π × 50 × 0.20 × 4.0 × 10⁻³ × 100 = 25 V']]},
+{t:'Describing a.c.',h:()=>`
+<h2>Frequency, period, peak and rms</h2>
+<ul><li><strong>Period T</strong>: the time for one complete cycle. <strong>Frequency f</strong> = 1/T. ω = 2πf.</li><li><strong>Peak value</strong> V₀ or I₀: the maximum value. Peak-to-peak = 2V₀.</li><li><strong>rms value</strong>: the steady (d.c.) value that would dissipate the same energy per cycle in a resistor.</li></ul>
+<div class="eqbig">I<sub>rms</sub> = I₀/√2 &nbsp;&nbsp; V<sub>rms</sub> = V₀/√2 = ωBAN/√2</div>
+<p>The UK mains is 230 V rms, 50 Hz, so the peak is 230 × √2 = 325 V. a.c. meters read rms values.</p>`,
+after:el=>wRms(el.querySelector('.wslot')),
+chk:[['Why is the rms value not simply the average p.d.?','The average of a sine wave over a cycle is zero. Power depends on V², whose mean is V₀²/2.']]},
+{t:'Power in a resistor',h:()=>`
+<h2>Mean power in a resistor</h2>
+<div class="eqbig">⟨P⟩ = I<sub>rms</sub>V<sub>rms</sub> = I<sub>rms</sub>²R = V<sub>rms</sub>²/R</div>
+<p>using rms values. The instantaneous power I²R swings between zero and I₀²R; its mean is I₀²R/2 = I<sub>rms</sub>²R. The peak power is twice the mean power.</p>
+<div class="work"><div>A 2.0 kW kettle on 230 V rms: I<sub>rms</sub> = 2000/230 = 8.7 A; I₀ = 12.3 A; R = 230²/2000 = 26 Ω</div></div>`,
+chk:[['A 12 V peak supply drives current through 6.0 Ω. Mean power?','V<sub>rms</sub> = 8.49 V; P = 8.49²/6.0 = 12 W']]},
+{t:'The oscilloscope',h:()=>`
+<h2>Using an oscilloscope</h2>
+<ul><li>The <strong>Y-gain</strong> (V/div) sets the vertical scale: peak p.d. = (divisions from the centre line to a peak) × Y-gain. Measuring peak-to-peak and halving is more precise.</li><li>The <strong>time base</strong> (ms/div) sets the horizontal scale: period = (divisions per cycle) × time base; then f = 1/T.</li><li><strong>d.c.</strong>: the trace is a horizontal line displaced from the centre by V/Y-gain divisions.</li><li>With the <strong>time base off</strong>, an a.c. signal becomes a vertical line of length 2V₀; a d.c. signal is a spot.</li><li>To measure a <strong>current</strong>, display the p.d. across a known resistor and use I = V/R.</li></ul>
+<p>Choose settings that make the trace as large as possible while staying on the screen.</p>`,
+chk:[['A trace spans 6.4 divisions peak to peak at 2 V/div, and one cycle covers 4.0 divisions at 5 ms/div. Find V<sub>rms</sub> and f.','V₀ = 6.4 V, V<sub>rms</sub> = 4.5 V; T = 20 ms, f = 50 Hz']]},
+{t:'Inductors',h:()=>`
+<h2>Inductors in a.c. circuits</h2>
+<p>A changing current in a coil induces a back e.m.f. that opposes the change. In a sinusoidal circuit the <strong>current lags the p.d. by 90°</strong> (π/2): the p.d. is greatest when the current is changing fastest.</p>
+<div class="eqbig">X<sub>L</sub> = V<sub>rms</sub>/I<sub>rms</sub> = ωL</div>
+<p>X<sub>L</sub> is the <strong>reactance</strong> (in ohms). It increases with frequency: inductors block high frequencies.</p>`,
+after:el=>wPhase(el.querySelector('.wslot')),
+chk:[['Find the reactance of a 0.25 H inductor at 50 Hz.','X<sub>L</sub> = 2π × 50 × 0.25 = 79 Ω']]},
+{t:'Capacitors',h:()=>`
+<h2>Capacitors in a.c. circuits</h2>
+<p>A capacitor charges and discharges every cycle. The <strong>current leads the p.d. by 90°</strong>: the current is greatest when the capacitor p.d. is zero and changing fastest.</p>
+<div class="eqbig">X<sub>C</sub> = V<sub>rms</sub>/I<sub>rms</sub> = 1/ωC</div>
+<p>X<sub>C</sub> falls as the frequency rises: capacitors block d.c. and low frequencies but pass high frequencies.</p>
+<h3>No mean power</h3>
+<p>Ideal inductors and capacitors store energy in one quarter-cycle and return it in the next, so the <strong>mean power dissipated in an inductor or a capacitor is zero</strong> (derivation not required). Only resistance dissipates energy.</p>`,
+chk:[['Find the reactance of a 10 μF capacitor at 50 Hz and at 5 kHz.','318 Ω and 3.2 Ω']]},
+{t:'Phasors and impedance',h:()=>`
+<h2>Series circuits: phasors and impedance</h2>
+<p>In a series circuit the <strong>current is the same</strong> through every component, so we draw it as the reference phasor. V<sub>R</sub> is in phase with I; V<sub>L</sub> leads by 90°; V<sub>C</sub> lags by 90°. Add the p.d.s as <strong>phasors</strong> (vectors), not as numbers:</p>
+<div class="eqbig">V = √(V<sub>R</sub>² + (V<sub>L</sub> − V<sub>C</sub>)²)</div>
+<p>Dividing by I gives the <strong>impedance</strong> Z = V<sub>rms</sub>/I<sub>rms</sub>:</p>
+<div class="eqbig">Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²) &nbsp;&nbsp; tan φ = (X<sub>L</sub> − X<sub>C</sub>)/R</div>
+<p>For RC only: Z = √(R² + X<sub>C</sub>²). For RL only: Z = √(R² + X<sub>L</sub>²). φ is the phase angle between the supply p.d. and the current.</p>`,
+after:el=>wPhasor(el.querySelector('.wslot')),
+chk:[['In a series RC circuit V<sub>R</sub> = 6.0 V and V<sub>C</sub> = 8.0 V. What is the supply p.d.?','√(6² + 8²) = 10 V (not 14 V)']]},
+{t:'Resonance',h:()=>`
+<h2>Resonance in a series RCL circuit</h2>
+<p>At one frequency X<sub>L</sub> = X<sub>C</sub>: the inductor and capacitor p.d.s cancel, Z = R (a minimum), the current is a maximum, and I and V are in phase.</p>
+<div class="work"><div>ω₀L = 1/ω₀C, so ω₀² = 1/LC</div></div>
+<div class="eqbig">f₀ = 1 / 2π√(LC)</div>
+<h3>The Q factor</h3>
+<div class="eqbig">Q = V<sub>L</sub>/V<sub>R</sub> = V<sub>C</sub>/V<sub>R</sub> (at resonance)</div>
+<p>= ω₀L/R. The <strong>sharpness</strong> of the resonance curve is set by Q: a small R gives a high Q and a tall, narrow peak. V<sub>L</sub> and V<sub>C</sub> can each be much bigger than the supply p.d.</p>
+<p>Uses: tuning a radio receiver to one station.</p>`,
+after:el=>wRes(el.querySelector('.wslot')),
+chk:[['Find f₀ for L = 100 mH and C = 1.0 μF.','f₀ = 1/(2π√(10⁻⁷)) = 503 Hz'],['At resonance V<sub>R</sub> = 0.50 V and V<sub>C</sub> = 6.0 V. Q?','Q = 12']]}
+];
+
+/* ---------- drills ---------- */
+const DR={
+ rms:{n:'Peak and rms',g(s){const v=s?rint(0,2):rint(0,1);
+  if(v===0){const V0=pick([5,12,24,100,325,340]);return Q(`An a.c. supply has a peak p.d. of ${V0} V. What is its rms value?`,V0/Math.SQRT2,'V',[`V<sub>rms</sub> = V₀/√2 = ${V0}/√2`,`= ${f3(V0/Math.SQRT2)} V`])}
+  if(v===1){const Ir=pick([0.5,2,3.5,10,13]);return Q(`An a.c. ammeter reads ${Ir} A. What is the peak current?`,Ir*Math.SQRT2,'A',[`I₀ = √2 × I<sub>rms</sub>`,`= ${f3(Ir*Math.SQRT2)} A`])}
+  const B=pick([0.05,0.1,0.2]),A=rint(2,40)*1e-4,N=pick([50,100,200,500]),f=pick([25,50,60]),w=2*Math.PI*f;return Q(`A ${N}-turn coil of area ${f3(A)} m² rotates at ${f} Hz in ${B} T. Find the rms e.m.f.`,w*B*A*N/Math.SQRT2,'V',[`V₀ = ωBAN = ${f3(w*B*A*N)} V`,`V<sub>rms</sub> = V₀/√2 = ${f3(w*B*A*N/Math.SQRT2)} V`],2)}},
+ pow:{n:'Mean power',g(s){const Rr=pick([4,10,22,47,100,1000]),v=s?rint(0,2):rint(0,1);
+  if(v===0){const Vr=pick([6,12,24,230]);return Q(`A ${Rr} Ω resistor is connected to a ${Vr} V rms supply. Find the mean power.`,Vr*Vr/Rr,'W',[`P = V<sub>rms</sub>²/R = ${Vr}²/${Rr}`,`= ${f3(Vr*Vr/Rr)} W`])}
+  if(v===1){const I0=pick([0.2,0.5,1,2,5]);return Q(`A current of peak value ${I0} A flows through ${Rr} Ω. Find the mean power.`,I0*I0*Rr/2,'W',[`I<sub>rms</sub> = ${f3(I0/Math.SQRT2)} A`,`P = I<sub>rms</sub>²R = ${f3(I0*I0*Rr/2)} W`])}
+  const P=pick([500,1000,2000,3000]),Vr=230;return Q(`A ${P} W heater runs on 230 V rms mains. Find the peak current.`,P/Vr*Math.SQRT2,'A',[`I<sub>rms</sub> = P/V<sub>rms</sub> = ${f3(P/Vr)} A`,`I₀ = √2 × I<sub>rms</sub> = ${f3(P/Vr*Math.SQRT2)} A`],2)}},
+ react:{n:'Reactance',g(s){const f=pick([50,100,250,1000,5000]),w=2*Math.PI*f,v=s?rint(0,3):rint(0,1);
+  if(v===0){const L=pick([0.01,0.05,0.1,0.25,0.5]);return Q(`Find the reactance of a ${L*1000} mH inductor at ${f} Hz.`,w*L,'Ω',[`X<sub>L</sub> = ωL = 2π × ${f} × ${L}`,`= ${f3(w*L)} Ω`])}
+  if(v===1){const C=pick([0.1,1,2.2,4.7,10,47])*1e-6;return Q(`Find the reactance of a ${f3(C*1e6)} μF capacitor at ${f} Hz.`,1/(w*C),'Ω',[`X<sub>C</sub> = 1/ωC = 1/(2π × ${f} × ${f3(C)})`,`= ${f3(1/(w*C))} Ω`])}
+  if(v===2){const C=pick([1,2.2,4.7,10])*1e-6,V=pick([5,10,12]);return Q(`A ${f3(C*1e6)} μF capacitor is connected to a ${V} V rms, ${f} Hz supply. Find the rms current in mA.`,V*w*C*1000,'mA',[`X<sub>C</sub> = 1/ωC = ${f3(1/(w*C))} Ω`,`I = V/X<sub>C</sub> = ${f3(V*w*C)} A = ${f3(V*w*C*1000)} mA`],2)}
+  const X=pick([100,200,500,1000]);return Q(`At what frequency does a 0.20 H inductor have a reactance of ${X} Ω?`,X/(2*Math.PI*0.2),'Hz',[`f = X<sub>L</sub>/2πL = ${X}/(2π × 0.20)`,`= ${f3(X/(2*Math.PI*0.2))} Hz`],2)}},
+ imp:{n:'Impedance and phase',g(s){const Rr=pick([30,50,100,220]),f=pick([50,100,500]),w=2*Math.PI*f,L=pick([0.1,0.2,0.5]),C=pick([2.2,4.7,10,22])*1e-6,XL=w*L,XC=1/(w*C),v=s?rint(0,3):rint(0,1);
+  if(v===0){const Z=Math.sqrt(Rr*Rr+XC*XC);return Q(`A ${Rr} Ω resistor is in series with a capacitor of reactance ${f3(XC)} Ω. Find the impedance.`,Z,'Ω',[`Z = √(R² + X<sub>C</sub>²)`,`= √(${Rr}² + ${f3(XC)}²)`,`= ${f3(Z)} Ω`])}
+  if(v===1){const VR=pick([3,6,8]),VL=pick([4,8,12]);return Q(`In a series RL circuit V<sub>R</sub> = ${VR} V and V<sub>L</sub> = ${VL} V (rms). Find the supply p.d.`,Math.hypot(VR,VL),'V',[`Add as phasors: V = √(V<sub>R</sub>² + V<sub>L</sub>²)`,`= √(${VR}² + ${VL}²) = ${f3(Math.hypot(VR,VL))} V`])}
+  const Z=Math.sqrt(Rr*Rr+(XL-XC)*(XL-XC)),phi=Math.atan((XL-XC)/Rr)*180/Math.PI;if(v===2)return Q(`A series circuit has R = ${Rr} Ω, L = ${L*1000} mH and C = ${f3(C*1e6)} μF at ${f} Hz. Find its impedance.`,Z,'Ω',[`X<sub>L</sub> = ${f3(XL)} Ω, X<sub>C</sub> = ${f3(XC)} Ω`,`Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)`,`= ${f3(Z)} Ω`],2);
+  return Q(`For R = ${Rr} Ω, L = ${L*1000} mH and C = ${f3(C*1e6)} μF in series at ${f} Hz, find the phase angle (in degrees, positive if p.d. leads current).`,phi,'°',[`X<sub>L</sub> = ${f3(XL)} Ω, X<sub>C</sub> = ${f3(XC)} Ω`,`tan φ = (X<sub>L</sub> − X<sub>C</sub>)/R = ${f3((XL-XC)/Rr)}`,`φ = ${f3(phi)}°`],2,0.02)}},
+ res:{n:'Resonance and Q',g(s){const L=pick([0.01,0.05,0.1,0.25]),C=pick([0.1,0.47,1,2.2,10])*1e-6,f0=1/(2*Math.PI*Math.sqrt(L*C)),v=s?rint(0,3):rint(0,1);
+  if(v===0)return Q(`Find the resonant frequency of a series circuit with L = ${L*1000} mH and C = ${f3(C*1e6)} μF.`,f0,'Hz',[`f₀ = 1/(2π√(LC))`,`= 1/(2π√(${L} × ${f3(C)}))`,`= ${f3(f0)} Hz`]);
+  if(v===1){const VR=pick([0.2,0.5,1]),Qf=pick([5,8,12,20]);return Q(`At resonance V<sub>R</sub> = ${VR} V and V<sub>L</sub> = ${VR*Qf} V. Find the Q factor.`,Qf,'',[`Q = V<sub>L</sub>/V<sub>R</sub> = ${VR*Qf}/${VR} = ${Qf}`])}
+  if(v===2){const f=pick([500,1000,2000]);return Q(`What capacitance resonates with a ${L*1000} mH inductor at ${f} Hz? Answer in μF.`,1/(4*Math.PI*Math.PI*f*f*L)*1e6,'μF',[`C = 1/(4π²f₀²L)`,`= ${f3(1/(4*Math.PI*Math.PI*f*f*L))} F`,`= ${f3(1/(4*Math.PI*Math.PI*f*f*L)*1e6)} μF`],2)}
+  const Rr=pick([5,10,20,50]),V=pick([1,2,5]);return Q(`A series RCL circuit (R = ${Rr} Ω, L = ${L*1000} mH, C = ${f3(C*1e6)} μF) is driven at resonance by ${V} V rms. Find the rms p.d. across the inductor.`,V/Rr*2*Math.PI*f0*L,'V',[`At resonance Z = R, so I = ${V}/${Rr} = ${f3(V/Rr)} A`,`X<sub>L</sub> = 2πf₀L = ${f3(2*Math.PI*f0*L)} Ω`,`V<sub>L</sub> = IX<sub>L</sub> = ${f3(V/Rr*2*Math.PI*f0*L)} V (Q = ${f3(2*Math.PI*f0*L/Rr)})`],2)}}
+};
+function drHint(v,q){if(close(v,q.ans*Math.SQRT2,0.02)||close(v,q.ans/Math.SQRT2,0.02))return ' Out by √2: check whether you need the peak or the rms value.';if(close(v,q.ans*2*Math.PI,0.02)||close(v,q.ans/(2*Math.PI),0.02))return ' Out by 2π: ω = 2πf.';if(close(v,q.ans*2,0.02))return ' Out by a factor of 2: the mean power is half the peak power.';return ''}
+
+/* ---------- quiz ---------- */
+const QB=[
+['The flux linkage of a coil rotating at angular velocity ω in a uniform field is:',['BAN cos ωt','BAN sin ωt','ωBAN cos ωt','BAN/ω'],0,'θ = ωt is the angle between the normal and the field.'],
+['The peak e.m.f. of a rotating coil is:',['ωBAN','BAN','BAN/ω','ωBAN/√2'],0,'V = ωBAN sin ωt.'],
+['Doubling the rotation speed of a generator coil:',['doubles both the peak e.m.f. and the frequency','doubles only the frequency','doubles only the peak e.m.f.','quadruples the peak e.m.f.'],0,'V₀ = ωBAN.'],
+['The rms value of an alternating current is:',['the steady current that would dissipate the same energy per cycle in a resistor','the average current','the peak current','half the peak current'],0,'I<sub>rms</sub> = I₀/√2.'],
+['UK mains is 230 V rms. Its peak value is about:',['325 V','163 V','230 V','460 V'],0,'230 × √2.'],
+['a.c. voltmeters and ammeters usually read:',['rms values','peak values','peak-to-peak values','average values'],0,'So P = I<sub>rms</sub>V<sub>rms</sub>.'],
+['The mean power in a resistor with peak current I₀ is:',['I₀²R/2','I₀²R','I₀R/√2','2I₀²R'],0,'= I<sub>rms</sub>²R.'],
+['An oscilloscope’s Y-gain is set to 2 V/div. A sine wave has peaks 3.5 divisions above the centre. The rms p.d. is:',['4.9 V','7.0 V','3.5 V','9.9 V'],0,'V₀ = 7.0 V, V<sub>rms</sub> = 7.0/√2.'],
+['One cycle covers 4 divisions at 5 ms/div. The frequency is:',['50 Hz','20 Hz','200 Hz','5 Hz'],0,'T = 20 ms.'],
+['With the time base switched off, an a.c. signal appears as:',['a vertical line of length 2V₀','a spot','a horizontal line','a sine wave'],0,'The spot moves only up and down.'],
+['A d.c. p.d. on an oscilloscope appears as:',['a horizontal line displaced from the centre','a vertical line','a sine wave','a spot at the centre'],0,'Displacement = V/Y-gain.'],
+['In a pure inductor, the current:',['lags the p.d. by 90°','leads the p.d. by 90°','is in phase with the p.d.','lags by 180°'],0,'The back e.m.f. opposes changes in current.'],
+['In a capacitor, the current:',['leads the p.d. by 90°','lags the p.d. by 90°','is in phase with the p.d.','is zero'],0,'Current is greatest when the p.d. is changing fastest.'],
+['The reactance of an inductor:',['increases with frequency','decreases with frequency','does not depend on frequency','is infinite for d.c.'],0,'X<sub>L</sub> = ωL.'],
+['The reactance of a capacitor:',['decreases with frequency','increases with frequency','is zero for d.c.','is constant'],0,'X<sub>C</sub> = 1/ωC: infinite for d.c.'],
+['The mean power dissipated in an ideal capacitor is:',['zero','I<sub>rms</sub>V<sub>rms</sub>','I₀V₀/2','V²/X<sub>C</sub>'],0,'Energy is stored and returned each cycle.'],
+['Reactance is measured in:',['ohms','henries','farads','siemens'],0,'X = V<sub>rms</sub>/I<sub>rms</sub>.'],
+['In a series RC circuit with V<sub>R</sub> = 3 V and V<sub>C</sub> = 4 V, the supply p.d. is:',['5 V','7 V','1 V','12 V'],0,'Add as phasors: √(3² + 4²).'],
+['The impedance of a series RCL circuit is:',['√(R² + (X<sub>L</sub> − X<sub>C</sub>)²)','R + X<sub>L</sub> + X<sub>C</sub>','R + X<sub>L</sub> − X<sub>C</sub>','√(R² + X<sub>L</sub>² + X<sub>C</sub>²)'],0,'X<sub>L</sub> and X<sub>C</sub> are in antiphase.'],
+['In a series a.c. circuit, the reference phasor is usually:',['the current, as it is the same in every component','the supply p.d.','V<sub>L</sub>','V<sub>C</sub>'],0,'P.d.s are then drawn relative to it.'],
+['The phase angle φ in a series RCL circuit satisfies:',['tan φ = (X<sub>L</sub> − X<sub>C</sub>)/R','tan φ = R/(X<sub>L</sub> − X<sub>C</sub>)','sin φ = X<sub>L</sub>/Z','cos φ = X<sub>C</sub>/R'],0,'From the phasor triangle.'],
+['At resonance in a series RCL circuit:',['X<sub>L</sub> = X<sub>C</sub>, Z = R and the current is a maximum','Z is a maximum','the current is zero','V<sub>L</sub> = V<sub>R</sub>'],0,'The reactances cancel.'],
+['The resonant frequency of a series RCL circuit is:',['1/(2π√(LC))','2π√(LC)','1/(2πLC)','√(L/C)'],0,'From ω₀L = 1/ω₀C.'],
+['At resonance, the phase angle between the supply p.d. and the current is:',['0°','90°','45°','180°'],0,'The circuit behaves like a pure resistance.'],
+['The Q factor of a series RCL circuit is:',['V<sub>L</sub>/V<sub>R</sub> at resonance','V<sub>R</sub>/V<sub>L</sub>','the resonant frequency','the peak current'],0,'Also V<sub>C</sub>/V<sub>R</sub>.'],
+['Reducing the resistance in a series RCL circuit makes the resonance curve:',['taller and sharper','broader','shift to a higher frequency','disappear'],0,'Higher Q: f₀ is unchanged.'],
+['Changing R in a series RCL circuit affects:',['the height and sharpness of the peak but not f₀','f₀ only','nothing','only the phase angle at resonance'],0,'f₀ depends only on L and C.'],
+['At resonance, the p.d. across the capacitor can be:',['much larger than the supply p.d.','only equal to the supply p.d.','zero','always smaller than V<sub>R</sub>'],0,'V<sub>C</sub> = Q × supply p.d.'],
+['Below the resonant frequency, a series RCL circuit behaves as:',['capacitive (current leads)','inductive (current lags)','purely resistive','an open circuit'],0,'X<sub>C</sub> > X<sub>L</sub> at low frequency.'],
+['A real coil’s measured reactance does not fall to zero at low frequency because:',['the coil wire has resistance','inductance increases','the meter is inaccurate','capacitance is present'],0,'Its impedance is √(r² + X<sub>L</sub>²).'],
+['A capacitor in series with a loudspeaker lets through:',['high frequencies but blocks low frequencies','low frequencies only','only d.c.','nothing'],0,'X<sub>C</sub> is small at high frequency.']
+];
+
+/* ---------- graph match ---------- */
+const CURVES={
+ vt:{xl:'t',yl:'V',mid:1,f:x=>0.8*Math.sin(x*4*Math.PI),extra:(c,x0,y0,xw,sc)=>{c.setLineDash([4,4]);c.strokeStyle=cssv('--muted');c.beginPath();c.moveTo(x0,y0-0.566*sc);c.lineTo(x0+xw,y0-0.566*sc);c.stroke();c.setLineDash([]);c.fillStyle=cssv('--muted');c.fillText('V_rms',x0+xw-4,y0-0.566*sc-4)}},
+ pt:{xl:'t',yl:'P (resistor)',f:x=>0.85*Math.pow(Math.sin(x*4*Math.PI),2)},
+ xcf:{xl:'f',yl:'X_C',f:x=>x<0.08?null:0.07/x},
+ xlf:{xl:'f',yl:'X_L',f:x=>0.85*x},
+ res:{xl:'f',yl:'I',f:x=>{const w=x*2+0.05;return 0.9/Math.sqrt(1+Math.pow(12*(w-1/w)/1,2)*0.08)}},
+ zf:{xl:'f',yl:'Z',f:x=>{const w=x*2+0.05;return Math.min(1,0.08*Math.sqrt(1+Math.pow(12*(w-1/w),2)*0.4))}},
+ lag:{xl:'t',yl:'V, I (inductor)',mid:1,f:x=>0.8*Math.sin(x*4*Math.PI),two:x=>0.55*Math.sin(x*4*Math.PI-Math.PI/2)}
+};
+const GM=[['vt','Sinusoidal p.d. with its rms value'],['pt','Power dissipated in a resistor over time'],['xcf','Reactance of a capacitor against frequency'],['xlf','Reactance of an inductor against frequency'],['res','Current in a series RCL circuit against frequency'],['zf','Impedance of a series RCL circuit against frequency'],['lag','Current lagging p.d. by 90°']];
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p,p2){this.p=p.slice();this.p2=p2?p2.slice():null;this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  const all=this.p.concat(this.p2||[]);if(all.length){const xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.p2){c.strokeStyle=cssv('--ok');c.lineWidth=2;this.p2.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.arc(P[0],P[1],5,0,7);c.stroke()})}
+  if(o.curve){c.strokeStyle=cssv('--muted');c.setLineDash([6,5]);c.lineWidth=2;c.beginPath();for(let i=0;i<=200;i++){const x=X[0]+(X[1]-X[0])*i/200,y=o.curve(x);if(!isFinite(y))continue;const P=px(x,y);i?c.lineTo(P[0],P[1]):c.moveTo(P[0],P[1])}c.stroke();c.setLineDash([])}
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+/* ============ LAB 1: oscilloscope ============ */
+const C1={s:0,y:1,x:1,off:false,data:[]};
+(function(){const g=kitRng(111);C1.src=[{n:'Signal generator A',V:Math.round((1.5+g()*4)*100)/100,f:Math.round(60+g()*340)},{n:'Signal generator B',V:Math.round((0.2+g()*0.8)*100)/100,f:Math.round((1+g()*4)*100)*10},{n:'Cell (d.c.)',V:Math.round((1.3+g()*0.3)*100)/100,f:0},{n:'Across a 100 Ω resistor',V:Math.round((0.5+g()*2.5)*100)/100,f:50}]})();
+const YG=[0.1,0.2,0.5,1,2,5],TB=[0.1,0.2,0.5,1,2,5,10];
+function c1Scope(){const cv=$('#c1Sc');if(!cv||!cv.isConnected)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#0B1A12';c.fillRect(0,0,w,h);const dx=w/10,dy=h/8;
+ c.strokeStyle='rgba(160,230,190,.18)';c.lineWidth=1;for(let i=0;i<=10;i++){c.beginPath();c.moveTo(i*dx,0);c.lineTo(i*dx,h);c.stroke()}for(let j=0;j<=8;j++){c.beginPath();c.moveTo(0,j*dy);c.lineTo(w,j*dy);c.stroke()}
+ c.strokeStyle='rgba(160,230,190,.5)';c.beginPath();c.moveTo(0,h/2);c.lineTo(w,h/2);c.moveTo(w/2,0);c.lineTo(w/2,h);c.stroke();for(let i=0;i<50;i++){const x=i*w/50;c.beginPath();c.moveTo(x,h/2-3);c.lineTo(x,h/2+3);c.stroke()}for(let j=0;j<40;j++){const y=j*h/40;c.beginPath();c.moveTo(w/2-3,y);c.lineTo(w/2+3,y);c.stroke()}
+ const S=C1.src[C1.s];c.strokeStyle='#5CFF9D';c.fillStyle='#5CFF9D';c.shadowColor='#5CFF9D';c.shadowBlur=6;c.lineWidth=2;
+ if(C1.off){if(S.f){const a=S.V/C1.y*dy;c.beginPath();c.moveTo(w/2,clamp(h/2-a,1,h-1));c.lineTo(w/2,clamp(h/2+a,1,h-1));c.stroke()}else{c.beginPath();c.arc(w/2,clamp(h/2-S.V/C1.y*dy,2,h-2),3,0,7);c.fill()}}
+ else{c.beginPath();for(let i=0;i<=w;i++){const t=i/dx*C1.x/1000,v=S.f?S.V*Math.sin(2*Math.PI*S.f*t):S.V;const y=clamp(h/2-v/C1.y*dy,1,h-1);i?c.lineTo(i,y):c.moveTo(i,y)}c.stroke()}
+ c.shadowBlur=0;c.fillStyle='#A7E3C0';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText(C1.y+' V/div   '+(C1.off?'time base off':C1.x+' ms/div'),6,h-6)}
+function c1Btns(){$('#c1Src').innerHTML=C1.src.map((s,i)=>'<button type="button" class="chip" data-i="'+i+'" aria-pressed="'+(i===C1.s)+'">'+s.n+'</button>').join('');$$('#c1Src .chip').forEach(b=>b.addEventListener('click',()=>{C1.s=+b.dataset.i;c1Btns();c1Scope();$('#c1Per').disabled=!C1.src[C1.s].f}));
+ $('#c1Y').innerHTML=YG.map(v=>'<button type="button" data-v="'+v+'" aria-pressed="'+(v===C1.y)+'">'+v+'</button>').join('');$$('#c1Y button').forEach(b=>b.addEventListener('click',()=>{C1.y=+b.dataset.v;c1Btns();c1Scope()}));
+ $('#c1X').innerHTML=TB.map(v=>'<button type="button" data-v="'+v+'" aria-pressed="'+(v===C1.x)+'">'+v+'</button>').join('');$$('#c1X button').forEach(b=>b.addEventListener('click',()=>{C1.x=+b.dataset.v;c1Btns();c1Scope()}))}
+$('#c1Off').addEventListener('change',e=>{C1.off=e.target.checked;c1Scope()});watch($('#c1Sc'),c1Scope);
+$('#c1Rec').addEventListener('click',()=>{const m=$('#c1Msg'),S=C1.src[C1.s],pk=parseNum($('#c1Pk').value),T=parseNum($('#c1Per').value);if(isNaN(pk)){fb(m,'info','Enter the peak p.d. (for the cell, its steady p.d.).');return}
+ if(S.V/C1.y>4){fb(m,'info','The trace goes off the screen: choose a larger V/div.');return}
+ if(Math.abs(Math.abs(pk)-S.V)>0.25*C1.y){miss();fb(m,'no','Check the p.d.: count divisions from the centre line and multiply by '+C1.y+' V/div.'+(S.V/C1.y<1.5?' A smaller V/div would make the trace bigger and easier to read.':''));return}
+ if(S.f){if(isNaN(T)){fb(m,'info','Enter the period in ms too.');return}const Tt=1000/S.f;if(C1.off){fb(m,'info','Switch the time base on to measure the period.');return}if(Math.abs(T-Tt)>0.25*C1.x){miss();fb(m,'no','Check the period: count divisions for one full cycle and multiply by '+C1.x+' ms/div.'+(Tt/C1.x>8?' A slower time base would help.':Tt/C1.x<1.5?' A faster time base (smaller ms/div) would spread the wave out.':''));return}}
+ C1.data=C1.data.filter(d=>d[0]!==C1.s);C1.data.push([C1.s,pk,S.f?T:null]);$('#c1Pk').value='';$('#c1Per').value='';award(1);c1Table();fb(m,'ok','Recorded for '+S.n+'.')});
+function c1Table(){$('#c1Tb').innerHTML=C1.data.length?C1.data.map((r,i)=>'<tr><td>'+C1.src[r[0]].n+'</td><td>'+r[1]+'</td><td>'+(r[2]===null?'–':r[2])+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="4" class="muted">No readings yet</td></tr>';$$('#c1Tb .x').forEach(b=>b.addEventListener('click',()=>{C1.data.splice(+b.dataset.i,1);c1Table()}))}
+function c1Tasks(){
+ $('#c1Card').innerHTML='<span>The screen has 10 × 8 divisions.</span><span>Measure peak p.d. from the centre line (or half the peak-to-peak).</span>';
+ const el=$('#c1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const S=C1.src,rec=i=>C1.data.find(d=>d[0]===i);
+ numTask(el,'1. What is the rms p.d. of signal generator A?','V',v=>{if(!rec(0))return {info:1,msg:'Record generator A first.'};const t=S[0].V/Math.SQRT2;if(Math.abs(v-t)<=0.04*t+0.01)return {ok:true,msg:'<strong>Correct:</strong> V<sub>rms</sub> = V₀/√2 = '+t.toFixed(2)+' V.'};return {ok:false,msg:'Divide the peak p.d. by √2.'}},2);
+ numTask(el,'2. What is the frequency of signal generator A?','Hz',v=>{if(!rec(0))return {info:1,msg:'Record generator A first.'};if(Math.abs(v-S[0].f)<=0.05*S[0].f)return {ok:true,msg:'<strong>Correct:</strong> f = 1/T = '+S[0].f+' Hz.'};return {ok:false,msg:'f = 1/T, with T converted from ms to s.'}},2);
+ numTask(el,'3. What is the frequency of signal generator B?','Hz',v=>{if(!rec(1))return {info:1,msg:'Record generator B first (you will need a faster time base).'};if(Math.abs(v-S[1].f)<=0.05*S[1].f)return {ok:true,msg:'<strong>Correct:</strong> '+S[1].f+' Hz.'};return {ok:false,msg:'f = 1/T.'}},2);
+ numTask(el,'4. What is the p.d. of the cell?','V',v=>{if(!rec(2))return {info:1,msg:'Record the cell first.'};if(Math.abs(v-S[2].V)<=0.03)return {ok:true,msg:'<strong>Correct:</strong> '+S[2].V.toFixed(2)+' V. A d.c. p.d. shifts the horizontal line; use a small V/div for precision.'};return {ok:false,msg:'Count divisions from the centre line to the line.'}},2);
+ numTask(el,'5. The scope is connected across a 100 Ω resistor. What is the rms current in the resistor?','mA',v=>{if(!rec(3))return {info:1,msg:'Record the p.d. across the resistor first.'};const t=S[3].V/Math.SQRT2/100*1000;if(Math.abs(v-t)<=0.04*t)return {ok:true,msg:'<strong>Correct:</strong> I<sub>rms</sub> = V<sub>rms</sub>/R = '+t.toFixed(1)+' mA.'};return {ok:false,msg:'I₀ = V₀/R, then divide by √2.'}},2);
+ numTask(el,'6. What is the mean power dissipated in the resistor?','mW',v=>{if(!rec(3))return {info:1,msg:'Record the p.d. across the resistor first.'};const t=S[3].V*S[3].V/2/100*1000;if(Math.abs(v-t)<=0.06*t)return {ok:true,msg:'<strong>Correct:</strong> P = V<sub>rms</sub>²/R = '+t.toFixed(1)+' mW.'};if(Math.abs(v-2*t)<=0.06*2*t)return {ok:false,msg:'That uses the peak p.d. Use the rms value.'};return {ok:false,msg:'P = V<sub>rms</sub>²/R.'}},2);
+ mcq(el,'With the time base off, generator A shows a vertical line. What is its length?',['2V₀ ÷ Y-gain divisions (peak-to-peak)','V₀ ÷ Y-gain divisions','V<sub>rms</sub> ÷ Y-gain divisions','zero'],0,'The spot moves up and down between +V₀ and −V₀.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="c1Deb">Reveal the true signals</button><div class="fb" id="c1DebO"></div></div>');
+ $('#c1Deb').addEventListener('click',()=>fb($('#c1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>'+S.map(s=>s.n+': '+(s.f?'V₀ = '+s.V+' V, f = '+s.f+' Hz':s.V+' V d.c.')).join('<br>')));
+}
+
+/* ============ LAB 2: reactance ============ */
+const X2={c:'C',f:200,data:[],V:2.0};
+(function(){const g=kitRng(112);X2.C=Math.round((1+g()*9)*10)/10*1e-6;X2.L=Math.round(50+g()*200)/1000;X2.r=Math.round(15+g()*45);X2.gV=1+(g()-0.5)*0.02;X2.gI=1+(g()-0.5)*0.02;})();
+function x2Z(){const w=2*Math.PI*X2.f;return X2.c==='C'?1/(w*X2.C):Math.sqrt(X2.r*X2.r+w*w*X2.L*X2.L)}
+function x2Read(){const Z=x2Z(),I=X2.V/Z;return {V:Math.round(X2.V*X2.gV*(1+gauss()*0.002)*1000)/1000,I:Math.round(I*1000*X2.gI*(1+gauss()*0.003)*100)/100}}
+function x2Circ(){let s=plc(acG(),40,110,90)+'<path d="M40 80 L40 30 L110 30" fill="none"></path>'+place('A',140,30)+'<path d="M170 30 L260 30 L260 70" fill="none"></path>'+plc(X2.c==='C'?capG():indG(),260,100,90)+'<path d="M260 130 L260 190 L40 190 L40 140" fill="none"></path>';
+ s+='<path d="M260 45 L320 45 L320 70" fill="none"></path>'+place('V',320,100,90)+'<path d="M320 130 L320 175 L260 175" fill="none"></path>'+dot(260,45)+dot(260,175)+tx(10,114,'~',{fs:12,a:'start'})+tx(232,104,X2.c==='C'?'C':'L',{fs:13,a:'end'});
+ $('#x2Circ').innerHTML=svgWrap('0 0 360 210',s,'a.c. circuit')}
+function x2Upd(){$('#x2Fo').textContent=X2.f+' Hz';const r=x2Read();X2.shown=r;$('#x2V').textContent=r.V.toFixed(3);$('#x2I').textContent=r.I.toFixed(2)}
+$$('#x2C button').forEach(b=>b.addEventListener('click',()=>{X2.c=b.dataset.c;$$('#x2C button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));x2Circ();x2Upd();x2Plot(true)}));
+$('#x2F').addEventListener('input',e=>{X2.f=+e.target.value;x2Upd()});setInterval(()=>{if(labActive==='lab2')x2Upd()},900);
+$('#x2Rec').addEventListener('click',()=>{const r=X2.shown;X2.data=X2.data.filter(d=>!(d[0]===X2.c&&d[1]===X2.f));X2.data.push([X2.c,X2.f,r.V,r.I]);X2.data.sort((a,b)=>a[0]<b[0]?-1:a[0]>b[0]?1:a[1]-b[1]);x2Table();x2Plot();fb($('#x2Msg'),'ok','Recorded: X = V/I = '+(r.V/(r.I/1000)).toFixed(1)+' Ω at '+X2.f+' Hz.')});
+$('#x2Clr').addEventListener('click',()=>{X2.data=[];x2Table();x2Plot()});
+function x2Table(){$('#x2Tb').innerHTML=X2.data.length?X2.data.map((r,i)=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2].toFixed(3)+'</td><td>'+r[3].toFixed(2)+'</td><td>'+(r[2]/(r[3]/1000)).toFixed(1)+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="6" class="muted">No readings yet</td></tr>';$$('#x2Tb .x').forEach(b=>b.addEventListener('click',()=>{X2.data.splice(+b.dataset.i,1);x2Table();x2Plot()}))}
+const p2=new Plot($('#x2G'),{xl:'1/f / ms',yl:'X / Ω',bx:[0,50],by:[0,8000],line:true,onDraw:()=>{const f=p2.line();$('#x2Ro').innerHTML=f?'gradient = <strong>'+sci(f.m,3)+(X2.c==='C'?' Ω ms⁻¹':' Ω Hz⁻¹')+'</strong>, intercept = '+sci(f.c,3)+' Ω':''}});
+function x2Pts(){return X2.data.filter(d=>d[0]===X2.c).map(d=>X2.c==='C'?[1000/d[1],d[2]/(d[3]/1000)]:[d[1],d[2]/(d[3]/1000)])}
+function x2Plot(reset){Object.assign(p2.o,X2.c==='C'?{xl:'1/f / ms'}:{xl:'f / Hz'});if(reset){p2.user=false;p2.h=null}$('#x2GT').textContent=X2.c==='C'?'Graph of X_C against 1/f':'Graph of X_L against f';p2.set(x2Pts())}
+$('#x2Line').addEventListener('click',()=>p2.reset(false));
+function x2Tasks(){const el=$('#x2Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">X<sub>C</sub> = (1/2πC)(1/f): a graph of X<sub>C</sub> against 1/f is a straight line through the origin with gradient 1/2πC. X<sub>L</sub> = 2πL f: a graph of X<sub>L</sub> against f has gradient 2πL.</p>';const S={};
+ numTask(el,'1. Capacitor: use your gradient to find C.','μF',v=>{if(X2.c!=='C')return {info:1,msg:'Select the capacitor to show its graph.'};const pts=x2Pts();if(pts.length<5)return {info:1,msg:'Record at least 5 frequencies with the capacitor.'};const f=p2.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};if(pct(f.m,ls.m)>6)return {ok:false,msg:'Adjust your line.'};const t=1/(2*Math.PI*f.m*1000)*1e6;if(close(v,t,0.03)){S.C=v;return {ok:true,msg:'<strong>Correct:</strong> C = 1/(2π × gradient) = '+t.toFixed(2)+' μF (the gradient is in Ω ms⁻¹, so × 1000 for Ω s⁻¹).'}}return {ok:false,msg:'C = 1/(2π × gradient), with the gradient in Ω s⁻¹ (× 1000).'}},3);
+ numTask(el,'2. Inductor: use the gradient of your X<sub>L</sub> against f line (fit it to the higher frequencies) to find L.','mH',v=>{if(X2.c!=='L')return {info:1,msg:'Select the inductor to show its graph.'};const pts=x2Pts();if(pts.length<5)return {info:1,msg:'Record at least 5 frequencies with the inductor.'};const f=p2.line();if(!f)return {info:1,msg:'Fit your line.'};const t=f.m/(2*Math.PI)*1000;if(Math.abs(t-X2.L*1000)/(X2.L*1000)>0.08)return {ok:false,msg:'Your line’s gradient gives '+t.toFixed(0)+' mH, which doesn’t follow the high-frequency points closely. Adjust it.'};if(close(v,t,0.03))return {ok:true,msg:'<strong>Good:</strong> L = gradient/2π = '+t.toFixed(0)+' mH.'};return {ok:false,msg:'L = gradient / 2π.'}},3);
+ numTask(el,'3. Using your value of C, what rms current would flow at 50 Hz with 2.00 V rms?','mA',v=>{if(S.C===undefined)return {info:1,msg:'Complete task 1.'};const t=2*2*Math.PI*50*S.C*1e-6*1000;if(close(v,t,0.03))return {ok:true,msg:'<strong>Correct:</strong> I = V/X<sub>C</sub> = '+t.toFixed(2)+' mA. Try it.'};return {ok:false,msg:'X<sub>C</sub> = 1/(2π × 50 × C), then I = V/X<sub>C</sub>.'}},2);
+ mcq(el,'At low frequencies the coil’s “reactance” levels off instead of falling to zero. Why?',['The coil’s wire has resistance, so V/I = √(r² + X<sub>L</sub>²) cannot fall below r','The inductance increases','The meters are faulty','The capacitor is still connected'],0,'That is why you fit the line at higher frequencies.');
+ mcq(el,'Why do we use rms meters here?',['X is defined as V<sub>rms</sub>/I<sub>rms</sub>; peak values would give the same ratio but a.c. meters read rms','Peak values are impossible to measure','rms values are always larger','To find the phase'],0,'Either ratio works for pure sine waves.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="x2Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="x2DebO"></div></div>');
+ $('#x2Deb').addEventListener('click',()=>fb($('#x2DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>C = '+(X2.C*1e6).toFixed(1)+' μF. L = '+(X2.L*1000).toFixed(0)+' mH with coil resistance '+X2.r+' Ω.<br>Voltmeter '+((X2.gV-1)*100).toFixed(1)+'%, ammeter '+((X2.gI-1)*100).toFixed(1)+'% calibration.'));
+}
+
+/* ============ LAB 3: resonance ============ */
+const R3={R:22,f:400,data:[]};
+(function(){const g=kitRng(113);R3.C=Math.round((0.5+g()*4.5)*100)/100*1e-6;R3.L=0.100*(1+(g()-0.5)*0.04);R3.r=Math.round(4+g()*8);})();
+function r3m(){const w=2*Math.PI*R3.f,XL=w*R3.L,XC=1/(w*R3.C),Z=Math.sqrt(Math.pow(R3.R+R3.r,2)+Math.pow(XL-XC,2)),I=1/Z;return {I,VR:I*R3.R,VL:I*Math.sqrt(R3.r*R3.r+XL*XL),VC:I*XC}}
+function r3Circ(){let s=plc(acG(),40,110,90)+'<path d="M40 80 L40 30 L90 30" fill="none"></path>'+place('res',120,30)+'<path d="M150 30 L190 30" fill="none"></path>'+plc(indG(),220,30)+'<path d="M250 30 L300 30 L300 70" fill="none"></path>'+plc(capG(),300,100,90)+'<path d="M300 130 L300 190 L40 190 L40 140" fill="none"></path>';
+ s+=tx(120,16,R3.R+' Ω',{fs:11})+tx(220,16,'100 mH',{fs:11})+tx(322,104,'C',{fs:12,a:'start'})+place('A',170,190);
+ $('#r3Circ').innerHTML=svgWrap('0 0 360 210',s,'series RCL circuit')}
+function r3Upd(){$('#r3Fo').textContent=R3.f+' Hz';$('#r3F').value=R3.f;const m=r3m();R3.shown={I:Math.round(m.I*1e5)/100,VR:Math.round(m.VR*1000)/1000,VL:Math.round(m.VL*100)/100,VC:Math.round(m.VC*100)/100};$('#r3I').textContent=R3.shown.I.toFixed(2);$('#r3VR').textContent=R3.shown.VR.toFixed(3);$('#r3VL').textContent=R3.shown.VL.toFixed(2);$('#r3VC').textContent=R3.shown.VC.toFixed(2)}
+$('#r3F').addEventListener('input',e=>{R3.f=+e.target.value;r3Upd()});$$('#sec-lab3 [data-n]').forEach(b=>b.addEventListener('click',()=>{R3.f=clamp(R3.f+(+b.dataset.n),50,2000);r3Upd()}));
+$$('#r3R button').forEach(b=>b.addEventListener('click',()=>{R3.R=+b.dataset.r;$$('#r3R button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));r3Circ();r3Upd();r3Plot()}));
+$('#r3Rec').addEventListener('click',()=>{const s=R3.shown;R3.data=R3.data.filter(d=>!(d[0]===R3.R&&d[1]===R3.f));R3.data.push([R3.R,R3.f,s.I,s.VR,s.VL,s.VC]);R3.data.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);r3Table();r3Plot();fb($('#r3Msg'),'ok','Recorded at '+R3.f+' Hz.')});
+$('#r3Clr').addEventListener('click',()=>{R3.data=[];r3Table();r3Plot()});
+function r3Table(){$('#r3Tb').innerHTML=R3.data.length?R3.data.map((r,i)=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2].toFixed(2)+'</td><td>'+r[3].toFixed(3)+'</td><td>'+r[4].toFixed(2)+'</td><td>'+r[5].toFixed(2)+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="7" class="muted">No readings yet</td></tr>';$$('#r3Tb .x').forEach(b=>b.addEventListener('click',()=>{R3.data.splice(+b.dataset.i,1);r3Table();r3Plot()}))}
+const p3=new Plot($('#r3G'),{xl:'f / Hz',yl:'I / mA',bx:[0,2000],by:[0,50],line:false,onDraw:()=>{}});
+function r3Plot(){p3.lineOn=false;p3.set(R3.data.filter(d=>d[0]===R3.R).map(d=>[d[1],d[2]]),R3.data.filter(d=>d[0]!==R3.R).map(d=>[d[1],d[2]]))}
+function r3Tasks(){const el=$('#r3Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const S={};const f0=1/(2*Math.PI*Math.sqrt(R3.L*R3.C));
+ numTask(el,'1. From your results, what is the resonant frequency?','Hz',v=>{if(R3.data.length<8)return {info:1,msg:'Take readings across a wide range, then closely around the peak.'};if(Math.abs(v-f0)/f0<=0.02){S.f=v;return {ok:true,msg:'<strong>Good:</strong> about '+f0.toFixed(0)+' Hz, where the current is greatest.'}}return {ok:false,msg:'Find the frequency of the maximum current (take readings close together near the peak).'}},3);
+ numTask(el,'2. Using L = 0.100 H, calculate the capacitance.','μF',v=>{if(S.f===undefined)return {info:1,msg:'Complete task 1.'};const t=1/(4*Math.PI*Math.PI*S.f*S.f*0.1)*1e6;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> C = 1/(4π²f₀²L) = '+t.toFixed(2)+' μF.'};return {ok:false,msg:'f₀ = 1/2π√(LC), so C = 1/(4π²f₀²L).'}},3);
+ numTask(el,'3. At resonance, with the 22 Ω resistor, what is the Q factor (V<sub>L</sub>/V<sub>R</sub>)?','',v=>{const rows=R3.data.filter(d=>d[0]===22);if(!rows.length)return {info:1,msg:'Record readings at resonance with the 22 Ω resistor.'};const r=rows.reduce((a,b)=>b[2]>a[2]?b:a);if(Math.abs(r[1]-f0)/f0>0.02)return {info:1,msg:'Your highest-current 22 Ω reading is not quite at resonance. Find the peak more precisely.'};const t=r[4]/r[3];if(close(v,t,0.03))return {ok:true,msg:'<strong>Correct:</strong> Q = '+r[4].toFixed(2)+'/'+r[3].toFixed(3)+' = '+t.toFixed(1)+'.'};return {ok:false,msg:'Divide V<sub>L</sub> by V<sub>R</sub> from your reading at resonance.'}},3);
+ mcq(el,'How does the resonance curve change when you use a larger resistor?',['The peak is lower and broader; f₀ is unchanged','The peak moves to a higher frequency','The peak becomes sharper','Nothing changes'],0,'Q = ω₀L/R falls. Compare your curves.');
+ mcq(el,'At resonance, V<sub>R</sub> is a little less than the 1.00 V supply. Why?',['The coil has resistance, so some of the supply p.d. is across it even at resonance','The capacitor stores the rest','The meters are inaccurate','The current is zero'],0,'Z = R + r at resonance.');
+ mcq(el,'Below resonance, the circuit is:',['capacitive: X<sub>C</sub> > X<sub>L</sub>, and the current leads the supply p.d.','inductive','purely resistive','open-circuit'],0,'Compare V<sub>C</sub> and V<sub>L</sub> in your readings.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="r3Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="r3DebO"></div></div>');
+ $('#r3Deb').addEventListener('click',()=>fb($('#r3DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>C = '+(R3.C*1e6).toFixed(2)+' μF. The coil is actually '+(R3.L*1000).toFixed(1)+' mH with resistance '+R3.r+' Ω. True f₀ = '+f0.toFixed(1)+' Hz.'));
+}
+const DER=[
+ {t:'Show where V = ωBAN sin ωt comes from',s:['The angle between the coil’s normal and the field is θ = ωt','So the flux linkage is NΦ = BAN cos ωt','The e.m.f. equals the rate of change of flux linkage (Faraday)','This gives V = ωBAN sin ωt, with peak V₀ = ωBAN']},
+ {t:'Explain why V<sub>rms</sub> = V₀/√2',s:['Power in a resistor is V²/R','V² = V₀² sin²ωt, whose mean over a cycle is V₀²/2','The rms value gives the same mean power as a steady p.d.','So V<sub>rms</sub>² = V₀²/2 and V<sub>rms</sub> = V₀/√2']},
+ {t:'Derive the impedance of a series RC circuit',s:['The same current I flows through R and C','V<sub>R</sub> = IR is in phase with I; V<sub>C</sub> = IX<sub>C</sub> lags I by 90°','Add as phasors: V² = V<sub>R</sub>² + V<sub>C</sub>²','Divide by I²: Z = √(R² + X<sub>C</sub>²)']},
+ {t:'Derive the impedance of a series RCL circuit',s:['The same current flows through R, L and C','V<sub>L</sub> leads I by 90°; V<sub>C</sub> lags I by 90°, so they are in antiphase','Their resultant (V<sub>L</sub> − V<sub>C</sub>) is at 90° to V<sub>R</sub>','V² = V<sub>R</sub>² + (V<sub>L</sub> − V<sub>C</sub>)², so Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)']},
+ {t:'Derive the resonant frequency',s:['At resonance the reactances cancel: X<sub>L</sub> = X<sub>C</sub>','ω₀L = 1/(ω₀C)','ω₀² = 1/LC','f₀ = 1/(2π√(LC))']},
+ {t:'Explain why the current is greatest at resonance',s:['Z = √(R² + (X<sub>L</sub> − X<sub>C</sub>)²)','At resonance X<sub>L</sub> − X<sub>C</sub> = 0','So Z = R, its smallest possible value','With a fixed supply p.d., I = V/Z is then a maximum']}
+];
+const EXAM=[
+ {t:'Mains supply',intro:'UK mains is 230 V rms, 50 Hz.',p:[['Find the peak p.d.',230*Math.SQRT2,'V','V₀ = √2 × 230 = 325 V'],['Find the period.',0.02,'s','T = 1/f = 0.020 s'],['A 3.0 kW kettle runs on it. Find the rms current.',3000/230,'A','I = P/V = 13 A']]},
+ {t:'Generator',intro:'A 200-turn coil of area 3.0 × 10⁻³ m² rotates at 50 revolutions per second in a 0.15 T field.',p:[['Find the peak e.m.f.',2*Math.PI*50*0.15*3e-3*200,'V','V₀ = ωBAN = 28.3 V'],['Find the rms e.m.f.',2*Math.PI*50*0.15*3e-3*200/Math.SQRT2,'V','V₀/√2 = 20.0 V'],['Find the mean power in a 40 Ω load.',Math.pow(2*Math.PI*50*0.15*3e-3*200/Math.SQRT2,2)/40,'W','V<sub>rms</sub>²/R = 10 W']]},
+ {t:'Oscilloscope',intro:'A sine wave on an oscilloscope set to 0.5 V/div and 2 ms/div has a peak-to-peak height of 6.0 divisions, and one cycle spans 5.0 divisions.',p:[['Find the rms p.d.',1.5/Math.SQRT2,'V','V₀ = 3.0 × 0.5 = 1.5 V; V<sub>rms</sub> = 1.06 V'],['Find the frequency.',100,'Hz','T = 10 ms, f = 100 Hz']]},
+ {t:'RC circuit',intro:'A 150 Ω resistor and a 10 μF capacitor are in series with a 12 V rms, 100 Hz supply.',p:[['Find X<sub>C</sub>.',1/(2*Math.PI*100*10e-6),'Ω','X<sub>C</sub> = 1/ωC = 159 Ω'],['Find the impedance.',Math.hypot(150,1/(2*Math.PI*100*10e-6)),'Ω','Z = √(150² + 159²) = 219 Ω'],['Find the rms current.',12/Math.hypot(150,1/(2*Math.PI*100*10e-6)),'A','I = V/Z = 0.055 A'],['Find the phase angle between V and I, in degrees.',Math.atan(1/(2*Math.PI*100*10e-6)/150)*180/Math.PI,'°','tan φ = X<sub>C</sub>/R: φ = 46.7° (current leads)']]},
+ {t:'Resonance',intro:'A series circuit has R = 20 Ω, L = 0.25 H and C = 4.0 μF, driven by 5.0 V rms.',p:[['Find the resonant frequency.',1/(2*Math.PI*Math.sqrt(0.25*4e-6)),'Hz','f₀ = 1/(2π√(LC)) = 159 Hz'],['Find the current at resonance.',0.25,'A','Z = R, so I = 5.0/20 = 0.25 A'],['Find the p.d. across the inductor at resonance.',0.25*2*Math.PI*159.15*0.25,'V','X<sub>L</sub> = 250 Ω, V<sub>L</sub> = 62.5 V'],['Find the Q factor.',62.5/5,'','Q = V<sub>L</sub>/V<sub>R</sub> = 62.5/5.0 = 12.5']]},
+ {t:'Inductor',intro:'A coil of negligible resistance takes 0.40 A rms from a 12 V rms, 50 Hz supply.',p:[['Find its reactance.',30,'Ω','X<sub>L</sub> = 12/0.40 = 30 Ω'],['Find its inductance.',30/(2*Math.PI*50),'H','L = X/2πf = 0.095 H'],['What is the mean power dissipated?',0,'W','Zero: ideal inductors dissipate no mean power']]}
+];
+
+/* ---------- revise cards ---------- */
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+/* ---------- drills ---------- */
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 2.3e-3.');return}
+  const ok=close(v,drQ.ans,drQ.tol);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+wk());
+  else{let hint=drHint(v,drQ);if(!hint){const r=v/drQ.ans,lg=Math.log10(Math.abs(r));if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check your unit prefixes.'}
+   fb(out,'no','<strong>Not quite.</strong>'+(hint||'')+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.'+wk())}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+/* ---------- quiz ---------- */
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+/* ---------- graph match ---------- */
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg');const C=CURVES[type];
+ const x0=40,xw=W-60,y0=C.mid?H/2+4:H-28,sc=C.mid?H/2-24:H-44;
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,C.mid?H-10:y0);c.lineTo(x0,12);c.stroke();
+ c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();c.beginPath();c.moveTo(x0,10);c.lineTo(x0-4,17);c.lineTo(x0+4,17);c.fill();
+ c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText(C.xl,x0+xw+6,y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,22);
+ c.fillStyle=mut;c.font='13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('0',x0-6,y0+4+(C.mid?0:10));
+ [C.f,C.two].forEach((fn,k)=>{if(!fn)return;c.strokeStyle=k?cssv('--pos'):neg;c.lineWidth=2.6;if(k)c.setLineDash([6,4]);c.beginPath();let st=false;for(let i=0;i<=300;i++){const x=i/300,y=fn(x);if(y===null||Math.abs(y)>1.05){st=false;continue}const X=x0+x*xw,Y=y0-y*sc;if(!st){c.moveTo(X,Y);st=true}else c.lineTo(X,Y)}c.stroke();c.setLineDash([])});
+ if(C.extra)C.extra(c,x0,y0,xw,sc);
+}
+let gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ gmOrder=shuffle(GM.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ $('#gmPool').innerHTML=shuffle(GM).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}else if(gmPlace[i]!==undefined)delete gmPlace[i];gmPaint()}));
+ gmPaint();
+}
+function gmPaint(){
+ const used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?GM.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+$('#gmCheck').addEventListener('click',()=>{let n=0;$$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<GM.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===GM.length){award(GM.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong>')}else{miss();fb($('#gmFb'),'no',n+' of '+GM.length+' correct. Move the labels with red borders and check again.')}});
+$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+function kitButtons(){
+ ['#kitA','#kitB','#kitC'].forEach(s=>{if(!$(s))return;$(s).textContent=kitCode();const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New kit';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all your data';setTimeout(()=>{armed=false;b.textContent='New kit'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],p[4]||0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let GT=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){GT={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!GT)return;const left=Math.max(0,(GT.end-performance.now())/1000),el=$('#gT');if(!el){GT=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=GT.score;GT=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+GT.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){GT.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(GT)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){GT.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(GT)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{GT=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- start-up ---------- */
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();gmStart();kitButtons();
+$('#c1Cen').parentElement.remove();c1Btns();c1Scope();c1Table();c1Tasks();
+x2Circ();x2Upd();x2Table();x2Plot();x2Tasks();
+r3Circ();r3Upd();r3Table();r3Plot();r3Tasks();
+derStart(0);
+})();
+</script>
+</body>
+</html>
