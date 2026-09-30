@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Electricity part 2: WJEC AS Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep2{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep2 *,#ep2 *::before,#ep2 *::after{box-sizing:border-box}
+#ep2 button,#ep2 input,#ep2 select{font:inherit;color:inherit}
+#ep2 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep2 sup{font-size:.72em;line-height:0}
+#ep2 sub{font-size:.72em;line-height:0}
+#ep2 .h,#ep2 h1,#ep2 h2,#ep2 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep2 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep2 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep2 p{margin:.45em 0 .7em;max-width:72ch}
+#ep2 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep2 li{margin:.2em 0}
+#ep2 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep2 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep2 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep2 .brand{flex:1 1 320px;min-width:0}
+#ep2 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep2 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep2 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep2 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep2 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep2 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep2 .lcd.pulse{animation:ep2pulse .5s ease}
+@keyframes ep2pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep2 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep2 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep2 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep2 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep2 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep2 .tab:hover{color:var(--ink)}
+#ep2 main{padding:22px 0 40px}
+#ep2 .sec{display:none}
+#ep2 .sec.on{display:block}
+#ep2 .lead{color:var(--muted);margin-top:.3em}
+
+#ep2 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep2 .panel + .panel{margin-top:16px}
+#ep2 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep2 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep2 .grid2{grid-template-columns:1fr}}
+#ep2 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep2 .sp{flex:1}
+
+#ep2 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep2 .btn:hover{filter:brightness(1.15)}
+#ep2 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep2 .btn.alt:hover{border-color:var(--ink)}
+#ep2 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep2 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep2 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep2 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep2 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep2 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep2 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep2 input[type=text],#ep2 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep2 input[type=text]:focus,#ep2 input[type=number]:focus{border-color:var(--focus)}
+#ep2 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep2 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep2 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep2 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep2 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep2 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep2 .work{font-size:.96rem}
+#ep2 .work div{padding:1px 0}
+#ep2 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep2 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep2 .muted{color:var(--muted)}
+#ep2 .small{font-size:.88rem}
+#ep2 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep2 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep2 .rv{grid-template-columns:1fr}}
+#ep2 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep2 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep2 .toc button{white-space:nowrap}}
+#ep2 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep2 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep2 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep2 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep2 .card h2{margin-bottom:.35em}
+#ep2 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep2 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep2 .check summary{cursor:pointer;font-weight:700}
+#ep2 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep2 .fig svg{max-width:100%;height:auto;display:block}
+#ep2 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep2 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep2 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep2 .cv{display:block;width:100%;height:100%}
+#ep2 .cvbox{position:relative;width:100%;height:230px}
+#ep2 .mini{height:150px}
+#ep2 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep2 table.t th,#ep2 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep2 table.t th{font-weight:700;color:var(--muted)}
+#ep2 table.t td:first-child,#ep2 table.t th:first-child{text-align:left}
+#ep2 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep2 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep2 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep2 .qcard{font-size:1.1rem}
+#ep2 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep2 .opts{display:grid;gap:8px;margin-top:8px}
+#ep2 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep2 .opt:hover{border-color:var(--ink)}
+#ep2 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep2 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep2 .opt:disabled{cursor:default}
+#ep2 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep2 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep2 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep2 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep2 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep2 .mcell.sel{border-color:var(--neg)}
+#ep2 .mcell.right{border-color:var(--ok)}
+#ep2 .mcell.wrong{border-color:var(--bad)}
+#ep2 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep2 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep2 .pool .chip.used{opacity:.35}
+#ep2 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep2 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep2 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep2 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep2 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep2 .dmm .lcd{min-width:130px}
+#ep2 .dmm .lcd .v{font-size:2rem}
+#ep2 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep2 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep2 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep2 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep2 .task:first-of-type{border-top:0;padding-top:4px}
+#ep2 .task .tq{font-weight:700;margin-bottom:6px}
+#ep2 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep2 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep2 .apbox{position:relative;width:100%;height:280px}
+#ep2 .loupebox{position:relative;width:100%;height:92px}
+#ep2 .microbox{position:relative;width:100%;height:170px}
+#ep2 .thermobox{position:relative;width:100%;height:260px}
+#ep2 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep2 .warn{color:var(--bad);font-weight:700}
+#ep2 .steps{counter-reset:s}
+#ep2 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep2 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep2 .step:hover{border-color:var(--ink)}
+#ep2 .dz .step{background:var(--panel)}
+#ep2 .dz.good{border-color:var(--ok)}
+#ep2 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep2 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep2 .brand h1{font-size:1.6rem}#ep2 .wrap{padding:0 12px}#ep2 .panel{padding:14px}#ep2 .bezel .lcd{min-width:88px}#ep2 .lcd .v{font-size:1.5rem}}
+#ep2 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep2 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep2 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep2 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep2 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep2 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+</style>
+</head>
+<body>
+<div id="ep2">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Electricity, part 2</h1>
+   <p>WJEC AS Physics: Kirchhoff’s laws, series and parallel circuits, e.m.f. and internal resistance, and potential dividers.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">charge banked / C</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="circ" aria-selected="false">Circuit solver</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Practical: internal resistance</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Sensor lab</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+
+<section class="sec on" id="sec-revise">
+ <div class="rv">
+  <div class="toc" id="toc"></div>
+  <div class="panel card" id="card"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Write the equation, substitute, then answer in the unit asked for. Standard form can be typed as 3.2e-4 or 3.2x10^-4.</p>
+ <div class="panel">
+  <div class="row" id="drTopics"></div>
+  <div class="row" style="margin-top:10px">
+   <span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span>
+   <span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span>
+  </div>
+ </div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+
+<section class="sec" id="sec-quiz">
+ <h2>Concept quiz</h2>
+ <p class="lead">Twelve questions drawn from a bank of definitions, explanations and circuit reasoning. Every answer comes with the reason.</p>
+ <div class="panel qcard" id="qzCard"></div>
+</section>
+
+<section class="sec" id="sec-circ">
+ <h2>Circuit solver</h2>
+ <p class="lead">A new circuit every time. Work through it the way an exam question does: combine resistances, find the current, then share out the p.d.s and currents.</p>
+ <div class="panel" id="csBox"></div>
+ <div class="panel">
+  <h3 style="margin-top:0">Graph match</h3>
+  <p class="small muted">Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+  <div class="pool" id="gmPool"></div>
+  <div class="mgrid" id="gmGrid"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div>
+  <div class="fb" id="gmFb"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Practical: determination of the internal resistance of a cell</h2>
+ <p class="lead">Four well-used D cells in series. Your bench has its own quirks, just like a real lab. Kit code <span class="kit" id="kitA"></span></p>
+ <div class="row" style="margin-bottom:12px"><span class="seg" id="l1Meth"><button type="button" aria-pressed="true" data-m="1">Method 1: R against 1/I</button><button type="button" aria-pressed="false" data-m="2">Method 2: V against I</button></span></div>
+ <div class="grid2">
+  <div class="panel">
+   <div class="circ" id="l1Circ"></div>
+   <div class="meters" style="margin-top:8px">
+    <div class="dmm" id="l1VBox"><div class="nm">Voltmeter</div><div class="lcd"><span class="v" id="l1V">0.00</span><span class="u">V</span></div></div>
+    <div class="dmm"><div class="nm">Ammeter</div><div class="lcd"><span class="v" id="l1I">0.00</span><span class="u">A</span></div></div>
+   </div>
+   <div class="ctl">
+    <div id="l1C1"><div class="lbl"><span>Resistor R in the circuit</span><span id="l1Ro1"></span></div><div class="row" id="l1Rs"></div></div>
+    <div id="l1C2" style="display:none"><div class="lbl"><label for="l1Rh">Variable resistor setting</label><span id="l1Rho"></span></div><input type="range" id="l1Rh" min="0" max="100" step="1" value="60"></div>
+    <div class="row">
+     <button class="btn alt" id="l1Sw" type="button" aria-pressed="false">Close switch</button>
+     <span class="small muted" id="l1Pol"></span><span class="sp"></span>
+     <button class="btn go" id="l1Rec" type="button">Record reading</button>
+    </div>
+   </div>
+   <div class="fb" id="l1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong id="l1TabT">Results</strong><span class="sp"></span><button class="btn alt" id="l1Clr" type="button">Clear these results</button></div>
+   <div class="tscroll" style="margin-top:8px"><table class="t"><thead id="l1Th"></thead><tbody id="l1Tb"></tbody></table></div>
+   <p class="small muted" id="l1Hint"></p>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="row"><strong id="l1GT">Graph</strong><span class="seg" id="l1GSel" style="display:none"><button type="button" aria-pressed="true" data-g="vi">V against I</button><button type="button" aria-pressed="false" data-g="pr">P against R</button></span><span class="sp"></span><button class="btn alt" id="l1Line" type="button">Reset best-fit line</button></div>
+  <div class="graphbox" style="margin-top:8px"><canvas class="cv" id="l1G"></canvas></div>
+  <div class="readout" id="l1Ro"></div>
+ </div>
+ <div class="panel" id="l1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Sensor lab: potential dividers with a thermistor or an LDR</h2>
+ <p class="lead">Predict the output with the data card, then build the circuit and check. Real components never match the data card exactly. Kit code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row"><span class="seg" id="l2Sen"><button type="button" aria-pressed="true" data-s="th">Thermistor</button><button type="button" aria-pressed="false" data-s="ldr">LDR</button></span><span class="seg" id="l2Pos"><button type="button" aria-pressed="true" data-p="bot">Sensor at the bottom</button><button type="button" aria-pressed="false" data-p="top">Sensor at the top</button></span></div>
+   <div class="circ" id="l2Circ" style="margin-top:8px"></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="l2X" id="l2XL">Temperature of the thermistor</label><span id="l2Xo"></span></div><input type="range" id="l2X" min="0" max="100" step="0.5" value="20"></div>
+    <div><div class="lbl"><label for="l2Rv">Variable resistor dial</label><span id="l2Rvo"></span></div><input type="range" id="l2Rv" min="0.5" max="50" step="0.1" value="10"></div>
+    <div class="row"><div class="dmm"><div class="nm">Voltmeter: V<sub>out</sub></div><div class="lcd"><span class="v" id="l2V">0.00</span><span class="u">V</span></div></div><span class="sp"></span><button class="btn go" id="l2Rec" type="button">Record reading</button></div>
+   </div>
+   <div class="fb" id="l2Msg"></div>
+  </div>
+  <div class="panel">
+   <h3 style="margin-top:0" id="l2CardT">Data card</h3>
+   <div class="tscroll" style="max-height:none"><table class="t"><thead id="l2CardH"></thead><tbody id="l2CardB"></tbody></table></div>
+   <p class="small muted">Supply p.d. 6.00 V. The voltmeter measures the p.d. across the bottom component.</p>
+   <div class="row" style="margin-top:6px"><strong>Your readings</strong><span class="sp"></span><button class="btn alt" id="l2Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px"><table class="t"><thead><tr><th id="l2ColX">θ / °C</th><th>V<sub>out</sub> / V</th><th>setup</th><th></th></tr></thead><tbody id="l2Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel">
+  <strong>Graph of V<sub>out</sub></strong>
+  <div class="graphbox" style="margin-top:8px;height:280px"><canvas class="cv" id="l2G"></canvas></div>
+ </div>
+ <div class="panel" id="l2Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall">
+ <h2>Challenge</h2>
+ <p class="lead">Rebuild the derivations the specification expects, crack multi-step exam problems (including a few awkward ones), then race the clock.</p>
+ <div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Derivation builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div>
+ <div class="panel" id="chBox"></div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep2');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep2-wjec-elec2-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+/* ---------- part 2 circuit drawings ---------- */
+const sub=['₀','₁','₂','₃','₄'];
+const om=v=>(v>=1000?(v/1000)+' kΩ':v+' Ω');
+function leftSource(v,r){
+ // cell on the left vertical wire x=50 between top rail y=30 and bottom rail y=205
+ let s='';
+ if(r!=null){s+=place('cell',50,90,90)+place('res',50,160,90)+ln(50,30,50,60)+ln(50,120,50,130)+ln(50,190,50,205)+'<rect x="26" y="52" width="48" height="146" fill="none" stroke-dasharray="5 4" stroke-width="1.3"></rect>'+tx(80,94,v,{a:'start',fs:12})+tx(80,164,'r = '+r+' Ω',{a:'start',fs:12})}
+ else{s+=place('cell',50,118,90)+ln(50,30,50,88)+ln(50,148,50,205)+tx(66,122,v,{a:'start',fs:12})}
+ return s;
+}
+function drawA(o){
+ let s=leftSource('E = '+o.E+' V',o.r)+ln(50,30,130,30)+place('res',160,30)+ln(190,30,380,30)+tx(160,16,'R₁ = '+om(o.R1),{fs:12});
+ s+=ln(270,30,270,88)+place('res',270,118,90)+ln(270,148,270,205)+ln(380,30,380,88)+place('res',380,118,90)+ln(380,148,380,205)+ln(50,205,380,205)+dot(270,30)+dot(270,205);
+ s+=tx(256,122,'R₂ = '+om(o.R2),{a:'end',fs:12})+tx(366,122,'R₃ = '+om(o.R3),{a:'end',fs:12});
+ return svgWrap('0 0 420 222',s,'circuit diagram');
+}
+function drawB(o){
+ let s=leftSource('E = '+o.E+' V',o.r)+ln(50,30,140,30)+place('res',170,30)+ln(200,30,260,30)+place('res',290,30)+ln(320,30,380,30);
+ s+=path([[110,30],[110,110],[200,110]])+place('res',230,110)+path([[260,110],[380,110],[380,30]])+path([[380,110],[380,205],[50,205]])+dot(110,30)+dot(380,110);
+ s+=tx(170,16,'R₁ = '+om(o.R1),{fs:12})+tx(290,16,'R₂ = '+om(o.R2),{fs:12})+tx(230,136,'R₃ = '+om(o.R3),{fs:12});
+ return svgWrap('0 0 420 222',s,'circuit diagram');
+}
+function drawC(o){
+ let s=leftSource('E = '+o.E+' V',o.r)+ln(50,30,360,30)+ln(50,205,360,205);
+ [160,260,360].forEach((x,i)=>{s+=ln(x,30,x,88)+place('res',x,118,90)+ln(x,148,x,205)+tx(x+14,122,'R'+sub[i+1]+' = '+om(o['R'+(i+1)]),{a:'start',fs:12});if(i<2)s+=dot(x,30)+dot(x,205)});
+ return svgWrap('0 0 420 222',s,'circuit diagram');
+}
+function drawD(o){
+ let s=ln(30,30,90,30)+place('cell',120,30,0)+ln(150,30,190,30)+(o.opp?place('cell',220,30,180):place('cell',220,30,0))+ln(250,30,300,30)+place('res',330,30)+path([[360,30],[400,30],[400,88]])+place('res',400,118,90)+path([[400,148],[400,205],[250,205]])+place('res',220,205)+path([[190,205],[30,205],[30,30]]);
+ s+=tx(120,62,o.E1+' V',{fs:12})+tx(220,62,o.E2+' V',{fs:12})+tx(330,16,'R₁ = '+om(o.R1),{fs:12})+tx(386,122,'R₂ = '+om(o.R2),{a:'end',fs:12})+tx(220,232,'R₃ = '+om(o.R3),{fs:12});
+ if(o.r1!=null)s+=tx(120,78,'r = '+o.r1+' Ω',{fs:11})+tx(220,78,'r = '+o.r2+' Ω',{fs:11});
+ return svgWrap('0 0 430 242',s,'circuit diagram');
+}
+function drawPD(o){
+ // o.top, o.bot = symbol types; labels
+ let s=place('cell',50,118,90)+ln(50,30,50,88)+ln(50,148,50,205)+tx(66,122,o.V0,{a:'start',fs:12});
+ s+=path([[50,30],[220,30],[220,45]])+place(o.top,220,75,90)+ln(220,105,220,130)+place(o.bot,220,160,90)+path([[220,190],[220,205],[50,205]]);
+ s+=path([[220,118],[300,118],[300,130]])+place('V',300,160,90)+path([[300,190],[300,205],[220,205]])+dot(220,118)+dot(220,205);
+ s+=tx(200,79,o.tl,{a:'end',fs:12})+tx(200,164,o.bl,{a:'end',fs:12})+tx(320,164,'V',{a:'start',fs:12})+'<text x="328" y="168" font-size="9" fill="currentColor" stroke="none">out</text>';
+ return svgWrap('0 0 380 222',s,'potential divider circuit');
+}
+function drawJ(w){
+ // w: array of {ang, I (string), into:bool}
+ const cx=190,cy=111,Lr=86;let s=dot(cx,cy);
+ w.forEach((q,i)=>{const a=q.ang*Math.PI/180,x=cx+Lr*Math.cos(a),y=cy-Lr*Math.sin(a);s+=ln(cx,cy,x,y);
+  const mx=cx+Lr*0.55*Math.cos(a),my=cy-Lr*0.55*Math.sin(a),d=q.into?-1:1;
+  const ux=Math.cos(a)*d,uy=-Math.sin(a)*d,tipx=mx+ux*10,tipy=my+uy*10,bx=mx-ux*8,by=my-uy*8,px=-uy*8,py=ux*8;
+  s+='<polygon points="'+tipx.toFixed(1)+','+tipy.toFixed(1)+' '+(bx+px).toFixed(1)+','+(by+py).toFixed(1)+' '+(bx-px).toFixed(1)+','+(by-py).toFixed(1)+'" fill="var(--pos)" stroke="none"></polygon>';
+  const lx=cx+(Lr+18)*Math.cos(a),ly=cy-(Lr+18)*Math.sin(a)+4;s+=tx(lx,ly,q.I,{fs:15,fw:700})});
+ return svgWrap('55 0 270 222',s,'junction');
+}
+
+/* ---------- graph shapes for part 2 ---------- */
+const CURVES={
+ vi:{xl:'I',yl:'V',f:x=>0.85-0.55*x,e:'E'},
+ rinv:{xl:'1/I',yl:'R',f:x=>-0.2+0.95*x,neg:1},
+ pr:{xl:'R',yl:'P',f:x=>{const R=x*4,r=1;return 1.9*R/((R+r)*(R+r))*1.05}},
+ vr:{xl:'R',yl:'V',f:x=>0.85*(x*6)/(x*6+1),e:'E'},
+ thb:{xl:'θ',yl:'Vout',f:x=>{const Rt=Math.exp(3.2*(0.5-x));return 0.9*Rt/(Rt+1)}},
+ tht:{xl:'θ',yl:'Vout',f:x=>{const Rt=Math.exp(3.2*(0.5-x));return 0.9/(Rt+1)}}
+};
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg');const C=CURVES[type];
+ const x0=40,xw=W-60,yh=H-50,y0=C.neg?H-58:H-28,ytop=16;
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,C.neg?H-10:y0);c.lineTo(x0,ytop-4);c.stroke();
+ c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();c.beginPath();c.moveTo(x0,ytop-6);c.lineTo(x0-4,ytop+1);c.lineTo(x0+4,ytop+1);c.fill();
+ c.font='bold 14px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText(C.xl,x0+xw+6,y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,ytop+8);
+ c.fillStyle=mut;c.font='13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('0',x0-6,y0+14);
+ const sc=C.neg?(y0-ytop):(y0-ytop);
+ c.strokeStyle=neg;c.lineWidth=2.6;c.beginPath();let st=false;
+ for(let i=0;i<=200;i++){const x=i/200,y=C.f(x);if(C.neg&&y<-0.26)continue;if(y<-0.01&&!C.neg)continue;const X=x0+x*xw,Y=y0-y*sc;if(!st){c.moveTo(X,Y);st=true}else c.lineTo(X,Y)}c.stroke();
+ if(C.e){c.fillStyle=mut;c.textAlign='right';c.fillText('E',x0-6,y0-0.85*sc+5);if(type==='vr'){c.setLineDash([4,4]);c.strokeStyle=mut;c.lineWidth=1;c.beginPath();c.moveTo(x0,y0-0.85*sc);c.lineTo(x0+xw,y0-0.85*sc);c.stroke();c.setLineDash([])}}
+}
+
+/* ---------- tabs ---------- */
+const onShow={};
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+
+/* ---------- interactive note widgets ---------- */
+function barSVG(parts,total,labels){
+ // parts: [[value,colour,label]]
+ let x=10,s='';const W=380;
+ parts.forEach(p=>{const w=W*p[0]/total;if(w>0.5){s+='<rect x="'+x.toFixed(1)+'" y="10" width="'+w.toFixed(1)+'" height="34" fill="'+p[1]+'" stroke="none"></rect>';if(w>60)s+=tx(x+w/2,32,p[2],{fs:13,fw:700,fill:'#fff'})}x+=w});
+ s+='<rect x="10" y="10" width="'+W+'" height="34" fill="none" stroke="var(--ink)" stroke-width="1.5"></rect>';
+ return '<svg viewBox="0 0 400 54" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="bar chart">'+s+'</svg>';
+}
+function wEmf(el){
+ const E=6.0,r=2.0;
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wR" style="min-width:150px">Load resistance R</label><input type="range" id="wR" min="0.2" max="20" step="0.1" value="4" style="flex:1;min-width:140px"><span id="wRo" class="small" style="min-width:60px"></span></div><div id="wBar"></div><div class="kv" id="wKv"></div><p class="small muted" style="margin:6px 0 0">E = 6.0 V, r = 2.0 Ω. Watch the lost volts grow as R falls and the current rises.</p></div>');
+ const upd=()=>{const R=+$('#wR').value,I=E/(R+r),V=I*R;$('#wRo').textContent=R.toFixed(1)+' Ω';
+  $('#wBar').innerHTML=barSVG([[V,'var(--neg)','V = '+V.toFixed(2)+' V'],[I*r,'var(--pos)','Ir = '+(I*r).toFixed(2)+' V']],E);
+  $('#wKv').innerHTML='<span>I = <b>'+I.toFixed(2)+' A</b></span><span>terminal p.d. V = <b>'+V.toFixed(2)+' V</b></span><span>lost volts Ir = <b>'+(I*r).toFixed(2)+' V</b></span><span>V + Ir = <b>'+E.toFixed(2)+' V</b></span>'};
+ $('#wR').addEventListener('input',upd);upd();
+}
+function wMaxP(el){
+ const E=6.0,r=2.0;
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wR2" style="min-width:150px">Load resistance R</label><input type="range" id="wR2" min="0.1" max="12" step="0.1" value="1" style="flex:1;min-width:140px"><span id="wR2o" class="small" style="min-width:60px"></span></div><div id="wPlot"></div><div class="kv" id="wKv2"></div></div>');
+ const X=R=>40+R/12*340,Y=P=>170-P/4.8*150;
+ let curve='';for(let i=0;i<=120;i++){const R=i/10,P=E*E*R/((R+r)*(R+r));curve+=(i?' ':'')+X(R).toFixed(1)+','+Y(P).toFixed(1)}
+ const upd=()=>{const R=+$('#wR2').value,I=E/(R+r),P=I*I*R;$('#wR2o').textContent=R.toFixed(1)+' Ω';
+  let s=ln(40,170,390,170)+ln(40,170,40,12)+tx(390,190,'R / Ω',{a:'end'})+tx(34,20,'P / W',{a:'end'})+'<polyline points="'+curve+'" fill="none" stroke="var(--neg)" stroke-width="2.5"></polyline>';
+  [0,2,4,6,8,10,12].forEach(v=>{s+=ln(X(v),170,X(v),175)+tx(X(v),188,String(v),{fs:11})});[0,1,2,3,4].forEach(v=>{s+=ln(35,Y(v),40,Y(v))+tx(31,Y(v)+4,String(v),{a:'end',fs:11})});
+  s+='<line x1="'+X(r)+'" y1="170" x2="'+X(r)+'" y2="'+Y(4.5)+'" stroke="var(--muted)" stroke-dasharray="4 4" stroke-width="1"></line>'+tx(X(r)+4,Y(4.5)-4,'R = r',{a:'start',fs:11});
+  s+='<circle cx="'+X(R).toFixed(1)+'" cy="'+Y(P).toFixed(1)+'" r="6" fill="var(--pos)" stroke="none"></circle>';
+  $('#wPlot').innerHTML=svgWrap('0 0 400 200',s,'power against load resistance');
+  $('#wKv2').innerHTML='<span>I = <b>'+I.toFixed(2)+' A</b></span><span>power in load I²R = <b>'+P.toFixed(2)+' W</b></span><span>wasted in r: <b>'+(I*I*r).toFixed(2)+' W</b></span>'};
+ $('#wR2').addEventListener('input',upd);upd();
+}
+function wPD(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wR1" style="min-width:90px">R₁</label><input type="range" id="wR1" min="1" max="20" step="1" value="4" style="flex:1;min-width:140px"><span id="wR1o" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wRb" style="min-width:90px">R₂</label><input type="range" id="wRb" min="1" max="20" step="1" value="8" style="flex:1;min-width:140px"><span id="wRbo" class="small" style="min-width:60px"></span></div><div id="wBar3"></div><div class="kv" id="wKv3"></div><p class="small muted" style="margin:6px 0 0">V₀ = 6.0 V. The p.d.s split in the same ratio as the resistances.</p></div>');
+ const upd=()=>{const a=+$('#wR1').value,b=+$('#wRb').value,V1=6*a/(a+b),V2=6-V1;$('#wR1o').textContent=a+' kΩ';$('#wRbo').textContent=b+' kΩ';
+  $('#wBar3').innerHTML=barSVG([[V1,'var(--muted)','V₁ = '+V1.toFixed(2)+' V'],[V2,'var(--neg)','V₂ = '+V2.toFixed(2)+' V']],6);
+  $('#wKv3').innerHTML='<span>V₂ = V₀R₂/(R₁ + R₂) = 6.0 × '+b+' / '+(a+b)+' = <b>'+V2.toFixed(2)+' V</b></span><span>V₁/V₂ = <b>'+(V1/V2).toFixed(2)+'</b> = R₁/R₂</span>'};
+ $('#wR1').addEventListener('input',upd);$('#wRb').addEventListener('input',upd);upd();
+}
+function thermR(T,R25,B){return R25*Math.exp(B*(1/(T+273.15)-1/298.15))}
+function ldrR(L,k){return (k||2e5)*Math.pow(L,-0.75)}
+function wSensor(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><span class="seg" id="wSs"><button type="button" aria-pressed="true" data-s="th">Thermistor</button><button type="button" aria-pressed="false" data-s="ldr">LDR</button></span></div><div class="row" style="margin-top:8px"><label class="sm" for="wX" id="wXl" style="min-width:110px">Temperature</label><input type="range" id="wX" min="0" max="100" step="1" value="20" style="flex:1;min-width:140px"><span id="wXo" class="small" style="min-width:70px"></span></div><div class="row"><label class="sm" for="wRv" style="min-width:110px">Variable resistor</label><input type="range" id="wRv" min="1" max="40" step="0.5" value="10" style="flex:1;min-width:140px"><span id="wRvo" class="small" style="min-width:70px"></span></div><div id="wBar4"></div><div class="kv" id="wKv4"></div><p class="small muted" style="margin:6px 0 0">Supply 6.0 V. Variable resistor on top, sensor at the bottom, V<sub>out</sub> across the sensor.</p></div>');
+ let S='th';
+ const upd=()=>{const x=+$('#wX').value,Rv=+$('#wRv').value*1000;let Rs,xs;
+  if(S==='th'){Rs=thermR(x,1e4,3950);xs=x+' °C'}else{const L=Math.pow(10,x/100*3);Rs=ldrR(L);xs=(L<10?L.toFixed(1):Math.round(L))+' lux'}
+  const Vo=6*Rs/(Rs+Rv);$('#wXo').textContent=xs;$('#wRvo').textContent=(Rv/1000).toFixed(1)+' kΩ';
+  $('#wBar4').innerHTML=barSVG([[6-Vo,'var(--muted)','resistor'],[Vo,'var(--neg)','V out = '+Vo.toFixed(2)+' V']],6);
+  $('#wKv4').innerHTML='<span>sensor resistance = <b>'+(Rs>=1000?(Rs/1000).toFixed(2)+' kΩ':Rs.toFixed(0)+' Ω')+'</b></span><span>V<sub>out</sub> = <b>'+Vo.toFixed(2)+' V</b></span>'};
+ $$('#wSs button').forEach(b=>b.addEventListener('click',()=>{S=b.dataset.s;$$('#wSs button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));$('#wXl').textContent=S==='th'?'Temperature':'Light intensity';$('#wX').value=S==='th'?20:50;upd()}));
+ $('#wX').addEventListener('input',upd);$('#wRv').addEventListener('input',upd);upd();
+}
+function circIntR(withV,loadType,closed){
+ let s='<rect x="60" y="68" width="172" height="44" fill="none" stroke-dasharray="5 4" stroke-width="1.3"></rect>'+ln(20,90,75,90)+place('batt',105,90)+ln(135,90,155,90)+place('res',185,90)+ln(215,90,270,90);
+ s+=tx(105,62,'cells',{fs:11})+tx(185,62,'r',{fs:12})+dot(45,90)+dot(245,90);
+ if(withV)s+=path([[45,90],[45,30],[115,30]])+place('V',145,30)+path([[175,30],[245,30],[245,90]]);
+ s+=(closed?ln(270,90,330,90)+dot(288,90)+dot(312,90):place('sw',300,90))+path([[330,90],[380,90],[380,130]])+place('A',380,160,90)+path([[380,190],[380,215],[250,215]])+place(loadType,220,215)+path([[190,215],[20,215],[20,90]]);
+ s+=tx(220,242,loadType==='var'?'variable resistor':'resistor R',{fs:11});
+ return svgWrap('0 0 420 250',s,'internal resistance circuit');
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'Kirchhoff’s first law',h:()=>`
+<h2>Current rule: Kirchhoff’s first law</h2>
+<p><strong>At any junction in a circuit, the total current leaving the junction equals the total current entering it.</strong> This follows from the <strong>conservation of charge</strong>: charge cannot build up at a junction or disappear.</p>
+<div class="fig" style="max-width:380px">${drawJ([{ang:180,I:'0.5 A',into:true},{ang:35,I:'1.5 A',into:false},{ang:-40,I:'?',into:true}])}</div>
+<p>In: 0.5 A. Out: 1.5 A. So the third wire must carry <strong>1.0 A into</strong> the junction.</p>
+<h3>Components in series</h3>
+<p>The current entering a component equals the current leaving it: components do not use up current. The current is the same at every point in a series circuit, so two ammeters either side of a lamp show the same reading.</p>
+<p>In a parallel circuit, the current from the source equals the sum of the currents in the separate branches.</p>`,
+chk:[['Currents of 2.0 A and 0.7 A enter a junction and 1.1 A leaves along a third wire. What is the current in the fourth wire?','1.6 A leaving the junction (2.7 A in, so 2.7 A must leave).'],['Which conservation law underlies Kirchhoff’s first law?','Conservation of charge.']]},
+
+{t:'p.d. in series and parallel',h:()=>`
+<h2>Potential difference rules</h2>
+<h3>Components in series</h3>
+<p>The total p.d. across components in series equals the <strong>sum</strong> of the p.d.s across each one. The battery gives each coulomb V₀ joules; it gives up that energy in stages:</p>
+<div class="eqbig">V₀ = V₁ + V₂ + V₃</div>
+<p>This is a consequence of <strong>conservation of energy</strong>.</p>
+<h3>Components in parallel</h3>
+<p>The p.d. across components in parallel is the <strong>same</strong>. Each coulomb delivers the same energy whichever branch it takes. So two lamps connected in parallel across a cell each have the full cell p.d. across them.</p>
+<p class="small muted">If a variable resistor takes V₁ first, the charge carriers have (V₀ − V₁) per coulomb left, and deliver that same amount, V₂, to each of the parallel resistors.</p>`,
+chk:[['A 12 V battery is connected to three lamps in series. Two have 3.5 V across them. What is the p.d. across the third?','12 − 3.5 − 3.5 = 5.0 V'],['Three resistors are in parallel across a 9 V supply. What is the p.d. across each?','9 V each.']]},
+
+{t:'Kirchhoff’s second law',h:()=>`
+<h2>Loop rule: Kirchhoff’s second law</h2>
+<p><strong>For any complete loop in a circuit, the sum of the e.m.f.s round the loop equals the sum of the p.d.s round the loop.</strong></p>
+<div class="eqbig">Σ e.m.f. = Σ IR</div>
+<p>Equivalently, the sum of the changes in potential round a closed loop is zero. This is a statement of <strong>conservation of energy</strong> for a complete circuit.</p>
+<h3>Example</h3>
+<p>A battery gives 9 J to every coulomb, so its e.m.f. is 9 V. The variable resistor takes 3 J per coulomb (3 V) and the lamp takes 6 J per coulomb (6 V).</p>
+<div class="work"><div>Σ e.m.f. = 9 V</div><div>Σ p.d. = 3 V + 6 V = 9 V</div><div>so Σ e.m.f. = Σ p.d.</div></div>`,
+chk:[['A loop contains a 6.0 V cell, a 2.0 V drop across a resistor and a lamp. What is the p.d. across the lamp?','4.0 V, since the p.d.s round the loop must add to 6.0 V.']]},
+
+{t:'Resistors in series',h:()=>`
+<h2>Resistors in series</h2>
+<p>Resistors in series carry the same current I. The total p.d. is the sum of the individual p.d.s.</p>
+<div class="work"><div>V = V₁ + V₂</div><div>V₁ = IR₁ and V₂ = IR₂, and for the combination V = IR<sub>T</sub></div><div>IR<sub>T</sub> = IR₁ + IR₂</div><div>The currents cancel, so R<sub>T</sub> = R₁ + R₂</div></div>
+<div class="eqbig">R<sub>T</sub> = R₁ + R₂ + R₃ + …</div>
+<p>The total resistance is always <strong>greater</strong> than any individual resistance.</p>`,
+chk:[['4 Ω and 6 Ω in series?','10 Ω']]},
+
+{t:'Resistors in parallel',h:()=>`
+<h2>Resistors in parallel</h2>
+<p>Resistors in parallel have the same p.d. V. The total current is the sum of the branch currents.</p>
+<div class="work"><div>I = I₁ + I₂</div><div>I₁ = V/R₁ and I₂ = V/R₂, and for the combination I = V/R<sub>T</sub></div><div>V/R<sub>T</sub> = V/R₁ + V/R₂</div><div>The p.d.s cancel, so 1/R<sub>T</sub> = 1/R₁ + 1/R₂</div></div>
+<div class="eqbig">1/R<sub>T</sub> = 1/R₁ + 1/R₂ + 1/R₃ + …</div>
+<p>The total resistance is always <strong>smaller</strong> than any individual resistance.</p>
+<h3>Worked example</h3>
+<div class="work"><div>4 Ω and 6 Ω in parallel:</div><div>1/R<sub>T</sub> = 1/4 + 1/6 = 0.250 + 0.167 = 0.417</div><div>R<sub>T</sub> = 1 / 0.417 = <strong>2.4 Ω</strong>. Don’t forget this last step.</div></div>
+<p class="small muted">Shortcuts: two resistors, R<sub>T</sub> = R₁R₂/(R₁ + R₂). N identical resistors R in parallel give R/N.</p>`,
+chk:[['Three 60 Ω resistors in parallel?','20 Ω'],['6.00 Ω and 3.00 Ω in parallel?','2.00 Ω']]},
+
+{t:'Combining networks',h:()=>`
+<h2>Series and parallel networks</h2>
+<p>Work from the inside out: reduce each parallel group or series chain to a single resistance, then combine.</p>
+<h3>Parallel section first</h3>
+<div class="fig circ">${drawA({E:'',R1:4,R2:2,R3:5}).replace('E =  V','')}</div>
+<div class="work"><div>1/R = 1/2 + 1/5 = 0.700, so R = 1.43 Ω</div><div>Add the series 4 Ω: R<sub>T</sub> = 5.43 Ω</div></div>
+<h3>Series section first</h3>
+<div class="fig circ">${drawB({E:'',R1:5,R2:8,R3:12}).replace('E =  V','')}</div>
+<div class="work"><div>5 Ω + 8 Ω = 13 Ω</div><div>13 Ω in parallel with 12 Ω: 1/R = 1/13 + 1/12 = 0.160, so R<sub>T</sub> = 6.24 Ω</div></div>
+<h3>Single cell question</h3>
+<div class="fig circ">${drawA({E:9,R1:8,R2:12,R3:6})}</div>
+<div class="work"><div>12 Ω in parallel with 6 Ω = 4 Ω, so R<sub>T</sub> = 8 + 4 = 12 Ω</div><div>I = 9 / 12 = 0.75 A</div><div>p.d. across 8 Ω = 0.75 × 8 = 6 V, so the p.d. across the parallel pair = 9 − 6 = 3 V</div><div>Current through 6 Ω = 3 / 6 = 0.50 A</div></div>`,
+chk:[['A 10 Ω resistor is in parallel with a series pair of 6 Ω and 4 Ω. Total?','6 + 4 = 10 Ω; 10 Ω in parallel with 10 Ω = 5 Ω.']]},
+
+{t:'Heating effect and brightness',h:()=>`
+<h2>Heating effect and lamp brightness</h2>
+<p>When a current flows through a conductor its resistance causes heating. Kettles, toasters, irons and hair dryers use this. A lamp’s brightness depends on the power it dissipates, P = I²R = V²/R.</p>
+<h3>Two 12 Ω lamps on a 15 V cell</h3>
+<table class="t" style="max-width:560px"><thead><tr><th>Circuit</th><th>current in each lamp</th><th>power of each lamp</th></tr></thead><tbody>
+<tr><td>lamps in series</td><td>15/24 = 0.625 A</td><td>4.7 W</td></tr>
+<tr><td>lamps in parallel</td><td>15/12 = 1.25 A</td><td>18.8 W</td></tr>
+<tr><td>series + 12 Ω resistor</td><td>15/36 = 0.417 A</td><td>2.1 W</td></tr>
+<tr><td>parallel + 12 Ω resistor</td><td>0.833/2 = 0.417 A</td><td>2.1 W</td></tr>
+<tr><td>series + 120 Ω resistor</td><td>15/144 = 0.104 A</td><td>0.13 W</td></tr>
+<tr><td>parallel + 120 Ω resistor</td><td>0.119/2 = 0.060 A</td><td>0.043 W</td></tr></tbody></table>
+<p style="margin-top:10px">With no series resistor, parallel lamps are far brighter. With a large resistor in the way, the resistor controls the total current and the <em>series</em> lamps end up brighter. Always work out the total resistance first.</p>`,
+chk:[['Why are two identical lamps in parallel brighter than the same two in series on the same supply (no other resistance)?','Each lamp in parallel gets the full supply p.d.; in series each gets half. P = V²/R, so each parallel lamp has four times the power.']]},
+
+{t:'e.m.f. and internal resistance',h:()=>`
+<h2>e.m.f. and internal resistance</h2>
+<p><strong>e.m.f. (E or ε):</strong> the electrical energy produced per unit charge by the source, E = W/Q. Its unit is the volt, the same as p.d.</p>
+<p><strong>Internal resistance (r):</strong> the resistance of the source itself. It is the loss of p.d. per unit current inside the source when current flows through it.</p>
+<p>Applying the loop rule to a cell with a load R:</p>
+<div class="eqbig">E = IR + Ir = I(R + r)</div>
+<p>IR is the <strong>terminal p.d.</strong> V, the p.d. across the external load. Ir is the <strong>lost volts</strong>.</p>
+<div class="eqbig">V = E − Ir</div>`,
+after:el=>wEmf(el.querySelector('.wslot')),
+chk:[['Terminal p.d. falls from 12 V (open circuit) to 10 V when 6 A flows. Find r.','Lost volts = 2 V; r = 2 / 6 = 0.333 Ω'],['A 1.5 V cell’s terminal p.d. drops by 0.2 V with an 8 Ω load. Find the current.','IR = 1.5 − 0.2 = 1.3 V, so I = 1.3 / 8 = 0.163 A'],['E = 2 V, r = 0.5 Ω, load 4 Ω. Terminal p.d.?','I = 2 / 4.5 = 0.444 A; V = 0.444 × 4 = 1.78 V']]},
+
+{t:'Energy meanings',h:()=>`
+<h2>What each quantity means in energy terms</h2>
+<ul>
+<li><strong>e.m.f.:</strong> energy transferred per coulomb passing through the cell (chemical to electrical).</li>
+<li><strong>Terminal p.d.:</strong> energy supplied to the external circuit per coulomb.</li>
+<li><strong>Lost volts, Ir:</strong> energy dissipated per coulomb inside the cell because of its internal resistance.</li>
+</ul>
+<div class="eqbig">e.m.f. = terminal p.d. + lost volts</div>
+<p>This is conservation of energy: the energy supplied per coulomb equals the energy delivered to the circuit plus the energy wasted inside the source.</p>
+<h3>High-voltage supply safety</h3>
+<p>A high-voltage supply is often given a large internal resistance to limit the current well below the dangerous level of about 50 mA. A 3 kV supply with r = 10 MΩ can deliver at most</p>
+<div class="work"><div>I<sub>max</sub> = 3000 / 10 000 000 = 3 × 10<sup>−4</sup> A = 0.3 mA, even through a near-zero resistance such as a wet person.</div></div>`,
+chk:[['Why does a laboratory 5 kV supply have a very high internal resistance?','To limit the maximum current to a safe value even if it is short-circuited.']]},
+
+{t:'Measuring internal resistance',h:()=>`
+<h2>Measuring internal resistance</h2>
+<div class="fig circ">${circIntR(true,'var')}</div>
+<h3>V against I (the method in your notes)</h3>
+<p>Measure the terminal p.d. V and the current I; change the variable resistor for more readings. A lamp or fixed resistor can limit the maximum current.</p>
+<div class="work"><div>V = E − Ir, so V = −rI + E, which has the form y = mx + c</div><div>A graph of V against I is a straight line: <strong>y-intercept = E</strong>, <strong>gradient = −r</strong></div></div>
+<h3>R against 1/I (the WJEC method)</h3>
+<p>Use fixed resistors of known value R and an ammeter only (no voltmeter).</p>
+<div class="work"><div>E = I(R + r), so R = E/I − r</div><div>A graph of R against 1/I is a straight line: <strong>gradient = E</strong>, <strong>y-intercept = −r</strong></div></div>
+<p class="small muted">Open the switch between readings: a cell delivering current for a long time drops its e.m.f. and warms up.</p>`,
+chk:[['On a V–I graph for a cell, what are the intercept and gradient?','Intercept on the V axis = E; gradient = −r.'],['On an R against 1/I graph, what are the gradient and intercept?','Gradient = E; intercept on the R axis = −r.']]},
+
+{t:'Maximum power transfer',h:()=>`
+<h2>Maximum power transfer</h2>
+<p>The power delivered to the load resistance R depends on R. It is <strong>largest when the load resistance equals the internal resistance</strong> of the source, R = r.</p>
+<p>So for maximum power a device should use a supply whose internal resistance is as close as possible to its own resistance. For example, a loudspeaker is loudest when its resistance matches the internal resistance of the amplifier.</p>`,
+after:el=>wMaxP(el.querySelector('.wslot')),
+chk:[['A source has E = 12 V and r = 4 Ω. What load gives maximum power, and what is that power?','R = 4 Ω; I = 12 / 8 = 1.5 A; P = 1.5² × 4 = 9.0 W']]},
+
+{t:'Cells in series',h:()=>`
+<h2>Cells in series</h2>
+<ul><li><strong>Same direction:</strong> add the e.m.f.s. A 1.5 V and a 2.0 V cell give 3.5 V.</li>
+<li><strong>Opposite directions:</strong> total e.m.f. = sum in one direction − sum in the other. 2.0 V against 1.5 V gives 0.5 V in the direction of the 2.0 V cell.</li>
+<li><strong>Internal resistances</strong> add in both cases.</li></ul>
+<h3>Example</h3>
+<div class="fig circ">${drawD({E1:1.5,E2:6.0,R1:4,R2:3,R3:8})}</div>
+<div class="work"><div>Total e.m.f. = 1.5 + 6.0 = 7.5 V</div><div>Total resistance = 4.0 + 3.0 + 8.0 = 15 Ω</div><div>I = 7.5 / 15 = 0.50 A</div><div>p.d. across 8 Ω = 0.50 × 8.0 = 4.0 V</div></div>`,
+chk:[['Reverse the 1.5 V cell in the example. New current?','E = 6.0 − 1.5 = 4.5 V; I = 4.5 / 15 = 0.30 A']]},
+
+{t:'Potential dividers',h:()=>`
+<h2>The potential divider</h2>
+<p>Two or more resistors in series across a fixed p.d. They are used to control the level of an output, for example a volume control or an automatic light switch.</p>
+<div class="fig circ" style="max-width:380px">${drawPD({V0:'V₀',top:'res',bot:'res',tl:'R₁',bl:'R₂'})}</div>
+<div class="work"><div>I = V₀ / (R₁ + R₂)</div><div>V₁ = IR₁ = V₀R₁ / (R₁ + R₂) and V₂ = V₀R₂ / (R₁ + R₂)</div><div>Dividing: V₁ / V₂ = R₁ / R₂. The p.d.s are in the same ratio as the resistances.</div></div>
+<div class="eqbig">V<sub>out</sub> = V₀R₂ / (R₁ + R₂)</div>`,
+after:el=>wPD(el.querySelector('.wslot')),
+chk:[['V₀ = 6 V, R₁ = 4 kΩ, R₂ = 8 kΩ. Find V₂.','V₂ = 6 × 8 / 12 = 4 V'],['V₀ = 12 V and V₁ = V₂. What does that tell you?','R₁ = R₂, and each p.d. is 6 V.']]},
+
+{t:'Variable p.d. and brightness control',h:()=>`
+<h2>Supplying a variable p.d.</h2>
+<p>Many potential dividers are a single resistor (a length of resistance wire, often coiled) split into two parts by a sliding contact. The output is taken between the slider and one end.</p>
+<ul><li>Output is maximum when the slider is at the far end, and zero when it is at the same end as the output connection.</li></ul>
+<div class="fig circ" style="max-width:360px">${circDivider()}</div>
+<p>Moving the slider changes the p.d. across the lamp continuously from <strong>zero</strong> up to the full supply p.d. This is better than a variable resistor in series, where the lamp may still glow at the maximum resistance setting. Loudspeaker volume can be controlled in the same way.</p>`,
+chk:[['Why is a potential divider better than a series variable resistor for dimming a lamp?','It can take the p.d. across the lamp right down to zero.']]},
+
+{t:'Sensor circuits',h:()=>`
+<h2>Temperature and light sensors</h2>
+<div class="grid2"><div class="fig circ">${drawPD({V0:'V₀',top:'var',bot:'therm',tl:'',bl:''})}</div><div class="fig circ">${drawPD({V0:'V₀',top:'var',bot:'ldr',tl:'',bl:''})}</div></div>
+<h3>Temperature sensor</h3>
+<p>The supply p.d. is shared between the variable resistor and the thermistor; the output is the p.d. across the thermistor. If the temperature falls, the thermistor’s resistance rises, so it takes a larger share and V<sub>out</sub> rises. This could switch on a heater.</p>
+<h3>Light sensor</h3>
+<p>The output is the p.d. across the LDR. If the light level falls, the LDR’s resistance rises, so V<sub>out</sub> rises. This could switch on a lamp.</p>
+<p>The setting of the variable resistor decides <em>at what point</em> the output reaches the switching level. Swap the two components and the output does the opposite.</p>`,
+after:el=>wSensor(el.querySelector('.wslot')),
+chk:[['A thermistor is at the top of a divider and V<sub>out</sub> is taken across the fixed resistor. What happens to V<sub>out</sub> when it warms up?','Thermistor resistance falls, so it takes less of the p.d.; the fixed resistor takes more, so V<sub>out</sub> rises.']]}
+];
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+
+/* ---------- calculation drills ---------- */
+function uPick(x,base){const P=[[1e6,'M'],[1e3,'k'],[1,''],[1e-3,'m'],[1e-6,'μ']];for(const [f,p] of P){if(Math.abs(x)>=f*0.9995)return [f,p+base]}return [1e-6,'μ'+base]}
+function Q(text,ans,unit,work,pts){return {text,ans,unit,work,pts:pts||1}}
+const f3=x=>sci(x,3);
+const RV=[2,3,4,5,6,8,10,12,15,20,24,30,40,60];
+const par=(a,b)=>a*b/(a+b);
+function junction(s){
+ const n=s?4:3;let ins=[],outs=[];
+ for(let k=0;k<n-1;k++){const v=rint(1,s?30:25)/10;(R()<0.5?ins:outs).push(v)}
+ if(!ins.length){ins.push(outs.pop())}if(!outs.length){outs.push(ins.pop())}
+ const sin=ins.reduce((a,b)=>a+b,0),sout=outs.reduce((a,b)=>a+b,0);let x=Math.round((sin-sout)*10)/10;
+ if(Math.abs(x)<0.05){ins[0]=Math.round((ins[0]+0.4)*10)/10;x=Math.round((x+0.4)*10)/10}
+ const unkInto=x<0;const ws=[];ins.forEach(v=>ws.push({I:v.toFixed(1)+' A',into:true}));outs.forEach(v=>ws.push({I:v.toFixed(1)+' A',into:false}));
+ const angs=n===3?[180,40,-50]:[180,70,-10,-100];const sh=shuffle(ws);sh.push({I:'?',into:unkInto});sh.forEach((w,i)=>w.ang=angs[i]);
+ const X=Math.abs(x);
+ return Q('<div class="fig" style="max-width:340px">'+drawJ(sh)+'</div>Find the size of the current in the wire marked ?. (Its arrow shows the direction.)',X,'A',[`Total in = ${f3(sin+(unkInto?X:0))} A (including ? if it flows in)`,`Total out = ${f3(sout+(unkInto?0:X))} A`,`Kirchhoff’s first law: total in = total out, so ? = ${f3(X)} A ${unkInto?'into':'out of'} the junction`]);
+}
+const DR={
+ k1:{n:'Junction currents',g:s=>junction(s)},
+ ser:{n:'Series and parallel',g(s){
+  const v=s?rint(0,3):rint(0,2);
+  if(v===0){const a=pick(RV),b=pick(RV),c=pick(RV);const three=R()<0.5;const T=a+b+(three?c:0);return Q(`Find the total resistance of ${om(a)}, ${om(b)}${three?' and '+om(c):''} connected in series.`,T,'Ω',[`R<sub>T</sub> = R₁ + R₂${three?' + R₃':''}`,`= ${a} + ${b}${three?' + '+c:''}`,`= ${f3(T)} Ω`])}
+  if(v===1){const a=pick(RV),b=pick(RV),T=par(a,b);return Q(`Find the total resistance of ${om(a)} and ${om(b)} connected in parallel.`,T,'Ω',[`1/R<sub>T</sub> = 1/R₁ + 1/R₂ = 1/${a} + 1/${b} = ${f3(1/a+1/b)}`,`R<sub>T</sub> = 1 / ${f3(1/a+1/b)} = ${f3(T)} Ω`])}
+  if(v===2){const a=pick(RV),b=pick(RV),c=pick(RV),T=1/(1/a+1/b+1/c);return Q(`Find the total resistance of ${om(a)}, ${om(b)} and ${om(c)} connected in parallel.`,T,'Ω',[`1/R<sub>T</sub> = 1/${a} + 1/${b} + 1/${c} = ${f3(1/a+1/b+1/c)}`,`R<sub>T</sub> = ${f3(T)} Ω`],s?2:1)}
+  const pairs=[[6,3,2],[12,6,4],[20,5,4],[30,15,10],[12,4,3],[60,20,15],[10,10,5],[24,8,6],[40,10,8]];const p=pick(pairs);
+  return Q(`What resistor must be connected in parallel with ${om(p[0])} to give a combined resistance of ${om(p[2])}?`,p[1],'Ω',[`1/R<sub>T</sub> = 1/R₁ + 1/R₂, so 1/R₂ = 1/${p[2]} − 1/${p[0]} = ${f3(1/p[2]-1/p[0])}`,`R₂ = ${f3(p[1])} Ω`],2)}},
+ net:{n:'Networks',g(s){
+  const o={E:pick([6,9,12]),R1:pick(RV),R2:pick(RV),R3:pick(RV),r:null};const B=R()<0.5;
+  if(!B){const Rp=par(o.R2,o.R3),T=o.R1+Rp;
+   if(!s)return Q('<div class="fig circ">'+drawA(o)+'</div>Find the total resistance of the circuit.',T,'Ω',[`R₂ and R₃ in parallel: 1/R = 1/${o.R2} + 1/${o.R3}, R = ${f3(Rp)} Ω`,`Add R₁ in series: R<sub>T</sub> = ${o.R1} + ${f3(Rp)} = ${f3(T)} Ω`]);
+   const I=o.E/T,Vp=I*Rp,I3=Vp/o.R3;return Q('<div class="fig circ">'+drawA(o)+'</div>Find the current through R₃.',I3,'A',[`R<sub>T</sub> = ${o.R1} + ${f3(Rp)} = ${f3(T)} Ω, so I = ${o.E} / ${f3(T)} = ${f3(I)} A`,`p.d. across the parallel pair = ${f3(I)} × ${f3(Rp)} = ${f3(Vp)} V`,`I₃ = ${f3(Vp)} / ${o.R3} = ${f3(I3)} A`],2)}
+  const Rs=o.R1+o.R2,T=par(Rs,o.R3);
+  if(!s)return Q('<div class="fig circ">'+drawB(o)+'</div>Find the total resistance of the circuit.',T,'Ω',[`R₁ + R₂ = ${Rs} Ω`,`${Rs} Ω in parallel with ${o.R3} Ω: R<sub>T</sub> = ${f3(T)} Ω`]);
+  const V2=o.E*o.R2/Rs;return Q('<div class="fig circ">'+drawB(o)+'</div>Find the p.d. across R₂.',V2,'V',[`The top branch has the full ${o.E} V across it (parallel with R₃)`,`V₂ = ${o.E} × ${o.R2} / (${o.R1} + ${o.R2}) = ${f3(V2)} V`],2)}},
+ emf:{n:'e.m.f. and internal resistance',g(s){
+  const v=s?rint(0,4):rint(0,2);
+  const E=pick([1.5,3.0,4.5,6.0,9.0,12]),r=pick([0.2,0.5,1.0,1.5,2.0]);
+  if(v===0){const I=pick([0.5,1.0,1.5,2.0]),V=E-I*r;if(V<=0)return this.g(s);return Q(`A cell of e.m.f. ${E} V and internal resistance ${r} Ω supplies ${I} A. Find the terminal p.d.`,V,'V',[`V = E − Ir`,`= ${E} − ${I} × ${r}`,`= ${f3(V)} V`])}
+  if(v===1){const I=pick([0.5,1.0,2.0,3.0,4.0,6.0]),V=Math.round((E-I*r)*100)/100;if(V<=0)return this.g(s);return Q(`A battery of e.m.f. ${E} V has a terminal p.d. of ${V} V when it supplies ${I} A. Find its internal resistance.`,(E-V)/I,'Ω',[`Lost volts = E − V = ${E} − ${V} = ${f3(E-V)} V`,`r = lost volts / I = ${f3(E-V)} / ${I} = ${f3((E-V)/I)} Ω`])}
+  if(v===2){const Rl=pick([2,4,5,8,10,12]),I=E/(Rl+r);return Q(`A source of e.m.f. ${E} V and internal resistance ${r} Ω is connected to a ${Rl} Ω load. Find the current.`,I,'A',[`E = I(R + r)`,`I = ${E} / (${Rl} + ${r})`,`= ${f3(I)} A`])}
+  if(v===3){const I1=pick([0.2,0.4,0.5]),I2=I1+pick([0.6,0.8,1.0]),V1=Math.round((E-I1*r)*100)/100,V2=Math.round((E-I2*r)*100)/100;if(V2<=0)return this.g(s);return Q(`A cell’s terminal p.d. is ${V1} V when the current is ${I1} A and ${V2} V when the current is ${I2.toFixed(1)} A. Find its internal resistance.`,(V1-V2)/(I2-I1),'Ω',[`V = E − Ir, so the change in V = −r × change in I`,`r = (${V1} − ${V2}) / (${I2.toFixed(1)} − ${I1}) = ${f3((V1-V2)/(I2-I1))} Ω`],2)}
+  const Pm=E*E/(4*r);return Q(`A supply has e.m.f. ${E} V and internal resistance ${r} Ω. Find the maximum power it can deliver to an external load.`,Pm,'W',[`Maximum power when R = r = ${r} Ω`,`I = E / 2r = ${f3(E/(2*r))} A`,`P = I²R = ${f3(E/(2*r))}² × ${r} = ${f3(Pm)} W`],2)}},
+ cells:{n:'Cells in series',g(s){
+  const E1=pick([1.5,2.0,3.0,4.5]),E2=pick([6.0,9.0,12]),R1=pick([2,3,4,5]),R2=pick([3,4,6,8]),R3=pick([4,6,8,10]),opp=s&&R()<0.5;
+  const Et=opp?E2-E1:E1+E2,Rt=R1+R2+R3,I=Et/Rt;
+  return Q('<div class="fig circ">'+drawD({E1,E2,R1,R2,R3,opp})+'</div>'+(opp?'The cells are connected in opposite directions. ':'Both cells are connected in the same direction. ')+'Find the p.d. across R₃. (Ignore internal resistance.)',I*R3,'V',[`Total e.m.f. = ${opp?E2+' − '+E1:E1+' + '+E2} = ${f3(Et)} V`,`Total resistance = ${R1} + ${R2} + ${R3} = ${Rt} Ω`,`I = ${f3(Et)} / ${Rt} = ${f3(I)} A`,`V₃ = IR₃ = ${f3(I)} × ${R3} = ${f3(I*R3)} V`],opp?2:1)}},
+ pd:{n:'Potential dividers',g(s){
+  const v=s?rint(0,2):0,V0=pick([5,6,9,12]);
+  if(v===0){const a=pick([1,2,3,4,5,8,10]),b=pick([1,2,4,5,6,8,12]),V2=V0*b/(a+b);return Q(`A potential divider has R₁ = ${a} kΩ and R₂ = ${b} kΩ across a ${V0} V supply. Find the p.d. across R₂.`,V2,'V',[`V₂ = V₀R₂ / (R₁ + R₂)`,`= ${V0} × ${b} / (${a} + ${b})`,`= ${f3(V2)} V`])}
+  if(v===1){const b=pick([1,2,4,5,10]),Vo=pick([1,1.5,2,3,4]);if(Vo>=V0)return this.g(s);const a=b*(V0-Vo)/Vo;return Q(`A ${V0} V supply feeds a divider. R₂ = ${b} kΩ. What value of R₁ gives ${Vo} V across R₂? Answer in kΩ.`,a,'kΩ',[`V₁ = ${V0} − ${Vo} = ${f3(V0-Vo)} V`,`V₁ / V₂ = R₁ / R₂, so R₁ = ${b} × ${f3(V0-Vo)} / ${Vo}`,`= ${f3(a)} kΩ`],2)}
+  const T=pick([0,10,20,30,40,60]),Rt=thermR(T,1e4,3950),Rf=pick([4.7,10,15,22])*1000,Vo=V0*Rt/(Rt+Rf);
+  return Q(`A thermistor is in series with a ${Rf/1000} kΩ resistor across a ${V0} V supply. At ${T} °C the thermistor’s resistance is ${f3(Rt/1000)} kΩ. Find the p.d. across the thermistor.`,Vo,'V',[`V<sub>th</sub> = V₀R<sub>th</sub> / (R<sub>th</sub> + R)`,`= ${V0} × ${f3(Rt/1000)} / (${f3(Rt/1000)} + ${Rf/1000})`,`= ${f3(Vo)} V`],2)}},
+ bright:{n:'Lamps and power',g(s){
+  const V=pick([6,9,12,15,24]),Rl=pick([4,6,8,12,24]),v=s?rint(0,2):rint(0,1);
+  if(v===0){const I=V/(2*Rl),P=I*I*Rl;return Q(`Two identical ${Rl} Ω lamps are connected in series to a ${V} V supply. Find the power of each lamp.`,P,'W',[`Total R = 2 × ${Rl} = ${2*Rl} Ω; I = ${V} / ${2*Rl} = ${f3(I)} A`,`P = I²R = ${f3(I)}² × ${Rl} = ${f3(P)} W`])}
+  if(v===1){const P=V*V/Rl;return Q(`Two identical ${Rl} Ω lamps are connected in parallel to a ${V} V supply. Find the power of each lamp.`,P,'W',[`Each lamp has the full ${V} V across it`,`P = V²/R = ${V}² / ${Rl} = ${f3(P)} W`])}
+  const Rs=pick([6,12,24,60]),T=Rs+Rl/2,I=V/T,Il=I/2,P=Il*Il*Rl;return Q(`Two identical ${Rl} Ω lamps in parallel are connected in series with a ${Rs} Ω resistor to a ${V} V supply. Find the power of each lamp.`,P,'W',[`Lamps in parallel: ${Rl}/2 = ${f3(Rl/2)} Ω; total R = ${f3(T)} Ω`,`I = ${V} / ${f3(T)} = ${f3(I)} A, so each lamp takes ${f3(Il)} A`,`P = I²R = ${f3(Il)}² × ${Rl} = ${f3(P)} W`],2)}}
+};
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 0.25 or 1.5e-3.');return}
+  const ok=close(v,drQ.ans,0.015);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+wk());
+  else{let hint='';const r=v/drQ.ans,lg=Math.log10(Math.abs(r));
+   if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check your prefixes.';
+   else if(drQ.topic==='Series and parallel'&&close(v,1/drQ.ans,0.02))hint=' You found 1/R<sub>T</sub>. Take the reciprocal as the final step.';
+   fb(out,'no','<strong>Not quite.</strong>'+hint+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.'+wk())}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+
+/* ---------- concept quiz ---------- */
+const QB=[
+['Kirchhoff’s first law is a consequence of the conservation of:',['charge','energy','momentum','current density'],0,'Charge cannot collect at or vanish from a junction.'],
+['Kirchhoff’s second law is a consequence of the conservation of:',['energy','charge','mass','resistance'],0,'Energy given to each coulomb by the e.m.f.s equals the energy it gives up in the p.d.s.'],
+['Two ammeters are placed either side of a lamp in a series circuit. They read:',['the same current','a smaller current after the lamp','a larger current after the lamp','zero after the lamp'],0,'Components do not use up current.'],
+['The p.d.s across components in parallel are:',['equal','in the ratio of their resistances','shared so they add up to the supply p.d.','always zero'],0,'Each coulomb delivers the same energy whichever branch it goes through.'],
+['Adding another resistor in parallel to a network:',['decreases the total resistance','increases the total resistance','has no effect','doubles the total resistance'],0,'An extra path lets more current flow for the same p.d.'],
+['The total resistance of resistors in parallel is always:',['smaller than the smallest individual resistance','larger than the largest','equal to the average','equal to the sum'],0,'1/R<sub>T</sub> is bigger than any single 1/R.'],
+['The total resistance of resistors in series is always:',['greater than the largest individual resistance','smaller than the smallest','equal to the product','equal to the average'],0,'R<sub>T</sub> = R₁ + R₂ + …'],
+['Three identical resistors of 60 Ω are connected in parallel. The total resistance is:',['20 Ω','180 Ω','60 Ω','0.05 Ω'],0,'For N identical resistors in parallel, R/N.'],
+['A student calculates 1/R<sub>T</sub> = 0.25 Ω⁻¹ and writes R<sub>T</sub> = 0.25 Ω. The mistake is:',['not taking the reciprocal: R<sub>T</sub> = 4 Ω','using the wrong formula','a unit error of 10³','nothing: it is correct'],0,'The last step is always R<sub>T</sub> = 1 / (1/R<sub>T</sub>).'],
+['e.m.f. is best defined as:',['the energy converted into electrical energy per unit charge by the source','the p.d. across the terminals when a current flows','the force that pushes electrons','the current produced per volt'],0,'E = W/Q for the source. Its unit is the volt.'],
+['Internal resistance is:',['the loss of p.d. per unit current inside the source','the resistance of the connecting wires','the resistance of the load','the total resistance of the circuit'],0,'Lost volts = Ir.'],
+['When a cell with internal resistance supplies a larger current, its terminal p.d.:',['decreases','increases','stays the same','becomes equal to the e.m.f.'],0,'V = E − Ir: more current, more lost volts.'],
+['The terminal p.d. equals the e.m.f. when:',['no current flows','the load resistance is zero','the load equals the internal resistance','the cell is new'],0,'With I = 0 there are no lost volts. A high-resistance voltmeter across an open cell reads very nearly E.'],
+['In E = V + Ir, the quantity Ir represents:',['energy per coulomb wasted inside the source','energy per coulomb delivered to the load','the total energy','the power of the cell'],0,'These are the “lost volts”.'],
+['On a graph of terminal p.d. V against current I for a cell, the gradient is:',['−r','E','r','1/r'],0,'V = −rI + E.'],
+['On a graph of terminal p.d. V against current I for a cell, the intercept on the V axis is:',['E','r','zero','the short-circuit current'],0,'When I = 0, V = E.'],
+['In the WJEC method, R is plotted against 1/I. The gradient of the line is:',['E','r','−r','1/E'],0,'R = E(1/I) − r.'],
+['In the WJEC method, R is plotted against 1/I. The intercept on the R axis is:',['−r','E','r','zero'],0,'Set 1/I = 0: R = −r.'],
+['Maximum power is delivered to a load when:',['the load resistance equals the internal resistance','the load resistance is zero','the load resistance is very large','the current is as small as possible'],0,'R = r gives the peak of the P–R curve.'],
+['A 3 kV supply has an internal resistance of 10 MΩ. Its maximum possible current is:',['0.3 mA','3 A','30 mA','3 mA'],0,'I = 3000 / 10⁷ = 3 × 10⁻⁴ A.'],
+['Why do high-voltage laboratory supplies have a very large internal resistance?',['To limit the current to a safe level if someone touches the terminals','To increase their e.m.f.','To make them more efficient','To make the voltmeter reading accurate'],0,'The internal resistance limits the maximum current.'],
+['Cells of 2.0 V and 1.5 V are connected in series but facing opposite ways. The total e.m.f. is:',['0.5 V','3.5 V','zero','1.75 V'],0,'Subtract e.m.f.s that oppose each other.'],
+['Two cells with internal resistances 0.5 Ω and 0.3 Ω are in series, facing opposite ways. The total internal resistance is:',['0.8 Ω','0.2 Ω','zero','0.19 Ω'],0,'Internal resistances in series always add, whichever way the cells face.'],
+['In a potential divider, the p.d.s across the two resistors are:',['in the same ratio as the resistances','equal','in the inverse ratio of the resistances','independent of the resistances'],0,'V₁/V₂ = R₁/R₂: same current through both.'],
+['A potential divider has R₁ = R₂. The output across R₂ is:',['half the supply p.d.','equal to the supply p.d.','zero','a quarter of the supply p.d.'],0,'Equal resistances share the p.d. equally.'],
+['The output of a potential divider is taken across a thermistor. As the temperature falls, V<sub>out</sub>:',['rises','falls','stays the same','drops to zero'],0,'Colder thermistor, higher resistance, bigger share of the p.d.'],
+['The output of a potential divider is taken across an LDR. As it gets darker, V<sub>out</sub>:',['rises','falls','stays the same','reverses'],0,'Darker, higher LDR resistance, bigger share of the p.d.'],
+['In a sensor circuit, what does changing the variable resistor do?',['It sets the temperature or light level at which the output reaches a given p.d.','It changes the supply p.d.','It stops the sensor working','It changes the sensor’s resistance'],0,'It moves the switching point.'],
+['Why is a potential divider better than a series variable resistor for dimming a lamp?',['It can reduce the p.d. across the lamp all the way to zero','It uses fewer components','It never gets hot','It increases the maximum brightness'],0,'With a series resistor the lamp may still glow at the maximum setting.'],
+['A voltmeter with a resistance similar to the resistor it is connected across will read:',['lower than the true p.d.','higher than the true p.d.','exactly the true p.d.','zero'],0,'The voltmeter in parallel lowers the combined resistance, so that section takes less of the p.d.'],
+['A balanced bridge has no current through the middle resistor. This is because:',['both ends of that resistor are at the same potential','it has infinite resistance','the current is too small to measure','it is short-circuited'],0,'No p.d. across it, so no current, and it can be removed without changing anything.'],
+['Two identical lamps are connected in parallel to a cell with negligible internal resistance. Compared with one lamp alone, each lamp is:',['equally bright','dimmer','brighter','off'],0,'Each still has the full cell p.d. across it.'],
+['Two identical lamps connected in series to a supply, compared with one lamp alone on the same supply, are each:',['dimmer, with a quarter of the power','equally bright','half as bright in power','twice as bright'],0,'Each gets half the p.d.; P = V²/R gives a quarter of the power.'],
+['A battery with significant internal resistance runs more lamps in parallel. The terminal p.d.:',['falls, so each lamp gets dimmer','rises','stays constant','becomes equal to E'],0,'More lamps, lower external resistance, larger current, larger lost volts.']
+];
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+
+/* ---------- circuit solver ---------- */
+function makeCircuit(){
+ const t=pick(['A','A','B','B','C','D']);const E=pick([6,9,12]),hasR=(t==='A'||t==='B')&&R()<0.45,r=hasR?pick([0.5,1,1.5,2]):null;
+ const o={E,R1:pick(RV),R2:pick(RV),R3:pick(RV),r};const rr=r||0;const P=[];let svg;
+ if(t==='A'){svg=drawA(o);const Rp=par(o.R2,o.R3),Rx=o.R1+Rp,I=E/(Rx+rr),V1=I*o.R1,Vp=I*Rp;
+  P.push(['the combined resistance of R₂ and R₃',Rp,'Ω',`1/R = 1/${o.R2} + 1/${o.R3}, so R = ${f3(Rp)} Ω`]);
+  P.push([hasR?'the total resistance of the circuit, including r':'the total resistance of the circuit',Rx+rr,'Ω',`R<sub>T</sub> = ${o.R1} + ${f3(Rp)}${hasR?' + '+r:''} = ${f3(Rx+rr)} Ω`]);
+  P.push(['the current from the cell',I,'A',`I = E / R<sub>T</sub> = ${E} / ${f3(Rx+rr)} = ${f3(I)} A`]);
+  if(hasR)P.push(['the terminal p.d. of the cell',E-I*rr,'V',`V = E − Ir = ${E} − ${f3(I)} × ${r} = ${f3(E-I*rr)} V`]);
+  P.push(['the p.d. across R₂',Vp,'V',`V = IR = ${f3(I)} × ${f3(Rp)} = ${f3(Vp)} V (R₂ and R₃ share this p.d.)`]);
+  P.push(['the current through R₃',Vp/o.R3,'A',`I₃ = ${f3(Vp)} / ${o.R3} = ${f3(Vp/o.R3)} A. Check: I₂ + I₃ = ${f3(Vp/o.R2)} + ${f3(Vp/o.R3)} = ${f3(I)} A`]);}
+ else if(t==='B'){svg=drawB(o);const Rs=o.R1+o.R2,Rp=par(Rs,o.R3),I=E/(Rp+rr),Vp=I*Rp;
+  P.push(['the resistance of the top branch',Rs,'Ω',`R₁ + R₂ = ${Rs} Ω`]);
+  P.push([hasR?'the total resistance, including r':'the total resistance of the circuit',Rp+rr,'Ω',`${Rs} Ω in parallel with ${o.R3} Ω = ${f3(Rp)} Ω${hasR?'; add r: '+f3(Rp+rr)+' Ω':''}`]);
+  P.push(['the current from the cell',I,'A',`I = ${E} / ${f3(Rp+rr)} = ${f3(I)} A`]);
+  if(hasR)P.push(['the lost volts',I*rr,'V',`Ir = ${f3(I)} × ${r} = ${f3(I*rr)} V`]);
+  P.push(['the current through R₃',Vp/o.R3,'A',`p.d. across the parallel section = ${f3(Vp)} V; I₃ = ${f3(Vp)} / ${o.R3} = ${f3(Vp/o.R3)} A`]);
+  P.push(['the p.d. across R₁',Vp*o.R1/Rs,'V',`Top branch current = ${f3(Vp)} / ${Rs} = ${f3(Vp/Rs)} A; V₁ = ${f3(Vp/Rs)} × ${o.R1} = ${f3(Vp*o.R1/Rs)} V`]);}
+ else if(t==='C'){svg=drawC(o);const Rp=1/(1/o.R1+1/o.R2+1/o.R3),I=E/Rp;
+  P.push(['the total resistance',Rp,'Ω',`1/R<sub>T</sub> = 1/${o.R1} + 1/${o.R2} + 1/${o.R3} = ${f3(1/Rp)}, R<sub>T</sub> = ${f3(Rp)} Ω`]);
+  P.push(['the current from the cell',I,'A',`I = ${E} / ${f3(Rp)} = ${f3(I)} A`]);
+  P.push(['the current through R₂',E/o.R2,'A',`Each resistor has the full ${E} V: I₂ = ${E} / ${o.R2} = ${f3(E/o.R2)} A`]);
+  P.push(['the power dissipated in R₃',E*E/o.R3,'W',`P = V²/R = ${E}² / ${o.R3} = ${f3(E*E/o.R3)} W`]);}
+ else {const E1=pick([1.5,2,3]),E2=pick([6,9]),opp=R()<0.4;const d={E1,E2,R1:pick([2,3,4,5]),R2:pick([3,4,6]),R3:pick([4,6,8,10]),opp};svg=drawD(d);const Et=opp?E2-E1:E1+E2,Rt=d.R1+d.R2+d.R3,I=Et/Rt;
+  P.push(['the total e.m.f.',Et,'V',opp?`The cells oppose: ${E2} − ${E1} = ${f3(Et)} V`:`The cells aid each other: ${E1} + ${E2} = ${f3(Et)} V`]);
+  P.push(['the current',I,'A',`I = ${f3(Et)} / (${d.R1} + ${d.R2} + ${d.R3}) = ${f3(I)} A`]);
+  P.push(['the p.d. across R₂',I*d.R2,'V',`V₂ = ${f3(I)} × ${d.R2} = ${f3(I*d.R2)} V`]);}
+ return {svg,P};
+}
+function csRender(){
+ const C=makeCircuit(),box=$('#csBox');
+ box.innerHTML='<div class="grid2"><div><div class="fig circ">'+C.svg+'</div><p class="small muted">Assume the connecting wires have no resistance.'+(C.svg.includes('r = ')?' The dashed box is the cell with its internal resistance.':' The cells have negligible internal resistance.')+'</p></div><div id="csParts"></div></div><div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn go" type="button" id="csNew">New circuit</button></div>';
+ const parts=$('#csParts');
+ C.P.forEach((p,j)=>{const id='cs'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') Find '+p[0]+'.</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer" style="width:120px"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Hint</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,hn]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],0.02)){if(!got){got=true;award(tries===1?2:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}else{miss();fb(out,'no',tries>=2?'Not yet. '+p[3]:'Not yet. Use your earlier answers and try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});hn.addEventListener('click',()=>fb(out,'info',p[3]))});
+ $('#csNew').addEventListener('click',csRender);
+}
+
+/* ---------- graph matching ---------- */
+const GM=[['vi','Cell: terminal p.d. against current'],['rinv','Practical: R against 1/I'],['pr','Power delivered to the load against load resistance'],['vr','Terminal p.d. against load resistance'],['thb','Thermistor at the bottom of a divider'],['tht','Thermistor at the top of a divider']];
+let gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ gmOrder=shuffle(GM.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ $('#gmPool').innerHTML=shuffle(GM).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}else if(gmPlace[i]!==undefined)delete gmPlace[i];gmPaint()}));
+ gmPaint();
+}
+function gmPaint(){
+ const used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?GM.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+$('#gmCheck').addEventListener('click',()=>{let n=0;$$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<GM.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===GM.length){award(GM.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong>')}else{miss();fb($('#gmFb'),'no',n+' of '+GM.length+' correct. Move the labels with red borders and check again.')}});
+$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p){this.p=p.slice();this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  if(this.p.length){const xs=this.p.map(q=>q[0]),ys=this.p.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+/* ============ LAB 1: internal resistance ============ */
+const RNOM=[2.2,3.3,4.7,6.8,10,15,22,33,47,56];
+const L1={m:1,on:false,ri:4,rh:60,pol:0,data:{1:[],2:[]},g:'vi',shown:{V:0,I:0}};
+(function(){const g=kitRng(11);
+ L1.cells=[0,1,2,3].map(()=>({e:1.50+(g()-0.5)*0.08,r:0.3+g()*0.4}));L1.E=L1.cells.reduce((a,c)=>a+c.e,0);L1.r=L1.cells.reduce((a,c)=>a+c.r,0);
+ L1.RA=0.12+g()*0.18;L1.lead=0.05;L1.zA=[0,0.01,-0.01,0.01,0][Math.floor(g()*5)];L1.gA=1+(g()-0.5)*0.02;L1.gV=1+(g()-0.5)*0.02;
+ L1.Ract=RNOM.map(v=>v*(1+(g()-0.5)*0.04));})();
+function l1Rv(){return 1.0+24*L1.rh/100}
+function l1Solve(){
+ if(!L1.on)return {V:L1.E*(1-0.03*L1.pol),I:0};
+ const Ee=L1.E*(1-0.03*L1.pol),Rl=L1.m===1?L1.Ract[L1.ri]:l1Rv(),I=Ee/(Rl+L1.r+L1.RA+L1.lead);return {V:Ee-I*L1.r,I};
+}
+function l1Read(){const s=l1Solve();const on=L1.on;
+ const I=Math.round((s.I*L1.gA+L1.zA)*100+(on?jit():0))/100,V=Math.round(s.V*L1.gV*100+(on?jit():0))/100;L1.shown={V,I};lcdSet($('#l1I'),I,2);lcdSet($('#l1V'),V,2)}
+function l1Draw(){
+ $('#l1Circ').innerHTML=circIntR(L1.m===2,L1.m===1?'res':'var',L1.on);
+ $('#l1VBox').style.display=L1.m===2?'':'none';$('#l1C1').style.display=L1.m===1?'':'none';$('#l1C2').style.display=L1.m===2?'':'none';
+ $('#l1Ro1').textContent=RNOM[L1.ri]+' Ω (nominal)';$('#l1Rho').textContent='about '+l1Rv().toFixed(0)+' Ω';
+ $('#l1GSel').style.display=L1.m===2?'':'none';
+}
+$('#l1Rs').innerHTML=RNOM.map((v,i)=>'<button type="button" class="chip" data-i="'+i+'" aria-pressed="'+(i===L1.ri)+'">'+v+' Ω</button>').join('');
+$$('#l1Rs .chip').forEach(b=>b.addEventListener('click',()=>{L1.ri=+b.dataset.i;$$('#l1Rs .chip').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));l1Draw();l1Read()}));
+$('#l1Rh').addEventListener('input',e=>{L1.rh=+e.target.value;l1Draw();l1Read()});
+$('#l1Sw').addEventListener('click',e=>{L1.on=!L1.on;e.target.textContent=L1.on?'Open switch':'Close switch';e.target.setAttribute('aria-pressed',L1.on);l1Draw();l1Read()});
+$$('#l1Meth button').forEach(b=>b.addEventListener('click',()=>{L1.m=+b.dataset.m;$$('#l1Meth button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));l1Draw();l1Read();l1Table();l1Plot(true);$('#l1Msg').className='fb'}));
+$$('#l1GSel button').forEach(b=>b.addEventListener('click',()=>{L1.g=b.dataset.g;$$('#l1GSel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));l1Plot(true)}));
+setInterval(()=>{const s=l1Solve();if(L1.on)L1.pol=Math.min(1,L1.pol+s.I*0.45/90);else L1.pol=Math.max(0,L1.pol-0.45/15);
+ const el=$('#l1Pol');if(el)el.textContent=L1.pol>0.3?'The cells are running down: open the switch to let them recover.':'';
+ if($('#sec-lab1').classList.contains('on'))l1Read()},450);
+const p1=new Plot($('#l1G'),{xl:'I⁻¹ / A⁻¹',yl:'R / Ω',bx:[0,2],by:[-4,10],line:true,onDraw:l1RoF});
+function l1RoF(){const f=p1.line(),el=$('#l1Ro');if(!f||!p1.lineOn){el.innerHTML=L1.m===2&&L1.g==='pr'?'Power delivered to the load, P = VI, against load resistance R = V/I.':'';return}
+ el.innerHTML='Your line: gradient = <strong>'+sci(f.m,3)+(L1.m===1?' Ω A':' V A<sup>−1</sup>')+'</strong>, intercept = <strong>'+sci(f.c,3)+(L1.m===1?' Ω':' V')+'</strong>. Drag the red handles.'}
+function l1Pts(){const d=L1.data[L1.m];if(L1.m===1)return d.filter(r=>r[1]>0).map(r=>[1/r[1],r[0]]);if(L1.g==='pr')return d.filter(r=>r[1]>0).map(r=>[r[0]/r[1],r[0]*r[1]]);return d.map(r=>[r[1],r[0]])}
+function l1Plot(reset){
+ if(L1.m===1)Object.assign(p1.o,{xl:'I⁻¹ / A⁻¹',yl:'R / Ω',bx:[0,1],by:[-4,10]});
+ else if(L1.g==='vi')Object.assign(p1.o,{xl:'I / A',yl:'V / V',bx:[0,0.5],by:[0,7]});
+ else Object.assign(p1.o,{xl:'R / Ω',yl:'P / W',bx:[0,5],by:[0,1]});
+ p1.lineOn=!(L1.m===2&&L1.g==='pr');if(reset){p1.user=false;p1.h=null}p1.set(l1Pts());
+ $('#l1GT').textContent=L1.m===1?'Graph of R against 1/I':(L1.g==='vi'?'Graph of V against I':'Graph of P against R');
+}
+function l1Table(){
+ const d=L1.data[L1.m];
+ $('#l1Th').innerHTML=L1.m===1?'<tr><th>R / Ω</th><th>I / A</th><th>I⁻¹ / A⁻¹</th><th></th></tr>':'<tr><th>V / V</th><th>I / A</th><th>R = V/I / Ω</th><th>P = VI / W</th><th></th></tr>';
+ $('#l1Tb').innerHTML=d.length?d.map((r,i)=>L1.m===1?'<tr><td>'+r[0]+'</td><td>'+r[1].toFixed(2)+'</td><td>'+(r[1]>0?(1/r[1]).toFixed(2):'–')+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>':'<tr><td>'+r[0].toFixed(2)+'</td><td>'+r[1].toFixed(2)+'</td><td>'+(r[1]>0?(r[0]/r[1]).toFixed(2):'–')+'</td><td>'+(r[0]*r[1]).toFixed(2)+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No readings yet</td></tr>';
+ $$('#l1Tb .x').forEach(b=>b.addEventListener('click',()=>{d.splice(+b.dataset.i,1);l1Table();l1Plot()}));
+ $('#l1TabT').textContent=L1.m===1?'Results: method 1':'Results: method 2';
+ $('#l1Hint').textContent=L1.m===1?'Use every resistor from 2.2 Ω to 56 Ω. The ammeter reads to ±0.01 A.':'Take at least 8 readings across the full range of the variable resistor.';
+}
+$('#l1Rec').addEventListener('click',()=>{
+ const m=$('#l1Msg');if(!L1.on){fb(m,'info','Close the switch to take a reading.');return}
+ const d=L1.data[L1.m];
+ if(L1.m===1){const Rn=RNOM[L1.ri];for(let i=d.length-1;i>=0;i--)if(d[i][0]===Rn)d.splice(i,1);d.push([Rn,L1.shown.I]);d.sort((a,b)=>a[0]-b[0])}
+ else{if(d.some(r=>r[0]===L1.shown.V&&r[1]===L1.shown.I)){fb(m,'info','You already have that reading. Move the variable resistor.');return}d.push([L1.shown.V,L1.shown.I]);d.sort((a,b)=>a[1]-b[1])}
+ l1Table();l1Plot();let msg='Reading recorded.';if(L1.pol>0.3)msg+=' <span class="warn">The switch has been closed for a while, so the cells’ e.m.f. has dropped a little.</span>';fb(m,'ok',msg);
+});
+$('#l1Clr').addEventListener('click',()=>{L1.data[L1.m]=[];l1Table();l1Plot()});
+$('#l1Line').addEventListener('click',()=>p1.reset(false));
+function l1Tasks(){
+ const el=$('#l1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis: method 1 (R against 1/I)</h3><p class="small muted">R = E(1/I) − r, so gradient = E and intercept = −r.</p>';
+ const lineCheck=(mm,need)=>{if(L1.m!==mm)return {info:1,msg:'Switch to method '+mm+' so your graph shows that line.'};
+  const pts=l1Pts();if(pts.length<need)return {info:1,msg:'Take at least '+need+' readings first.'};const f=p1.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Drag the red handles to fit your line.'};
+  if(pct(f.m,ls.m)>6)return {ok:false,msg:'Your line’s gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend of your points. Adjust it so the points are balanced either side.'};return {f,ls}};
+ numTask(el,'Use the gradient of your line to find the e.m.f. of the battery.','V',v=>{const k=lineCheck(1,6);if(!k.f)return k;
+  if(close(v,k.f.m,0.03))return {ok:true,msg:'<strong>Good.</strong> E = gradient = '+sci(k.f.m,3)+' V. Four cells of about 1.5 V each.'};return {ok:false,msg:'The gradient of R against 1/I is E. Read it from your line: ΔR ÷ Δ(1/I).'}},3);
+ numTask(el,'Use the intercept of your line to find the internal resistance r.','Ω',v=>{const k=lineCheck(1,6);if(!k.f)return k;const rr=-k.f.c;
+  if(Math.abs(v-rr)<=Math.max(0.12,0.06*Math.abs(rr)))return {ok:true,msg:'<strong>Good.</strong> The intercept is '+sci(k.f.c,3)+' Ω, so r = '+sci(rr,3)+' Ω. Extend your line back to 1/I = 0 on paper to find it.'};
+  if(Math.abs(v+rr)<=Math.max(0.12,0.06*Math.abs(rr)))return {ok:false,msg:'The intercept is −r, so r is the positive value.'};return {ok:false,msg:'Read where your line crosses the R axis (1/I = 0). That value is −r.'}},3);
+ el.insertAdjacentHTML('beforeend','<h3>Analysis: method 2 (V against I)</h3><p class="small muted">V = −rI + E, so intercept = E and gradient = −r.</p>');
+ numTask(el,'Use the intercept of your V–I line to find the e.m.f.','V',v=>{if(L1.g!=='vi')return {info:1,msg:'Show the V against I graph.'};const k=lineCheck(2,6);if(!k.f)return k;
+  if(close(v,k.f.c,0.02))return {ok:true,msg:'<strong>Good.</strong> E = intercept = '+sci(k.f.c,3)+' V.'};return {ok:false,msg:'Read where your line crosses the V axis (I = 0).'}},3);
+ numTask(el,'Use the gradient of your V–I line to find r.','Ω',v=>{if(L1.g!=='vi')return {info:1,msg:'Show the V against I graph.'};const k=lineCheck(2,6);if(!k.f)return k;const rr=-k.f.m;
+  if(close(v,rr,0.04))return {ok:true,msg:'<strong>Good.</strong> Gradient = '+sci(k.f.m,3)+' V A<sup>−1</sup>, so r = '+sci(rr,3)+' Ω.'};if(close(v,-rr,0.04))return {ok:false,msg:'The gradient is −r, so r is positive.'};return {ok:false,msg:'r = −gradient of your V–I line.'}},3);
+ mcq(el,'Switch the method 2 graph to P against R. Where is the peak?',['Where the load resistance is about equal to the internal resistance','Where the load resistance is zero','At the largest load resistance','Where the terminal p.d. equals the e.m.f.'],0,'Maximum power transfer happens when R = r.');
+ mcq(el,'Method 1 usually gives a slightly larger value of r than method 2. Why?',['In method 1 the ammeter’s own resistance adds to r in the intercept','The voltmeter in method 2 takes current','Method 1 uses fewer readings','The e.m.f. is larger in method 1'],0,'R = E/I − (r + R<sub>A</sub>): the intercept includes every resistance you have not counted in R.');
+ mcq(el,'Why open the switch between readings?',['The cells’ e.m.f. falls and their internal resistance changes if current flows for a long time','To reset the ammeter','To stop the voltmeter drifting','To make the resistors cooler so they read higher'],0,'Cells run down and warm up while delivering current, which adds a drift to later readings.');
+ mcq(el,'Why is the smallest load resistance about 2 Ω, rather than zero?',['To limit the maximum current, which protects the cells and the ammeter','Because 0 Ω would make the e.m.f. zero','To make the graph pass through the origin','Because resistors below 2 Ω do not exist'],0,'In your notes a lamp does this job: it limits the maximum current drawn from the cell.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l1Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="l1DebO"></div></div>');
+ $('#l1Deb').addEventListener('click',()=>fb($('#l1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>True e.m.f. of your four cells: '+L1.E.toFixed(2)+' V. True total internal resistance: '+L1.r.toFixed(2)+' Ω.<br>Ammeter resistance: '+L1.RA.toFixed(2)+' Ω (plus about 0.05 Ω in the leads). Ammeter zero error: '+(L1.zA>=0?'+':'')+L1.zA.toFixed(2)+' A.<br>Resistor values (nominal → actual): '+RNOM.map((v,i)=>v+'→'+L1.Ract[i].toFixed(2)).join(', ')+' Ω.<br>Meter calibration: ammeter '+((L1.gA-1)*100).toFixed(1)+'%, voltmeter '+((L1.gV-1)*100).toFixed(1)+'%.<br>The e.m.f. drops by up to 3% while the switch is kept closed.'));
+}
+
+/* ============ LAB 2: sensor lab ============ */
+const L2={sen:'th',pos:'bot',x:{th:20,ldr:50},rv:10,data:{th:[],ldr:[]},shown:0};
+(function(){const g=kitRng(12);L2.V0=6.0*(1+(g()-0.5)*0.02);L2.R25=1e4*(1+(g()-0.5)*0.1);L2.B=3950*(1+(g()-0.5)*0.04);L2.k=2e5*(1+(g()-0.5)*0.16);L2.gR=1+(g()-0.5)*0.06;L2.gV=1+(g()-0.5)*0.01})();
+const lux=x=>Math.pow(10,x/100*3);
+function l2Rs(){return L2.sen==='th'?thermR(L2.x.th,L2.R25,L2.B):ldrR(lux(L2.x.ldr),L2.k)}
+function l2V(){const Rs=l2Rs(),Rv=L2.rv*1000*L2.gR;const Rb=L2.pos==='bot'?Rs:Rv,Rt=L2.pos==='bot'?Rv:Rs;return L2.V0*Rb/(Rb+Rt)}
+function l2Read(){const v=Math.round(l2V()*L2.gV*100+jit())/100;L2.shown=v;lcdSet($('#l2V'),v,2)}
+function l2Draw(){
+ const s=L2.sen==='th'?'therm':'ldr',sl=L2.sen==='th'?'thermistor':'LDR';
+ $('#l2Circ').innerHTML=drawPD({V0:'6.0 V',top:L2.pos==='bot'?'var':s,bot:L2.pos==='bot'?s:'var',tl:L2.pos==='bot'?'variable resistor':sl,bl:L2.pos==='bot'?sl:'variable resistor'});
+ const x=L2.x[L2.sen];$('#l2X').value=x;$('#l2XL').textContent=L2.sen==='th'?'Temperature of the thermistor':'Light intensity on the LDR';
+ $('#l2Xo').textContent=L2.sen==='th'?x.toFixed(1)+' °C':(lux(x)<10?lux(x).toFixed(1):Math.round(lux(x)))+' lux';$('#l2Rvo').textContent=L2.rv.toFixed(1)+' kΩ';
+ $('#l2ColX').textContent=L2.sen==='th'?'θ / °C':'light / lux';
+ if(L2.sen==='th'){$('#l2CardT').textContent='Data card: thermistor (nominal values)';$('#l2CardH').innerHTML='<tr><th>θ / °C</th><th>R / kΩ</th></tr>';$('#l2CardB').innerHTML=[0,10,15,18,20,25,30,40,50,60,80,100].map(T=>'<tr><td>'+T+'</td><td>'+sci(thermR(T,1e4,3950)/1000,3)+'</td></tr>').join('')}
+ else{$('#l2CardT').textContent='Data card: LDR (nominal values)';$('#l2CardH').innerHTML='<tr><th>light / lux</th><th>R / kΩ</th></tr>';$('#l2CardB').innerHTML=[1,5,10,20,50,100,200,500,1000].map(L=>'<tr><td>'+L+'</td><td>'+sci(ldrR(L)/1000,3)+'</td></tr>').join('')}
+ l2Read();
+}
+$$('#l2Sen button').forEach(b=>b.addEventListener('click',()=>{L2.sen=b.dataset.s;$$('#l2Sen button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));l2Draw();l2Table();l2Plot()}));
+$$('#l2Pos button').forEach(b=>b.addEventListener('click',()=>{L2.pos=b.dataset.p;$$('#l2Pos button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));l2Draw()}));
+$('#l2X').addEventListener('input',e=>{L2.x[L2.sen]=+e.target.value;l2Draw()});
+$('#l2Rv').addEventListener('input',e=>{L2.rv=+e.target.value;l2Draw()});
+setInterval(()=>{if($('#sec-lab2').classList.contains('on'))l2Read()},500);
+const p2=new Plot($('#l2G'),{xl:'θ / °C',yl:'Vout / V',bx:[0,100],by:[0,6],line:false});
+function l2Setup(){return (L2.pos==='bot'?'bottom':'top')+', '+L2.rv.toFixed(1)+' kΩ'}
+function l2Table(){const d=L2.data[L2.sen];
+ $('#l2Tb').innerHTML=d.length?d.map((r,i)=>'<tr><td>'+(L2.sen==='th'?r[0].toFixed(1):(r[0]<10?r[0].toFixed(1):Math.round(r[0])))+'</td><td>'+r[1].toFixed(2)+'</td><td class="small">'+r[2]+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="4" class="muted">No readings yet</td></tr>';
+ $$('#l2Tb .x').forEach(b=>b.addEventListener('click',()=>{d.splice(+b.dataset.i,1);l2Table();l2Plot()}))}
+function l2Plot(){Object.assign(p2.o,L2.sen==='th'?{xl:'θ / °C',bx:[0,100]}:{xl:'light intensity / lux',bx:[0,1000]});p2.set(L2.data[L2.sen].map(r=>[r[0],r[1]]))}
+$('#l2Rec').addEventListener('click',()=>{const d=L2.data[L2.sen],x=L2.sen==='th'?L2.x.th:lux(L2.x.ldr);d.push([x,L2.shown,l2Setup()]);d.sort((a,b)=>a[0]-b[0]);l2Table();l2Plot();fb($('#l2Msg'),'ok','Recorded. Keep the same position and dial setting for one set of readings so the graph shows a single curve.')});
+$('#l2Clr').addEventListener('click',()=>{L2.data[L2.sen]=[];l2Table();l2Plot()});
+function l2Tasks(){
+ const el=$('#l2Tasks');el.innerHTML='<h3 style="margin-top:0">Predict, then test</h3>';
+ const R20=thermR(20,1e4,3950),R18=thermR(18,1e4,3950),R100=ldrR(100);
+ const meas=(ok,sen,pos,rv,x)=>{if(L2.sen===sen&&L2.pos===pos&&Math.abs(L2.rv-rv)<0.05&&Math.abs((sen==='th'?L2.x.th:lux(L2.x.ldr))-x)<(sen==='th'?0.3:3))return ' Your meter currently reads '+L2.shown.toFixed(2)+' V.';return ' Now set up exactly that circuit and compare with the meter.'};
+ numTask(el,'Thermistor at the bottom, dial set to 10.0 kΩ, temperature 20 °C. Use the data card to predict V<sub>out</sub>.','V',v=>{const p=6*R20/(R20+1e4);
+  if(close(v,p,0.02))return {ok:true,msg:'<strong>Correct prediction:</strong> V<sub>out</sub> = 6.0 × '+sci(R20/1000,3)+' / ('+sci(R20/1000,3)+' + 10.0) = '+p.toFixed(2)+' V.'+meas(1,'th','bot',10,20)};
+  if(close(v,6-p,0.02))return {ok:false,msg:'That is the p.d. across the variable resistor. The output is across the thermistor.'};return {ok:false,msg:'V<sub>out</sub> = V₀R<sub>th</sub> / (R<sub>th</sub> + R).'}},2);
+ numTask(el,'Heater control: with the thermistor at the bottom, V<sub>out</sub> must be exactly 3.00 V at 18 °C. What dial setting is needed?','kΩ',v=>{
+  if(close(v,R18/1000,0.02))return {ok:true,msg:'<strong>Yes:</strong> 3.00 V is half of 6.0 V, so the two resistances must be equal: '+sci(R18/1000,3)+' kΩ. Set it, set 18 °C and check the meter: tolerances mean it will be close to, but not exactly, 3.00 V.'};
+  return {ok:false,msg:'For half the supply p.d., both parts of the divider need the same resistance. Look up the thermistor at 18 °C.'}},3);
+ mcq(el,'With that circuit, the heater switches on when V<sub>out</sub> rises above 3.00 V. If you turn the dial to a larger resistance, the heater switches on at:',['a lower temperature','a higher temperature','the same temperature','it never switches on'],0,'A larger top resistance means the thermistor needs a larger resistance, so a colder temperature, to take half the p.d.');
+ mcq(el,'A garden lamp should switch on as it gets dark, when V<sub>out</sub> rises. Where should the LDR go?',['At the bottom, with V<sub>out</sub> across the LDR','At the top, with V<sub>out</sub> across the variable resistor','Either: it makes no difference','In parallel with the supply'],0,'Darker, higher LDR resistance, so the LDR takes more of the p.d.');
+ numTask(el,'LDR at the bottom, dial set to 4.7 kΩ, 100 lux. Predict V<sub>out</sub> from the data card.','V',v=>{const p=6*R100/(R100+4700);
+  if(close(v,p,0.02))return {ok:true,msg:'<strong>Correct:</strong> 6.0 × '+sci(R100/1000,3)+' / ('+sci(R100/1000,3)+' + 4.7) = '+p.toFixed(2)+' V.'+meas(1,'ldr','bot',4.7,100)};return {ok:false,msg:'V<sub>out</sub> = V₀R<sub>LDR</sub> / (R<sub>LDR</sub> + R). Use R<sub>LDR</sub> at 100 lux.'}},2);
+ mcq(el,'Your measured V<sub>out</sub> differs slightly from your prediction. The most likely reason is:',['The real components differ from their nominal values (tolerances)','The voltmeter draws a large current','Kirchhoff’s laws do not apply to sensors','The supply p.d. is exactly 6.00 V'],0,'Thermistors, LDRs and dial markings all have tolerances. A digital voltmeter’s very high resistance means it draws negligible current.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="l2Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="l2DebO"></div></div>');
+ $('#l2Deb').addEventListener('click',()=>fb($('#l2DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Supply: '+L2.V0.toFixed(3)+' V.<br>Your thermistor: '+sci(L2.R25/1000,3)+' kΩ at 25 °C (data card says 10.0 kΩ), B = '+Math.round(L2.B)+' K (card: 3950 K).<br>Your LDR is '+((L2.k/2e5-1)*100).toFixed(0)+'% different from the card.<br>The variable resistor dial reads '+((1/L2.gR-1)*100).toFixed(1)+'% '+(L2.gR>1?'low':'high')+'.'));
+}
+/* ============ CHALLENGE ============ */
+const DER=[
+ {t:'Derive the formula for resistors in series',s:['The same current I flows through each resistor','The p.d.s add: V = V₁ + V₂','Using V = IR for each: IR<sub>T</sub> = IR₁ + IR₂','Cancel I: R<sub>T</sub> = R₁ + R₂']},
+ {t:'Derive the formula for resistors in parallel',s:['The p.d. V is the same across each resistor','The currents add: I = I₁ + I₂','Using I = V/R for each: V/R<sub>T</sub> = V/R₁ + V/R₂','Cancel V: 1/R<sub>T</sub> = 1/R₁ + 1/R₂']},
+ {t:'Derive V = E − Ir',s:['Loop rule: the sum of the e.m.f.s equals the sum of the p.d.s round the loop','So E = IR + Ir','The terminal p.d. across the load is V = IR','So E = V + Ir, giving V = E − Ir']},
+ {t:'Show what the gradient and intercept of a V–I graph for a cell give',s:['V = E − Ir','Rearrange: V = −rI + E','Compare with y = mx + c, with V on the y-axis and I on the x-axis','Gradient = −r and y-intercept = E']},
+ {t:'Show why R against 1/I is a straight line (WJEC method)',s:['E = I(R + r)','Divide by I: E/I = R + r','Rearrange: R = E × (1/I) − r','So a graph of R against 1/I has gradient E and intercept −r']},
+ {t:'Derive the potential divider equation',s:['The same current flows through R₁ and R₂: I = V₀ / (R₁ + R₂)','The p.d. across R₂ is V₂ = IR₂','Substitute for I: V₂ = V₀R₂ / (R₁ + R₂)','Similarly V₁ = V₀R₁ / (R₁ + R₂), so V₁/V₂ = R₁/R₂']}
+];
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+const EXAM=[
+ {t:'Single cell network',intro:'A 12 V battery of negligible internal resistance is connected to a 10 Ω resistor in series with a parallel pair of 20 Ω and 30 Ω.<div class="fig circ" style="max-width:420px">'+drawA({E:12,R1:10,R2:20,R3:30})+'</div>',p:[
+  ['Calculate the combined resistance of the parallel pair.',12,'Ω','1/R = 1/20 + 1/30 = 0.0833, so R = 12 Ω'],
+  ['Calculate the current from the battery.',12/22,'A','R<sub>T</sub> = 10 + 12 = 22 Ω; I = 12 / 22 = 0.545 A'],
+  ['Calculate the p.d. across the parallel pair.',12*12/22,'V','V = 0.545 × 12 = 6.55 V (or 12 − 0.545 × 10)'],
+  ['Calculate the current through the 20 Ω resistor.',12*12/22/20,'A','I = 6.55 / 20 = 0.327 A']]},
+ {t:'Cells with internal resistance',intro:'A 1.5 V cell (internal resistance 0.50 Ω) and a 6.0 V cell (internal resistance 1.0 Ω) are connected in series, the same way round, with resistors of 4.0 Ω, 3.0 Ω and 8.0 Ω.',p:[
+  ['Calculate the total e.m.f.',7.5,'V','1.5 + 6.0 = 7.5 V'],
+  ['Calculate the total resistance of the circuit.',16.5,'Ω','4.0 + 3.0 + 8.0 + 0.50 + 1.0 = 16.5 Ω. Internal resistances count too.'],
+  ['Calculate the current.',7.5/16.5,'A','I = 7.5 / 16.5 = 0.455 A'],
+  ['The 1.5 V cell is turned round. Calculate the new current.',4.5/16.5,'A','E = 6.0 − 1.5 = 4.5 V; internal resistances still add: I = 4.5 / 16.5 = 0.273 A']]},
+ {t:'High-voltage supply',intro:'A 5.0 kV laboratory supply must never deliver more than 1.0 mA, even when short-circuited.',p:[
+  ['Calculate the minimum internal resistance it needs.',5e6,'Ω','r = E / I<sub>max</sub> = 5000 / 1.0 × 10<sup>−3</sup> = 5.0 × 10<sup>6</sup> Ω'],
+  ['The supply actually has r = 10 MΩ. What is its maximum current, in mA?',0.5,'mA','I = 5000 / 10<sup>7</sup> = 5.0 × 10<sup>−4</sup> A = 0.50 mA']]},
+ {t:'Awkward: the bridge',intro:'A network between points A and B: a top arm of 400 Ω then 200 Ω, a bottom arm of 800 Ω then 400 Ω, and a 150 Ω resistor joining the midpoints of the two arms. A p.d. of 6.0 V is applied between A and B.',p:[
+  ['Ignoring the 150 Ω resistor for now, find the p.d. across the 200 Ω resistor.',2,'V','Top arm: 6.0 × 200 / 600 = 2.0 V'],
+  ['Find the p.d. across the 400 Ω resistor in the bottom arm.',2,'V','Bottom arm: 6.0 × 400 / 1200 = 2.0 V'],
+  ['So what current flows through the 150 Ω resistor?',0,'A','Both ends are at the same potential (2.0 V above B), so there is no p.d. across it and no current. It can be removed.'],
+  ['Find the total resistance between A and B.',400,'Ω','600 Ω in parallel with 1200 Ω = 600 × 1200 / 1800 = 400 Ω']]},
+ {t:'Awkward: the real voltmeter',intro:'Resistors X (20 kΩ) and Y (10 kΩ) are in series across a 6.0 V battery of negligible internal resistance. A voltmeter of resistance 20 kΩ is connected across Y.',p:[
+  ['What would a perfect voltmeter read across Y?',2,'V','6.0 × 10 / 30 = 2.0 V'],
+  ['Calculate the combined resistance of Y and the voltmeter.',20/3,'kΩ','10 × 20 / 30 = 6.67 kΩ'],
+  ['What does this voltmeter actually read?',1.5,'V','6.0 × 6.67 / (20 + 6.67) = 1.5 V. The meter lowers the resistance of that section, so it takes less of the p.d.']]},
+ {t:'Maximum power',intro:'A supply has e.m.f. 12 V and internal resistance 4.0 Ω.',p:[
+  ['What load resistance receives maximum power?',4,'Ω','Maximum power transfer when R = r = 4.0 Ω'],
+  ['Calculate that maximum power.',9,'W','I = 12 / 8.0 = 1.5 A; P = 1.5² × 4.0 = 9.0 W'],
+  ['Calculate the power delivered to a 2.0 Ω load instead.',8,'W','I = 12 / 6.0 = 2.0 A; P = 2.0² × 2.0 = 8.0 W, slightly less'],
+  ['What is the terminal p.d. when maximum power is delivered?',6,'V','V = E − Ir = 12 − 1.5 × 4.0 = 6.0 V, half the e.m.f.']]},
+ {t:'Lamps and a battery',intro:'Two identical 12 Ω lamps are connected in parallel to a battery of e.m.f. 15 V and internal resistance 1.0 Ω.',p:[
+  ['Calculate the current from the battery.',15/7,'A','R<sub>T</sub> = 6.0 + 1.0 = 7.0 Ω; I = 15 / 7.0 = 2.14 A'],
+  ['Calculate the terminal p.d.',15-15/7,'V','V = 15 − 2.14 × 1.0 = 12.9 V'],
+  ['Calculate the power of each lamp.',Math.pow(15-15/7,2)/12,'W','P = V²/R = 12.9² / 12 = 13.8 W']]}
+];
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let G=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){G={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!G)return;const left=Math.max(0,(G.end-performance.now())/1000),el=$('#gT');if(!el){G=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=G.score;G=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+G.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){G.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(G)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){G.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(G)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{G=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+/* ---------- start-up ---------- */
+function kitButtons(){
+ ['#kitA','#kitB'].forEach(s=>{$(s).textContent=kitCode();const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New kit';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all practical results';setTimeout(()=>{armed=false;b.textContent='New kit'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();csRender();gmStart();kitButtons();
+l1Draw();l1Read();l1Table();l1Plot(true);l1Tasks();
+l2Draw();l2Table();l2Plot();l2Tasks();
+derStart(0);
+})();
+</script>
+</body>
+</html>

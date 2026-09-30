@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Medical physics: WJEC A2 Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#0F1620;--sky2:#1A2433;--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep14{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep14 *,#ep14 *::before,#ep14 *::after{box-sizing:border-box}
+#ep14 button,#ep14 input,#ep14 select{font:inherit;color:inherit}
+#ep14 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep14 sup{font-size:.72em;line-height:0}
+#ep14 sub{font-size:.72em;line-height:0}
+#ep14 .h,#ep14 h1,#ep14 h2,#ep14 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep14 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep14 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep14 p{margin:.45em 0 .7em;max-width:72ch}
+#ep14 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep14 li{margin:.2em 0}
+#ep14 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep14 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep14 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep14 .brand{flex:1 1 320px;min-width:0}
+#ep14 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep14 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep14 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep14 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep14 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep14 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep14 .lcd.pulse{animation:ep14pulse .5s ease}
+@keyframes ep14pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep14 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep14 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep14 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep14 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep14 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep14 .tab:hover{color:var(--ink)}
+#ep14 main{padding:22px 0 40px}
+#ep14 .sec{display:none}
+#ep14 .sec.on{display:block}
+#ep14 .lead{color:var(--muted);margin-top:.3em}
+
+#ep14 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep14 .panel + .panel{margin-top:16px}
+#ep14 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep14 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep14 .grid2{grid-template-columns:1fr}}
+#ep14 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep14 .sp{flex:1}
+
+#ep14 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep14 .btn:hover{filter:brightness(1.15)}
+#ep14 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep14 .btn.alt:hover{border-color:var(--ink)}
+#ep14 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep14 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep14 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep14 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep14 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep14 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep14 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep14 input[type=text],#ep14 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep14 input[type=text]:focus,#ep14 input[type=number]:focus{border-color:var(--focus)}
+#ep14 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep14 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep14 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep14 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep14 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep14 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep14 .work{font-size:.96rem}
+#ep14 .work div{padding:1px 0}
+#ep14 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep14 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep14 .muted{color:var(--muted)}
+#ep14 .small{font-size:.88rem}
+#ep14 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep14 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep14 .rv{grid-template-columns:1fr}}
+#ep14 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep14 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep14 .toc button{white-space:nowrap}}
+#ep14 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep14 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep14 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep14 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep14 .card h2{margin-bottom:.35em}
+#ep14 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep14 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep14 .check summary{cursor:pointer;font-weight:700}
+#ep14 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep14 .fig svg{max-width:100%;height:auto;display:block}
+#ep14 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep14 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep14 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep14 .cv{display:block;width:100%;height:100%}
+#ep14 .cvbox{position:relative;width:100%;height:230px}
+#ep14 .mini{height:150px}
+#ep14 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep14 table.t th,#ep14 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep14 table.t th{font-weight:700;color:var(--muted)}
+#ep14 table.t td:first-child,#ep14 table.t th:first-child{text-align:left}
+#ep14 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep14 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep14 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep14 .qcard{font-size:1.1rem}
+#ep14 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep14 .opts{display:grid;gap:8px;margin-top:8px}
+#ep14 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep14 .opt:hover{border-color:var(--ink)}
+#ep14 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep14 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep14 .opt:disabled{cursor:default}
+#ep14 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep14 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep14 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep14 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep14 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep14 .mcell.sel{border-color:var(--neg)}
+#ep14 .mcell.right{border-color:var(--ok)}
+#ep14 .mcell.wrong{border-color:var(--bad)}
+#ep14 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep14 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep14 .pool .chip.used{opacity:.35}
+#ep14 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep14 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep14 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep14 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep14 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep14 .dmm .lcd{min-width:130px}
+#ep14 .dmm .lcd .v{font-size:2rem}
+#ep14 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep14 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep14 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep14 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep14 .task:first-of-type{border-top:0;padding-top:4px}
+#ep14 .task .tq{font-weight:700;margin-bottom:6px}
+#ep14 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep14 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep14 .apbox{position:relative;width:100%;height:280px}
+#ep14 .loupebox{position:relative;width:100%;height:92px}
+#ep14 .microbox{position:relative;width:100%;height:170px}
+#ep14 .thermobox{position:relative;width:100%;height:260px}
+#ep14 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep14 .warn{color:var(--bad);font-weight:700}
+#ep14 .steps{counter-reset:s}
+#ep14 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep14 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep14 .step:hover{border-color:var(--ink)}
+#ep14 .dz .step{background:var(--panel)}
+#ep14 .dz.good{border-color:var(--ok)}
+#ep14 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep14 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep14 .brand h1{font-size:1.6rem}#ep14 .wrap{padding:0 12px}#ep14 .panel{padding:14px}#ep14 .bezel .lcd{min-width:88px}#ep14 .lcd .v{font-size:1.5rem}}
+#ep14 .top{background:var(--sky);color:#F1F4FA;border-bottom:0}
+#ep14 .brand p{color:#C3CEE3}
+#ep14 .themebtn{color:#F1F4FA;border-color:#8FA2C6}
+#ep14 .bezel{background:#0B1322;box-shadow:inset 0 -3px 0 #060B14}
+#ep14 .fieldstrip{display:block;width:100%;height:46px;background:#0F1620}
+#ep14 .specstrip{position:relative;height:14px;background:linear-gradient(90deg,#5B1FA8 0%,#3240D6 12%,#1E7FE0 24%,#19B3B0 36%,#3DBE46 48%,#C9D52A 60%,#F2B21B 70%,#EE6A1A 82%,#C8241C 100%);overflow:hidden}
+#ep14 .specstrip i{position:absolute;top:0;bottom:0;width:3px;background:#0A0E18;animation:ep14shift 2.4s cubic-bezier(.2,.7,.2,1) .4s both}
+@keyframes ep14shift{from{transform:translateX(0)}to{transform:translateX(26px)}}
+#ep14 .sky{background:#0F1D26;border-radius:8px}
+#ep14 .grat{background:#0B1A12;border-radius:8px}
+#ep14 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep14 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep14 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep14 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep14 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep14 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+</style>
+</head>
+<body>
+<div id="ep14">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Medical physics</h1>
+   <p>WJEC A2 Physics Option B: X-rays and CT, ultrasound and Doppler, MRI, radiation dose, radioactive tracers and PET.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">scans banked</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+ <canvas class="fieldstrip" id="hdrCv" aria-hidden="true"></canvas>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="graphs" aria-selected="false">Graph match</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">X-ray lab</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Ultrasound lab</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Nuclear medicine</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+<section class="sec on" id="sec-revise"><div class="rv"><div class="toc" id="toc"></div><div class="panel card" id="card"></div></div></section>
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Use h = 6.63 × 10<sup>−34</sup> J s, c = 3.00 × 10<sup>8</sup> m s<sup>−1</sup>, e = 1.60 × 10<sup>−19</sup> C, speed of sound in soft tissue 1540 m s<sup>−1</sup>. Type standard form as 1.5e-11 or 1.5x10^-11.</p>
+ <div class="panel"><div class="row" id="drTopics"></div><div class="row" style="margin-top:10px"><span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span><span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span></div></div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+<section class="sec" id="sec-quiz"><h2>Concept quiz</h2><p class="lead">Twelve questions drawn from a bank covering the whole option. Every answer comes with the reason.</p><div class="panel qcard" id="qzCard"></div></section>
+<section class="sec" id="sec-graphs"><h2>Graph match</h2><p class="lead">Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+ <div class="panel"><div class="pool" id="gmPool"></div><div class="mgrid" id="gmGrid"></div><div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div><div class="fb" id="gmFb"></div></div></section>
+
+<section class="sec" id="sec-lab1">
+ <h2>X-ray lab: the spectrum and attenuation</h2>
+ <p class="lead">Part 1: explore the spectrum from a tungsten-target tube. Part 2: measure how a sample of tissue-equivalent material attenuates the beam. Kit code <span class="kit" id="kitA"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <h3 style="margin-top:0">Part 1: the X-ray spectrum</h3>
+   <div class="ctl" style="margin-top:0">
+    <div><div class="lbl"><label for="k1V">Tube p.d.</label><span id="k1Vo"></span></div><input type="range" id="k1V" min="20" max="120" step="1" value="80"></div>
+    <div><div class="lbl"><label for="k1I">Tube current</label><span id="k1Io"></span></div><input type="range" id="k1I" min="1" max="10" step="1" value="5"></div>
+    <div><div class="lbl"><label for="k1F">Aluminium filter</label><span id="k1Fo"></span></div><input type="range" id="k1F" min="0" max="6" step="0.5" value="1"></div>
+   </div>
+   <div class="apbox" style="height:260px;margin-top:8px"><canvas class="cv" id="k1Cv"></canvas></div>
+   <div class="ctl"><div><div class="lbl"><label for="k1X">Cursor photon energy</label><span id="k1Xo"></span></div><input type="range" id="k1X" min="0" max="125" step="0.5" value="60"></div><div class="small muted" id="k1Rd"></div></div>
+  </div>
+  <div class="panel">
+   <h3 style="margin-top:0">Part 2: attenuation by a sample</h3>
+   <div class="apbox" style="height:120px"><canvas class="cv" id="k2Cv"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="k2X">Sample thickness</label><span id="k2Xo"></span></div><input type="range" id="k2X" min="0" max="40" step="1" value="0"></div>
+    <div class="row"><label class="small"><input type="checkbox" id="k2Sh"> close the tube shutter (background only)</label></div>
+    <div class="row"><div class="dmm"><div class="nm">Detector: counts in 10 s</div><div class="lcd"><span class="v" id="k2C">0</span><span class="u">counts</span></div></div><span class="sp"></span><button class="btn alt" id="k2Cnt" type="button">Count for 10 s</button><button class="btn go" id="k2Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="k2Msg"></div>
+   <div class="tscroll" style="margin-top:6px;max-height:220px"><table class="t"><thead><tr><th>x / mm</th><th>counts / 10 s</th><th></th></tr></thead><tbody id="k2Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel"><div class="row"><strong>Graph of ln(corrected count) against x</strong><span class="sp"></span><button class="btn alt" id="k2Line" type="button">Reset line</button></div><div class="graphbox" style="margin-top:8px;height:280px"><canvas class="cv" id="k2G"></canvas></div><div class="readout" id="k2Ro"></div></div>
+ <div class="panel" id="k1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Ultrasound lab: A-scans and Doppler</h2>
+ <p class="lead">An A-scan of a tissue phantom (fat, then muscle, then bone), and a Doppler probe over an artery. Kit code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <h3 style="margin-top:0">A-scan</h3>
+   <div class="row"><label class="small"><input type="checkbox" id="u1G" checked> coupling gel between the probe and the skin</label></div>
+   <div class="apbox" style="height:120px;margin-top:6px"><canvas class="cv" id="u1Ph"></canvas></div>
+   <div class="apbox" style="height:220px;margin-top:8px;background:#0B1A12;border-radius:10px"><canvas class="cv" id="u1Cv"></canvas></div>
+   <div class="ctl"><div><div class="lbl"><label for="u1X">Cursor time</label><span id="u1Xo"></span></div><input type="range" id="u1X" min="0" max="120" step="0.1" value="20"></div>
+   <div class="row"><button class="btn alt" type="button" data-n="-1">−1 μs</button><button class="btn alt" type="button" data-n="-0.1">−0.1 μs</button><button class="btn alt" type="button" data-n="0.1">+0.1 μs</button><button class="btn alt" type="button" data-n="1">+1 μs</button></div></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="u1Card"></div>
+   <table class="t" style="margin-top:8px"><thead><tr><th>material</th><th>ρ / kg m⁻³</th><th>c / m s⁻¹</th><th>Z / kg m⁻² s⁻¹</th></tr></thead><tbody id="u1Z"></tbody></table>
+   <h3>Doppler probe</h3>
+   <div class="apbox" style="height:140px"><canvas class="cv" id="u2Cv"></canvas></div>
+   <div class="ctl"><div><div class="lbl"><label for="u2A">Angle between beam and blood flow</label><span id="u2Ao"></span></div><input type="range" id="u2A" min="20" max="80" step="1" value="45"></div>
+   <div class="row"><div class="dmm"><div class="nm">Doppler shift Δf</div><div class="lcd"><span class="v" id="u2D">0</span><span class="u">Hz</span></div></div></div></div>
+  </div>
+ </div>
+ <div class="panel" id="u1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Nuclear medicine: a technetium-99m scan</h2>
+ <p class="lead">A patient is injected with a Tc-99m tracer that collects in the kidneys. A gamma camera images the kidneys and counts the gamma photons over the following hours. Kit code <span class="kit" id="kitC"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row"><label class="small"><input type="checkbox" id="n1Col" checked> lead collimator fitted</label><label class="small"><input type="checkbox" id="n1Pt" checked> patient on the couch</label></div>
+   <div class="apbox" style="height:260px;margin-top:8px;background:#000;border-radius:10px"><canvas class="cv" id="n1Cv"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="n1T">Time since injection</label><span id="n1To"></span></div><input type="range" id="n1T" min="0" max="24" step="0.5" value="1"></div>
+    <div class="row"><div class="dmm"><div class="nm">Counts per minute (kidney region)</div><div class="lcd"><span class="v" id="n1C">0</span><span class="u">min⁻¹</span></div></div><span class="sp"></span><button class="btn alt" id="n1Cnt" type="button">Count for 1 minute</button><button class="btn go" id="n1Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="n1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="n1Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px;max-height:220px"><table class="t"><thead><tr><th>t / h</th><th>counts / min</th><th></th></tr></thead><tbody id="n1Tb"></tbody></table></div>
+   <div class="graphbox" style="margin-top:10px;height:240px"><canvas class="cv" id="n1G"></canvas></div>
+   <div class="row"><span class="readout" id="n1Ro"></span><span class="sp"></span><button class="btn alt" id="n1Line" type="button">Reset line</button></div>
+  </div>
+ </div>
+ <div class="panel" id="n1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall"><h2>Challenge</h2><p class="lead">Rebuild the key arguments, work through classic exam problems, then race the clock.</p><div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Argument builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div><div class="panel" id="chBox"></div></section>
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep14');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep14-wjec-medical-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+/* ---------- tabs ---------- */
+const onShow={};let labActive='revise';
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ labActive=name;if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(cv,draw){let last=performance.now();function f(now){if(!cv.isConnected)return;const dt=Math.min(0.05,(now-last)/1000);last=now;draw(RM?0:dt);requestAnimationFrame(f)}requestAnimationFrame(f)}
+function carr(x1,y1,x2,y2,col,w){return arr(x1,y1,x2,y2).replace('<line ','<line stroke="'+col+'" stroke-width="'+(w||2.5)+'" ').replace('fill="currentColor"','fill="'+col+'"')}
+function gauss(){let u=0,v=0;while(u===0)u=R();while(v===0)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function Q(text,ans,unit,work,pts,tol){return {text,ans,unit,work,pts:pts||1,tol:tol||0.015}}
+const f3=x=>sci(x,3);
+
+const HP=6.63e-34,CL=3.00e8,QE=1.60e-19,CS=1540;
+/* ---------- header: an ECG-like trace with scan lines ---------- */
+function hdr(){const cv=$('#hdrCv');if(!cv)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#0F1620';c.fillRect(0,0,w,h);
+ c.strokeStyle='rgba(120,200,255,.12)';for(let x=0;x<w;x+=16){c.beginPath();c.moveTo(x+.5,0);c.lineTo(x+.5,h);c.stroke()}
+ c.strokeStyle='#5CE1E6';c.lineWidth=1.8;c.beginPath();const P=150;for(let x=0;x<=w;x++){const ph=(x%P)/P;let y=h*0.62;if(ph>0.3&&ph<0.34)y-=(ph-0.3)/0.04*h*0.5;else if(ph>=0.34&&ph<0.38)y-=h*0.5-(ph-0.34)/0.04*h*0.7;else if(ph>=0.38&&ph<0.41)y+=h*0.2-(ph-0.38)/0.03*h*0.2;else if(ph>0.55&&ph<0.7)y-=Math.sin((ph-0.55)/0.15*Math.PI)*h*0.12;x?c.lineTo(x,y):c.moveTo(x,y)}c.stroke();
+ const g=c.createRadialGradient(w*0.82,h/2,2,w*0.82,h/2,40);g.addColorStop(0,'rgba(255,214,102,.5)');g.addColorStop(1,'rgba(255,214,102,0)');c.fillStyle=g;c.fillRect(w*0.82-40,0,80,h)}
+watch($('#hdrCv'),hdr);
+
+/* ---------- X-ray spectrum model ---------- */
+function muAl(E){return 0.75*Math.pow(22/Math.max(E,3),3)+0.02} // per mm of Al
+function spec(E,V,I,fx){if(E<=0||E>=V)return 0;let s=I*(V-E)/60;if(V>69.5){s+=I*0.9*(Math.exp(-Math.pow((E-59.3)/0.8,2))+0.35*Math.exp(-Math.pow((E-67.2)/0.8,2)))*(V-69.5)/30}if(V>12){s+=I*0.6*Math.exp(-Math.pow((E-9.7)/0.6,2))}return s*Math.exp(-muAl(E)*(fx+0.5))}
+function drawSpec(cv,V,I,fx,cur){const {c,w,h}=fitCanvas(cv);c.fillStyle=cssv('--panel');c.fillRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted'),x0=44,y0=h-28,xw=w-58,yh=h-40,X=E=>x0+E/125*xw;
+ let mx=0;for(let E=1;E<125;E+=0.5)mx=Math.max(mx,spec(E,120,10,0));const Y=v=>y0-v/mx*yh*1.6;
+ c.strokeStyle=ink;c.lineWidth=1.3;c.beginPath();c.moveTo(x0,y0-yh);c.lineTo(x0,y0);c.lineTo(x0+xw,y0);c.stroke();c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';for(let E=0;E<=120;E+=20)c.fillText(String(E),X(E),y0+14);c.textAlign='left';c.fillText('photon energy / keV',x0+xw-110,y0-6);c.save();c.translate(14,y0-yh/2+30);c.rotate(-Math.PI/2);c.fillText('intensity',0,0);c.restore();
+ c.strokeStyle=cssv('--neg');c.lineWidth=2.2;c.beginPath();for(let i=0;i<=500;i++){const E=i/500*125,y=Math.max(y0-yh,Y(spec(E,V,I,fx)));i?c.lineTo(X(E),y):c.moveTo(X(E),y)}c.stroke();
+ if(cur!==undefined){c.strokeStyle=cssv('--pos');c.setLineDash([4,3]);c.beginPath();c.moveTo(X(cur),y0-yh);c.lineTo(X(cur),y0);c.stroke();c.setLineDash([])}}
+
+/* ---------- widgets ---------- */
+function wSpec(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wsV" style="min-width:110px">Tube p.d.</label><input type="range" id="wsV" min="20" max="120" step="1" value="90" style="flex:1;min-width:140px"><span id="wsVo" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wsI" style="min-width:110px">Tube current</label><input type="range" id="wsI" min="1" max="10" step="1" value="5" style="flex:1;min-width:140px"><span id="wsIo" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wsF" style="min-width:110px">Al filter</label><input type="range" id="wsF" min="0" max="6" step="0.5" value="1" style="flex:1;min-width:140px"><span id="wsFo" class="small" style="min-width:60px"></span></div><div class="cvbox" style="height:230px;margin-top:6px"><canvas class="cv" id="wsCv"></canvas></div><div class="kv" id="wsK"></div></div>');
+ const cv=$('#wsCv');const draw=()=>{if(!cv.isConnected)return;const V=+$('#wsV').value,I=+$('#wsI').value,F=+$('#wsF').value;$('#wsVo').textContent=V+' kV';$('#wsIo').textContent=I+' mA';$('#wsFo').textContent=F+' mm';drawSpec(cv,V,I,F);
+  $('#wsK').innerHTML='<span>maximum photon energy = eV = <b>'+V+' keV</b></span><span>λ<sub>min</sub> = hc/eV = <b>'+sci(HP*CL/(QE*V*1000),3)+' m</b></span><span>'+(V>69.5?'tungsten K lines visible (59 and 67 keV)':'p.d. too low to knock out K-shell electrons: no K lines')+'</span>'};
+ ['#wsV','#wsI','#wsF'].forEach(s=>$(s).addEventListener('input',draw));watch(cv,draw);draw();
+}
+function wAtt(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="waM" style="min-width:150px">Attenuation coefficient μ</label><input type="range" id="waM" min="0.1" max="2" step="0.05" value="0.5" style="flex:1;min-width:140px"><span id="waMo" class="small" style="min-width:70px"></span></div><div id="waS"></div><div class="kv" id="waK"></div></div>');
+ const upd=()=>{const mu=+$('#waM').value;$('#waMo').textContent=mu+' cm⁻¹';const X=x=>40+x/8*340,Y=v=>170-v*150;let s=ln(40,170,390,170)+ln(40,14,40,170)+tx(390,186,'x / cm',{a:'end',fs:11})+tx(46,20,'I/I₀',{a:'start',fs:12});let p='';for(let i=0;i<=160;i++){const x=i/20;p+=X(x).toFixed(1)+','+Y(Math.exp(-mu*x)).toFixed(1)+' '}
+  const hv=Math.LN2/mu;s+='<polyline points="'+p+'" fill="none" stroke="var(--neg)" stroke-width="2.4"></polyline>';if(hv<8){s+=ln(40,Y(0.5),X(hv),Y(0.5),1).replace('<line ','<line stroke-dasharray="4 4" ')+ln(X(hv),Y(0.5),X(hv),170,1).replace('<line ','<line stroke-dasharray="4 4" ')+tx(X(hv),184,'x½',{fs:11});if(2*hv<8)s+=ln(X(2*hv),Y(0.25),X(2*hv),170,1).replace('<line ','<line stroke-dasharray="2 4" ')}
+  [0,2,4,6,8].forEach(x=>{s+=tx(X(x),184,String(x),{fs:10})});$('#waS').innerHTML=svgWrap('0 0 400 195',s,'attenuation');$('#waK').innerHTML='<span>half-value thickness x½ = ln 2/μ = <b>'+hv.toFixed(2)+' cm</b></span><span>after 3 half-value thicknesses: <b>1/8</b> of the intensity remains</span>'};
+ $('#waM').addEventListener('input',upd);upd();
+}
+const TIS={air:['air',1.3,330],water:['water',1000,1500],gel:['coupling gel',1020,1530],fat:['fat',925,1450],muscle:['muscle',1075,1590],blood:['blood',1060,1570],bone:['bone',1900,4080]};
+const Zof=k=>TIS[k][1]*TIS[k][2];
+function wZ(el){
+ const keys=Object.keys(TIS);el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm">From</label><span class="seg" id="wz1">'+keys.map(k=>'<button type="button" data-k="'+k+'" aria-pressed="'+(k==='fat')+'">'+TIS[k][0]+'</button>').join('')+'</span></div><div class="row" style="margin-top:6px"><label class="sm">into</label><span class="seg" id="wz2">'+keys.map(k=>'<button type="button" data-k="'+k+'" aria-pressed="'+(k==='muscle')+'">'+TIS[k][0]+'</button>').join('')+'</span></div><div class="kv" id="wzK" style="margin-top:8px"></div></div>');
+ let a='fat',b='muscle';const upd=()=>{const Z1=Zof(a),Z2=Zof(b),Rr=Math.pow((Z2-Z1)/(Z2+Z1),2);$('#wzK').innerHTML='<span>Z₁ = ρc = <b>'+sci(Z1,3)+'</b></span><span>Z₂ = <b>'+sci(Z2,3)+'</b> kg m<sup>−2</sup> s<sup>−1</sup></span><span>R = (Z₂ − Z₁)²/(Z₂ + Z₁)² = <b>'+(Rr*100).toPrecision(3)+'%</b> reflected</span><span><b>'+((1-Rr)*100).toPrecision(3)+'%</b> transmitted</span>'};
+ [['#wz1',k=>a=k],['#wz2',k=>b=k]].forEach(p=>$$(p[0]+' button').forEach(bt=>bt.addEventListener('click',()=>{p[1](bt.dataset.k);$$(p[0]+' button').forEach(x=>x.setAttribute('aria-pressed',x===bt?'true':'false'));upd()})));upd();
+}
+function wDop(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wdV" style="min-width:130px">Blood speed</label><input type="range" id="wdV" min="0.05" max="1.5" step="0.05" value="0.5" style="flex:1;min-width:140px"><span id="wdVo" class="small" style="min-width:60px"></span></div><div class="row"><label class="sm" for="wdA" style="min-width:130px">Beam angle θ</label><input type="range" id="wdA" min="0" max="89" step="1" value="45" style="flex:1;min-width:140px"><span id="wdAo" class="small" style="min-width:60px"></span></div><div class="kv" id="wdK"></div><p class="small muted" style="margin:6px 0 0">Probe frequency f₀ = 5.0 MHz; c = 1540 m s⁻¹.</p></div>');
+ const upd=()=>{const v=+$('#wdV').value,a=+$('#wdA').value,df=2*v*Math.cos(a*Math.PI/180)*5e6/CS;$('#wdVo').textContent=v.toFixed(2)+' m s⁻¹';$('#wdAo').textContent=a+'°';$('#wdK').innerHTML='<span>Δf = 2f₀v cos θ / c = <b>'+df.toFixed(0)+' Hz</b></span><span>'+(a>80?'at nearly 90° there is almost no shift: the blood moves across the beam':'the shift is in the audible range, so it can be heard as a sound')+'</span>'};
+ $('#wdV').addEventListener('input',upd);$('#wdA').addEventListener('input',upd);upd();
+}
+function wMRI(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wmB" style="min-width:110px">Field B</label><input type="range" id="wmB" min="0.2" max="3" step="0.1" value="1.5" style="flex:1;min-width:140px"><span id="wmBo" class="small" style="min-width:60px"></span></div><div class="cvbox" style="height:200px;margin-top:6px"><canvas class="cv" id="wmCv"></canvas></div><div class="kv" id="wmK"></div></div>');
+ let ph=0;const cv=$('#wmCv');loop(cv,dt=>{const B=+$('#wmB').value;$('#wmBo').textContent=B.toFixed(1)+' T';ph+=dt*B*3;const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const cx=w/2,cy=h*0.62;
+  c.strokeStyle=cssv('--muted');c.setLineDash([4,4]);c.beginPath();c.moveTo(cx,h-6);c.lineTo(cx,10);c.stroke();c.setLineDash([]);c.fillStyle=cssv('--muted');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('B',cx+6,18);
+  c.strokeStyle=cssv('--line');c.beginPath();c.ellipse(cx,cy-60,50,14,0,0,7);c.stroke();const tx2=cx+50*Math.cos(ph),ty=cy-60+14*Math.sin(ph);c.strokeStyle=cssv('--neg');c.lineWidth=3;c.beginPath();c.moveTo(cx,cy);c.lineTo(tx2,ty);c.stroke();c.fillStyle='#E5484D';c.beginPath();c.arc(cx,cy,10,0,7);c.fill();c.fillStyle='#fff';c.fillText('p',cx-3,cy+4);
+  $('#wmK').innerHTML='<span>Larmor (precession) frequency f = 42.6 × 10<sup>6</sup> × B = <b>'+(42.6*B).toFixed(1)+' MHz</b></span><span>an RF pulse at exactly this frequency causes resonance</span>'});
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'X-rays',h:()=>`
+<h2>The nature and properties of X-rays</h2>
+<p>X-rays are <strong>electromagnetic waves</strong> of very short wavelength (about 10<sup>−8</sup> to 10<sup>−13</sup> m), i.e. high-energy photons. They:</p>
+<ul><li>travel in straight lines at c and are not deflected by electric or magnetic fields;</li><li>are <strong>ionising</strong>, so they can damage living cells;</li><li>penetrate matter, being absorbed more strongly by materials of high density and high proton number (bone more than soft tissue);</li><li>affect photographic film and digital detectors, and cause fluorescence.</li></ul>`,
+chk:[['Why does bone show up clearly on an X-ray image?','Bone contains elements of higher proton number (calcium) and is denser, so it absorbs X-rays much more than soft tissue.']]},
+{t:'Producing X-rays',h:()=>`
+<h2>The X-ray tube and spectrum</h2>
+<p>Electrons from a heated cathode (thermionic emission) are accelerated through a p.d. of tens of kilovolts onto a <strong>tungsten target</strong>. About 99% of their energy becomes heat, so the anode is rotated and cooled.</p>
+<ul><li><strong>Continuous (braking) spectrum</strong>: electrons decelerating in the target emit photons of any energy up to eV.</li><li><strong>Line (characteristic) spectrum</strong>: incoming electrons knock out inner-shell electrons; outer electrons drop into the gaps, emitting photons of energies characteristic of the target.</li><li><strong>Minimum wavelength</strong>: a whole electron’s energy becomes one photon: eV = hc/λ<sub>min</sub>.</li></ul>
+<h3>Controlling the beam</h3>
+<p>The <strong>tube current</strong> (filament heating) controls the <strong>intensity</strong> (number of photons). The <strong>tube p.d.</strong> controls the <strong>photon energy</strong> (penetration) and also increases intensity. An <strong>aluminium filter</strong> absorbs low-energy photons that would only be absorbed by the skin, reducing the patient’s dose.</p>`,
+after:el=>wSpec(el.querySelector('.wslot')),
+chk:[['Find λ<sub>min</sub> for a tube operating at 100 kV.','λ = hc/eV = 1.24 × 10⁻¹¹ m']]},
+{t:'Therapy and diagnosis',h:()=>`
+<h2>Therapy and diagnosis</h2>
+<ul><li><strong>Diagnosis</strong> uses lower-energy X-rays (about 20–150 keV). At these energies absorption depends strongly on proton number, giving good contrast between bone and soft tissue.</li><li><strong>Therapy</strong> uses high-energy X-rays (MeV, from a linear accelerator) to destroy cancer cells. The beam is aimed at the tumour from several directions, so the tumour receives a high dose while surrounding healthy tissue receives much less.</li></ul>`,
+chk:[['Why is the therapy beam rotated around the patient?','The tumour lies where all the beams overlap and gets a large dose; healthy tissue on each beam path gets only a fraction of it.']]},
+{t:'Attenuation',h:()=>`
+<h2>Attenuation of X-rays</h2>
+<div class="eqbig">I = I₀ e<sup>−μx</sup></div>
+<p>μ is the (linear) attenuation coefficient; it depends on the material and the photon energy. Unit: m<sup>−1</sup> (or cm<sup>−1</sup>, mm<sup>−1</sup>).</p>
+<h3>Half-value thickness</h3>
+<div class="work"><div>At x = x½, I = I₀/2: ½ = e<sup>−μx½</sup></div><div>ln 2 = μx½, so <strong>x½ = ln 2/μ</strong></div></div>
+<p>Taking logs: ln I = ln I₀ − μx, so a graph of ln I against x is a straight line of gradient −μ.</p>`,
+after:el=>wAtt(el.querySelector('.wslot')),
+chk:[['The half-value thickness of a material is 4.0 mm. What fraction of X-rays passes through 12 mm?','Three half-value thicknesses: 1/8.']]},
+{t:'X-ray imaging',h:()=>`
+<h2>Imaging soft tissue, fluoroscopy and digital radiography</h2>
+<ul><li><strong>Contrast media</strong>: soft tissues absorb X-rays similarly. A contrast medium of high proton number is introduced: barium sulfate (swallowed, for the digestive tract) or iodine compounds (injected, for blood vessels).</li><li><strong>Fluoroscopy</strong> gives <strong>real-time</strong> moving images, for example of a barium meal or a catheter being guided. An <strong>image intensifier</strong> converts X-rays to light, then to electrons that are accelerated onto a fluorescent screen, giving a much brighter image, so a lower dose can be used.</li><li><strong>Digital image receptors</strong> (flat-panel detectors) record X-ray images digitally rather than on film: images are available immediately, can be processed (contrast, zoom), stored and shared electronically, and need a lower dose.</li></ul>`,
+chk:[['Why is a contrast medium needed to image the intestines?','Soft tissues have similar attenuation; barium (high proton number) absorbs X-rays strongly, outlining the intestine.']]},
+{t:'CT scanning',h:()=>`
+<h2>Computed tomography (CT)</h2>
+<p>An X-ray tube <strong>rotates</strong> around the patient, sending a thin fan-shaped beam through the body to a ring of detectors. Measurements from many angles are processed by computer to build up cross-sectional images (“slices”), which can be combined into a 3D image.</p>
+<table class="t"><thead><tr><th>Advantages</th><th>Disadvantages</th></tr></thead><tbody><tr><td>3D images; no overlapping structures</td><td>much larger radiation dose than a single X-ray</td></tr><tr><td>distinguishes soft tissues with small differences in attenuation</td><td>expensive equipment</td></tr><tr><td>fast; good for bone and bleeding</td><td>patient must keep still</td></tr></tbody></table>`,
+chk:[['Why does a CT scan give a much larger dose than a chest X-ray?','Many X-ray exposures are taken from different angles through the same region.']]},
+{t:'Generating ultrasound',h:()=>`
+<h2>Generating and detecting ultrasound</h2>
+<p>Ultrasound is sound above 20 kHz; medical scans use 1–15 MHz. It is produced and detected by a <strong>piezoelectric transducer</strong>:</p>
+<ul><li>an alternating p.d. across a piezoelectric crystal makes it change thickness, vibrating at the same frequency and emitting ultrasound (strongest at the crystal’s resonant frequency);</li><li>returning echoes make the crystal vibrate, generating a p.d. that can be detected;</li><li>the crystal is damped so it sends short <strong>pulses</strong>, and the same probe then listens for echoes.</li></ul>
+<p>Higher frequencies give better resolution (shorter wavelength) but are absorbed more, so penetrate less.</p>`,
+chk:[['Why must the ultrasound be sent in short pulses?','So the echo times can be measured, and so the transducer can detect echoes between pulses.']]},
+{t:'Acoustic impedance',h:()=>`
+<h2>Acoustic impedance and reflection</h2>
+<div class="eqbig">Z = cρ</div>
+<p>When ultrasound meets a boundary, the fraction of the intensity reflected is</p>
+<div class="eqbig">R = (Z₂ − Z₁)² / (Z₂ + Z₁)²</div>
+<p>(given if needed). Similar impedances (soft tissue to soft tissue) give weak echoes, so most energy passes on to deeper boundaries. A large mismatch reflects almost everything.</p>
+<p>Air has a tiny Z, so about 99.9% of the ultrasound would be reflected at the skin. A <strong>coupling gel</strong> with Z close to that of skin removes the air gap so the ultrasound enters the body.</p>`,
+after:el=>wZ(el.querySelector('.wslot')),
+chk:[['Why can ultrasound not image the lungs or through bone well?','Huge impedance mismatches (tissue–air, tissue–bone) reflect almost all the ultrasound.']]},
+{t:'A-scans and B-scans',h:()=>`
+<h2>A-scans and B-scans</h2>
+<ul><li><strong>A-scan</strong> (amplitude scan): a single beam direction; echoes are displayed as peaks against time. Depth of a boundary = ct/2 (the pulse goes there and back). Used to measure depths and distances, e.g. the length of the eyeball or the midline of the brain.</li><li><strong>B-scan</strong> (brightness scan): the probe is moved or electronically swept; each echo becomes a dot whose brightness shows its strength, building a 2D image. Used for foetal scans and imaging organs.</li></ul>
+<div class="work"><div>An echo returns 65 μs after the pulse: depth = 1540 × 65 × 10⁻⁶ / 2 = 5.0 cm</div></div>`,
+chk:[['An echo arrives 26 μs after the pulse. How deep is the boundary?','1540 × 26 × 10⁻⁶ / 2 = 2.0 cm']]},
+{t:'Doppler ultrasound',h:()=>`
+<h2>Doppler measurement of blood flow</h2>
+<p>Ultrasound reflected from moving red blood cells has its frequency shifted:</p>
+<div class="eqbig">Δf/f₀ = 2v cos θ / c</div>
+<p>θ is the angle between the ultrasound beam and the direction of blood flow; the factor 2 arises because the moving cells both receive and re-emit the sound. Measuring Δf gives the blood speed v, revealing narrowed or blocked arteries.</p>`,
+after:el=>wDop(el.querySelector('.wslot')),
+chk:[['Why is the probe held at an angle to the artery rather than at 90°?','At 90°, cos θ = 0 and there is no Doppler shift.']]},
+{t:'MRI',h:()=>`
+<h2>Magnetic resonance imaging</h2>
+<ul><li>Hydrogen nuclei (protons) behave like tiny magnets. In a strong uniform field B they align and <strong>precess</strong> about the field direction at the Larmor frequency:</li></ul>
+<div class="eqbig">f = 42.6 × 10⁶ B</div>
+<ul><li>A radio-frequency pulse at exactly this frequency causes <strong>resonance</strong>: the protons absorb energy and are tipped out of alignment.</li><li>When the pulse stops, the protons realign, emitting RF signals. The <strong>relaxation time</strong> depends on the type of tissue, so different tissues give different signals and appear with different brightness.</li><li>Gradient fields make B (and so f) vary across the body, so the position of each signal can be located to build up an image.</li></ul>`,
+after:el=>wMRI(el.querySelector('.wslot')),
+chk:[['What RF frequency is needed in a 1.5 T scanner?','42.6 × 10⁶ × 1.5 = 63.9 MHz']]},
+{t:'Comparing imaging methods',h:()=>`
+<h2>Ultrasound, X-ray and MRI compared</h2>
+<table class="t"><thead><tr><th></th><th>Advantages</th><th>Disadvantages</th></tr></thead><tbody>
+<tr><td>Ultrasound</td><td>no ionising radiation (safe for foetuses); cheap, portable; real-time; Doppler gives blood flow</td><td>poor resolution; cannot image through bone or air; operator-dependent</td></tr>
+<tr><td>X-ray / CT</td><td>excellent for bone; quick; CT gives 3D detail</td><td>ionising radiation (large dose for CT); poor soft-tissue contrast without contrast media</td></tr>
+<tr><td>MRI</td><td>no ionising radiation; excellent soft-tissue detail (brain, joints); 3D images in any plane</td><td>expensive; slow and noisy; cannot be used with some metal implants or pacemakers; claustrophobic</td></tr></tbody></table>`,
+chk:[['Which method would you choose to image a foetus, and why?','Ultrasound: no ionising radiation, cheap and real-time.']]},
+{t:'Radiation and dose',h:()=>`
+<h2>Effects of radiation and dose</h2>
+<p>α, β and γ radiation <strong>ionise</strong> atoms in cells, damaging molecules such as DNA. This can kill cells or cause mutations that lead to cancer. α particles are most strongly ionising: very dangerous inside the body but stopped by the outer layer of dead skin. β and γ penetrate further but ionise less densely.</p>
+<ul><li><strong>Absorbed dose</strong> D = energy absorbed per kilogram. Unit: gray, <strong>Gy</strong> (J kg<sup>−1</sup>).</li><li><strong>Equivalent dose</strong> H = D × W<sub>R</sub>, the radiation weighting factor: W<sub>R</sub> = 20 for α; 1 for β, γ and X-rays. Unit: sievert, <strong>Sv</strong>.</li><li><strong>Effective dose</strong> E = H × W<sub>T</sub>, the tissue weighting factor (given in questions), which accounts for how sensitive each organ is. Unit: <strong>Sv</strong>.</li></ul>`,
+chk:[['A 2.0 kg organ absorbs 0.60 mJ from α radiation. Find D and H.','D = 3.0 × 10⁻⁴ Gy; H = 20 × D = 6.0 × 10⁻³ Sv']]},
+{t:'Tracers and the gamma camera',h:()=>`
+<h2>Radioactive tracers and the gamma camera</h2>
+<p><strong>Technetium-99m</strong> is the most widely used tracer:</p>
+<ul><li>it emits only <strong>γ rays</strong> (140 keV), which pass out of the body to be detected, and no ionising α or β;</li><li>its half-life of <strong>6 hours</strong> is long enough for the scan but short enough to limit the dose;</li><li>it can be attached to different compounds that collect in particular organs;</li><li>it is produced on site from a molybdenum-99 generator.</li></ul>
+<h3>The gamma camera</h3>
+<ul><li><strong>Collimator</strong>: a thick lead plate with many parallel holes. Only γ rays travelling straight along the holes get through, so each point on the detector corresponds to a point in the body.</li><li><strong>Scintillator</strong> (sodium iodide crystal): each γ photon produces a flash of light.</li><li><strong>Photomultiplier tubes</strong> (or CCDs) convert the flashes into electrical pulses; their position is calculated to build up the image.</li></ul>`,
+chk:[['Why must a tracer emit γ rays rather than α or β?','γ rays leave the body to reach the camera and cause less ionisation inside.']]},
+{t:'PET scanning',h:()=>`
+<h2>Positron emission tomography (PET)</h2>
+<ul><li>A positron-emitting tracer, usually fluorine-18 attached to glucose (FDG), is injected. Active cells, including many <strong>tumours</strong>, take up more glucose.</li><li>Each positron travels a very short distance, then <strong>annihilates</strong> with an electron, producing <strong>two 511 keV γ photons travelling in opposite directions</strong>.</li><li>A ring of detectors registers pairs of photons arriving at the same time (<strong>coincidence detection</strong>). The annihilation lies on the line joining the two detectors; many such lines locate the source.</li><li>The computer builds a 3D image of tracer concentration, showing metabolic activity. PET is often combined with CT.</li></ul>`,
+chk:[['Why are two photons produced, travelling in opposite directions?','To conserve momentum: the electron–positron pair has almost zero momentum.']]}
+];
+
+/* ---------- drills ---------- */
+const DR={
+ xray:{n:'X-ray tube',g(s){const V=pick([30,50,80,100,120])*1000,v=s?rint(0,2):rint(0,1);
+  if(v===0)return Q(`Find the minimum wavelength of X-rays from a tube operating at ${V/1000} kV.`,HP*CL/(QE*V),'m',[`eV = hc/λ<sub>min</sub>`,`λ<sub>min</sub> = 6.63 × 10<sup>−34</sup> × 3.00 × 10<sup>8</sup> / (1.60 × 10<sup>−19</sup> × ${V})`,`= ${f3(HP*CL/(QE*V))} m`]);
+  if(v===1)return Q(`What is the maximum photon energy, in J, from a ${V/1000} kV X-ray tube?`,QE*V,'J',[`E<sub>max</sub> = eV = 1.60 × 10<sup>−19</sup> × ${V}`,`= ${f3(QE*V)} J (${V/1000} keV)`]);
+  const I=pick([2,5,10,20])/1000,eff=0.01;return Q(`An X-ray tube runs at ${V/1000} kV and ${I*1000} mA with an efficiency of 1%. At what rate must heat be removed from the anode?`,V*I*0.99,'W',[`power input = VI = ${f3(V*I)} W`,`99% becomes heat: ${f3(V*I*0.99)} W`],2)}},
+ att:{n:'Attenuation',g(s){const mu=pick([0.2,0.35,0.5,0.8,1.2]),x=pick([1,2,3,5,8]),v=s?rint(0,3):rint(0,1);
+  if(v===0)return Q(`X-rays pass through ${x} cm of material with μ = ${mu} cm<sup>−1</sup>. What fraction of the intensity is transmitted?`,Math.exp(-mu*x),'',[`I/I₀ = e<sup>−μx</sup> = e<sup>−${mu} × ${x}</sup>`,`= ${f3(Math.exp(-mu*x))}`]);
+  if(v===1)return Q(`Find the half-value thickness for a material with μ = ${mu} cm<sup>−1</sup>.`,Math.LN2/mu,'cm',[`x½ = ln 2/μ = 0.693/${mu}`,`= ${f3(Math.LN2/mu)} cm`]);
+  if(v===2){const hv=pick([2,3,4,6]);return Q(`A material has a half-value thickness of ${hv} mm. Find its attenuation coefficient.`,Math.LN2/hv,'mm⁻¹',[`μ = ln 2/x½ = 0.693/${hv}`,`= ${f3(Math.LN2/hv)} mm<sup>−1</sup>`],2)}
+  const fr=pick([0.1,0.05,0.01]);return Q(`What thickness of material with μ = ${mu} cm<sup>−1</sup> reduces the intensity to ${fr*100}%?`,Math.log(1/fr)/mu,'cm',[`e<sup>−μx</sup> = ${fr}, so x = ln(1/${fr})/μ`,`= ${f3(Math.log(1/fr))}/${mu} = ${f3(Math.log(1/fr)/mu)} cm`],2)}},
+ us:{n:'Ultrasound',g(s){const v=s?rint(0,3):rint(0,1);
+  if(v===0){const t=pick([13,26,40,65,78,104]);return Q(`An ultrasound echo returns ${t} μs after the pulse is sent. How deep is the boundary (c = 1540 m s<sup>−1</sup>)? Answer in cm.`,CS*t*1e-6/2*100,'cm',[`depth = ct/2 = 1540 × ${t} × 10<sup>−6</sup> / 2`,`= ${f3(CS*t*1e-6/2)} m = ${f3(CS*t*1e-6/2*100)} cm`])}
+  if(v===1){const k=pick(['fat','muscle','bone','blood']);return Q(`Find the acoustic impedance of ${k} (ρ = ${TIS[k][1]} kg m<sup>−3</sup>, c = ${TIS[k][2]} m s<sup>−1</sup>).`,Zof(k),'kg m⁻² s⁻¹',[`Z = cρ = ${TIS[k][2]} × ${TIS[k][1]}`,`= ${f3(Zof(k))} kg m<sup>−2</sup> s<sup>−1</sup>`])}
+  const pairs=[['fat','muscle'],['muscle','bone'],['air','gel'],['blood','muscle'],['water','fat']],p=pick(pairs),Z1=Zof(p[0]),Z2=Zof(p[1]),Rr=Math.pow((Z2-Z1)/(Z2+Z1),2);
+  if(v===2)return Q(`Find the fraction of ultrasound intensity reflected at a ${TIS[p[0]][0]}–${TIS[p[1]][0]} boundary (Z = ${f3(Z1)} and ${f3(Z2)} kg m<sup>−2</sup> s<sup>−1</sup>).`,Rr,'',[`R = (Z₂ − Z₁)²/(Z₂ + Z₁)²`,`= (${f3(Z2-Z1)})² / (${f3(Z2+Z1)})²`,`= ${f3(Rr)}`],2);
+  return Q(`What percentage of the ultrasound intensity is transmitted across a ${TIS[p[0]][0]}–${TIS[p[1]][0]} boundary (Z = ${f3(Z1)} and ${f3(Z2)})?`,(1-Rr)*100,'%',[`R = ${f3(Rr)}`,`transmitted = 1 − R = ${f3(1-Rr)} = ${f3((1-Rr)*100)}%`],2)}},
+ dop:{n:'Doppler',g(s){const f0=pick([2,3.5,5,7.5])*1e6,v=pick([0.1,0.2,0.35,0.5,0.8]),th=pick([30,40,45,60]),df=2*f0*v*Math.cos(th*Math.PI/180)/CS;
+  if(!s)return Q(`Blood moves at ${v} m s<sup>−1</sup>. A ${f0/1e6} MHz beam makes an angle of ${th}° with the flow. Find the Doppler shift.`,df,'Hz',[`Δf = 2f₀v cos θ / c`,`= 2 × ${f3(f0)} × ${v} × cos ${th}° / 1540`,`= ${f3(df)} Hz`]);
+  return Q(`A ${f0/1e6} MHz probe at ${th}° to an artery detects a Doppler shift of ${f3(df)} Hz. Find the blood speed.`,v,'m s⁻¹',[`v = cΔf / (2f₀ cos θ)`,`= 1540 × ${f3(df)} / (2 × ${f3(f0)} × cos ${th}°)`,`= ${f3(v)} m s<sup>−1</sup>`],2)}},
+ mri:{n:'MRI',g(s){const B=pick([0.5,1,1.5,3,7]);
+  if(!s)return Q(`Find the Larmor frequency of protons in a ${B} T field, in MHz.`,42.6*B,'MHz',[`f = 42.6 × 10<sup>6</sup> × B = 42.6 × 10<sup>6</sup> × ${B}`,`= ${f3(42.6*B)} MHz`]);
+  const f=pick([21.3,63.9,85.2,127.8]);return Q(`An MRI scanner uses an RF frequency of ${f} MHz. What is its field strength?`,f/42.6,'T',[`B = f/42.6 × 10<sup>6</sup>`,`= ${f} × 10<sup>6</sup> / 42.6 × 10<sup>6</sup>`,`= ${f3(f/42.6)} T`],2)}},
+ dose:{n:'Dose',g(s){const m=pick([0.05,0.2,1.5,60,70]),E=pick([0.1,0.5,1,2.4,10])*1e-3,D=E/m,v=s?rint(0,2):rint(0,1);
+  if(v===0)return Q(`A ${m} kg mass of tissue absorbs ${f3(E)} J of radiation energy. Find the absorbed dose.`,D,'Gy',[`D = E/m = ${f3(E)} / ${m}`,`= ${f3(D)} Gy`]);
+  if(v===1){const r=pick([['α',20],['β',1],['γ',1],['X-ray',1]]);return Q(`Tissue receives an absorbed dose of ${f3(D)} Gy of ${r[0]} radiation. Find the equivalent dose.`,D*r[1],'Sv',[`H = D × W<sub>R</sub>, with W<sub>R</sub> = ${r[1]} for ${r[0]}`,`= ${f3(D*r[1])} Sv`])}
+  const WT=pick([0.01,0.04,0.12,0.08]),WR=pick([1,20]);return Q(`An organ of mass ${m} kg absorbs ${f3(E)} J from ${WR===20?'α':'γ'} radiation. Its tissue weighting factor is ${WT}. Find the effective dose.`,D*WR*WT,'Sv',[`D = E/m = ${f3(D)} Gy`,`H = D × W<sub>R</sub> = ${f3(D*WR)} Sv`,`E = H × W<sub>T</sub> = ${f3(D*WR*WT)} Sv`],2)}},
+ trace:{n:'Tracers',g(s){const A0=pick([200,400,600,800])*1e6,T=6,t=pick([3,6,12,18,24]);
+  if(!s)return Q(`A patient is injected with Tc-99m of activity ${f3(A0)} Bq (half-life 6.0 h). What is its activity after ${t} hours?`,A0*Math.pow(0.5,t/T),'Bq',[`A = A₀ (½)<sup>t/T½</sup> = ${f3(A0)} × (½)<sup>${t}/6</sup>`,`= ${f3(A0*Math.pow(0.5,t/T))} Bq`]);
+  const E=511e3*QE;return Q(`Find the energy, in J, of each photon produced when a positron annihilates with an electron at rest (each photon carries 511 keV).`,E,'J',[`E = 511 × 10<sup>3</sup> × 1.60 × 10<sup>−19</sup>`,`= ${f3(E)} J`],2)}}
+};
+function drHint(v,q){if(q.unit==='cm'&&q.text.includes('echo')&&close(v,q.ans*2,0.02))return ' Remember to halve: the pulse travels to the boundary and back.';if(q.text.includes('Doppler')&&(close(v,q.ans/2,0.02)||close(v,q.ans*2,0.02)))return ' Out by 2: the factor 2 in 2v cos θ/c.';return ''}
+
+/* ---------- quiz ---------- */
+const QB=[
+['X-rays are:',['electromagnetic waves of very short wavelength','streams of electrons','sound waves','streams of protons'],0,'High-energy photons.'],
+['In an X-ray tube, most of the electrons’ kinetic energy becomes:',['heat in the anode','X-rays','light','sound'],0,'About 99%, so the anode is rotated and cooled.'],
+['The continuous part of an X-ray spectrum is caused by:',['electrons decelerating in the target','electrons dropping between inner energy levels','radioactive decay','fluorescence'],0,'Braking radiation.'],
+['The characteristic lines in an X-ray spectrum are due to:',['electrons filling vacancies in inner shells of target atoms','electrons being decelerated','the filter','the tube current'],0,'Their energies identify the target element.'],
+['The minimum wavelength of X-rays from a tube depends on:',['the tube p.d.','the tube current','the target material','the filter'],0,'eV = hc/λ<sub>min</sub>.'],
+['Increasing the tube current:',['increases the intensity but not the maximum photon energy','increases the maximum photon energy','shifts the lines','decreases λ<sub>min</sub>'],0,'More electrons, more photons.'],
+['An aluminium filter is placed in the X-ray beam to:',['remove low-energy photons that would only be absorbed by the skin','increase the intensity','produce characteristic lines','focus the beam'],0,'This reduces the patient’s dose.'],
+['High-energy X-rays are used in therapy rather than diagnosis because:',['they penetrate deeply to deliver a large dose to a tumour','they give better contrast','they are safer','they are cheaper'],0,'Diagnosis uses lower energies for contrast.'],
+['The half-value thickness is:',['ln 2/μ','μ/ln 2','μ ln 2','1/μ'],0,'From I = I₀e<sup>−μx</sup>.'],
+['After 3 half-value thicknesses, the intensity is:',['1/8 of the original','1/3','1/6','1/9'],0,'(½)³.'],
+['A contrast medium such as barium sulfate is used because:',['it has a high proton number and absorbs X-rays strongly','it glows under X-rays','it is radioactive','it reflects X-rays'],0,'It outlines soft-tissue structures.'],
+['Fluoroscopy provides:',['real-time moving X-ray images','3D slices','ultrasound images','MRI images'],0,'An image intensifier gives a bright image at low dose.'],
+['A disadvantage of CT compared with a normal X-ray is:',['a much higher radiation dose','poorer images','no 3D information','it uses ultrasound'],0,'Many exposures are needed.'],
+['Ultrasound is produced by:',['a piezoelectric crystal vibrating under an alternating p.d.','a heated filament','radioactive decay','a magnet'],0,'The same crystal detects echoes.'],
+['Acoustic impedance is:',['Z = cρ','Z = c/ρ','Z = ρ/c','Z = c²ρ'],0,'Speed of sound × density.'],
+['Coupling gel is used because:',['without it, almost all ultrasound would reflect at the air–skin boundary','it kills bacteria','it absorbs ultrasound','it cools the probe'],0,'Its impedance is close to that of skin.'],
+['Strong reflection of ultrasound occurs at a boundary where:',['the acoustic impedances are very different','the impedances are equal','the density is low','the frequency is high'],0,'R = (Z₂ − Z₁)²/(Z₂ + Z₁)².'],
+['In an A-scan, the depth of a boundary is:',['ct/2','ct','2ct','c/t'],0,'The pulse travels there and back.'],
+['A B-scan:',['builds up a 2D image from echoes as the probe sweeps across','measures depth along one line only','uses X-rays','measures blood speed'],0,'Echo strength sets each dot’s brightness.'],
+['Higher-frequency ultrasound gives:',['better resolution but less penetration','worse resolution','more penetration','no difference'],0,'Shorter wavelength, but more absorption.'],
+['In Doppler ultrasound, Δf/f₀ = 2v cos θ/c. The factor 2 arises because:',['the moving blood cells both receive and re-emit the ultrasound','there are two red blood cells','the probe has two crystals','the wave travels at twice the speed'],0,'Two Doppler shifts.'],
+['If the ultrasound beam is at 90° to the blood flow:',['there is no Doppler shift','the shift is a maximum','the shift doubles','the frequency halves'],0,'cos 90° = 0.'],
+['In MRI, the Larmor frequency of protons:',['is proportional to the magnetic flux density','is independent of B','decreases as B increases','depends on the RF pulse length'],0,'f = 42.6 × 10⁶ B.'],
+['In MRI, resonance occurs when:',['the RF frequency equals the precession (Larmor) frequency','the field is switched off','X-rays are absorbed','the patient moves'],0,'The protons absorb energy and tip over.'],
+['Different tissues appear differently in MRI because they have different:',['relaxation times','densities of X-ray absorption','acoustic impedances','half-lives'],0,'Particularly for hydrogen in water and fat.'],
+['An advantage of MRI over CT is:',['no ionising radiation','it is cheaper','it is faster','it can be used with pacemakers'],0,'It also gives excellent soft-tissue detail.'],
+['The unit of absorbed dose is:',['the gray (J kg⁻¹)','the sievert','the becquerel','the joule'],0,'D = energy per kilogram.'],
+['The radiation weighting factor for α radiation is:',['20','1','10','0.5'],0,'1 for β, γ and X-rays.'],
+['Equivalent dose is:',['absorbed dose × radiation weighting factor','absorbed dose × tissue weighting factor','energy × mass','activity × time'],0,'Measured in sieverts.'],
+['Effective dose takes into account:',['the sensitivity of different tissues','the half-life of the source','the distance from the source','the energy of each photon only'],0,'E = H × W<sub>T</sub>.'],
+['α radiation is most dangerous:',['inside the body, where it ionises cells densely','outside the body','at long range','when shielded by lead'],0,'It cannot penetrate the dead outer layer of skin.'],
+['Technetium-99m is a good tracer because:',['it emits only γ rays and has a 6-hour half-life','it emits α particles','it has a half-life of many years','it emits positrons'],0,'Detectable outside the body, and a low dose.'],
+['The collimator in a gamma camera:',['lets through only γ rays travelling along its holes, giving a sharp image','amplifies the signal','converts γ rays to light','focuses the γ rays with lenses'],0,'Without it, the image is blurred.'],
+['In a gamma camera, the sodium iodide crystal:',['produces a flash of light when a γ photon is absorbed','absorbs light','emits γ rays','acts as a lens'],0,'Photomultipliers then detect the flashes.'],
+['In PET scanning, the detected photons come from:',['annihilation of positrons with electrons','β decay','X-ray tubes','nuclear fission'],0,'Two 511 keV photons in opposite directions.'],
+['PET is useful for detecting tumours because:',['tumours take up more of the glucose-based tracer','tumours emit positrons naturally','tumours reflect γ rays','tumours are denser'],0,'Showing metabolic activity.']
+];
+
+/* ---------- graph match ---------- */
+const CURVES={
+ spec:{xl:'photon energy',yl:'intensity',f:x=>{const E=x*100,s=spec(E,90,5,1);return s/6.5}},
+ att:{xl:'x',yl:'I',f:x=>0.9*Math.exp(-3*x)},
+ lnI:{xl:'x',yl:'ln I',f:x=>0.9-0.8*x},
+ ascan:{xl:'t',yl:'echo amplitude',f:x=>{let v=0;[[0.03,0.9],[0.3,0.4],[0.55,0.2],[0.78,0.6]].forEach(p=>{v+=p[1]*Math.exp(-Math.pow((x-p[0])/0.012,2))});return v}},
+ lar:{xl:'B',yl:'Larmor f',f:x=>0.85*x},
+ act:{xl:'t',yl:'activity',f:x=>0.9*Math.pow(0.5,x*4)},
+ dop:{xl:'v',yl:'Δf',f:x=>0.8*x}
+};
+const GM=[['spec','X-ray spectrum from a tungsten target'],['att','X-ray intensity against thickness of absorber'],['lnI','ln I against absorber thickness'],['ascan','Ultrasound A-scan'],['lar','Larmor frequency against magnetic flux density'],['act','Activity of Tc-99m against time'],['dop','Doppler shift against blood speed']];
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p,p2){this.p=p.slice();this.p2=p2?p2.slice():null;this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  const all=this.p.concat(this.p2||[]);if(all.length){const xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.p2){c.strokeStyle=cssv('--ok');c.lineWidth=2;this.p2.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.arc(P[0],P[1],5,0,7);c.stroke()})}
+  if(o.curve){c.strokeStyle=cssv('--muted');c.setLineDash([6,5]);c.lineWidth=2;c.beginPath();for(let i=0;i<=200;i++){const x=X[0]+(X[1]-X[0])*i/200,y=o.curve(x);if(!isFinite(y))continue;const P=px(x,y);i?c.lineTo(P[0],P[1]):c.moveTo(P[0],P[1])}c.stroke();c.setLineDash([])}
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+/* ============ LAB 1: X-ray spectrum and attenuation ============ */
+const K1={V:80,I:5,F:1,X:60,x:0,sh:false,data:[],bg:null};
+(function(){const g=kitRng(121);K1.mu=Math.round((0.06+g()*0.06)*1000)/1000;K1.B=2+g()*4;K1.N0=2600+g()*800;})();
+function k1Draw(){drawSpec($('#k1Cv'),K1.V,K1.I,K1.F,K1.X);const s=spec(K1.X,K1.V,K1.I,K1.F);$('#k1Rd').textContent='cursor: '+K1.X.toFixed(1)+' keV, relative intensity '+s.toFixed(2)}
+function k1Upd(){$('#k1Vo').textContent=K1.V+' kV';$('#k1Io').textContent=K1.I+' mA';$('#k1Fo').textContent=K1.F+' mm';$('#k1Xo').textContent=K1.X.toFixed(1)+' keV';k1Draw()}
+[['#k1V','V'],['#k1I','I'],['#k1F','F'],['#k1X','X']].forEach(p=>$(p[0]).addEventListener('input',e=>{K1[p[1]]=+e.target.value;k1Upd()}));watch($('#k1Cv'),k1Draw);
+function k2Count(){const r=(K1.sh?0:K1.N0*Math.exp(-K1.mu*K1.x))+K1.B,N=r*10;K1.cnt=Math.max(0,Math.round(N+gauss()*Math.sqrt(N)));$('#k2C').textContent=K1.cnt;k2Draw()}
+function k2Draw(){const cv=$('#k2Cv');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);c.fillStyle='#5A5F66';c.fillRect(10,h/2-18,50,36);c.fillStyle='#C3CEE3';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('tube',20,h/2+4);
+ if(!K1.sh){c.fillStyle='rgba(255,214,102,.25)';c.fillRect(60,h/2-8,w-140,16)}else{c.fillStyle='#333';c.fillRect(60,h/2-20,8,40)}const sw=K1.x/40*(w*0.4);c.fillStyle='rgba(200,160,120,.8)';c.fillRect(w/2-sw/2,h/2-30,Math.max(1,sw),60);c.fillStyle='#3B4046';c.fillRect(w-80,h/2-20,60,40);c.fillStyle='#fff';c.fillText('detector',w-74,h/2+4)}
+$('#k2X').addEventListener('input',e=>{K1.x=+e.target.value;$('#k2Xo').textContent=K1.x+' mm';k2Draw()});$('#k2Sh').addEventListener('change',e=>{K1.sh=e.target.checked;k2Draw()});
+$('#k2Cnt').addEventListener('click',k2Count);watch($('#k2Cv'),k2Draw);
+$('#k2Rec').addEventListener('click',()=>{const m=$('#k2Msg');if(K1.cnt===undefined){fb(m,'info','Take a 10 s count first.');return}if(K1.sh){K1.bg=K1.cnt;fb(m,'ok','Background recorded: '+K1.cnt+' counts in 10 s.');k2Plot();return}K1.data=K1.data.filter(d=>d[0]!==K1.x);K1.data.push([K1.x,K1.cnt]);K1.data.sort((a,b)=>a[0]-b[0]);K1.cnt=undefined;k2Table();k2Plot();fb(m,'ok','Recorded.'+(K1.bg===null?' Remember to record the background with the shutter closed.':''))});
+function k2Table(){$('#k2Tb').innerHTML=(K1.bg!==null?'<tr><td>background</td><td>'+K1.bg+'</td><td></td></tr>':'')+(K1.data.length?K1.data.map((r,i)=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="3" class="muted">No readings yet</td></tr>');$$('#k2Tb .x').forEach(b=>b.addEventListener('click',()=>{K1.data.splice(+b.dataset.i,1);k2Table();k2Plot()}))}
+const p1=new Plot($('#k2G'),{xl:'x / mm',yl:'ln(C − B)',bx:[0,40],by:[0,11],line:true,onDraw:()=>{const f=p1.line();$('#k2Ro').innerHTML=f?'gradient = <strong>'+sci(f.m,3)+' mm⁻¹</strong>'+(K1.bg===null?' <span class="warn">(background not subtracted yet)</span>':''):''}});
+function k2Pts(){const b=K1.bg||0;return K1.data.filter(d=>d[1]-b>0).map(d=>[d[0],Math.log(d[1]-b)])}
+function k2Plot(){k2Table();p1.set(k2Pts())}
+$('#k2Line').addEventListener('click',()=>p1.reset(false));
+function k1Tasks(){const el=$('#k1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const S={};
+ numTask(el,'1. Set the tube to 80 kV. Use the cursor to find the maximum photon energy.','keV',v=>{if(Math.abs(v-80)<=1.5)return {ok:true,msg:'<strong>Correct:</strong> 80 keV: each electron gains eV = 80 keV, the most any single photon can have.'};return {ok:false,msg:'Find where the spectrum reaches zero at the high-energy end.'}},2);
+ numTask(el,'2. Calculate the minimum wavelength at 80 kV.','m',v=>{const t=HP*CL/(QE*80e3);if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> λ<sub>min</sub> = hc/eV = '+sci(t,3)+' m.'};return {ok:false,msg:'λ<sub>min</sub> = hc/eV, with V = 80 000 V.'}},2);
+ mcq(el,'Lower the tube p.d. below about 70 kV. What happens to the sharp peaks near 60 keV, and why?',['They disappear: electrons no longer have enough energy to knock out K-shell electrons in tungsten','They move to lower energies','They get taller','Nothing'],0,'The characteristic lines have fixed energies but need a minimum tube p.d. to appear.');
+ mcq(el,'Increasing the aluminium filter thickness:',['removes more low-energy photons, raising the average photon energy','removes high-energy photons','increases the maximum energy','shifts the characteristic lines'],0,'Beam hardening: the skin dose falls.');
+ numTask(el,'3. Part 2: what is the background count in 10 s?','counts',v=>{if(K1.bg===null)return {info:1,msg:'Close the shutter, count for 10 s and record it.'};if(Math.abs(v-K1.bg)<=0.5)return {ok:true,msg:'<strong>Correct.</strong> Subtract this from every count before taking logs.'};return {ok:false,msg:'Use your recorded background count.'}},1);
+ numTask(el,'4. From your graph, find the attenuation coefficient μ of the sample.','mm⁻¹',v=>{const pts=k2Pts();if(pts.length<6||K1.bg===null)return {info:1,msg:'Record the background and at least 6 thicknesses.'};const f=p1.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};if(pct(f.m,ls.m)>6)return {ok:false,msg:'Adjust your line.'};if(close(v,-f.m,0.03)){S.mu=v;return {ok:true,msg:'<strong>Good:</strong> μ = −gradient = '+(-f.m).toFixed(3)+' mm<sup>−1</sup>.'}}if(close(v,f.m,0.03))return {ok:false,msg:'μ is positive: μ = −gradient.'};return {ok:false,msg:'ln I = ln I₀ − μx, so μ = −gradient.'}},3);
+ numTask(el,'5. Calculate the half-value thickness of the sample.','mm',v=>{if(S.mu===undefined)return {info:1,msg:'Complete task 4.'};const t=Math.LN2/S.mu;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> x½ = ln 2/μ = '+t.toFixed(1)+' mm.'};return {ok:false,msg:'x½ = ln 2/μ.'}},2);
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="k1Deb">Reveal my kit’s hidden values</button><div class="fb" id="k1DebO"></div></div>');
+ $('#k1Deb').addEventListener('click',()=>fb($('#k1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>True μ = '+K1.mu+' mm<sup>−1</sup> (x½ = '+(Math.LN2/K1.mu).toFixed(1)+' mm). Background '+(K1.B*10).toFixed(0)+' counts per 10 s on average. Counts vary randomly (about ±√N).'));
+}
+
+/* ============ LAB 2: ultrasound ============ */
+const U1={gel:true,x:20,th:45};
+(function(){const g=kitRng(122);U1.d1=Math.round((1.0+g()*1.5)*100)/100;U1.d2=Math.round((2.0+g()*2.0)*100)/100;U1.v=Math.round((0.2+g()*0.7)*100)/100;})();
+function u1Echo(){const t1=2*U1.d1/100/1450*1e6,t2=t1+2*U1.d2/100/1590*1e6;const Rg=Math.pow((Zof('fat')-(U1.gel?Zof('gel'):Zof('air')))/(Zof('fat')+(U1.gel?Zof('gel'):Zof('air'))),2),Rfm=Math.pow((Zof('muscle')-Zof('fat'))/(Zof('muscle')+Zof('fat')),2),Rmb=Math.pow((Zof('bone')-Zof('muscle'))/(Zof('bone')+Zof('muscle')),2);
+ const T0=1-Rg;return [[0.6,Math.min(1,0.25+Math.sqrt(Rg)*1.2)],[t1,Math.sqrt(Rfm)*T0*6*Math.exp(-t1/80)],[t2,Math.sqrt(Rmb)*T0*(1-Rfm)*1.4*Math.exp(-t2/80)]]}
+function u1Draw(){const cv=$('#u1Cv');const {c,w,h}=fitCanvas(cv);c.fillStyle='#0B1A12';c.fillRect(0,0,w,h);const dx=w/12;c.strokeStyle='rgba(160,230,190,.18)';for(let i=0;i<=12;i++){c.beginPath();c.moveTo(i*dx,0);c.lineTo(i*dx,h);c.stroke()}
+ const X=t=>t/120*w,y0=h-24;const E=u1Echo(),rnd=mulberry32(Math.floor(performance.now()/400));c.strokeStyle='#5CFF9D';c.shadowColor='#5CFF9D';c.shadowBlur=5;c.lineWidth=1.6;c.beginPath();
+ for(let i=0;i<=w;i++){const t=i/w*120;let a=0.012*(rnd()-0.5);E.forEach(e=>{a+=e[1]*Math.exp(-Math.pow((t-e[0])/0.35,2))*Math.abs(Math.cos((t-e[0])*12))});const y=y0-Math.min(1.05,a)*(h-40);i?c.lineTo(i,y):c.moveTo(i,y)}c.stroke();c.shadowBlur=0;
+ c.strokeStyle='#FFD666';c.setLineDash([4,3]);c.beginPath();c.moveTo(X(U1.x),6);c.lineTo(X(U1.x),y0+4);c.stroke();c.setLineDash([]);c.fillStyle='#A7E3C0';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('10 μs/div',6,h-6);c.fillText('cursor '+U1.x.toFixed(1)+' μs',w-100,h-6)}
+function u1Ph(){const cv=$('#u1Ph');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const sc=(w-40)/10,x0=30;const L=[['fat',U1.d1,'#F2D38A'],['muscle',U1.d2,'#D98C8C'],['bone',10-U1.d1-U1.d2,'#E8E4DA']];let x=x0;L.forEach(l=>{c.fillStyle=l[2];c.fillRect(x,20,l[1]*sc,h-40);c.fillStyle='#333';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText(l[0],x+4,h/2+4);x+=l[1]*sc});
+ c.fillStyle='#5A5F66';c.fillRect(4,h/2-18,x0-8,36);if(U1.gel){c.fillStyle='rgba(120,200,255,.6)';c.fillRect(x0-4,h/2-20,4,40)}c.fillStyle=cssv('--muted');c.fillText('probe',2,14)}
+function u2Draw(){const cv=$('#u2Cv');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);c.fillStyle='#D98C8C';c.fillRect(0,h*0.55,w,h*0.3);c.fillStyle='#A33';for(let i=0;i<14;i++){const x=((performance.now()/1000*U1.v*200)+i*40)%(w+20)-10;c.beginPath();c.ellipse(x,h*0.7,7,4,0,0,7);c.fill()}
+ const a=U1.th*Math.PI/180,px=w/2-Math.cos(a)*90,py=h*0.7-Math.sin(a)*90;c.strokeStyle='#5A5F66';c.lineWidth=12;c.beginPath();c.moveTo(px-Math.cos(a)*20,py-Math.sin(a)*20);c.lineTo(px,py);c.stroke();c.strokeStyle='rgba(255,214,102,.8)';c.lineWidth=2;c.setLineDash([5,4]);c.beginPath();c.moveTo(px,py);c.lineTo(w/2,h*0.7);c.stroke();c.setLineDash([]);
+ c.fillStyle=cssv('--ink');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('θ = '+U1.th+'°',w/2+8,h*0.5);c.fillText('blood flow →',w-100,h*0.95)}
+let u2t=0;function u2Loop(){if(labActive!=='lab2')return;u2Draw();requestAnimationFrame(u2Loop)}onShow.lab2=()=>requestAnimationFrame(u2Loop);
+function u1Upd(){$('#u1Xo').textContent=U1.x.toFixed(1)+' μs';$('#u1X').value=U1.x;u1Draw();u1Ph();$('#u2Ao').textContent=U1.th+'°';const df=2*5e6*U1.v*Math.cos(U1.th*Math.PI/180)/CS;$('#u2D').textContent=Math.round(df+gauss()*3)}
+$('#u1X').addEventListener('input',e=>{U1.x=+e.target.value;u1Upd()});$$('#sec-lab2 [data-n]').forEach(b=>b.addEventListener('click',()=>{U1.x=clamp(Math.round((U1.x+(+b.dataset.n))*10)/10,0,120);u1Upd()}));
+$('#u1G').addEventListener('change',e=>{U1.gel=e.target.checked;u1Upd()});$('#u2A').addEventListener('input',e=>{U1.th=+e.target.value;u1Upd()});
+watch($('#u1Cv'),u1Draw);watch($('#u1Ph'),u1Ph);setInterval(()=>{if(labActive==='lab2')u1Draw()},500);
+function u1Tasks(){
+ $('#u1Card').innerHTML='<span>The scanner assumes c = <b>1540 m s⁻¹</b></span><span>Doppler probe f₀ = <b>5.0 MHz</b></span>';
+ $('#u1Z').innerHTML=['air','gel','fat','muscle','blood','bone'].map(k=>'<tr><td>'+TIS[k][0]+'</td><td>'+TIS[k][1]+'</td><td>'+TIS[k][2]+'</td><td>'+sci(Zof(k),3)+'</td></tr>').join('');
+ const el=$('#u1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const t1=2*U1.d1/100/1450*1e6,t2=t1+2*U1.d2/100/1590*1e6;
+ numTask(el,'1. Using c = 1540 m s⁻¹, how deep is the fat–muscle boundary?','cm',v=>{const t=CS*t1*1e-6/2*100;if(Math.abs(v-t)<=0.06)return {ok:true,msg:'<strong>Good:</strong> '+t.toFixed(2)+' cm (echo at '+t1.toFixed(1)+' μs).'};return {ok:false,msg:'Find the second echo (the first is from the skin). depth = ct/2, with t in seconds.'}},3);
+ numTask(el,'2. Using c = 1540 m s⁻¹, how thick is the muscle layer?','cm',v=>{const t=CS*(t2-t1)*1e-6/2*100;if(Math.abs(v-t)<=0.06)return {ok:true,msg:'<strong>Good:</strong> '+t.toFixed(2)+' cm.'};return {ok:false,msg:'Thickness = c × (difference in echo times)/2.'}},3);
+ numTask(el,'3. Calculate the fraction of the intensity reflected at the fat–muscle boundary.','',v=>{const t=Math.pow((Zof('muscle')-Zof('fat'))/(Zof('muscle')+Zof('fat')),2);if(close(v,t,0.03))return {ok:true,msg:'<strong>Correct:</strong> R = '+sci(t,3)+': under 1%, so most of the ultrasound travels on to deeper tissues.'};return {ok:false,msg:'R = (Z₂ − Z₁)²/(Z₂ + Z₁)² using the table.'}},2);
+ mcq(el,'Untick the coupling gel. Why do the deeper echoes disappear?',['Almost all the ultrasound is reflected at the air–skin boundary because their acoustic impedances are so different','The gel amplifies the echoes','Air absorbs all sound','The probe stops working'],0,'R ≈ 0.999 for air to tissue.');
+ mcq(el,'The real speed of sound is 1450 m s⁻¹ in fat and 1590 m s⁻¹ in muscle, but the scanner assumes 1540 m s⁻¹. What does this cause?',['Small errors in the calculated depths and thicknesses','No effect','The echoes disappear','The frequency changes'],0,'Depth = ct/2 with the wrong c.');
+ numTask(el,'4. Doppler: use the Doppler shift at your chosen angle to find the blood speed.','m s⁻¹',v=>{const t=U1.v;if(Math.abs(v-t)<=0.04*t+0.01)return {ok:true,msg:'<strong>Correct:</strong> v = cΔf/(2f₀ cos θ) ≈ '+t.toFixed(2)+' m s<sup>−1</sup>. Try a different angle: Δf changes but v does not.'};return {ok:false,msg:'v = cΔf/(2f₀ cos θ), with f₀ = 5.0 × 10⁶ Hz and θ from the slider.'}},3);
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="u1Deb">Reveal the phantom</button><div class="fb" id="u1DebO"></div></div>');
+ $('#u1Deb').addEventListener('click',()=>fb($('#u1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Fat '+U1.d1+' cm, muscle '+U1.d2+' cm thick. Blood speed '+U1.v+' m s<sup>−1</sup>.'));
+}
+
+/* ============ LAB 3: Tc-99m ============ */
+const N1={t:1,col:true,pt:true,data:[],bg:null};
+(function(){const g=kitRng(123);N1.C0=40000+g()*20000;N1.Tb=18+g()*22;N1.Te=1/(1/6+1/N1.Tb);N1.B=30+g()*50;})();
+function n1Rate(){if(!N1.pt)return N1.B;const a=N1.C0*Math.exp(-Math.LN2*N1.t/N1.Te);return (N1.col?a:a*3)+N1.B}
+function n1Count(){const N=n1Rate();N1.cnt=Math.max(0,Math.round(N+gauss()*Math.sqrt(N)));$('#n1C').textContent=N1.cnt;n1Draw()}
+function n1Draw(){const cv=$('#n1Cv');const {c,w,h}=fitCanvas(cv);c.fillStyle='#000';c.fillRect(0,0,w,h);const rnd=mulberry32(Math.floor(N1.t*10)+(N1.col?1:2)+(N1.pt?3:5));const act=N1.pt?Math.exp(-Math.LN2*N1.t/N1.Te):0;const n=Math.floor(2500*act),blur=N1.col?7:45;
+ const kid=[[w*0.38,h*0.5],[w*0.62,h*0.5]];c.fillStyle='rgba(120,255,180,.8)';for(let i=0;i<n;i++){const k=kid[i%2];const a=rnd()*6.28,r=Math.sqrt(rnd());let x=k[0]+Math.cos(a)*r*w*0.07+((i%2)?-1:1)*Math.sin(a)*8,y=k[1]+Math.sin(a)*r*h*0.25;x+=(rnd()+rnd()+rnd()-1.5)*blur;y+=(rnd()+rnd()+rnd()-1.5)*blur;c.fillRect(x,y,1.5,1.5)}
+ for(let i=0;i<60;i++){c.fillRect(rnd()*w,rnd()*h,1.2,1.2)}c.fillStyle='#A7E3C0';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText(N1.col?'collimator fitted: sharp image':'no collimator: blurred image',6,h-6)}
+function n1Upd(){$('#n1To').textContent=N1.t+' h';n1Draw()}
+$('#n1T').addEventListener('input',e=>{N1.t=+e.target.value;N1.cnt=undefined;n1Upd()});$('#n1Col').addEventListener('change',e=>{N1.col=e.target.checked;n1Draw()});$('#n1Pt').addEventListener('change',e=>{N1.pt=e.target.checked;n1Draw()});
+$('#n1Cnt').addEventListener('click',n1Count);watch($('#n1Cv'),n1Draw);
+$('#n1Rec').addEventListener('click',()=>{const m=$('#n1Msg');if(N1.cnt===undefined){fb(m,'info','Take a 1 minute count first.');return}if(!N1.pt){N1.bg=N1.cnt;fb(m,'ok','Background recorded: '+N1.cnt+' counts per minute.');n1Plot();return}if(!N1.col){fb(m,'info','Fit the collimator: without it the counts include γ rays from all directions, not just the kidneys.');return}
+ N1.data=N1.data.filter(d=>d[0]!==N1.t);N1.data.push([N1.t,N1.cnt]);N1.data.sort((a,b)=>a[0]-b[0]);N1.cnt=undefined;n1Table();n1Plot();fb(m,'ok','Recorded.')});
+$('#n1Clr').addEventListener('click',()=>{N1.data=[];n1Table();n1Plot()});
+function n1Table(){$('#n1Tb').innerHTML=(N1.bg!==null?'<tr><td>background</td><td>'+N1.bg+'</td><td></td></tr>':'')+(N1.data.length?N1.data.map((r,i)=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="3" class="muted">No readings yet</td></tr>');$$('#n1Tb .x').forEach(b=>b.addEventListener('click',()=>{N1.data.splice(+b.dataset.i,1);n1Table();n1Plot()}))}
+const p3=new Plot($('#n1G'),{xl:'t / h',yl:'ln(C − B)',bx:[0,24],by:[0,12],line:true,onDraw:()=>{const f=p3.line();$('#n1Ro').innerHTML=f?'gradient = <strong>'+sci(f.m,3)+' h⁻¹</strong>':''}});
+function n1Pts(){const b=N1.bg||0;return N1.data.filter(d=>d[1]-b>0).map(d=>[d[0],Math.log(d[1]-b)])}
+function n1Plot(){n1Table();p3.set(n1Pts())}
+$('#n1Line').addEventListener('click',()=>p3.reset(false));
+function n1Tasks(){const el=$('#n1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const S={};
+ numTask(el,'1. Use the gradient of your ln(C − B) against t graph to find the half-life of the activity in the kidneys.','h',v=>{const pts=n1Pts();if(pts.length<6||N1.bg===null)return {info:1,msg:'Record the background (patient off the couch) and at least 6 times over 24 hours.'};const f=p3.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};if(pct(f.m,ls.m)>6)return {ok:false,msg:'Adjust your line.'};const t=Math.LN2/(-f.m);if(close(v,t,0.03)){S.T=v;return {ok:true,msg:'<strong>Good:</strong> T½ = ln 2/λ = '+t.toFixed(1)+' h, where λ = −gradient.'}}return {ok:false,msg:'λ = −gradient; T½ = ln 2/λ.'}},3);
+ mcq(el,'The half-life you measured is shorter than the 6.0 h physical half-life of Tc-99m. Why?',['The body also removes the tracer (biological excretion), so the activity in the kidneys falls faster','The camera is inaccurate','Tc-99m decays faster inside the body','Background radiation'],0,'This combined “effective” half-life is what matters for the patient’s dose.');
+ mcq(el,'Why must the collimator be fitted?',['Only γ rays travelling straight along its holes reach the crystal, so each point on the image matches a point in the body','It increases the count rate','It converts γ rays to light','It shields the patient'],0,'Untick it to see the blurred image.');
+ numTask(el,'2. During the scan the kidneys (total mass 0.30 kg) absorb 4.5 × 10⁻⁵ J of γ-ray energy. Find the absorbed dose.','Gy',v=>{const t=4.5e-5/0.30;if(close(v,t,0.02)){S.D=t;return {ok:true,msg:'<strong>Correct:</strong> D = E/m = '+sci(t,3)+' Gy.'}}return {ok:false,msg:'D = E/m.'}},2);
+ numTask(el,'3. Find the equivalent dose (γ rays).','Sv',v=>{const t=4.5e-5/0.30;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> H = D × W<sub>R</sub> = '+sci(t,3)+' Sv (W<sub>R</sub> = 1 for γ).'};return {ok:false,msg:'H = D × W<sub>R</sub>, with W<sub>R</sub> = 1 for γ rays.'}},2);
+ numTask(el,'4. The tissue weighting factor for the kidneys is 0.12. Find the effective dose.','Sv',v=>{const t=4.5e-5/0.30*0.12;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> E = H × W<sub>T</sub> = '+sci(t,3)+' Sv.'};return {ok:false,msg:'E = H × W<sub>T</sub>.'}},2);
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="n1Deb">Reveal the patient’s hidden values</button><div class="fb" id="n1DebO"></div></div>');
+ $('#n1Deb').addEventListener('click',()=>fb($('#n1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Biological half-life '+N1.Tb.toFixed(1)+' h; physical half-life 6.0 h; effective half-life '+N1.Te.toFixed(2)+' h. Background '+N1.B.toFixed(0)+' counts per minute.'));
+}
+const DER=[
+ {t:'Derive the minimum X-ray wavelength',s:['Electrons are accelerated through a p.d. V, gaining kinetic energy eV','The most energetic photon is made when one electron loses all its energy at once','So hf<sub>max</sub> = eV, i.e. hc/λ<sub>min</sub> = eV','λ<sub>min</sub> = hc/eV']},
+ {t:'Derive the half-value thickness',s:['I = I₀ e<sup>−μx</sup>','At the half-value thickness I = I₀/2','So ½ = e<sup>−μx½</sup>, giving ln 2 = μx½','x½ = ln 2/μ']},
+ {t:'Explain why coupling gel is needed',s:['Air has a very low acoustic impedance compared with skin','R = (Z₂ − Z₁)²/(Z₂ + Z₁)² is then almost 1','So almost all the ultrasound would be reflected at the skin','Gel, with Z close to that of skin, replaces the air so the ultrasound enters the body']},
+ {t:'Explain how an A-scan measures depth',s:['A short pulse of ultrasound is sent into the body','Part of it is reflected at each tissue boundary','The echo time t is measured for the round trip','Depth = ct/2, using the speed of sound in tissue']},
+ {t:'Explain how MRI produces a signal',s:['Protons in a strong field B precess at the Larmor frequency f = 42.6 × 10⁶ B','An RF pulse at this frequency causes resonance: the protons absorb energy and tip over','When the pulse stops they relax back, emitting RF signals','Relaxation times differ between tissues, giving contrast in the image']},
+ {t:'Explain how PET locates a tumour',s:['A positron-emitting tracer (e.g. F-18 in glucose) collects in active cells','Each positron annihilates with an electron','Two 511 keV photons travel in opposite directions and are detected in coincidence','The source lies on the line joining the detectors; many lines locate it in 3D']},
+ {t:'Work out the effective dose',s:['Absorbed dose D = energy absorbed ÷ mass (Gy)','Equivalent dose H = D × W<sub>R</sub>, allowing for the type of radiation (Sv)','Effective dose E = H × W<sub>T</sub>, allowing for the tissue’s sensitivity (Sv)','α has W<sub>R</sub> = 20; β, γ and X-rays have W<sub>R</sub> = 1']}
+];
+const EXAM=[
+ {t:'X-ray tube',intro:'An X-ray tube operates at 90 kV with a current of 20 mA.',p:[['Find the maximum photon energy in J.',90e3*QE,'J','E = eV = 1.44 × 10<sup>−14</sup> J'],['Find the minimum wavelength.',HP*CL/(90e3*QE),'m','λ = hc/eV = 1.38 × 10<sup>−11</sup> m'],['The efficiency is 1%. Find the rate of heat production at the anode.',90e3*0.02*0.99,'W','P = VI = 1800 W; 99% is heat: 1782 W']]},
+ {t:'Attenuation',intro:'Bone has an attenuation coefficient of 0.55 cm⁻¹ for a particular X-ray beam.',p:[['Find its half-value thickness.',Math.LN2/0.55,'cm','x½ = ln 2/μ = 1.26 cm'],['What fraction of the beam passes through 3.0 cm of bone?',Math.exp(-0.55*3),'','e<sup>−1.65</sup> = 0.19']]},
+ {t:'Ultrasound',intro:'Z for fat = 1.34 × 10⁶ and for muscle = 1.71 × 10⁶ kg m⁻² s⁻¹. c = 1540 m s⁻¹.',p:[['Find the fraction of intensity reflected at a fat–muscle boundary.',Math.pow((1.71-1.34)/(1.71+1.34),2),'','R = (0.37/3.05)² = 0.0147'],['An echo from this boundary returns after 32 μs. How deep is it, in cm?',1540*32e-6/2*100,'cm','depth = ct/2 = 2.46 cm']]},
+ {t:'Doppler',intro:'A 4.0 MHz probe is held at 50° to an artery. The Doppler shift is 1.3 kHz. c = 1540 m s⁻¹.',p:[['Find the speed of the blood.',1540*1300/(2*4e6*Math.cos(50*Math.PI/180)),'m s⁻¹','v = cΔf/(2f₀ cos θ) = 0.39 m s<sup>−1</sup>']]},
+ {t:'MRI',intro:'',p:[['Find the Larmor frequency of protons in a 3.0 T scanner, in MHz.',127.8,'MHz','f = 42.6 × 10⁶ × 3.0 = 128 MHz'],['What field is needed for a resonant frequency of 21.3 MHz?',0.5,'T','B = 21.3/42.6 = 0.50 T']]},
+ {t:'Dose',intro:'A 0.050 kg tumour absorbs 0.40 J from a radiotherapy beam of X-rays.',p:[['Find the absorbed dose.',8,'Gy','D = 0.40/0.050 = 8.0 Gy'],['Find the equivalent dose.',8,'Sv','W<sub>R</sub> = 1 for X-rays: 8.0 Sv'],['The same energy delivered by α particles would give what equivalent dose?',160,'Sv','W<sub>R</sub> = 20: 160 Sv']]},
+ {t:'Technetium-99m',intro:'A patient receives Tc-99m with an activity of 500 MBq (half-life 6.0 h).',p:[['Find the activity after 24 h, in MBq.',500/16,'MBq','Four half-lives: 500/16 = 31 MBq'],['Find the energy of each 140 keV γ photon, in J.',140e3*QE,'J','140 × 10³ × 1.60 × 10<sup>−19</sup> = 2.24 × 10<sup>−14</sup> J']]}
+];
+
+/* ---------- revise cards ---------- */
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+/* ---------- drills ---------- */
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 2.3e-3.');return}
+  const ok=close(v,drQ.ans,drQ.tol);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+wk());
+  else{let hint=drHint(v,drQ);if(!hint){const r=v/drQ.ans,lg=Math.log10(Math.abs(r));if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check your unit prefixes.'}
+   fb(out,'no','<strong>Not quite.</strong>'+(hint||'')+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.'+wk())}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+/* ---------- quiz ---------- */
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+/* ---------- graph match ---------- */
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg');const C=CURVES[type];
+ const x0=40,xw=W-60,y0=C.mid?H/2+4:H-28,sc=C.mid?H/2-24:H-44;
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,C.mid?H-10:y0);c.lineTo(x0,12);c.stroke();
+ c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();c.beginPath();c.moveTo(x0,10);c.lineTo(x0-4,17);c.lineTo(x0+4,17);c.fill();
+ c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText(C.xl,x0+xw+6,y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,22);
+ c.fillStyle=mut;c.font='13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('0',x0-6,y0+4+(C.mid?0:10));
+ [C.f,C.two].forEach((fn,k)=>{if(!fn)return;c.strokeStyle=k?cssv('--pos'):neg;c.lineWidth=2.6;if(k)c.setLineDash([6,4]);c.beginPath();let st=false;for(let i=0;i<=300;i++){const x=i/300,y=fn(x);if(y===null||Math.abs(y)>1.05){st=false;continue}const X=x0+x*xw,Y=y0-y*sc;if(!st){c.moveTo(X,Y);st=true}else c.lineTo(X,Y)}c.stroke();c.setLineDash([])});
+ if(C.extra)C.extra(c,x0,y0,xw,sc);
+}
+let gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ gmOrder=shuffle(GM.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ $('#gmPool').innerHTML=shuffle(GM).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}else if(gmPlace[i]!==undefined)delete gmPlace[i];gmPaint()}));
+ gmPaint();
+}
+function gmPaint(){
+ const used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?GM.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+$('#gmCheck').addEventListener('click',()=>{let n=0;$$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<GM.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===GM.length){award(GM.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong>')}else{miss();fb($('#gmFb'),'no',n+' of '+GM.length+' correct. Move the labels with red borders and check again.')}});
+$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+function kitButtons(){
+ ['#kitA','#kitB','#kitC'].forEach(s=>{if(!$(s))return;$(s).textContent=kitCode();const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New kit';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all your data';setTimeout(()=>{armed=false;b.textContent='New kit'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],p[4]||0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let GT=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){GT={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!GT)return;const left=Math.max(0,(GT.end-performance.now())/1000),el=$('#gT');if(!el){GT=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=GT.score;GT=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+GT.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){GT.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(GT)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){GT.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(GT)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{GT=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- start-up ---------- */
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();gmStart();kitButtons();
+k1Upd();k2Draw();$('#k2Xo').textContent='0 mm';k2Table();k2Plot();k1Tasks();
+u1Upd();u1Tasks();
+n1Upd();n1Table();n1Plot();n1Tasks();
+derStart(0);
+})();
+</script>
+</body>
+</html>

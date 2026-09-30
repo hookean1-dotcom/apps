@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gravitational fields: WJEC A2 Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#0A1224;--sky2:#15203A;--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep12{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep12 *,#ep12 *::before,#ep12 *::after{box-sizing:border-box}
+#ep12 button,#ep12 input,#ep12 select{font:inherit;color:inherit}
+#ep12 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep12 sup{font-size:.72em;line-height:0}
+#ep12 sub{font-size:.72em;line-height:0}
+#ep12 .h,#ep12 h1,#ep12 h2,#ep12 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep12 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep12 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep12 p{margin:.45em 0 .7em;max-width:72ch}
+#ep12 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep12 li{margin:.2em 0}
+#ep12 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep12 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep12 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep12 .brand{flex:1 1 320px;min-width:0}
+#ep12 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep12 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep12 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep12 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep12 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep12 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep12 .lcd.pulse{animation:ep12pulse .5s ease}
+@keyframes ep12pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep12 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep12 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep12 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep12 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep12 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep12 .tab:hover{color:var(--ink)}
+#ep12 main{padding:22px 0 40px}
+#ep12 .sec{display:none}
+#ep12 .sec.on{display:block}
+#ep12 .lead{color:var(--muted);margin-top:.3em}
+
+#ep12 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep12 .panel + .panel{margin-top:16px}
+#ep12 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep12 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep12 .grid2{grid-template-columns:1fr}}
+#ep12 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep12 .sp{flex:1}
+
+#ep12 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep12 .btn:hover{filter:brightness(1.15)}
+#ep12 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep12 .btn.alt:hover{border-color:var(--ink)}
+#ep12 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep12 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep12 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep12 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep12 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep12 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep12 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep12 input[type=text],#ep12 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep12 input[type=text]:focus,#ep12 input[type=number]:focus{border-color:var(--focus)}
+#ep12 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep12 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep12 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep12 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep12 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep12 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep12 .work{font-size:.96rem}
+#ep12 .work div{padding:1px 0}
+#ep12 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep12 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep12 .muted{color:var(--muted)}
+#ep12 .small{font-size:.88rem}
+#ep12 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep12 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep12 .rv{grid-template-columns:1fr}}
+#ep12 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep12 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep12 .toc button{white-space:nowrap}}
+#ep12 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep12 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep12 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep12 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep12 .card h2{margin-bottom:.35em}
+#ep12 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep12 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep12 .check summary{cursor:pointer;font-weight:700}
+#ep12 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep12 .fig svg{max-width:100%;height:auto;display:block}
+#ep12 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep12 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep12 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep12 .cv{display:block;width:100%;height:100%}
+#ep12 .cvbox{position:relative;width:100%;height:230px}
+#ep12 .mini{height:150px}
+#ep12 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep12 table.t th,#ep12 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep12 table.t th{font-weight:700;color:var(--muted)}
+#ep12 table.t td:first-child,#ep12 table.t th:first-child{text-align:left}
+#ep12 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep12 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep12 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep12 .qcard{font-size:1.1rem}
+#ep12 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep12 .opts{display:grid;gap:8px;margin-top:8px}
+#ep12 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep12 .opt:hover{border-color:var(--ink)}
+#ep12 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep12 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep12 .opt:disabled{cursor:default}
+#ep12 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep12 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep12 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep12 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep12 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep12 .mcell.sel{border-color:var(--neg)}
+#ep12 .mcell.right{border-color:var(--ok)}
+#ep12 .mcell.wrong{border-color:var(--bad)}
+#ep12 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep12 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep12 .pool .chip.used{opacity:.35}
+#ep12 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep12 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep12 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep12 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep12 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep12 .dmm .lcd{min-width:130px}
+#ep12 .dmm .lcd .v{font-size:2rem}
+#ep12 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep12 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep12 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep12 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep12 .task:first-of-type{border-top:0;padding-top:4px}
+#ep12 .task .tq{font-weight:700;margin-bottom:6px}
+#ep12 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep12 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep12 .apbox{position:relative;width:100%;height:280px}
+#ep12 .loupebox{position:relative;width:100%;height:92px}
+#ep12 .microbox{position:relative;width:100%;height:170px}
+#ep12 .thermobox{position:relative;width:100%;height:260px}
+#ep12 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep12 .warn{color:var(--bad);font-weight:700}
+#ep12 .steps{counter-reset:s}
+#ep12 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep12 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep12 .step:hover{border-color:var(--ink)}
+#ep12 .dz .step{background:var(--panel)}
+#ep12 .dz.good{border-color:var(--ok)}
+#ep12 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep12 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep12 .brand h1{font-size:1.6rem}#ep12 .wrap{padding:0 12px}#ep12 .panel{padding:14px}#ep12 .bezel .lcd{min-width:88px}#ep12 .lcd .v{font-size:1.5rem}}
+#ep12 .top{background:var(--sky);color:#F1F4FA;border-bottom:0}
+#ep12 .brand p{color:#C3CEE3}
+#ep12 .themebtn{color:#F1F4FA;border-color:#8FA2C6}
+#ep12 .bezel{background:#0B1322;box-shadow:inset 0 -3px 0 #060B14}
+#ep12 .fieldstrip{display:block;width:100%;height:46px;background:#0A1224}
+#ep12 .specstrip{position:relative;height:14px;background:linear-gradient(90deg,#5B1FA8 0%,#3240D6 12%,#1E7FE0 24%,#19B3B0 36%,#3DBE46 48%,#C9D52A 60%,#F2B21B 70%,#EE6A1A 82%,#C8241C 100%);overflow:hidden}
+#ep12 .specstrip i{position:absolute;top:0;bottom:0;width:3px;background:#0A0E18;animation:ep12shift 2.4s cubic-bezier(.2,.7,.2,1) .4s both}
+@keyframes ep12shift{from{transform:translateX(0)}to{transform:translateX(26px)}}
+#ep12 .sky{background:#0F1D26;border-radius:8px}
+#ep12 .grat{background:#0B1A12;border-radius:8px}
+#ep12 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep12 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep12 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep12 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep12 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep12 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+</style>
+</head>
+<body>
+<div id="ep12">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Gravitational fields</h1>
+   <p>WJEC A2 Physics 4.2 and 4.3: Newton’s law of gravitation, field strength, potential, combining fields, escape velocity and orbits.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">orbits banked</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+ <canvas class="fieldstrip" id="hdrCv" aria-hidden="true"></canvas>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="graphs" aria-selected="false">Graph match</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Planet survey</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Earth–Moon line</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Orbit lab</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+
+<section class="sec on" id="sec-revise">
+ <div class="rv">
+  <div class="toc" id="toc"></div>
+  <div class="panel card" id="card"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Use G = 6.67 × 10<sup>−11</sup> N m<sup>2</sup> kg<sup>−2</sup>, Earth mass 6.0 × 10<sup>24</sup> kg, Earth radius 6400 km. Type standard form as 6.0e24 or 6.0x10^24.</p>
+ <div class="panel">
+  <div class="row" id="drTopics"></div>
+  <div class="row" style="margin-top:10px">
+   <span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span>
+   <span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span>
+  </div>
+ </div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+
+<section class="sec" id="sec-quiz">
+ <h2>Concept quiz</h2>
+ <p class="lead">Twelve questions drawn from a bank covering the whole topic. Every answer comes with the reason.</p>
+ <div class="panel qcard" id="qzCard"></div>
+</section>
+
+<section class="sec" id="sec-graphs">
+ <h2>Graph match</h2>
+ <p class="lead">Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+ <div class="panel">
+  <div class="pool" id="gmPool"></div>
+  <div class="mgrid" id="gmGrid"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div>
+  <div class="fb" id="gmFb"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Planet survey: weighing a planet</h2>
+ <p class="lead">A probe with a gravimeter descends towards an unknown planet. Radar gives its distance from the planet’s centre. Measure g at different distances. Mission code <span class="kit" id="kitA"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="cvbox sky" style="height:260px;border-radius:10px"><canvas class="cv" id="s1Cv"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="s1H">Probe altitude above the surface</label><span id="s1Ho"></span></div><input type="range" id="s1H" min="0" max="40000" step="100" value="8000"></div>
+    <div class="meters"><div class="dmm"><div class="nm">Radar: distance from centre</div><div class="lcd"><span class="v" id="s1R" style="font-size:1.5rem">0</span><span class="u">km</span></div></div><div class="dmm"><div class="nm">Gravimeter</div><div class="lcd"><span class="v" id="s1G" style="font-size:1.5rem">0</span><span class="u">N kg⁻¹</span></div></div></div>
+    <div class="row"><span class="sp"></span><button class="btn go" id="s1Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="s1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="s1Card"></div>
+   <div class="row" style="margin-top:8px"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="s1Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px"><table class="t"><thead><tr><th>r / 10⁶ m</th><th>1/r² / 10⁻¹⁴ m⁻²</th><th>g / N kg⁻¹</th><th></th></tr></thead><tbody id="s1Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="row"><strong>Graph of g against 1/r²</strong><span class="sp"></span><button class="btn alt" id="s1Line" type="button">Reset best-fit line</button></div>
+  <div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="s1G2"></canvas></div>
+  <div class="readout" id="s1Ro"></div>
+ </div>
+ <div class="panel" id="s1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>The Earth–Moon line: finding the neutral point</h2>
+ <p class="lead">A probe travels along the line joining the centres of the Earth and the Moon, 3.84 × 10⁸ m apart. Its gravimeter reads the resultant field (positive towards the Moon). Mission code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="cvbox sky" style="height:170px;border-radius:10px"><canvas class="cv" id="e2Cv"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="e2X">Distance from the Earth’s centre</label><span id="e2Xo"></span></div><input type="range" id="e2X" min="0.5" max="3.8" step="0.01" value="2.0"></div>
+    <div class="row"><button class="btn alt" type="button" data-n="-0.1">−0.10</button><button class="btn alt" type="button" data-n="-0.01">−0.01</button><button class="btn alt" type="button" data-n="0.01">+0.01</button><button class="btn alt" type="button" data-n="0.1">+0.10</button><span class="small muted">× 10⁸ m</span></div>
+    <div class="row"><div class="dmm"><div class="nm">Gravimeter (towards Moon +)</div><div class="lcd"><span class="v" id="e2G" style="font-size:1.5rem">0</span><span class="u">mN kg⁻¹</span></div></div><span class="sp"></span><button class="btn go" id="e2Rec" type="button">Record</button></div>
+   </div>
+   <div class="fb" id="e2Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="e2Card"></div>
+   <div class="row" style="margin-top:8px"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="e2Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px"><table class="t"><thead><tr><th>x / 10⁸ m</th><th>g / mN kg⁻¹</th><th></th></tr></thead><tbody id="e2Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="row"><strong>Graph of resultant g against x</strong><span class="sp"></span><button class="btn alt" id="e2Line" type="button">Reset line</button></div>
+  <div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="e2G2"></canvas></div>
+  <div class="readout" id="e2Ro"></div>
+ </div>
+ <div class="panel" id="e2Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Orbit lab: launching satellites</h2>
+ <p class="lead">Launch a satellite horizontally at a chosen altitude and speed. Find the speed that gives a circular orbit, time the orbit, and use Kepler’s third law to find the planet’s mass. Mission code <span class="kit" id="kitC"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row"><span class="seg" id="o3P"><button type="button" aria-pressed="true" data-p="E">Earth</button><button type="button" aria-pressed="false" data-p="Q">Planet Q (unknown mass)</button></span></div>
+   <div class="cvbox sky" style="height:340px;border-radius:10px;margin-top:8px"><canvas class="cv" id="o3Cv"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="o3H">Launch altitude</label><span id="o3Ho"></span></div><input type="range" id="o3H" min="200" max="40000" step="100" value="2000"></div>
+    <div><div class="lbl"><label for="o3V">Launch speed</label><span id="o3Vo"></span></div><input type="range" id="o3V" min="1.00" max="16.00" step="0.01" value="6.90"></div>
+    <div class="row"><button class="btn alt" type="button" data-n="-0.1">−0.1</button><button class="btn alt" type="button" data-n="-0.01">−0.01</button><button class="btn alt" type="button" data-n="0.01">+0.01</button><button class="btn alt" type="button" data-n="0.1">+0.1</button><span class="small muted">km s⁻¹</span><span class="sp"></span><button class="btn go" id="o3Go" type="button">Launch</button></div>
+   </div>
+   <div class="fb" id="o3Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="o3Card"></div>
+   <div class="row" style="margin-top:8px"><strong>Circular orbits recorded</strong><span class="sp"></span><button class="btn alt" id="o3Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px"><table class="t"><thead><tr><th>planet</th><th>r / 10⁶ m</th><th>v / km s⁻¹</th><th>T / s</th><th></th></tr></thead><tbody id="o3Tb"></tbody></table></div>
+   <div class="graphbox" style="margin-top:10px;height:260px"><canvas class="cv" id="o3G"></canvas></div>
+   <div class="row"><span class="readout" id="o3Ro"></span><span class="sp"></span><button class="btn alt" id="o3Line" type="button">Reset line</button></div>
+  </div>
+ </div>
+ <div class="panel" id="o3Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall">
+ <h2>Challenge</h2>
+ <p class="lead">Rebuild the derivations, work through classic exam problems, then race the clock.</p>
+ <div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Derivation builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div>
+ <div class="panel" id="chBox"></div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep12');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep12-wjec-gravity-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+const G=6.67e-11,ME=6.0e24,RE=6.4e6,MM=7.35e22,DEM=3.84e8,g0=9.81;
+const BODIES={Earth:[6.0e24,6.4e6],Moon:[7.35e22,1.74e6],Mars:[6.42e23,3.39e6],Jupiter:[1.90e27,7.0e7],Sun:[2.0e30,7.0e8]};
+/* ---------- tabs ---------- */
+const onShow={};let labActive='revise';
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ labActive=name;if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(cv,draw){let last=performance.now();function f(now){if(!cv.isConnected)return;const dt=Math.min(0.05,(now-last)/1000);last=now;draw(RM?0:dt);requestAnimationFrame(f)}requestAnimationFrame(f)}
+function fieldAt(ch,x,y){let ex=0,ey=0,v=0;for(const c of ch){const dx=x-c.x,dy=y-c.y,r2=dx*dx+dy*dy+1e-6,r=Math.sqrt(r2);ex+=c.q*dx/(r2*r);ey+=c.q*dy/(r2*r);v+=c.q/r}return {ex,ey,v}}
+function drawField(c,w,h,ch,opt){
+ opt=opt||{};const lineCol=opt.line||'#7FD1C7',eqCol=opt.eq||'rgba(255,214,102,.55)';
+ if(opt.eqp){const s=4,cols=Math.ceil(w/s)+1,rows=Math.ceil(h/s)+1,B=[];let vmax=0;
+  for(let j=0;j<rows;j++){B[j]=[];for(let i=0;i<cols;i++){const v=fieldAt(ch,i*s,j*s).v;B[j][i]=v}}
+  const ref=opt.eqStep||(Math.max(...ch.map(q=>Math.abs(q.q)))/(0.42*Math.min(w,h)));
+  c.fillStyle=eqCol;for(let j=0;j<rows-1;j++)for(let i=0;i<cols-1;i++){const a=Math.floor(B[j][i]/ref),b=Math.floor(B[j][i+1]/ref),d=Math.floor(B[j+1][i]/ref);if((a!==b||a!==d)&&Math.abs(B[j][i])<ref*14)c.fillRect(i*s,j*s,1.6,1.6)}}
+ const pos=ch.filter(q=>q.q>0),src=pos.length?pos:ch.filter(q=>q.q<0),dir=pos.length?1:-1;
+ c.strokeStyle=lineCol;c.lineWidth=1.3;
+ const nPer=opt.n||14,qmax=Math.max(...src.map(q=>Math.abs(q.q)));
+ src.forEach(s=>{if(s.noLines)return;const n=Math.max(4,Math.round(nPer*Math.abs(s.q)/qmax));for(let k=0;k<n;k++){const a=(k+0.5)/n*2*Math.PI;let x=s.x+Math.cos(a)*(s.rad||8),y=s.y+Math.sin(a)*(s.rad||8);c.beginPath();c.moveTo(x,y);let arrowed=false;
+  for(let st=0;st<1400;st++){const f=fieldAt(ch,x,y),m=Math.hypot(f.ex,f.ey);if(m<1e-12)break;const ux=dir*f.ex/m,uy=dir*f.ey/m;x+=ux*2;y+=uy*2;c.lineTo(x,y);
+   if(!arrowed&&st===30){arrowed=true;c.stroke();const ax=dir>0?ux:-ux,ay=dir>0?uy:-uy;c.fillStyle=lineCol;c.beginPath();c.moveTo(x+ax*5,y+ay*5);c.lineTo(x-ax*3-ay*4,y-ay*3+ax*4);c.lineTo(x-ax*3+ay*4,y-ay*3-ax*4);c.fill();c.beginPath();c.moveTo(x,y)}
+   if(x<-5||y<-5||x>w+5||y>h+5)break;let hit=false;for(const q of ch)if(q.q*dir<0&&Math.hypot(x-q.x,y-q.y)<(q.rad||6))hit=true;if(hit)break}c.stroke()}});
+ ch.forEach(q=>{if(q.hide)return;c.fillStyle=q.q>0?'#E5484D':'#3E7BFA';c.beginPath();c.arc(q.x,q.y,q.rad||9,0,7);c.fill();c.fillStyle='#fff';c.font='bold 13px Arial';c.textAlign='center';c.fillText(q.q>0?'+':'−',q.x,q.y+4.5)});c.textAlign='left';
+}
+function planetDraw(c,x,y,r,col,label){const g=c.createRadialGradient(x-r*0.35,y-r*0.35,r*0.1,x,y,r);g.addColorStop(0,col[0]);g.addColorStop(1,col[1]);c.fillStyle=g;c.beginPath();c.arc(x,y,r,0,7);c.fill();if(label){c.fillStyle='#fff';c.font='bold 11px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(label,x,y+4);c.textAlign='left'}}
+const EARTHC=['#7FB3FF','#1D4E9E'],MOONC=['#E6E6E6','#8A8A8A'],QC=['#F5B971','#9C5A1C'];
+
+/* ---------- header: a planet, equipotentials and orbits ---------- */
+function hdr(){const cv=$('#hdrCv');if(!cv)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#0A1224';c.fillRect(0,0,w,h);const rnd=mulberry32(4);c.fillStyle='rgba(255,255,255,.6)';for(let i=0;i<w/6;i++)c.fillRect(rnd()*w,rnd()*h,1,1);
+ const cx=w*0.22,cy=h/2;c.strokeStyle='rgba(255,214,102,.35)';c.lineWidth=1;for(let k=1;k<9;k++){c.beginPath();c.arc(cx,cy,14+k*k*7,0,7);c.stroke()}
+ c.strokeStyle='rgba(127,209,199,.5)';c.setLineDash([3,4]);c.beginPath();c.ellipse(cx,cy,w*0.5,h*0.36,0,0,7);c.stroke();c.setLineDash([]);
+ planetDraw(c,cx,cy,14,EARTHC);planetDraw(c,cx+w*0.5,cy,4,MOONC)}
+watch($('#hdrCv'),hdr);
+
+/* ---------- widgets ---------- */
+const GCONF={'planet':()=>[{x:.5,y:.5,q:-1,rad:22,c:EARTHC}],'planet and moon':()=>[{x:.3,y:.5,q:-1,rad:20,c:EARTHC},{x:.78,y:.5,q:-0.2,rad:9,c:MOONC}],'two equal masses':()=>[{x:.32,y:.5,q:-1,rad:14,c:QC},{x:.68,y:.5,q:-1,rad:14,c:QC}],'near the surface':()=>null};
+function wGField(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row" id="wgC"></div><div class="cvbox sky" style="height:280px;margin-top:8px"><canvas class="cv" id="wgCv" style="touch-action:none"></canvas></div><div class="row" style="margin-top:6px"><label class="small"><input type="checkbox" id="wgE" checked> show equipotentials</label><span class="sp"></span><span class="small muted">Drag a mass to move it.</span></div></div>');
+ let key='planet and moon',ch=GCONF[key](),drag=-1;const cv=$('#wgCv');
+ $('#wgC').innerHTML=Object.keys(GCONF).map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===key)+'">'+k+'</button>').join('');
+ $$('#wgC .chip').forEach(b=>b.addEventListener('click',()=>{key=b.dataset.k;ch=GCONF[key]();$$('#wgC .chip').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));draw()}));
+ const draw=()=>{if(!cv.isConnected)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#0F1D26';c.fillRect(0,0,w,h);
+  if(!ch){c.fillStyle='#2D5A3D';c.fillRect(0,h-40,w,40);c.strokeStyle='#7FD1C7';c.fillStyle='#7FD1C7';c.lineWidth=1.4;for(let x=40;x<w;x+=50){c.beginPath();c.moveTo(x,20);c.lineTo(x,h-46);c.stroke();c.beginPath();c.moveTo(x,h-44);c.lineTo(x-5,h-54);c.lineTo(x+5,h-54);c.fill()}
+   if($('#wgE').checked){c.strokeStyle='rgba(255,214,102,.6)';for(let y=40;y<h-50;y+=40){c.beginPath();c.moveTo(0,y);c.lineTo(w,y);c.stroke()}}c.fillStyle='#C3CEE3';c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('close to the surface the field is almost uniform: parallel, equally spaced lines',10,16);return}
+  const px=ch.map(q=>Object.assign({},q,{x:q.x*w,y:q.y*h,q:q.q*100,hide:1}));drawField(c,w,h,px,{eqp:$('#wgE').checked,n:18});
+  px.forEach(q=>planetDraw(c,q.x,q.y,q.rad,q.c));
+  if(ch.length===2){const a=ch[0],b=ch[1],t=1/(1+Math.sqrt(b.q/a.q)),x=(a.x+(b.x-a.x)*t)*w,y=(a.y+(b.y-a.y)*t)*h;c.strokeStyle='#FFD666';c.lineWidth=2;c.beginPath();c.moveTo(x-6,y-6);c.lineTo(x+6,y+6);c.moveTo(x+6,y-6);c.lineTo(x-6,y+6);c.stroke();c.fillStyle='#FFD666';c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('neutral point',x+8,y-10)}};
+ $('#wgE').addEventListener('change',draw);
+ cv.addEventListener('pointerdown',e=>{if(!ch)return;const r=cv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;ch.forEach((q,i)=>{if(Math.hypot((q.x-x)*r.width,(q.y-y)*r.height)<24)drag=i});if(drag>=0){try{cv.setPointerCapture(e.pointerId)}catch(err){}}});
+ cv.addEventListener('pointermove',e=>{if(drag<0)return;const r=cv.getBoundingClientRect();ch[drag].x=clamp((e.clientX-r.left)/r.width,.08,.92);ch[drag].y=clamp((e.clientY-r.top)/r.height,.1,.9);draw()});
+ cv.addEventListener('pointerup',()=>drag=-1);cv.addEventListener('pointercancel',()=>drag=-1);watch(cv,draw);draw();
+}
+function wGR(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wrR" style="min-width:150px">Distance from Earth’s centre</label><input type="range" id="wrR" min="0" max="5" step="0.05" value="1" style="flex:1;min-width:140px"><span id="wrRo" class="small" style="min-width:70px"></span></div><div class="grid2" style="margin-top:8px"><div id="wrG"></div><div id="wrV"></div></div><div class="kv" id="wrK"></div></div>');
+ const upd=()=>{const k=+$('#wrR').value,r=k*RE;$('#wrRo').textContent=k.toFixed(2)+' R';const X=u=>40+u/5*175;
+  const g=u=>u<1?u:1/(u*u),V=u=>u<1?null:-1/u;
+  let p1='',p2='';for(let i=0;i<=200;i++){const u=i/40;p1+=X(u).toFixed(1)+','+(140-g(u)*115).toFixed(1)+' ';const v=V(u);if(v!==null)p2+=X(u).toFixed(1)+','+(20-v*115).toFixed(1)+' '}
+  let a=ln(40,140,220,140)+ln(40,10,40,150)+tx(220,154,'r',{a:'end'})+tx(46,18,'g',{a:'start',fs:12})+'<line x1="'+X(1)+'" y1="10" x2="'+X(1)+'" y2="150" stroke="var(--muted)" stroke-dasharray="4 4"></line>'+tx(X(1)+3,150,'R',{a:'start',fs:11})+'<polyline points="'+p1+'" fill="none" stroke="var(--neg)" stroke-width="2.4"></polyline><circle cx="'+X(k)+'" cy="'+(140-g(k)*115)+'" r="5" fill="var(--meter)" stroke="var(--ink)"></circle>';
+  let b=ln(40,20,220,20)+ln(40,10,40,150)+tx(220,14,'r',{a:'end'})+tx(46,148,'V (negative)',{a:'start',fs:12})+'<line x1="'+X(1)+'" y1="10" x2="'+X(1)+'" y2="150" stroke="var(--muted)" stroke-dasharray="4 4"></line>'+'<polyline points="'+p2+'" fill="none" stroke="var(--pos)" stroke-width="2.4"></polyline>'+(k>=1?'<circle cx="'+X(k)+'" cy="'+(20+115/k)+'" r="5" fill="var(--meter)" stroke="var(--ink)"></circle>':'');
+  $('#wrG').innerHTML=svgWrap('0 0 230 160',a,'g against r');$('#wrV').innerHTML=svgWrap('0 0 230 160',b,'V against r');
+  $('#wrK').innerHTML=k===0?'<span>At the centre g = 0.</span>':'<span>g = <b>'+(k<1?(9.81*k).toFixed(2):(9.81/(k*k)).toFixed(2))+' N kg<sup>−1</sup></b>'+(k<1?' (inside: g ∝ r for uniform density)':' (outside: g = GM/r²)')+'</span>'+(k>=1?'<span>V = −GM/r = <b>'+sci(-G*ME/r,3)+' J kg<sup>−1</sup></b></span>':'')};
+ $('#wrR').addEventListener('input',upd);upd();
+}
+function wEM(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div id="weS"></div><div class="row"><label class="sm" for="weX" style="min-width:150px">Distance from Earth</label><input type="range" id="weX" min="0.2" max="3.8" step="0.01" value="2" style="flex:1;min-width:140px"><span id="weXo" class="small" style="min-width:90px"></span></div><div class="kv" id="weK"></div><p class="small muted" style="margin:6px 0 0">Field strengths are vectors (subtract, as they point opposite ways); potentials are scalars (just add).</p></div>');
+ const gE=x=>G*ME/(x*x),gM=x=>G*MM/((DEM-x)*(DEM-x)),xn=DEM/(1+Math.sqrt(MM/ME));
+ const upd=()=>{const xs=+$('#weX').value,x=xs*1e8;$('#weXo').textContent=xs.toFixed(2)+' × 10⁸ m';const X=u=>30+u/3.84*350;let s='';
+  let p='',q='';for(let i=5;i<=380;i+=1){const u=i/100,xx=u*1e8;if(u>3.82)break;const g=-(gE(xx)-gM(xx));p+=X(u).toFixed(1)+','+(70-clamp(g/0.004*40,-45,45)).toFixed(1)+' ';const V=-(G*ME/xx+G*MM/(DEM-xx));q+=X(u).toFixed(1)+','+(150-clamp((V+1e6)/5e6*50,-60,40)).toFixed(1)+' '}
+  s+=ln(30,70,380,70)+tx(34,20,'g (towards Moon +)',{a:'start',fs:11})+'<polyline points="'+p+'" fill="none" stroke="var(--neg)" stroke-width="2.2"></polyline>';
+  s+=tx(34,130,'V',{a:'start',fs:11})+'<polyline points="'+q+'" fill="none" stroke="var(--pos)" stroke-width="2.2"></polyline>';
+  s+=ln(X(xn/1e8),30,X(xn/1e8),210,1).replace('<line ','<line stroke-dasharray="4 4" ')+tx(X(xn/1e8)-4,222,'neutral point',{fs:10,a:'end'})+'<circle cx="'+X(xs)+'" cy="70" r="5" fill="var(--meter)" stroke="var(--ink)"></circle>';
+  s+='<circle cx="30" cy="70" r="12" fill="#3E7BFA" stroke="none"></circle><circle cx="380" cy="70" r="5" fill="#AAA" stroke="none"></circle>';
+  $('#weS').innerHTML=svgWrap('0 0 400 230',s,'field and potential along the Earth–Moon line');
+  const g1=gE(x),g2=gM(x),V=-(G*ME/x+G*MM/(DEM-x));$('#weK').innerHTML='<span>g due to Earth: <b>'+sci(g1,3)+'</b> towards Earth</span><span>g due to Moon: <b>'+sci(g2,3)+'</b> towards Moon</span><span>resultant: <b>'+sci(Math.abs(g1-g2),3)+' N kg<sup>−1</sup></b> towards '+(g1>g2?'Earth':'Moon')+'</span><span>V = <b>'+sci(V,3)+' J kg<sup>−1</sup></b></span><span>neutral point at <b>'+sci(xn,3)+' m</b></span>'};
+ $('#weX').addEventListener('input',upd);upd();
+}
+function wEsc(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row" id="wvB"></div><div class="kv" id="wvK" style="margin-top:8px"></div></div>');let b='Earth';
+ const upd=()=>{$('#wvB').innerHTML=Object.keys(BODIES).map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===b)+'">'+k+'</button>').join('');$$('#wvB .chip').forEach(x=>x.addEventListener('click',()=>{b=x.dataset.k;upd()}));
+  const [M,R]=BODIES[b],v=Math.sqrt(2*G*M/R);$('#wvK').innerHTML='<span>M = <b>'+sci(M,2)+' kg</b>, R = <b>'+sci(R,2)+' m</b></span><span>surface g = GM/R² = <b>'+(G*M/(R*R)).toFixed(2)+' N kg<sup>−1</sup></b></span><span>V at surface = <b>'+sci(-G*M/R,3)+' J kg<sup>−1</sup></b></span><span>escape velocity √(2GM/R) = <b>'+(v/1000).toFixed(1)+' km s<sup>−1</sup></b></span>'};upd();
+}
+function wOrb(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="woR" style="min-width:120px">Orbital radius</label><input type="range" id="woR" min="1.05" max="8" step="0.01" value="2" style="flex:1;min-width:140px"><span id="woRo" class="small" style="min-width:90px"></span></div><div class="cvbox sky" style="height:260px;margin-top:6px"><canvas class="cv" id="woCv"></canvas></div><div class="kv" id="woK"></div></div>');
+ let th=0,th0=0;const cv=$('#woCv');loop(cv,dt=>{const k=+$('#woR').value,r=k*RE,v=Math.sqrt(G*ME/r),T=2*Math.PI*r/v;$('#woRo').textContent=k.toFixed(2)+' R (Earth)';th+=dt*2*Math.PI/(T/1200);th0+=dt*2*Math.PI/(5.1e3/1200);
+  const {c,w,h}=fitCanvas(cv);c.fillStyle='#0F1D26';c.fillRect(0,0,w,h);const cx=w/2,cy=h/2,sc=Math.min(w,h)*0.46/8;planetDraw(c,cx,cy,RE/RE*sc,EARTHC);
+  c.strokeStyle='rgba(255,214,102,.35)';c.setLineDash([3,4]);c.beginPath();c.arc(cx,cy,6.6*sc,0,7);c.stroke();c.setLineDash([]);c.fillStyle='rgba(255,214,102,.7)';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('geostationary radius',cx+6.6*sc*0.72,cy-6.6*sc*0.72);
+  c.strokeStyle='rgba(127,209,199,.6)';c.beginPath();c.arc(cx,cy,k*sc,0,7);c.stroke();c.fillStyle='#F2C12E';c.beginPath();c.arc(cx+k*sc*Math.cos(th),cy-k*sc*Math.sin(th),5,0,7);c.fill();
+  $('#woK').innerHTML='<span>v = √(GM/r) = <b>'+(v/1000).toFixed(2)+' km s<sup>−1</sup></b></span><span>T = 2πr/v = <b>'+(T/3600).toFixed(2)+' h</b></span><span>T² / r³ = <b>'+sci(T*T/(r*r*r),3)+'</b> (the same for every orbit)</span>'});
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'Gravitational fields',h:()=>`
+<h2>Gravitational force and fields</h2>
+<p>Gravitational force is the <strong>attractive</strong> force between objects due to their <strong>masses</strong>. <strong>Weight</strong> is the gravitational force exerted by a planet or moon on an object.</p>
+<p>A <strong>gravitational field</strong> is a region in which a mass experiences a gravitational force. We draw it with field lines: arrows show the direction of the force on a mass, and closer lines mean a stronger field.</p>
+<ul><li>Around a point mass or a uniform sphere, such as a planet, the field is <strong>radial</strong>, pointing inwards.</li><li>Close to the surface of a planet the field is almost <strong>uniform</strong>.</li><li>Outside a spherical body the field is the same as if all its mass were concentrated at its <strong>centre</strong>.</li></ul>`,
+after:el=>wGField(el.querySelector('.wslot')),
+chk:[['Why can gravitational field lines never point away from a mass?','Gravity is always attractive: a test mass is always pulled towards the mass.']]},
+
+{t:'Field strength',h:()=>`
+<h2>Gravitational field strength</h2>
+<p><strong>Gravitational field strength g</strong> is the force per unit mass on a small test mass placed at the point:</p>
+<div class="eqbig">g = F / m</div>
+<p>It is a <strong>vector</strong>, in the direction of the force. Unit: N kg<sup>−1</sup>, which is the same as m s<sup>−2</sup>: in free fall (gravity the only force) ma = mg, so the acceleration equals the field strength.</p>
+<table class="t" style="max-width:420px"><thead><tr><th>Location</th><th>g / N kg⁻¹</th></tr></thead><tbody><tr><td>Earth, sea level</td><td>9.81</td></tr><tr><td>Moon surface</td><td>1.6</td></tr><tr><td>Jupiter cloud tops</td><td>24</td></tr></tbody></table>
+<div class="work"><div>An 80 kg astronaut on the Moon: W = mg = 80 × 1.6 = 128 N</div></div>`,
+chk:[['A 50 g mass weighs 0.491 N. What is g?','g = 0.491/0.050 = 9.81 N kg⁻¹']]},
+
+{t:'Newton’s law of gravitation',h:()=>`
+<h2>Newton’s law of gravitation</h2>
+<p>Every particle attracts every other particle with a force that is directly proportional to the product of their masses and inversely proportional to the square of their separation:</p>
+<div class="eqbig">F = GM₁M₂ / r²</div>
+<p>G = 6.67 × 10<sup>−11</sup> N m² kg<sup>−2</sup>, a universal constant. Doubling one mass doubles F; doubling both quadruples it; doubling r quarters it. The force is always attractive.</p>
+<div class="work"><div>Two 70 kg people 1.0 m apart: F = 6.67 × 10⁻¹¹ × 70 × 70 / 1² = 3.3 × 10⁻⁷ N</div><div>That is the weight of about 0.03 mg: far too small to notice. Gravity matters only when at least one mass is huge.</div></div>`,
+chk:[['The distance between two masses is tripled. By what factor does the force change?','It becomes one ninth.']]},
+
+{t:'g around a planet',h:()=>`
+<h2>Field strength around a planet</h2>
+<p>For a small mass m at distance r from the centre of a mass M: g = F/m = (GMm/r²)/m, so</p>
+<div class="eqbig">g = GM / r²</div>
+<div class="work"><div>Mass of the Earth: M = gr²/G = 9.81 × (6.4 × 10⁶)² / 6.67 × 10⁻¹¹ = 6.0 × 10²⁴ kg</div><div>Top of Snowdon (r = 6401 km): 9.77 N kg⁻¹; Everest (6410 km): 9.74; ISS (6700 km): 8.9 N kg⁻¹</div></div>
+<p>Outside the planet g ∝ 1/r². Inside a planet of uniform density, g ∝ r, falling to zero at the centre (not required by WJEC, but it explains the graph).</p>
+<h3>Ratio questions</h3>
+<p>If density ρ is fixed, M = ρ(4/3)πR³, so the surface field is g = (4/3)πGρR: <strong>proportional to the radius</strong>.</p>`,
+after:el=>wGR(el.querySelector('.wslot')),
+chk:[['A planet has twice the Earth’s radius and the same density. What is its surface g?','g ∝ R, so 2 × 9.81 = 19.6 N kg⁻¹']]},
+
+{t:'Gravitational potential',h:()=>`
+<h2>Gravitational potential</h2>
+<p>The <strong>gravitational potential</strong> at a point is the work done per unit mass in bringing a small mass from <strong>infinity</strong> to that point.</p>
+<div class="eqbig">V<sub>g</sub> = −GM / r</div>
+<ul><li>Unit: J kg<sup>−1</sup>. It is a <strong>scalar</strong>.</li><li>V = 0 at infinity, so all other potentials are <strong>negative</strong>: gravity is attractive, so work is done by the field (not by us) as the mass comes in.</li><li>The potential energy of a mass m is E<sub>P</sub> = −GMm/r.</li></ul>
+<div class="work"><div>At the Earth’s surface: V = −6.67 × 10⁻¹¹ × 6.0 × 10²⁴ / 6.4 × 10⁶ = −6.26 × 10⁷ J kg⁻¹</div></div>`,
+chk:[['Why is gravitational potential always negative?','Its zero is at infinity, and energy must be supplied to move a mass away from a planet towards infinity, so everywhere else it is lower than zero.']]},
+
+{t:'Potential energy and work',h:()=>`
+<h2>Changes in potential energy</h2>
+<p>Moving a mass m through a potential difference ΔV needs work</p>
+<div class="eqbig">ΔE<sub>P</sub> = mΔV</div>
+<p>Close to a planet’s surface, where g hardly changes over the height Δh, this becomes the familiar <span class="eq">ΔE<sub>P</sub> = mgΔh</span>.</p>
+<h3>Worked example: lifting an astronaut to the ISS</h3>
+<div class="work"><div>V at the surface (r = 6.4 × 10⁶ m) = −6.26 × 10⁷ J kg⁻¹; V at the ISS (r = 6.7 × 10⁶ m) = −5.97 × 10⁷ J kg⁻¹</div><div>ΔV = 2.9 × 10⁶ J kg⁻¹; ΔW = mΔV = 80 × 2.9 × 10⁶ = 2.3 × 10⁸ J</div></div>
+<h3>Equipotentials</h3>
+<p>Surfaces joining points of equal potential. No work is done moving along one. They are always <strong>perpendicular to field lines</strong>: spheres around a planet, horizontal planes near the surface (sea level, a bench top).</p>`,
+chk:[['Why can you not use mgΔh to find the energy needed to reach the ISS accurately?','g falls noticeably over 300 km (from 9.81 to 8.9 N kg⁻¹), so you must use mΔV.']]},
+
+{t:'Potential gradient',h:()=>`
+<h2>Field strength and potential gradient</h2>
+<p>The potential gradient ΔV/Δr is the change of potential per metre (J kg<sup>−1</sup> m<sup>−1</sup>). The field strength is minus the gradient of the V–r graph:</p>
+<div class="eqbig">g = − ΔV / Δr</div>
+<p>The minus sign shows that g points towards lower potential: V increases (towards zero) as you move away, but the field points inwards. Near the Earth’s surface the potential gradient is 9.81 J kg<sup>−1</sup> m<sup>−1</sup>.</p>`,
+chk:[['On a V–r graph for a planet, where is the gradient steepest?','At the surface, where g is greatest.']]},
+
+{t:'Combining fields',h:()=>`
+<h2>Combining fields: the Earth–Moon line</h2>
+<p>With more than one mass:</p>
+<ul><li>add the <strong>field strengths as vectors</strong> (on a line: take directions into account);</li><li>add the <strong>potentials as scalars</strong> (just add the negative numbers).</li></ul>
+<p>Between two masses there is a <strong>neutral point</strong> where the fields are equal and opposite: GM₁/x² = GM₂/(d − x)², giving</p>
+<div class="eqbig">x = d / (1 + √(M₂/M₁))</div>
+<p>measured from M₁. For the Earth and Moon (M₂/M₁ ≈ 1/81.6, d = 3.84 × 10⁸ m) the neutral point is 0.90d = 3.46 × 10⁸ m from the Earth. The potential has its maximum (least negative) value there.</p>`,
+after:el=>wEM(el.querySelector('.wslot')),
+chk:[['Is the potential zero at the neutral point?','No: both potentials are negative, so the total is negative. Only the resultant field is zero.']]},
+
+{t:'Escape velocity',h:()=>`
+<h2>Escape velocity</h2>
+<p>To escape completely, an object projected from the surface must have enough kinetic energy to reach infinity, where its potential energy is zero:</p>
+<div class="work"><div>½mv² = GMm/R</div></div>
+<div class="eqbig">v<sub>esc</sub> = √(2GM/R)</div>
+<p>It does not depend on the object’s mass (air resistance ignored).</p>
+<div class="work"><div>80 kg astronaut: work to escape = mΔV = 80 × 6.26 × 10⁷ = 5.0 × 10⁹ J</div><div>½ × 80 × v² = 5.0 × 10⁹, so v = 1.12 × 10⁴ m s⁻¹ (11 km s⁻¹)</div></div>`,
+after:el=>wEsc(el.querySelector('.wslot')),
+chk:[['Why does the Moon have almost no atmosphere?','Its escape velocity (2.4 km s⁻¹) is low, so fast gas molecules escape.']]},
+
+{t:'Orbits and Kepler’s third law',h:()=>`
+<h2>Satellites and Kepler’s third law</h2>
+<p>For a circular orbit, gravity provides the centripetal force:</p>
+<div class="work"><div>GMm/r² = mv²/r, so <strong>v = √(GM/r)</strong>: slower further out</div><div>With v = 2πr/T: GM/r² = 4π²r/T², so</div></div>
+<div class="eqbig">T² = (4π²/GM) r³</div>
+<p>This is Kepler’s third law (you must be able to derive it). It lets us find the mass of the central object from any orbit’s r and T.</p>
+<div class="work"><div>ISS, r = 6.7 × 10⁶ m: v = √(GM/r) = 7.7 km s⁻¹, T = 5.45 × 10³ s = 91 minutes</div><div>The Moon, r = 4.0 × 10⁸ m: g = GM/r² = 0.0025 N kg⁻¹; T = √(4π²r/g) = 2.5 × 10⁶ s = 29 days</div></div>`,
+after:el=>wOrb(el.querySelector('.wslot')),
+chk:[['Why does Jupiter travel more slowly round the Sun than the Earth?','v = √(GM/r): it is further from the Sun.']]},
+
+{t:'Geostationary orbits',h:()=>`
+<h2>Geostationary orbits</h2>
+<p>A geostationary satellite stays above the same point on the Earth. Its orbit must be:</p>
+<ul><li>of period 24 hours (strictly one sidereal day, 23 h 56 min);</li><li>circular and equatorial;</li><li>in the same direction as the Earth’s rotation;</li><li>at radius r = (GMT²/4π²)<sup>1/3</sup> = 4.2 × 10⁷ m, about 36 000 km above the surface.</li></ul>
+<p>Uses: satellite TV, communications, weather monitoring.</p>`,
+chk:[['Why must a geostationary orbit be above the equator?','The orbit’s centre must be the Earth’s centre, and only an equatorial orbit keeps the satellite over a fixed point as the Earth spins.']]},
+
+{t:'Orbital energy',h:()=>`
+<h2>Energy in orbits</h2>
+<p>For a circular orbit, mv² = GMm/r, so</p>
+<div class="work"><div>E<sub>K</sub> = ½mv² = GMm/2r; E<sub>P</sub> = −GMm/r</div><div>total energy E = E<sub>K</sub> + E<sub>P</sub> = −GMm/2r</div></div>
+<p>Most orbits are elliptical. Total energy stays constant: at closest approach the potential energy is least and the satellite moves fastest; at its furthest point it moves slowest.</p>`,
+chk:[['A satellite moves to a higher circular orbit. What happens to its kinetic, potential and total energy?','E<sub>K</sub> decreases; E<sub>P</sub> and total energy increase (become less negative).']]},
+
+{t:'Electric vs gravitational',h:()=>`
+<h2>Comparing electric and gravitational fields</h2>
+<table class="t"><thead><tr><th></th><th>Electric</th><th>Gravitational</th></tr></thead><tbody>
+<tr><td>field strength</td><td>force per unit charge, E = F/q (N C⁻¹)</td><td>force per unit mass, g = F/m (N kg⁻¹)</td></tr>
+<tr><td>inverse square law</td><td>F = Q₁Q₂/4πε₀r²</td><td>F = GM₁M₂/r²</td></tr>
+<tr><td>direction of force</td><td>attractive or repulsive</td><td>attractive only</td></tr>
+<tr><td>point source field</td><td>E = Q/4πε₀r²</td><td>g = GM/r²</td></tr>
+<tr><td>potential</td><td>V = Q/4πε₀r (J C⁻¹)</td><td>V = −GM/r (J kg⁻¹)</td></tr>
+<tr><td>potential energy</td><td>Q₁Q₂/4πε₀r</td><td>−GM₁M₂/r</td></tr>
+<tr><td>change in PE</td><td>qΔV</td><td>mΔV</td></tr>
+<tr><td>field from potential</td><td>E = −slope of V–r</td><td>g = −slope of V–r</td></tr></tbody></table>`,
+chk:[['Why is there no gravitational equivalent of a repulsive electric force?','Mass is always positive, so gravity only attracts.']]}
+];
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+
+/* ---------- calculation drills ---------- */
+function Q(text,ans,unit,work,pts,tol){return {text,ans,unit,work,pts:pts||1,tol:tol||0.015}}
+const f3=x=>sci(x,3);
+const PLN=[['Mars',6.42e23,3.39e6],['the Moon',7.35e22,1.74e6],['Jupiter',1.90e27,7.0e7],['Venus',4.87e24,6.05e6],['Mercury',3.30e23,2.44e6]];
+const DR={
+ newt:{n:'Newton’s law',g(s){
+  const v=s?rint(0,2):rint(0,1);
+  if(v===0){const m1=pick([50,70,1000,5e4]),m2=pick([60,80,2000,1e5]),r=pick([0.5,1,2,10]);return Q(`Find the gravitational force between masses of ${f3(m1)} kg and ${f3(m2)} kg that are ${r} m apart.`,G*m1*m2/(r*r),'N',[`F = GM₁M₂/r²`,`= 6.67 × 10<sup>−11</sup> × ${f3(m1)} × ${f3(m2)} / ${r}²`,`= ${f3(G*m1*m2/(r*r))} N`])}
+  if(v===1){const m=pick([500,1200,4200]),h=pick([300,2000,20000,36000])*1e3,r=RE+h;return Q(`Find the gravitational force of the Earth on a ${m} kg satellite ${h/1000} km above the surface.`,G*ME*m/(r*r),'N',[`r = 6400 km + ${h/1000} km = ${f3(r)} m`,`F = GMm/r² = 6.67 × 10<sup>−11</sup> × 6.0 × 10<sup>24</sup> × ${m} / (${f3(r)})²`,`= ${f3(G*ME*m/(r*r))} N`])}
+  const k=pick([2,3,0.5]),F=pick([100,240,900]);return Q(`Two masses attract with a force of ${F} N. The distance between them is multiplied by ${k}. What is the new force?`,F/(k*k),'N',[`F ∝ 1/r²`,`new F = ${F} / ${k}² = ${f3(F/(k*k))} N`],2)}},
+ gf:{n:'Field strength',g(s){
+  const v=s?rint(0,2):rint(0,1);
+  if(v===0){const h=pick([1,10,300,1000,20000,36000])*1e3,r=RE+h;return Q(`Find the Earth’s gravitational field strength ${h/1000} km above its surface.`,G*ME/(r*r),'N kg⁻¹',[`r = ${f3(r)} m (from the centre)`,`g = GM/r² = 6.67 × 10<sup>−11</sup> × 6.0 × 10<sup>24</sup> / (${f3(r)})²`,`= ${f3(G*ME/(r*r))} N kg<sup>−1</sup>`])}
+  if(v===1){const P=pick(PLN),g=G*P[1]/(P[2]*P[2]);return Q(`The surface field strength of ${P[0]} is ${f3(g)} N kg<sup>−1</sup> and its radius is ${f3(P[2])} m. Find its mass.`,P[1],'kg',[`M = gr²/G`,`= ${f3(g)} × (${f3(P[2])})² / 6.67 × 10<sup>−11</sup>`,`= ${f3(P[1])} kg`])}
+  const kR=pick([2,0.5,3]),kr=pick([1,2,0.5]);return Q(`Planet X has ${kR} times the Earth’s radius and ${kr} times its density. What is the field strength at its surface?`,9.81*kR*kr,'N kg⁻¹',[`g = (4/3)πGρR, so g ∝ ρR`,`g = 9.81 × ${kR} × ${kr}`,`= ${f3(9.81*kR*kr)} N kg<sup>−1</sup>`],2)}},
+ pot:{n:'Potential and energy',g(s){
+  const v=s?rint(0,2):rint(0,1);
+  if(v===0){const h=pick([0,300,1000,20000,36000])*1e3,r=RE+h;return Q(`Find the gravitational potential ${h?h/1000+' km above':'at'} the Earth’s surface.`,-G*ME/r,'J kg⁻¹',[`V = −GM/r, with r = ${f3(r)} m`,`= −6.67 × 10<sup>−11</sup> × 6.0 × 10<sup>24</sup> / ${f3(r)}`,`= ${f3(-G*ME/r)} J kg<sup>−1</sup>`])}
+  if(v===1){const m=pick([80,500,1000]),h=pick([300,1000,20000])*1e3,dV=G*ME/RE-G*ME/(RE+h);return Q(`Find the minimum work needed to lift a ${m} kg mass from the Earth’s surface to a height of ${h/1000} km.`,m*dV,'J',[`V(surface) = ${f3(-G*ME/RE)} J kg<sup>−1</sup>; V(height) = ${f3(-G*ME/(RE+h))} J kg<sup>−1</sup>`,`ΔV = ${f3(dV)} J kg<sup>−1</sup>`,`W = mΔV = ${f3(m*dV)} J`])}
+  const m=pick([1000,2500]),r=pick([7e6,1e7,4.2e7]);return Q(`Find the potential energy of a ${m} kg satellite at ${f3(r)} m from the Earth’s centre.`,-G*ME*m/r,'J',[`E<sub>P</sub> = −GMm/r`,`= −6.67 × 10<sup>−11</sup> × 6.0 × 10<sup>24</sup> × ${m} / ${f3(r)}`,`= ${f3(-G*ME*m/r)} J`],2)}},
+ esc:{n:'Escape velocity',g(s){
+  const P=pick([['the Earth',ME,RE]].concat(PLN)),ve=Math.sqrt(2*G*P[1]/P[2]),v=s?rint(0,2):0;
+  if(v===0)return Q(`Find the escape velocity from ${P[0]} (M = ${f3(P[1])} kg, R = ${f3(P[2])} m).`,ve,'m s⁻¹',[`½mv² = GMm/R, so v = √(2GM/R)`,`= √(2 × 6.67 × 10<sup>−11</sup> × ${f3(P[1])} / ${f3(P[2])})`,`= ${f3(ve)} m s<sup>−1</sup>`]);
+  if(v===1)return Q(`The escape velocity from a planet of radius ${f3(P[2])} m is ${f3(ve)} m s<sup>−1</sup>. Find its mass.`,P[1],'kg',[`M = v²R/2G`,`= (${f3(ve)})² × ${f3(P[2])} / (2 × 6.67 × 10<sup>−11</sup>)`,`= ${f3(P[1])} kg`],2);
+  const m=pick([80,1000]);return Q(`What minimum energy would a ${m} kg object need to escape completely from ${P[0]}’s surface?`,G*P[1]*m/P[2],'J',[`E = GMm/R (equal to −E<sub>P</sub> at the surface)`,`= 6.67 × 10<sup>−11</sup> × ${f3(P[1])} × ${m} / ${f3(P[2])}`,`= ${f3(G*P[1]*m/P[2])} J`],2)}},
+ orb:{n:'Orbits',g(s){
+  const v=s?rint(0,3):rint(0,1);
+  if(v===0){const h=pick([300,400,800,2000,20000])*1e3,r=RE+h;return Q(`Find the orbital speed of a satellite ${h/1000} km above the Earth.`,Math.sqrt(G*ME/r),'m s⁻¹',[`r = ${f3(r)} m`,`v = √(GM/r) = √(6.67 × 10<sup>−11</sup> × 6.0 × 10<sup>24</sup> / ${f3(r)})`,`= ${f3(Math.sqrt(G*ME/r))} m s<sup>−1</sup>`])}
+  if(v===1){const h=pick([300,400,800,2000,20000])*1e3,r=RE+h,T=2*Math.PI*Math.sqrt(r*r*r/(G*ME));return Q(`Find the period of a satellite orbiting ${h/1000} km above the Earth.`,T,'s',[`T = √(4π²r³/GM), r = ${f3(r)} m`,`= ${f3(T)} s`,`= ${f3(T/60)} minutes`])}
+  if(v===2){const T=pick([12,24,48])*3600;return Q(`Find the radius of an Earth orbit with a period of ${T/3600} hours.`,Math.cbrt(G*ME*T*T/(4*Math.PI*Math.PI)),'m',[`r³ = GMT²/4π²`,`= 6.67 × 10<sup>−11</sup> × 6.0 × 10<sup>24</sup> × (${T})² / 4π²`,`r = ${f3(Math.cbrt(G*ME*T*T/(4*Math.PI*Math.PI)))} m`],2)}
+  const M=pick([5.7e26,1.9e27,6.4e23]),r=pick([1.2e9,4.2e8,9.4e6]),T=2*Math.PI*Math.sqrt(r*r*r/(G*M));return Q(`A moon orbits a planet at radius ${f3(r)} m with period ${f3(T)} s. Find the planet’s mass.`,M,'kg',[`M = 4π²r³/GT²`,`= 4π² × (${f3(r)})³ / (6.67 × 10<sup>−11</sup> × (${f3(T)})²)`,`= ${f3(M)} kg`],2)}},
+ comb:{n:'Combining fields',g(s){
+  const d=pick([3.84e8,1e6,2e9]),M1=pick([6.0e24,1e22,2e30]),k=pick([4,9,16,25,81]),M2=M1/k,xn=d/(1+Math.sqrt(M2/M1));
+  if(!s)return Q(`Two masses, ${f3(M1)} kg and ${f3(M2)} kg, are ${f3(d)} m apart. How far from the larger mass is the neutral point?`,xn,'m',[`GM₁/x² = GM₂/(d − x)²`,`x = d/(1 + √(M₂/M₁)) = ${f3(d)} / (1 + √(1/${k}))`,`= ${f3(xn)} m`]);
+  const x=d/2,g1=G*M1/(x*x),g2=G*M2/(x*x);return Q(`Two masses, ${f3(M1)} kg and ${f3(M2)} kg, are ${f3(d)} m apart. Find the size of the resultant field strength halfway between them.`,g1-g2,'N kg⁻¹',[`g₁ = GM₁/(d/2)² = ${f3(g1)}; g₂ = ${f3(g2)} (opposite direction)`,`resultant = g₁ − g₂ = ${f3(g1-g2)} N kg<sup>−1</sup>, towards the larger mass`],2)}}
+};
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 6.0e24.');return}
+  const ok=close(v,drQ.ans,drQ.tol);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+wk());
+  else{let hint='';const r=v/drQ.ans,lg=Math.log10(Math.abs(r));
+   if(close(v,-drQ.ans,0.02))hint=' Check the sign: gravitational potential and potential energy are negative.';
+   else if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check km to m.';
+   fb(out,'no','<strong>Not quite.</strong>'+hint+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.'+wk())}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+
+/* ---------- concept quiz ---------- */
+const QB=[
+['Gravitational field strength is defined as:',['the force per unit mass on a small test mass','the force on any mass','the work done per unit mass from infinity','mass per unit volume'],0,'g = F/m.'],
+['The unit N kg⁻¹ is equivalent to:',['m s⁻²','m s⁻¹','J kg⁻¹','N m'],0,'1 N = 1 kg m s⁻².'],
+['Gravitational field strength is:',['a vector','a scalar','always zero at the surface','measured in J kg⁻¹'],0,'It has the direction of the force.'],
+['Gravitational potential is:',['a scalar','a vector','always positive','zero at a planet’s surface'],0,'Potentials add as numbers.'],
+['Gravitational potential is defined as:',['the work done per unit mass bringing a small mass from infinity to the point','the force per unit mass','the potential energy of a 1 kg mass at the surface','the work done lifting 1 kg by 1 m'],0,'V = −GM/r.'],
+['Gravitational potential is negative because:',['it is zero at infinity and the field does work as a mass moves in','mass can be negative','the field points outwards','it is a vector'],0,'Energy must be supplied to move away.'],
+['Outside a uniform spherical planet, the field is the same as:',['that of a point mass at its centre','zero','uniform','that of a ring'],0,'This lets us use g = GM/r².'],
+['Close to the Earth’s surface the field is approximately:',['uniform','radial and rapidly changing','zero','repulsive'],0,'So ΔE<sub>P</sub> = mgΔh works for small heights.'],
+['If the distance between two masses is halved, the force between them:',['quadruples','doubles','halves','quarters'],0,'F ∝ 1/r².'],
+['If both masses are doubled, the force between them:',['quadruples','doubles','stays the same','halves'],0,'F ∝ M₁M₂.'],
+['The gravitational force between two people is tiny because:',['G is very small','they are too close','they are moving','air shields them'],0,'G = 6.67 × 10⁻¹¹ N m² kg⁻².'],
+['Inside a planet of uniform density, g:',['is proportional to the distance from the centre','is constant','increases towards the centre','is proportional to 1/r²'],0,'It falls to zero at the centre.'],
+['A planet has the same density as the Earth but twice the radius. Its surface g is:',['2 × 9.81 N kg⁻¹','4 × 9.81 N kg⁻¹','9.81 N kg⁻¹','9.81/2 N kg⁻¹'],0,'g = (4/3)πGρR ∝ R.'],
+['Equipotential surfaces are:',['perpendicular to field lines','parallel to field lines','always flat','where g = 0'],0,'No work is done moving along one.'],
+['The work done moving a mass along an equipotential is:',['zero','mgh','mΔV with ΔV large','negative'],0,'ΔV = 0.'],
+['The change in potential energy when a mass m moves through potential difference ΔV is:',['mΔV','ΔV/m','m/ΔV','mgΔV'],0,'ΔE<sub>P</sub> = mΔV.'],
+['ΔE<sub>P</sub> = mgΔh is valid when:',['g does not change significantly over the height Δh','the height is very large','the mass is very small','in orbit'],0,'Otherwise use mΔV.'],
+['The field strength is related to the V–r graph by:',['g = −gradient','g = +area','g = gradient','g = V/r²'],0,'g = −ΔV/Δr.'],
+['At the neutral point between the Earth and the Moon:',['the resultant field strength is zero','the potential is zero','both fields are zero','the potential is most negative'],0,'The potential is negative, with a maximum there.'],
+['The neutral point between the Earth and Moon is:',['much nearer the Moon','exactly halfway','nearer the Earth','inside the Earth'],0,'The Moon’s field is much weaker, so you must be close to it for its pull to match the Earth’s.'],
+['When combining fields from two masses:',['field strengths add as vectors, potentials as scalars','both add as vectors','both add as scalars','potentials add as vectors'],0,'Directions matter only for g.'],
+['Escape velocity from a planet depends on:',['the planet’s mass and radius, but not the escaping object’s mass','the escaping object’s mass','the direction of launch','the object’s shape'],0,'v = √(2GM/R).'],
+['The escape velocity from the Earth is about:',['11 km s⁻¹','8 km s⁻¹','3 × 10⁸ m s⁻¹','340 m s⁻¹'],0,'11.2 km s⁻¹.'],
+['For a satellite in a circular orbit, the centripetal force is provided by:',['gravity','the rocket engines','air resistance','centrifugal force'],0,'GMm/r² = mv²/r.'],
+['The orbital speed of a satellite:',['decreases as the orbital radius increases','increases with orbital radius','does not depend on radius','depends on the satellite’s mass'],0,'v = √(GM/r).'],
+['Kepler’s third law states that for orbits round the same body:',['T² ∝ r³','T ∝ r','T² ∝ r²','T ∝ r³'],0,'T² = 4π²r³/GM.'],
+['From one moon’s orbital radius and period you can find:',['the mass of the planet','the mass of the moon','the planet’s radius','the moon’s density'],0,'M = 4π²r³/GT².'],
+['A geostationary satellite must orbit:',['above the equator, with a 24 h period, in the direction of the Earth’s rotation','over the poles','at any height with a 24 h period','in the opposite direction to the Earth’s rotation'],0,'At about 36 000 km altitude.'],
+['An astronaut in orbit feels weightless because:',['she and the spacecraft are both in free fall with the same acceleration','there is no gravity in space','she is too far from the Earth','the spacecraft shields gravity'],0,'g at the ISS is still about 8.9 N kg⁻¹.'],
+['For a circular orbit, the total energy of a satellite is:',['−GMm/2r','+GMm/2r','−GMm/r','zero'],0,'E<sub>K</sub> = GMm/2r, E<sub>P</sub> = −GMm/r.'],
+['In an elliptical orbit, a satellite moves fastest:',['at its closest approach','at its furthest point','at the same speed throughout','halfway round'],0,'Potential energy is least there, so kinetic energy is greatest.'],
+['Moving a satellite to a higher circular orbit:',['increases its total energy and decreases its speed','decreases its total energy','increases its speed','leaves its energy unchanged'],0,'Total energy −GMm/2r becomes less negative.'],
+['Unlike electric forces, gravitational forces are:',['always attractive','always repulsive','sometimes repulsive','independent of distance'],0,'There is no negative mass.'],
+['On the Moon (g = 1.6 N kg⁻¹), an 80 kg astronaut has a weight of:',['128 N','80 N','785 N','50 N'],0,'W = mg.'],
+['Newton checked his law by showing that the Moon’s acceleration towards the Earth matched:',['g at the Earth’s surface scaled by 1/r²','the Moon’s mass','the tides','the Sun’s gravity'],0,'This gave an orbital period of about 29 days.']
+];
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+
+/* ---------- graph match ---------- */
+const CURVES={
+ gr:{xl:'r',yl:'g',f:x=>{const u=x*5;return u<1?0.8*u:0.8/(u*u)},mk:0.2},
+ vr:{xl:'r',yl:'V',top:1,f:x=>{const u=x*5;return u<1?null:-0.9/u},mk:0.2},
+ f1r2:{xl:'1/r²',yl:'F',f:x=>0.85*x},
+ t2r3:{xl:'r³',yl:'T²',f:x=>0.8*x},
+ vorb:{xl:'r',yl:'orbital speed',f:x=>x<0.12?null:0.3/Math.sqrt(x)},
+ gline:{xl:'x (Earth → Moon)',yl:'resultant g',mid:1,f:x=>{if(x<0.06||x>0.97)return null;const a=0.004/(x*x),b=0.00005/((1-x)*(1-x));return clamp(-(a-b),-0.9,0.9)}},
+ vline:{xl:'x (Earth → Moon)',yl:'V',top:1,f:x=>{if(x<0.06||x>0.97)return null;return Math.max(-0.95,-(0.04/x+0.0005/(1-x))*1.2)}}
+};
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg');const C=CURVES[type];
+ const x0=40,xw=W-60,y0=C.top?26:C.mid?H/2+4:H-28,sc=C.top?H-44:C.mid?H/2-24:H-44;
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,C.top?H-10:C.mid?H-10:y0);c.lineTo(x0,C.top?y0:12);c.stroke();
+ c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();
+ c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText(C.xl,x0+xw+6,C.top?y0-8:y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,C.top?H-12:22);
+ c.fillStyle=mut;c.font='13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('0',x0-6,y0+4);
+ if(C.mk){c.setLineDash([4,4]);c.strokeStyle=mut;c.lineWidth=1;c.beginPath();c.moveTo(x0+C.mk*xw,12);c.lineTo(x0+C.mk*xw,H-10);c.stroke();c.setLineDash([]);c.fillText('R',x0+C.mk*xw+12,C.top?H-12:y0+14)}
+ c.strokeStyle=neg;c.lineWidth=2.6;c.beginPath();let st=false;for(let i=0;i<=300;i++){const x=i/300,y=C.f(x);if(y===null||Math.abs(y)>1.05){st=false;continue}const X=x0+x*xw,Y=y0-y*sc;if(!st){c.moveTo(X,Y);st=true}else c.lineTo(X,Y)}c.stroke();
+}
+const GM=[['gr','g against distance from a planet’s centre'],['vr','Gravitational potential against distance'],['f1r2','Gravitational force against 1/r²'],['t2r3','Kepler’s third law'],['vorb','Orbital speed against orbital radius'],['gline','Resultant g along the Earth–Moon line'],['vline','Potential along the Earth–Moon line']];
+let gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ gmOrder=shuffle(GM.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ $('#gmPool').innerHTML=shuffle(GM).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}else if(gmPlace[i]!==undefined)delete gmPlace[i];gmPaint()}));
+ gmPaint();
+}
+function gmPaint(){
+ const used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?GM.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+$('#gmCheck').addEventListener('click',()=>{let n=0;$$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<GM.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===GM.length){award(GM.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong>')}else{miss();fb($('#gmFb'),'no',n+' of '+GM.length+' correct. Move the labels with red borders and check again.')}});
+$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p,p2){this.p=p.slice();this.p2=p2?p2.slice():null;this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  const all=this.p.concat(this.p2||[]);if(all.length){const xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.p2){c.strokeStyle=cssv('--ok');c.lineWidth=2;this.p2.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.arc(P[0],P[1],5,0,7);c.stroke()})}
+  if(o.curve){c.strokeStyle=cssv('--muted');c.setLineDash([6,5]);c.lineWidth=2;c.beginPath();for(let i=0;i<=200;i++){const x=X[0]+(X[1]-X[0])*i/200,y=o.curve(x);if(!isFinite(y))continue;const P=px(x,y);i?c.lineTo(P[0],P[1]):c.moveTo(P[0],P[1])}c.stroke();c.setLineDash([])}
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+function gauss(){let u=0,v=0;while(u===0)u=R();while(v===0)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+
+/* ============ LAB 1: planet survey ============ */
+const S1={h:8000,data:[]};
+(function(){const g=kitRng(101);const rho=3000+g()*3000;S1.R=Math.round((3+g()*5)*1e3)*1e3;S1.M=rho*4/3*Math.PI*Math.pow(S1.R,3);S1.gain=1+(g()-0.5)*0.03;S1.rho=rho;S1.max=Math.round(S1.R*5/1e6)*1000;})();
+function s1g(){const r=S1.R+S1.h*1e3;return G*S1.M/(r*r)*S1.gain*(1+gauss()*0.003)}
+function s1Draw(){const cv=$('#s1Cv');const {c,w,h}=fitCanvas(cv);c.fillStyle='#0F1D26';c.fillRect(0,0,w,h);const rnd=mulberry32(9);c.fillStyle='rgba(255,255,255,.5)';for(let i=0;i<60;i++)c.fillRect(rnd()*w,rnd()*h,1,1);
+ const scale=Math.min((h-30)/(S1.max*1e3),0.9*h/(6*S1.R));const Rp=S1.R*scale,px=w*0.18,py=h/2;planetDraw(c,px,py,Math.max(8,Rp),QC,'X');
+ const r=(S1.R+S1.h*1e3)*scale;c.strokeStyle='rgba(127,209,199,.4)';c.setLineDash([3,4]);c.beginPath();c.moveTo(px,py);c.lineTo(px+r,py);c.stroke();c.setLineDash([]);
+ c.fillStyle='#F2C12E';c.fillRect(px+Math.max(r,Rp)-4,py-5,8,10);c.fillStyle='#C3CEE3';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('probe',px+Math.max(r,Rp)-12,py-10)}
+function s1Upd(){$('#s1Ho').textContent=S1.h.toLocaleString('en-GB')+' km';$('#s1R').textContent=Math.round((S1.R/1e3+S1.h)).toLocaleString('en-GB');S1.shown=Number(s1g().toPrecision(3));$('#s1G').textContent=S1.shown;s1Draw()}
+$('#s1H').addEventListener('input',e=>{S1.h=+e.target.value;s1Upd()});watch($('#s1Cv'),s1Draw);
+$('#s1Rec').addEventListener('click',()=>{const r=S1.R+S1.h*1e3;S1.data=S1.data.filter(d=>Math.abs(d[0]-r)>1);S1.data.push([r,S1.shown]);S1.data.sort((a,b)=>a[0]-b[0]);s1Table();s1Plot();fb($('#s1Msg'),'ok','Recorded g = '+S1.shown+' N kg⁻¹ at r = '+(r/1e6).toFixed(3)+' × 10⁶ m.')});
+$('#s1Clr').addEventListener('click',()=>{S1.data=[];s1Table();s1Plot()});
+function s1Table(){$('#s1Tb').innerHTML=S1.data.length?S1.data.map((r,i)=>'<tr><td>'+(r[0]/1e6).toFixed(3)+'</td><td>'+(1e14/(r[0]*r[0])).toFixed(3)+'</td><td>'+r[1]+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="4" class="muted">No readings yet</td></tr>';
+ $$('#s1Tb .x').forEach(b=>b.addEventListener('click',()=>{S1.data.splice(+b.dataset.i,1);s1Table();s1Plot()}))}
+const p1=new Plot($('#s1G2'),{xl:'1/r² / 10⁻¹⁴ m⁻²',yl:'g / N kg⁻¹',bx:[0,10],by:[0,10],line:true,onDraw:()=>{const f=p1.line();$('#s1Ro').innerHTML=f?'gradient = <strong>'+sci(f.m,3)+' N kg⁻¹ per 10⁻¹⁴ m⁻²</strong>, intercept = '+sci(f.c,2):''}});
+function s1Pts(){return S1.data.map(r=>[1e14/(r[0]*r[0]),r[1]])}
+function s1Plot(){p1.set(s1Pts())}
+$('#s1Line').addEventListener('click',()=>p1.reset(false));
+function s1Tasks(){
+ $('#s1Card').innerHTML='<span>Planet X radius (from imaging): <b>R = '+(S1.R/1e3).toLocaleString('en-GB')+' km</b></span><span>G = <b>6.67 × 10⁻¹¹</b> N m² kg⁻²</span>';
+ const el=$('#s1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">g = GM/r², so a graph of g against 1/r² is a straight line through the origin with gradient GM.</p>';const S={};
+ numTask(el,'1. Find the gradient of your g against 1/r² line.','N kg⁻¹ per 10⁻¹⁴ m⁻²',v=>{const pts=s1Pts();if(pts.length<6)return {info:1,msg:'Record g at 6 or more distances.'};const f=p1.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};if(pct(f.m,ls.m)>5)return {ok:false,msg:'Adjust your line: its gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend.'};if(close(v,f.m,0.03)){S.g=v;return {ok:true,msg:'<strong>Good.</strong> In SI units, GM = gradient × 10<sup>14</sup> = '+sci(v*1e14,3)+' N m² kg<sup>−1</sup>.'}}return {ok:false,msg:'Read the gradient of your line.'}},3);
+ numTask(el,'2. Calculate the mass of Planet X.','kg',v=>{if(S.g===undefined)return {info:1,msg:'Complete task 1.'};const t=S.g*1e14/G;if(close(v,t,0.02)){S.M=v;return {ok:true,msg:'<strong>Correct:</strong> M = GM/G = '+sci(t,3)+' kg ('+(t/ME).toPrecision(2)+' Earth masses).'}}return {ok:false,msg:'M = (gradient × 10¹⁴) / G.'}},3);
+ numTask(el,'3. Using your mass, find the field strength at the planet’s surface.','N kg⁻¹',v=>{if(S.M===undefined)return {info:1,msg:'Complete task 2.'};const t=G*S.M/(S1.R*S1.R);if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> g = GM/R² = '+t.toFixed(2)+' N kg<sup>−1</sup>. Compare with the gravimeter at zero altitude.'};return {ok:false,msg:'g = GM/R² with R in metres.'}},2);
+ numTask(el,'4. Find the escape velocity from the surface.','m s⁻¹',v=>{if(S.M===undefined)return {info:1,msg:'Complete task 2.'};const t=Math.sqrt(2*G*S.M/S1.R);if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> √(2GM/R) = '+(t/1000).toFixed(2)+' km s<sup>−1</sup>.'};return {ok:false,msg:'v = √(2GM/R).'}},2);
+ numTask(el,'5. Find the mean density of Planet X.','kg m⁻³',v=>{if(S.M===undefined)return {info:1,msg:'Complete task 2.'};const t=S.M/(4/3*Math.PI*Math.pow(S1.R,3));if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> about '+t.toFixed(0)+' kg m<sup>−3</sup>: a rocky planet (the Earth is 5500 kg m<sup>−3</sup>).'};return {ok:false,msg:'ρ = M / (4/3 πR³).'}},2);
+ mcq(el,'Why can the planet be treated as a point mass at its centre?',['Outside a spherically symmetric body, the field is the same as if all the mass were at the centre','Because it is very far away','Because the probe is small','Because g is uniform'],0,'That is why g = GM/r² uses r from the centre.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="s1Deb">Reveal the mission’s hidden values</button><div class="fb" id="s1DebO"></div></div>');
+ $('#s1Deb').addEventListener('click',()=>fb($('#s1DebO'),'info','<strong>Mission '+kitCode()+'</strong><br>True mass '+sci(S1.M,3)+' kg; mean density '+S1.rho.toFixed(0)+' kg m<sup>−3</sup>.<br>The gravimeter reads '+((S1.gain-1)*100).toFixed(1)+'% '+(S1.gain>1?'high':'low')+', which scales your gradient and mass by the same amount.'));
+}
+
+/* ============ LAB 2: Earth–Moon line ============ */
+const E2={x:2.0,data:[]};
+(function(){const g=kitRng(102);E2.gain=1+(g()-0.5)*0.02;E2.off=(g()-0.5)*0.004;})();
+function e2gt(x){return (-G*ME/(x*x)+G*MM/((DEM-x)*(DEM-x)))*1000}
+function e2Read(){return Math.round((e2gt(E2.x*1e8)*E2.gain*(1+gauss()*0.002)+E2.off+gauss()*0.0003)*1000)/1000}
+function e2Draw(){const cv=$('#e2Cv');const {c,w,h}=fitCanvas(cv);c.fillStyle='#0F1D26';c.fillRect(0,0,w,h);const X=u=>30+u/3.84*(w-50);planetDraw(c,X(0),h/2,18,EARTHC);planetDraw(c,X(3.84),h/2,6,MOONC);
+ c.strokeStyle='rgba(195,206,227,.35)';c.setLineDash([3,4]);c.beginPath();c.moveTo(X(0),h/2);c.lineTo(X(3.84),h/2);c.stroke();c.setLineDash([]);c.fillStyle='#F2C12E';c.fillRect(X(E2.x)-4,h/2-5,8,10);
+ c.fillStyle='#C3CEE3';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Earth',X(0)-14,h/2+34);c.fillText('Moon',X(3.84)-24,h/2+22);c.fillText('probe',X(E2.x)-14,h/2-12)}
+function e2Upd(){$('#e2X').value=E2.x;$('#e2Xo').textContent=E2.x.toFixed(2)+' × 10⁸ m';E2.shown=e2Read();$('#e2G').textContent=E2.shown.toFixed(3);e2Draw()}
+$('#e2X').addEventListener('input',e=>{E2.x=+e.target.value;e2Upd()});$$('#sec-lab2 [data-n]').forEach(b=>b.addEventListener('click',()=>{E2.x=clamp(Math.round((E2.x+(+b.dataset.n))*100)/100,0.5,3.8);e2Upd()}));
+watch($('#e2Cv'),e2Draw);
+$('#e2Rec').addEventListener('click',()=>{E2.data=E2.data.filter(d=>d[0]!==E2.x);E2.data.push([E2.x,E2.shown]);E2.data.sort((a,b)=>a[0]-b[0]);e2Table();e2Plot();fb($('#e2Msg'),'ok','Recorded g = '+E2.shown.toFixed(3)+' mN kg⁻¹ at '+E2.x.toFixed(2)+' × 10⁸ m.')});
+$('#e2Clr').addEventListener('click',()=>{E2.data=[];e2Table();e2Plot()});
+function e2Table(){$('#e2Tb').innerHTML=E2.data.length?E2.data.map((r,i)=>'<tr><td>'+r[0].toFixed(2)+'</td><td>'+r[1].toFixed(3)+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="3" class="muted">No readings yet</td></tr>';
+ $$('#e2Tb .x').forEach(b=>b.addEventListener('click',()=>{E2.data.splice(+b.dataset.i,1);e2Table();e2Plot()}))}
+const p2=new Plot($('#e2G2'),{xl:'x / 10⁸ m',yl:'g / mN kg⁻¹',bx:[0,3.84],by:[-2,1],line:true,onDraw:()=>{const f=p2.line();$('#e2Ro').innerHTML=f?'Use the line locally, near where g crosses zero. It crosses g = 0 at x = <strong>'+(f.m?(-f.c/f.m).toFixed(3):'–')+' × 10⁸ m</strong>.':''}});
+function e2Plot(){p2.set(E2.data)}
+$('#e2Line').addEventListener('click',()=>p2.reset(false));
+function e2Tasks(){
+ $('#e2Card').innerHTML='<span>Earth–Moon separation d = <b>3.84 × 10⁸ m</b></span><span>M<sub>Earth</sub> = <b>6.0 × 10²⁴ kg</b></span><span>G = <b>6.67 × 10⁻¹¹</b></span>';
+ const el=$('#e2Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">Take readings every 0.1–0.2 × 10⁸ m, then more closely near the point where the reading changes sign.</p>';const S={};
+ let xz=null;for(let x=3.0;x<3.8;x+=0.0005){const v=e2gt(x*1e8)*E2.gain+E2.off;if(v>=0){xz=x;break}}
+ numTask(el,'1. From your results, how far from the Earth’s centre is the neutral point?','× 10⁸ m',v=>{const pts=E2.data.filter(d=>Math.abs(d[0]-xz)<0.15);if(pts.length<3||!E2.data.some(d=>d[1]<0&&d[0]>xz-0.15)||!E2.data.some(d=>d[1]>0&&d[0]<xz+0.15))return {info:1,msg:'Take several readings close to the point where g changes sign, on both sides.'};if(Math.abs(v-xz)<=0.012){S.x=v;return {ok:true,msg:'<strong>Good:</strong> about '+xz.toFixed(3)+' × 10⁸ m, roughly 90% of the way to the Moon.'}}return {ok:false,msg:'Find where your readings (or a short line through the nearby points) cross g = 0.'}},3);
+ numTask(el,'2. Use your neutral point to find the ratio M<sub>Moon</sub> / M<sub>Earth</sub>.','',v=>{if(S.x===undefined)return {info:1,msg:'Complete task 1.'};const t=Math.pow((3.84-S.x)/S.x,2);if(close(v,t,0.03))return {ok:true,msg:'<strong>Correct:</strong> ((d − x)/x)² = '+t.toPrecision(3)+', so the Moon is about 1/'+(1/t).toFixed(0)+' of the Earth’s mass (accepted 1/81.6).'};return {ok:false,msg:'At the neutral point GM<sub>E</sub>/x² = GM<sub>M</sub>/(d − x)², so M<sub>M</sub>/M<sub>E</sub> = ((d − x)/x)².'}},3);
+ numTask(el,'3. Using M<sub>Moon</sub> = 7.35 × 10²² kg, calculate the potential at the true neutral point (3.46 × 10⁸ m from the Earth).','J kg⁻¹',v=>{const x=3.46e8,t=-(G*ME/x+G*MM/(DEM-x));if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> '+sci(t,3)+' J kg<sup>−1</sup>. Not zero: potentials add as negative scalars.'};return {ok:false,msg:'V = −GM<sub>E</sub>/x − GM<sub>M</sub>/(d − x).'}},2);
+ numTask(el,'4. What is the minimum energy per kilogram needed to travel from the Earth’s surface (6.4 × 10⁶ m) to the neutral point?','J kg⁻¹',v=>{const Vn=-(G*ME/3.46e8+G*MM/(DEM-3.46e8)),Vs=-(G*ME/RE+G*MM/(DEM-RE)),t=Vn-Vs;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> ΔV = '+sci(t,3)+' J kg<sup>−1</sup>. Past the neutral point the Moon pulls the craft in.'};return {ok:false,msg:'ΔV = V(neutral point) − V(Earth’s surface), including both bodies’ potentials.'}},3);
+ mcq(el,'Why does a spacecraft need much less energy to leave the Moon for the Earth than the reverse?',['The Moon’s surface is at a much higher (less negative) potential, and the neutral point is close to the Moon','The Moon has no atmosphere','The Earth pulls harder on the way back','The spacecraft is lighter'],0,'The potential “hill” is far lower from the Moon’s side.');
+ mcq(el,'The gravimeter has a small zero error. How does this affect your neutral point?',['It shifts it, because the reading crosses zero at a slightly different place where the field is weak and changes slowly','It has no effect','It doubles the distance','It only affects readings near the Earth'],0,'Close to the neutral point, a tiny offset moves the crossing noticeably.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="e2Deb">Reveal the mission’s hidden values</button><div class="fb" id="e2DebO"></div></div>');
+ $('#e2Deb').addEventListener('click',()=>fb($('#e2DebO'),'info','<strong>Mission '+kitCode()+'</strong><br>Gravimeter gain '+((E2.gain-1)*100).toFixed(1)+'%, zero error '+(E2.off>=0?'+':'')+E2.off.toFixed(4)+' mN kg<sup>−1</sup>.<br>The true neutral point (no error) is at 3.46 × 10⁸ m; your gravimeter crosses zero at '+xz.toFixed(3)+' × 10⁸ m.'));
+}
+
+/* ============ LAB 3: orbit lab ============ */
+const O3={p:'E',h:2000,v:6.9,data:[],run:null};
+(function(){const g=kitRng(103);const M=(1+g()*14)*1e24;const Rmin=G*M/Math.pow(10.5e3,2);O3.Q={M,R:Math.max(4.5e6,Rmin)*(1+g()*0.3),P:Math.round(10+g()*30)}})();
+function o3Pl(){return O3.p==='E'?{M:ME,R:RE,n:'Earth',P:23.93}:{M:O3.Q.M,R:O3.Q.R,n:'Planet Q',P:O3.Q.P}}
+function o3Sim(){const P=o3Pl(),GMv=G*P.M,r0=P.R+O3.h*1e3,v0=O3.v*1000;let x=r0,y=0,vx=0,vy=v0;const Tc=2*Math.PI*Math.sqrt(r0*r0*r0/GMv),dt=Tc/4000;let t=0,ang=0,la=0,T=null,rmin=r0,rmax=r0,path=[[x,y]],esc=false,crash=false;
+ const acc=(x,y)=>{const r=Math.hypot(x,y),a=-GMv/(r*r*r);return [a*x,a*y]};let [ax,ay]=acc(x,y);
+ for(let i=0;i<4000*6;i++){vx+=ax*dt/2;vy+=ay*dt/2;x+=vx*dt;y+=vy*dt;[ax,ay]=acc(x,y);vx+=ax*dt/2;vy+=ay*dt/2;t+=dt;const r=Math.hypot(x,y);rmin=Math.min(rmin,r);rmax=Math.max(rmax,r);
+  const a=Math.atan2(y,x);let d=a-la;if(d<-Math.PI)d+=2*Math.PI;if(d>Math.PI)d-=2*Math.PI;ang+=d;la=a;if(i%20===0)path.push([x,y]);
+  if(r<P.R){crash=true;break}if(r>30*r0){esc=true;break}if(T===null&&ang>=2*Math.PI){T=t;if(i>200)break}}
+ return {P,r0,v0,path,T,rmin,rmax,esc,crash,t}}
+function o3Draw(k){const cv=$('#o3Cv');const {c,w,h}=fitCanvas(cv);c.fillStyle='#0F1D26';c.fillRect(0,0,w,h);const P=o3Pl(),s=O3.run,cx=w/2,cy=h/2;
+ const span=s?Math.min(Math.max(s.rmax,s.r0)*1.15,s.r0*6):(P.R+O3.h*1e3)*1.6,sc=Math.min(w,h)/2/span;planetDraw(c,cx,cy,Math.max(4,P.R*sc),O3.p==='E'?EARTHC:QC);
+ if(!s){c.fillStyle='#F2C12E';c.beginPath();c.arc(cx+(P.R+O3.h*1e3)*sc,cy,4,0,7);c.fill();return}
+ const n=Math.floor(s.path.length*Math.min(1,k));c.strokeStyle='rgba(127,209,199,.8)';c.lineWidth=1.6;c.beginPath();for(let i=0;i<n;i++){const p=s.path[i],X=cx+p[0]*sc,Y=cy-p[1]*sc;i?c.lineTo(X,Y):c.moveTo(X,Y)}c.stroke();const p=s.path[Math.max(0,n-1)];c.fillStyle='#F2C12E';c.beginPath();c.arc(cx+p[0]*sc,cy-p[1]*sc,4,0,7);c.fill()}
+function o3Upd(){$('#o3Ho').textContent=O3.h.toLocaleString('en-GB')+' km';$('#o3Vo').textContent=O3.v.toFixed(2)+' km s⁻¹';$('#o3V').value=O3.v;const P=o3Pl();
+ $('#o3Card').innerHTML='<span>'+P.n+': radius <b>'+(P.R/1e3).toFixed(0)+' km</b>'+(O3.p==='E'?', mass <b>6.0 × 10²⁴ kg</b>':', mass <b>unknown</b>')+', rotation period <b>'+P.P+' h</b></span><span>launch radius r = <b>'+sci(P.R+O3.h*1e3,4)+' m</b></span>';if(!O3.anim)o3Draw(0)}
+$('#o3H').addEventListener('input',e=>{O3.h=+e.target.value;O3.run=null;o3Upd()});$('#o3V').addEventListener('input',e=>{O3.v=+e.target.value;o3Upd()});
+$$('#sec-lab3 [data-n]').forEach(b=>b.addEventListener('click',()=>{O3.v=clamp(Math.round((O3.v+(+b.dataset.n))*100)/100,1,16);o3Upd()}));
+$$('#o3P button').forEach(b=>b.addEventListener('click',()=>{O3.p=b.dataset.p;O3.run=null;$$('#o3P button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));o3Upd();o3Plot()}));
+watch($('#o3Cv'),()=>o3Draw(1));
+$('#o3Go').addEventListener('click',()=>{const s=o3Sim();O3.run=s;const t0=performance.now();O3.anim=true;const step=now=>{const k=(now-t0)/2500;o3Draw(k);if(k<1)requestAnimationFrame(step);else{O3.anim=false;o3Result()}};requestAnimationFrame(step)});
+function o3Result(){const s=O3.run,m=$('#o3Msg');if(s.crash){fb(m,'no','Too slow: the satellite fell back and hit the surface.');return}if(s.esc||!s.T){fb(m,'info','The satellite <strong>escaped</strong>: its kinetic energy was greater than its gravitational binding energy.');return}
+ const ecc=(s.rmax-s.rmin)/(s.rmax+s.rmin),circ=ecc<0.01;
+ fb(m,circ?'ok':'info','Orbit period <strong>T = '+s.T.toFixed(0)+' s</strong> ('+(s.T/3600).toFixed(2)+' h). Closest '+sci(s.rmin,3)+' m, furthest '+sci(s.rmax,3)+' m. '+(circ?'This orbit is circular (to within 1%). <button class="btn alt" type="button" id="o3Rec">Record this orbit</button>':'This is an ellipse: '+(O3.v*1000>Math.sqrt(G*s.P.M/s.r0)?'too fast':'too slow')+' for a circular orbit.'));
+ if(circ)$('#o3Rec').addEventListener('click',()=>{O3.data.push([O3.p,s.r0,O3.v,Math.round(s.T)]);o3Table();o3Plot();award(1);fb(m,'ok','Recorded.')})}
+$('#o3Clr').addEventListener('click',()=>{O3.data=[];o3Table();o3Plot()});
+function o3Table(){$('#o3Tb').innerHTML=O3.data.length?O3.data.map((r,i)=>'<tr><td>'+(r[0]==='E'?'Earth':'Q')+'</td><td>'+(r[1]/1e6).toFixed(3)+'</td><td>'+r[2].toFixed(2)+'</td><td>'+r[3]+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="5" class="muted">No circular orbits yet</td></tr>';
+ $$('#o3Tb .x').forEach(b=>b.addEventListener('click',()=>{O3.data.splice(+b.dataset.i,1);o3Table();o3Plot()}))}
+const p3=new Plot($('#o3G'),{xl:'r³ / 10²¹ m³',yl:'T² / 10⁸ s²',bx:[0,10],by:[0,10],line:true,onDraw:()=>{const f=p3.line();$('#o3Ro').innerHTML=f?(O3.p==='E'?'Earth':'Planet Q')+' orbits: gradient = <strong>'+sci(f.m,3)+'</strong>':''}});
+function o3Pts(){return O3.data.filter(r=>r[0]===O3.p).map(r=>[Math.pow(r[1],3)/1e21,r[3]*r[3]/1e8])}
+function o3Plot(){p3.set(o3Pts())}
+$('#o3Line').addEventListener('click',()=>p3.reset(false));
+function o3Tasks(){
+ const el=$('#o3Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">T² = (4π²/GM) r³. With the graph’s units, gradient = (4π²/GM) × 10²¹/10⁸, so M = 4π² × 10¹³ / (G × gradient).</p>';const S={};
+ numTask(el,'1. Earth: calculate the speed needed for a circular orbit 2000 km above the surface, then test it.','km s⁻¹',v=>{const t=Math.sqrt(G*ME/(RE+2e6))/1000;if(close(v,t,0.01))return {ok:true,msg:'<strong>Correct:</strong> v = √(GM/r) = '+t.toFixed(2)+' km s<sup>−1</sup>. Launch at this speed to check that the orbit is circular.'};return {ok:false,msg:'v = √(GM/r), with r = 6400 + 2000 km in metres.'}},2);
+ numTask(el,'2. Planet Q: record at least 4 circular orbits at different altitudes. What is the gradient of T² against r³?','',v=>{if(O3.p!=='Q')return {info:1,msg:'Select Planet Q to show its graph.'};const pts=o3Pts();if(pts.length<4)return {info:1,msg:'Record at least 4 circular orbits round Planet Q.'};const f=p3.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};if(pct(f.m,ls.m)>4)return {ok:false,msg:'Adjust your line.'};if(close(v,f.m,0.03)){S.g=v;return {ok:true,msg:'<strong>Good.</strong> A straight line through the origin confirms Kepler’s third law.'}}return {ok:false,msg:'Read the gradient of your line.'}},3);
+ numTask(el,'3. Find the mass of Planet Q.','kg',v=>{if(S.g===undefined)return {info:1,msg:'Complete task 2.'};const t=4*Math.PI*Math.PI*1e13/(G*S.g);if(close(v,t,0.02)){S.M=v;return {ok:true,msg:'<strong>Correct:</strong> M = '+sci(t,3)+' kg.'}}return {ok:false,msg:'M = 4π² × 10¹³ / (G × gradient).'}},3);
+ numTask(el,'4. Using your mass, find the radius of a geostationary orbit round Planet Q (its day is '+O3.Q.P+' hours).','m',v=>{if(S.M===undefined)return {info:1,msg:'Complete task 3.'};const T=O3.Q.P*3600,t=Math.cbrt(G*S.M*T*T/(4*Math.PI*Math.PI));if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> r = (GMT²/4π²)<sup>1/3</sup> = '+sci(t,3)+' m.'};return {ok:false,msg:'r³ = GMT²/4π² with T in seconds.'}},2);
+ numTask(el,'5. What is the escape speed 2000 km above Planet Q’s surface? Test it by launching at that speed.','km s⁻¹',v=>{const r=O3.Q.R+2e6,t=Math.sqrt(2*G*O3.Q.M/r)/1000;if(close(v,t,0.02))return {ok:true,msg:'<strong>Correct:</strong> about '+t.toFixed(2)+' km s<sup>−1</sup>: √2 times the circular orbit speed there.'};return {ok:false,msg:'v<sub>esc</sub> = √(2GM/r) = √2 × (circular speed at that radius). Use your circular-orbit results.'}},3);
+ mcq(el,'Launching slightly faster than the circular speed produces:',['an elliptical orbit whose furthest point is opposite the launch point','a circular orbit at a larger radius','an escape','a crash'],0,'The satellite climbs away, slows, and returns: kinetic and potential energy are exchanged.');
+ mcq(el,'Why does a satellite in a circular orbit not fall to the ground?',['It is falling all the time, but its sideways speed means it keeps missing the planet','There is no gravity at that height','Its engines keep it up','Centrifugal force balances gravity'],0,'Gravity provides exactly the centripetal force needed.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="o3Deb">Reveal Planet Q</button><div class="fb" id="o3DebO"></div></div>');
+ $('#o3Deb').addEventListener('click',()=>fb($('#o3DebO'),'info','<strong>Mission '+kitCode()+'</strong><br>Planet Q: mass '+sci(O3.Q.M,3)+' kg, radius '+(O3.Q.R/1e3).toFixed(0)+' km, day '+O3.Q.P+' h.'));
+}
+/* ============ CHALLENGE ============ */
+const DER=[
+ {t:'Derive g = GM/r²',s:['Field strength is defined as g = F/m','A small mass m at distance r from mass M feels F = GMm/r²','So g = (GMm/r²)/m','g = GM/r²: independent of the test mass']},
+ {t:'Derive Kepler’s third law',s:['Gravity provides the centripetal force: GMm/r² = mv²/r','For one orbit, v = 2πr/T','So GM/r² = 4π²r/T²','Rearrange: T² = (4π²/GM) r³']},
+ {t:'Derive the orbital speed',s:['For a circular orbit GMm/r² = mv²/r','Cancel m and one r: GM/r = v²','v = √(GM/r)','So satellites further out move more slowly']},
+ {t:'Derive the escape velocity',s:['At the surface the potential energy is −GMm/R','To reach infinity the total energy must be at least zero','½mv² − GMm/R = 0','v<sub>esc</sub> = √(2GM/R), independent of m']},
+ {t:'Derive the position of the neutral point',s:['At the neutral point the two field strengths are equal and opposite','GM₁/x² = GM₂/(d − x)²','Take square roots: (d − x)/x = √(M₂/M₁)','x = d / (1 + √(M₂/M₁))']},
+ {t:'Show that surface g ∝ R for planets of the same density',s:['M = ρV = ρ(4/3)πR³','g = GM/R²','Substitute: g = Gρ(4/3)πR³/R²','g = (4/3)πGρR: proportional to R']},
+ {t:'Find the total energy of a satellite in a circular orbit',s:['mv²/r = GMm/r², so mv² = GMm/r','E<sub>K</sub> = ½mv² = GMm/2r','E<sub>P</sub> = −GMm/r','Total E = E<sub>K</sub> + E<sub>P</sub> = −GMm/2r']}
+];
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+const EXAM=[
+ {t:'The Earth',intro:'Surface g = 9.81 N kg⁻¹, radius 6400 km.',p:[
+  ['Calculate the mass of the Earth.',9.81*6.4e6*6.4e6/G,'kg','M = gr²/G = 6.0 × 10<sup>24</sup> kg'],
+  ['Find g at the height of the ISS (300 km).',G*6.0e24/(6.7e6*6.7e6),'N kg⁻¹','r = 6.7 × 10<sup>6</sup> m: g = 8.9 N kg<sup>−1</sup>'],
+  ['Find the potential at the Earth’s surface.',-G*6.0e24/6.4e6,'J kg⁻¹','V = −GM/r = −6.26 × 10<sup>7</sup> J kg<sup>−1</sup>']]},
+ {t:'Astronaut to the ISS',intro:'An 80 kg astronaut; Earth mass 6.0 × 10²⁴ kg, radius 6400 km, ISS 300 km up.',p:[
+  ['Find the minimum work to lift the astronaut to the ISS.',80*(G*6e24/6.4e6-G*6e24/6.7e6),'J','ΔV = 2.8 × 10<sup>6</sup> J kg<sup>−1</sup>; W = mΔV = 2.2 × 10<sup>8</sup> J'],
+  ['Find the work to remove the astronaut completely from the Earth’s field.',80*G*6e24/6.4e6,'J','W = m × 6.26 × 10<sup>7</sup> = 5.0 × 10<sup>9</sup> J'],
+  ['Find the escape speed.',Math.sqrt(2*G*6e24/6.4e6),'m s⁻¹','½mv² = 5.0 × 10<sup>9</sup> J: v = 1.12 × 10<sup>4</sup> m s<sup>−1</sup>']]},
+ {t:'The ISS orbit',intro:'r = 6.7 × 10⁶ m, Earth mass 6.0 × 10²⁴ kg.',p:[
+  ['Find the orbital speed.',Math.sqrt(G*6e24/6.7e6),'m s⁻¹','v = √(GM/r) = 7.7 × 10<sup>3</sup> m s<sup>−1</sup>'],
+  ['Find the orbital period.',2*Math.PI*Math.sqrt(Math.pow(6.7e6,3)/(G*6e24)),'s','T = √(4π²r³/GM) = 5.45 × 10<sup>3</sup> s (91 minutes)']]},
+ {t:'Geostationary orbit',intro:'Earth mass 6.0 × 10²⁴ kg.',p:[
+  ['Find the orbital radius for a period of 24 h.',Math.cbrt(G*6e24*86400*86400/(4*Math.PI*Math.PI)),'m','r³ = GMT²/4π²: r = 4.23 × 10<sup>7</sup> m'],
+  ['How high is this above the surface (radius 6400 km)?',Math.cbrt(G*6e24*86400*86400/(4*Math.PI*Math.PI))-6.4e6,'m','3.59 × 10<sup>7</sup> m, about 36 000 km']]},
+ {t:'The Moon’s orbit',intro:'Earth mass 6.0 × 10²⁴ kg; Moon orbital radius 4.0 × 10⁸ m.',p:[
+  ['Find the Earth’s field strength at the Moon.',G*6e24/1.6e17,'N kg⁻¹','g = GM/r² = 2.5 × 10<sup>−3</sup> N kg<sup>−1</sup>'],
+  ['Hence find the Moon’s orbital period in days.',2*Math.PI*Math.sqrt(4e8/(G*6e24/1.6e17))/86400,'days','g = rω² = 4π²r/T²: T = 2.5 × 10<sup>6</sup> s = 29 days']]},
+ {t:'Neutral point',intro:'The Earth (6.0 × 10²⁴ kg) and Moon (7.35 × 10²² kg) are 3.84 × 10⁸ m apart.',p:[
+  ['How far from the Earth’s centre is the neutral point?',3.84e8/(1+Math.sqrt(7.35e22/6e24)),'m','x = d/(1 + √(M<sub>M</sub>/M<sub>E</sub>)) = 3.46 × 10<sup>8</sup> m'],
+  ['Find the potential there.',-(G*6e24/3.456e8+G*7.35e22/(3.84e8-3.456e8)),'J kg⁻¹','V = −GM<sub>E</sub>/x − GM<sub>M</sub>/(d − x) = −1.28 × 10<sup>6</sup> J kg<sup>−1</sup>']]},
+ {t:'Two people',intro:'Two 70 kg people are 1.0 m apart.',p:[
+  ['Find the gravitational force between them.',G*70*70,'N','F = GM₁M₂/r² = 3.3 × 10<sup>−7</sup> N'],
+  ['What mass has a weight equal to this force on Earth, in grams?',G*70*70/9.81*1000,'g','m = F/g = 3.3 × 10<sup>−5</sup> g: far too small to notice']]}
+];
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],p[4]||0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let GT=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){GT={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!GT)return;const left=Math.max(0,(GT.end-performance.now())/1000),el=$('#gT');if(!el){GT=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=GT.score;GT=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+GT.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){GT.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(GT)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){GT.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(GT)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{GT=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- start-up ---------- */
+function kitButtons(){
+ ['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode();const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New kit';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all your data';setTimeout(()=>{armed=false;b.textContent='New kit'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();gmStart();kitButtons();
+$('#s1H').max=S1.max;s1Upd();s1Table();s1Plot();s1Tasks();
+e2Upd();e2Table();e2Plot();e2Tasks();
+o3Upd();o3Table();o3Plot();o3Tasks();
+derStart(0);
+})();
+</script>
+</body>
+</html>
