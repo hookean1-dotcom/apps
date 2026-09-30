@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Solids under stress: WJEC AS Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#14171B;--sky2:#20252B;--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep10{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep10 *,#ep10 *::before,#ep10 *::after{box-sizing:border-box}
+#ep10 button,#ep10 input,#ep10 select{font:inherit;color:inherit}
+#ep10 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep10 sup{font-size:.72em;line-height:0}
+#ep10 sub{font-size:.72em;line-height:0}
+#ep10 .h,#ep10 h1,#ep10 h2,#ep10 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep10 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep10 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep10 p{margin:.45em 0 .7em;max-width:72ch}
+#ep10 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep10 li{margin:.2em 0}
+#ep10 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep10 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep10 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep10 .brand{flex:1 1 320px;min-width:0}
+#ep10 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep10 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep10 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep10 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep10 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep10 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep10 .lcd.pulse{animation:ep10pulse .5s ease}
+@keyframes ep10pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep10 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep10 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep10 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep10 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep10 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep10 .tab:hover{color:var(--ink)}
+#ep10 main{padding:22px 0 40px}
+#ep10 .sec{display:none}
+#ep10 .sec.on{display:block}
+#ep10 .lead{color:var(--muted);margin-top:.3em}
+
+#ep10 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep10 .panel + .panel{margin-top:16px}
+#ep10 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep10 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep10 .grid2{grid-template-columns:1fr}}
+#ep10 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep10 .sp{flex:1}
+
+#ep10 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep10 .btn:hover{filter:brightness(1.15)}
+#ep10 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep10 .btn.alt:hover{border-color:var(--ink)}
+#ep10 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep10 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep10 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep10 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep10 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep10 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep10 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep10 input[type=text],#ep10 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep10 input[type=text]:focus,#ep10 input[type=number]:focus{border-color:var(--focus)}
+#ep10 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep10 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep10 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep10 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep10 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep10 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep10 .work{font-size:.96rem}
+#ep10 .work div{padding:1px 0}
+#ep10 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep10 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep10 .muted{color:var(--muted)}
+#ep10 .small{font-size:.88rem}
+#ep10 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep10 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep10 .rv{grid-template-columns:1fr}}
+#ep10 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep10 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep10 .toc button{white-space:nowrap}}
+#ep10 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep10 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep10 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep10 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep10 .card h2{margin-bottom:.35em}
+#ep10 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep10 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep10 .check summary{cursor:pointer;font-weight:700}
+#ep10 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep10 .fig svg{max-width:100%;height:auto;display:block}
+#ep10 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep10 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep10 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep10 .cv{display:block;width:100%;height:100%}
+#ep10 .cvbox{position:relative;width:100%;height:230px}
+#ep10 .mini{height:150px}
+#ep10 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep10 table.t th,#ep10 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep10 table.t th{font-weight:700;color:var(--muted)}
+#ep10 table.t td:first-child,#ep10 table.t th:first-child{text-align:left}
+#ep10 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep10 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep10 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep10 .qcard{font-size:1.1rem}
+#ep10 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep10 .opts{display:grid;gap:8px;margin-top:8px}
+#ep10 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep10 .opt:hover{border-color:var(--ink)}
+#ep10 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep10 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep10 .opt:disabled{cursor:default}
+#ep10 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep10 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep10 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep10 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep10 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep10 .mcell.sel{border-color:var(--neg)}
+#ep10 .mcell.right{border-color:var(--ok)}
+#ep10 .mcell.wrong{border-color:var(--bad)}
+#ep10 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep10 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep10 .pool .chip.used{opacity:.35}
+#ep10 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep10 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep10 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep10 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep10 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep10 .dmm .lcd{min-width:130px}
+#ep10 .dmm .lcd .v{font-size:2rem}
+#ep10 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep10 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep10 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep10 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep10 .task:first-of-type{border-top:0;padding-top:4px}
+#ep10 .task .tq{font-weight:700;margin-bottom:6px}
+#ep10 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep10 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep10 .apbox{position:relative;width:100%;height:280px}
+#ep10 .loupebox{position:relative;width:100%;height:92px}
+#ep10 .microbox{position:relative;width:100%;height:170px}
+#ep10 .thermobox{position:relative;width:100%;height:260px}
+#ep10 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep10 .warn{color:var(--bad);font-weight:700}
+#ep10 .steps{counter-reset:s}
+#ep10 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep10 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep10 .step:hover{border-color:var(--ink)}
+#ep10 .dz .step{background:var(--panel)}
+#ep10 .dz.good{border-color:var(--ok)}
+#ep10 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep10 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep10 .brand h1{font-size:1.6rem}#ep10 .wrap{padding:0 12px}#ep10 .panel{padding:14px}#ep10 .bezel .lcd{min-width:88px}#ep10 .lcd .v{font-size:1.5rem}}
+#ep10 .top{background:var(--sky);color:#F1F4FA;border-bottom:0}
+#ep10 .brand p{color:#C3CEE3}
+#ep10 .themebtn{color:#F1F4FA;border-color:#8FA2C6}
+#ep10 .bezel{background:#0B1322;box-shadow:inset 0 -3px 0 #060B14}
+#ep10 .fieldstrip{display:block;width:100%;height:46px;background:#14171B}
+#ep10 .specstrip{position:relative;height:14px;background:linear-gradient(90deg,#5B1FA8 0%,#3240D6 12%,#1E7FE0 24%,#19B3B0 36%,#3DBE46 48%,#C9D52A 60%,#F2B21B 70%,#EE6A1A 82%,#C8241C 100%);overflow:hidden}
+#ep10 .specstrip i{position:absolute;top:0;bottom:0;width:3px;background:#0A0E18;animation:ep10shift 2.4s cubic-bezier(.2,.7,.2,1) .4s both}
+@keyframes ep10shift{from{transform:translateX(0)}to{transform:translateX(26px)}}
+#ep10 .sky{background:#0F1D26;border-radius:8px}
+#ep10 .grat{background:#0B1A12;border-radius:8px}
+#ep10 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep10 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep10 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep10 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep10 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep10 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+</style>
+</head>
+<body>
+<div id="ep10">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Solids under stress</h1>
+   <p>WJEC AS Physics 1.5: Hooke’s law, stress, strain and the Young modulus, strain energy, and how metals, glasses and rubber behave.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">strain energy / mJ</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+ <canvas class="fieldstrip" id="hdrCv" aria-hidden="true"></canvas>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="graphs" aria-selected="false">Graph match</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Practical: Young modulus</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Practical: rubber</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Tensile testing</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+
+<section class="sec on" id="sec-revise">
+ <div class="rv">
+  <div class="toc" id="toc"></div>
+  <div class="panel card" id="card"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh numbers every time. Use g = 9.81 N kg<sup>−1</sup>. Watch the units: mm² = 10<sup>−6</sup> m², GPa = 10<sup>9</sup> Pa. Type standard form as 2.1e11 or 2.1x10^11.</p>
+ <div class="panel">
+  <div class="row" id="drTopics"></div>
+  <div class="row" style="margin-top:10px">
+   <span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span>
+   <span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span>
+  </div>
+ </div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+
+<section class="sec" id="sec-quiz">
+ <h2>Concept quiz</h2>
+ <p class="lead">Twelve questions drawn from a bank covering the whole topic. Every answer comes with the reason.</p>
+ <div class="panel qcard" id="qzCard"></div>
+</section>
+
+<section class="sec" id="sec-graphs">
+ <h2>Graph match</h2>
+ <p class="lead">Pick a label, then tap the graph it belongs to. Tap a filled graph to clear it.</p>
+ <div class="panel">
+  <div class="pool" id="gmPool"></div>
+  <div class="mgrid" id="gmGrid"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="gmCheck" type="button">Check my matches</button><button class="btn alt" id="gmNew" type="button">Shuffle again</button></div>
+  <div class="fb" id="gmFb"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Practical: determining the Young modulus of a metal wire</h2>
+ <p class="lead">Two identical long wires hang from a beam. The vernier on the test wire slides past the main scale on the comparison wire. Add loads in 5 N steps and read the vernier each time. Kit code <span class="kit" id="kitA"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="apbox" style="height:230px"><canvas class="cv" id="y1Ap"></canvas></div>
+   <div class="row" style="margin-top:8px"><button class="btn alt" id="y1Dn" type="button">− 5 N</button><button class="btn alt" id="y1Up" type="button">+ 5 N</button><span class="tag" id="y1Load"></span></div>
+   <p class="small muted" style="margin:8px 0 4px">Vernier (magnified): main scale in mm above, vernier below.</p>
+   <div class="microbox" style="height:150px"><canvas class="cv" id="y1Vn"></canvas></div>
+   <div class="row" style="margin-top:8px"><label class="sm" for="y1In">Vernier reading / mm</label><input type="text" id="y1In" inputmode="decimal" autocomplete="off" style="width:100px"><button class="btn go" id="y1Rec" type="button">Record</button></div>
+   <div class="fb" id="y1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="y1Card"></div>
+   <h3>Diameter of the test wire</h3>
+   <div class="row"><button class="btn alt" id="mcZero" type="button">Close jaws (check zero)</button><button class="btn alt" id="mcMeas" type="button">Measure at a new place</button></div>
+   <div class="microbox" style="margin-top:8px"><canvas class="cv" id="mcCv"></canvas></div>
+   <div class="row" style="margin-top:8px"><label for="mcIn" class="sm" id="mcLbl">Your reading / mm</label><input type="text" id="mcIn" inputmode="decimal" autocomplete="off" style="width:90px"><button class="btn" id="mcOk" type="button">Enter reading</button></div>
+   <div class="fb" id="mcFb"></div>
+   <div class="small" id="mcList" style="margin-top:8px"></div>
+  </div>
+ </div>
+ <div class="grid2" style="margin-top:16px">
+  <div class="panel">
+   <div class="row"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="y1Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px"><table class="t"><thead><tr><th>F / N</th><th>reading / mm</th><th>x / mm</th><th></th></tr></thead><tbody id="y1Tb"></tbody></table></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Graph of F against x</strong><span class="sp"></span><button class="btn alt" id="y1Line" type="button">Reset line</button></div>
+   <div class="graphbox" style="margin-top:8px;height:280px"><canvas class="cv" id="y1G"></canvas></div>
+   <div class="readout" id="y1Ro"></div>
+  </div>
+ </div>
+ <div class="panel" id="y1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Practical: the force–extension relationship for rubber</h2>
+ <p class="lead">A cut rubber band hangs from a clamp with a 50 g mass holder. A pointer on the holder moves against a metre rule. Add 50 g masses, then remove them again. Kit code <span class="kit" id="kitB"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="grid2" style="grid-template-columns:1fr 1fr">
+    <div class="apbox" style="height:320px"><canvas class="cv" id="r1Ap"></canvas></div>
+    <div class="apbox" style="height:320px"><canvas class="cv" id="r1Zm"></canvas></div>
+   </div>
+   <div class="row" style="margin-top:8px"><button class="btn alt" id="r1Dn" type="button">Remove 50 g</button><button class="btn alt" id="r1Up" type="button">Add 50 g</button><span class="tag" id="r1Load"></span></div>
+   <div class="row" style="margin-top:8px"><label class="sm" for="r1In">Pointer reading / mm</label><input type="text" id="r1In" inputmode="decimal" autocomplete="off" style="width:100px"><button class="btn go" id="r1Rec" type="button">Record</button></div>
+   <div class="fb" id="r1Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="kv" id="r1Card"></div>
+   <div class="row" style="margin-top:8px"><strong>Results</strong><span class="sp"></span><button class="btn alt" id="r1Clr" type="button">Clear</button></div>
+   <div class="tscroll" style="margin-top:6px;max-height:330px"><table class="t"><thead><tr><th></th><th>m / g</th><th>F / N</th><th>reading / mm</th><th>x / mm</th><th></th></tr></thead><tbody id="r1Tb"></tbody></table></div>
+  </div>
+ </div>
+ <div class="panel">
+  <div class="row"><strong>Graph of F against x</strong> <span class="small muted">(× loading, ○ unloading)</span><span class="sp"></span><button class="btn alt" id="r1Line" type="button">Reset line</button></div>
+  <div class="graphbox" style="margin-top:8px;height:300px"><canvas class="cv" id="r1G"></canvas></div>
+  <div class="readout" id="r1Ro"></div>
+ </div>
+ <div class="panel" id="r1Tasks"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Tensile testing machine</h2>
+ <p class="lead">Stretch specimens to destruction and watch the stress–strain curve. Pull back the slider to unload and see whether the specimen returns to its original length. Kit code <span class="kit" id="kitC"></span></p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row" id="t3Sp"></div>
+   <div class="apbox" style="height:110px;margin-top:8px"><canvas class="cv" id="t3Ap"></canvas></div>
+   <div class="ctl">
+    <div><div class="lbl"><label for="t3E">Machine strain setting</label><span id="t3Eo"></span></div><input type="range" id="t3E" min="0" max="1000" step="1" value="0"></div>
+    <div class="meters"><div class="dmm"><div class="nm">Stress</div><div class="lcd"><span class="v" id="t3S">0</span><span class="u">MPa</span></div></div><div class="dmm"><div class="nm">Strain</div><div class="lcd"><span class="v" id="t3St">0.0000</span><span class="u"></span></div></div></div>
+    <div class="row"><button class="btn alt" id="t3New" type="button">Fit a fresh specimen</button></div>
+   </div>
+   <div class="fb" id="t3Msg"></div>
+  </div>
+  <div class="panel">
+   <div class="row"><strong>Stress–strain curve</strong><span class="sp"></span><span class="seg" id="t3Z"><button type="button" aria-pressed="true" data-z="all">whole curve</button><button type="button" aria-pressed="false" data-z="el">elastic region</button></span></div>
+   <div class="apbox" style="height:330px;margin-top:8px"><canvas class="cv" id="t3G"></canvas></div>
+   <p class="small muted" id="t3Rd"></p>
+  </div>
+ </div>
+ <div class="panel" id="t3Tasks"></div>
+</section>
+
+<section class="sec" id="sec-chall">
+ <h2>Challenge</h2>
+ <p class="lead">Rebuild the derivations, work through classic exam problems, then race the clock.</p>
+ <div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Derivation builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div>
+ <div class="panel" id="chBox"></div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep10');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep10-wjec-solids-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+const G0=9.81;
+/* ---------- tabs ---------- */
+const onShow={};let labActive='revise';
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ labActive=name;if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+const RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(cv,draw){let last=performance.now();function f(now){if(!cv.isConnected)return;const dt=Math.min(0.05,(now-last)/1000);last=now;draw(RM?0:dt);requestAnimationFrame(f)}requestAnimationFrame(f)}
+
+/* ---------- header: a crystal lattice with an edge dislocation ---------- */
+function hdr(){const cv=$('#hdrCv');if(!cv)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#14171B';c.fillRect(0,0,w,h);const sp=11,dx=w*0.55;
+ for(let row=0;row*sp<h+sp;row++){const y=row*sp+4,up=y<h/2;for(let x=4;x<w;x+=sp){let xx=x;if(up){const d=x-dx;xx=x-sp*0.5*Math.tanh(d/30)}else{const d=x-dx;xx=x}if(up&&Math.abs(x-dx)<sp/2)continue;c.fillStyle='rgba(190,200,210,'+(0.35+0.25*Math.sin(x*0.02+row))+')';c.beginPath();c.arc(xx,y,2.3,0,7);c.fill()}}
+ c.fillStyle='#F2C12E';for(let y=4;y<h/2;y+=sp){c.beginPath();c.arc(dx,y,2.6,0,7);c.fill()}
+ c.strokeStyle='#F2C12E';c.lineWidth=2;c.beginPath();c.moveTo(dx-6,h/2+2);c.lineTo(dx+6,h/2+2);c.moveTo(dx,h/2+2);c.lineTo(dx,h/2-8);c.stroke()}
+watch($('#hdrCv'),hdr);
+
+/* ---------- material models (shared with the tensile tester) ---------- */
+const MATS={
+ steel:{n:'Mild steel',E:200e9,P:250e6,Y1:285e6,Y2:260e6,U:450e6,eu:0.18,eb:0.26,yd:1},
+ cuA:{n:'Copper (annealed)',E:120e9,P:60e6,U:220e6,eu:0.35,eb:0.45,tau:0.08},
+ cuW:{n:'Copper (work-hardened)',E:120e9,P:250e6,U:320e6,eu:0.04,eb:0.08,tau:0.01},
+ brass:{n:'Brass (copper + zinc atoms)',E:100e9,P:150e6,U:350e6,eu:0.22,eb:0.30,tau:0.06},
+ glS:{n:'Glass rod (scratched)',E:70e9,brk:40e6},
+ glP:{n:'Glass rod (polished)',E:70e9,brk:90e6},
+ glT:{n:'Toughened glass',E:70e9,brk:180e6},
+ glF:{n:'Thin glass fibre',E:70e9,brk:1500e6}
+};
+function sigma(m,e){// loading curve
+ if(m.brk!==undefined)return e*m.E>=m.brk?null:e*m.E;
+ const eP=m.P/m.E;if(e<=eP)return m.E*e;
+ if(e>m.eb)return null;
+ if(m.yd){const eL=0.022;if(e<eP+0.0006)return m.P+(m.Y1-m.P)*(e-eP)/0.0006;if(e<eL)return m.Y2;const t=(e-eL)/(m.eu-eL);if(e<=m.eu)return m.Y2+(m.U-m.Y2)*(1-Math.pow(1-t,2));return m.U-(m.U*0.22)*Math.pow((e-m.eu)/(m.eb-m.eu),2)}
+ if(e<=m.eu){const s=m.P+(m.U-m.P)*(1-Math.exp(-(e-eP)/m.tau))/(1-Math.exp(-(m.eu-eP)/m.tau));return s}
+ return m.U-(m.U*0.2)*Math.pow((e-m.eu)/(m.eb-m.eu),2);
+}
+
+/* ---------- widgets ---------- */
+function wSpring(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wkK" style="min-width:110px">Spring constant</label><input type="range" id="wkK" min="20" max="200" step="10" value="80" style="flex:1;min-width:140px"><span id="wkKo" class="small" style="min-width:70px"></span></div><div class="row"><label class="sm" for="wkX" style="min-width:110px">Extension</label><input type="range" id="wkX" min="0" max="10" step="0.5" value="5" style="flex:1;min-width:140px"><span id="wkXo" class="small" style="min-width:70px"></span></div><div id="wkS"></div><div class="kv" id="wkK2"></div></div>');
+ const upd=()=>{const k=+$('#wkK').value,x=+$('#wkX').value/100,F=k*x;$('#wkKo').textContent=k+' N m⁻¹';$('#wkXo').textContent=(x*100).toFixed(1)+' cm';
+  let g='';const cx=60;let y=16;const coils=12,L=60+x*1000*1.6;g+=ln(20,12,100,12,4);let p='M'+cx+' 12';for(let i=0;i<coils;i++){const y1=12+(i+0.5)*L/coils,y2=12+(i+1)*L/coils;p+=' L'+(cx+(i%2?-14:14))+' '+y1+' L'+cx+' '+y2}g+='<path d="'+p+'" fill="none" stroke="var(--ink)" stroke-width="2"></path><rect x="'+(cx-16)+'" y="'+(12+L)+'" width="32" height="24" fill="var(--meter)" stroke="none"></rect>'+tx(cx,28+L+2,F.toFixed(1)+' N',{fs:10});
+  const X=v=>180+v/0.1*200,Y=v=>200-v/20*180;g+=ln(180,200,390,200)+ln(180,200,180,14)+tx(385,214,'x / cm',{a:'end',fs:11})+tx(186,20,'F / N',{a:'start',fs:11});
+  g+='<polygon points="'+X(0)+','+Y(0)+' '+X(x)+','+Y(F)+' '+X(x)+','+Y(0)+'" fill="var(--meter)" opacity=".5" stroke="none"></polygon>'+ln(X(0),Y(0),X(0.1),Y(k*0.1>20?20:k*0.1),2).replace('<line ','<line stroke="var(--neg)" ');
+  [0,5,10].forEach(v=>{g+=tx(X(v/100),214,String(v),{fs:10})});[0,10,20].forEach(v=>{g+=tx(174,Y(v)+4,String(v),{a:'end',fs:10})});
+  $('#wkS').innerHTML=svgWrap('0 0 400 225',g,'spring and force–extension graph');
+  $('#wkK2').innerHTML='<span>F = kx = <b>'+F.toFixed(2)+' N</b></span><span>energy stored = ½Fx = ½kx² = <b>'+(0.5*F*x).toFixed(3)+' J</b> (shaded area)</span>'};
+ $('#wkK').addEventListener('input',upd);$('#wkX').addEventListener('input',upd);upd();
+}
+function wSS(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><span class="seg" id="wsM"><button type="button" aria-pressed="true" data-m="steel">steel (labelled)</button><button type="button" aria-pressed="false" data-m="cmp">compare materials</button></span></div><div class="cvbox" style="height:280px;margin-top:6px"><canvas class="cv" id="wsCv"></canvas></div><p class="small muted" id="wsT" style="margin:6px 0 0"></p></div>');
+ let mode='steel';$$('#wsM button').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.m;$$('#wsM button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));draw()}));
+ const cv=$('#wsCv');const draw=()=>{if(!cv.isConnected)return;const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted'),x0=46,y0=h-30,xw=w-64,yh=h-46;
+  c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0-yh);c.lineTo(x0,y0);c.lineTo(x0+xw,y0);c.stroke();c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('strain',x0+xw-40,y0+18);c.save();c.translate(16,y0-yh/2+20);c.rotate(-Math.PI/2);c.fillText('stress',0,0);c.restore();
+  if(mode==='steel'){const m=MATS.steel,EM=0.3,SM=500e6;// schematic: stretch the elastic region so it is visible
+   const X=e=>x0+Math.pow(e/EM,0.45)*xw,Y=s=>y0-s/SM*yh;c.strokeStyle=cssv('--neg');c.lineWidth=2.6;c.beginPath();let first=true;for(let i=0;i<=600;i++){const e=m.eb*i/600,s=sigma(m,e);if(s===null)break;const px=X(e),py=Y(s);first?c.moveTo(px,py):c.lineTo(px,py);first=false}c.stroke();
+   const pts=[['P',m.P/m.E,m.P,'limit of proportionality'],['E',m.P/m.E*1.12,m.P*1.06,'elastic limit'],['Y₁',m.P/m.E+0.0006,m.Y1,'upper yield point'],['Y₂',0.012,m.Y2,'lower yield point'],['UTS',m.eu,m.U,'ultimate tensile stress'],['B',m.eb,sigma(m,m.eb-1e-6),'breaking point']];
+   c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';pts.forEach((p,i)=>{const px=X(p[1]),py=Y(p[2]);c.fillStyle=cssv('--pos');c.beginPath();c.arc(px,py,4,0,7);c.fill();c.fillText(p[0],px+(i===0?8:i===1?-20:6),py+(i===0?12:i===2?-10:-6))});
+   c.fillStyle='rgba(62,123,250,.08)';c.fillRect(x0,y0-yh,X(m.P/m.E*1.12)-x0,yh);c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('elastic',x0+4,y0-yh+14);c.fillText('plastic',X(0.05),y0-yh+14);
+   $('#wsT').innerHTML='Schematic (the strain axis is stretched at the start so the elastic region is visible). P: limit of proportionality. E: elastic limit. Y₁ and Y₂: yield points, where the wire suddenly stretches plastically. UTS: the maximum stress. After UTS the wire <strong>necks</strong> and breaks at B.'}
+  else{const EM=0.5,SM=500e6,X=e=>x0+Math.pow(e/EM,0.45)*xw,Y=s=>y0-s/SM*yh;[['steel','#E5484D'],['cuA','#D08A2E'],['glP','#3E7BFA']].forEach(k=>{const m=MATS[k[0]];c.strokeStyle=k[1];c.lineWidth=2.4;c.beginPath();let first=true,le=0;for(let i=0;i<=800;i++){const e=(m.eb||m.brk/m.E)*i/800,s=sigma(m,e);if(s===null)break;le=e;first?c.moveTo(X(e),Y(s)):c.lineTo(X(e),Y(s));first=false}c.stroke();c.fillStyle=k[1];c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';const s=sigma(m,le);c.fillText(m.n.replace(' (annealed)','').replace(' rod (polished)',''),X(le)-50,Y(s)-8)});
+   $('#wsT').innerHTML='Steel is stiffer (steeper) and stronger than copper; copper is more <strong>ductile</strong> (it reaches a much larger strain before breaking). Glass is <strong>brittle</strong>: it obeys Hooke’s law right up to fracture, with no plastic region.'}};
+ watch(cv,draw);draw();
+}
+function wDisloc(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><button class="btn alt" type="button" id="wdGo">Apply a shear force</button><button class="btn alt" type="button" id="wdR">Reset</button><label class="small"><input type="checkbox" id="wdI"> add a foreign atom in the slip plane</label></div><div class="cvbox" style="height:220px;margin-top:6px"><canvas class="cv" id="wdCv"></canvas></div><p class="small muted" id="wdT" style="margin:6px 0 0">The extra half-plane of atoms (yellow) is an edge dislocation. It moves one row at a time, breaking only a few bonds at each step.</p></div>');
+ let pos=2,target=2;$('#wdGo').addEventListener('click',()=>{target=Math.min(target+1,11)});$('#wdR').addEventListener('click',()=>{pos=2;target=2});
+ const cv=$('#wdCv');loop(cv,dt=>{const imp=$('#wdI').checked;const bar=6;if(imp&&target>bar)target=bar;pos+=(target-pos)*Math.min(1,dt*4);
+  const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const cols=13,sp=Math.min((w-40)/cols,26),x0=(w-sp*(cols-1))/2,rows=7,y0=h/2-sp*3;const d=pos;
+  for(let r=0;r<rows;r++){const y=y0+r*sp,up=r<3.5;for(let i=0;i<cols;i++){let x=x0+i*sp;if(up){x+=sp*0.5*Math.tanh((i-d)*0.9)-sp*0.5*(i>d?0:0)}c.fillStyle=cssv('--muted');c.beginPath();c.arc(x,y,5,0,7);c.fill()}}
+  for(let r=0;r<4;r++){const y=y0+r*sp;const x=x0+(d+0.5)*sp;c.fillStyle='#F2C12E';c.beginPath();c.arc(x,y,5.5,0,7);c.fill()}
+  if(imp){const x=x0+(bar+1.5)*sp,y=y0+3.5*sp;c.fillStyle='#E5484D';c.beginPath();c.arc(x,y,8,0,7);c.fill()}
+  c.fillStyle=cssv('--ink');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('slip plane',8,y0+3.5*sp+4);c.strokeStyle=cssv('--line');c.setLineDash([4,4]);c.beginPath();c.moveTo(70,y0+3.5*sp);c.lineTo(w-8,y0+3.5*sp);c.stroke();c.setLineDash([]);
+  $('#wdT').innerHTML=imp&&target>=bar?'The foreign atom distorts the lattice and <strong>pins the dislocation</strong>: a larger stress is needed to move it. This is why alloys are stronger.':d>10?'The dislocation has reached the edge: the top half has slipped one atom spacing. This is <strong>plastic deformation</strong>, and it needed far less force than breaking a whole plane of bonds at once.':'The extra half-plane of atoms (yellow) is an edge dislocation. It moves one row at a time, breaking only a few bonds at each step.'});
+}
+function wChain(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><label class="sm" for="wcS" style="min-width:110px">Stretch</label><input type="range" id="wcS" min="0" max="1" step="0.01" value="0" style="flex:1;min-width:140px"></div><div class="cvbox" style="height:160px;margin-top:6px"><canvas class="cv" id="wcCv"></canvas></div></div>');
+ const rnd=mulberry32(5),N=40,ang=[];let a=0;for(let i=0;i<N;i++){a+=(rnd()-0.5)*2.4;ang.push(a)}const cv=$('#wcCv');
+ loop(cv,dt=>{const s=+$('#wcS').value;const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const seg=(w-60)/N;let x=30,y=h/2;c.strokeStyle=cssv('--neg');c.lineWidth=2.4;c.beginPath();c.moveTo(x,y);const jig=(1-s)*0.25;
+  for(let i=0;i<N;i++){const t=ang[i]*(1-s)+Math.sin(performance.now()/300+i)*jig;x+=seg*Math.cos(t)*(0.55+0.45*s);y+=seg*Math.sin(t)*(1-s)*0.8;y=clamp(y,10,h-10);c.lineTo(x,y)}c.stroke();
+  c.fillStyle=cssv('--muted');c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText(s<0.3?'tangled chains: thermal motion keeps them coiled':s<0.8?'chains straightening against thermal motion':'nearly straight: now the bonds themselves stretch, so the rubber stiffens',8,h-8)});
+}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'Density',h:()=>`
+<h2>Density (a reminder)</h2>
+<div class="eqbig">ρ = m / V</div>
+<p>Unit: kg m<sup>−3</sup>. 1 g cm<sup>−3</sup> = 1000 kg m<sup>−3</sup>.</p>
+<table class="t" style="max-width:420px"><thead><tr><th>Material</th><th>ρ / kg m⁻³</th></tr></thead><tbody><tr><td>air</td><td>1.29</td></tr><tr><td>water</td><td>1000</td></tr><tr><td>aluminium</td><td>2700</td></tr><tr><td>iron</td><td>7900</td></tr><tr><td>lead</td><td>11 300</td></tr><tr><td>gold</td><td>19 300</td></tr><tr><td>osmium</td><td>22 610</td></tr></tbody></table>
+<div class="work"><div>A gold ingot 20 cm × 10 cm × 4 cm: V = 800 cm³ = 8.0 × 10⁻⁴ m³</div><div>m = ρV = 19 300 × 8.0 × 10⁻⁴ = 15.4 kg; weight = 15.4 × 9.81 = 151 N</div></div>`,
+chk:[['Convert 0.80 g cm⁻³ into kg m⁻³.','800 kg m⁻³']]},
+
+{t:'Hooke’s law',h:()=>`
+<h2>Hooke’s law</h2>
+<p><strong>Hooke’s law:</strong> the extension of a spring (or wire) is directly proportional to the force applied, provided the limit of proportionality is not exceeded.</p>
+<div class="eqbig">F = kx</div>
+<p>The <strong>spring constant</strong> k is the force per unit extension (N m<sup>−1</sup>).</p>
+<p>Below the <strong>elastic limit</strong> the spring returns to its original length when the force is removed: elastic behaviour. Beyond it, it is permanently stretched: plastic behaviour.</p>
+<div class="work"><div>A 15 cm spring extends 3.0 cm under 6.0 N: k = 6.0/0.030 = 200 N m⁻¹</div><div>Under 18 N: x = 18/200 = 0.090 m, so its length is 15 + 9 = 24 cm</div></div>`,
+chk:[['A spring has k = 50 N m⁻¹. What force stretches it by 4.0 cm?','F = kx = 50 × 0.040 = 2.0 N']]},
+
+{t:'Elastic strain energy',h:()=>`
+<h2>Work done and elastic strain energy</h2>
+<p>The work done stretching a spring or wire is the <strong>area under the force–extension graph</strong>. If Hooke’s law is obeyed this is a triangle:</p>
+<div class="eqbig">W = ½Fx = ½kx²</div>
+<p>This work is stored as <strong>elastic strain energy</strong>.</p>
+<div class="work"><div>A 20 cm spring extends to 25 cm under 4.0 N: energy = ½ × 4.0 × 0.050 = 0.10 J; k = 4.0/0.050 = 80 N m⁻¹</div><div>To store 0.50 J: x = √(2 × 0.50/80) = 0.112 m, so the length is 31.2 cm</div></div>`,
+after:el=>wSpring(el.querySelector('.wslot')),
+chk:[['Double the extension (Hooke’s law obeyed). What happens to the energy stored?','It quadruples: W = ½kx².']]},
+
+{t:'Stress and strain',h:()=>`
+<h2>Tensile stress and strain</h2>
+<div class="eqbig">σ = F / A &nbsp;&nbsp;&nbsp; ε = Δl / l</div>
+<p><strong>Stress</strong> is the force per unit cross-sectional area (Pa = N m<sup>−2</sup>). <strong>Strain</strong> is the extension per unit original length: a ratio with no unit. The <strong>breaking stress</strong> is the stress needed to break the material.</p>
+<p>For a wire of diameter D, A = πD²/4. Remember 1 mm² = 10<sup>−6</sup> m².</p>
+<div class="work"><div>A 2.5 m wire, 0.50 mm in diameter, extends 5.0 cm under 40 N:</div><div>ε = 0.050/2.5 = 0.020; A = π(0.50 × 10⁻³)²/4 = 1.96 × 10⁻⁷ m²; σ = 40/1.96 × 10⁻⁷ = 2.0 × 10⁸ Pa</div><div>With breaking stress 1.5 × 10⁹ Pa: breaking force = σA = 294 N</div></div>`,
+chk:[['Why use stress and strain rather than force and extension?','They do not depend on the sample’s size, so they describe the material itself.']]},
+
+{t:'The Young modulus',h:()=>`
+<h2>The Young modulus</h2>
+<div class="eqbig">E = σ / ε = Fl / AΔl</div>
+<p>The Young modulus measures a material’s <strong>stiffness</strong>. It applies only while Hooke’s law is obeyed, and it is the <strong>gradient of the linear part of a stress–strain graph</strong>. Unit: Pa.</p>
+<table class="t" style="max-width:380px"><thead><tr><th>Material</th><th>E / 10⁹ Pa</th></tr></thead><tbody><tr><td>diamond</td><td>1200</td></tr><tr><td>steel</td><td>210</td></tr><tr><td>copper</td><td>130</td></tr><tr><td>brass</td><td>100</td></tr><tr><td>glass</td><td>80</td></tr><tr><td>oak</td><td>12</td></tr><tr><td>rubber</td><td>0.02</td></tr></tbody></table>
+<div class="work"><div>A 1.6 m wire of area 0.80 mm² extends 4.0 mm under 200 N:</div><div>ε = 0.0025; σ = 200/0.80 × 10⁻⁶ = 2.5 × 10⁸ Pa; E = 1.0 × 10¹¹ Pa</div></div>`,
+chk:[['Steel is under a stress of 4.0 × 10⁷ Pa. What is the strain?','ε = σ/E = 4.0 × 10⁷/210 × 10⁹ = 1.9 × 10⁻⁴']]},
+
+{t:'Measuring E',h:()=>`
+<h2>Measuring the Young modulus of a wire</h2>
+<ol><li>Hang two identical long, thin wires from the same beam: the <strong>test</strong> wire and a <strong>comparison</strong> wire, each with a small weight to keep it straight. A vernier links the two.</li><li>Measure the original length l of the test wire with a metre rule.</li><li>Measure the diameter with a micrometer at several places and orientations; check for a zero error. Find the mean area A = πD²/4.</li><li>Add loads in 5 N steps, reading the extension x on the vernier each time.</li><li>Plot F (y-axis) against x (x-axis). The gradient is F/x, so <span class="eq">E = gradient × l/A</span>.</li></ol>
+<h3>Why?</h3>
+<ul><li>A <strong>long, thin</strong> wire gives a larger, more measurable extension.</li><li>The <strong>comparison wire</strong> expands equally if the temperature changes, and cancels any sagging of the beam.</li><li>Stop before the limit of proportionality (strain well below about 0.01).</li></ul>`,
+chk:[['What is the most important source of uncertainty, and why?','Usually the diameter: it is tiny, and it is squared in A = πD²/4, which doubles its percentage uncertainty.']]},
+
+{t:'Stress–strain curves',h:()=>`
+<h2>Stress–strain curves</h2>
+<ul><li><strong>Limit of proportionality (P):</strong> up to here, stress ∝ strain.</li><li><strong>Elastic limit (E):</strong> close to P. Beyond it the material is permanently deformed: <strong>plastic strain</strong>. Up to it the strain is <strong>elastic</strong>, and all of it disappears when the load is removed.</li><li><strong>Yield point:</strong> the material suddenly stretches plastically with little or no extra stress.</li><li><strong>Ultimate tensile stress (UTS):</strong> the maximum stress. Beyond it the wire <strong>necks</strong> (thins at its weakest point) and breaks at the <strong>breaking point</strong>: a ductile fracture.</li></ul>
+<p>If a metal is unloaded after going beyond the elastic limit, it returns along a line parallel to the original elastic line, leaving a <strong>permanent strain</strong>.</p>`,
+after:el=>wSS(el.querySelector('.wslot')),
+chk:[['What does it mean for copper to be more ductile than steel?','It can undergo a much larger plastic strain before breaking, so it can be drawn into wires.']]},
+
+{t:'Types of solid',h:()=>`
+<h2>Classifying solids</h2>
+<ul><li><strong>Crystalline:</strong> atoms regularly arranged in a lattice, ordered over long distances. Metals are <strong>polycrystalline</strong>: many small crystals (grains) at random orientations.</li><li><strong>Amorphous:</strong> no long-range order; atoms arranged randomly. Glasses and ceramics are examples. They often form when a liquid cools too quickly for crystals to grow.</li><li><strong>Polymeric:</strong> made of long chain-like molecules, e.g. rubber and polythene.</li></ul>`,
+chk:[['Which type of solid is glass?','Amorphous.']]},
+
+{t:'Dislocations',h:()=>`
+<h2>Dislocations and the strength of metals</h2>
+<p>Real metal crystals contain <strong>dislocations</strong>. An <strong>edge dislocation</strong> is an extra half-plane of atoms. Under a shear stress it moves through the crystal one row at a time, so only a few bonds break at once. The top of the crystal slips relative to the bottom: <strong>plastic deformation</strong>. This needs much less stress than breaking a whole plane of bonds simultaneously, which is why metals yield.</p>
+<h3>Strengthening metals</h3>
+<p>Anything that blocks dislocation movement makes the metal stronger (and usually less ductile):</p>
+<ul><li><strong>Foreign atoms</strong>, as in alloys (brass, steel), distort the lattice and pin dislocations.</li><li><strong>Other dislocations</strong>: working the metal creates more dislocations that tangle together (work hardening).</li><li><strong>More grain boundaries</strong> (smaller grains): dislocations cannot cross a grain boundary.</li></ul>`,
+after:el=>wDisloc(el.querySelector('.wslot')),
+chk:[['Why is work-hardened copper stronger but less ductile than annealed copper?','It contains many tangled dislocations that block each other, so a greater stress is needed for slip and less plastic deformation is possible.']]},
+
+{t:'Ductile and brittle fracture',h:()=>`
+<h2>Ductile and brittle fracture</h2>
+<h3>Ductile fracture</h3>
+<p>Extensive plastic deformation and <strong>necking</strong>: the material thins and pulls apart rather than cracking.</p>
+<h3>Brittle fracture</h3>
+<p>A brittle material such as glass obeys Hooke’s law right up to fracture, with no plastic region. Being amorphous, it has no dislocations to move. It breaks by <strong>crack propagation</strong>: at the tip of a surface crack the stress is concentrated, the bonds there break, the crack grows, and the stress at its new tip is even larger.</p>
+<p>Brittle materials are weak in tension but strong in compression. Their breaking stress can be increased by:</p>
+<ul><li><strong>reducing surface imperfections</strong>, as in thin glass fibres, which have very few surface cracks;</li><li><strong>putting the surface under compression</strong>, as in toughened glass or pre-stressed concrete, so cracks are squeezed shut;</li><li>using <strong>composites</strong>, where a crack is stopped when it reaches a different material.</li></ul>`,
+chk:[['Why is a scratched glass rod much weaker than a polished one?','The scratch concentrates stress at its tip, so a crack propagates at a much lower applied stress.']]},
+
+{t:'Rubber and hysteresis',h:()=>`
+<h2>Rubber and hysteresis</h2>
+<p>Rubber is a polymer of long, tangled chain molecules with a few cross-links. Thermal motion keeps the chains coiled. Stretching rubber mostly <strong>straightens the chains against this thermal opposition</strong> rather than stretching bonds, so:</p>
+<ul><li>its Young modulus is very <strong>low</strong>, and it can reach huge strains;</li><li>Hooke’s law is only approximately obeyed, near the start;</li><li>once the chains are nearly straight, the bonds themselves stretch and it becomes much stiffer.</li></ul>
+<h3>Hysteresis</h3>
+<p>The unloading curve lies <strong>below</strong> the loading curve. The work done stretching the rubber is the area under the loading curve, but only the area under the unloading curve is returned. The area of the <strong>hysteresis loop</strong> is the energy transferred to internal energy: the rubber gets warm. The rubber may not quite return to its original length: a small <strong>permanent set</strong>.</p>`,
+after:el=>wChain(el.querySelector('.wslot')),
+chk:[['A rubber band is stretched and relaxed rapidly many times. What happens, and why?','It warms up: each cycle transfers energy equal to the loop area to internal energy.']]}
+];
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+
+/* ---------- calculation drills ---------- */
+function Q(text,ans,unit,work,pts,tol){return {text,ans,unit,work,pts:pts||1,tol:tol||0.015}}
+const f3=x=>sci(x,3);
+const DR={
+ dens:{n:'Density',g(s){
+  const M=pick([['aluminium',2700],['iron',7900],['lead',11300],['gold',19300],['copper',8900]]),v=s?rint(0,2):rint(0,1);
+  if(v===0){const V=rint(2,50)*1e-5;return Q(`Find the mass of ${f3(V)} m³ of ${M[0]} (ρ = ${M[1]} kg m<sup>−3</sup>).`,M[1]*V,'kg',[`m = ρV = ${M[1]} × ${f3(V)}`,`= ${f3(M[1]*V)} kg`])}
+  if(v===1){const m=rint(1,40)/10,V=m/M[1];return Q(`A ${m} kg block has a volume of ${f3(V)} m³. Find its density.`,M[1],'kg m⁻³',[`ρ = m/V = ${m} / ${f3(V)}`,`= ${f3(M[1])} kg m<sup>−3</sup>`])}
+  const a=rint(2,20),b=rint(2,10),c=rint(1,5),V=a*b*c*1e-6,W=M[1]*V*G0;return Q(`Find the weight of a ${M[0]} block measuring ${a} cm × ${b} cm × ${c} cm (ρ = ${M[1]} kg m<sup>−3</sup>).`,W,'N',[`V = ${a*b*c} cm³ = ${f3(V)} m³`,`m = ρV = ${f3(M[1]*V)} kg`,`W = mg = ${f3(W)} N`],2)}},
+ hooke:{n:'Hooke’s law',g(s){
+  const k=pick([20,40,50,80,120,200,450]),x=rint(1,20)/100,F=k*x,v=s?rint(0,2):rint(0,1);
+  if(v===0)return Q(`A force of ${f3(F)} N extends a spring by ${x*100} cm. Find the spring constant.`,k,'N m⁻¹',[`k = F/x`,`= ${f3(F)} / ${x}`,`= ${f3(k)} N m<sup>−1</sup>`]);
+  if(v===1)return Q(`A spring has k = ${k} N m<sup>−1</sup>. What force extends it by ${x*100} cm?`,F,'N',[`F = kx = ${k} × ${x}`,`= ${f3(F)} N`]);
+  const L0=rint(10,30),F1=rint(2,8),x1=rint(2,6),F2=F1*rint(2,4);return Q(`A spring of natural length ${L0} cm extends by ${x1} cm under ${F1} N. What is its length under ${F2} N?`,L0+x1*F2/F1,'cm',[`k = ${F1} / ${x1/100} = ${f3(F1/(x1/100))} N m<sup>−1</sup>`,`x = ${F2}/k = ${f3(x1*F2/F1)} cm`,`length = ${L0} + ${f3(x1*F2/F1)} = ${f3(L0+x1*F2/F1)} cm`],2)}},
+ energy:{n:'Strain energy',g(s){
+  const k=pick([40,80,100,200,500]),x=rint(2,20)/100,F=k*x,v=s?rint(0,2):rint(0,1);
+  if(v===0)return Q(`A force of ${f3(F)} N stretches a spring by ${x*100} cm (Hooke’s law obeyed). Find the energy stored.`,0.5*F*x,'J',[`E = ½Fx`,`= ½ × ${f3(F)} × ${x}`,`= ${f3(0.5*F*x)} J`]);
+  if(v===1)return Q(`Find the energy stored in a spring of k = ${k} N m<sup>−1</sup> extended by ${x*100} cm.`,0.5*k*x*x,'J',[`E = ½kx²`,`= ½ × ${k} × ${x}²`,`= ${f3(0.5*k*x*x)} J`]);
+  const E=pick([0.1,0.25,0.5,1,2]);return Q(`What extension of a spring with k = ${k} N m<sup>−1</sup> stores ${E} J?`,Math.sqrt(2*E/k)*100,'cm',[`½kx² = E, so x = √(2E/k)`,`= √(2 × ${E} / ${k})`,`= ${f3(Math.sqrt(2*E/k))} m = ${f3(Math.sqrt(2*E/k)*100)} cm`],2)}},
+ stress:{n:'Stress and strain',g(s){
+  const D=pick([0.2,0.3,0.4,0.5,0.8,1.0]),A=Math.PI*Math.pow(D*1e-3,2)/4,F=pick([10,20,40,50,80,120]),L=pick([0.8,1.2,1.5,2,2.5]),dL=rint(1,50)/10,v=s?rint(0,3):rint(0,1);
+  if(v===0)return Q(`A wire of original length ${L} m extends by ${dL} mm. Find the strain.`,dL/1000/L,'',[`ε = Δl/l = ${dL/1000} / ${L}`,`= ${f3(dL/1000/L)}`]);
+  if(v===1)return Q(`A force of ${F} N acts on a wire of diameter ${D} mm. Find the stress.`,F/A,'Pa',[`A = πD²/4 = π × (${D} × 10<sup>−3</sup>)² / 4 = ${f3(A)} m²`,`σ = F/A = ${F} / ${f3(A)}`,`= ${f3(F/A)} Pa`]);
+  if(v===2){const bs=pick([4e8,8e8,1.5e9]);return Q(`A wire of diameter ${D} mm has a breaking stress of ${f3(bs)} Pa. What force breaks it?`,bs*A,'N',[`A = πD²/4 = ${f3(A)} m²`,`F = σA = ${f3(bs)} × ${f3(A)}`,`= ${f3(bs*A)} N`],2)}
+  const Am=rint(2,20)/10;return Q(`A cable of cross-sectional area ${Am} mm² carries a tension of ${F} N. Find the stress.`,F/(Am*1e-6),'Pa',[`A = ${Am} × 10<sup>−6</sup> m²`,`σ = ${F} / ${f3(Am*1e-6)}`,`= ${f3(F/(Am*1e-6))} Pa`],2)}},
+ young:{n:'Young modulus',g(s){
+  const M=pick([['steel',210e9],['copper',130e9],['brass',100e9],['aluminium',70e9]]),D=pick([0.3,0.4,0.5,0.8]),A=Math.PI*Math.pow(D*1e-3,2)/4,L=pick([1.5,2,2.5,3]),F=pick([20,40,50,60]),dL=F*L/(A*M[1]),v=s?rint(0,3):rint(0,1);
+  if(v===0){const st=F/A,sn=dL/L;return Q(`A wire under a stress of ${f3(st)} Pa has a strain of ${f3(sn)}. Find the Young modulus.`,st/sn,'Pa',[`E = σ/ε = ${f3(st)} / ${f3(sn)}`,`= ${f3(st/sn)} Pa`])}
+  if(v===1){const Am=Number((A*1e6).toPrecision(3));return Q(`A ${M[0]} wire of length ${L} m and area ${Am} mm² extends by ${f3(dL*1000)} mm under ${F} N. Find its Young modulus.`,F*L/(Am*1e-6*dL),'Pa',[`E = Fl/AΔl`,`= ${F} × ${L} / (${Am} × 10<sup>−6</sup> × ${f3(dL)})`,`= ${f3(F*L/(Am*1e-6*dL))} Pa`])}
+  if(v===2)return Q(`A ${M[0]} wire (E = ${f3(M[1])} Pa) of length ${L} m and diameter ${D} mm carries ${F} N. Find its extension in mm.`,dL*1000,'mm',[`A = πD²/4 = ${f3(A)} m²`,`Δl = Fl/AE = ${F} × ${L} / (${f3(A)} × ${f3(M[1])})`,`= ${f3(dL)} m = ${f3(dL*1000)} mm`],2);
+  const k=pick([2,3]);return Q(`Two wires of the same material and length carry the same load. Wire X has ${k} times the diameter of wire Y. What is (extension of Y) ÷ (extension of X)?`,k*k,'',[`Δl = Fl/AE ∝ 1/A ∝ 1/D²`,`ratio = ${k}² = ${k*k}`],2)}}
+};
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" inputmode="decimal" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const check=()=>{const v=parseNum(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example 2.1e11.');return}
+  const ok=close(v,drQ.ans,drQ.tol);
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+sci(drQ.ans,3)+' '+drQ.unit+wk());
+  else{let hint='';const r=v/drQ.ans,lg=Math.log10(Math.abs(r));
+   if(Math.abs(lg-Math.round(lg))<0.01&&Math.round(lg)!==0)hint=' Your number is out by a factor of 10<sup>'+Math.round(lg)+'</sup>: check mm, mm² and cm conversions.';
+   else if(close(v,drQ.ans*4,0.02)||close(v,drQ.ans/4,0.02))hint=' Out by a factor of 4: did you use the diameter instead of the radius (A = πD²/4)?';
+   else if(close(v,drQ.ans*2,0.02)||close(v,drQ.ans/2,0.02))hint=' Out by a factor of 2: remember the ½ in ½Fx.';
+   fb(out,'no','<strong>Not quite.</strong>'+hint+' The answer is '+sci(drQ.ans,3)+' '+drQ.unit+'.'+wk())}
+ };
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+
+/* ---------- concept quiz ---------- */
+const QB=[
+['Hooke’s law states that:',['extension is proportional to the applied force, up to the limit of proportionality','force is proportional to length','stress is always proportional to strain','extension is proportional to the square of the force'],0,'F = kx.'],
+['The spring constant is:',['the force per unit extension','the extension per unit force','the energy per unit extension','the force per unit length'],0,'Unit: N m⁻¹.'],
+['A material returns to its original length when the load is removed if it has not passed its:',['elastic limit','ultimate tensile stress','breaking point','yield point only'],0,'Beyond it, deformation is plastic.'],
+['The work done stretching a spring is equal to:',['the area under the force–extension graph','the gradient of the force–extension graph','force × original length','the spring constant × extension'],0,'½Fx when Hooke’s law is obeyed.'],
+['If the extension of a spring is doubled (Hooke’s law obeyed), the energy stored:',['increases four times','doubles','halves','is unchanged'],0,'½kx².'],
+['Tensile stress is:',['force per unit cross-sectional area','extension per unit length','force per unit extension','force × area'],0,'σ = F/A, unit Pa.'],
+['Tensile strain has the unit:',['none: it is a ratio','m','Pa','N m⁻¹'],0,'Δl/l.'],
+['The Young modulus is:',['stress ÷ strain, while Hooke’s law applies','strain ÷ stress','force ÷ extension','the breaking stress'],0,'It measures stiffness.'],
+['On a stress–strain graph, the Young modulus is:',['the gradient of the linear section','the area under the graph','the maximum stress','the strain at breaking'],0,'Gradient = σ/ε.'],
+['Two wires of the same material and length, one with twice the diameter, carry the same load. The thicker wire’s extension is:',['one quarter','one half','the same','double'],0,'Area is four times bigger.'],
+['In the Young modulus experiment, the comparison wire is used to:',['cancel the effects of temperature changes and sagging of the support','increase the load','measure the diameter','make the wire straight'],0,'Both wires are affected equally.'],
+['A long, thin test wire is used so that:',['the extension is large enough to measure accurately','the wire is stronger','the stress is small','the wire does not break'],0,'Δl = Fl/AE.'],
+['The diameter of the test wire is measured in several places because:',['the wire may not be perfectly uniform, so a mean is needed','the micrometer is inaccurate','the wire stretches','it improves the resolution'],0,'Also check for a zero error.'],
+['The largest percentage uncertainty in finding E usually comes from:',['the diameter of the wire','the length of the wire','the load','g'],0,'It is small and is squared.'],
+['The ultimate tensile stress is:',['the maximum stress a material can withstand','the stress at the elastic limit','the stress at the yield point','the stress at breaking'],0,'After UTS, necking begins.'],
+['Necking happens in:',['ductile materials after the UTS','brittle materials before breaking','rubber when unloaded','glass fibres'],0,'The wire thins at its weakest point.'],
+['Plastic deformation in metals happens mainly by:',['the movement of dislocations','bonds stretching elastically','atoms evaporating','cracks propagating'],0,'An edge dislocation moves row by row.'],
+['Adding foreign atoms to a metal (making an alloy) makes it:',['stronger, because the atoms pin dislocations','weaker','more ductile','amorphous'],0,'Brass and steel are alloys.'],
+['Work hardening strengthens a metal because:',['extra dislocations tangle and block one another','the grains grow larger','the metal becomes amorphous','the dislocations disappear'],0,'It also becomes less ductile.'],
+['Making the grains of a metal smaller:',['strengthens it, because dislocations cannot cross grain boundaries','weakens it','has no effect','makes it brittle like glass'],0,'More grain boundaries, more barriers.'],
+['Glass is:',['amorphous','polycrystalline','polymeric','a single crystal'],0,'No long-range order.'],
+['Rubber is:',['polymeric','crystalline','amorphous like glass','a metal'],0,'Long chain molecules.'],
+['A brittle material:',['obeys Hooke’s law up to fracture, with no plastic region','necks before breaking','has a yield point','shows hysteresis'],0,'Glass is the classic example.'],
+['Glass breaks at a much lower stress than expected because of:',['crack propagation from surface imperfections','dislocations','necking','hysteresis'],0,'Stress concentrates at a crack tip.'],
+['Thin glass fibres are much stronger than glass rods because:',['they have far fewer surface cracks','they are crystalline','they are ductile','they contain dislocations'],0,'Fewer imperfections to start a crack.'],
+['Toughened glass is strong because:',['its surface is under compression, which holds cracks closed','it contains metal atoms','it is thicker','it is ductile'],0,'The same idea as pre-stressed concrete.'],
+['Pre-stressed concrete works by:',['keeping the concrete under compression so cracks cannot open','making concrete ductile','stretching the concrete','removing dislocations'],0,'Concrete is strong in compression, weak in tension.'],
+['Rubber has a very low Young modulus because stretching it mainly:',['straightens tangled chain molecules against thermal motion','stretches strong covalent bonds','moves dislocations','breaks cross-links'],0,'Only later do the bonds themselves stretch.'],
+['For rubber, Hooke’s law is:',['only approximately obeyed, near the start','exactly obeyed up to breaking','never obeyed at all','obeyed only when unloading'],0,'Its force–extension graph is curved.'],
+['In a hysteresis loop for rubber, the area enclosed represents:',['energy transferred to internal energy (heating) in one cycle','the energy stored','the work done by the rubber','the Young modulus'],0,'The rubber warms up.'],
+['For rubber, at a given extension the unloading force is:',['less than the loading force','greater than the loading force','equal to the loading force','zero'],0,'So less energy is returned than was supplied.'],
+['A permanent set is:',['a small extension that remains after the load is removed','the maximum extension','the breaking point','the elastic limit'],0,'Seen in rubber and in metals loaded beyond the elastic limit.'],
+['A metal loaded beyond its elastic limit and then unloaded returns along:',['a line parallel to the original elastic line','the same curve','the strain axis','a curve through the origin'],0,'Leaving a permanent strain.'],
+['Copper is more ductile than steel. This means copper:',['can be stretched to a much larger strain before breaking','is stiffer','has a higher UTS','is brittle'],0,'Steel is stronger and stiffer.']
+];
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+
+/* ---------- graph match ---------- */
+const CURVES={
+ hooke:{xl:'x',yl:'F',f:x=>x<0.6?1.25*x:x<0.9?0.75+0.9*(x-0.6)-0.9*Math.pow(x-0.6,2)*2:null},
+ duct:{xl:'strain',yl:'stress',f:x=>{if(x<0.05)return 10*x;if(x<0.12)return 0.5+0.05*(x-0.05)/0.07;if(x<0.7)return 0.55+0.3*(1-Math.pow(1-(x-0.12)/0.58,2));if(x<0.9)return 0.85-0.25*Math.pow((x-0.7)/0.2,2);return null}},
+ brit:{xl:'strain',yl:'stress',f:x=>x<0.55?1.4*x:null},
+ rub:{xl:'x',yl:'F',f:x=>{const s=x=>0.5*x+0.4*Math.pow(Math.max(0,x-0.55),2)*6;return Math.min(0.95,s(x)*(x<0.95?1:1))},two:x=>{if(x<0.08)return null;const p=(x-0.08)/(0.92-0.08);const top=Math.min(0.95,0.5*0.92+0.4*Math.pow(0.37,2)*6);return top*Math.pow(p,2.3)}},
+ en:{xl:'x',yl:'energy',f:x=>0.85*x*x},
+ perm:{xl:'strain',yl:'stress',f:x=>{if(x<0.08)return 8*x;if(x<0.6)return 0.64+0.2*(1-Math.exp(-(x-0.08)/0.15));return null},two:x=>{const e1=0.6,s1=0.64+0.2*(1-Math.exp(-0.52/0.15)),e0=e1-s1/8;return x<e0||x>e1?null:8*(x-e0)}}
+};
+function drawCurve(cv,type){
+ const W=300,H=200,d=2;cv.width=W*d;cv.height=H*d;const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);c.clearRect(0,0,W,H);
+ const ink=cssv('--ink'),mut=cssv('--muted'),neg=cssv('--neg');const C=CURVES[type];
+ const x0=40,xw=W-60,y0=H-28,sc=H-44;
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0);c.lineTo(x0+xw+6,y0);c.moveTo(x0,y0);c.lineTo(x0,12);c.stroke();
+ c.fillStyle=ink;c.beginPath();c.moveTo(x0+xw+8,y0);c.lineTo(x0+xw+1,y0-4);c.lineTo(x0+xw+1,y0+4);c.fill();c.beginPath();c.moveTo(x0,10);c.lineTo(x0-4,17);c.lineTo(x0+4,17);c.fill();
+ c.font='bold 14px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText(C.xl,x0+xw+6,y0+18);c.textAlign='left';c.fillText(C.yl,x0+8,22);
+ c.fillStyle=mut;c.font='13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='right';c.fillText('0',x0-6,y0+14);
+ [C.f,C.two].forEach((fn,k)=>{if(!fn)return;c.strokeStyle=k?cssv('--pos'):neg;c.lineWidth=2.6;if(k)c.setLineDash([6,4]);c.beginPath();let st=false;for(let i=0;i<=300;i++){const x=i/300,y=fn(x);if(y===null||y>1.05){st=false;continue}const X=x0+x*xw,Y=y0-y*sc;if(!st){c.moveTo(X,Y);st=true}else c.lineTo(X,Y)}c.stroke();c.setLineDash([])});
+ if(type==='brit'){c.fillStyle=neg;c.font='bold 13px Arial';c.fillText('×',x0+0.55*xw-4,y0-0.77*sc+5)}
+}
+const GM=[['hooke','Spring: Hooke’s law up to the limit of proportionality'],['duct','Ductile metal (e.g. copper) to fracture'],['brit','Brittle material (e.g. glass)'],['rub','Rubber: loading and unloading'],['en','Strain energy stored against extension'],['perm','Metal loaded beyond its elastic limit, then unloaded']];
+let gmSel=null,gmPlace={},gmOrder=[];
+function gmStart(){
+ gmOrder=shuffle(GM.map(s=>s[0]));gmPlace={};gmSel=null;$('#gmFb').className='fb';
+ $('#gmGrid').innerHTML=gmOrder.map((k,i)=>'<button type="button" class="mcell" data-i="'+i+'"><canvas style="width:100%;height:auto;display:block" data-c="'+k+'"></canvas><span class="lab">Tap to place a label</span></button>').join('');
+ $$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c));
+ $('#gmPool').innerHTML=shuffle(GM).map(s=>'<button type="button" class="chip" data-k="'+s[0]+'" aria-pressed="false">'+s[1]+'</button>').join('');
+ $$('#gmPool .chip').forEach(b=>b.addEventListener('click',()=>{gmSel=gmSel===b.dataset.k?null:b.dataset.k;gmPaint()}));
+ $$('#gmGrid .mcell').forEach(b=>b.addEventListener('click',()=>{const i=+b.dataset.i;
+  if(gmSel!==null){for(const j in gmPlace)if(gmPlace[j]===gmSel)delete gmPlace[j];gmPlace[i]=gmSel;gmSel=null}else if(gmPlace[i]!==undefined)delete gmPlace[i];gmPaint()}));
+ gmPaint();
+}
+function gmPaint(){
+ const used=Object.values(gmPlace);
+ $$('#gmPool .chip').forEach(b=>{b.setAttribute('aria-pressed',gmSel===b.dataset.k?'true':'false');b.classList.toggle('used',used.includes(b.dataset.k))});
+ $$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,k=gmPlace[i];b.classList.remove('right','wrong');b.classList.toggle('sel',gmSel!==null);$('.lab',b).textContent=k?GM.find(s=>s[0]===k)[1]:(gmSel?'Place here':'Tap to place a label')});
+}
+$('#gmCheck').addEventListener('click',()=>{let n=0;$$('#gmGrid .mcell').forEach(b=>{const i=+b.dataset.i,ok=gmPlace[i]===gmOrder[i];if(ok)n++;b.classList.add(ok?'right':'wrong')});
+ if(Object.keys(gmPlace).length<GM.length){fb($('#gmFb'),'info','Place every label before checking. '+n+' correct so far.');return}
+ if(n===GM.length){award(GM.length);fb($('#gmFb'),'ok','<strong>All '+n+' correct.</strong>')}else{miss();fb($('#gmFb'),'no',n+' of '+GM.length+' correct. Move the labels with red borders and check again.')}});
+$('#gmNew').addEventListener('click',gmStart);
+redrawers.push(()=>$$('#gmGrid canvas').forEach(cv=>drawCurve(cv,cv.dataset.c)));
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p,p2){this.p=p.slice();this.p2=p2?p2.slice():null;this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  const all=this.p.concat(this.p2||[]);if(all.length){const xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.p2){c.strokeStyle=cssv('--ok');c.lineWidth=2;this.p2.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.arc(P[0],P[1],5,0,7);c.stroke()})}
+  if(o.curve){c.strokeStyle=cssv('--muted');c.setLineDash([6,5]);c.lineWidth=2;c.beginPath();for(let i=0;i<=200;i++){const x=X[0]+(X[1]-X[0])*i/200,y=o.curve(x);if(!isFinite(y))continue;const P=px(x,y);i?c.lineTo(P[0],P[1]):c.moveTo(P[0],P[1])}c.stroke();c.setLineDash([])}
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+function gauss(){let u=0,v=0;while(u===0)u=R();while(v===0)v=R();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+
+/* ============ LAB 1: Young modulus of a wire ============ */
+const METALS=[['steel',200e9,212e9,1.0e9,0.28,0.32],['brass',100e9,110e9,3.2e8,0.46,0.50],['copper',118e9,130e9,2.6e8,0.56,0.60]];
+const Y1={F:0,data:[],mic:{mode:'zero',k:0,zeroIn:null,reads:[],jz:0,n:0}};
+(function(){const g=kitRng(91);const M=METALS[Math.floor(g()*3)];Y1.metal=M[0];Y1.E=M[1]+g()*(M[2]-M[1]);Y1.P=M[3];Y1.d=(M[4]+g()*(M[5]-M[4]))*1e-3;Y1.dl=Array.from({length:7},()=>Y1.d*(1+(g()-0.5)*0.012));Y1.dm=Y1.dl.reduce((a,b)=>a+b,0)/7;Y1.A=Math.PI*Y1.dm*Y1.dm/4;
+ Y1.l=Math.round((1.8+g()*0.4)*1000)/1000;Y1.r0=Math.round((10+g()*20)*10)/10+0.03;Y1.zM=Math.round((g()-0.4)*5)/100;Y1.nz={};})();
+function y1X(F){const s=F/Y1.A;let x=F*Y1.l/(Y1.A*Y1.E);if(s>Y1.P)x+=3*(s-Y1.P)/Y1.E*Y1.l;if(Y1.nz[F]===undefined)Y1.nz[F]=gauss()*0.015e-3;return x+Y1.nz[F]}
+function y1R(){return Y1.r0+y1X(Y1.F)*1000}
+function y1Ap(){const cv=$('#y1Ap');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted'),x1=w*0.4,x2=w*0.6;
+ c.fillStyle='#6B7078';c.fillRect(w*0.2,8,w*0.6,10);c.strokeStyle='#8C96A6';c.lineWidth=1.5;c.beginPath();c.moveTo(x1,18);c.lineTo(x1,h-60);c.moveTo(x2,18);c.lineTo(x2,h-60+Y1.F*0.25);c.stroke();
+ c.fillStyle='#C9CDD2';c.fillRect(x1-10,h-100,20,40);c.fillStyle='#E7D7A8';c.fillRect(x2-8,h-96+Y1.F*0.25,16,30);c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('main scale',x1-72,h-78);c.fillText('vernier',x2+12,h-78+Y1.F*0.25);
+ c.fillStyle='#5A5F66';c.fillRect(x1-12,h-58,24,16);const n=Math.round(Y1.F/5);c.fillStyle='#3B4046';for(let i=0;i<=n;i++){c.fillRect(x2-14,h-58+Y1.F*0.25+i*6,28,5)}
+ c.fillStyle=ink;c.fillText('comparison wire',x1-100,34);c.fillText('test wire',x2+8,34);c.fillText('load '+Y1.F+' N',x2+20,h-44+Y1.F*0.25)}
+function y1Vn(){const cv=$('#y1Vn');const {c,w,h}=fitCanvas(cv);c.fillStyle=cssv('--panel2');c.fillRect(0,0,w,h);const r=y1R(),ppm=Math.min(34,w/16),cx=w*0.35,X=mm=>cx+(mm-(r-3))*ppm,mid=h/2;
+ c.fillStyle='#EDE4CC';c.fillRect(0,mid-44,w,44);c.fillStyle='#D8DCE0';c.fillRect(0,mid,w,44);c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+ for(let mm=Math.floor(r-8);mm<=Math.ceil(r+14);mm++){const x=X(mm);if(x<0||x>w)continue;const L=mm%10===0?26:mm%5===0?18:12;c.lineWidth=mm%10===0?1.6:1;c.beginPath();c.moveTo(x,mid);c.lineTo(x,mid-L);c.stroke();if(mm%10===0)c.fillText(String(mm/10),x,mid-30)}
+ for(let k=0;k<=10;k++){const x=X(r+k*0.9);c.lineWidth=k%5===0?1.6:1;c.beginPath();c.moveTo(x,mid);c.lineTo(x,mid+(k%5===0?22:14));c.stroke();if(k%5===0)c.fillText(String(k),x,mid+36)}
+ c.textAlign='left';c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillStyle=cssv('--muted');c.fillText('main scale: cm numbers, mm divisions',6,12);c.fillText('vernier: 10 divisions = 9 mm',6,h-4)}
+function y1Upd(){$('#y1Load').textContent='added load: '+Y1.F+' N';y1Ap();y1Vn()}
+$('#y1Up').addEventListener('click',()=>{if(Y1.F<60){Y1.F+=5;y1Upd()}});$('#y1Dn').addEventListener('click',()=>{if(Y1.F>0){Y1.F-=5;y1Upd()}});
+watch($('#y1Ap'),y1Ap);watch($('#y1Vn'),y1Vn);
+$('#y1Rec').addEventListener('click',()=>{const v=parseNum($('#y1In').value),m=$('#y1Msg'),r=y1R();if(isNaN(v)){fb(m,'info','Type the vernier reading in mm, for example 23.4.');return}
+ if(Math.abs(v-r)>0.1){miss();fb(m,'no','Look again. Read the main scale just to the left of the vernier zero (in mm), then find the vernier line that lines up exactly with a main-scale line: that gives the tenths of a millimetre.');return}
+ Y1.data=Y1.data.filter(d=>d[0]!==Y1.F);Y1.data.push([Y1.F,Math.round(v*10)/10]);Y1.data.sort((a,b)=>a[0]-b[0]);$('#y1In').value='';award(1);y1Table();y1Plot();fb(m,'ok','Recorded '+v.toFixed(1)+' mm at '+Y1.F+' N.'+(Y1.data[0][0]!==0?' Remember to record the reading with no added load.':''))});
+$('#y1Clr').addEventListener('click',()=>{Y1.data=[];y1Table();y1Plot()});
+function y1Pts(){const z=Y1.data.find(d=>d[0]===0);if(!z)return [];return Y1.data.map(d=>[Math.round((d[1]-z[1])*10)/10,d[0]])}
+function y1Table(){const z=Y1.data.find(d=>d[0]===0);$('#y1Tb').innerHTML=Y1.data.length?Y1.data.map((r,i)=>'<tr><td>'+r[0]+'</td><td>'+r[1].toFixed(1)+'</td><td>'+(z?(r[1]-z[1]).toFixed(1):'–')+'</td><td><button class="x" type="button" data-i="'+i+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="4" class="muted">No readings yet</td></tr>';
+ $$('#y1Tb .x').forEach(b=>b.addEventListener('click',()=>{Y1.data.splice(+b.dataset.i,1);y1Table();y1Plot()}))}
+const p1=new Plot($('#y1G'),{xl:'x / mm',yl:'F / N',bx:[0,8],by:[0,60],line:true,onDraw:()=>{const f=p1.line();$('#y1Ro').innerHTML=f?'gradient = <strong>'+sci(f.m,3)+' N mm⁻¹</strong>, intercept = '+sci(f.c,2)+' N':''}});
+function y1Plot(){p1.set(y1Pts())}
+$('#y1Line').addEventListener('click',()=>p1.reset(false));
+/* micrometer */
+function micReading(){const M=Y1.mic;return M.mode==='zero'?Y1.zM+M.jz:Y1.dl[M.k]*1000+Y1.zM+M.jz}
+function micDraw(){
+ const cv=$('#mcCv');const {c,w,h}=fitCanvas(cv);const r=micReading();
+ const ink=cssv('--ink'),pan=cssv('--panel2');c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+ const mid=h/2,ppm=Math.min(260,w*0.55),z=w*0.22,xe=z+r*ppm;
+ c.fillStyle='#C9CDD2';c.fillRect(8,mid-24,xe-8,48);c.strokeStyle='#6B7078';c.lineWidth=1;c.strokeRect(8,mid-24,xe-8,48);
+ c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.lineWidth=1.3;c.beginPath();c.moveTo(8,mid);c.lineTo(xe,mid);c.stroke();
+ c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+ for(let k=-2;k<=4;k++){const x=z+k*0.5*ppm;if(x>xe-1||x<10)continue;c.beginPath();if(k%2===0){c.moveTo(x,mid);c.lineTo(x,mid-16);c.stroke();c.fillText(String(k/2),x,mid-19)}else{c.moveTo(x,mid);c.lineTo(x,mid+14);c.stroke()}}
+ const tw=Math.min(190,w-xe-10);c.fillStyle='#B7BCC3';c.fillRect(xe,mid-58,tw,116);c.fillStyle='#D8DCE0';c.fillRect(xe,mid-58,12,116);c.strokeStyle='#6B7078';c.strokeRect(xe,mid-58,tw,116);
+ let t=(((r%0.5)+0.5)%0.5)/0.01;
+ c.save();c.beginPath();c.rect(xe,mid-56,tw,112);c.clip();c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='left';
+ for(let k=Math.floor(t)-8;k<=Math.ceil(t)+8;k++){const ang=(k-t)*0.105;if(Math.abs(ang)>1.45)continue;const y=mid+Math.sin(ang)*58;const kk=((k%50)+50)%50;const long=kk%5===0;c.lineWidth=long?1.5:1;c.beginPath();c.moveTo(xe,y);c.lineTo(xe+(long?22:13),y);c.stroke();if(long)c.fillText(String(kk),xe+26,y+4)}
+ c.restore();
+ c.fillStyle=ink;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='left';c.fillText('sleeve',12,h-8);c.fillText('thimble',xe+18,Math.min(h-4,mid+72));
+ c.fillStyle=cssv('--muted');c.fillText(Y1.mic.mode==='zero'?'jaws closed, nothing between them':'measuring the wire, place '+(Y1.mic.n||1),12,14);
+}
+$('#mcZero').addEventListener('click',()=>{Y1.mic.mode='zero';Y1.mic.jz=(R()-0.5)*0.002;$('#mcLbl').textContent='Zero reading / mm';micDraw();$('#mcFb').className='fb'});
+$('#mcMeas').addEventListener('click',()=>{Y1.mic.mode='wire';Y1.mic.k=(Y1.mic.k+1+Math.floor(R()*3))%7;Y1.mic.n=(Y1.mic.n||0)+1;Y1.mic.jz=(R()-0.5)*0.003;$('#mcLbl').textContent='Diameter reading / mm';micDraw();$('#mcFb').className='fb'});
+function micList(){const M=Y1.mic;let s='';if(M.zeroIn!==null)s+='Zero reading: <strong>'+M.zeroIn.toFixed(2)+' mm</strong>. ';if(M.reads.length)s+='Diameter readings: '+M.reads.map(x=>x.toFixed(2)).join(', ')+' mm (mean '+(M.reads.reduce((a,b)=>a+b,0)/M.reads.length).toFixed(3)+' mm).';$('#mcList').innerHTML=s}
+$('#mcOk').addEventListener('click',()=>{const v=parseNum($('#mcIn').value),out=$('#mcFb'),r=micReading();if(isNaN(v)){fb(out,'info','Type the reading in mm, for example 0.30.');return}
+ if(Math.abs(v-r)<=0.0101){if(Y1.mic.mode==='zero'){Y1.mic.zeroIn=Math.round(v*100)/100;fb(out,'ok','Zero reading recorded. '+(Math.abs(v)<0.005?'No zero error.':'That is a zero error of '+(v>0?'+':'')+v.toFixed(2)+' mm: subtract it from every reading.'))}
+  else{if(Y1.mic.reads.length>=8){fb(out,'info','Eight readings is plenty.');return}Y1.mic.reads.push(Math.round(v*100)/100);award(1);fb(out,'ok','Reading accepted. Measure at several places along the wire, rotating it each time.')}$('#mcIn').value='';micList()}
+ else{miss();fb(out,'no','Look again.'+(Y1.mic.mode==='zero'&&r<0?' The thimble edge has gone past the zero on the sleeve, so this reading is negative: 0.50 − thimble value.':' Sleeve reading first (whole and half millimetres showing), then add the thimble division on the datum line × 0.01 mm.'))}});
+watch($('#mcCv'),micDraw);
+function y1Tasks(){
+ $('#y1Card').innerHTML='<span>Original length of the test wire (metre rule): <b>l = '+Y1.l.toFixed(3)+' m</b></span>';
+ const el=$('#y1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">F = (EA/l)x, so a graph of F against x has gradient EA/l, and E = gradient × l/A.</p>';const S={};
+ numTask(el,'1. Mean diameter of the test wire, corrected for any zero error.','mm',v=>{const M=Y1.mic;if(M.zeroIn===null)return {info:1,msg:'Check the micrometer’s zero reading first.'};if(M.reads.length<3)return {info:1,msg:'Take at least 3 diameter readings.'};const mean=M.reads.reduce((a,b)=>a+b,0)/M.reads.length,cor=mean-M.zeroIn;
+  if(Math.abs(v-cor)<=0.0035){S.d=v;return {ok:true,msg:'<strong>Correct.</strong> '+mean.toFixed(3)+' − ('+M.zeroIn.toFixed(2)+') = '+cor.toFixed(3)+' mm.'}}if(Math.abs(v-mean)<=0.0035&&Math.abs(M.zeroIn)>0.004)return {ok:false,msg:'Subtract the zero reading of '+M.zeroIn.toFixed(2)+' mm.'};return {ok:false,msg:'Average your readings, then subtract the zero reading.'}},3);
+ numTask(el,'2. Calculate the cross-sectional area.','m²',v=>{if(S.d===undefined)return {info:1,msg:'Complete task 1.'};const t=Math.PI*Math.pow(S.d*1e-3,2)/4;if(close(v,t,0.01)){S.A=v;return {ok:true,msg:'<strong>Correct:</strong> A = πD²/4 = '+sci(t,3)+' m².'}}if(close(v,t*4,0.01))return {ok:false,msg:'Use πD²/4 (or πr²), not πD².'};return {ok:false,msg:'A = πD²/4 with D in metres.'}},2);
+ numTask(el,'3. Find the gradient of your F against x line.','N mm⁻¹',v=>{const pts=y1Pts();if(pts.length<8)return {info:1,msg:'Record the reading at 0 N and at least 7 loads up to 60 N.'};const f=p1.line(),ls=linfit(pts);if(!f)return {info:1,msg:'Fit your line.'};if(pct(f.m,ls.m)>6)return {ok:false,msg:'Adjust your line: its gradient is '+pct(f.m,ls.m).toFixed(0)+'% away from the trend of your points.'};if(close(v,f.m,0.03)){S.g=v;return {ok:true,msg:'<strong>Good.</strong>'}}return {ok:false,msg:'Read the gradient of your line.'}},3);
+ numTask(el,'4. Calculate the Young modulus of the wire.','Pa',v=>{if(S.A===undefined||S.g===undefined)return {info:1,msg:'Complete tasks 2 and 3.'};const t=S.g*1000*Y1.l/S.A;if(close(v,t,0.02)){S.E=v;return {ok:true,msg:'<strong>Correct:</strong> E = gradient × l/A = '+sci(t,3)+' Pa.'}}if(close(v,t/1000,0.02))return {ok:false,msg:'Convert the gradient from N mm⁻¹ to N m⁻¹ (× 1000).'};return {ok:false,msg:'E = (gradient in N m⁻¹) × l / A.'}},3);
+ mcq(el,'Which metal is the wire most likely to be made of? (steel 210 GPa, copper 130 GPa, brass 100 GPa, aluminium 70 GPa)',['steel','copper','brass','aluminium'],['steel','copper','brass'].indexOf(Y1.metal),'Compare your value with the table.');
+ mcq(el,'What is the purpose of the comparison wire?',['It compensates for temperature changes and sagging of the support, because both wires are affected equally','It carries half the load','It measures the diameter','It keeps the test wire straight'],0,'The vernier measures the extension of the test wire relative to the comparison wire.');
+ mcq(el,'Why should you stop well before the limit of proportionality?',['Beyond it F is no longer proportional to x, and the wire may be permanently stretched','The vernier would fall off','The wire gets hot','It makes the diameter larger'],0,'Only the linear part gives E.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="y1Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="y1DebO"></div></div>');
+ $('#y1Deb').addEventListener('click',()=>fb($('#y1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>The wire was '+Y1.metal+' with E = '+sci(Y1.E,3)+' Pa.<br>True mean diameter '+(Y1.dm*1000).toFixed(3)+' mm (it varies slightly along the wire). Micrometer zero error '+(Y1.zM>=0?'+':'')+Y1.zM.toFixed(2)+' mm.<br>Limit of proportionality reached at about '+(Y1.P*Y1.A).toFixed(0)+' N'+(Y1.P*Y1.A<60?': the last points bend away from the line.':' (above 60 N, so all your points should be linear).')));
+}
+
+/* ============ LAB 2: rubber band ============ */
+const R1={n:0,mode:'load',nmax:0,broken:false,data:[]};
+(function(){const g=kitRng(92);R1.k0=22+g()*8;R1.w=Math.round((1.8+g()*0.4)*100)/100;R1.t=Math.round((0.9+g()*0.2)*100)/100;R1.l0=Math.round(95+g()*15);R1.R0=Math.round(350+g()*60)+0.4*g();R1.nb=14+Math.floor(g()*4);
+ const xs=[0],Fs=[0];let F=0;for(let x=0.0005;x<=0.8;x+=0.0005){const sm=(a,b)=>x<a?0:x>b?1:(1-Math.cos(Math.PI*(x-a)/(b-a)))/2;const s=R1.k0*(1-0.6*sm(0.02,0.10))+70*sm(0.16,0.30);F+=s*0.0005;xs.push(x);Fs.push(F)}R1.xs=xs;R1.Fs=Fs;})();
+function r1xL(F){const a=R1.Fs;let i=0;while(i<a.length-1&&a[i+1]<F)i++;if(i>=a.length-1)return R1.xs[a.length-1];const t=(F-a[i])/(a[i+1]-a[i]||1);return R1.xs[i]+t*(R1.xs[i+1]-R1.xs[i])}
+function r1F(n){return n*0.050*G0}
+function r1x(){const F=r1F(R1.n);if(R1.mode==='load')return r1xL(F);const Fm=r1F(R1.nmax),xm=r1xL(Fm),s=0.03*xm+0.002;return s+(xm-s)*Math.pow(F/Fm,1/2.2)}
+function r1R(){return R1.R0+r1x()*1000}
+function r1Ap(){const cv=$('#r1Ap');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted'),cx=w*0.45,top=24,L=R1.l0*0.9+r1x()*1000*0.9;
+ c.fillStyle='#6B7078';c.fillRect(cx-40,8,80,14);if(!R1.broken){c.strokeStyle='#C8453B';c.lineWidth=3;c.beginPath();c.moveTo(cx,top);c.lineTo(cx,top+L);c.stroke()}
+ const hy=R1.broken?h-40:top+L;c.fillStyle='#8C96A6';c.fillRect(cx-10,hy,20,10);for(let i=0;i<R1.n;i++){c.fillStyle=i%2?'#5A5F66':'#72777F';c.fillRect(cx-16,hy+10+i*5,32,5)}c.strokeStyle=cssv('--pos');c.lineWidth=2;c.beginPath();c.moveTo(cx+10,hy+5);c.lineTo(w-30,hy+5);c.stroke();
+ c.fillStyle='#EDE4CC';c.fillRect(w-28,10,18,h-20);c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('rule',w-30,h-4);if(R1.broken){c.fillStyle=cssv('--neg');c.fillText('SNAP!',cx-18,h/2)}}
+function r1Zm(){const cv=$('#r1Zm');const {c,w,h}=fitCanvas(cv);c.fillStyle='#EDE4CC';c.fillRect(0,0,w,h);const r=r1R(),ppm=Math.min(9,h/40),Y=mm=>h/2+(mm-r)*ppm;c.strokeStyle='#1B1E22';c.fillStyle='#1B1E22';c.font='bold 12px Atkinson Hyperlegible, Verdana, sans-serif';
+ for(let mm=Math.floor(r-h/2/ppm);mm<=Math.ceil(r+h/2/ppm);mm++){const y=Y(mm),L=mm%10===0?28:mm%5===0?18:10;c.lineWidth=mm%10===0?1.6:1;c.beginPath();c.moveTo(0,y);c.lineTo(L,y);c.stroke();if(mm%10===0)c.fillText(String(mm/10)+' cm',32,y+4)}
+ c.strokeStyle=cssv('--pos');c.lineWidth=2.5;c.beginPath();c.moveTo(w,h/2);c.lineTo(8,h/2);c.stroke();c.fillStyle=cssv('--pos');c.beginPath();c.moveTo(4,h/2);c.lineTo(14,h/2-5);c.lineTo(14,h/2+5);c.fill();c.fillStyle=cssv('--muted');c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('pointer (magnified)',w-110,14)}
+function r1Upd(){$('#r1Load').textContent=R1.broken?'band broken':(R1.mode==='load'?'loading: ':'unloading: ')+(R1.n*50)+' g added';r1Ap();r1Zm()}
+$('#r1Up').addEventListener('click',()=>{const m=$('#r1Msg');if(R1.broken){fb(m,'info','The band has broken. Press Clear to fit a new band.');return}if(R1.mode==='unload'){fb(m,'info','You are unloading this band. Remove masses to complete the loop, or press Clear for a new band.');return}R1.n++;if(R1.n>=R1.nb){R1.broken=true;fb(m,'no','The band snapped at '+(R1.n*50)+' g. Press Clear to try again with a fresh band, and start unloading earlier to see the hysteresis loop.')}r1Upd()});
+$('#r1Dn').addEventListener('click',()=>{if(R1.broken||R1.n===0)return;if(R1.mode==='load'){R1.mode='unload';R1.nmax=R1.n}R1.n--;r1Upd()});
+watch($('#r1Ap'),r1Ap);watch($('#r1Zm'),r1Zm);
+$('#r1Rec').addEventListener('click',()=>{const v=parseNum($('#r1In').value),m=$('#r1Msg'),r=r1R();if(R1.broken){fb(m,'info','The band has broken.');return}if(isNaN(v)){fb(m,'info','Type the pointer reading in mm, for example 412.');return}
+ if(Math.abs(v-r)>1.0){miss();fb(m,'no','Look again: read the scale where the pointer’s tip sits, to the nearest millimetre.');return}
+ R1.data=R1.data.filter(d=>!(d[0]===R1.mode&&d[1]===R1.n));R1.data.push([R1.mode,R1.n,Math.round(v)]);$('#r1In').value='';award(1);r1Table();r1Plot();fb(m,'ok','Recorded '+Math.round(v)+' mm with '+(R1.n*50)+' g ('+(R1.mode==='load'?'loading':'unloading')+').')});
+$('#r1Clr').addEventListener('click',()=>{R1.data=[];R1.n=0;R1.mode='load';R1.nmax=0;R1.broken=false;r1Upd();r1Table();r1Plot();$('#r1Msg').className='fb'});
+function r1Zero(){const z=R1.data.find(d=>d[0]==='load'&&d[1]===0);return z?z[2]:null}
+function r1Table(){const z=r1Zero();const rows=R1.data.slice().sort((a,b)=>(a[0]===b[0]?(a[0]==='load'?a[1]-b[1]:b[1]-a[1]):a[0]==='load'?-1:1));$('#r1Tb').innerHTML=rows.length?rows.map(r=>'<tr><td class="small">'+(r[0]==='load'?'load':'unload')+'</td><td>'+(r[1]*50)+'</td><td>'+r1F(r[1]).toFixed(2)+'</td><td>'+r[2]+'</td><td>'+(z===null?'–':r[2]-z)+'</td><td><button class="x" type="button" data-i="'+R1.data.indexOf(r)+'" aria-label="delete row">×</button></td></tr>').join(''):'<tr><td colspan="6" class="muted">No readings yet</td></tr>';
+ $$('#r1Tb .x').forEach(b=>b.addEventListener('click',()=>{R1.data.splice(+b.dataset.i,1);r1Table();r1Plot()}))}
+function r1Pts(mode){const z=r1Zero();if(z===null)return [];return R1.data.filter(d=>d[0]===mode).map(d=>[d[2]-z,r1F(d[1])]).sort((a,b)=>a[0]-b[0])}
+const p2=new Plot($('#r1G'),{xl:'x / mm',yl:'F / N',bx:[0,200],by:[0,8],line:true,onDraw:()=>{const f=p2.line();$('#r1Ro').innerHTML=f?'your line (fit it to the first, nearly straight section): gradient = <strong>'+sci(f.m,3)+' N mm⁻¹</strong>':''}});
+function r1Plot(){p2.set(r1Pts('load'),r1Pts('unload'))}
+$('#r1Line').addEventListener('click',()=>p2.reset(false));
+function trap(p){let a=0;for(let i=1;i<p.length;i++)a+=(p[i][0]-p[i-1][0])*(p[i][1]+p[i-1][1])/2;return a}
+function r1Tasks(){
+ $('#r1Card').innerHTML='<span>Length of the band with the holder: <b>'+R1.l0+' mm</b></span><span>width <b>'+R1.w.toFixed(2)+' mm</b>, thickness <b>'+R1.t.toFixed(2)+' mm</b> (micrometer)</span><span>each mass: 50 g, weight 0.49 N</span>';
+ const el=$('#r1Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3>';const S={};
+ numTask(el,'1. Fit your line to the first nearly straight part of the loading curve. What is its gradient?','N mm⁻¹',v=>{const pts=r1Pts('load');if(pts.length<6)return {info:1,msg:'Record the loading readings, starting with 0 g added.'};const f=p2.line();if(!f)return {info:1,msg:'Fit your line.'};const t=R1.k0/1000;if(Math.abs(f.m-t)/t>0.18)return {ok:false,msg:'Your line should follow the first few points (the steepest early section). Its gradient is '+pct(f.m,t).toFixed(0)+'% away from theirs.'};if(close(v,f.m,0.03)){S.k=v;return {ok:true,msg:'<strong>Good:</strong> k ≈ '+(v*1000).toFixed(0)+' N m<sup>−1</sup> for small extensions.'}}return {ok:false,msg:'Read the gradient of your line.'}},3);
+ numTask(el,'2. Use this gradient to estimate the Young modulus of the rubber.','Pa',v=>{if(S.k===undefined)return {info:1,msg:'Complete task 1.'};const A=R1.w*R1.t*1e-6,t=S.k*1000*R1.l0/1000/A;if(close(v,t,0.03))return {ok:true,msg:'<strong>Correct:</strong> E = kl/A = '+sci(t,3)+' Pa: about 10⁵ times smaller than steel.'};return {ok:false,msg:'E = (gradient in N m⁻¹) × l / A, with l = '+R1.l0+' mm and A = width × thickness in m².'}},3);
+ numTask(el,'3. After unloading completely, what is the permanent set (the extension left with 0 g added)?','mm',v=>{const u=R1.data.find(d=>d[0]==='unload'&&d[1]===0),z=r1Zero();if(!u||z===null)return {info:1,msg:'Load the band (stop before it snaps!), then unload it completely, recording at each step including 0 g.'};const t=u[2]-z;if(Math.abs(v-t)<=0.6)return {ok:true,msg:'<strong>Correct:</strong> '+t+' mm. The band has not quite returned to its original length.'};return {ok:false,msg:'Unloaded reading at 0 g minus the first loading reading at 0 g.'}},2);
+ numTask(el,'4. Estimate the energy transferred to internal energy in the cycle (the area of the loop).','J',v=>{const L=r1Pts('load'),U=r1Pts('unload');if(L.length<6||U.length<5)return {info:1,msg:'You need a complete loop: loading and unloading readings.'};const t=(trap(L)-trap(U))/1000;if(Math.abs(v-t)<=Math.max(0.15*Math.abs(t),0.005))return {ok:true,msg:'<strong>Good:</strong> about '+t.toFixed(3)+' J (area between the curves, with x in metres).'};return {ok:false,msg:'Count squares between the loading and unloading curves, then convert: 1 N × 1 mm = 10⁻³ J.'}},3);
+ mcq(el,'Why is the Young modulus of rubber so low?',['Stretching mainly straightens tangled chain molecules against thermal motion, rather than stretching bonds','Rubber contains many dislocations','Rubber is amorphous like glass','The band is very thin'],0,'Only at large extensions do the bonds themselves stretch, and the curve steepens.');
+ mcq(el,'Why does the rubber become warm after being stretched and relaxed?',['The area between the loading and unloading curves is energy transferred to internal energy','Friction with the clamp','The masses are warm','The rubber stores the energy elastically'],0,'This is hysteresis.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="r1Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="r1DebO"></div></div>');
+ $('#r1Deb').addEventListener('click',()=>fb($('#r1DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>Initial stiffness of the band: '+R1.k0.toFixed(1)+' N m<sup>−1</sup>. This band snaps at '+(R1.nb*50)+' g.<br>Permanent set is about 3% of the maximum extension reached.'));
+}
+
+/* ============ LAB 3: tensile testing machine ============ */
+const T3={k:'steel',v:0,emax:0,broken:false,hist:[],zoom:'all'};
+(function(){const g=kitRng(93);T3.gain=1+(g()-0.5)*0.04;T3.var={};Object.keys(MATS).forEach(k=>T3.var[k]=1+(g()-0.5)*0.06)})();
+function t3M(){const b=MATS[T3.k],f=T3.var[T3.k],m=Object.assign({},b);['P','Y1','Y2','U','brk'].forEach(p=>{if(m[p]!==undefined)m[p]*=f});return m}
+function t3eps(){return 0.5*Math.pow(T3.v/1000,2.5)}
+function t3state(){const m=t3M(),e=t3eps();if(T3.broken)return {e,s:0};
+ if(e>=T3.emax){const s=sigma(m,e);if(s===null){T3.broken=true;T3.bk={e,s:sigma(m,T3.emax)};return {e,s:0}}T3.emax=e;return {e,s}}
+ const sm=sigma(m,T3.emax),elastic=sm<=(m.P||m.brk||1e12)*1.02;const s=elastic?m.E*e:Math.max(0,sm-m.E*(T3.emax-e));return {e,s}}
+function t3Upd(){const m0=t3M(),e0=t3eps();if(!T3.broken&&e0>T3.emax+1e-6){const a=T3.emax,n=40;for(let i=1;i<n;i++){const e=a+(e0-a)*i/n,sv=sigma(m0,e);if(sv===null)break;T3.hist.push([e,sv*T3.gain/1e6])}}const st=t3state();const shown=st.s*T3.gain/1e6;$('#t3Eo').textContent=st.e.toFixed(4);$('#t3S').textContent=shown.toFixed(shown<10?2:1);$('#t3St').textContent=st.e.toFixed(4);
+ if(!T3.broken||T3.hist.length===0||T3.hist[T3.hist.length-1][1]!==0)T3.hist.push([st.e,shown]);if(T3.hist.length>4000)T3.hist.shift();
+ if(T3.broken&&!T3.said){T3.said=true;fb($('#t3Msg'),'no','The specimen has broken'+(MATS[T3.k].brk?' suddenly, with no plastic deformation: a brittle fracture.':' after necking: a ductile fracture.'))}
+ t3Draw();t3Ap()}
+function t3Ap(){const cv=$('#t3Ap');const {c,w,h}=fitCanvas(cv);c.clearRect(0,0,w,h);const e=t3eps(),m=MATS[T3.k],L=w*0.5*(1+Math.min(0.5,e)),cx=w/2,br=T3.broken;
+ c.fillStyle='#5A5F66';c.fillRect(cx-L/2-40,h/2-22,40,44);c.fillRect(cx+L/2,h/2-22,40,44);
+ const neck=(!m.brk&&T3.emax>(m.eu||1))?Math.min(0.6,(T3.emax-m.eu)/(m.eb-m.eu)):0;c.fillStyle=m.brk?'rgba(140,190,230,.8)':'#B87333';
+ if(br){c.fillRect(cx-L/2,h/2-7,L/2-8,14);c.fillRect(cx+8,h/2-7,L/2-8,14)}else{c.beginPath();c.moveTo(cx-L/2,h/2-7);c.lineTo(cx-10,h/2-7);c.lineTo(cx,h/2-7+7*neck);c.lineTo(cx+10,h/2-7);c.lineTo(cx+L/2,h/2-7);c.lineTo(cx+L/2,h/2+7);c.lineTo(cx+10,h/2+7);c.lineTo(cx,h/2+7-7*neck);c.lineTo(cx-10,h/2+7);c.lineTo(cx-L/2,h/2+7);c.closePath();c.fill()}
+ c.fillStyle=cssv('--muted');c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText(m.n,8,12)}
+function t3Draw(){const cv=$('#t3G');const {c,w,h}=fitCanvas(cv);c.fillStyle=cssv('--panel');c.fillRect(0,0,w,h);const ink=cssv('--ink'),mut=cssv('--muted'),m=MATS[T3.k];
+ const emx=T3.zoom==='el'?(m.brk?Math.min(0.03,m.brk*1.1/m.E):0.004):(m.brk?m.brk*1.25/m.E:m.eb*1.1),smx=T3.zoom==='el'&&!m.brk?Math.max(m.P,m.Y1||0)*1.5/1e6:(m.brk||m.U)*1.25/1e6;
+ const x0=56,y0=h-34,xw=w-72,yh=h-50,X=e=>x0+e/emx*xw,Y=s=>y0-s/smx*yh;
+ c.strokeStyle=cssv('--grid');for(let i=1;i<=5;i++){c.beginPath();c.moveTo(x0,y0-i*yh/5);c.lineTo(x0+xw,y0-i*yh/5);c.stroke();c.beginPath();c.moveTo(x0+i*xw/5,y0);c.lineTo(x0+i*xw/5,y0-yh);c.stroke()}
+ c.strokeStyle=ink;c.lineWidth=1.4;c.beginPath();c.moveTo(x0,y0-yh);c.lineTo(x0,y0);c.lineTo(x0+xw,y0);c.stroke();c.fillStyle=mut;c.font='11px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';for(let i=0;i<=5;i++)c.fillText((emx*i/5).toPrecision(2),x0+i*xw/5,y0+14);c.textAlign='right';for(let i=0;i<=5;i++)c.fillText((smx*i/5).toPrecision(3),x0-4,y0-i*yh/5+4);c.textAlign='left';c.fillText('strain',x0+xw-34,y0-6);c.fillText('stress / MPa',x0+4,12);
+ c.save();c.beginPath();c.rect(x0,y0-yh,xw,yh);c.clip();c.strokeStyle=cssv('--neg');c.lineWidth=2.2;c.beginPath();T3.hist.forEach((p,i)=>{i?c.lineTo(X(p[0]),Y(p[1])):c.moveTo(X(p[0]),Y(p[1]))});c.stroke();
+ const last=T3.hist[T3.hist.length-1];if(last){c.fillStyle=cssv('--pos');c.beginPath();c.arc(X(last[0]),Y(last[1]),4,0,7);c.fill()}c.restore();
+ $('#t3Rd').textContent=last?'current: strain '+last[0].toFixed(4)+', stress '+last[1].toFixed(1)+' MPa'+(T3.broken&&T3.bk?' (broke at a stress of about '+(T3.bk.s*T3.gain/1e6).toFixed(0)+' MPa)':''):''}
+function t3Fresh(){T3.v=0;T3.emax=0;T3.broken=false;T3.said=false;T3.bk=null;T3.hist=[];$('#t3E').value=0;$('#t3Msg').className='fb';t3Upd()}
+function t3Btns(){$('#t3Sp').innerHTML=Object.keys(MATS).map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===T3.k)+'">'+MATS[k].n+'</button>').join('');$$('#t3Sp .chip').forEach(b=>b.addEventListener('click',()=>{T3.k=b.dataset.k;t3Btns();t3Fresh()}))}
+$('#t3E').addEventListener('input',e=>{T3.v=+e.target.value;t3Upd()});$('#t3New').addEventListener('click',t3Fresh);
+$$('#t3Z button').forEach(b=>b.addEventListener('click',()=>{T3.zoom=b.dataset.z;$$('#t3Z button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));t3Draw()}));
+watch($('#t3G'),t3Draw);watch($('#t3Ap'),t3Ap);
+function t3Tasks(){
+ const el=$('#t3Tasks');el.innerHTML='<h3 style="margin-top:0">Analysis</h3><p class="small muted">Use the “elastic region” view for the Young modulus: E = stress ÷ strain on the straight section.</p>';
+ const tr=k=>MATS[k],vr=k=>T3.var[k];
+ numTask(el,'1. Mild steel: find the Young modulus from the elastic region.','GPa',v=>{const t=MATS.steel.E*T3.gain/1e9;if(Math.abs(v-t)/t<=0.05)return {ok:true,msg:'<strong>Good:</strong> about '+t.toFixed(0)+' GPa.'};return {ok:false,msg:'Stretch steel a little (strain below 0.001), read the stress (MPa) and strain, and divide. 1 MPa ÷ strain gives MPa; ÷ 1000 for GPa.'}},3);
+ numTask(el,'2. Annealed copper: what is its ultimate tensile stress?','MPa',v=>{const t=MATS.cuA.U*vr('cuA')*T3.gain/1e6;if(Math.abs(v-t)/t<=0.03)return {ok:true,msg:'<strong>Correct:</strong> about '+t.toFixed(0)+' MPa, the highest point of the curve.'};return {ok:false,msg:'Stretch annealed copper until the stress stops rising; the peak is the UTS.'}},2);
+ numTask(el,'3. Load annealed copper to a strain of 0.050, then slide back until the stress is zero. What permanent strain remains?','',v=>{const m=Object.assign({},MATS.cuA);m.P*=vr('cuA');m.U*=vr('cuA');const t=0.05-sigma(m,0.05)/m.E;if(Math.abs(v-t)<=0.002)return {ok:true,msg:'<strong>Correct:</strong> about '+t.toFixed(4)+'. Almost all of the strain was plastic; only a tiny elastic part (σ/E) was recovered.'};return {ok:false,msg:'Watch the strain reading at the moment the stress first reaches zero as you unload.'}},3);
+ numTask(el,'4. How many times greater is the breaking stress of toughened glass than scratched glass?','',v=>{const t=MATS.glT.brk*vr('glT')/(MATS.glS.brk*vr('glS'));if(Math.abs(v-t)<=0.4)return {ok:true,msg:'<strong>Yes:</strong> about '+t.toFixed(1)+' times. The compressed surface holds cracks shut.'};return {ok:false,msg:'Break one of each and compare the breaking stresses.'}},2);
+ mcq(el,'Compare work-hardened and annealed copper. Work-hardened copper is:',['stronger but much less ductile, because tangled dislocations block further slip','weaker and more ductile','identical','brittle like glass'],0,'Its limit of proportionality is far higher but it breaks at a much smaller strain.');
+ mcq(el,'Why is a thin glass fibre so much stronger than a glass rod?',['It has very few surface imperfections where cracks can start','It is crystalline','It contains dislocations','It is ductile'],0,'Its breaking stress approaches that of steel.');
+ mcq(el,'Why does brass have a higher limit of proportionality than annealed copper?',['The zinc atoms distort the lattice and pin dislocations','Brass has larger grains','Brass is amorphous','Brass has a higher density'],0,'Foreign atoms are barriers to dislocation movement.');
+ el.insertAdjacentHTML('beforeend','<div class="task"><button class="btn alt" type="button" id="t3Deb">Reveal my kit’s hidden quirks</button><div class="fb" id="t3DebO"></div></div>');
+ $('#t3Deb').addEventListener('click',()=>fb($('#t3DebO'),'info','<strong>Kit '+kitCode()+'</strong><br>The load cell reads '+((T3.gain-1)*100).toFixed(1)+'% '+(T3.gain>1?'high':'low')+'. Each specimen’s strength varies by up to ±3% from the textbook value.'));
+}
+/* ============ CHALLENGE ============ */
+const DER=[
+ {t:'Derive the energy stored in a stretched spring',s:['The work done is the area under the force–extension graph','If Hooke’s law is obeyed, the graph is a straight line through the origin','The area is a triangle: W = ½Fx','Substituting F = kx gives W = ½kx²']},
+ {t:'Derive E = Fl/AΔl',s:['Stress σ = F/A','Strain ε = Δl/l','E = σ/ε = (F/A) ÷ (Δl/l)','So E = Fl/AΔl']},
+ {t:'Find E from a graph of F against x',s:['E = Fl/Ax, so F = (EA/l)x','A graph of F (y-axis) against x (x-axis) is a straight line through the origin','Its gradient is EA/l','So E = gradient × l/A']},
+ {t:'Explain why metals yield at low stress',s:['Real metal crystals contain edge dislocations','Under stress a dislocation moves one row of atoms at a time','Only a few bonds break at any moment, not a whole plane','So planes slip at a much lower stress than for a perfect crystal: plastic deformation']},
+ {t:'Explain why glass breaks by crack propagation',s:['Glass is amorphous, so it has no dislocations and cannot deform plastically','The stress is concentrated at the tip of a surface crack','The bonds at the tip break, and the crack grows','The stress at the new, sharper tip is even greater, so the crack runs right through']},
+ {t:'Explain hysteresis in rubber',s:['Stretching rubber straightens tangled chain molecules','The force when unloading is less than when loading at the same extension','So less work is returned than was done on the rubber','The difference, the loop area, becomes internal energy: the rubber warms up']}
+];
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+const EXAM=[
+ {t:'Spring',intro:'A spring of original length 20 cm extends to 25 cm when a 4.0 N weight is hung from it.',p:[
+  ['Find the elastic strain energy stored.',0.1,'J','½Fx = ½ × 4.0 × 0.050 = 0.10 J'],
+  ['Find the spring constant.',80,'N m⁻¹','k = F/x = 4.0/0.050 = 80 N m<sup>−1</sup>'],
+  ['Find the length of the spring when it stores 0.50 J.',20+Math.sqrt(2*0.5/80)*100,'cm','x = √(2E/k) = 0.112 m, so length = 31.2 cm']]},
+ {t:'Steel wire',intro:'A wire of natural length 2.5 m and diameter 0.50 mm extends by 5.0 cm under a force of 40 N.',p:[
+  ['Find the tensile strain.',0.02,'','ε = 0.050/2.5 = 0.020'],
+  ['Find the tensile stress.',40/(Math.PI*Math.pow(0.5e-3,2)/4),'Pa','A = π(0.50 × 10<sup>−3</sup>)²/4 = 1.96 × 10<sup>−7</sup> m²; σ = 2.04 × 10<sup>8</sup> Pa'],
+  ['The breaking stress is 1.5 × 10⁹ Pa. Find the breaking force.',1.5e9*Math.PI*Math.pow(0.5e-3,2)/4,'N','F = σA = 294 N']]},
+ {t:'Young modulus',intro:'A metal wire of original length 1.6 m and cross-sectional area 0.80 mm² extends by 4.0 mm under a tension of 200 N.',p:[
+  ['Find the strain.',0.0025,'','ε = 0.0040/1.6 = 0.0025'],
+  ['Find the stress.',2.5e8,'Pa','σ = 200/0.80 × 10<sup>−6</sup> = 2.5 × 10<sup>8</sup> Pa'],
+  ['Find the Young modulus.',1e11,'Pa','E = σ/ε = 1.0 × 10<sup>11</sup> Pa'],
+  ['Find the energy stored in the wire.',0.5*200*0.004,'J','½Fx = ½ × 200 × 0.0040 = 0.40 J']]},
+ {t:'Steel under load',intro:'Steel has E = 210 GPa.',p:[
+  ['Find the strain in steel under a stress of 4.0 × 10⁷ Pa.',4e7/210e9,'','ε = σ/E = 1.9 × 10<sup>−4</sup>'],
+  ['A 3.0 m steel cable of diameter 2.0 mm supports 500 N. Find its extension in mm.',500*3/(Math.PI*1e-6*210e9)*1000,'mm','A = π(1.0 × 10<sup>−3</sup>)² = 3.14 × 10<sup>−6</sup> m²; Δl = Fl/AE = 2.3 mm']]},
+ {t:'Gold ingot',intro:'Gold has density 19 300 kg m⁻³.',p:[
+  ['Find the weight of a gold ingot measuring 20 cm × 10 cm × 4.0 cm.',19300*8e-4*9.81,'N','V = 8.0 × 10<sup>−4</sup> m³, m = 15.4 kg, W = 151 N']]}
+];
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],p[4]||0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let GT=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){GT={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!GT)return;const left=Math.max(0,(GT.end-performance.now())/1000),el=$('#gT');if(!el){GT=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=GT.score;GT=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+GT.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){GT.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(GT)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){GT.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(GT)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{GT=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+
+
+
+
+
+
+
+
+/* ---------- start-up ---------- */
+function kitButtons(){
+ ['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode();const b=document.createElement('button');b.type='button';b.className='btn alt';b.style.cssText='padding:3px 10px;font-size:.85rem;margin-left:8px';b.textContent='New kit';let armed=false;
+  b.addEventListener('click',()=>{if(!armed){armed=true;b.textContent='Tap again: this clears all your data';setTimeout(()=>{armed=false;b.textContent='New kit'},4000);return}store.kit=Math.floor(R()*2176782335)+1;save();location.reload()});
+  $(s).after(b)});
+}
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();gmStart();kitButtons();
+y1Upd();y1Table();y1Plot();micDraw();micList();y1Tasks();
+r1Upd();r1Table();r1Plot();r1Tasks();
+t3Btns();t3Upd();t3Tasks();
+derStart(0);
+})();
+</script>
+</body>
+</html>
