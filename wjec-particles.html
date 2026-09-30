@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Particles and nuclear structure: WJEC AS Physics revision lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,600;112,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#0B1020;--sky2:#161E36;--bg:#EDF1EA;--panel:#FFFFFF;--panel2:#F5F7F2;--ink:#17232E;--muted:#55626C;--line:#C8D1C6;--meter:#F2C12E;--meterDk:#D9A916;--meterInk:#1D1A0E;--pos:#C4302A;--neg:#1F57C3;--ok:#16754A;--okBg:#DCF1E4;--bad:#B3261E;--badBg:#FBE4E1;--lcd:#C7D4AE;--lcdInk:#1C2614;--focus:#1F57C3;--grid:#E4E9E1;--chip:#E3E9E0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}}
+:root[data-theme="dark"]{--bg:#10171C;--panel:#18222A;--panel2:#1E2A32;--ink:#E3E9ED;--muted:#9DAAB4;--line:#2F3D47;--meter:#E4B622;--meterDk:#C99E12;--meterInk:#1D1A0E;--pos:#F2776F;--neg:#7EA8FF;--ok:#5DD193;--okBg:#153A2A;--bad:#FF8C82;--badBg:#3E1D1A;--lcd:#A8B98D;--lcdInk:#141C0D;--focus:#7EA8FF;--grid:#24313A;--chip:#23313A}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg);height:100%}
+body{margin:0;background:var(--bg);min-height:100%}
+#ep11{font-family:'Atkinson Hyperlegible',Verdana,'Segoe UI',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%}
+#ep11 *,#ep11 *::before,#ep11 *::after{box-sizing:border-box}
+#ep11 button,#ep11 input,#ep11 select{font:inherit;color:inherit}
+#ep11 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+#ep11 sup{font-size:.72em;line-height:0}
+#ep11 sub{font-size:.72em;line-height:0}
+#ep11 .h,#ep11 h1,#ep11 h2,#ep11 h3{font-family:'Archivo','Arial Narrow',Arial,sans-serif;font-stretch:112%;letter-spacing:-.01em;margin:0}
+#ep11 h2{font-size:1.45rem;font-weight:800;line-height:1.15}
+#ep11 h3{font-size:1.08rem;font-weight:800;line-height:1.25;margin:1.1em 0 .35em}
+#ep11 p{margin:.45em 0 .7em;max-width:72ch}
+#ep11 ul{margin:.3em 0 .8em;padding-left:1.25em;max-width:72ch}
+#ep11 li{margin:.2em 0}
+#ep11 .wrap{max-width:1180px;margin:0 auto;padding:0 18px}
+
+/* signature: multimeter casing header */
+#ep11 .top{background:var(--meter);color:var(--meterInk);border-bottom:4px solid var(--meterDk)}
+#ep11 .top .wrap{display:flex;align-items:center;gap:18px;padding-top:14px;padding-bottom:14px;flex-wrap:wrap}
+#ep11 .brand{flex:1 1 320px;min-width:0}
+#ep11 .brand h1{font-size:2.2rem;font-weight:800;line-height:1.02}
+#ep11 .brand p{margin:.25em 0 0;font-size:.95rem;max-width:60ch;color:#3A3417}
+#ep11 .bezel{background:#23262A;border-radius:14px 14px 22px 22px;padding:9px 12px 10px;display:flex;gap:10px;align-items:stretch;box-shadow:inset 0 -3px 0 #121416}
+#ep11 .lcd{background:var(--lcd);color:var(--lcdInk);border-radius:6px;padding:4px 10px 3px;font-family:'Share Tech Mono','Courier New',monospace;min-width:108px;box-shadow:inset 0 2px 4px rgba(0,0,0,.28)}
+#ep11 .lcd .v{font-size:1.9rem;line-height:1.05;letter-spacing:.04em;display:block;text-align:right}
+#ep11 .lcd .u{font-size:.8rem;display:block;text-align:right;opacity:.8}
+#ep11 .lcd.pulse{animation:ep11pulse .5s ease}
+@keyframes ep11pulse{0%{filter:brightness(1.25)}100%{filter:none}}
+#ep11 .themebtn{background:transparent;border:2px solid #3A3417;border-radius:999px;padding:4px 12px;color:#1D1A0E;cursor:pointer;font-size:.85rem}
+
+#ep11 .tabs{background:var(--panel);border-bottom:1px solid var(--line)}
+#ep11 .tabs .wrap{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+#ep11 .tab{background:none;border:0;border-bottom:3px solid transparent;padding:12px 13px 10px;cursor:pointer;white-space:nowrap;color:var(--muted);font-weight:700}
+#ep11 .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--neg)}
+#ep11 .tab:hover{color:var(--ink)}
+#ep11 main{padding:22px 0 40px}
+#ep11 .sec{display:none}
+#ep11 .sec.on{display:block}
+#ep11 .lead{color:var(--muted);margin-top:.3em}
+
+#ep11 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px}
+#ep11 .panel + .panel{margin-top:16px}
+#ep11 .grid2{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px;align-items:start}
+#ep11 .grid2 > .panel + .panel{margin-top:0}
+@media (max-width:860px){#ep11 .grid2{grid-template-columns:1fr}}
+#ep11 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ep11 .sp{flex:1}
+
+#ep11 .btn{background:var(--ink);color:var(--panel);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer;line-height:1.2}
+#ep11 .btn:hover{filter:brightness(1.15)}
+#ep11 .btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+#ep11 .btn.alt:hover{border-color:var(--ink)}
+#ep11 .btn.go{background:var(--meter);color:var(--meterInk)}
+#ep11 .btn:disabled{opacity:.45;cursor:not-allowed}
+#ep11 .chip{background:var(--chip);border:1.5px solid transparent;border-radius:999px;padding:6px 13px;cursor:pointer;font-size:.92rem}
+#ep11 .chip[aria-pressed="true"]{background:var(--panel);border-color:var(--ink);font-weight:700}
+#ep11 .seg{display:inline-flex;border:1.5px solid var(--line);border-radius:7px;overflow:hidden}
+#ep11 .seg button{background:transparent;border:0;padding:7px 12px;cursor:pointer}
+#ep11 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#ep11 input[type=text],#ep11 input[type=number]{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:8px 10px;width:150px;min-width:0}
+#ep11 input[type=text]:focus,#ep11 input[type=number]:focus{border-color:var(--focus)}
+#ep11 input[type=range]{width:100%;accent-color:var(--neg)}
+#ep11 label.sm{font-size:.9rem;color:var(--muted)}
+
+#ep11 .fb{margin-top:10px;border-radius:7px;padding:10px 13px;display:none}
+#ep11 .fb.ok{display:block;background:var(--okBg);color:var(--ink);border-left:4px solid var(--ok)}
+#ep11 .fb.no{display:block;background:var(--badBg);color:var(--ink);border-left:4px solid var(--bad)}
+#ep11 .fb.info{display:block;background:var(--panel2);border-left:4px solid var(--neg)}
+#ep11 .work{font-size:.96rem}
+#ep11 .work div{padding:1px 0}
+#ep11 .eq{font-family:'Archivo',Arial,sans-serif;font-stretch:100%;font-weight:600;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:2px 8px;white-space:nowrap;display:inline-block;margin:1px 0}
+#ep11 .eqbig{font-family:'Archivo',Arial,sans-serif;font-weight:800;font-size:1.35rem;padding:8px 14px;background:var(--panel2);border-left:4px solid var(--meter);border-radius:4px;display:inline-block;margin:.3em 0 .6em}
+#ep11 .muted{color:var(--muted)}
+#ep11 .small{font-size:.88rem}
+#ep11 .tag{display:inline-block;font-size:.8rem;border-radius:4px;padding:1px 7px;background:var(--chip);color:var(--muted)}
+
+/* revise */
+#ep11 .rv{display:grid;grid-template-columns:250px minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#ep11 .rv{grid-template-columns:1fr}}
+#ep11 .toc{display:flex;flex-direction:column;gap:2px;position:sticky;top:8px}
+@media (max-width:860px){#ep11 .toc{flex-direction:row;overflow-x:auto;position:static;padding-bottom:4px}#ep11 .toc button{white-space:nowrap}}
+#ep11 .toc button{text-align:left;background:none;border:0;border-left:3px solid transparent;padding:6px 10px;cursor:pointer;color:var(--muted);border-radius:0 5px 5px 0;white-space:normal}
+#ep11 .toc button[aria-current="true"]{color:var(--ink);border-left-color:var(--meterDk);background:var(--panel);font-weight:700}
+#ep11 .toc button .d{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;border:1.5px solid var(--line);vertical-align:0}
+#ep11 .toc button.seen .d{background:var(--ok);border-color:var(--ok)}
+#ep11 .card h2{margin-bottom:.35em}
+#ep11 .check{margin-top:16px;border-top:1px dashed var(--line);padding-top:12px}
+#ep11 .check details{margin:6px 0;background:var(--panel2);border-radius:6px;padding:8px 12px}
+#ep11 .check summary{cursor:pointer;font-weight:700}
+#ep11 .fig{margin:10px 0;max-width:100%;overflow-x:auto}
+#ep11 .fig svg{max-width:100%;height:auto;display:block}
+#ep11 .figs{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:10px 0}
+#ep11 .figs figure{margin:0;background:var(--panel2);border-radius:8px;padding:8px}
+#ep11 .figs figcaption{font-size:.88rem;color:var(--muted);margin-top:4px}
+#ep11 .cv{display:block;width:100%;height:100%}
+#ep11 .cvbox{position:relative;width:100%;height:230px}
+#ep11 .mini{height:150px}
+#ep11 table.t{border-collapse:collapse;width:100%;font-size:.93rem}
+#ep11 table.t th,#ep11 table.t td{border-bottom:1px solid var(--line);padding:5px 8px;text-align:right}
+#ep11 table.t th{font-weight:700;color:var(--muted)}
+#ep11 table.t td:first-child,#ep11 table.t th:first-child{text-align:left}
+#ep11 .tscroll{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:7px}
+#ep11 .x{background:none;border:0;cursor:pointer;color:var(--muted);padding:0 4px;font-size:1rem}
+#ep11 .nav{display:flex;justify-content:space-between;margin-top:16px;gap:8px}
+
+/* drills & quiz */
+#ep11 .qcard{font-size:1.1rem}
+#ep11 .qcard .q{margin:.2em 0 .9em;max-width:70ch}
+#ep11 .opts{display:grid;gap:8px;margin-top:8px}
+#ep11 .opt{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:8px;padding:10px 14px;cursor:pointer}
+#ep11 .opt:hover{border-color:var(--ink)}
+#ep11 .opt.right{border-color:var(--ok);background:var(--okBg)}
+#ep11 .opt.wrong{border-color:var(--bad);background:var(--badBg)}
+#ep11 .opt:disabled{cursor:default}
+#ep11 .tally{font-family:'Share Tech Mono','Courier New',monospace;font-size:.95rem;color:var(--muted)}
+#ep11 .bar{height:6px;background:var(--chip);border-radius:3px;overflow:hidden;margin:6px 0 12px}
+#ep11 .bar i{display:block;height:100%;background:var(--neg);width:0;transition:width .3s}
+
+/* matching */
+#ep11 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:12px}
+#ep11 .mcell{background:var(--panel2);border:2px solid var(--line);border-radius:9px;padding:8px;cursor:pointer;text-align:left}
+#ep11 .mcell.sel{border-color:var(--neg)}
+#ep11 .mcell.right{border-color:var(--ok)}
+#ep11 .mcell.wrong{border-color:var(--bad)}
+#ep11 .mcell .lab{display:block;min-height:1.6em;font-weight:700;margin-top:4px;font-size:.95rem}
+#ep11 .pool{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+#ep11 .pool .chip.used{opacity:.35}
+#ep11 .sym{display:flex;justify-content:center;background:var(--panel2);border-radius:10px;padding:14px;margin:6px 0 10px}
+#ep11 .sym svg{width:min(260px,100%);height:auto}
+
+/* lab */
+#ep11 .meters{display:flex;gap:12px;flex-wrap:wrap}
+#ep11 .dmm{background:var(--meter);border-radius:12px 12px 18px 18px;padding:8px 9px 10px;color:var(--meterInk);min-width:150px;border-bottom:4px solid var(--meterDk)}
+#ep11 .dmm .nm{font-size:.82rem;font-weight:700;margin:0 2px 4px}
+#ep11 .dmm .lcd{min-width:130px}
+#ep11 .dmm .lcd .v{font-size:2rem}
+#ep11 .ctl{display:grid;gap:10px;margin:12px 0}
+#ep11 .ctl .lbl{display:flex;justify-content:space-between;font-size:.92rem}
+#ep11 .kit{font-family:'Share Tech Mono','Courier New',monospace;background:var(--chip);padding:2px 8px;border-radius:4px}
+#ep11 .task{border-top:1px solid var(--line);padding:12px 0 4px}
+#ep11 .task:first-of-type{border-top:0;padding-top:4px}
+#ep11 .task .tq{font-weight:700;margin-bottom:6px}
+#ep11 .readout{font-size:.92rem;color:var(--muted);margin-top:6px}
+#ep11 .graphbox{position:relative;width:100%;height:340px;touch-action:none}
+#ep11 .apbox{position:relative;width:100%;height:280px}
+#ep11 .loupebox{position:relative;width:100%;height:92px}
+#ep11 .microbox{position:relative;width:100%;height:170px}
+#ep11 .thermobox{position:relative;width:100%;height:260px}
+#ep11 .svgc svg{display:block;width:100%;height:auto;max-height:230px}
+#ep11 .warn{color:var(--bad);font-weight:700}
+#ep11 .steps{counter-reset:s}
+#ep11 .dz{min-height:60px;border:2px dashed var(--line);border-radius:9px;padding:8px;display:flex;flex-direction:column;gap:6px}
+#ep11 .step{text-align:left;background:var(--panel2);border:1.5px solid var(--line);border-radius:7px;padding:8px 12px;cursor:pointer}
+#ep11 .step:hover{border-color:var(--ink)}
+#ep11 .dz .step{background:var(--panel)}
+#ep11 .dz.good{border-color:var(--ok)}
+#ep11 .big{font-family:'Share Tech Mono','Courier New',monospace;font-size:2.4rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#ep11 *{animation:none!important;transition:none!important}}
+@media (max-width:560px){#ep11 .brand h1{font-size:1.6rem}#ep11 .wrap{padding:0 12px}#ep11 .panel{padding:14px}#ep11 .bezel .lcd{min-width:88px}#ep11 .lcd .v{font-size:1.5rem}}
+#ep11 .top{background:var(--sky);color:#F1F4FA;border-bottom:0}
+#ep11 .brand p{color:#C3CEE3}
+#ep11 .themebtn{color:#F1F4FA;border-color:#8FA2C6}
+#ep11 .bezel{background:#0B1322;box-shadow:inset 0 -3px 0 #060B14}
+#ep11 .fieldstrip{display:block;width:100%;height:46px;background:#0B1020}
+#ep11 .specstrip{position:relative;height:14px;background:linear-gradient(90deg,#5B1FA8 0%,#3240D6 12%,#1E7FE0 24%,#19B3B0 36%,#3DBE46 48%,#C9D52A 60%,#F2B21B 70%,#EE6A1A 82%,#C8241C 100%);overflow:hidden}
+#ep11 .specstrip i{position:absolute;top:0;bottom:0;width:3px;background:#0A0E18;animation:ep11shift 2.4s cubic-bezier(.2,.7,.2,1) .4s both}
+@keyframes ep11shift{from{transform:translateX(0)}to{transform:translateX(26px)}}
+#ep11 .sky{background:#0F1D26;border-radius:8px}
+#ep11 .grat{background:#0B1A12;border-radius:8px}
+#ep11 .wbox{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:12px 14px;margin:10px 0}
+#ep11 .kv{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.95rem;margin-top:6px}
+#ep11 .kv b{font-family:'Share Tech Mono','Courier New',monospace;font-weight:400;font-size:1.05rem}
+#ep11 .sel{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;padding:7px 9px}
+#ep11 .card6{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+#ep11 .circ svg{display:block;width:100%;height:auto;max-height:260px}
+#ep11 .ob{text-decoration:overline;text-decoration-thickness:1.5px}
+#ep11 .qslot{width:64px;height:64px;border-radius:50%;border:2px dashed var(--line);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;background:var(--panel2)}
+#ep11 .qslot.f{border-style:solid}
+#ep11 .qbtn{min-width:64px;font-size:1.2rem}
+#ep11 .rx{font-size:1.35rem;font-weight:700;letter-spacing:.02em;padding:10px 0}
+#ep11 .bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+#ep11 .bin{border:2px solid var(--line);border-radius:12px;padding:10px;min-height:110px;background:var(--panel2);text-align:left;cursor:pointer}
+#ep11 .bin h4{margin:0 0 6px;font-size:.95rem}
+#ep11 .bin.sel{border-color:var(--pos)}
+#ep11 .bin .chip{margin:3px}
+#ep11 .pal .chip{font-size:1.05rem;min-width:52px}
+</style>
+</head>
+<body>
+<div id="ep11">
+<header class="top">
+ <div class="wrap">
+  <div class="brand">
+   <h1>Particles and nuclear structure</h1>
+   <p>WJEC AS Physics 1.7: quarks and leptons, antiparticles, hadrons, the four interactions and the conservation laws.</p>
+  </div>
+  <div class="bezel" aria-live="polite">
+   <div class="lcd" id="hudQ"><span class="v">0000</span><span class="u">collisions banked</span></div>
+   <div class="lcd" id="hudS"><span class="v">00</span><span class="u">streak</span></div>
+  </div>
+  <button class="themebtn" id="themeBtn" type="button">Dark mode</button>
+ </div>
+ <canvas class="fieldstrip" id="hdrCv" aria-hidden="true"></canvas>
+</header>
+<nav class="tabs" aria-label="Sections">
+ <div class="wrap" role="tablist">
+  <button class="tab" role="tab" data-tab="revise" aria-selected="true">Revise</button>
+  <button class="tab" role="tab" data-tab="drills" aria-selected="false">Calculation drills</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Concept quiz</button>
+  <button class="tab" role="tab" data-tab="sort" aria-selected="false">Particle sort</button>
+  <button class="tab" role="tab" data-tab="lab1" aria-selected="false">Hadron builder</button>
+  <button class="tab" role="tab" data-tab="lab2" aria-selected="false">Reaction checker</button>
+  <button class="tab" role="tab" data-tab="lab3" aria-selected="false">Missing particle</button>
+  <button class="tab" role="tab" data-tab="chall" aria-selected="false">Challenge</button>
+ </div>
+</nav>
+<main>
+<div class="wrap">
+
+<section class="sec on" id="sec-revise">
+ <div class="rv">
+  <div class="toc" id="toc"></div>
+  <div class="panel card" id="card"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-drills">
+ <h2>Calculation drills</h2>
+ <p class="lead">Fresh questions every time. Charges are in units of e (so a proton is +1). Use m<sub>e</sub> = 9.11 × 10<sup>−31</sup> kg, m<sub>p</sub> = 1.67 × 10<sup>−27</sup> kg, c = 3.00 × 10<sup>8</sup> m s<sup>−1</sup>, h = 6.63 × 10<sup>−34</sup> J s. Type fractions as decimals (−0.333) or like −1/3.</p>
+ <div class="panel">
+  <div class="row" id="drTopics"></div>
+  <div class="row" style="margin-top:10px">
+   <span class="seg" id="drLevel"><button type="button" aria-pressed="true" data-l="0">Steady</button><button type="button" aria-pressed="false" data-l="1">Stretch</button></span>
+   <span class="sp"></span><span class="tally" id="drTally">0 / 0 this session</span>
+  </div>
+ </div>
+ <div class="panel qcard" id="drCard"></div>
+</section>
+
+<section class="sec" id="sec-quiz">
+ <h2>Concept quiz</h2>
+ <p class="lead">Twelve questions drawn from a bank covering the whole topic. Every answer comes with the reason.</p>
+ <div class="panel qcard" id="qzCard"></div>
+</section>
+
+<section class="sec" id="sec-sort">
+ <h2>Particle sort</h2>
+ <p class="lead">Tap a particle, then tap the family it belongs to. Tap a particle already in a box to send it back.</p>
+ <div class="panel">
+  <div class="pool pal" id="soPool"></div>
+  <div class="bins" id="soBins"></div>
+  <div class="row" style="margin-top:12px"><button class="btn" id="soCheck" type="button">Check my sorting</button><button class="btn alt" id="soNew" type="button">New set</button></div>
+  <div class="fb" id="soFb"></div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab1">
+ <h2>Hadron builder</h2>
+ <p class="lead">Quarks are never found alone. Combine up and down quarks and antiquarks into hadrons: three quarks make a baryon, three antiquarks an antibaryon, and a quark with an antiquark a meson.</p>
+ <div class="grid2">
+  <div class="panel">
+   <div class="row" id="hbSlots" style="gap:12px;justify-content:center;min-height:72px"></div>
+   <div class="row pal" style="justify-content:center;margin-top:12px" id="hbPal"></div>
+   <div class="row" style="justify-content:center;margin-top:10px"><button class="btn alt" id="hbUndo" type="button">Remove last</button><button class="btn alt" id="hbClr" type="button">Empty</button></div>
+   <div class="kv" id="hbK" style="margin-top:12px;justify-content:center"></div>
+  </div>
+  <div class="panel">
+   <h3 style="margin-top:0">Target</h3>
+   <div id="hbT" class="q"></div>
+   <div class="row"><button class="btn go" id="hbGo" type="button">Check my hadron</button><button class="btn alt" id="hbSkip" type="button">New target</button><span class="sp"></span><span class="tally" id="hbS">0 built</span></div>
+   <div class="fb" id="hbFb"></div>
+  </div>
+ </div>
+</section>
+
+<section class="sec" id="sec-lab2">
+ <h2>Reaction checker</h2>
+ <p class="lead">Is this reaction possible? Check charge, baryon number and lepton number. If it can happen, decide which interaction is responsible.</p>
+ <div class="panel" id="rcBox"></div>
+</section>
+
+<section class="sec" id="sec-lab3">
+ <h2>Find the missing particle</h2>
+ <p class="lead">Complete each equation so that everything is conserved.</p>
+ <div class="panel" id="mpBox"></div>
+</section>
+
+<section class="sec" id="sec-chall">
+ <h2>Challenge</h2>
+ <p class="lead">Rebuild the key arguments, work through classic exam problems, then race the clock.</p>
+ <div class="row" style="margin-bottom:14px"><span class="seg" id="chMode"><button type="button" aria-pressed="true" data-m="der">Argument builder</button><button type="button" aria-pressed="false" data-m="exam">Exam problems</button><button type="button" aria-pressed="false" data-m="gaunt">90-second gauntlet</button></span></div>
+ <div class="panel" id="chBox"></div>
+</section>
+
+</div>
+</main>
+</div>
+<script>
+(function(){
+'use strict';
+const root=document.getElementById('ep11');
+const $=(s,el)=>(el||root).querySelector(s);
+const $$=(s,el)=>[...(el||root).querySelectorAll(s)];
+const cssv=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const R=Math.random;
+const rnd=(a,b)=>a+(b-a)*R();
+const rint=(a,b)=>Math.floor(a+(b-a+1)*R());
+const pick=a=>a[Math.floor(R()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const E_CH=1.60e-19;
+
+/* ---------- number formatting and parsing ---------- */
+function sci(x,sf,html){
+ if(sf===undefined)sf=3; if(html===undefined)html=true;
+ if(!isFinite(x))return '–'; if(x===0)return '0';
+ const a=Math.abs(x);
+ if(a>=1e-3&&a<1e5){const s=x.toPrecision(sf);if(!/e/.test(s))return s; if(a>=1e3&&a<1e5){return String(Math.round(x))}}
+ let e=Math.floor(Math.log10(a)),m=x/Math.pow(10,e),ms=m.toFixed(sf-1);
+ if(Math.abs(parseFloat(ms))>=10){e++;m=x/Math.pow(10,e);ms=m.toFixed(sf-1)}
+ return html?ms+' × 10<sup>'+e+'</sup>':ms+'×10^'+e;
+}
+function sciT(x,sf){return sci(x,sf||3,false).replace('×10^','×10^')}
+function parseNum(s){
+ if(s==null)return NaN;
+ s=String(s).trim().replace(/\s+/g,'').replace(/[−–]/g,'-').replace(/,/g,'');
+ s=s.replace(/(?:×|x|X|\*)10\^?\(?([-+]?\d+)\)?$/,'e$1');
+ if(!/^[-+]?(\d+\.?\d*|\.\d+)(e[-+]?\d+)?$/i.test(s))return NaN;
+ return parseFloat(s);
+}
+function close(v,t,tol){if(!isFinite(v))return false;if(t===0)return Math.abs(v)<1e-9;return Math.abs(v-t)/Math.abs(t)<=(tol||0.015)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- storage and score ---------- */
+const KEY='ep11-wjec-particles-v1';
+const store={score:0,streak:0,best:0,sprint:0,kit:0,seen:{}};
+try{Object.assign(store,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}}
+function hud(p){
+ const q=$('#hudQ .v'),s=$('#hudS .v');
+ q.textContent=String(Math.min(9999,store.score)).padStart(4,'0');
+ s.textContent=String(Math.min(99,store.streak)).padStart(2,'0');
+ if(p){const el=$('#hudQ');el.classList.remove('pulse');void el.offsetWidth;el.classList.add('pulse')}
+}
+function award(n){store.score+=n;store.streak++;save();hud(true)}
+function miss(){store.streak=0;save();hud(false)}
+function fb(el,cls,html){el.className='fb '+cls;el.innerHTML=html}
+
+/* ---------- theme ---------- */
+const docEl=document.documentElement;
+function isDark(){const t=docEl.getAttribute('data-theme');if(t)return t==='dark';return window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches}
+function themeLabel(){$('#themeBtn').textContent=isDark()?'Light mode':'Dark mode'}
+const redrawers=[];
+$('#themeBtn').addEventListener('click',()=>{docEl.setAttribute('data-theme',isDark()?'light':'dark');themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})});
+if(window.matchMedia){try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{themeLabel();redrawers.forEach(f=>{try{f()}catch(e){}})})}catch(e){}}
+
+/* ---------- canvas helper ---------- */
+function fitCanvas(cv){
+ const box=cv.parentElement,w=Math.max(10,box.clientWidth),h=Math.max(10,box.clientHeight),d=window.devicePixelRatio||1;
+ if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d)}
+ const c=cv.getContext('2d');c.setTransform(d,0,0,d,0,0);return {c,w,h};
+}
+function watch(cv,draw){
+ if(window.ResizeObserver){new ResizeObserver(()=>draw()).observe(cv.parentElement)}
+ redrawers.push(draw);
+}
+
+/* ---------- SVG circuit symbols (explicit closing tags throughout) ---------- */
+function ln(x1,y1,x2,y2,w){return '<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'"'+(w?' stroke-width="'+w+'"':'')+'></line>'}
+function arr(x1,y1,x2,y2){const a=Math.atan2(y2-y1,x2-x1),h=6.5;
+ const p1=[(x2-h*Math.cos(a-0.45)).toFixed(1),(y2-h*Math.sin(a-0.45)).toFixed(1)],p2=[(x2-h*Math.cos(a+0.45)).toFixed(1),(y2-h*Math.sin(a+0.45)).toFixed(1)];
+ return ln(x1,y1,x2,y2)+'<polygon points="'+x2+','+y2+' '+p1.join(',')+' '+p2.join(',')+'" fill="currentColor" stroke="none"></polygon>'}
+function symG(t,rot){
+ rot=rot||0;
+ const L=(a,b)=>ln(a,0,b,0);
+ const box='<rect x="-18" y="-7" width="36" height="14" fill="none"></rect>';
+ const res=L(-30,-18)+box+L(18,30);
+ const lab=(s)=>'<text x="0" y="5" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" stroke="none" font-family="Arial,sans-serif" transform="rotate('+(-rot)+')">'+s+'</text>';
+ switch(t){
+  case 'res':return res;
+  case 'lamp':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+ln(-7.8,-7.8,7.8,7.8)+ln(-7.8,7.8,7.8,-7.8)+L(11,30);
+  case 'A':case 'V':case 'M':return L(-30,-11)+'<circle cx="0" cy="0" r="11" fill="none"></circle>'+lab(t)+L(11,30);
+  case 'cell':return L(-30,-4)+ln(-4,-13,-4,13)+ln(4,-6.5,4,6.5,4.5)+L(4,30);
+  case 'batt':return L(-30,-12)+ln(-12,-13,-12,13)+ln(-5,-6.5,-5,6.5,4.5)+L(-5,5)+ln(5,-13,5,13)+ln(12,-6.5,12,6.5,4.5)+L(12,30);
+  case 'diode':return L(-30,-8)+'<polygon points="-8,-9 -8,9 8,0" fill="none"></polygon>'+ln(8,-9,8,9)+L(8,30);
+  case 'led':return symG('diode')+arr(1,-11,10,-22)+arr(7,-7,16,-18);
+  case 'therm':return res+'<polyline points="-25,13 -16,13 16,-13" fill="none"></polyline>';
+  case 'ldr':return res+arr(-20,-27,-9,-12)+arr(-7,-27,4,-12);
+  case 'var':return res+arr(-15,12,17,-14);
+  case 'sw':return L(-30,-10)+'<circle cx="-10" cy="0" r="2.3" fill="currentColor"></circle>'+ln(-10,0,11,-12)+'<circle cx="12" cy="0" r="2.3" fill="currentColor"></circle>'+L(12,30);
+  case 'pot':return res+arr(0,24,0,8);
+ }
+ return '';
+}
+function place(t,x,y,rot){return '<g transform="translate('+x+','+y+') rotate('+(rot||0)+')">'+symG(t,rot)+'</g>'}
+function symSVG(t){return '<svg viewBox="-38 -32 76 62" role="img" aria-label="circuit symbol" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'+symG(t)+'</g></svg>'}
+function dot(x,y){return '<circle cx="'+x+'" cy="'+y+'" r="3.2" fill="currentColor" stroke="none"></circle>'}
+function tx(x,y,s,o){o=o||{};return '<text x="'+x+'" y="'+y+'" font-size="'+(o.fs||12)+'" text-anchor="'+(o.a||'middle')+'" fill="'+(o.fill||'currentColor')+'" stroke="none" font-family="Atkinson Hyperlegible,Verdana,sans-serif"'+(o.fw?' font-weight="'+o.fw+'"':'')+'>'+s+'</text>'}
+function path(pts){return '<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" fill="none"></polyline>'}
+function svgWrap(vb,inner,label){return '<svg viewBox="'+vb+'" role="img" aria-label="'+(label||'diagram')+'" xmlns="http://www.w3.org/2000/svg" style="color:var(--ink)"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+inner+'</g></svg>'}
+
+/* circuits used in notes */
+function circSeries(comp,label){
+ let s=path([[70,30],[40,30],[40,150],[190,150]])+place('cell',100,30)+ln(130,30,170,30)+place('var',200,30)+ln(230,30,270,30)+place('A',300,30)+path([[330,30],[400,30],[400,150],[250,150]])+place(comp,220,150);
+ s+=path([[170,150],[170,205],[190,205]])+place('V',220,205)+path([[250,205],[270,205],[270,150]])+dot(170,150)+dot(270,150);
+ s+=tx(100,62,'cell',{fs:11})+tx(200,62,'variable resistor',{fs:11})+tx(220,125,label,{fs:11});
+ return svgWrap('0 0 440 232',s,'series circuit with variable resistor');
+}
+function circDivider(){
+ let s=path([[120,30],[40,30],[40,110],[120,110]])+place('cell',150,30)+path([[180,30],[260,30],[260,110],[180,110]]);
+ s+=place('pot',150,110);
+ s+=path([[150,134],[150,150],[300,150],[300,190],[250,190]])+place('A',220,190)+ln(160,190,190,190)+place('lamp',130,190)+path([[100,190],[40,190],[40,110]])+dot(40,110);
+ s+=path([[85,190],[85,235],[100,235]])+place('V',130,235)+path([[160,235],[175,235],[175,190]])+dot(85,190)+dot(175,190);
+ s+=tx(150,82,'potentiometer',{fs:11})+tx(205,146,'slider',{fs:11,a:'end'});
+ return svgWrap('0 0 330 262',s,'potential divider circuit');
+}
+
+
+const HP=6.63e-34,CL=3.00e8,QE=1.60e-19,ME=9.11e-31,MP=1.67e-27;
+/* ---------- tabs ---------- */
+const onShow={};let labActive='revise';
+function showTab(name){
+ $$('.tab').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===name?'true':'false'));
+ $$('.sec').forEach(s=>s.classList.toggle('on',s.id==='sec-'+name));
+ labActive=name;if(onShow[name])onShow[name]();
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+
+/* ---------- header: bubble chamber tracks ---------- */
+function hdr(){const cv=$('#hdrCv');if(!cv)return;const {c,w,h}=fitCanvas(cv);c.fillStyle='#0B1020';c.fillRect(0,0,w,h);const rnd=mulberry32(33);
+ for(let k=0;k<Math.max(6,w/90);k++){let x=rnd()*w,y=rnd()*h,a=rnd()*6.28,r=30+rnd()*120;const s=rnd()<0.5?1:-1,col=rnd()<0.5?'rgba(140,200,255,.75)':'rgba(255,150,190,.7)';c.strokeStyle=col;c.lineWidth=1.3;c.beginPath();c.moveTo(x,y);
+  for(let i=0;i<160;i++){x+=Math.cos(a)*2;y+=Math.sin(a)*2;a+=s*2/r;r*=0.985;if(r<4)break;c.lineTo(x,y)}c.stroke()}
+ c.strokeStyle='rgba(255,230,140,.6)';c.setLineDash([3,4]);c.beginPath();c.moveTo(w*0.3,h);c.lineTo(w*0.36,0);c.stroke();c.setLineDash([])}
+watch($('#hdrCv'),hdr);
+
+/* ---------- particle library ---------- */
+const bar=s=>'<span class="ob">'+s+'</span>';
+const PT={
+ p:{s:'p',n:'proton',q:1,B:1,L:0,cat:'baryon',qk:'uud'},
+ n:{s:'n',n:'neutron',q:0,B:1,L:0,cat:'baryon',qk:'udd'},
+ pb:{s:bar('p'),n:'antiproton',q:-1,B:-1,L:0,cat:'antibaryon',qk:'ūūd̄'},
+ nb:{s:bar('n'),n:'antineutron',q:0,B:-1,L:0,cat:'antibaryon',qk:'ūd̄d̄'},
+ Dpp:{s:'Δ<sup>++</sup>',n:'delta plus plus',q:2,B:1,L:0,cat:'baryon',qk:'uuu'},
+ Dp:{s:'Δ<sup>+</sup>',n:'delta plus',q:1,B:1,L:0,cat:'baryon',qk:'uud'},
+ D0:{s:'Δ<sup>0</sup>',n:'delta zero',q:0,B:1,L:0,cat:'baryon',qk:'udd'},
+ Dm:{s:'Δ<sup>−</sup>',n:'delta minus',q:-1,B:1,L:0,cat:'baryon',qk:'ddd'},
+ pip:{s:'π<sup>+</sup>',n:'positive pion',q:1,B:0,L:0,cat:'meson',qk:'ud̄'},
+ pim:{s:'π<sup>−</sup>',n:'negative pion',q:-1,B:0,L:0,cat:'meson',qk:'dū'},
+ pi0:{s:'π<sup>0</sup>',n:'neutral pion',q:0,B:0,L:0,cat:'meson',qk:'uū or dd̄'},
+ em:{s:'e<sup>−</sup>',n:'electron',q:-1,B:0,L:1,cat:'lepton'},
+ ep:{s:'e<sup>+</sup>',n:'positron',q:1,B:0,L:-1,cat:'antilepton'},
+ nu:{s:'ν<sub>e</sub>',n:'electron neutrino',q:0,B:0,L:1,cat:'lepton'},
+ nub:{s:bar('ν')+'<sub>e</sub>',n:'electron antineutrino',q:0,B:0,L:-1,cat:'antilepton'},
+ g:{s:'γ',n:'photon',q:0,B:0,L:0,cat:'boson'},
+ Wm:{s:'W<sup>−</sup>',n:'W minus boson',q:-1,B:0,L:0,cat:'boson'},
+ Wp:{s:'W<sup>+</sup>',n:'W plus boson',q:1,B:0,L:0,cat:'boson'},
+ gl:{s:'g',n:'gluon',q:0,B:0,L:0,cat:'boson'}
+};
+const QK={u:{s:'u',q:2/3,B:1/3},d:{s:'d',q:-1/3,B:1/3},ub:{s:bar('u'),q:-2/3,B:-1/3},db:{s:bar('d'),q:1/3,B:-1/3}};
+function frac(x){const r=Math.round(x*3);if(r%3===0)return (r/3>0?'+':r<0?'−':'')+Math.abs(r/3);return (r>0?'+':'−')+Math.abs(r)+'/3'}
+function rxHTML(l,r){return l.map(k=>PT[k]?PT[k].s:k).join(' + ')+' → '+r.map(k=>PT[k]?PT[k].s:k).join(' + ')}
+
+/* ---------- widgets ---------- */
+function figAtom(){let g='<circle cx="120" cy="100" r="80" fill="none" stroke="var(--line)" stroke-dasharray="4 4"></circle><circle cx="120" cy="100" r="3" fill="var(--neg)" stroke="none"></circle>';[[50,0.3],[65,2],[80,4.2]].forEach(o=>{g+='<circle cx="'+(120+o[0]*Math.cos(o[1]))+'" cy="'+(100+o[0]*Math.sin(o[1]))+'" r="4" fill="var(--pos)" stroke="none"></circle>'});
+ g+=tx(120,196,'atom ~ 10⁻¹⁰ m',{fs:12});g+=ln(125,97,230,40,1).replace('<line ','<line stroke-dasharray="3 3" ');
+ const pp=[[270,40,1],[288,36,0],[279,55,1],[297,52,0],[262,58,0],[288,70,1],[270,74,0],[300,70,1]];g+='<circle cx="281" cy="55" r="36" fill="none" stroke="var(--line)"></circle>';pp.forEach(q=>{g+='<circle cx="'+q[0]+'" cy="'+q[1]+'" r="9" fill="'+(q[2]?'var(--neg)':'var(--muted)')+'" stroke="none"></circle>'});g+=tx(281,112,'nucleus ~ 10⁻¹⁵ m',{fs:12})+tx(281,128,'(red: protons, grey: neutrons)',{fs:10});
+ return svgWrap('0 0 400 205',g,'atom and nucleus')}
+function figBeta(){const X=e=>50+e*320,Y=v=>170-v*140;let g=ln(50,170,380,170)+ln(50,170,50,20)+tx(380,188,'kinetic energy of β particle',{a:'end',fs:11})+tx(56,24,'number of β particles',{a:'start',fs:11});
+ let p='';for(let i=0;i<=100;i++){const e=i/100,v=4*e*Math.pow(1-e,1.6)*1.9;p+=(i?' L':'M')+X(e)+' '+Y(Math.min(1,v))}g+='<path d="'+p+'" fill="none" stroke="var(--neg)" stroke-width="2.4"></path>'+ln(X(1),175,X(1),30,1.5).replace('<line ','<line stroke-dasharray="4 4" ')+tx(X(1),24,'energy released by the decay',{a:'end',fs:11});
+ return svgWrap('0 0 400 200',g,'beta energy spectrum')}
+function figForce(){const X=r=>50+r/4*320,Y=f=>100-f*70;let g=ln(50,100,380,100)+ln(50,20,50,190)+tx(380,116,'separation / fm',{a:'end',fs:11})+tx(56,24,'repulsion',{a:'start',fs:11})+tx(56,186,'attraction',{a:'start',fs:11});
+ let p='';for(let i=4;i<=400;i++){const r=i/100,f=1.2*Math.exp(-(r-0.5)*6)-1.3*Math.exp(-Math.pow((r-1.1)/0.7,2));p+=(i>4?' L':'M')+X(r)+' '+Y(Math.max(-1.2,Math.min(1.2,f)))}g+='<path d="'+p+'" fill="none" stroke="var(--neg)" stroke-width="2.4"></path>';[0.5,1,2,3].forEach(r=>{g+=tx(X(r),116,String(r),{fs:10})});
+ return svgWrap('0 0 400 200',g,'strong force against separation')}
+function wFeyn(el){
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row"><span class="seg" id="wfT"><button type="button" aria-pressed="true" data-t="m">β⁻ decay</button><button type="button" aria-pressed="false" data-t="p">β⁺ decay</button></span></div><div id="wfS" style="margin-top:6px"></div><div class="kv" id="wfK"></div></div>');
+ let t='m';const upd=()=>{const m=t==='m';let g='';g+=carr(120,190,120,110,'var(--ink)',2.5)+carr(120,110,120,30,'var(--ink)',2.5)+tx(108,196,m?'d':'u',{fs:16,fw:700,a:'end'})+tx(108,30,m?'u':'d',{fs:16,fw:700,a:'end'});
+  let wz='M120 110';for(let i=1;i<=10;i++)wz+=' L'+(120+i*12)+' '+(110+(i%2?-7:7));g+='<path d="'+wz+'" fill="none" stroke="var(--pos)" stroke-width="2.2"></path>'+tx(180,98,m?'W⁻':'W⁺',{fs:14,fw:700,fill:'var(--pos)'});
+  g+=carr(240,110,320,40,'var(--ink)',2.2)+carr(240,110,320,170,'var(--ink)',2.2).replace('marker','m');g+=tx(328,40,m?'e⁻':'e⁺',{a:'start',fs:15,fw:700})+tx(328,182,m?'ν̄e':'νe',{a:'start',fs:15,fw:700});
+  g+=carr(30,190,30,40,'var(--muted)',1.2)+tx(22,120,'time',{fs:11,a:'end'});
+  $('#wfS').innerHTML='<div style="max-width:420px">'+svgWrap('0 0 400 210',g,'Feynman-style diagram')+'</div>';
+  $('#wfK').innerHTML=m?'<span>A down quark becomes an up quark (neutron udd → proton uud).</span><span>The W⁻ carries the charge away and produces an electron and an electron antineutrino.</span><span>Charge: −⅓ → +⅔ − 1 + 0 ✓</span>':'<span>An up quark becomes a down quark (proton uud → neutron udd), inside a nucleus.</span><span>The W⁺ produces a positron and an electron neutrino.</span><span>Charge: +⅔ → −⅓ + 1 + 0 ✓</span>'};
+ $$('#wfT button').forEach(b=>b.addEventListener('click',()=>{t=b.dataset.t;$$('#wfT button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));upd()}));upd();
+}
+function carr(x1,y1,x2,y2,col,w){return arr(x1,y1,x2,y2).replace('<line ','<line stroke="'+col+'" stroke-width="'+(w||2.5)+'" ').replace('fill="currentColor"','fill="'+col+'"')}
+function wTable(el){
+ const keys=['p','n','pb','nb','Dpp','Dp','D0','Dm','pip','pim','pi0'];
+ el.insertAdjacentHTML('beforeend','<div class="wbox"><div class="row pal" id="wtB">'+keys.map(k=>'<button type="button" class="chip" data-k="'+k+'">'+PT[k].s+'</button>').join('')+'</div><div class="kv" id="wtK" style="margin-top:8px"></div></div>');
+ const show=k=>{const P=PT[k];$$('#wtB .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.k===k?'true':'false'));
+  const qs=P.qk.includes('or')?null:P.qk.replace(/ū/g,'U').replace(/d̄/g,'D').split('');const parts=qs?qs.map(c=>c==='u'?[2/3,'u']:c==='d'?[-1/3,'d']:c==='U'?[-2/3,bar('u')]:[1/3,bar('d')]):null;
+  $('#wtK').innerHTML='<span><b>'+P.n+'</b> ('+P.cat+')</span><span>quarks: <b>'+(parts?parts.map(x=>x[1]).join(''):'u'+bar('u')+' or d'+bar('d'))+'</b></span>'+(parts?'<span>charge: '+parts.map(x=>frac(x[0])).join(' ')+' = <b>'+frac(P.q)+'</b></span>':'<span>charge: <b>0</b></span>')+'<span>baryon number: <b>'+frac(P.B)+'</b></span>'};
+ $$('#wtB .chip').forEach(b=>b.addEventListener('click',()=>show(b.dataset.k)));show('p');
+}
+function figAnn(){let g='';g+='<circle cx="80" cy="60" r="12" fill="var(--pos)" stroke="none"></circle>'+tx(80,65,'e⁻',{fs:11,fill:'#fff'})+'<circle cx="80" cy="140" r="12" fill="var(--neg)" stroke="none"></circle>'+tx(80,145,'e⁺',{fs:11,fill:'#fff'})+carr(95,68,140,92,'var(--ink)',2)+carr(95,132,140,108,'var(--ink)',2);
+ let w1='M160 100';for(let i=1;i<=8;i++)w1+=' L'+(160+i*9)+' '+(100-i*8+(i%2?-5:5));let w2='M160 100';for(let i=1;i<=8;i++)w2+=' L'+(160+i*9)+' '+(100+i*8+(i%2?-5:5));g+='<path d="'+w1+'" fill="none" stroke="#F2C12E" stroke-width="2.2"></path><path d="'+w2+'" fill="none" stroke="#F2C12E" stroke-width="2.2"></path>'+tx(240,34,'γ',{fs:16,fw:700})+tx(240,174,'γ',{fs:16,fw:700})+tx(150,195,'annihilation: two photons, opposite directions',{fs:11});
+ g+=ln(275,10,275,200,1).replace('<line ','<line stroke-dasharray="4 4" ');let w3='M290 100';for(let i=1;i<=6;i++)w3+=' L'+(290+i*9)+' '+(100+(i%2?-6:6));g+='<path d="'+w3+'" fill="none" stroke="#F2C12E" stroke-width="2.2"></path>'+tx(300,86,'γ',{fs:14,fw:700})+'<circle cx="350" cy="100" r="6" fill="var(--muted)" stroke="none"></circle>'+carr(352,98,388,60,'var(--pos)',2)+carr(352,102,388,140,'var(--neg)',2)+tx(386,52,'e⁻',{fs:11})+tx(386,156,'e⁺',{fs:11})+tx(340,195,'pair production',{fs:11});
+ return svgWrap('0 0 400 205',g,'annihilation and pair production')}
+
+/* ---------- revise cards ---------- */
+const CARDS=[
+{t:'Atoms and nuclei',h:()=>`
+<h2>The structure of the atom</h2>
+<div class="fig" style="max-width:420px">${figAtom()}</div>
+<p>A tiny, positively charged <strong>nucleus</strong> of protons and neutrons (nucleons), diameter about 10<sup>−15</sup> m (1 fm), surrounded by electrons. The atom is about 10<sup>−10</sup> m across: roughly 100 000 times larger.</p>
+<table class="t" style="max-width:520px"><thead><tr><th></th><th>charge / C</th><th>relative charge</th><th>mass / kg</th><th>relative mass</th></tr></thead><tbody>
+<tr><td>proton</td><td>+1.6 × 10⁻¹⁹</td><td>+1</td><td>1.673 × 10⁻²⁷</td><td>1</td></tr><tr><td>neutron</td><td>0</td><td>0</td><td>1.675 × 10⁻²⁷</td><td>1</td></tr><tr><td>electron</td><td>−1.6 × 10⁻¹⁹</td><td>−1</td><td>9.11 × 10⁻³¹</td><td>0.0005</td></tr></tbody></table>
+<p style="margin-top:10px"><strong>Proton number Z</strong> (atomic number): the number of protons. <strong>Nucleon number A</strong> (mass number): protons + neutrons. <strong>Isotopes</strong> have the same Z but different numbers of neutrons. Written <sup>A</sup><sub>Z</sub>X, e.g. <sup>14</sup><sub>6</sub>C has 6 protons and 8 neutrons.</p>`,
+chk:[['How many neutrons in ²³⁵₉₂U?','235 − 92 = 143']]},
+
+{t:'Radioactive decay',h:()=>`
+<h2>Alpha, beta and gamma decay</h2>
+<ul><li><strong>α decay</strong> (large nuclei): an α particle is 2 protons + 2 neutrons, <sup>4</sup><sub>2</sub>α. Z falls by 2, A by 4. <sup>238</sup><sub>92</sub>U → <sup>234</sup><sub>90</sub>Th + <sup>4</sup><sub>2</sub>α</li>
+<li><strong>β⁻ decay</strong> (too many neutrons): a neutron becomes a proton; a fast electron and an <strong>antineutrino</strong> are emitted. Z rises by 1, A unchanged. <sup>14</sup><sub>6</sub>C → <sup>14</sup><sub>7</sub>N + e⁻ + ${bar('ν')}<sub>e</sub></li>
+<li><strong>β⁺ decay</strong>: a proton becomes a neutron, emitting a positron and a <strong>neutrino</strong>. Z falls by 1.</li>
+<li><strong>γ emission</strong>: electromagnetic radiation from a nucleus left with excess energy after α or β decay. Z and A are unchanged.</li></ul>
+<h3>Evidence for the neutrino</h3>
+<div class="fig" style="max-width:420px">${figBeta()}</div>
+<p>Each β decay of a given nuclide releases the same energy, yet the β particles have a <strong>range</strong> of kinetic energies. Another particle must carry the rest: the (anti)neutrino. Neutrinos have almost no mass and no charge and barely interact with matter.</p>
+<p class="small muted">Nuclear decay equations are covered in more depth in A2 unit 3.5; they are included here because they appear in your notes.</p>`,
+chk:[['²³⁸₉₂U decays by α then two β⁻ decays. What is the product?','A = 234, Z = 92: ²³⁴₉₂U (uranium again).']]},
+
+{t:'Quarks and leptons',h:()=>`
+<h2>Quarks and leptons</h2>
+<p>Matter is made of <strong>quarks</strong> and <strong>leptons</strong>. There are three generations of each, but the everyday world is built from the first generation, and WJEC questions use only these:</p>
+<table class="t" style="max-width:520px"><thead><tr><th></th><th colspan="2">leptons</th><th colspan="2">quarks</th></tr></thead><tbody><tr><td>particle</td><td>electron</td><td>electron neutrino</td><td>up</td><td>down</td></tr><tr><td>symbol</td><td>e⁻</td><td>ν<sub>e</sub></td><td>u</td><td>d</td></tr><tr><td>charge / e</td><td>−1</td><td>0</td><td>+⅔</td><td>−⅓</td></tr></tbody></table>
+<p style="margin-top:10px">The second generation (muon, muon neutrino, charm, strange) and third generation (tau, tau neutrino, top, bottom) are heavier copies. Leptons are fundamental: they are not made of anything smaller.</p>`,
+chk:[['Which first-generation particle has charge −⅓ e?','The down quark.']]},
+
+{t:'Antiparticles',h:()=>`
+<h2>Antiparticles</h2>
+<p>Every particle in the table has an <strong>antiparticle</strong> with identical properties (such as mass) except for <strong>opposite charge</strong> (and opposite baryon and lepton numbers).</p>
+<ul><li>The antielectron is the <strong>positron</strong>, e⁺.</li><li>Other antiparticles have a bar: ${bar('u')}, ${bar('d')}, ${bar('ν')}<sub>e</sub>, ${bar('p')}, ${bar('n')}.</li><li>The antineutron is uncharged but is still different from the neutron: it is made of antiquarks.</li><li>Two particles of equal mass and opposite charge are not necessarily a particle–antiparticle pair.</li></ul>
+<div class="fig" style="max-width:420px">${figAnn()}</div>
+<p><strong>Annihilation:</strong> a particle and its antiparticle meet and their mass and kinetic energy become (usually) two photons moving in opposite directions, conserving momentum. <strong>Pair production:</strong> a photon near a nucleus creates a particle–antiparticle pair. Positrons for PET scans come from β⁺-emitting isotopes.</p>`,
+chk:[['Why must annihilation of a stationary e⁻e⁺ pair produce at least two photons?','Total momentum is zero before, so it must be zero after: one photon always carries momentum, so two travelling in opposite directions are needed.']]},
+
+{t:'Hadrons',h:()=>`
+<h2>Hadrons: baryons and mesons</h2>
+<p>Quarks and antiquarks are <strong>never observed in isolation</strong>. They are bound into composite particles called <strong>hadrons</strong>:</p>
+<ul><li><strong>baryons</strong>: three quarks (qqq), e.g. proton uud, neutron udd;</li><li><strong>antibaryons</strong>: three antiquarks, e.g. antiproton ${bar('u')}${bar('u')}${bar('d')};</li><li><strong>mesons</strong>: a quark and an antiquark, e.g. π⁺ = u${bar('d')}, π⁻ = d${bar('u')}, π⁰ = u${bar('u')} or d${bar('d')}.</li></ul>
+<p>Add the quark charges to get the hadron’s charge. Each quark has baryon number +⅓ and each antiquark −⅓, so baryons have B = +1, antibaryons −1, mesons 0. Tap a hadron to see its make-up:</p>`,
+after:el=>wTable(el.querySelector('.wslot')),
+chk:[['Suggest the quark make-up of a baryon with charge +2.','uuu (the Δ⁺⁺).']]},
+
+{t:'The four interactions',h:()=>`
+<h2>The four fundamental interactions</h2>
+<table class="t"><thead><tr><th>Interaction</th><th>Experienced by</th><th>Range</th><th>Comments</th></tr></thead><tbody>
+<tr><td>gravitational</td><td>all matter</td><td>infinite</td><td>very weak: negligible except between large objects such as planets</td></tr>
+<tr><td>weak</td><td>all leptons, all quarks, so all hadrons</td><td>very short</td><td>only significant when the e-m and strong interactions do not operate; typical time 10⁻⁸ s</td></tr>
+<tr><td>electromagnetic</td><td>all charged particles</td><td>infinite</td><td>also felt by neutral hadrons, as they are made of charged quarks; typical time 10⁻¹⁶ s</td></tr>
+<tr><td>strong</td><td>all quarks, so all hadrons</td><td>short</td><td>not felt by leptons; typical time 10⁻²³ s</td></tr></tbody></table>
+<h3>The strong force between nucleons</h3>
+<div class="fig" style="max-width:420px">${figForce()}</div>
+<p>Attractive up to about 3 fm, overcoming the electrostatic repulsion between protons; repulsive below about 0.5 fm, stopping the nucleus collapsing.</p>
+<p class="small muted">Your notes also describe exchange particles: photons (e-m), W and Z bosons (weak), gluons (strong) and the undiscovered graviton. These are useful background; WJEC does not examine them.</p>`,
+chk:[['Why do neutrons feel the electromagnetic interaction even though they are uncharged?','They are made of charged quarks.']]},
+
+{t:'Conservation laws',h:()=>`
+<h2>Conservation laws</h2>
+<p>In every interaction these are conserved:</p>
+<ul><li><strong>charge</strong>;</li><li><strong>baryon number</strong> B (equivalently, total quark number): baryons +1, antibaryons −1, everything else 0; quarks +⅓, antiquarks −⅓;</li><li><strong>lepton number</strong> L: e⁻ and ν<sub>e</sub> +1; e⁺ and ${bar('ν')}<sub>e</sub> −1; everything else 0.</li></ul>
+<p>(Energy and momentum are conserved too.)</p>
+<h3>Worked example</h3>
+<div class="work"><div>n → p + e⁻ + ${bar('ν')}<sub>e</sub></div><div>charge: 0 → +1 − 1 + 0 = 0 ✓</div><div>B: 1 → 1 + 0 + 0 ✓</div><div>L: 0 → 0 + 1 − 1 = 0 ✓ So it can happen (by the weak interaction).</div></div>
+<div class="work"><div>p + p → p + p + n: B: 2 → 3 ✗ Impossible.</div></div>`,
+chk:[['Why must β⁻ decay produce an antineutrino rather than a neutrino?','Lepton number: before 0; the electron has +1, so the other lepton must have −1: an antineutrino.']]},
+
+{t:'Weak interactions',h:()=>`
+<h2>Quark flavour changes and the weak interaction</h2>
+<p>Only the weak interaction can <strong>change the flavour</strong> of a quark (u ↔ d), and only the weak interaction involves <strong>neutrinos</strong>. These are exclusive to weak interactions.</p>
+<div class="eqbig" style="font-size:1.05rem">β⁻: d → u + e⁻ + ${bar('ν')}<sub>e</sub> &nbsp;&nbsp;&nbsp; β⁺: u → d + e⁺ + ν<sub>e</sub></div>`,
+after:el=>wFeyn(el.querySelector('.wslot')),
+chk:[['In β⁻ decay, which quark changes, and into what?','One down quark becomes an up quark: udd → uud.']]},
+
+{t:'Which interaction?',h:()=>`
+<h2>Identifying the interaction</h2>
+<ol><li>Is a <strong>neutrino</strong> involved, or does a <strong>quark change flavour</strong> (count the u and d quarks before and after)? → <strong>weak</strong> (about 10⁻⁸ s).</li><li>Otherwise, are <strong>photons</strong> emitted or absorbed? → <strong>electromagnetic</strong> (about 10⁻¹⁶ s).</li><li>Otherwise, only hadrons with quark numbers of each flavour conserved? → <strong>strong</strong> (about 10⁻²³ s).</li></ol>
+<p>The strongest interaction that could be responsible is the one that happens.</p>
+<div class="work"><div>Δ⁺⁺ → p + π⁺: uuu → uud + u${bar('d')}: u: 3 → 3, d: 0 → 0. Hadrons only: <strong>strong</strong>.</div><div>π⁰ → γ + γ: photons: <strong>electromagnetic</strong>.</div><div>n → p + e⁻ + ${bar('ν')}<sub>e</sub>: neutrino, d → u: <strong>weak</strong>.</div></div>`,
+chk:[['An interaction takes about 10⁻²³ s and involves only hadrons. Which interaction is it?','Strong.']]},
+
+{t:'Cosmic rays and accelerators',h:()=>`
+<h2>Discovering particles</h2>
+<p><strong>Cosmic rays</strong> are high-energy protons and nuclei from stars, including the Sun. They strike gas atoms in the upper atmosphere and produce new short-lived particles and antiparticles, some of which reach the ground. The positron, muon (1937), pion and kaon (1947) were all found this way.</p>
+<p><strong>Accelerators</strong> give controlled collisions. Charged particles are accelerated to almost the speed of light and collide with a fixed target or head-on. The collision energy creates new particles. The Large Hadron Collider at CERN has a 27 km ring and collides protons at up to 7000 GeV each.</p>
+<p class="small muted">Context from your notes; not separately examined in 1.7.</p>`,
+chk:[['Why are new particles created in high-energy collisions?','Some of the kinetic energy of the colliding particles becomes the mass of new particles.']]}
+];
+let cardIx=0;
+function renderToc(){
+ $('#toc').innerHTML=CARDS.map((c,i)=>'<button type="button" data-i="'+i+'" aria-current="'+(i===cardIx)+'" class="'+(store.seen[i]?'seen':'')+'"><span class="d"></span>'+c.t+'</button>').join('');
+ $$('#toc button').forEach(b=>b.addEventListener('click',()=>{cardIx=+b.dataset.i;renderCard()}));
+}
+function renderCard(){
+ const c=CARDS[cardIx],el=$('#card');store.seen[cardIx]=1;save();
+ el.innerHTML=c.h()+(c.after?'<div class="wslot"></div>':'')+'<div class="check"><strong>Check yourself</strong>'+c.chk.map(q=>'<details><summary>'+q[0]+'</summary><div style="margin-top:6px">'+q[1]+'</div></details>').join('')+'</div>'+
+ '<div class="nav"><button class="btn alt" type="button" id="cPrev"'+(cardIx?'':' disabled')+'>Previous topic</button><button class="btn" type="button" id="cNext">'+(cardIx<CARDS.length-1?'Next topic':'Start the drills')+'</button></div>';
+ $('#cPrev').addEventListener('click',()=>{if(cardIx){cardIx--;renderCard()}});
+ $('#cNext').addEventListener('click',()=>{if(cardIx<CARDS.length-1){cardIx++;renderCard()}else showTab('drills')});
+ if(c.after)c.after(el);renderToc();
+}
+
+function parseQ(s){const t=String(s||'').trim().replace(/\s+/g,'').replace(/[−–]/g,'-');const m=t.match(/^([-+]?\d+)\/(\d+)$/);if(m)return (+m[1])/(+m[2]);return parseNum(t)}
+/* ---------- calculation drills ---------- */
+function Q(text,ans,unit,work,pts,tol){return {text,ans,unit,work,pts:pts||1,tol:tol||0.015}}
+const f3=x=>sci(x,3);
+const HADS=['p','n','pb','nb','Dpp','Dm','D0','pip','pim'];
+const QSTR={p:['u','u','d'],n:['u','d','d'],pb:['ub','ub','db'],nb:['ub','db','db'],Dpp:['u','u','u'],Dm:['d','d','d'],D0:['u','d','d'],pip:['u','db'],pim:['d','ub']};
+const qhtml=a=>a.map(k=>QK[k].s).join('');
+const NUC=[['U',92,238],['U',92,235],['Th',90,232],['Ra',88,226],['C',6,14],['Po',84,210],['Na',11,24],['Co',27,60],['Sr',38,90],['Pu',94,239],['F',9,18]];
+const DR={
+ quark:{n:'Quark charges',g(s){
+  if(!s){const k=pick(HADS),q=QSTR[k];return Q(`A hadron has the quark composition ${qhtml(q)}. What is its charge (in units of e)?`,PT[k].q,'e',[q.map(x=>QK[x].s+' '+frac(QK[x].q)).join(', '),`total = ${frac(PT[k].q)}`])}
+  if(R()<0.5){const k=pick(HADS),q=QSTR[k];return Q(`What is the baryon number of a particle made of ${qhtml(q)}?`,PT[k].B,'',[`quarks +⅓ each, antiquarks −⅓ each`,`total = ${frac(PT[k].B)}`,PT[k].B===0?'It is a meson.':PT[k].B>0?'It is a baryon.':'It is an antibaryon.'],2)}
+  const c=pick([[2,0],[1,1],[0,2],[-1,3]]),ch=c[0]*2/3-c[1]/3;return Q(`A baryon is made of ${c[0]} up and ${c[1]} down quark${c[1]===1?'':'s'}. What is its charge?`,ch,'e',[`${c[0]} × (+⅔) + ${c[1]} × (−⅓)`,`= ${frac(ch)}`],2)}},
+ nuc:{n:'Nuclides and decay',g(s){
+  const N=pick(NUC),v=s?rint(0,2):rint(0,1);
+  if(v===0)return Q(`How many neutrons are there in <sup>${N[2]}</sup><sub>${N[1]}</sub>${N[0]}?`,N[2]-N[1],'',[`neutrons = A − Z = ${N[2]} − ${N[1]}`,`= ${N[2]-N[1]}`]);
+  if(v===1){const t=pick(['alpha','beta']);const A=t==='alpha'?N[2]-4:N[2],Z=t==='alpha'?N[1]-2:N[1]+1;return Q(`<sup>${N[2]}</sup><sub>${N[1]}</sub>${N[0]} undergoes ${t==='alpha'?'α':'β⁻'} decay. What is the proton number of the product?`,Z,'',[t==='alpha'?'α decay: Z − 2, A − 4':'β⁻ decay: Z + 1, A unchanged',`Z = ${Z} (A = ${A})`])}
+  const a=rint(1,3),b=rint(0,3),A=N[2]-4*a,Z=N[1]-2*a+b;const ask=R()<0.5?'nucleon number':'proton number';return Q(`<sup>${N[2]}</sup><sub>${N[1]}</sub>${N[0]} undergoes ${a} α decay${a>1?'s':''} and ${b} β⁻ decay${b===1?'':'s'}. What is the ${ask} of the final nuclide?`,ask==='nucleon number'?A:Z,'',[`each α: A − 4, Z − 2; each β⁻: Z + 1`,`A = ${N[2]} − ${4*a} = ${A}`,`Z = ${N[1]} − ${2*a} + ${b} = ${Z}`],2)}},
+ cons:{n:'Conservation numbers',g(s){
+  const R0=pick(RXS.filter(r=>r.ok)),side=R0.r.length>1?'r':'l',arrS=R0[side],idx=rint(0,arrS.length-1),miss=arrS[idx];const what=pick(s?['L','B','q']:['q','B']);
+  const l=R0.l.map((k,i)=>side==='l'&&i===idx?'X':k),r=R0.r.map((k,i)=>side==='r'&&i===idx?'X':k);const nm={q:'charge (in e)',B:'baryon number',L:'lepton number'}[what];
+  return Q(`In the reaction ${rxHTML(l,r)}, what must be the ${nm} of particle X?`,PT[miss][what],'',[`${nm} is conserved`,`X is ${PT[miss].s} (${PT[miss].n}): ${frac(PT[miss][what])}`],s?2:1)}},
+ anni:{n:'Annihilation energy',g(s){
+  const P=pick([['an electron and a positron',ME,'electron'],['a proton and an antiproton',MP,'proton']]),E=P[1]*CL*CL,v=s?rint(0,2):0;
+  if(v===0)return Q(`${P[0][0].toUpperCase()+P[0].slice(1)} at rest annihilate to give two identical photons. Find the energy of each photon (E = mc² for one particle).`,E,'J',[`Each photon carries the rest energy of one particle`,`E = mc² = ${f3(P[1])} × (3.00 × 10<sup>8</sup>)²`,`= ${f3(E)} J`]);
+  if(v===1)return Q(`${P[0][0].toUpperCase()+P[0].slice(1)} at rest annihilate. Find the frequency of each photon.`,E/HP,'Hz',[`E = mc² = ${f3(E)} J`,`f = E/h = ${f3(E/HP)} Hz`],2);
+  return Q(`What is the minimum photon energy, in MeV, needed for pair production of ${P[2]}–anti${P[2]} pairs? (1 MeV = 1.60 × 10<sup>−13</sup> J)`,2*E/1.6e-13,'MeV',[`E<sub>min</sub> = 2mc² = ${f3(2*E)} J`,`= ${f3(2*E/1.6e-13)} MeV`],2)}},
+ size:{n:'Sizes',g(s){
+  const dn=rint(2,15)*1e-15,da=rint(1,5)*1e-10;if(!s)return Q(`A nucleus has diameter ${f3(dn)} m and its atom has diameter ${f3(da)} m. How many times larger is the atom?`,da/dn,'',[`ratio = ${f3(da)} / ${f3(dn)}`,`= ${f3(da/dn)}`]);
+  return Q(`A nucleus of diameter ${f3(dn)} m sits in an atom of diameter ${f3(da)} m. What fraction of the atom’s volume does the nucleus occupy?`,Math.pow(dn/da,3),'',[`volume ∝ d³`,`fraction = (${f3(dn)} / ${f3(da)})³`,`= ${f3(Math.pow(dn/da,3))}: an atom is almost entirely empty space`],2)}}
+};
+const drKeys=Object.keys(DR);
+let drTopic='all',drLevel=0,drQ=null,drDone=0,drRight=0,drTried=false;
+function genDrill(level){const k=drTopic==='all'?pick(drKeys):drTopic;const q=DR[k].g(level);q.topic=DR[k].n;return q}
+function renderDrTopics(){
+ $('#drTopics').innerHTML='<button type="button" class="chip" data-k="all" aria-pressed="'+(drTopic==='all')+'">Mixed</button>'+drKeys.map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(drTopic===k)+'">'+DR[k].n+'</button>').join('');
+ $$('#drTopics .chip').forEach(b=>b.addEventListener('click',()=>{drTopic=b.dataset.k;renderDrTopics();newDrill()}));
+}
+$$('#drLevel button').forEach(b=>b.addEventListener('click',()=>{drLevel=+b.dataset.l;$$('#drLevel button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));newDrill()}));
+function newDrill(){
+ drQ=genDrill(drLevel);drTried=false;const el=$('#drCard');
+ el.innerHTML='<span class="tag">'+drQ.topic+(drQ.pts>1?', stretch':'')+'</span><div class="q">'+drQ.text+'</div>'+
+ '<div class="row"><input type="text" id="drIn" autocomplete="off" aria-label="Your answer"><span>'+drQ.unit+'</span><button class="btn" id="drGo" type="button">Check</button><button class="btn alt" id="drShow" type="button">Show method</button><span class="sp"></span><button class="btn alt" id="drNext" type="button">New question</button></div><div class="fb" id="drFb"></div>';
+ const inp=$('#drIn');inp.focus({preventScroll:true});
+ const wk=()=>'<div class="work" style="margin-top:6px">'+drQ.work.map(w=>'<div>'+w+'</div>').join('')+'</div>';
+ const fmt=v=>Math.abs(v)<1e3&&Math.abs(v)>=0.01||v===0?frac(v).replace(/^\+/,v>0?'+':''):sci(v,3);
+ const check=()=>{const v=parseQ(inp.value),out=$('#drFb');
+  if(isNaN(v)){fb(out,'info','Type a number, for example −1, 2/3 or 8.2e-14.');return}
+  const ok=drQ.ans===0?Math.abs(v)<1e-6:(Number.isInteger(drQ.ans*3)&&Math.abs(drQ.ans)<10?Math.abs(v-drQ.ans)<0.02:close(v,drQ.ans,drQ.tol));
+  if(!drTried){drDone++;if(ok){drRight++;award(drQ.pts)}else miss();drTried=true}
+  $('#drTally').textContent=drRight+' / '+drDone+' this session';
+  const a3=drQ.ans*3,third=Math.abs(a3-Math.round(a3))<1e-9&&!Number.isInteger(drQ.ans);const ansS=Number.isInteger(drQ.ans)?((drQ.unit==='e'&&drQ.ans>0?'+':'')+String(drQ.ans).replace('-','−')):third?frac(drQ.ans):sci(drQ.ans,3);
+  if(ok)fb(out,'ok','<strong>Correct.</strong> '+ansS+' '+drQ.unit+wk());else fb(out,'no','<strong>Not quite.</strong> The answer is '+ansS+' '+drQ.unit+'.'+wk())};
+ $('#drGo').addEventListener('click',check);
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){if(drTried&&$('#drFb').classList.contains('ok'))newDrill();else check()}});
+ $('#drShow').addEventListener('click',()=>{if(!drTried){drDone++;drTried=true;miss();$('#drTally').textContent=drRight+' / '+drDone+' this session'}fb($('#drFb'),'info',wk())});
+ $('#drNext').addEventListener('click',newDrill);
+}
+
+/* ---------- concept quiz ---------- */
+const QB=[
+['The diameter of a nucleus is roughly:',['10⁻¹⁵ m','10⁻¹⁰ m','10⁻¹² m','10⁻⁵ m'],0,'About 1 fm; the atom is about 10⁻¹⁰ m.'],
+['Isotopes of an element have:',['the same number of protons but different numbers of neutrons','the same number of neutrons but different numbers of protons','the same nucleon number','different numbers of electrons only'],0,'Same Z, different A.'],
+['In α decay the nucleon number:',['falls by 4','falls by 2','rises by 1','is unchanged'],0,'An α particle is ⁴₂He.'],
+['In β⁻ decay:',['a neutron becomes a proton, emitting an electron and an antineutrino','a proton becomes a neutron, emitting a positron','two protons and two neutrons are emitted','only a photon is emitted'],0,'Z rises by 1.'],
+['The existence of the neutrino was first suggested because:',['β particles are emitted with a range of kinetic energies, though each decay releases the same energy','neutrinos were seen in cloud chambers','α particles have a single energy','γ rays have no charge'],0,'The missing energy is carried by the (anti)neutrino.'],
+['The charge of an up quark is:',['+⅔ e','−⅓ e','+⅓ e','−⅔ e'],0,'Down is −⅓ e.'],
+['The charge of a down antiquark is:',['+⅓ e','−⅓ e','+⅔ e','−⅔ e'],0,'Antiparticles have opposite charge.'],
+['An antiparticle has:',['the same mass but opposite charge','the opposite mass and charge','the same charge but opposite mass','twice the mass'],0,'Its properties are identical apart from charge (and quantum numbers).'],
+['The antiparticle of the electron is:',['the positron','the antineutrino','the proton','the antiproton'],0,'Symbol e⁺.'],
+['When a particle meets its antiparticle they:',['annihilate, usually producing two photons','bond to form a meson','repel strongly','become neutrinos'],0,'Mass is converted to electromagnetic energy.'],
+['Annihilation of a stationary pair produces two photons rather than one because:',['momentum must be conserved','charge must be conserved','baryon number must be conserved','energy is quantised'],0,'The two photons move off in opposite directions.'],
+['Quarks are:',['never observed in isolation','found free in cosmic rays','leptons','only found in mesons'],0,'They are always bound into hadrons.'],
+['A baryon consists of:',['three quarks','a quark and an antiquark','two quarks','three antiquarks'],0,'e.g. the proton, uud.'],
+['A meson consists of:',['a quark and an antiquark','three quarks','two leptons','three antiquarks'],0,'e.g. π⁺ = ud̄.'],
+['The quark composition of a neutron is:',['udd','uud','uuu','ddd'],0,'Charge +⅔ − ⅓ − ⅓ = 0.'],
+['The quark composition of the π⁺ is:',['u d̄','ū d','u u','d d̄'],0,'Charge +⅔ + ⅓ = +1.'],
+['A baryon with charge −1 made of first-generation quarks is:',['ddd','udd','uud','ūūd̄'],0,'This is the Δ⁻.'],
+['The antiproton’s quark composition is:',['ū ū d̄','u u d','ū d̄ d̄','u d̄'],0,'Three antiquarks: charge −1.'],
+['Which particle is a lepton?',['electron neutrino','proton','π⁰','neutron'],0,'Leptons: e⁻, νe and their antiparticles (at AS).'],
+['Leptons do NOT feel:',['the strong interaction','the weak interaction','gravity','the electromagnetic interaction if charged'],0,'The strong interaction acts only on quarks.'],
+['The strong interaction acts on:',['all quarks, and so all hadrons','all particles','only charged particles','leptons only'],0,'Short range.'],
+['The weak interaction acts on:',['all leptons and all quarks','only quarks','only leptons','only charged particles'],0,'So it affects all hadrons too.'],
+['The electromagnetic interaction is felt by a neutron because:',['it is made of charged quarks','it has a small charge','it is a lepton','it contains electrons'],0,'Neutral hadrons still feel it.'],
+['Which interactions have infinite range?',['gravitational and electromagnetic','strong and weak','strong and electromagnetic','only gravitational'],0,'The strong and weak are short range.'],
+['A typical strong interaction takes about:',['10⁻²³ s','10⁻¹⁶ s','10⁻⁸ s','1 s'],0,'Electromagnetic about 10⁻¹⁶ s; weak about 10⁻⁸ s.'],
+['Neutrino involvement is a sign of:',['the weak interaction','the strong interaction','the electromagnetic interaction','gravity'],0,'Neutrinos only feel the weak interaction (and gravity).'],
+['A change of quark flavour (e.g. d → u) can only happen in:',['the weak interaction','the strong interaction','the electromagnetic interaction','any interaction'],0,'e.g. β decay.'],
+['The emission or absorption of photons is a sign of:',['the electromagnetic interaction','the weak interaction','the strong interaction','gravity'],0,'e.g. π⁰ → γ + γ.'],
+['Which quantity is NOT always conserved in particle interactions?',['the number of each type of quark','charge','baryon number','lepton number'],0,'Quark flavour can change in weak interactions.'],
+['The lepton number of a positron is:',['−1','+1','0','+½'],0,'It is an antilepton.'],
+['The baryon number of a π⁻ is:',['0','+1','−1','⅓'],0,'Mesons have one quark (+⅓) and one antiquark (−⅓).'],
+['Why is n → p + e⁻ impossible?',['lepton number is not conserved','charge is not conserved','baryon number is not conserved','energy is not conserved'],0,'0 → 0 + 1. An antineutrino must also be emitted.'],
+['Why is p + p → p + p + n impossible?',['baryon number is not conserved','charge is not conserved','lepton number is not conserved','it is allowed'],0,'2 → 3.'],
+['In β⁺ decay, at quark level:',['u → d + e⁺ + νe','d → u + e⁻ + ν̄e','u → d + e⁻ + νe','d → u + e⁺ + ν̄e'],0,'A proton becomes a neutron (only inside a nucleus).'],
+['Δ⁺⁺ → p + π⁺ takes about 10⁻²³ s. The interaction is:',['strong','weak','electromagnetic','gravitational'],0,'Only hadrons, and quark flavours are conserved: uuu → uud + ud̄.']
+];
+let qz={list:[],i:0,score:0,answered:false};
+function startQuiz(){qz={list:shuffle(QB).slice(0,12),i:0,score:0,answered:false};renderQuiz()}
+function renderQuiz(){
+ const el=$('#qzCard');
+ if(qz.i>=qz.list.length){const s=qz.score,msg=s>=11?'Outstanding. You know this section.':s>=8?'Good. Read the explanations for the ones you missed.':'Worth another go after revisiting the topic notes.';
+  el.innerHTML='<div class="big">'+s+' / 12</div><p>'+msg+'</p><button class="btn go" type="button" id="qzAgain">New set of questions</button>';$('#qzAgain').addEventListener('click',startQuiz);return}
+ const item=qz.list[qz.i],order=shuffle([0,1,2,3]);qz.answered=false;
+ el.innerHTML='<div class="row"><span class="tally">Question '+(qz.i+1)+' of 12</span><span class="sp"></span><span class="tally">'+qz.score+' correct</span></div><div class="bar"><i style="width:'+(qz.i/12*100)+'%"></i></div><div class="q">'+item[0]+'</div><div class="opts">'+order.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+item[1][k]+'</button>').join('')+'</div><div class="fb" id="qzFb"></div><div class="row" style="margin-top:12px"><span class="sp"></span><button class="btn" type="button" id="qzNext" disabled>Next question</button></div>';
+ $$('.opt',el).forEach(b=>b.addEventListener('click',()=>{if(qz.answered)return;qz.answered=true;const k=+b.dataset.k,ok=k===item[2];
+  $$('.opt',el).forEach(x=>{x.disabled=true;if(+x.dataset.k===item[2])x.classList.add('right')});
+  if(ok){qz.score++;award(1);fb($('#qzFb'),'ok','<strong>Correct.</strong> '+item[3])}else{b.classList.add('wrong');miss();fb($('#qzFb'),'no','<strong>Not this one.</strong> '+item[3])}
+  const n=$('#qzNext');n.disabled=false;n.focus({preventScroll:true})}));
+ $('#qzNext').addEventListener('click',()=>{qz.i++;renderQuiz()});
+}
+
+/* ---------- particle sort ---------- */
+const BINS=[['baryon','Baryons (qqq)'],['antibaryon','Antibaryons'],['meson','Mesons (q q̄)'],['lepton','Leptons'],['antilepton','Antileptons'],['boson','Force carriers']];
+let so={sel:null,place:{},items:[]};
+function soStart(){const all=['p','n','pb','nb','Dpp','Dm','pip','pim','pi0','em','nu','ep','nub','g','Wm','gl'];so={sel:null,place:{},items:shuffle(all).slice(0,11)};$('#soFb').className='fb';soPaint()}
+function soPaint(){
+ $('#soPool').innerHTML=so.items.filter(k=>!so.place[k]).map(k=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(so.sel===k)+'" title="'+PT[k].n+'">'+PT[k].s+'</button>').join('')||'<span class="small muted">All placed. Check your sorting.</span>';
+ $('#soBins').innerHTML=BINS.map(b=>'<div class="bin'+(so.sel?' sel':'')+'" data-b="'+b[0]+'" role="button" tabindex="0"><h4>'+b[1]+'</h4>'+so.items.filter(k=>so.place[k]===b[0]).map(k=>'<button type="button" class="chip" data-k="'+k+'" title="'+PT[k].n+'">'+PT[k].s+'</button>').join('')+'</div>').join('');
+ $$('#soPool .chip').forEach(b=>b.addEventListener('click',()=>{so.sel=so.sel===b.dataset.k?null:b.dataset.k;soPaint()}));
+ $$('#soBins .bin').forEach(b=>b.addEventListener('click',e=>{const ch=e.target.closest('.chip');if(ch){delete so.place[ch.dataset.k];soPaint();return}if(so.sel){so.place[so.sel]=b.dataset.b;so.sel=null;soPaint()}}));
+}
+$('#soCheck').addEventListener('click',()=>{if(Object.keys(so.place).length<so.items.length){fb($('#soFb'),'info','Place every particle first.');return}const wrong=so.items.filter(k=>so.place[k]!==PT[k].cat);
+ if(!wrong.length){award(so.items.length);fb($('#soFb'),'ok','<strong>All '+so.items.length+' correct.</strong>')}else{miss();fb($('#soFb'),'no',(so.items.length-wrong.length)+' of '+so.items.length+' correct. Check: '+wrong.map(k=>PT[k].s+' ('+PT[k].n+')').join(', ')+'.')}});
+$('#soNew').addEventListener('click',soStart);
+
+/* ---------- plotting with a draggable best-fit line ---------- */
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function niceStep(r){if(!(r>0))return 1;const e=Math.pow(10,Math.floor(Math.log10(r)));const f=r/e;return (f<1.5?1:f<3?2:f<7?5:10)*e}
+function linfit(p){const n=p.length;if(n<2)return null;let sx=0,sy=0,sxx=0,sxy=0;p.forEach(q=>{sx+=q[0];sy+=q[1];sxx+=q[0]*q[0];sxy+=q[0]*q[1]});const d=n*sxx-sx*sx;if(Math.abs(d)<1e-15)return null;const m=(n*sxy-sx*sy)/d;return {m,c:(sy-m*sx)/n}}
+function tfmt(v,step){if(Math.abs(v)<step*1e-6)return '0';const d=Math.max(0,-Math.floor(Math.log10(step)+1e-9));return v.toFixed(Math.min(d,4))}
+class Plot{
+ constructor(cv,o){
+  this.cv=cv;this.o=o;this.p=[];this.h=null;this.drag=-1;this.lineOn=!!o.line;this.user=false;this.X=o.bx.slice();this.Y=o.by.slice();
+  watch(cv,()=>this.draw());
+  cv.addEventListener('pointerdown',e=>{if(!this.lineOn||!this.h||!this.M)return;const r=cv.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let best=-1,bd=24;this.h.forEach((q,i)=>{const P=this.M.px(q[0],q[1]);const d=Math.hypot(P[0]-x,P[1]-y);if(d<bd){bd=d;best=i}});if(best>=0){this.drag=best;try{cv.setPointerCapture(e.pointerId)}catch(err){}e.preventDefault()}});
+  cv.addEventListener('pointermove',e=>{if(this.drag<0)return;const r=cv.getBoundingClientRect();this.h[this.drag]=this.M.dt(e.clientX-r.left,e.clientY-r.top);this.user=true;this.draw()});
+  const up=()=>{if(this.drag>=0){this.drag=-1;this.draw()}};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+ }
+ set(p,p2){this.p=p.slice();this.p2=p2?p2.slice():null;this.range();if(this.lineOn&&(!this.h||!this.user))this.reset(true);this.draw()}
+ range(){
+  const o=this.o;let x0=o.bx[0],x1=o.bx[1],y0=o.by[0],y1=o.by[1];
+  const all=this.p.concat(this.p2||[]);if(all.length){const xs=all.map(q=>q[0]),ys=all.map(q=>q[1]);
+   if(o.fitY){y0=Math.min(...ys);y1=Math.max(...ys);const pad=Math.max((y1-y0)*0.12,0.05*Math.abs(y1)||0.1);y0-=pad;y1+=pad}
+   else{y0=Math.min(y0,...ys);y1=Math.max(y1,...ys)}
+   x0=Math.min(x0,...xs);x1=Math.max(x1,...xs)}
+  const sx=niceStep((x1-x0)/6),sy=niceStep((y1-y0)/5);
+  this.X=[Math.floor(x0/sx+1e-9)*sx,Math.ceil(x1/sx-1e-9)*sx];this.Y=[Math.floor(y0/sy+1e-9)*sy,Math.ceil(y1/sy-1e-9)*sy];
+  if(this.X[1]-this.X[0]<1e-12)this.X[1]+=sx;if(this.Y[1]-this.Y[0]<1e-12)this.Y[1]+=sy;
+  this.sx=sx;this.sy=sy;
+ }
+ reset(auto){const X=this.X,Y=this.Y;this.h=[[X[0]+(X[1]-X[0])*0.12,Y[0]+(Y[1]-Y[0])*0.25],[X[0]+(X[1]-X[0])*0.88,Y[0]+(Y[1]-Y[0])*0.7]];if(!auto)this.user=false;this.draw()}
+ line(){if(!this.h)return null;const a=this.h[0],b=this.h[1];if(Math.abs(b[0]-a[0])<1e-12)return null;const m=(b[1]-a[1])/(b[0]-a[0]);return {m,c:a[1]-m*a[0]}}
+ draw(){
+  const {c,w,h}=fitCanvas(this.cv);const L=62,Rm=16,T=14,B=46,pw=w-L-Rm,ph=h-T-B;
+  if(!this.sx)this.range();
+  const X=this.X,Y=this.Y,o=this.o;
+  const px=(x,y)=>[L+(x-X[0])/(X[1]-X[0])*pw,T+(Y[1]-y)/(Y[1]-Y[0])*ph];
+  const dt=(a,b)=>[clamp(X[0]+(a-L)/pw*(X[1]-X[0]),X[0],X[1]),clamp(Y[1]-(b-T)/ph*(Y[1]-Y[0]),Y[0],Y[1])];
+  this.M={px,dt};
+  const ink=cssv('--ink'),mut=cssv('--muted'),grid=cssv('--grid'),line=cssv('--line'),neg=cssv('--neg'),pos=cssv('--pos'),pan=cssv('--panel');
+  c.clearRect(0,0,w,h);c.fillStyle=pan;c.fillRect(0,0,w,h);
+  c.lineWidth=1;
+  for(let k=0;k<=1;k++){const st=k?this.sx:this.sx/5;c.strokeStyle=k?line:grid;c.beginPath();for(let x=Math.ceil(X[0]/st-1e-9)*st;x<=X[1]+st*1e-6;x+=st){const P=px(x,0);c.moveTo(Math.round(P[0])+0.5,T);c.lineTo(Math.round(P[0])+0.5,T+ph)}c.stroke();
+   const sy=k?this.sy:this.sy/5;c.beginPath();for(let y=Math.ceil(Y[0]/sy-1e-9)*sy;y<=Y[1]+sy*1e-6;y+=sy){const P=px(0,y);c.moveTo(L,Math.round(P[1])+0.5);c.lineTo(L+pw,Math.round(P[1])+0.5)}c.stroke()}
+  c.strokeStyle=ink;c.lineWidth=1.6;c.strokeRect(L,T,pw,ph);
+  c.beginPath();if(X[0]<0&&X[1]>0){const P=px(0,0);c.moveTo(P[0],T);c.lineTo(P[0],T+ph)}if(Y[0]<0&&Y[1]>0){const P=px(0,0);c.moveTo(L,P[1]);c.lineTo(L+pw,P[1])}c.stroke();
+  c.fillStyle=mut;c.font='12px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';
+  for(let x=Math.ceil(X[0]/this.sx-1e-9)*this.sx;x<=X[1]+this.sx*1e-6;x+=this.sx){const P=px(x,0);c.fillText(tfmt(x,this.sx),P[0],T+ph+16)}
+  c.textAlign='right';for(let y=Math.ceil(Y[0]/this.sy-1e-9)*this.sy;y<=Y[1]+this.sy*1e-6;y+=this.sy){const P=px(0,y);c.fillText(tfmt(y,this.sy),L-6,P[1]+4)}
+  c.fillStyle=ink;c.font='bold 13px Atkinson Hyperlegible, Verdana, sans-serif';c.textAlign='center';c.fillText(o.xl,L+pw/2,h-8);
+  c.save();c.translate(15,T+ph/2);c.rotate(-Math.PI/2);c.fillText(o.yl,0,0);c.restore();
+  if(!this.p.length){c.fillStyle=mut;c.font='14px Atkinson Hyperlegible, Verdana, sans-serif';c.fillText('Your recorded readings will be plotted here',L+pw/2,T+ph/2)}
+  c.save();c.beginPath();c.rect(L,T,pw,ph);c.clip();
+  c.strokeStyle=neg;c.lineWidth=2;this.p.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.moveTo(P[0]-5,P[1]-5);c.lineTo(P[0]+5,P[1]+5);c.moveTo(P[0]+5,P[1]-5);c.lineTo(P[0]-5,P[1]+5);c.stroke()});
+  if(this.p2){c.strokeStyle=cssv('--ok');c.lineWidth=2;this.p2.forEach(q=>{const P=px(q[0],q[1]);c.beginPath();c.arc(P[0],P[1],5,0,7);c.stroke()})}
+  if(o.curve){c.strokeStyle=cssv('--muted');c.setLineDash([6,5]);c.lineWidth=2;c.beginPath();for(let i=0;i<=200;i++){const x=X[0]+(X[1]-X[0])*i/200,y=o.curve(x);if(!isFinite(y))continue;const P=px(x,y);i?c.lineTo(P[0],P[1]):c.moveTo(P[0],P[1])}c.stroke();c.setLineDash([])}
+  if(this.lineOn&&this.h){const f=this.line();if(f){const a=px(X[0],f.m*X[0]+f.c),b=px(X[1],f.m*X[1]+f.c);c.strokeStyle=pos;c.lineWidth=2;c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke()}
+   this.h.forEach((q,i)=>{const P=px(q[0],q[1]);c.fillStyle=pan;c.strokeStyle=pos;c.lineWidth=2.5;c.beginPath();c.arc(P[0],P[1],this.drag===i?10:8,0,7);c.fill();c.stroke();c.fillStyle=pos;c.beginPath();c.arc(P[0],P[1],2.5,0,7);c.fill()})}
+  c.restore();
+  if(o.onDraw)o.onDraw();
+ }
+}
+
+/* ---------- shared lab helpers ---------- */
+if(!store.kit){store.kit=Math.floor(R()*2176782335)+1;save()}
+function kitCode(){return store.kit.toString(36).toUpperCase().padStart(6,'0')}
+function kitRng(k){return mulberry32((store.kit+k*99991)>>>0)}
+function mcq(el,q,opts,right,why){
+ const id='m'+Math.floor(R()*1e9),ord=shuffle(opts.map((_,i)=>i));
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="opts">'+ord.map(i=>'<button type="button" class="opt" data-k="'+i+'">'+opts[i]+'</button>').join('')+'</div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild;let done=false;
+ $$('.opt',box).forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;const k=+b.dataset.k;$$('.opt',box).forEach(x=>{x.disabled=true;if(+x.dataset.k===right)x.classList.add('right')});
+  if(k===right){award(1);fb($('#'+id),'ok','<strong>Yes.</strong> '+why)}else{b.classList.add('wrong');miss();fb($('#'+id),'no','<strong>Not quite.</strong> '+why)}}));
+}
+function numTask(el,q,unit,checker,pts){
+ const id='n'+Math.floor(R()*1e9);let got=false;
+ el.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">'+q+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+unit+'</span><button class="btn" type="button">Check</button></div><div class="fb" id="'+id+'"></div></div>');
+ const box=el.lastElementChild,inp=$('input',box),out=$('#'+id);
+ const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number, for example 6.3 or 1.1e-6.');return}const r=checker(v);fb(out,r.ok?'ok':(r.info?'info':'no'),r.msg);if(r.ok&&!got){got=true;award(pts||2)}};
+ $('button',box).addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+}
+function pct(a,b){return Math.abs(a-b)/Math.abs(b)*100}
+function setKitLabels(){['#kitA','#kitB','#kitC'].forEach(s=>{$(s).textContent=kitCode()})}
+function lcdSet(el,v,dp){el.textContent=(v<0?'-':'')+Math.abs(v).toFixed(dp)}
+function jit(){const r=R();return r<0.18?-1:r>0.82?1:0}
+
+
+/* ============ reaction library ============ */
+const RXS=[
+ {l:['n'],r:['p','em','nub'],ok:1,int:'weak',note:'A neutrino is involved and a d quark changes to a u quark.'},
+ {l:['p'],r:['n','ep','nu'],ok:1,int:'weak',note:'β⁺ decay (inside a nucleus): a u quark becomes a d quark and a neutrino is emitted.'},
+ {l:['em','ep'],r:['g','g'],ok:1,int:'em',note:'Annihilation: photons are produced.'},
+ {l:['p','pb'],r:['pip','pim'],ok:1,int:'strong',note:'Only hadrons; u: 2 − 2 = 0 → 1 − 1 = 0 and d: 1 − 1 = 0 → −1 + 1 = 0. Flavours conserved.'},
+ {l:['p','pb'],r:['g','g'],ok:1,int:'em',note:'Annihilation into photons.'},
+ {l:['pi0'],r:['g','g'],ok:1,int:'em',note:'Photons are produced.'},
+ {l:['Dpp'],r:['p','pip'],ok:1,int:'strong',note:'uuu → uud + ud̄: u 3 → 3, d 0 → 0. Only hadrons.'},
+ {l:['Dm'],r:['n','pim'],ok:1,int:'strong',note:'ddd → udd + dū: flavours conserved.'},
+ {l:['D0'],r:['p','pim'],ok:1,int:'strong',note:'udd → uud + dū: flavours conserved.'},
+ {l:['pip','n'],r:['p','pi0'],ok:1,int:'strong',note:'Only hadrons and quark flavours conserved.'},
+ {l:['pim','p'],r:['n','pi0'],ok:1,int:'strong',note:'Only hadrons and quark flavours conserved.'},
+ {l:['nu','n'],r:['p','em'],ok:1,int:'weak',note:'A neutrino is involved.'},
+ {l:['nub','p'],r:['n','ep'],ok:1,int:'weak',note:'An antineutrino is involved (this is how antineutrinos were first detected).'},
+ {l:['em','p'],r:['n','nu'],ok:1,int:'weak',note:'Electron capture: a neutrino is produced and u → d.'},
+ {l:['p','p'],r:['p','p','pi0'],ok:1,int:'strong',note:'Kinetic energy becomes a new pion; flavours conserved.'},
+ {l:['p','p'],r:['p','n','pip'],ok:1,int:'strong',note:'u: 4 → 2 + 1 + 1, d: 2 → 1 + 2 − 1. Flavours conserved.'},
+ {l:['pip','p'],r:['Dpp'],ok:1,int:'strong',note:'Hadrons combine; flavours conserved.'},
+ {l:['pim'],r:['em','nub'],ok:1,int:'weak',note:'A neutrino is involved and the quarks annihilate by the weak interaction.'},
+ {l:['g'],r:['em','ep'],ok:1,int:'em',note:'Pair production (near a nucleus): a photon is absorbed.'},
+ {l:['n'],r:['p','em'],ok:0,why:'L',note:'Lepton number: 0 → 0 + 1. An antineutrino is needed.'},
+ {l:['p'],r:['n','ep'],ok:0,why:'L',note:'Lepton number: 0 → 0 − 1. A neutrino is needed.'},
+ {l:['p','p'],r:['p','p','n'],ok:0,why:'B',note:'Baryon number: 2 → 3.'},
+ {l:['p'],r:['pip','pi0'],ok:0,why:'B',note:'Baryon number: 1 → 0. The proton is the lightest baryon, so it cannot decay to mesons.'},
+ {l:['em','p'],r:['n','nub'],ok:0,why:'L',note:'Lepton number: +1 → −1.'},
+ {l:['pim','p'],r:['n','pip'],ok:0,why:'q',note:'Charge: −1 + 1 = 0 → 0 + 1 = +1.'},
+ {l:['nu','p'],r:['n','em'],ok:0,why:'q',note:'Charge: +1 → −1 (and lepton number is fine).'},
+ {l:['Dpp'],r:['p','pi0'],ok:0,why:'q',note:'Charge: +2 → +1.'},
+ {l:['pb'],r:['pim','pi0'],ok:0,why:'B',note:'Baryon number: −1 → 0.'},
+ {l:['n'],r:['p','pim'],ok:0,why:'E',note:'Charge, baryon and lepton numbers are all conserved, but the proton and π⁻ together have more rest mass than the neutron: energy cannot be conserved.'},
+ {l:['em'],r:['nu','g'],ok:0,why:'q',note:'Charge: −1 → 0.'},
+ {l:['pip'],r:['ep','nub'],ok:0,why:'L',note:'Lepton number: 0 → −1 − 1 = −2. It should be π⁺ → e⁺ + νe.'}
+];
+function sums(a){return {q:a.reduce((s,k)=>s+PT[k].q,0),B:a.reduce((s,k)=>s+PT[k].B,0),L:a.reduce((s,k)=>s+PT[k].L,0)}}
+const INTN={strong:'strong',em:'electromagnetic',weak:'weak'};
+
+/* ============ LAB 1: hadron builder ============ */
+const HB={q:[],t:null,n:0};
+function hbId(){const q=HB.q,u=q.filter(x=>x==='u').length,d=q.filter(x=>x==='d').length,U=q.filter(x=>x==='ub').length,D=q.filter(x=>x==='db').length,nq=u+d,na=U+D;
+ const ch=q.reduce((s,k)=>s+QK[k].q,0),B=q.reduce((s,k)=>s+QK[k].B,0);let name=null,type=null;
+ if(nq===3&&na===0){type='baryon';name=['Δ⁻ (ddd)','neutron n or Δ⁰ (udd)','proton p or Δ⁺ (uud)','Δ⁺⁺ (uuu)'][u]}
+ else if(na===3&&nq===0){type='antibaryon';name=U===2?'antiproton':U===1?'antineutron':U===3?'anti-Δ (charge −2)':'anti-Δ (charge +1)'}
+ else if(nq===1&&na===1){type='meson';name=u&&D?'π⁺':d&&U?'π⁻':'π⁰'}
+ return {ch,B,type,name,u,d,U,D}}
+function hbPaint(){$('#hbSlots').innerHTML=[0,1,2].map(i=>'<div class="qslot'+(HB.q[i]?' f':'')+'">'+(HB.q[i]?QK[HB.q[i]].s:'')+'</div>').join('');const h=hbId();
+ $('#hbK').innerHTML=HB.q.length?'<span>charge: <b>'+HB.q.map(k=>frac(QK[k].q)).join(' ')+' = '+frac(h.ch)+'</b></span><span>baryon number: <b>'+frac(h.B)+'</b></span><span>'+(h.type?'<b>'+h.name+'</b>, a '+h.type:'<b>not a hadron</b>: use qqq, q̄q̄q̄ or q q̄')+'</span>':'<span class="muted">Tap quarks to add them.</span>'}
+const HBT=[['Build a proton.',h=>h.type==='baryon'&&h.u===2],['Build a neutron.',h=>h.type==='baryon'&&h.u===1],['Build a Δ⁺⁺ baryon (charge +2).',h=>h.type==='baryon'&&h.u===3],['Build a Δ⁻ baryon (charge −1).',h=>h.type==='baryon'&&h.d===3],['Build an antiproton.',h=>h.type==='antibaryon'&&h.U===2],['Build an antineutron.',h=>h.type==='antibaryon'&&h.U===1],['Build a π⁺ meson.',h=>h.type==='meson'&&h.ch===1],['Build a π⁻ meson.',h=>h.type==='meson'&&h.ch===-1],['Build a π⁰ meson.',h=>h.type==='meson'&&h.ch===0],['Build a hadron with baryon number 0 and charge +1.',h=>h.type==='meson'&&h.ch===1],['Build a hadron with charge 0 and baryon number +1.',h=>h.type==='baryon'&&Math.abs(h.ch)<1e-9],['Build a hadron with charge −2.',h=>h.type==='antibaryon'&&Math.abs(h.ch+2)<1e-9],['Build an antibaryon with charge +1.',h=>h.type==='antibaryon'&&Math.abs(h.ch-1)<1e-9]];
+function hbNew(){HB.t=pick(HBT);HB.q=[];$('#hbT').innerHTML=HB.t[0];$('#hbFb').className='fb';hbPaint()}
+function hbPal(){$('#hbPal').innerHTML=['u','d','ub','db'].map(k=>'<button type="button" class="chip qbtn" data-k="'+k+'">'+QK[k].s+'<span class="small muted" style="font-size:.7rem;margin-left:4px">'+frac(QK[k].q)+'</span></button>').join('');$$('#hbPal .chip').forEach(b=>b.addEventListener('click',()=>{if(HB.q.length<3){HB.q.push(b.dataset.k);hbPaint()}}))}
+$('#hbUndo').addEventListener('click',()=>{HB.q.pop();hbPaint()});$('#hbClr').addEventListener('click',()=>{HB.q=[];hbPaint()});$('#hbSkip').addEventListener('click',hbNew);
+$('#hbGo').addEventListener('click',()=>{const h=hbId();if(!HB.q.length){fb($('#hbFb'),'info','Add some quarks first.');return}if(HB.t[1](h)){HB.n++;award(2);$('#hbS').textContent=HB.n+' built';fb($('#hbFb'),'ok','<strong>Correct:</strong> '+h.name+'. <button class="btn alt" type="button" id="hbNx">Next target</button>');$('#hbNx').addEventListener('click',hbNew)}else{miss();fb($('#hbFb'),'no',h.type?'That is '+h.name+', a '+h.type+' with charge '+frac(h.ch)+'. Not quite the target.':'That combination is not a hadron: quarks only come in threes (qqq or q̄q̄q̄) or quark–antiquark pairs.')}});
+
+/* ============ LAB 2: reaction checker ============ */
+let RC={i:0,order:[],score:0,done:0};
+function rcStart(){RC.order=shuffle(RXS.map((_,i)=>i));RC.i=0;rcShow()}
+function rcShow(){const x=RXS[RC.order[RC.i%RC.order.length]],L=sums(x.l),Rr=sums(x.r),el=$('#rcBox');const qs=[['q','charge'],['B','baryon number'],['L','lepton number']];
+ el.innerHTML='<div class="row"><span class="tally">Reaction '+(RC.i+1)+'</span><span class="sp"></span><span class="tally">'+RC.score+' / '+RC.done+' fully correct</span></div><div class="rx">'+rxHTML(x.l,x.r)+'</div>'+
+ '<table class="t" style="max-width:560px"><tbody>'+qs.map(q=>'<tr><td>'+q[1]+'</td><td><span class="seg" data-q="'+q[0]+'"><button type="button" data-v="1">conserved</button><button type="button" data-v="0">not conserved</button></span></td><td class="small" id="rcV'+q[0]+'"></td></tr>').join('')+
+ '<tr><td>Can it happen?</td><td><span class="seg" data-q="ok"><button type="button" data-v="1">yes</button><button type="button" data-v="0">no</button></span></td><td></td></tr><tr><td>If so, which interaction?</td><td><span class="seg" data-q="int"><button type="button" data-v="strong">strong</button><button type="button" data-v="em">e-m</button><button type="button" data-v="weak">weak</button><button type="button" data-v="none">n/a</button></span></td><td></td></tr></tbody></table>'+
+ '<div class="row" style="margin-top:10px"><button class="btn go" type="button" id="rcGo">Check</button><span class="sp"></span><button class="btn alt" type="button" id="rcNx">Next reaction</button></div><div class="fb" id="rcFb"></div>';
+ const ans={};$$('#rcBox .seg').forEach(sg=>$$('button',sg).forEach(b=>b.addEventListener('click',()=>{ans[sg.dataset.q]=b.dataset.v;$$('button',sg).forEach(y=>y.setAttribute('aria-pressed',y===b?'true':'false'))})));
+ $('#rcNx').addEventListener('click',()=>{RC.i++;rcShow()});
+ $('#rcGo').addEventListener('click',()=>{if(['q','B','L','ok'].some(k=>ans[k]===undefined)||(ans.ok==='1'&&!ans.int)){fb($('#rcFb'),'info','Answer every row (choose n/a for the interaction if it cannot happen).');return}
+  let right=0,tot=4;const cons={q:Math.abs(L.q-Rr.q)<1e-9,B:Math.abs(L.B-Rr.B)<1e-9,L:Math.abs(L.L-Rr.L)<1e-9};
+  ['q','B','L'].forEach(k=>{const ok=(ans[k]==='1')===cons[k];if(ok)right++;$('#rcV'+k).innerHTML=(ok?'✓ ':'✗ ')+frac(L[k])+' → '+frac(Rr[k])});
+  if((ans.ok==='1')===!!x.ok)right++;if(x.ok){tot++;if(ans.int===x.int)right++}
+  RC.done++;if(right===tot){RC.score++;award(3)}else miss();
+  fb($('#rcFb'),right===tot?'ok':'no','<strong>'+(x.ok?'Possible':'Impossible')+(x.ok?', by the '+INTN[x.int]+' interaction':'')+'.</strong> '+x.note+' <span class="small">('+right+' of '+tot+' parts right.)</span>')});
+}
+
+/* ============ LAB 3: missing particle ============ */
+const PAL=['p','n','pb','em','ep','nu','nub','g','pip','pim','pi0'];
+const MP_P=[
+ {l:['n'],r:['p','em','X'],a:'nub'},{l:['p'],r:['n','X','nu'],a:'ep'},{l:['em','X'],r:['g','g'],a:'ep'},{l:['X'],r:['p','pip'],a:'Dpp',pal:['Dpp','Dm','p','n','pip']},{l:['pim','p'],r:['n','X'],a:'pi0'},{l:['nub','p'],r:['X','ep'],a:'n'},{l:['em','p'],r:['n','X'],a:'nu'},{l:['p','p'],r:['p','n','X'],a:'pip'},{l:['X'],r:['g','g'],a:'pi0'},{l:['g'],r:['em','X'],a:'ep'},{l:['pip','n'],r:['p','X'],a:'pi0'},{l:['nu','n'],r:['p','X'],a:'em'}];
+const MP_Q=[{t:'d → u + e⁻ + X',a:'nub',why:'β⁻ at quark level: lepton number needs an antineutrino.'},{t:'u → d + X + ν<sub>e</sub>',a:'ep',why:'β⁺ at quark level: charge +⅔ → −⅓ + 1.'}];
+const MP_N=[['U',92,238,'α'],['Ra',88,226,'α'],['Po',84,210,'α'],['C',6,14,'β⁻'],['Sr',38,90,'β⁻'],['Co',27,60,'β⁻'],['Na',11,22,'β⁺'],['F',9,18,'β⁺'],['Th',90,234,'β⁻'],['Pu',94,239,'α']];
+let MPS={score:0,done:0};
+function mpNext(){const el=$('#mpBox'),t=R();
+ const head='<div class="row"><span class="sp"></span><span class="tally">'+MPS.score+' / '+MPS.done+'</span></div>';
+ if(t<0.3){const N=pick(MP_N),dA=N[3]==='α'?4:0,dZ=N[3]==='α'?-2:N[3]==='β⁻'?1:-1,prod=N[3]==='α'?'<sup>4</sup><sub>2</sub>α':N[3]==='β⁻'?'e⁻ + '+bar('ν')+'<sub>e</sub>':'e⁺ + ν<sub>e</sub>';
+  el.innerHTML=head+'<div class="rx"><sup>'+N[2]+'</sup><sub>'+N[1]+'</sub>'+N[0]+' → <sup>A</sup><sub>Z</sub>X + '+prod+'</div><div class="row"><label class="sm" for="mpA">A =</label><input type="text" id="mpA" inputmode="numeric" style="width:80px"><label class="sm" for="mpZ">Z =</label><input type="text" id="mpZ" inputmode="numeric" style="width:80px"><button class="btn go" type="button" id="mpGo">Check</button><span class="sp"></span><button class="btn alt" type="button" id="mpNx">Next</button></div><div class="fb" id="mpFb"></div>';
+  $('#mpGo').addEventListener('click',()=>{const A=parseNum($('#mpA').value),Z=parseNum($('#mpZ').value);if(isNaN(A)||isNaN(Z)){fb($('#mpFb'),'info','Enter both A and Z.');return}MPS.done++;const ok=A===N[2]-dA&&Z===N[1]+dZ;if(ok){MPS.score++;award(2)}else miss();
+   fb($('#mpFb'),ok?'ok':'no',(ok?'<strong>Correct.</strong> ':'<strong>Not quite.</strong> ')+N[3]+' decay: A '+(dA?'− 4':'unchanged')+', Z '+(dZ>0?'+ 1':dZ===-1?'− 1':'− 2')+'. X has A = '+(N[2]-dA)+', Z = '+(N[1]+dZ)+'.')});}
+ else{let text,ans,why,pal=PAL;if(t<0.45){const Qx=pick(MP_Q);text=Qx.t;ans=Qx.a;why=Qx.why}else{const P=pick(MP_P);text=rxHTML(P.l,P.r);ans=P.a;pal=P.pal||PAL;const x=RXS.find(r=>r.ok&&JSON.stringify(r.l.concat(r.r))===JSON.stringify(P.l.map(k=>k==='X'?P.a:k).concat(P.r.map(k=>k==='X'?P.a:k))));why=x?x.note:''}
+  el.innerHTML=head+'<div class="rx">'+text+'</div><p class="small muted">Choose X:</p><div class="row pal" id="mpPal">'+pal.map(k=>'<button type="button" class="chip" data-k="'+k+'" title="'+PT[k].n+'">'+PT[k].s+'</button>').join('')+'</div><div class="row" style="margin-top:8px"><span class="sp"></span><button class="btn alt" type="button" id="mpNx">Next</button></div><div class="fb" id="mpFb"></div>';
+  let done=false;$$('#mpPal .chip').forEach(b=>b.addEventListener('click',()=>{if(done)return;done=true;MPS.done++;const k=b.dataset.k,A=PT[ans],K=PT[k];const same=K.q===A.q&&K.B===A.B&&K.L===A.L;b.setAttribute('aria-pressed','true');
+   if(same){MPS.score++;award(2);fb($('#mpFb'),'ok','<strong>Correct:</strong> X = '+K.s+' ('+K.n+'). '+(k!==ans?'(The expected answer was '+A.s+', which has the same charge, baryon and lepton numbers.) ':'')+(why||''))}
+   else{miss();fb($('#mpFb'),'no','<strong>Not that one.</strong> X must have charge '+frac(A.q)+', baryon number '+frac(A.B)+' and lepton number '+frac(A.L)+': it is '+A.s+' ('+A.n+'). You chose '+K.s+': charge '+frac(K.q)+', B '+frac(K.B)+', L '+frac(K.L)+'.')}}))}
+ $('#mpNx').addEventListener('click',mpNext);
+}
+/* ============ CHALLENGE ============ */
+const DER=[
+ {t:'Explain why the neutrino was proposed',s:['Every β decay of a given nuclide releases the same total energy','But the β particles are emitted with a continuous range of kinetic energies','So another, undetected particle must carry the rest of the energy','It must be neutral and almost massless: the (anti)neutrino']},
+ {t:'Show that a proton has charge +1',s:['A proton is made of two up quarks and one down quark','Each up quark has charge +⅔ e','The down quark has charge −⅓ e','Total: +⅔ + ⅔ − ⅓ = +1 e']},
+ {t:'Show that β⁻ decay conserves everything',s:['n → p + e⁻ + ν̄e','Charge: 0 → +1 − 1 + 0 = 0','Baryon number: 1 → 1 + 0 + 0 = 1','Lepton number: 0 → 0 + 1 − 1 = 0']},
+ {t:'Explain why annihilation gives two photons',s:['An electron and positron at rest have zero total momentum','A single photon always carries momentum','So at least two photons must be produced','They travel in opposite directions with equal energies']},
+ {t:'Decide which interaction is responsible for a reaction',s:['If a neutrino is involved or a quark changes flavour, it must be weak','Otherwise, if photons are emitted or absorbed, it is electromagnetic','Otherwise, if only hadrons take part and flavours are conserved, it is strong','The strongest interaction that could be responsible is the one that occurs']},
+ {t:'Explain β⁻ decay at quark level',s:['A neutron (udd) becomes a proton (uud)','So one down quark changes into an up quark','A change of quark flavour can only happen by the weak interaction','An electron and an electron antineutrino are emitted to conserve charge and lepton number']}
+];
+let der={i:0,pool:[],ans:[]};
+function derStart(i){der={i,pool:shuffle(DER[i].s.map((_,k)=>k)),ans:[],done:false};derRender()}
+function derRender(){
+ const D=DER[der.i],box=$('#chBox');
+ box.innerHTML='<div class="row">'+DER.map((d,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===der.i)+'">'+(k+1)+'</button>').join('')+'</div><h3>'+D.t+'</h3><p class="small muted">Tap the statements in the correct order. Tap one in your answer to send it back.</p>'+
+ '<div class="grid2"><div><strong class="small">Statements</strong><div class="opts" id="dPool" style="margin-top:6px">'+der.pool.map(k=>'<button type="button" class="step" data-k="'+k+'">'+D.s[k]+'</button>').join('')+'</div></div><div><strong class="small">Your derivation</strong><div class="dz" id="dAns" style="margin-top:6px">'+der.ans.map((k,j)=>'<button type="button" class="step" data-j="'+j+'">'+(j+1)+'. '+D.s[k]+'</button>').join('')+'</div></div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" id="dChk">Check the order</button></div><div class="fb" id="dFb"></div>';
+ $$('#dPool .step').forEach(b=>b.addEventListener('click',()=>{const k=+b.dataset.k;der.pool=der.pool.filter(x=>x!==k);der.ans.push(k);derRender()}));
+ $$('#dAns .step').forEach(b=>b.addEventListener('click',()=>{const j=+b.dataset.j;der.pool.push(der.ans[j]);der.ans.splice(j,1);derRender()}));
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>derStart(+b.dataset.k)));
+ $('#dChk').addEventListener('click',()=>{
+  if(der.pool.length){fb($('#dFb'),'info','Use every statement first.');return}
+  const firstBad=der.ans.findIndex((k,j)=>k!==j);
+  if(firstBad<0){if(!der.done){der.done=true;award(3)}$('#dAns').classList.add('good');fb($('#dFb'),'ok','<strong>Perfect derivation.</strong> '+(der.i<DER.length-1?'<button class="btn go" type="button" id="dNext" style="margin-left:8px">Next derivation</button>':'You have built them all.'));const n=$('#dNext');if(n)n.addEventListener('click',()=>derStart(der.i+1))}
+  else{miss();fb($('#dFb'),'no','Statement '+(firstBad+1)+' is out of place. Each step must follow from the ones before it.')}
+ });
+}
+const EXAM=[
+ {t:'Quark charges',intro:'',p:[
+  ['What is the charge (in e) of a hadron made of u u u?',2,'e','3 × (+⅔) = +2: the Δ⁺⁺'],
+  ['What is the charge of an antineutron’s quark set ū d̄ d̄?',0,'e','−⅔ + ⅓ + ⅓ = 0'],
+  ['What is the baryon number of a π⁻?',0,'','d ū: +⅓ − ⅓ = 0']]},
+ {t:'Nuclides',intro:'Uranium-238 has proton number 92.',p:[
+  ['How many neutrons does it have?',146,'','238 − 92 = 146'],
+  ['After one α decay, what is the proton number?',90,'','92 − 2 = 90 (thorium)'],
+  ['The thorium then undergoes two β⁻ decays. What is the proton number now?',92,'','90 + 2 = 92: uranium-234']]},
+ {t:'Annihilation',intro:'An electron and a positron, both almost at rest, annihilate. m<sub>e</sub> = 9.11 × 10⁻³¹ kg.',p:[
+  ['Find the energy of each of the two photons.',ME*CL*CL,'J','E = mc² = 8.2 × 10<sup>−14</sup> J'],
+  ['Find the frequency of each photon.',ME*CL*CL/HP,'Hz','f = E/h = 1.24 × 10<sup>20</sup> Hz (gamma)'],
+  ['Find the wavelength of each photon.',HP/(ME*CL),'m','λ = c/f = 2.4 × 10<sup>−12</sup> m']]},
+ {t:'Conservation',intro:'In the reaction ν̄e + p → n + X:',p:[
+  ['What is the charge of X?',1,'e','0 + 1 = 0 + q, so q = +1'],
+  ['What is the lepton number of X?',-1,'','−1 + 0 = 0 + L, so L = −1: X is a positron']]},
+ {t:'Sizes',intro:'A nucleus has diameter 1.0 × 10⁻¹⁴ m and its atom 1.0 × 10⁻¹⁰ m.',p:[
+  ['How many times larger is the atom’s diameter?',1e4,'','10 000'],
+  ['What fraction of the atom’s volume is the nucleus?',1e-12,'','(10⁻⁴)³ = 10<sup>−12</sup>']]}
+];
+let exI=0;
+function examRender(){
+ const E=EXAM[exI],box=$('#chBox');
+ box.innerHTML='<div class="row">'+EXAM.map((e,k)=>'<button type="button" class="chip" data-k="'+k+'" aria-pressed="'+(k===exI)+'">'+e.t+'</button>').join('')+'</div><h3>'+E.t+'</h3><p>'+E.intro+'</p><div id="exParts"></div><div class="row" style="margin-top:10px"><span class="sp"></span>'+(exI<EXAM.length-1?'<button class="btn alt" type="button" id="exNext">Next problem</button>':'')+'</div>';
+ $$('#chBox .chip').forEach(b=>b.addEventListener('click',()=>{exI=+b.dataset.k;examRender()}));
+ const n=$('#exNext');if(n)n.addEventListener('click',()=>{exI++;examRender()});
+ const parts=$('#exParts');
+ E.p.forEach((p,j)=>{
+  const id='ex'+j;let tries=0,got=false;
+  parts.insertAdjacentHTML('beforeend','<div class="task"><div class="tq">('+String.fromCharCode(97+j)+') '+p[0]+'</div><div class="row"><input type="text" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+p[2]+'</span><button class="btn" type="button">Check</button><button class="btn alt" type="button">Show solution</button></div><div class="fb" id="'+id+'"></div></div>');
+  const b=parts.lastElementChild,inp=$('input',b),[ck,sh]=$$('button',b),out=$('#'+id);
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v)){fb(out,'info','Type a number.');return}tries++;
+   if(close(v,p[1],p[4]||0.02)){if(!got){got=true;award(tries===1?3:1)}fb(out,'ok','<strong>Correct.</strong> '+p[3])}
+   else{miss();fb(out,'no',tries>=2?'Not yet. Solution: '+p[3]:'Not yet. Check your units and powers of ten, then try again.')}};
+  ck.addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  sh.addEventListener('click',()=>fb(out,'info',p[3]));
+ });
+}
+let GT=null;
+function gauntIntro(){
+ $('#chBox').innerHTML='<h3 style="margin-top:0">90-second gauntlet</h3><p>Mixed calculations and concept questions. Each correct answer scores a point; skipping costs nothing but time.</p><div class="row"><button class="btn go" type="button" id="gGo">Start</button><span class="tally">'+(store.best?'Best score '+store.best:'No best score yet')+'</span></div>';
+ $('#gGo').addEventListener('click',gauntStart);
+}
+function gauntStart(){GT={end:performance.now()+90000,score:0};gauntQ();gauntTick()}
+function gauntTick(){if(!GT)return;const left=Math.max(0,(GT.end-performance.now())/1000),el=$('#gT');if(!el){GT=null;return}el.textContent=left.toFixed(1)+' s';if(left<=0){gauntEnd();return}setTimeout(gauntTick,100)}
+function gauntEnd(){const s=GT.score;GT=null;const best=s>store.best;if(best){store.best=s;save()}
+ $('#chBox').innerHTML='<div class="big">'+s+'</div><p>'+(best?'A new best score.':'Best score: '+store.best)+'</p><button class="btn go" type="button" id="gGo">Go again</button>';$('#gGo').addEventListener('click',gauntStart)}
+function gauntQ(){
+ const box=$('#chBox'),head='<div class="row"><span class="big" id="gT" style="font-size:1.8rem">90.0 s</span><span class="sp"></span><span class="tally">Score '+GT.score+'</span></div>';
+ if(R()<0.55){const q=DR[pick(drKeys)].g(0);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+q.text+'</div><div class="row"><input type="text" id="gIn" inputmode="decimal" autocomplete="off" aria-label="answer"><span>'+q.unit+'</span><button class="btn" id="gOk" type="button">Submit</button><button class="btn alt" id="gSkip" type="button">Skip</button></div><div class="fb" id="gFb"></div>';
+  const inp=$('#gIn');inp.focus({preventScroll:true});
+  const go=()=>{const v=parseNum(inp.value);if(isNaN(v))return;if(close(v,q.ans,0.02)){GT.score++;award(1);gauntQ()}else{miss();fb($('#gFb'),'no','Answer: '+sci(q.ans,3)+' '+q.unit);setTimeout(()=>{if(GT)gauntQ()},1400)}};
+  $('#gOk').addEventListener('click',go);inp.addEventListener('keydown',e=>{if(e.key==='Enter')go()});$('#gSkip').addEventListener('click',gauntQ);
+ } else {const it=pick(QB),ord=shuffle([0,1,2,3]);
+  box.innerHTML=head+'<div class="q" style="margin-top:10px">'+it[0]+'</div><div class="opts">'+ord.map(k=>'<button type="button" class="opt" data-k="'+k+'">'+it[1][k]+'</button>').join('')+'</div>';
+  $$('#chBox .opt').forEach(b=>b.addEventListener('click',()=>{if(+b.dataset.k===it[2]){GT.score++;award(1);b.classList.add('right')}else{miss();b.classList.add('wrong');$$('#chBox .opt').forEach(x=>{if(+x.dataset.k===it[2])x.classList.add('right')})}$$('#chBox .opt').forEach(x=>x.disabled=true);setTimeout(()=>{if(GT)gauntQ()},650)}));
+ }
+}
+$$('#chMode button').forEach(b=>b.addEventListener('click',()=>{GT=null;$$('#chMode button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));const m=b.dataset.m;if(m==='der')derStart(der.i||0);else if(m==='exam')examRender();else gauntIntro()}));
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- start-up ---------- */
+themeLabel();hud(false);renderToc();renderCard();renderDrTopics();newDrill();startQuiz();soStart();
+hbPal();hbNew();rcStart();mpNext();
+derStart(0);
+})();
+</script>
+</body>
+</html>
