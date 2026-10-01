@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Range of alpha, beta and gamma radiation in air</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+#rr-app{--bg:#EEF2F6;--panel:#FFFFFF;--ink:#1C2B3A;--muted:#506074;--line:#D3DCE6;--acc:#2350B8;--accs:#E4EBFA;--al:#C0255F;--be:#0F7F86;--ga:#6A3FC1;--warm:#F2B33D;
+  box-sizing:border-box;width:100%;height:100%;min-height:640px;background:var(--bg);color:var(--ink);
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:15px;line-height:1.45;padding:18px;}
+#rr-app *,#rr-app *::before,#rr-app *::after{box-sizing:border-box}
+#rr-app .rr-inner{max-width:1240px;margin:0 auto}
+#rr-app button,#rr-app select,#rr-app input{font:inherit;color:inherit}
+#rr-app button{cursor:pointer}
+#rr-app :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#rr-app .rr-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px;margin-bottom:14px}
+#rr-app .rr-h1{font-family:Sora,"Atkinson Hyperlegible",system-ui,sans-serif;font-size:1.5rem;font-weight:600;letter-spacing:-0.015em;line-height:1.2;margin:0}
+#rr-app .rr-h1 .rr-ga{color:var(--al)}#rr-app .rr-h1 .rr-gb{color:var(--be)}#rr-app .rr-h1 .rr-gg{color:var(--ga)}
+#rr-app .rr-sub{margin:4px 0 0;color:var(--muted);max-width:66ch}
+#rr-app .rr-headctl{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#rr-app .rr-seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px;gap:2px}
+#rr-app .rr-seg button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-weight:700;color:var(--muted)}
+#rr-app .rr-seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+#rr-app .rr-seg.rr-small button{padding:4px 11px;font-size:0.9rem}
+#rr-app .rr-btn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 14px;font-weight:700}
+#rr-app .rr-btn:hover{border-color:#9FB0C3}
+#rr-app .rr-btn:disabled{opacity:.45;cursor:not-allowed}
+#rr-app .rr-primary{background:var(--acc);border-color:var(--acc);color:#fff}
+#rr-app .rr-primary:hover{background:#1B438F;border-color:#1B438F}
+#rr-app .rr-stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative}
+#rr-app .rr-stage canvas{display:block;width:100%;touch-action:pan-y}
+#rr-app .rr-hint{position:absolute;right:12px;top:8px;margin:0;font-size:0.82rem;color:var(--muted);background:rgba(255,255,255,.85);padding:2px 8px;border-radius:6px}
+#rr-app .rr-grid{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:14px;margin-top:14px}
+#rr-app .rr-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+#rr-app .rr-panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+#rr-app .rr-h2{font-family:Sora,"Atkinson Hyperlegible",system-ui,sans-serif;font-size:1rem;font-weight:600;margin:0 0 10px}
+#rr-app .rr-chips{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+#rr-app .rr-chip{display:flex;flex-direction:column;align-items:flex-start;gap:1px;text-align:left;border:1.5px solid var(--line);background:#F8FAFC;border-radius:10px;padding:8px 10px;min-width:0}
+#rr-app .rr-chip b{font-size:0.93rem;line-height:1.2}
+#rr-app .rr-chip small{color:var(--muted);font-size:0.82rem}
+#rr-app .rr-chip .rr-dot{width:10px;height:10px;border-radius:50%;margin-bottom:4px}
+#rr-app .rr-chip[aria-pressed="true"]{border-color:var(--acc);background:var(--accs);box-shadow:inset 0 0 0 1px var(--acc)}
+#rr-app .rr-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+#rr-app .rr-row:first-of-type{margin-top:0}
+#rr-app .rr-lab{color:var(--muted);font-size:0.9rem}
+#rr-app input[type="range"]{flex:1 1 200px;accent-color:var(--acc);min-width:0}
+#rr-app .rr-out{font-family:Sora,system-ui,sans-serif;font-weight:600;min-width:5.5em;text-align:right;font-variant-numeric:tabular-nums}
+#rr-app .rr-nudge{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+#rr-app .rr-nudge button{border:1px solid var(--line);background:#F8FAFC;border-radius:8px;padding:4px 10px;font-size:0.88rem;font-weight:700}
+#rr-app select{border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:#fff}
+#rr-app .rr-check{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:0.9rem;color:var(--ink)}
+#rr-app .rr-check input{margin-top:3px;accent-color:var(--acc)}
+#rr-app .rr-al{display:none}
+#rr-app.rr-is-al .rr-al{display:flex}
+#rr-app.rr-is-al .rr-al.rr-inl{display:inline}
+#rr-app .rr-counter{background:#20324A;color:#E8EEF6;border-radius:14px;padding:14px 16px;border:1px solid #20324A}
+#rr-app .rr-ctop{display:flex;align-items:center;gap:8px;font-size:0.88rem;color:#B9C7D8}
+#rr-app .rr-led{width:11px;height:11px;border-radius:50%;background:#FF5A3C;opacity:.18;box-shadow:0 0 8px #FF5A3C}
+#rr-app .rr-readout{font-family:Sora,system-ui,sans-serif;font-variant-numeric:tabular-nums;color:var(--warm);font-weight:600;line-height:1.05}
+#rr-app .rr-rate{display:flex;align-items:baseline;gap:10px;margin:4px 0 10px}
+#rr-app .rr-rate .rr-readout{font-size:2.5rem}
+#rr-app .rr-unit{color:#B9C7D8;font-size:0.88rem}
+#rr-app .rr-scaler{border-top:1px solid #3A4E69;padding-top:10px}
+#rr-app .rr-scr{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#rr-app .rr-scr .rr-readout{font-size:1.9rem}
+#rr-app .rr-prog{height:6px;background:#33475F;border-radius:4px;overflow:hidden;margin:8px 0 10px}
+#rr-app .rr-prog span{display:block;height:100%;width:0;background:var(--warm)}
+#rr-app .rr-scctl{display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:0.9rem;color:#D3DDE9}
+#rr-app .rr-counter select{background:#2C415C;color:#fff;border-color:#4A5F7B}
+#rr-app .rr-scbtn{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+#rr-app .rr-counter .rr-btn{background:#2C415C;border-color:#4A5F7B;color:#fff}
+#rr-app .rr-counter .rr-primary{background:var(--warm);border-color:var(--warm);color:#1C2B3A}
+#rr-app .rr-counter .rr-primary:hover{background:#FFC65C}
+#rr-app .rr-msg{min-height:1.3em;margin:8px 0 0;font-size:0.86rem;color:#C9D5E3}
+#rr-app .rr-wrow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin-top:10px}
+#rr-app .rr-wrow:first-of-type{margin-top:0}
+#rr-app .rr-wlab{font-size:0.9rem}
+#rr-app .rr-wval{font-family:Sora,system-ui,sans-serif;font-weight:600;font-variant-numeric:tabular-nums;text-align:right;font-size:0.95rem}
+#rr-app .rr-wbar{grid-column:1/3;height:8px;background:#E8EDF3;border-radius:5px;overflow:hidden}
+#rr-app .rr-wbar span{display:block;height:100%;width:0;background:var(--acc);border-radius:5px;transition:width .25s}
+#rr-app .rr-wnote{margin:10px 0 0;font-size:0.86rem;color:var(--muted)}
+#rr-app .rr-data{margin-top:14px}
+#rr-app .rr-dhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+#rr-app .rr-dhead .rr-h2{margin:0}
+#rr-app .rr-bgnote{font-size:0.9rem;color:var(--muted);flex:1 1 220px}
+#rr-app .rr-dgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+#rr-app .rr-twrap{overflow:auto;max-height:330px;border:1px solid var(--line);border-radius:10px}
+#rr-app table{border-collapse:collapse;width:100%;font-size:0.86rem;font-variant-numeric:tabular-nums}
+#rr-app th,#rr-app td{padding:6px 8px;text-align:right;border-bottom:1px solid #E6ECF2;white-space:nowrap}
+#rr-app th{position:sticky;top:0;background:#F3F6FA;font-weight:700;color:var(--ink);z-index:1}
+#rr-app th:first-child,#rr-app td:first-child{text-align:left}
+#rr-app td .rr-sw{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+#rr-app td button{border:0;background:transparent;color:var(--muted);padding:0 4px;font-size:1rem}
+#rr-app .rr-empty{padding:18px;color:var(--muted);text-align:center;white-space:normal}
+#rr-app .rr-gctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:0.9rem;margin-bottom:8px}
+#rr-app .rr-gwrap canvas{display:block;width:100%;border:1px solid var(--line);border-radius:10px}
+#rr-app .rr-fit{font-size:0.86rem;color:var(--muted);margin:6px 0 0;min-height:1.2em;font-variant-numeric:tabular-nums}
+#rr-app .rr-notes{margin-top:14px}
+#rr-app .rr-ngrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#rr-app .rr-ncard{border-left:4px solid var(--line);padding:2px 0 2px 12px}
+#rr-app .rr-ncard h3{font-family:Sora,system-ui,sans-serif;font-size:0.95rem;margin:0 0 4px;font-weight:600}
+#rr-app .rr-ncard p{margin:0 0 6px;font-size:0.9rem}
+#rr-app .rr-nextra{margin:12px 0 0;font-size:0.9rem;color:var(--ink)}
+#rr-app .rr-nextra p{margin:0 0 6px}
+@media (max-width:900px){
+  #rr-app .rr-grid,#rr-app .rr-dgrid{grid-template-columns:minmax(0,1fr)}
+  #rr-app .rr-ngrid{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:560px){
+  #rr-app{padding:10px;font-size:14px}
+  #rr-app .rr-chips{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #rr-app .rr-h1{font-size:1.25rem}
+  #rr-app .rr-hint{display:none}
+}
+</style>
+</head>
+<body style="margin:0;background:#EEF2F6">
+<div id="rr-app">
+<div class="rr-inner" id="rr-inner">
+  <header class="rr-head">
+    <div>
+      <h1 class="rr-h1">How far do <span class="rr-ga">α</span>, <span class="rr-gb">β</span> and <span class="rr-gg">γ</span> travel in air?</h1>
+      <p class="rr-sub">Move the Geiger–Müller tube away from the source, add absorbers and take counts. Find where each count rate drops to background.</p>
+    </div>
+    <div class="rr-headctl">
+      <div class="rr-seg" role="group" aria-label="Course level" id="rr-level">
+        <button type="button" data-level="gcse" aria-pressed="true">GCSE</button>
+        <button type="button" data-level="alevel" aria-pressed="false">A-level</button>
+      </div>
+      <button type="button" class="rr-btn" id="rr-sound" aria-pressed="false">Clicks off</button>
+    </div>
+  </header>
+
+  <div class="rr-stage" id="rr-stage">
+    <canvas id="rr-bench" role="img" aria-label="Bench with the source on the left, the absorber and the Geiger–Müller tube on the right, and a ruler in centimetres"></canvas>
+    <p class="rr-hint">Drag the tube to change the distance</p>
+  </div>
+
+  <div class="rr-grid">
+    <div class="rr-col">
+      <section class="rr-panel">
+        <h2 class="rr-h2">Source</h2>
+        <div class="rr-chips" id="rr-src">
+          <button type="button" class="rr-chip" data-src="alpha" aria-pressed="true"><span class="rr-dot" style="background:#C0255F"></span><b>Americium-241</b><small>alpha emitter</small></button>
+          <button type="button" class="rr-chip" data-src="beta" aria-pressed="false"><span class="rr-dot" style="background:#0F7F86"></span><b>Strontium-90</b><small>beta emitter</small></button>
+          <button type="button" class="rr-chip" data-src="gamma" aria-pressed="false"><span class="rr-dot" style="background:#6A3FC1"></span><b>Cobalt-60</b><small>gamma emitter</small></button>
+          <button type="button" class="rr-chip" data-src="none" aria-pressed="false"><span class="rr-dot" style="background:#9AA8B8"></span><b>No source</b><small>background only</small></button>
+        </div>
+        <label class="rr-check rr-al"><input type="checkbox" id="rr-amg"><span>Include americium-241’s weak 60&nbsp;keV gamma emission (real school sources emit it too)</span></label>
+      </section>
+
+      <section class="rr-panel">
+        <h2 class="rr-h2">Distance from source to tube</h2>
+        <div class="rr-row">
+          <input type="range" id="rr-d" min="0.5" max="10" step="0.1" value="2" aria-label="Distance from source to tube window in centimetres">
+          <output class="rr-out" id="rr-dout" for="rr-d">2.0 cm</output>
+        </div>
+        <div class="rr-nudge" id="rr-nudge">
+          <button type="button" data-n="-1">−1 cm</button><button type="button" data-n="-0.1">−0.1 cm</button><button type="button" data-n="0.1">+0.1 cm</button><button type="button" data-n="1">+1 cm</button><button type="button" data-n="10">+10 cm</button>
+        </div>
+        <div class="rr-row">
+          <span class="rr-lab">Bench shown</span>
+          <div class="rr-seg rr-small" role="group" aria-label="Length of bench shown" id="rr-view">
+            <button type="button" data-v="10" aria-pressed="true">0–10 cm</button>
+            <button type="button" data-v="50" aria-pressed="false">0–50 cm</button>
+            <button type="button" data-v="150" aria-pressed="false">0–150 cm</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="rr-panel">
+        <h2 class="rr-h2">Absorber in front of the tube</h2>
+        <div class="rr-chips" id="rr-mat">
+          <button type="button" class="rr-chip" data-mat="none" aria-pressed="true"><b>None</b><small>air only</small></button>
+          <button type="button" class="rr-chip" data-mat="paper" aria-pressed="false"><b>Paper</b><small>80 g/m² sheets</small></button>
+          <button type="button" class="rr-chip" data-mat="al" aria-pressed="false"><b>Aluminium</b><small>sheet</small></button>
+          <button type="button" class="rr-chip" data-mat="pb" aria-pressed="false"><b>Lead</b><small>sheet</small></button>
+        </div>
+        <div class="rr-row" style="margin-top:10px">
+          <label class="rr-lab" for="rr-thk">Thickness</label>
+          <select id="rr-thk" disabled><option>—</option></select>
+        </div>
+      </section>
+    </div>
+
+    <div class="rr-col">
+      <section class="rr-counter" aria-label="Counter">
+        <div class="rr-ctop"><span class="rr-led" id="rr-led"></span><span>Ratemeter (smoothed over about 2 s)</span></div>
+        <div class="rr-rate"><span class="rr-readout" id="rr-rate" aria-live="off">0.0</span><span class="rr-unit">counts per second</span></div>
+        <div class="rr-scaler">
+          <div class="rr-scr"><span class="rr-unit">Scaler</span><span class="rr-readout" id="rr-n">0</span><span class="rr-unit">counts in <span id="rr-tel">0.0</span>&nbsp;s</span></div>
+          <div class="rr-prog"><span id="rr-bar"></span></div>
+          <div class="rr-scctl">
+            <label>Count for <select id="rr-ct"><option value="10">10 s</option><option value="30" selected>30 s</option><option value="60">60 s</option><option value="100">100 s</option></select></label>
+            <label>Time runs <select id="rr-sp"><option value="1">1× (real time)</option><option value="10" selected>10× faster</option><option value="50">50× faster</option></select></label>
+          </div>
+          <div class="rr-scbtn">
+            <button type="button" class="rr-btn rr-primary" id="rr-start">Start count</button>
+            <button type="button" class="rr-btn" id="rr-rec" disabled>Record result</button>
+          </div>
+          <p class="rr-msg" id="rr-msg" aria-live="polite">Take a background count first: choose “No source”.</p>
+        </div>
+      </section>
+
+      <section class="rr-panel">
+        <h2 class="rr-h2">Where the radiation goes</h2>
+        <div class="rr-wrow"><div class="rr-wlab">Heading towards the tube window (spreading out)</div><div class="rr-wval" id="rr-gv">—</div><div class="rr-wbar"><span id="rr-gb"></span></div></div>
+        <div class="rr-wrow"><div class="rr-wlab">Getting through the air and any absorber</div><div class="rr-wval" id="rr-tv">—</div><div class="rr-wbar"><span id="rr-tb"></span></div></div>
+        <p class="rr-wnote" id="rr-wnote"></p>
+      </section>
+    </div>
+  </div>
+
+  <section class="rr-panel rr-data">
+    <div class="rr-dhead">
+      <h2 class="rr-h2">Results</h2>
+      <span class="rr-bgnote" id="rr-bgnote">Background: not measured yet.</span>
+      <div style="display:flex;gap:8px"><button type="button" class="rr-btn" id="rr-csv">Download CSV</button><button type="button" class="rr-btn" id="rr-clear">Clear results</button></div>
+    </div>
+    <div class="rr-dgrid">
+      <div class="rr-twrap"><table id="rr-table"></table></div>
+      <div class="rr-gwrap" id="rr-gwrap">
+        <div class="rr-gctl">
+          <label for="rr-gy">Plot</label><select id="rr-gy"></select>
+          <label for="rr-gx">against</label><select id="rr-gx"><option value="d">distance d</option><option value="t">absorber thickness</option></select>
+          <label for="rr-gs">for</label><select id="rr-gs"><option value="alpha">Am-241</option><option value="beta">Sr-90</option><option value="gamma">Co-60</option><option value="all">all sources</option></select>
+          <label class="rr-al rr-inl"><input type="checkbox" id="rr-fitbox"> line of best fit</label>
+        </div>
+        <canvas id="rr-graph" role="img" aria-label="Graph of recorded results"></canvas>
+        <p class="rr-fit" id="rr-fit"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="rr-panel rr-notes">
+    <h2 class="rr-h2">What you should find</h2>
+    <div class="rr-ngrid" id="rr-ngrid"></div>
+    <div class="rr-nextra" id="rr-nextra"></div>
+  </section>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('rr-app');
+function $(s){return root.querySelector(s);}
+function $$(s){return Array.prototype.slice.call(root.querySelectorAll(s));}
+
+/* ---------- Physics model (school sealed sources, end-window GM tube) ---------- */
+var PHY={
+  a:0.9,          /* GM window radius / cm */
+  d0:0.3,         /* source sits 0.3 cm behind the front face of its holder / cm */
+  tau:1.0e-4,     /* GM dead time / s */
+  bg:0.40,        /* background count rate / s^-1 (24 per minute) */
+  rA:4.0,sA:0.15, /* alpha range in air (incl. GM window) and straggling / cm */
+  S:{alpha:3000,beta:40000,gamma:20000,amg:60}, /* detected rate if all radiation entered the window */
+  rho:{air:0.0012,paper:0.8,al:2.70,pb:11.34},  /* g cm^-3 */
+  betaC:[{f:0.5,mu:33.8,R:0.18},{f:0.5,mu:6.6,R:1.10}], /* Sr-90 (0.55 MeV max) and Y-90 (2.28 MeV max): mass absorption coeff cm^2/g, max range g/cm^2 */
+  muG:{air:0.0567,paper:0.063,al:0.055,pb:0.059}, /* Co-60 gamma, cm^2/g */
+  muA:{air:0.187,paper:0.21,al:0.277,pb:5.0},     /* 59.5 keV gamma, cm^2/g */
+  alphaK:{paper:1.1,al:0.8,pb:0.4}                /* relative stopping per g/cm^2 compared with air */
+};
+function erfc(x){var z=Math.abs(x),t=1/(1+0.3275911*z);var y=t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))))*Math.exp(-z*z);return x>=0?y:2-y;}
+function geom(d){var D=d+PHY.d0;return 0.5*(1-D/Math.sqrt(D*D+PHY.a*PHY.a));}
+function areal(m,t){return m==='none'?0:PHY.rho[m]*t;}
+function airLen(s){return Math.max(0,s.d-s.t);}
+function cut(x,R){if(x>=R)return 0;var q=x/R;return 1-q*q*q*q;}
+function tAlpha(s){var eq=airLen(s)+(s.mat==='none'?0:areal(s.mat,s.t)/PHY.rho.air*PHY.alphaK[s.mat]);return 0.5*erfc((eq-PHY.rA)/(PHY.sA*Math.SQRT2));}
+function tBeta(s){var x=PHY.rho.air*airLen(s)+areal(s.mat,s.t)+0.002,T=0;for(var i=0;i<2;i++){var c=PHY.betaC[i];T+=c.f*Math.exp(-c.mu*x)*cut(x,c.R);}return T;}
+function tGam(s,mu){var T=Math.exp(-mu.air*PHY.rho.air*airLen(s));if(s.mat!=='none')T*=Math.exp(-mu[s.mat]*PHY.rho[s.mat]*s.t);return T;}
+function rates(s){
+  var r={g:geom(s.d),alpha:0,beta:0,gamma:0,amg:0,T:null};
+  if(s.src==='alpha'){r.T=tAlpha(s);r.alpha=PHY.S.alpha*r.g*r.T;if(s.level==='alevel'&&s.amg)r.amg=PHY.S.amg*r.g*tGam(s,PHY.muA);}
+  else if(s.src==='beta'){r.T=tBeta(s);r.beta=PHY.S.beta*r.g*r.T;}
+  else if(s.src==='gamma'){r.T=tGam(s,PHY.muG);r.gamma=PHY.S.gamma*r.g*r.T;}
+  r.n=PHY.bg+r.alpha+r.beta+r.gamma+r.amg;
+  r.m=r.n/(1+r.n*PHY.tau);
+  return r;
+}
+function gauss(){var u=1-Math.random(),v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function poisson(l){if(l<=0)return 0;if(l<30){var L=Math.exp(-l),k=0,p=1;do{k++;p*=Math.random();}while(p>L);return k-1;}var g=Math.round(l+Math.sqrt(l)*gauss());return g<0?0:g;}
+
+/* ---------- State ---------- */
+var THK={
+  paper:[[0.01,'1 sheet (0.1 mm)'],[0.02,'2 sheets (0.2 mm)'],[0.05,'5 sheets (0.5 mm)'],[0.1,'10 sheets (1 mm)']],
+  al:[[0.05,'0.5 mm'],[0.1,'1 mm'],[0.2,'2 mm'],[0.3,'3 mm'],[0.4,'4 mm'],[0.5,'5 mm'],[0.6,'6 mm'],[0.8,'8 mm'],[1.0,'10 mm']],
+  pb:[[0.1,'1 mm'],[0.2,'2 mm'],[0.5,'5 mm'],[1.0,'10 mm'],[1.5,'15 mm'],[2.0,'20 mm'],[3.0,'30 mm'],[4.0,'40 mm'],[5.0,'50 mm']]
+};
+var THKDEF={paper:0.01,al:0.1,pb:1.0};
+var MATNAME={none:'none',paper:'paper',al:'aluminium',pb:'lead'};
+var SRC={alpha:{name:'Am-241',long:'Americium-241',col:'#C0255F',sym:'α'},beta:{name:'Sr-90',long:'Strontium-90',col:'#0F7F86',sym:'β'},gamma:{name:'Co-60',long:'Cobalt-60',col:'#6A3FC1',sym:'γ'},none:{name:'Background',long:'No source',col:'#8695A7',sym:''}};
+var st={level:'gcse',src:'alpha',d:2.0,view:10,mat:'none',t:0,amg:false,sound:false,speed:10,ct:30,
+  counting:false,done:false,el:0,N:0,rows:[],bg:null,bgRow:null,gx:'d',gy:'rate',gs:'alpha',fit:false};
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function absLabel(m,t){if(m==='none')return 'none';var o=THK[m].filter(function(e){return Math.abs(e[0]-t)<1e-9;})[0];var l=o?o[1]:(t*10).toFixed(1)+' mm';if(m==='paper')return l.replace(/ \(.*\)/,'')+' of paper';return l+' '+MATNAME[m];}
+function fmtRate(x){if(x==null||!isFinite(x))return '—';var a=Math.abs(x);if(a<1)return x.toFixed(2);if(a<100)return x.toFixed(1);return Math.round(x).toLocaleString('en-GB');}
+function sig(x,n){if(x===0)return '0';var p=Math.pow(10,n-1-Math.floor(Math.log10(Math.abs(x))));return (Math.round(x*p)/p);}
+
+/* ---------- Controls ---------- */
+var dIn=$('#rr-d'),dOut=$('#rr-dout'),thk=$('#rr-thk'),msg=$('#rr-msg');
+function setPressed(group,attr,val){$$(group+' ['+attr+']').forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute(attr)===String(val)));});}
+function minD(){return Math.round((st.t+0.5)*10)/10;}
+function clampD(){var lo=Math.max(0.5,minD());st.d=Math.min(st.view,Math.max(lo,Math.round(st.d*10)/10));}
+function syncDist(){clampD();dIn.min=String(Math.max(0.5,minD()));dIn.max=String(st.view);dIn.value=String(st.d);dOut.textContent=st.d.toFixed(1)+' cm';}
+function settingsChanged(){
+  if(st.counting||st.done){st.counting=false;st.done=false;st.N=0;st.el=0;$('#rr-start').textContent='Start count';$('#rr-rec').disabled=true;msg.textContent='Settings changed, so the scaler was reset.';}
+  updateWhere();
+}
+function setView(v){st.view=v;setPressed('#rr-view','data-v',v);syncDist();}
+$('#rr-src').addEventListener('click',function(e){var b=e.target.closest('[data-src]');if(!b)return;var s=b.getAttribute('data-src');if(s===st.src)return;st.src=s;setPressed('#rr-src','data-src',s);
+  if(s==='alpha'){setView(10);st.d=Math.max(2,minD());}
+  else if(s==='beta'){setView(150);st.d=Math.max(5,minD());}
+  else if(s==='gamma'){setView(150);st.d=Math.max(5,minD());}
+  if(s!=='none'){st.gs=s;$('#rr-gs').value=s;}
+  syncDist();particles.length=0;settingsChanged();drawGraph();});
+dIn.addEventListener('input',function(){st.d=parseFloat(dIn.value);syncDist();settingsChanged();});
+$('#rr-nudge').addEventListener('click',function(e){var b=e.target.closest('[data-n]');if(!b)return;var n=parseFloat(b.getAttribute('data-n'));if(st.d+n>st.view&&st.view<150){setView(st.view===10?50:150);}st.d=st.d+n;syncDist();settingsChanged();});
+$('#rr-view').addEventListener('click',function(e){var b=e.target.closest('[data-v]');if(!b)return;var old=st.d;setView(parseInt(b.getAttribute('data-v'),10));if(st.d!==old)settingsChanged();});
+function buildThk(){thk.innerHTML='';if(st.mat==='none'){thk.disabled=true;thk.innerHTML='<option>—</option>';return;}thk.disabled=false;THK[st.mat].forEach(function(e){var o=document.createElement('option');o.value=String(e[0]);o.textContent=e[1];if(Math.abs(e[0]-st.t)<1e-9)o.selected=true;thk.appendChild(o);});}
+$('#rr-mat').addEventListener('click',function(e){var b=e.target.closest('[data-mat]');if(!b)return;var m=b.getAttribute('data-mat');if(m===st.mat)return;st.mat=m;st.t=m==='none'?0:THKDEF[m];setPressed('#rr-mat','data-mat',m);buildThk();syncDist();settingsChanged();});
+thk.addEventListener('change',function(){st.t=parseFloat(thk.value);syncDist();settingsChanged();});
+$('#rr-amg').addEventListener('change',function(e){st.amg=e.target.checked;settingsChanged();});
+$('#rr-level').addEventListener('click',function(e){var b=e.target.closest('[data-level]');if(!b)return;st.level=b.getAttribute('data-level');setPressed('#rr-level','data-level',st.level);root.classList.toggle('rr-is-al',st.level==='alevel');buildGy();renderTable();renderNotes();updateWhere();drawGraph();});
+$('#rr-ct').addEventListener('change',function(e){st.ct=parseInt(e.target.value,10);settingsChanged();});
+$('#rr-sp').addEventListener('change',function(e){st.speed=parseInt(e.target.value,10);});
+$('#rr-start').addEventListener('click',function(){
+  if(st.counting){st.counting=false;st.done=false;this.textContent='Start count';msg.textContent='Count stopped. Start again to take a full count.';return;}
+  st.counting=true;st.done=false;st.N=0;st.el=0;this.textContent='Stop';$('#rr-rec').disabled=true;msg.textContent='Counting…';ensureAudio();
+});
+$('#rr-rec').addEventListener('click',function(){
+  if(!st.done)return;
+  var row={src:st.src,d:st.d,mat:st.mat,t:st.t,tc:st.ct,N:st.N,rate:st.N/st.ct,unc:Math.sqrt(st.N)/st.ct};
+  st.rows.push(row);
+  if(st.src==='none'){st.bg=row.rate;st.bgRow=st.rows.length;}
+  st.done=false;$('#rr-rec').disabled=true;
+  msg.textContent=st.src==='none'?'Background recorded. Now choose a source.':'Result recorded in row '+st.rows.length+'.';
+  renderTable();drawGraph();
+});
+$('#rr-clear').addEventListener('click',function(){if(st.rows.length&&!window.confirm('Clear all recorded results?'))return;st.rows=[];st.bg=null;st.bgRow=null;renderTable();drawGraph();});
+$('#rr-csv').addEventListener('click',function(){
+  var lines=['Row,Source,Distance d / cm,Absorber,Absorber thickness / mm,Count time / s,Counts,Count rate / s^-1,Uncertainty / s^-1,Corrected count rate / s^-1'];
+  st.rows.forEach(function(r,i){var c=st.bg==null||r.src==='none'?'':(r.rate-st.bg).toFixed(3);lines.push([i+1,SRC[r.src].name,r.d.toFixed(1),MATNAME[r.mat],(r.t*10).toFixed(1),r.tc,r.N,r.rate.toFixed(3),r.unc.toFixed(3),c].join(','));});
+  var blob=new Blob([lines.join('\n')],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='radiation-range-results.csv';root.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+});
+$('#rr-gx').addEventListener('change',function(e){st.gx=e.target.value;drawGraph();});
+$('#rr-gy').addEventListener('change',function(e){st.gy=e.target.value;drawGraph();});
+$('#rr-gs').addEventListener('change',function(e){st.gs=e.target.value;drawGraph();});
+$('#rr-fitbox').addEventListener('change',function(e){st.fit=e.target.checked;drawGraph();});
+$('#rr-table').addEventListener('click',function(e){var b=e.target.closest('[data-del]');if(!b)return;var i=parseInt(b.getAttribute('data-del'),10);st.rows.splice(i,1);recomputeBg();renderTable();drawGraph();});
+function recomputeBg(){st.bg=null;st.bgRow=null;st.rows.forEach(function(r,i){if(r.src==='none'){st.bg=r.rate;st.bgRow=i+1;}});}
+
+/* ---------- Sound (hard-capped very quiet, no volume control) ---------- */
+var ac=null,master=null,nbuf=null,lastClick=0;
+function ensureAudio(){if(!st.sound)return;try{if(!ac){var C=window.AudioContext||window.webkitAudioContext;if(!C)return;ac=new C();master=ac.createGain();master.gain.value=0.02;master.connect(ac.destination);var len=Math.floor(ac.sampleRate*0.004);nbuf=ac.createBuffer(1,len,ac.sampleRate);var dd=nbuf.getChannelData(0);for(var i=0;i<len;i++){dd[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);}}if(ac.state==='suspended')ac.resume();}catch(err){ac=null;}}
+function clickAt(delay){if(!st.sound||!ac)return;var t=ac.currentTime+delay;if(t-lastClick<0.012)return;lastClick=t;var s=ac.createBufferSource();s.buffer=nbuf;s.connect(master);s.start(t);}
+$('#rr-sound').addEventListener('click',function(){st.sound=!st.sound;this.setAttribute('aria-pressed',String(st.sound));this.textContent=st.sound?'Clicks on':'Clicks off';ensureAudio();});
+
+/* ---------- Where-it-goes panel ---------- */
+function updateWhere(){
+  var r=rates(st),gv=$('#rr-gv'),tv=$('#rr-tv'),gb=$('#rr-gb'),tb=$('#rr-tb'),note=$('#rr-wnote');
+  if(st.src==='none'){gv.textContent='—';tv.textContent='—';gb.style.width='0';tb.style.width='0';note.textContent='Background radiation comes from rocks, building materials, the air and cosmic rays. Measure it and subtract it from every reading.';return;}
+  var inv=1/r.g;gv.textContent='1 in '+Number(sig(inv,inv<100?2:3)).toLocaleString('en-GB');
+  gb.style.width=Math.max(0,Math.min(100,(Math.log10(r.g)+6)/(Math.log10(0.5)+6)*100))+'%';
+  var T=r.T*100;tv.textContent=(T>=99.95?'100':T>=10?T.toFixed(0):T>=0.1?T.toFixed(1):T>0.0005?T.toFixed(3):'0')+'%';
+  tb.style.width=Math.max(0,Math.min(100,T))+'%';
+  var gmt=st.mat==='none';
+  if(st.src==='alpha')note.textContent=r.T<0.02?(gmt?'The alpha particles have used up all their energy ionising the air before they reach the tube.':'The absorber stops every alpha particle.'):'Each alpha particle travels about the same distance in air before it stops.';
+  else if(st.src==='beta')note.textContent=r.T<0.005?'Almost no beta particles get through.':'Beta particles are gradually absorbed and also spread out, so the count rate falls steadily.';
+  else note.textContent=gmt?'Air absorbs almost no gamma. The count rate falls only because the radiation spreads out.':'Each extra thickness of absorber cuts the gamma by the same fraction. It never quite reaches zero.';
+}
+
+/* ---------- Table ---------- */
+function renderTable(){
+  var al=st.level==='alevel',h='<thead><tr><th>Source</th><th>d / cm</th><th>Absorber</th><th>t / s</th><th>Counts</th><th>Count rate / s⁻¹</th><th>'+(al?'Corrected / s⁻¹':'Rate − background / s⁻¹')+'</th><th></th></tr></thead><tbody>';
+  if(!st.rows.length)h+='<tr><td colspan="8" class="rr-empty">No results yet. Take a count, then press Record result.</td></tr>';
+  st.rows.forEach(function(r,i){var c=(st.bg==null||r.src==='none')?'—':fmtRate(r.rate-st.bg)+(al?' ± '+fmtRate(r.unc):'');
+    h+='<tr><td><span class="rr-sw" style="background:'+SRC[r.src].col+'"></span>'+SRC[r.src].name+'</td><td>'+(r.src==='none'?'—':r.d.toFixed(1))+'</td><td>'+(r.mat==='none'?'—':absLabel(r.mat,r.t))+'</td><td>'+r.tc+'</td><td>'+r.N.toLocaleString('en-GB')+'</td><td>'+fmtRate(r.rate)+(al?' ± '+fmtRate(r.unc):'')+'</td><td>'+c+'</td><td><button type="button" data-del="'+i+'" aria-label="Delete row '+(i+1)+'">×</button></td></tr>';});
+  $('#rr-table').innerHTML=h+'</tbody>';
+  $('#rr-bgnote').textContent=st.bg==null?'Background: not measured yet. Choose “No source” and take a count.':'Background: '+fmtRate(st.bg)+' counts per second (row '+st.bgRow+'), subtracted in the last column.';
+}
+function buildGy(){var o=[['rate','count rate'],['corr','count rate − background']];if(st.level==='alevel')o.push(['ln','ln(corrected count rate)'],['inv','1/√(corrected count rate)']);else if(st.gy==='ln'||st.gy==='inv')st.gy='corr';
+  var s=$('#rr-gy');s.innerHTML='';o.forEach(function(e){var x=document.createElement('option');x.value=e[0];x.textContent=e[1];if(e[0]===st.gy)x.selected=true;s.appendChild(x);});}
+
+/* ---------- Notes ---------- */
+function renderNotes(){
+  var al=st.level==='alevel',g=$('#rr-ngrid'),x=$('#rr-nextra');
+  var A='<div class="rr-ncard" style="border-color:#C0255F"><h3>Alpha (α)</h3><p>Range in air: a few centimetres. With this source the count rate drops to background at about 4 cm.</p><p>Stopped by a sheet of paper (or the outer layer of skin).</p>'+(al?'<p>Am-241 alpha particles all have about the same energy (5.5 MeV), so they all have about the same range. The count rate stays high and then falls sharply over a few millimetres.</p>':'<p>In exams, quote a value: about 5 cm is safe. Mark schemes usually accept roughly 3–7 cm.</p>')+'</div>';
+  var B='<div class="rr-ncard" style="border-color:#0F7F86"><h3>Beta (β)</h3><p>Range in air: tens of centimetres up to about a metre. Here the count rate is hard to tell from background beyond roughly 70–100 cm.</p><p>Hardly affected by paper. Stopped by a few millimetres of aluminium (about 3–5 mm).</p>'+(al?'<p>Beta particles are emitted with a range of energies (Sr-90 up to 0.55 MeV; its daughter Y-90 up to 2.28 MeV), so there is no single range. The count rate falls gradually: the particles spread out and are absorbed at the same time.</p>':'<p>In exams, about 1 m is a safe value; mark schemes have accepted anything from about 20 cm to 3 m.</p>')+'</div>';
+  var G='<div class="rr-ncard" style="border-color:#6A3FC1"><h3>Gamma (γ)</h3><p>No definite range: air absorbs almost none. The count rate falls with distance only because the radiation spreads out (inverse square law).</p><p>Reduced, but never completely stopped, by several centimetres of lead or thick concrete.</p>'+(al?'<p>For a point source, I = k/x². In lead, C = C₀e<sup>−μx</sup>; the half-value thickness ln2/μ is about 1 cm of lead for Co-60.</p>':'')+'</div>';
+  g.innerHTML=A+B+G;
+  x.innerHTML=al?'<p><b>Testing the inverse square law:</b> plot 1/√(C − B) against d for gamma. You should get a straight line. Its intercept on the d axis is about −0.3 cm because the radioactive material sits a little behind the front of the holder. Use distances above about 5 cm, where the tube window is small compared with d.</p><p><b>Absorption:</b> plot ln(C − B) against lead thickness. The gradient is −μ (per mm here, as thickness is in mm).</p><p><b>Uncertainty and dead time:</b> decay is random, so the uncertainty in a count N is about √N. At thousands of counts per second the GM tube misses some counts (dead time about 100 µs here), so very close readings are too low.</p><p><b>Real sources:</b> americium-241 also emits 60 keV gamma rays, so beyond the alpha range a real count rate sits slightly above background. Tick the box under Source to see this.</p>'
+  :'<p><b>Doing it properly:</b> measure the background count first and subtract it from every reading. Count for long enough (at least 30 s) to reduce the effect of random fluctuations, and repeat close to where the count rate reaches background. Always handle sources with tongs, point them away from people and return them to their box straight after use.</p>';
+}
+
+/* ---------- Bench canvas ---------- */
+var bench=$('#rr-bench'),bctx=bench.getContext('2d'),bw=800,bh=300,dpr=1;
+var L={x0:90,ppc:60,cy:130,benchY:210,tubeR:17};
+var particles=[],streaks=[],spawnAcc=0,winFlash=0,drag=null;
+function layout(){L.x0=Math.max(64,Math.min(110,bw*0.1));L.ppc=(bw-L.x0-Math.min(150,bw*0.3))/st.view;L.cy=Math.round(bh*0.43);L.benchY=Math.round(bh*0.72);}
+function sizeBench(){var w=bench.parentNode.clientWidth;if(!w)return;dpr=window.devicePixelRatio||1;bw=w;bh=Math.round(Math.max(250,Math.min(340,w*0.33)));bench.width=Math.round(bw*dpr);bench.height=Math.round(bh*dpr);bench.style.height=bh+'px';}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function winX(){return L.x0+st.d*L.ppc;}
+function absGeom(){if(st.mat==='none')return null;var tp=Math.max(3,st.t*L.ppc);var front=winX()-2-tp;return {x:front,w:tp,h:78};}
+
+function spawn(type){
+  var a=(Math.random()*2-1)*0.34,p={type:type,x:L.x0+1,y:L.cy+(Math.random()*2-1)*5,a:a,tr:0,pts:[],dead:false,fade:1,tested:false,comp:0};
+  if(type==='alpha'){p.v=150;p.stop=PHY.rA+gauss()*PHY.sA;}
+  else if(type==='beta'){p.v=360;p.comp=Math.random()<0.5?0:1;var c=PHY.betaC[p.comp];p.stop=Math.min(-Math.log(1-Math.random())/(c.mu*PHY.rho.air),c.R/PHY.rho.air);}
+  else{p.v=650;p.stop=Infinity;}
+  p.pts.push([p.x,p.y]);particles.push(p);
+}
+function absPass(p){
+  var m=st.mat,t=st.t,xa=areal(m,t);
+  if(p.type==='alpha')return 0;
+  if(p.type==='beta'){var c=PHY.betaC[p.comp],xair=PHY.rho.air*p.tr,c0=cut(xair,c.R);if(c0<=0)return 0;return Math.exp(-c.mu*xa)*cut(xair+xa,c.R)/c0;}
+  if(p.type==='amg')return Math.exp(-PHY.muA[m]*xa);
+  return Math.exp(-PHY.muG[m]*xa);
+}
+function stepParticles(dt){
+  var ab=absGeom(),wx=winX(),i,p;
+  for(i=0;i<particles.length;i++){
+    p=particles[i];
+    if(p.dead){p.fade-=dt*1.6;continue;}
+    var dist=p.v*dt,n=Math.max(1,Math.ceil(dist/4)),sub=dist/n;
+    for(var k=0;k<n&&!p.dead;k++){
+      if(p.type==='beta'){p.a+=gauss()*0.16;}
+      p.x+=Math.cos(p.a)*sub;p.y+=Math.sin(p.a)*sub;p.tr+=sub/L.ppc;
+      if(p.tr>=p.stop){p.dead=true;}
+      else if(ab&&!p.tested&&p.x>=ab.x&&Math.abs(p.y-L.cy)<=ab.h/2){p.tested=true;if(Math.random()>absPass(p)){p.dead=true;p.x=ab.x;}else if(p.type==='beta'){p.a+=gauss()*0.5;}}
+      else if(p.x>=wx&&Math.abs(p.y-L.cy)<=L.tubeR){p.dead=true;p.x=wx;winFlash=1;}
+      if(p.x>bw+20||p.y<-20||p.y>L.benchY||p.x<0){p.dead=true;p.fade=0;}
+      if(p.type!=='gamma'&&p.type!=='amg'){p.pts.push([p.x,p.y]);}
+    }
+    if(p.type==='beta'&&p.pts.length>70)p.pts.splice(0,p.pts.length-70);
+  }
+  particles=particles.filter(function(q){return q.fade>0;});
+  for(i=0;i<streaks.length;i++)streaks[i].f-=dt*1.4;
+  streaks=streaks.filter(function(s){return s.f>0;});
+}
+function drawRuler(c){
+  var y=L.benchY+10,x1=L.x0+st.view*L.ppc;
+  c.fillStyle='#FBFCFE';c.strokeStyle='#A8B5C3';c.lineWidth=1;rr(c,L.x0-12,y,x1-L.x0+24,30,4);c.fill();c.stroke();
+  var cfg={10:[0.1,0.5,1],50:[1,5,5],150:[1,5,10]}[st.view],minor=cfg[0],mid=cfg[1],lab=cfg[2];
+  while(lab*L.ppc<30)lab*=2;
+  var showMinor=minor*L.ppc>=3,nmax=Math.round(st.view/minor);
+  c.strokeStyle='#3B4A5C';c.fillStyle='#2A3A4C';c.font='11px "Atkinson Hyperlegible", system-ui, sans-serif';c.textAlign='center';c.textBaseline='top';
+  for(var i=0;i<=nmax;i++){var v=i*minor,x=Math.round(L.x0+v*L.ppc)+0.5,isMid=Math.abs(v/mid-Math.round(v/mid))<1e-6,isLab=Math.abs(v/lab-Math.round(v/lab))<1e-6;
+    if(!showMinor&&!isMid&&!isLab)continue;
+    var len=isLab?11:isMid?8:4;c.beginPath();c.moveTo(x,y);c.lineTo(x,y+len);c.stroke();
+    if(isLab)c.fillText(String(Math.round(v*10)/10),x,y+13);}
+  c.textAlign='left';c.fillText('cm',x1+16,y+13);
+}
+function drawSource(c){
+  var x0=L.x0,cy=L.cy;
+  c.fillStyle='#8E9BAA';c.fillRect(x0-29,cy+10,6,L.benchY-cy-10);
+  c.fillStyle='#7C8999';rr(c,x0-58,L.benchY-7,64,7,3);c.fill();
+  var g=c.createLinearGradient(0,cy-18,0,cy+18);g.addColorStop(0,'#C6D0DB');g.addColorStop(1,'#7F8FA1');c.fillStyle=g;rr(c,x0-52,cy-18,52,36,5);c.fill();
+  c.strokeStyle='#6B7A8B';c.lineWidth=1;c.stroke();
+  var col=SRC[st.src].col;
+  if(st.src!=='none'){c.fillStyle=col;c.fillRect(x0-4,cy-9,4,18);}
+  c.fillStyle=st.src==='none'?'#5E6C7C':col;c.font='700 13px "Atkinson Hyperlegible", system-ui, sans-serif';c.textAlign='center';c.textBaseline='bottom';
+  c.fillText(st.src==='none'?'no source':SRC[st.src].name,x0-26,cy-24);
+}
+function drawAbsorber(c){
+  var ab=absGeom();if(!ab)return;var y=L.cy-ab.h/2;
+  c.fillStyle='#8E9BAA';c.fillRect(ab.x+ab.w/2-1.5,L.cy+ab.h/2,3,L.benchY-L.cy-ab.h/2);
+  var g=c.createLinearGradient(ab.x,0,ab.x+ab.w,0);
+  if(st.mat==='paper'){g.addColorStop(0,'#FFFFFF');g.addColorStop(1,'#EEF1F4');c.strokeStyle='#A9B4C0';}
+  else if(st.mat==='al'){g.addColorStop(0,'#EEF2F5');g.addColorStop(1,'#B3BEC9');c.strokeStyle='#7F8C99';}
+  else{g.addColorStop(0,'#7A8798');g.addColorStop(1,'#4A5566');c.strokeStyle='#384250';}
+  c.fillStyle=g;c.fillRect(ab.x,y,ab.w,ab.h);c.lineWidth=1;c.strokeRect(ab.x+0.5,y+0.5,ab.w-1,ab.h-1);
+  c.fillStyle='#2A3A4C';c.font='12px "Atkinson Hyperlegible", system-ui, sans-serif';c.textAlign='center';c.textBaseline='bottom';
+  c.fillText(absLabel(st.mat,st.t),ab.x+ab.w/2,y-4);
+}
+function drawTube(c){
+  var x=winX(),cy=L.cy,r=L.tubeR,len=128;
+  c.strokeStyle='#5D6B7B';c.lineWidth=3;c.beginPath();c.moveTo(x+len+10,cy);c.bezierCurveTo(x+len+60,cy,x+len+40,L.benchY-4,x+len+120,L.benchY-4);c.stroke();
+  c.fillStyle='#8E9BAA';c.fillRect(x+70,cy+r,6,L.benchY-cy-r);c.fillStyle='#7C8999';rr(c,x+45,L.benchY-7,56,7,3);c.fill();
+  var g=c.createLinearGradient(0,cy-r,0,cy+r);g.addColorStop(0,'#EEF2F6');g.addColorStop(0.45,'#CBD4DE');g.addColorStop(1,'#93A2B2');
+  c.fillStyle=g;rr(c,x,cy-r,len,2*r,5);c.fill();c.strokeStyle='#7C8B9B';c.lineWidth=1;c.stroke();
+  c.fillStyle='#4E5B6B';c.fillRect(x,cy-r,9,2*r);
+  c.fillStyle='#4E5B6B';rr(c,x+len-2,cy-7,12,14,2);c.fill();
+  c.fillStyle=winFlash>0.05?'rgba(242,179,61,'+(0.35+0.65*winFlash)+')':'#C9A75A';c.fillRect(x-1.5,cy-r+3,3,2*r-6);
+  c.fillStyle='#24364C';c.font='600 12px Sora, system-ui, sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillText('GM tube',x+len/2+6,cy+1);
+}
+function drawDim(c){
+  var x1=L.x0,x2=winX(),y=L.cy-62;
+  c.strokeStyle='#2350B8';c.fillStyle='#2350B8';c.lineWidth=1.2;
+  c.beginPath();c.moveTo(x1,y-6);c.lineTo(x1,y+6);c.moveTo(x2,y-6);c.lineTo(x2,y+6);c.moveTo(x1,y);c.lineTo(x2,y);c.stroke();
+  if(x2-x1>14){c.beginPath();c.moveTo(x1,y);c.lineTo(x1+6,y-3.5);c.lineTo(x1+6,y+3.5);c.closePath();c.fill();c.beginPath();c.moveTo(x2,y);c.lineTo(x2-6,y-3.5);c.lineTo(x2-6,y+3.5);c.closePath();c.fill();}
+  var t='d = '+st.d.toFixed(1)+' cm';c.font='700 13px "Atkinson Hyperlegible", system-ui, sans-serif';var w=c.measureText(t).width+14,cx=Math.max(x1+w/2,Math.min(bw-w/2-4,(x1+x2)/2));
+  c.fillStyle='#FFFFFF';rr(c,cx-w/2,y-20,w,18,9);c.fill();c.strokeStyle='#C9D5EA';c.stroke();
+  c.fillStyle='#2350B8';c.textAlign='center';c.textBaseline='middle';c.fillText(t,cx,y-11);
+}
+function drawParticles(c){
+  c.lineCap='round';c.lineJoin='round';
+  streaks.forEach(function(s){c.strokeStyle='rgba(120,135,155,'+(0.45*s.f)+')';c.lineWidth=1;c.beginPath();c.moveTo(s.x1,s.y1);c.lineTo(s.x2,s.y2);c.stroke();});
+  particles.forEach(function(p){
+    var a=Math.max(0,Math.min(1,p.fade));
+    if(p.type==='alpha'||p.type==='beta'){
+      if(p.pts.length<2)return;
+      c.strokeStyle=p.type==='alpha'?'rgba(192,37,95,'+(0.85*a)+')':'rgba(15,127,134,'+(0.8*a)+')';
+      c.lineWidth=p.type==='alpha'?3.4:1.5;
+      c.beginPath();c.moveTo(p.pts[0][0],p.pts[0][1]);for(var i=1;i<p.pts.length;i++)c.lineTo(p.pts[i][0],p.pts[i][1]);c.stroke();
+      if(!p.dead){c.fillStyle=p.type==='alpha'?'#C0255F':'#0F7F86';c.beginPath();c.arc(p.x,p.y,p.type==='alpha'?3.2:2,0,6.283);c.fill();}
+    }else{
+      var len=26,ux=Math.cos(p.a),uy=Math.sin(p.a);c.strokeStyle=(p.type==='amg'?'rgba(150,110,215,':'rgba(106,63,193,')+(0.9*a)+')';c.lineWidth=1.6;c.beginPath();
+      for(var s=0;s<=len;s+=2){var px=p.x-ux*s,py=p.y-uy*s,o=Math.sin(s*0.75)*3*(1-s/len*0.4);px+=-uy*o;py+=ux*o;if(s===0)c.moveTo(px,py);else c.lineTo(px,py);}c.stroke();
+    }
+  });
+}
+function drawBench(){
+  layout();var c=bctx;c.setTransform(dpr,0,0,dpr,0,0);
+  var g=c.createLinearGradient(0,0,0,bh);g.addColorStop(0,'#F9FBFD');g.addColorStop(1,'#E9EFF5');c.fillStyle=g;c.fillRect(0,0,bw,bh);
+  c.fillStyle='#D6DFE8';c.fillRect(0,L.benchY,bw,bh-L.benchY);c.fillStyle='#BCC8D5';c.fillRect(0,L.benchY,bw,2);
+  drawRuler(c);drawSource(c);drawParticles(c);drawAbsorber(c);drawTube(c);drawDim(c);
+}
+
+/* drag the tube */
+function evPos(e){var b=bench.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top};}
+function overTube(p){var x=winX(),ab=absGeom(),left=ab?ab.x-6:x-10;return p.x>=left&&p.x<=x+140&&Math.abs(p.y-L.cy)<=46;}
+bench.addEventListener('pointerdown',function(e){var p=evPos(e);if(!overTube(p))return;drag={off:p.x-winX(),id:e.pointerId};bench.setPointerCapture(e.pointerId);bench.style.cursor='grabbing';e.preventDefault();});
+bench.addEventListener('pointermove',function(e){var p=evPos(e);if(!drag){bench.style.cursor=overTube(p)?'grab':'default';return;}var d=(p.x-drag.off-L.x0)/L.ppc;var old=st.d;st.d=d;syncDist();if(st.d!==old)settingsChanged();});
+function endDrag(){if(drag){drag=null;bench.style.cursor='grab';}}
+bench.addEventListener('pointerup',endDrag);bench.addEventListener('pointercancel',endDrag);
+
+/* ---------- Graph ---------- */
+var graph=$('#rr-graph'),gctx=graph.getContext('2d'),gw=500,gh=280;
+function sizeGraph(){var w=graph.parentNode.clientWidth;if(!w)return;gw=w;gh=Math.round(Math.max(240,Math.min(320,w*0.62)));graph.width=Math.round(gw*dpr);graph.height=Math.round(gh*dpr);graph.style.height=gh+'px';}
+function nice(lo,hi,n){var span=hi-lo;if(span<=0){span=Math.abs(hi)||1;lo-=span/2;hi+=span/2;span=hi-lo;}var raw=span/n,mag=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/mag,step=(f<1.5?1:f<3?2:f<7?5:10)*mag;return {lo:Math.floor(lo/step)*step,hi:Math.ceil(hi/step)*step,step:step};}
+function yv(r){var c=r.rate,u=r.unc;if(st.gy==='rate')return [c,u];if(st.bg==null)return null;var cc=c-st.bg;if(st.gy==='corr')return [cc,u];if(cc<=0)return null;if(st.gy==='ln')return [Math.log(cc),u/cc];return [1/Math.sqrt(cc),0.5*u*Math.pow(cc,-1.5)];}
+function drawGraph(){
+  var c=gctx;c.setTransform(dpr,0,0,dpr,0,0);c.fillStyle='#fff';c.fillRect(0,0,gw,gh);
+  var al=st.level==='alevel',pts=[];
+  st.rows.forEach(function(r){if(r.src==='none')return;if(st.gs!=='all'&&r.src!==st.gs)return;var y=yv(r);if(!y)return;pts.push({x:st.gx==='d'?r.d:r.t*10,y:y[0],e:y[1],col:SRC[r.src].col});});
+  var fitP=$('#rr-fit');fitP.textContent='';
+  c.font='13px "Atkinson Hyperlegible", system-ui, sans-serif';c.textAlign='center';c.textBaseline='middle';
+  if(!pts.length){c.fillStyle='#506074';var m=(st.gy!=='rate'&&st.bg==null)?'Measure the background first to plot corrected values.':'Record some results to plot them here.';c.fillText(m,gw/2,gh/2);return;}
+  var xs=pts.map(function(p){return p.x;}),ys=pts.map(function(p){return p.y;});
+  var xmin=Math.min(0,Math.min.apply(null,xs)),xmax=Math.max.apply(null,xs);if(xmax<=xmin)xmax=xmin+1;
+  var ylo=Math.min.apply(null,pts.map(function(p){return p.y-(al?p.e:0);})),yhi=Math.max.apply(null,pts.map(function(p){return p.y+(al?p.e:0);}));
+  if(st.gy!=='ln')ylo=Math.min(0,ylo);
+  var X=nice(xmin,xmax,6),Y=nice(ylo,yhi,5);
+  var ml=56,mr=14,mt=14,mb=44,pw=gw-ml-mr,ph=gh-mt-mb;
+  function px(v){return ml+(v-X.lo)/(X.hi-X.lo)*pw;}function py(v){return mt+ph-(v-Y.lo)/(Y.hi-Y.lo)*ph;}
+  c.strokeStyle='#E6ECF2';c.lineWidth=1;c.fillStyle='#3B4A5C';c.font='11px "Atkinson Hyperlegible", system-ui, sans-serif';
+  var v,dp=function(s){return Math.max(0,-Math.floor(Math.log10(s)+1e-9));};
+  for(v=X.lo;v<=X.hi+X.step/2;v+=X.step){var xx=Math.round(px(v))+0.5;c.beginPath();c.moveTo(xx,mt);c.lineTo(xx,mt+ph);c.stroke();c.textAlign='center';c.textBaseline='top';c.fillText(v.toFixed(dp(X.step)),xx,mt+ph+5);}
+  for(v=Y.lo;v<=Y.hi+Y.step/2;v+=Y.step){var yy=Math.round(py(v))+0.5;c.beginPath();c.moveTo(ml,yy);c.lineTo(ml+pw,yy);c.stroke();c.textAlign='right';c.textBaseline='middle';c.fillText(v.toFixed(dp(Y.step)),ml-6,yy);}
+  c.strokeStyle='#3B4A5C';c.lineWidth=1.2;c.beginPath();var x0p=X.lo<=0&&X.hi>=0?px(0):ml,y0p=Y.lo<=0&&Y.hi>=0?py(0):mt+ph;c.moveTo(Math.round(x0p)+0.5,mt);c.lineTo(Math.round(x0p)+0.5,mt+ph);c.moveTo(ml,Math.round(y0p)+0.5);c.lineTo(ml+pw,Math.round(y0p)+0.5);c.stroke();
+  c.fillStyle='#1C2B3A';c.font='12px "Atkinson Hyperlegible", system-ui, sans-serif';c.textAlign='center';c.textBaseline='bottom';
+  c.fillText(st.gx==='d'?'distance d / cm':'absorber thickness / mm',ml+pw/2,gh-4);
+  var yl={rate:'count rate / s⁻¹',corr:'corrected count rate / s⁻¹',ln:'ln(corrected count rate / s⁻¹)',inv:'1/√(corrected count rate) / s^½'}[st.gy];
+  c.save();c.translate(13,mt+ph/2);c.rotate(-Math.PI/2);c.textBaseline='middle';c.fillText(yl,0,0);c.restore();
+  if(st.gy==='corr'&&Y.lo<0){c.setLineDash([4,4]);c.strokeStyle='#9AA8B8';c.beginPath();c.moveTo(ml,py(0));c.lineTo(ml+pw,py(0));c.stroke();c.setLineDash([]);}
+  if(st.gy==='rate'&&st.bg!=null&&st.bg<Y.hi){c.setLineDash([5,4]);c.strokeStyle='#8695A7';c.beginPath();c.moveTo(ml,py(st.bg));c.lineTo(ml+pw,py(st.bg));c.stroke();c.setLineDash([]);c.fillStyle='#506074';c.textAlign='right';c.textBaseline='bottom';c.fillText('background',ml+pw-4,py(st.bg)-3);}
+  pts.forEach(function(p){var x=px(p.x),y=py(p.y);if(al&&p.e>0){c.strokeStyle=p.col;c.lineWidth=1;c.beginPath();c.moveTo(x,py(p.y-p.e));c.lineTo(x,py(p.y+p.e));c.moveTo(x-3,py(p.y-p.e));c.lineTo(x+3,py(p.y-p.e));c.moveTo(x-3,py(p.y+p.e));c.lineTo(x+3,py(p.y+p.e));c.stroke();}
+    c.fillStyle=p.col;c.beginPath();c.arc(x,y,4,0,6.283);c.fill();c.strokeStyle='#fff';c.lineWidth=1;c.stroke();});
+  if(al&&st.fit&&pts.length>=2){
+    var n=0,sx=0,sy=0,sxx=0,sxy=0;pts.forEach(function(p){var w=p.e>0?1/(p.e*p.e):1;n+=w;sx+=w*p.x;sy+=w*p.y;sxx+=w*p.x*p.x;sxy+=w*p.x*p.y;});var den=n*sxx-sx*sx;
+    if(Math.abs(den)>1e-12){var m=(n*sxy-sx*sy)/den,b=(sy-m*sx)/n;c.strokeStyle='#1C2B3A';c.lineWidth=1.4;c.save();c.beginPath();c.rect(ml,mt,pw,ph);c.clip();c.beginPath();c.moveTo(px(X.lo),py(m*X.lo+b));c.lineTo(px(X.hi),py(m*X.hi+b));c.stroke();c.restore();
+      var xi=m!==0?(-b/m):NaN;fitP.textContent='Best fit (weighted by the error bars): gradient = '+sig(m,3)+', y-intercept = '+sig(b,3)+(isFinite(xi)?', x-intercept = '+sig(xi,3):'')+'.';}
+  }
+}
+
+/* ---------- Main loop ---------- */
+var ratemeter=rates(st).m,lastT=performance.now(),dispT=0,led=$('#rr-led'),ledL=0,spawnRate=reduce?0.4:1,streakAcc=0;
+function frame(now){
+  var dt=Math.min(0.1,(now-lastT)/1000);lastT=now;
+  var r=rates(st);
+  /* ratemeter in real time */
+  var ev=poisson(r.m*dt);ratemeter=ratemeter*Math.exp(-dt/2)+ev/2;
+  if(ev>0){ledL=1;for(var i=0;i<Math.min(ev,6);i++)clickAt(Math.random()*dt);}
+  ledL=Math.max(0,ledL-dt*14);led.style.opacity=String(0.18+0.82*ledL);
+  /* scaler */
+  if(st.counting){var sdt=dt*st.speed,rem=st.ct-st.el;if(sdt>=rem){sdt=rem;}st.N+=poisson(r.m*sdt);st.el+=sdt;
+    if(st.el>=st.ct-1e-9){st.el=st.ct;st.counting=false;st.done=true;$('#rr-start').textContent='Start count';$('#rr-rec').disabled=false;msg.textContent='Count finished: '+st.N.toLocaleString('en-GB')+' counts in '+st.ct+' s. Press Record result to add it to the table.';}}
+  $('#rr-n').textContent=st.N.toLocaleString('en-GB');$('#rr-tel').textContent=st.el.toFixed(1);$('#rr-bar').style.width=(st.el/st.ct*100)+'%';
+  dispT+=dt;if(dispT>0.25){dispT=0;$('#rr-rate').textContent=fmtRate(ratemeter);}
+  /* visual particles (representative, not one per count) */
+  if(st.src!=='none'){spawnAcc+=dt*spawnRate*({alpha:16,beta:40,gamma:34})[st.src];while(spawnAcc>=1){spawnAcc-=1;spawn(st.src);}
+    if(st.src==='alpha'&&st.level==='alevel'&&st.amg&&Math.random()<dt*6)spawn('amg');}
+  streakAcc+=dt*0.5;if(streakAcc>=1){streakAcc=0;if(Math.random()<0.6){var x1=Math.random()*bw,x2=x1+(Math.random()-0.5)*bw*0.4;streaks.push({x1:x1,y1:0,x2:x2,y2:L.benchY,f:1});}}
+  if(particles.length>500)particles.splice(0,particles.length-500);
+  stepParticles(dt);winFlash=Math.max(0,winFlash-dt*5);
+  drawBench();
+  requestAnimationFrame(frame);
+}
+
+/* ---------- Sizing and host-page height messaging ---------- */
+var ro=new ResizeObserver(function(){sizeBench();sizeGraph();drawGraph();});
+ro.observe($('#rr-stage'));ro.observe($('#rr-gwrap'));
+var inner=$('#rr-inner'),lastH=0;
+function postH(){var h=Math.ceil(inner.getBoundingClientRect().height+parseFloat(getComputedStyle(root).paddingTop)+parseFloat(getComputedStyle(root).paddingBottom));if(h!==lastH&&window.parent&&window.parent!==window){lastH=h;window.parent.postMessage({rrHeight:h},'*');}}
+new ResizeObserver(postH).observe(inner);
+
+/* ---------- Init ---------- */
+buildThk();buildGy();syncDist();renderTable();renderNotes();updateWhere();sizeBench();sizeGraph();drawGraph();postH();
+requestAnimationFrame(function(t){lastT=t;frame(t);});
+})();
+</script>
+</body>
+</html>
