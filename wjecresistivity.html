@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resistivity of a metal wire: nichrome (WJEC AS Physics)</title>
+</head>
+<body style="margin:0;background:#e3e6f0;">
+
+<!-- ================================================================== -->
+<!--  EMBED ROOT: everything below is scoped under #djp-rho-sim          -->
+<!-- ================================================================== -->
+<div id="djp-rho-sim">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+#djp-rho-sim{
+  --bench:#eaecf5; --card:#ffffff; --rule:#c7cbde; --rule-soft:#e2e5f0;
+  --ink:#171b33; --soft:#4b5170;
+  --acc:#3a3fa3; --acc-dk:#272b78; --wash:#e3e5f8;
+  --meter:#f1c22e; --meter-dk:#b98c0b; --lcd:#c6d0b7;
+  --w1:#b3175f; --w2:#0f6b5c;
+  box-sizing:border-box; width:100%; min-height:560px; text-align:left;
+  background:var(--bench); color:var(--ink);
+  font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:14px; line-height:1.4; font-weight:400;
+  border:1px solid var(--rule); border-radius:10px; overflow:hidden;
+  container-type:inline-size;
+}
+#djp-rho-sim *{ box-sizing:border-box; }
+#djp-rho-sim .rs-q{ font-family:'Cambria Math',Cambria,'Times New Roman',Times,serif; font-style:italic; font-weight:400; }
+#djp-rho-sim .rs-off{ display:none !important; }
+#djp-rho-sim sup{ font-size:0.72em; line-height:0; vertical-align:super; position:static; }
+
+/* ---- header ---- */
+#djp-rho-sim .rs-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:18px 20px 14px; background:var(--card); border-bottom:1px solid var(--rule); }
+#djp-rho-sim .rs-title{ margin:0; padding:0; font-family:inherit; font-size:22px; line-height:1.15; font-weight:700; letter-spacing:-0.01em; color:var(--ink); text-transform:none; }
+#djp-rho-sim .rs-sub{ margin:5px 0 0; padding:0; font-size:14px; line-height:1.35; color:var(--soft); max-width:64ch; }
+
+/* ---- buttons and inputs ---- */
+#djp-rho-sim .rs-btn{
+  appearance:none; -webkit-appearance:none; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  margin:0; width:auto; min-height:38px; padding:8px 13px;
+  font-family:inherit; font-size:14px; font-weight:600; line-height:1.15; font-style:normal; letter-spacing:0; text-transform:none; text-shadow:none; text-decoration:none;
+  color:var(--ink); background:var(--card); border:1px solid #a3a8c4; border-radius:7px; box-shadow:none; cursor:pointer;
+}
+#djp-rho-sim .rs-btn:hover{ border-color:var(--acc); color:var(--acc-dk); }
+#djp-rho-sim .rs-btn:active{ transform:translateY(1px); }
+#djp-rho-sim .rs-btn:focus-visible, #djp-rho-sim .rs-tab:focus-visible, #djp-rho-sim .rs-range:focus-visible, #djp-rho-sim .rs-x:focus-visible, #djp-rho-sim .rs-in:focus-visible, #djp-rho-sim .rs-check input:focus-visible{ outline:3px solid #f1c22e; outline-offset:2px; }
+#djp-rho-sim .rs-btn.rs-go{ background:var(--acc); border-color:var(--acc); color:#fff; }
+#djp-rho-sim .rs-btn.rs-go:hover{ background:var(--acc-dk); border-color:var(--acc-dk); color:#fff; }
+#djp-rho-sim .rs-btn.rs-held{ background:var(--wash); border-color:var(--acc); color:var(--acc-dk); }
+#djp-rho-sim .rs-btn.rs-sm{ min-height:30px; padding:5px 10px; font-size:13px; font-weight:400; }
+#djp-rho-sim .rs-btn.rs-sq{ min-width:38px; padding:8px 0; font-size:18px; line-height:1; }
+#djp-rho-sim .rs-in{ appearance:none; -webkit-appearance:none; margin:0; width:84px; height:38px; padding:6px 9px; font-family:inherit; font-size:15px; font-weight:600; line-height:1.2; color:var(--ink); background:#fff; border:1px solid #8e94b6; border-radius:7px; box-shadow:none; text-align:right; font-variant-numeric:tabular-nums; }
+#djp-rho-sim .rs-in.rs-exp{ width:50px; height:30px; font-size:13px; padding:3px 6px; position:relative; top:-9px; }
+
+/* ---- tabs ---- */
+#djp-rho-sim .rs-tabs{ display:flex; gap:0; padding:12px 14px 0; flex-wrap:wrap; }
+#djp-rho-sim .rs-tab{
+  appearance:none; -webkit-appearance:none; margin:0 6px 0 0; width:auto; padding:9px 14px 9px 12px; min-height:40px;
+  font-family:inherit; font-size:14px; font-weight:600; line-height:1.15; font-style:normal; letter-spacing:0; text-transform:none; text-shadow:none;
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:none;
+  color:var(--soft); background:transparent; border:1px solid transparent; border-bottom:none; border-radius:8px 8px 0 0;
+}
+#djp-rho-sim .rs-tab:hover{ color:var(--ink); }
+#djp-rho-sim .rs-tab[aria-selected="true"]{ color:var(--ink); background:var(--card); border-color:var(--rule); position:relative; top:1px; }
+#djp-rho-sim .rs-tab i{ font-style:normal; font-weight:700; font-size:17px; line-height:0.8; width:12px; text-align:center; }
+#djp-rho-sim .rs-tab small{ font-size:12.5px; font-weight:400; color:var(--soft); }
+
+/* ---- layout ---- */
+#djp-rho-sim .rs-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.1fr); grid-template-areas:"bench results" "method results"; grid-template-rows:auto 1fr; gap:12px; padding:0 14px 14px; }
+#djp-rho-sim .rs-card{ background:var(--card); border:1px solid var(--rule); border-radius:8px; }
+#djp-rho-sim .rs-bench{ grid-area:bench; border-top-left-radius:0; padding:12px; display:flex; flex-direction:column; gap:10px; }
+#djp-rho-sim .rs-results{ grid-area:results; padding:12px; display:flex; flex-direction:column; gap:10px; min-width:0; }
+#djp-rho-sim .rs-method{ grid-area:method; padding:12px 14px 13px; }
+#djp-rho-sim .rs-pane{ display:flex; flex-direction:column; gap:10px; }
+
+/* instrument switch */
+#djp-rho-sim .rs-seg{ display:grid; grid-template-columns:1fr 1fr; gap:0; border:1px solid #a3a8c4; border-radius:8px; overflow:hidden; }
+#djp-rho-sim .rs-seg .rs-btn{ border:none; border-radius:0; min-height:36px; font-size:13.5px; color:var(--soft); }
+#djp-rho-sim .rs-seg .rs-btn + .rs-btn{ border-left:1px solid #a3a8c4; }
+#djp-rho-sim .rs-seg .rs-btn[aria-pressed="true"]{ background:var(--acc); color:#fff; }
+
+/* ---- apparatus ---- */
+#djp-rho-sim .rs-stage{ border:1px solid var(--rule-soft); border-radius:6px; overflow:hidden; }
+#djp-rho-sim .rs-stage canvas{ display:block; width:100%; height:300px; }
+#djp-rho-sim #rs-cv{ touch-action:pan-y; }
+#djp-rho-sim #rs-mic{ height:262px; }
+#djp-rho-sim .rs-kit{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:7px 10px; border-top:1px solid var(--rule-soft); font-size:13px; color:var(--soft); background:#f6f7fb; }
+#djp-rho-sim .rs-kit b{ color:var(--ink); font-weight:600; }
+#djp-rho-sim .rs-temp{ font-variant-numeric:tabular-nums; white-space:nowrap; }
+
+#djp-rho-sim .rs-meters{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+#djp-rho-sim .rs-meter{ background:var(--meter); border:1px solid var(--meter-dk); border-radius:9px; padding:8px 8px 7px; box-shadow:inset 0 -3px 0 rgba(120,88,0,.28); }
+#djp-rho-sim .rs-meter canvas{ display:block; width:100%; height:64px; border-radius:4px; background:var(--lcd); border:2px solid #23291f; }
+#djp-rho-sim .rs-mcap{ margin-top:6px; font-size:13px; line-height:1.25; color:#2b2204; font-weight:700; }
+#djp-rho-sim .rs-mcap span{ display:block; font-weight:400; }
+
+#djp-rho-sim .rs-box{ border:1px solid var(--rule); border-radius:8px; padding:9px 11px 11px; }
+#djp-rho-sim .rs-srow{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:8px; }
+#djp-rho-sim .rs-slab{ font-weight:600; }
+#djp-rho-sim .rs-sval{ font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+#djp-rho-sim .rs-dial{ display:flex; align-items:center; gap:9px; }
+#djp-rho-sim .rs-range{ -webkit-appearance:none; appearance:none; flex:1 1 auto; min-width:0; width:100%; height:26px; margin:0; padding:0; background:transparent; border:none; cursor:pointer; }
+#djp-rho-sim .rs-range::-webkit-slider-runnable-track{ height:8px; border-radius:4px; background:linear-gradient(90deg,#d4d7ee,#3a3fa3); }
+#djp-rho-sim .rs-range::-moz-range-track{ height:8px; border-radius:4px; background:linear-gradient(90deg,#d4d7ee,#3a3fa3); }
+#djp-rho-sim .rs-range::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:24px; height:24px; margin-top:-8px; border-radius:50%; background:#fff; border:3px solid var(--acc); box-shadow:0 1px 3px rgba(20,22,70,.35); }
+#djp-rho-sim .rs-range::-moz-range-thumb{ width:19px; height:19px; border-radius:50%; background:#fff; border:3px solid var(--acc); box-shadow:0 1px 3px rgba(20,22,70,.35); }
+
+#djp-rho-sim .rs-actions{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+#djp-rho-sim .rs-actions .rs-go{ flex:1 1 150px; }
+#djp-rho-sim .rs-status{ margin:0; padding:8px 11px; min-height:36px; font-size:13.5px; line-height:1.35; color:var(--acc-dk); background:var(--wash); border-radius:6px; }
+
+/* micrometer */
+#djp-rho-sim .rs-places{ display:grid; grid-template-columns:1.55fr 1fr 1fr 1fr 1fr; gap:6px; }
+#djp-rho-sim .rs-places .rs-btn{ flex-direction:column; gap:2px; min-height:46px; padding:5px 2px; font-size:13px; white-space:nowrap; }
+#djp-rho-sim .rs-places .rs-btn b{ font-weight:400; color:var(--soft); font-variant-numeric:tabular-nums; min-height:16px; }
+#djp-rho-sim .rs-places .rs-btn[aria-pressed="true"]{ background:var(--wash); border-color:var(--acc); color:var(--acc-dk); }
+#djp-rho-sim .rs-entry{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+#djp-rho-sim .rs-entry label{ display:inline; margin:0; font-weight:600; font-size:14px; color:var(--ink); }
+#djp-rho-sim .rs-dsum{ margin:0; padding:9px 11px; border:1px solid var(--rule); border-radius:8px; font-size:14px; line-height:1.45; }
+
+/* ---- graph ---- */
+#djp-rho-sim .rs-graph{ border:1px solid var(--rule-soft); border-radius:6px; overflow:hidden; }
+#djp-rho-sim .rs-graph canvas{ display:block; width:100%; height:372px; }
+#djp-rho-sim .rs-gtools{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+#djp-rho-sim .rs-legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--soft); }
+#djp-rho-sim .rs-legend span{ display:inline-flex; align-items:center; gap:6px; }
+#djp-rho-sim .rs-legend i{ font-style:normal; font-weight:700; font-size:17px; line-height:0.8; }
+#djp-rho-sim .rs-gbtns{ display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+#djp-rho-sim .rs-check{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--ink); cursor:pointer; margin:0; font-weight:400; }
+#djp-rho-sim .rs-check input{ width:16px; height:16px; margin:0; accent-color:var(--acc); }
+#djp-rho-sim .rs-find{ border-left:4px solid var(--acc); background:#f4f5fb; border-radius:0 6px 6px 0; padding:9px 12px; font-size:14px; line-height:1.45; }
+#djp-rho-sim .rs-find p{ margin:0; padding:0; max-width:76ch; }
+#djp-rho-sim .rs-find p + p, #djp-rho-sim .rs-find div + p, #djp-rho-sim .rs-find p + div, #djp-rho-sim .rs-find div + div{ margin-top:7px; }
+#djp-rho-sim .rs-find b{ font-weight:700; }
+#djp-rho-sim .rs-ans{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; font-size:15px; }
+#djp-rho-sim .rs-ans .rs-in{ width:74px; }
+#djp-rho-sim .rs-eq{ display:inline-flex; align-items:center; gap:6px; white-space:nowrap; }
+#djp-rho-sim .rs-eq .rs-exp{ width:46px; }
+#djp-rho-sim .rs-fb{ font-weight:600; }
+#djp-rho-sim .rs-id{ display:flex; flex-wrap:wrap; gap:7px; align-items:center; }
+
+/* ---- results table ---- */
+#djp-rho-sim .rs-tablebox{ border:1px solid var(--rule); border-radius:6px; overflow:hidden; display:flex; flex-direction:column; flex:1 1 auto; min-height:236px; }
+#djp-rho-sim .rs-thead{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding:7px 9px 7px 11px; border-bottom:1px solid var(--rule); background:#f6f7fb; }
+#djp-rho-sim .rs-count{ font-weight:600; }
+#djp-rho-sim .rs-ttools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+#djp-rho-sim .rs-scroll{ flex:1 1 0; min-height:0; overflow-y:auto; }
+#djp-rho-sim .rs-table{ width:100%; margin:0; border-collapse:separate; border-spacing:0; border:none; font-size:14px; font-variant-numeric:tabular-nums; background:var(--card); }
+#djp-rho-sim .rs-short{ display:none; }
+#djp-rho-sim .rs-table th{ white-space:nowrap; position:sticky; top:0; background:var(--card); color:var(--ink); font-weight:600; text-align:right; padding:6px 12px; border:none; border-bottom:1px solid var(--rule); }
+#djp-rho-sim .rs-table td{ text-align:right; padding:4px 12px; border:none; border-bottom:1px solid var(--rule-soft); color:var(--ink); background:transparent; }
+#djp-rho-sim .rs-table td.rs-d, #djp-rho-sim .rs-table th.rs-d{ width:38px; padding:0 6px 0 0; }
+#djp-rho-sim .rs-table tr.rs-new td{ animation:rsflash 1.1s ease-out; }
+@keyframes rsflash{ from{ background:#fbe9a6; } to{ background:transparent; } }
+#djp-rho-sim .rs-x{ appearance:none; -webkit-appearance:none; margin:0; width:26px; height:26px; min-height:0; padding:0; border:none; border-radius:5px; background:transparent; color:var(--soft); font-family:inherit; font-size:17px; font-weight:400; line-height:1; cursor:pointer; box-shadow:none; }
+#djp-rho-sim .rs-x:hover{ background:#fbe3e6; color:#a01228; }
+#djp-rho-sim .rs-empty{ margin:0; padding:16px 12px; color:var(--soft); font-size:13.5px; }
+
+/* ---- method ---- */
+#djp-rho-sim .rs-h3{ margin:0 0 7px; padding:0; font-family:inherit; font-size:15px; line-height:1.2; font-weight:700; color:var(--ink); text-transform:none; letter-spacing:0; }
+#djp-rho-sim .rs-steps{ list-style:none; margin:0; padding:0; counter-reset:rss; }
+#djp-rho-sim .rs-steps li{ counter-increment:rss; position:relative; margin:0; padding:4px 0 4px 31px; font-size:14px; line-height:1.4; color:var(--ink); list-style:none; background:none; }
+#djp-rho-sim .rs-steps li::before{ content:counter(rss); position:absolute; left:0; top:4px; width:21px; height:21px; border-radius:50%; border:1.5px solid #9499b8; color:var(--soft); font-size:12px; font-weight:700; line-height:18px; text-align:center; background:var(--card); }
+#djp-rho-sim .rs-steps li.rs-done::before{ content:"\2713"; background:var(--acc); border-color:var(--acc); color:#fff; }
+#djp-rho-sim .rs-steps li em{ font-style:normal; color:var(--soft); white-space:nowrap; }
+#djp-rho-sim .rs-tip{ margin:8px 0 0; padding:8px 0 0; border-top:1px solid var(--rule-soft); font-size:13.5px; line-height:1.45; color:var(--soft); }
+
+@media (prefers-reduced-motion:reduce){ #djp-rho-sim .rs-table tr.rs-new td{ animation:none; } }
+
+@container (max-width:900px){
+  #djp-rho-sim .rs-grid{ grid-template-columns:minmax(0,1fr); grid-template-areas:"bench" "results" "method"; grid-template-rows:auto; }
+  #djp-rho-sim .rs-graph canvas{ height:340px; }
+  #djp-rho-sim .rs-tablebox{ flex:none; min-height:0; }
+  #djp-rho-sim .rs-scroll{ flex:none; max-height:270px; }
+}
+@container (max-width:520px){
+  #djp-rho-sim .rs-head{ flex-direction:column; align-items:flex-start; padding:14px 14px 12px; }
+  #djp-rho-sim .rs-title{ font-size:19px; }
+  #djp-rho-sim .rs-tabs{ padding:10px 8px 0; }
+  #djp-rho-sim .rs-tab{ padding:8px 9px; margin-right:2px; font-size:13.5px; }
+  #djp-rho-sim .rs-tab small{ display:none; }
+  #djp-rho-sim .rs-grid{ padding:0 8px 8px; gap:8px; }
+  #djp-rho-sim .rs-bench, #djp-rho-sim .rs-results{ padding:8px; }
+  #djp-rho-sim .rs-stage canvas{ height:270px; }
+  #djp-rho-sim #rs-mic{ height:236px; }
+  #djp-rho-sim .rs-places{ gap:4px; }
+  #djp-rho-sim .rs-places .rs-btn{ font-size:12px; padding:5px 0; }
+  #djp-rho-sim .rs-graph canvas{ height:300px; }
+  #djp-rho-sim .rs-meter canvas{ height:52px; }
+  #djp-rho-sim .rs-table td, #djp-rho-sim .rs-table th{ padding-left:4px; padding-right:7px; }
+  #djp-rho-sim .rs-long{ display:none; }
+  #djp-rho-sim .rs-short{ display:inline; }
+}
+  </style>
+
+  <div class="rs-head">
+    <div>
+      <h2 class="rs-title">Resistivity of a metal wire: nichrome</h2>
+      <p class="rs-sub">WJEC AS Physics, Unit 2.2 Resistance. Measure the wire's diameter, find how its resistance depends on its length, then calculate the resistivity of the metal.</p>
+    </div>
+    <button type="button" class="rs-btn" id="rs-new" title="Swap in different wires, cell and micrometer and clear all readings">New apparatus</button>
+  </div>
+
+  <div class="rs-tabs" role="tablist" aria-label="Wire under test" id="rs-tabs">
+    <button type="button" class="rs-tab" role="tab" data-k="nichrome"><i style="color:var(--w1)">&#215;</i>Nichrome wire</button>
+    <button type="button" class="rs-tab" role="tab" data-k="mystery"><i style="color:var(--w2)">+</i>Unknown wire <small>(extension)</small></button>
+  </div>
+
+  <div class="rs-grid">
+
+    <!-- APPARATUS -->
+    <div class="rs-card rs-bench">
+      <div class="rs-seg" id="rs-seg">
+        <button type="button" class="rs-btn" data-v="circuit" aria-pressed="true">Circuit and metre rule</button>
+        <button type="button" class="rs-btn" data-v="mic" aria-pressed="false">Micrometer</button>
+      </div>
+
+      <div class="rs-pane" id="rs-pane-circuit">
+        <div class="rs-stage">
+          <canvas id="rs-cv" role="img" aria-label="Circuit: a 1.5 volt cell, switch and ammeter in series with a length of wire held along a metre rule between two crocodile clips; a voltmeter is connected across the two clips"></canvas>
+          <div class="rs-kit"><span id="rs-kit"></span><span class="rs-temp" id="rs-temp"></span></div>
+        </div>
+        <div class="rs-meters">
+          <div class="rs-meter"><canvas id="rs-lv" role="img" aria-label="Voltmeter display"></canvas><div class="rs-mcap">Voltmeter<span>p.d. across the wire</span></div></div>
+          <div class="rs-meter"><canvas id="rs-la" role="img" aria-label="Ammeter display"></canvas><div class="rs-mcap">Ammeter<span>current in the wire</span></div></div>
+        </div>
+        <div class="rs-box">
+          <div class="rs-srow"><span class="rs-slab">Moving crocodile clip</span><span class="rs-sval"><span class="rs-q">l</span> = <span id="rs-lv-txt">0.500</span> m</span></div>
+          <div class="rs-dial">
+            <button type="button" class="rs-btn rs-sq" id="rs-dn" aria-label="Move the clip 1 millimetre towards zero">&#8722;</button>
+            <input type="range" class="rs-range" id="rs-range" min="0.05" max="1" step="0.005" value="0.5" aria-label="Position of the moving crocodile clip in metres">
+            <button type="button" class="rs-btn rs-sq" id="rs-up" aria-label="Move the clip 1 millimetre away from zero">+</button>
+          </div>
+        </div>
+        <div class="rs-actions">
+          <button type="button" class="rs-btn" id="rs-sw" aria-pressed="false">Close the switch</button>
+          <button type="button" class="rs-btn rs-go" id="rs-rec">Record reading</button>
+          <button type="button" class="rs-btn" id="rs-auto">Collect a full set</button>
+        </div>
+      </div>
+
+      <div class="rs-pane rs-off" id="rs-pane-mic">
+        <div class="rs-stage">
+          <canvas id="rs-mic" role="img" aria-label="Micrometer screw gauge closed on the wire, showing the sleeve scale and the thimble scale"></canvas>
+          <div class="rs-kit"><span>Micrometer: one turn of the thimble is 0.50 mm, each thimble division is 0.01 mm</span></div>
+        </div>
+        <div class="rs-places" id="rs-places"></div>
+        <div class="rs-entry">
+          <label for="rs-min">Your reading</label>
+          <input type="text" inputmode="decimal" autocomplete="off" class="rs-in" id="rs-min" aria-describedby="rs-status">
+          <span>mm</span>
+          <button type="button" class="rs-btn rs-go" id="rs-mrec">Record</button>
+          <button type="button" class="rs-btn" id="rs-mshow">Show the reading</button>
+        </div>
+        <p class="rs-dsum" id="rs-dsum"></p>
+      </div>
+
+      <p class="rs-status" id="rs-status" aria-live="polite"></p>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="rs-card rs-results">
+      <div class="rs-graph"><canvas id="rs-gr" role="img" aria-label="Graph of resistance against length for the recorded readings"></canvas></div>
+      <div class="rs-gtools">
+        <div class="rs-legend" id="rs-legend"></div>
+        <div class="rs-gbtns">
+          <label class="rs-check"><input type="checkbox" id="rs-unc"> Include uncertainties</label>
+          <button type="button" class="rs-btn rs-sm" id="rs-fit" aria-pressed="false">Draw best fit</button>
+          <button type="button" class="rs-btn rs-sm" id="rs-png">Save graph image</button>
+        </div>
+      </div>
+      <div class="rs-find rs-off" id="rs-find">
+        <div id="rs-fittxt"></div>
+        <div id="rs-calc">
+          <div class="rs-ans">
+            <label for="rs-m" style="margin:0;font-weight:600;">Your value:</label>
+            <span class="rs-eq"><span><span class="rs-q">&#961;</span> =</span>
+            <input type="text" inputmode="decimal" autocomplete="off" class="rs-in" id="rs-m" aria-label="Resistivity: the number in front of the power of ten">
+            <span>&#215; 10</span><input type="text" inputmode="numeric" autocomplete="off" class="rs-in rs-exp" id="rs-e" aria-label="Power of ten">
+            <span>&#937; m</span></span>
+            <button type="button" class="rs-btn rs-sm" id="rs-chk">Check</button>
+            <button type="button" class="rs-btn rs-sm" id="rs-work" aria-pressed="false">Show working</button>
+          </div>
+          <p class="rs-fb rs-off" id="rs-fb"></p>
+          <div class="rs-off" id="rs-worktxt"></div>
+          <div class="rs-id rs-off" id="rs-id"></div>
+        </div>
+      </div>
+
+      <div class="rs-tablebox">
+        <div class="rs-thead">
+          <span class="rs-count" id="rs-count"></span>
+          <div class="rs-ttools">
+            <label class="rs-check"><input type="checkbox" id="rs-showr" checked> Show <span class="rs-q">R</span> = <span class="rs-q">V</span> / <span class="rs-q">I</span></label>
+            <button type="button" class="rs-btn rs-sm" id="rs-copy" title="Copy the table so it can be pasted into a spreadsheet">Copy table</button>
+            <button type="button" class="rs-btn rs-sm" id="rs-clear">Clear</button>
+          </div>
+        </div>
+        <div class="rs-scroll" id="rs-scroll">
+          <table class="rs-table">
+            <thead><tr>
+              <th><span class="rs-long">length</span><span class="rs-short rs-q">l</span> / m</th>
+              <th><span class="rs-long">p.d.</span><span class="rs-short rs-q">V</span> / V</th>
+              <th><span class="rs-long">current</span><span class="rs-short rs-q">I</span> / A</th>
+              <th class="rs-rc"><span class="rs-long">resistance</span><span class="rs-short rs-q">R</span> / &#937;</th>
+              <th class="rs-d"></th></tr></thead>
+            <tbody id="rs-tbody"></tbody>
+          </table>
+          <p class="rs-empty" id="rs-empty"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- METHOD -->
+    <div class="rs-card rs-method">
+      <h3 class="rs-h3">Method</h3>
+      <ol class="rs-steps" id="rs-steps"></ol>
+      <p class="rs-tip" id="rs-tip"></p>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+"use strict";
+var root=document.getElementById('djp-rho-sim'); if(!root) return;
+var $=function(id){ return root.querySelector('#'+id); };
+var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+var INK='#171b33', SOFT='#4b5170', ACC='#3a3fa3', TAU=6.2832;
+var FONT='"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+var SERIF='italic 400 16px "Cambria Math",Cambria,"Times New Roman",serif';
+
+function rnd(a,b){ return a+Math.random()*(b-a); }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function gauss(){ return Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(TAU*Math.random()); }
+function clamp(x,a,b){ return x<a?a:(x>b?b:x); }
+function mm(v){ return v.toFixed(Math.round(v*1000)%10?3:2); }       // micrometer value: 2 d.p. unless a half division was estimated
+function minus(s){ return String(s).replace(/-/g,'\u2212'); }
+function sfn(x,n){ if(!isFinite(x)) return '\u2014'; var s=x.toPrecision(Math.max(1,n)); return s.indexOf('e')>=0? String(Number(s)) : s; }
+function sigs(s){ return s.replace(/[^0-9]/g,'').replace(/^0+/,'').length; }
+function sci(x,n){                                    // standard form, e.g. 1.09 x 10^-6
+  var e=Math.floor(Math.log10(Math.abs(x))), m=x/Math.pow(10,e); if(Number(m.toFixed(n-1))>=10){ m/=10; e++; }
+  return m.toFixed(n-1)+' \u00D7 10<sup>'+minus(e)+'</sup>';
+}
+
+function pm(x,u){ var e=Math.floor(Math.log10(Math.abs(x))), p=Math.pow(10,e), dp=clamp(-Math.floor(Math.log10(u/p)),0,3);
+  return '('+(x/p).toFixed(dp)+' \u00B1 '+(u/p).toFixed(dp)+') \u00D7 10<sup>'+minus(e)+'</sup>'; }
+
+//  Materials and apparatus
+var MAT={ nichrome:{name:'nichrome', rho:1.10e-6, al:1.7e-4}, constantan:{name:'constantan', rho:4.9e-7, al:2e-5},
+          steel:{name:'stainless steel', rho:7.2e-7, al:9e-4}, kanthal:{name:'Kanthal', rho:1.39e-6, al:5e-5} };
+var IDS=['constantan','steel','nichrome','kanthal'];
+var SWG={24:0.559, 26:0.457, 28:0.376};               // the guide recommends 24 to 28 swg
+var CFG={ nichrome:{name:'Nichrome wire', col:'#b3175f', mk:'x'}, mystery:{name:'Unknown wire', col:'#0f6b5c', mk:'+'} };
+var ORDER=['nichrome','mystery'], PL=['A','B','C','D'];
+var rV=0.01, rI=0.01;                                 // meter resolution
+
+var KIT, WD, S, M, AUTO=null, fitOn=false, uncOn=false, showR=true, workOn=false, dirty=true, lastNew=null;
+function mkWire(mat,gs){
+  var g=pick(gs), d0=SWG[g]*rnd(0.985,1.015), dp=PL.map(function(){ return d0+gauss()*0.006; });
+  var dm=(dp[0]+dp[1]+dp[2]+dp[3])/4;
+  return { mat:mat, swg:g, dp:dp, rpm:MAT[mat].rho*rnd(0.97,1.03)/(Math.PI*dm*dm*1e-6/4),   // ohms per metre = rho / A
+           off:rnd(-0.002,0.004), rc0:rnd(0.03,0.07) };  // fixed-clip offset (m); contact resistance (ohm)
+}
+function newKit(){
+  KIT={ z:pick([0,0.01,0.02,0.02,0.03]), emf:rnd(1.5,1.6), r:rnd(0.25,0.45),
+        w:{ nichrome:mkWire('nichrome',[24,26,28]), mystery:mkWire(pick(['constantan','steel','kanthal']),[26,28]) } };
+  WD={}; ORDER.forEach(function(k){ WD[k]={pts:[], z:null, p:[null,null,null,null], ok:false, id:false}; });
+  S={ sel:(S&&S.sel)||'nichrome', view:(S&&S.view)||'circuit', l:0.5, on:false, dT:0, V:0, I:0, rc:0.05, dl:0, gV:gauss(), gI:gauss(), tn:0, dV:0, dI:0 };
+  M={ place:-1, show:1.2, target:KIT.z, tries:0 };
+}
+function contact(){ var w=KIT.w[S.sel]; S.rc=w.rc0+Math.abs(gauss())*0.02; S.dl=gauss()*0.0007; }  // new every time the clip is moved
+
+function step(dt,now){
+  var w=KIT.w[S.sel], R=w.rpm*Math.max(0.004,S.l+w.off+S.dl)*(1+MAT[w.mat].al*S.dT), I=0, V=0;
+  if(S.on){ I=KIT.emf/(R+S.rc+KIT.r+0.05); V=I*(R+S.rc); }
+  S.dT+=dt*(I*I*w.rpm/(80*Math.PI*SWG[w.swg]*1e-3)-S.dT)/4;    // wire heats towards a steady excess temperature
+  S.V=V; S.I=I;
+  if(now-S.tn>420){ S.tn=now; S.gV=gauss(); S.gI=gauss(); }
+  read();
+}
+function read(){
+  var V=S.V, I=S.I;
+  var sv=0.002*V+0.3*rV*Math.min(1,V/(5*rV)), si=0.004*I+0.3*rI*Math.min(1,I/(5*rI));
+  var dV=Math.round((V+S.gV*sv)/rV)*rV, dI=Math.round((I+S.gI*si)/rI)*rI;
+  if(dV<rV/2) dV=0; if(dI<rI/2) dI=0;
+  if(dV!==S.dV || dI!==S.dI || S.lcd!==1){ S.dV=dV; S.dI=dI; S.lcd=1; drawLCD(lvCv,dV,2,'V'); drawLCD(laCv,dI,2,'A'); dirty=true; }
+}
+
+//  Canvas helpers
+function hid(cv){
+  var dpr=Math.min(3,window.devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight, ctx=cv.getContext('2d');
+  if(cv._w!==w || cv._h!==h || cv._d!==dpr){ cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr)); cv._w=w; cv._h=h; cv._d=dpr; }
+  ctx.setTransform(dpr,0,0,dpr,0,0); return {ctx:ctx,w:w,h:h};
+}
+function ln(c,x1,y1,x2,y2){ c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke(); }
+function disc(c,x,y,r,fill,stroke){ c.beginPath(); c.arc(x,y,r,0,TAU); if(fill){ c.fillStyle=fill; c.fill(); } if(stroke){ c.strokeStyle=stroke; c.stroke(); } }
+function box(c,x,y,w,h,fill,stroke){ c.beginPath(); c.rect(x,y,w,h); if(fill){ c.fillStyle=fill; c.fill(); } if(stroke){ c.strokeStyle=stroke; c.stroke(); } }
+function label(c,t,x,y,al,font,col){ c.font=font||('400 12.5px '+FONT); c.fillStyle=col||SOFT; c.textAlign=al||'center'; c.textBaseline='alphabetic'; c.fillText(t,x,y); }
+function bez(p0,p1,p2,p3,n){ var a=[], i, t, u; for(i=0;i<=n;i++){ t=i/n; u=1-t;
+  a.push([u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0], u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]]); } return a; }
+function poly(c,a){ c.beginPath(); a.forEach(function(p,i){ if(i) c.lineTo(p[0],p[1]); else c.moveTo(p[0],p[1]); }); c.stroke(); }
+
+// ---- seven-segment LCD ----
+var SEG={'0':'abcdef','1':'bc','2':'abged','3':'abgcd','4':'fgbc','5':'afgcd','6':'afgecd','7':'abc','8':'abcdefg','9':'abcdfg',' ':''};
+function segs(c,x,y,w,h,on){
+  var t=h*0.115, g=t*0.22, q=t/2, m=h/2, i, s;
+  function H(yy){ c.moveTo(x+q+g,yy); c.lineTo(x+t+g,yy-q); c.lineTo(x+w-t-g,yy-q); c.lineTo(x+w-q-g,yy); c.lineTo(x+w-t-g,yy+q); c.lineTo(x+t+g,yy+q); c.closePath(); }
+  function Vt(xx,y1,y2){ c.moveTo(xx,y1+g); c.lineTo(xx+q,y1+q+g); c.lineTo(xx+q,y2-q-g); c.lineTo(xx,y2-g); c.lineTo(xx-q,y2-q-g); c.lineTo(xx-q,y1+q+g); c.closePath(); }
+  c.beginPath();
+  for(i=0;i<on.length;i++){ s=on.charAt(i);
+    if(s==='a') H(y+q); else if(s==='g') H(y+m); else if(s==='d') H(y+h-q);
+    else if(s==='f') Vt(x+q,y+q,y+m); else if(s==='e') Vt(x+q,y+m,y+h-q);
+    else if(s==='b') Vt(x+w-q,y+q,y+m); else Vt(x+w-q,y+m,y+h-q); }
+  c.fill();
+}
+function drawLCD(cv,val,dp,unit){
+  var d=hid(cv), c=d.ctx, W=d.w, H=d.h; if(!W) return; c.clearRect(0,0,W,H);
+  var h=Math.min(H*0.66,(W-64)/3.6), w=h*0.52, gap=h*0.24, n=4, y=(H-h)/2, x0=Math.max(8,(W-26-(n+1)*(w+gap))/2), i, x;
+  var digits=val.toFixed(dp).replace('.',''), dot=digits.length-dp;
+  while(digits.length<n){ digits=' '+digits; dot++; }
+  c.save(); c.transform(1,0,-0.07,1,H*0.035,0);
+  for(i=0;i<=n;i++){ x=x0+i*(w+gap);
+    c.fillStyle='rgba(27,36,22,0.075)'; segs(c,x,y,w,h,i===0?'g':'abcdefg');
+    c.fillStyle='#1b2416'; if(i>0) segs(c,x,y,w,h,SEG[digits.charAt(i-1)]||'');
+    if(i===dot && i>0) c.fillRect(x+w+gap*0.22,y+h-h*0.12,h*0.12,h*0.12); }
+  c.restore();
+  label(c,unit,W-9,y+h,'right','700 '+Math.round(h*0.44)+'px '+FONT,'#1b2416');
+}
+
+//  Circuit, laid out as in the WJEC guide: switch and cell along the top,
+//  ammeter on the right, voltmeter across the two flying leads,
+//  crocodile clips on the wire along a metre rule.
+var cv=$('rs-cv'), lvCv=$('rs-lv'), laCv=$('rs-la'), grCv=$('rs-gr'), mcv=$('rs-mic'), flow=0, drag=false;
+function geo(W,H){ return {x0:30, x1:W-30, wy:H-70, L:W*0.27, R:W*0.73, T:42, Vb:126}; }
+function clip(c,x,wy,col){                           // crocodile clip gripping the wire at x
+  c.lineWidth=1.2; c.beginPath(); c.moveTo(x-4.5,wy-12); c.lineTo(x,wy+1.5); c.lineTo(x+4.5,wy-12); c.closePath(); c.fillStyle='#c3c8d4'; c.fill(); c.strokeStyle='#5d6480'; c.stroke();
+  box(c,x-6,wy-32,12,21,col,'#22263f');
+}
+function drawCircuit(dt){
+  var d=hid(cv), c=d.ctx, W=d.w, H=d.h; if(!W) return; c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  var g=geo(W,H), L=g.L, R=g.R, T=g.T, Vb=g.Vb, wy=g.wy, sp=g.x1-g.x0, X0=g.x0, Xl=g.x0+sp*S.l;
+  var kx=L+(R-L)*0.27, sx=L+(R-L)*0.66, ay=(T+Vb)/2, cxm=(L+R)/2, mr=16, i, x, cm;
+  var leadL=bez([L,Vb],[L,Vb+46],[X0,wy-92],[X0,wy-32],14), leadR=bez([R,Vb],[R,Vb+46],[Xl,wy-92],[Xl,wy-32],14);
+
+  // metre rule
+  var ry=wy+7, rh=24; box(c,X0-7,ry,sp+14,rh,'#f4e2b4','#b49650');
+  c.strokeStyle='#5c4a1c'; c.lineWidth=1; c.beginPath();
+  for(cm=0;cm<=100;cm++){ x=Math.round(X0+sp*cm/100)+0.5; c.moveTo(x,ry); c.lineTo(x,ry+(cm%10===0?10:(cm%5===0?7:4))); }
+  c.stroke();
+  for(cm=0;cm<=100;cm+=(sp<330?20:10)) label(c,String(cm),X0+sp*cm/100,ry+21,'center','400 10.5px '+FONT,'#4a3b14');
+  // the wire: the part between the clips is the length l being tested
+  c.lineCap='round'; c.strokeStyle='#8b91a8'; c.lineWidth=2; ln(c,Math.max(4,X0-sp*0.05),wy,Math.min(W-4,g.x1+sp*0.05),wy);
+  if(S.dT>8){ c.strokeStyle='rgba(240,120,20,'+(0.2+0.6*clamp(S.dT/150,0,1))+')'; c.lineWidth=11; ln(c,X0,wy,Xl,wy); }
+  c.strokeStyle=CFG[S.sel].col; c.lineWidth=3; ln(c,X0,wy,Xl,wy); c.lineCap='butt';
+  // length marker below the rule
+  var ly=ry+rh+13; c.strokeStyle=INK; c.fillStyle=INK; c.lineWidth=1.2; ln(c,X0,ly,Xl,ly); ln(c,X0,ly-5,X0,ly+5); ln(c,Xl,ly-5,Xl,ly+5);
+  c.beginPath(); c.moveTo(X0,ly); c.lineTo(X0+7,ly-3.5); c.lineTo(X0+7,ly+3.5); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(Xl,ly); c.lineTo(Xl-7,ly-3.5); c.lineTo(Xl-7,ly+3.5); c.closePath(); c.fill();
+  c.fillStyle='#fff'; c.fillRect((X0+Xl)/2-9,ly-8,18,16); label(c,'l',(X0+Xl)/2,ly+5,'center',SERIF,INK);
+
+  // circuit wires and flying leads
+  c.strokeStyle=INK; c.lineWidth=1.8; c.lineJoin='round';
+  c.beginPath(); c.moveTo(kx-15,T); c.lineTo(L,T); c.lineTo(L,Vb); c.moveTo(kx+15,T); c.lineTo(sx-5,T);
+  c.moveTo(sx+5,T); c.lineTo(R,T); c.lineTo(R,ay-mr); c.moveTo(R,ay+mr); c.lineTo(R,Vb);
+  c.moveTo(L,Vb); c.lineTo(cxm-mr,Vb); c.moveTo(cxm+mr,Vb); c.lineTo(R,Vb); c.stroke();
+  poly(c,leadL); poly(c,leadR);
+  disc(c,L,Vb,3.2,INK); disc(c,R,Vb,3.2,INK);
+
+  // conventional current markers
+  if(S.on && S.I>0.004){
+    var P=[[sx,T],[L,T]].concat(leadL,[[X0,wy],[Xl,wy]],leadR.slice().reverse(),[[R,T],[sx,T]]), spc=44, tot=0, sg=[], u, s, a, b, f;
+    for(i=0;i<P.length-1;i++){ sg[i]=Math.sqrt(Math.pow(P[i+1][0]-P[i][0],2)+Math.pow(P[i+1][1]-P[i][1],2)); tot+=sg[i]; }
+    if(!RM) flow=(flow+dt*(22+60*clamp(S.I/1.5,0.08,1.4)))%spc;
+    c.fillStyle=ACC;
+    for(u=flow;u<tot;u+=spc){ s=u; for(i=0;i<sg.length;i++){ if(s<=sg[i]) break; s-=sg[i]; } if(i>=sg.length) continue;
+      a=P[i]; b=P[i+1]; f=sg[i]?s/sg[i]:0; c.beginPath(); c.arc(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,2.7,0,TAU); c.fill(); }
+  }
+
+  // cell: the long thin plate is the positive terminal
+  c.fillStyle='#fff'; c.fillRect(sx-4,T-5,8,10);
+  c.strokeStyle=INK; c.lineWidth=1.8; ln(c,sx-5,T-15,sx-5,T+15); c.lineWidth=4.5; ln(c,sx+5,T-8,sx+5,T+8);
+  label(c,'+',sx-17,T-9,'center','700 15px '+FONT,INK); label(c,'\u2212',sx+18,T-9,'center','700 15px '+FONT,INK);
+  label(c,'1.5 V cell',sx,T-25);
+  // switch
+  c.fillStyle='#fff'; c.fillRect(kx-12,T-4,24,8); c.strokeStyle=INK; c.lineWidth=1.8;
+  if(S.on) ln(c,kx-15,T,kx+15,T); else ln(c,kx-15,T,kx+11,T-16);
+  disc(c,kx-15,T,3.2,'#fff',INK); disc(c,kx+15,T,3.2,'#fff',INK);
+  label(c,S.on?'switch closed':'switch open',kx,T+20);
+  // meters
+  c.lineWidth=1.8; disc(c,R,ay,mr,'#fff',INK); label(c,'A',R,ay+6,'center','700 17px '+FONT,INK);
+  disc(c,cxm,Vb,mr,'#fff',INK); label(c,'V',cxm,Vb+6,'center','700 17px '+FONT,INK);
+
+  // crocodile clips (the right-hand one can be dragged)
+  clip(c,X0,wy,'#b3202a'); clip(c,Xl,wy,'#22263f');
+  c.strokeStyle=ACC; c.lineWidth=1.8; c.lineCap='round'; c.lineJoin='round';
+  c.beginPath(); c.moveTo(Xl-11,wy-26); c.lineTo(Xl-16,wy-21); c.lineTo(Xl-11,wy-16); c.moveTo(Xl+11,wy-26); c.lineTo(Xl+16,wy-21); c.lineTo(Xl+11,wy-16); c.stroke(); c.lineCap='butt';
+}
+
+//  Micrometer: sleeve and thimble drawn to scale with the gap
+function micTarget(){ return M.place<0? KIT.z : KIT.w[S.sel].dp[M.place]+KIT.z; }
+function drawMic(dt){
+  var d=hid(mcv), c=d.ctx, W=d.w, H=d.h; if(!W) return;
+  M.show+=(M.target-M.show)*(RM?1:Math.min(1,dt*7)); if(Math.abs(M.target-M.show)<0.0004) M.show=M.target;
+  c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+  var s=clamp(W*0.25,80,128), th=Math.min(78,H*0.31), sh=th*0.6, yc=H*0.45, xA=W*0.06+18, xb=xA+0.7*s+22, xs0=xb+46, rd=M.show;
+  var xS=xA+Math.max(0,rd-KIT.z)*s, te=xs0+rd*s, wr=M.place>=0? KIT.w[S.sel].dp[M.place]*s/2 : 0, k, x, v, y, t, a;
+  // frame
+  c.strokeStyle='#4c5273'; c.lineWidth=22; c.lineCap='butt'; c.beginPath(); c.moveTo(xA-13,yc); c.bezierCurveTo(xA-13,H*1.2-22,xb+13,H*1.2-22,xb+13,yc); c.stroke();
+  box(c,xb,yc-21,28,42,'#4c5273');
+  // anvil, wire (seen end on) and spindle
+  c.lineWidth=1.2; box(c,xA-15,yc-10,15,20,'#cdd2de','#5d6480');
+  if(wr){ disc(c,xA+wr,yc,wr,CFG[S.sel].col); label(c,'wire',xA+wr,yc+wr+16); }
+  c.lineWidth=1.2; box(c,xS,yc-10,xb-xS,20,'#cdd2de','#5d6480');
+  // sleeve: datum line, millimetre marks above it and half-millimetre marks below it
+  box(c,xb+28,yc-sh,te-xb-26,2*sh,'#e9ecf3','#5d6480');
+  c.strokeStyle=INK; c.lineWidth=1.4; ln(c,xb+34,yc,te,yc);
+  for(k=0;k<=3;k++){ x=xs0+k*s; if(x<te+1){ ln(c,x,yc-sh*0.5,x,yc); label(c,String(k),x-7,yc-sh*0.5+2,'center','700 14px '+FONT,INK); }
+    x=xs0+(k+0.5)*s; if(x<te+1) ln(c,x,yc,x,yc+sh*0.4); }
+  // thimble: 50 divisions round its edge, numbers increasing upwards
+  c.save(); c.beginPath(); c.moveTo(te,yc-th+9); c.lineTo(te+12,yc-th); c.lineTo(W+4,yc-th); c.lineTo(W+4,yc+th); c.lineTo(te+12,yc+th); c.lineTo(te,yc+th-9); c.closePath();
+  var gr=c.createLinearGradient(0,yc-th,0,yc+th); gr.addColorStop(0,'#a9afc3'); gr.addColorStop(0.42,'#f1f3f8'); gr.addColorStop(1,'#9ea5ba');
+  c.fillStyle=gr; c.fill(); c.strokeStyle='#5d6480'; c.lineWidth=1.2; c.stroke(); c.clip();
+  t=((rd%0.5)+0.5)%0.5/0.01; c.strokeStyle=INK; c.lineWidth=1.3;
+  for(v=Math.floor(t)-12;v<=Math.floor(t)+13;v++){ a=(v-t)*TAU/50; if(Math.abs(a)>1.5) continue; y=yc-th*Math.sin(a); k=((v%50)+50)%50;
+    ln(c,te+1,y,te+(k%5===0?24:14),y);
+    if(k%5===0){ c.save(); c.translate(te+40,y); c.scale(1,Math.max(0.2,Math.cos(a))); label(c,String(k),0,5.5,'center','700 16px '+FONT,INK); c.restore(); } }
+  c.restore();
+  label(c,'thimble',Math.min(W-30,te+56),yc-th-8,'center'); label(c,'sleeve',te-5,yc-sh-8,'right');
+  label(c,'anvil',xA-8,yc-Math.max(18,wr+8),'center'); if(xb-Math.max(xS,xA+2*wr)>46) label(c,'spindle',(Math.max(xS,xA+2*wr)+xb)/2,yc-18,'center');
+}
+
+//  Analysis helpers
+function Rof(p){ return p.V/p.I; }
+function Rtxt(p){ return sfn(Rof(p),Math.min(sigs(p.V.toFixed(2)),sigs(p.I.toFixed(2)))); }   // to the s.f. of the less precise reading
+function dR(p){ return Rof(p)*(rV/p.V+rI/p.I); }                                               // from the meter resolutions
+function fit(k){
+  var a=WD[k].pts, n=a.length, sx=0, sy=0, sxx=0, sxy=0; if(n<3) return null;
+  a.forEach(function(p){ var y=Rof(p); sx+=p.l; sy+=y; sxx+=p.l*p.l; sxy+=p.l*y; });
+  var den=n*sxx-sx*sx; if(Math.abs(den)<1e-9) return null;
+  var m=(n*sxy-sx*sy)/den, f={m:m, c:(sy-m*sx)/n}, p1=a[0], p2=a[n-1], dx=p2.l-p1.l;
+  if(dx>0.2){ f.ms=(Rof(p2)+dR(p2)-Rof(p1)+dR(p1))/dx; f.mh=(Rof(p2)-dR(p2)-Rof(p1)-dR(p1))/dx;      // steepest and shallowest lines through the end error bars
+    f.cs=Rof(p1)-dR(p1)-f.ms*p1.l; f.ch=Rof(p1)+dR(p1)-f.mh*p1.l; f.dm=(f.ms-f.mh)/2; }
+  return f;
+}
+function dia(k){
+  var w=WD[k], a=w.p.filter(function(x){ return x!==null; }); if(!a.length) return null;
+  var mean=a.reduce(function(s,x){ return s+x; },0)/a.length;
+  return {n:a.length, mean:mean, z:w.z, d:mean-(w.z||0), u:Math.max(0.01,(Math.max.apply(null,a)-Math.min.apply(null,a))/2)};
+}
+function rhoOf(k,raw){ var f=fit(k), d=dia(k); if(!f || !d || WD[k].pts.length<5) return null; var dd=(raw?d.mean:d.d)*1e-3; return f.m*Math.PI*dd*dd/4; }
+
+//  Graph of resistance against length on graph paper
+function drawGraph(){
+  var d=hid(grCv), c=d.ctx, W=d.w, H=d.h; if(!W) return;
+  var top=KIT.w[S.sel].rpm; ORDER.forEach(function(k){ if(WD[k].pts.length) top=Math.max(top,KIT.w[k].rpm); });
+  top=top*1.1+0.2; var ys=[0.5,1,2,5].filter(function(s){ return top/s<=6; })[0]||5, y1=Math.ceil(top/ys-1e-9)*ys, nx=5, ny=Math.round(y1/ys);
+  var pL=58, pR=16, pT=16, pB=44, pw=W-pL-pR, ph=H-pT-pB, i, v, px;
+  function X(x){ return pL+x*pw; } function Y(y){ return pT+(1-y/y1)*ph; }
+  c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H); c.fillStyle='#fbfcff'; c.fillRect(pL,pT,pw,ph);
+  var mx=(pw/nx>=58)?10:5, my=(ph/ny>=58)?10:5;
+  c.lineWidth=1; c.strokeStyle='#dbe4f6'; c.beginPath();
+  for(i=0;i<=nx*mx;i++){ px=Math.round(pL+pw*i/(nx*mx))+0.5; c.moveTo(px,pT); c.lineTo(px,pT+ph); }
+  for(i=0;i<=ny*my;i++){ px=Math.round(pT+ph*i/(ny*my))+0.5; c.moveTo(pL,px); c.lineTo(pL+pw,px); }
+  c.stroke(); c.strokeStyle='#9db6e3'; c.beginPath();
+  for(i=0;i<=nx;i++){ px=Math.round(pL+pw*i/nx)+0.5; c.moveTo(px,pT); c.lineTo(px,pT+ph); }
+  for(i=0;i<=ny;i++){ px=Math.round(pT+ph*i/ny)+0.5; c.moveTo(pL,px); c.lineTo(pL+pw,px); }
+  c.stroke();
+  c.strokeStyle=INK; c.lineWidth=1.6; ln(c,pL+0.5,pT,pL+0.5,pT+ph); ln(c,pL,pT+ph+0.5,pL+pw,pT+ph+0.5);
+  for(i=0;i<=nx;i++) label(c,(i/nx).toFixed(1),pL+pw*i/nx,pT+ph+17,'center','400 12.5px '+FONT,INK);
+  for(i=0;i<=ny;i++){ v=i*ys; label(c,v.toFixed(ys<1?1:0),pL-8,pT+ph-ph*i/ny+4.5,'right','400 12.5px '+FONT,INK); }
+  label(c,'length / m',pL+pw/2,H-8,'center','600 13.5px '+FONT,INK);
+  c.save(); c.translate(15,pT+ph/2); c.rotate(-Math.PI/2); label(c,'resistance / \u03A9',0,0,'center','600 13.5px '+FONT,INK); c.restore();
+
+  c.save(); c.beginPath(); c.rect(pL,pT,pw,ph); c.clip();
+  ORDER.forEach(function(k){
+    var a=WD[k].pts, col=CFG[k].col, q=CFG[k].mk==='x'?4.2:5.4, f;
+    if(fitOn && (f=fit(k))){
+      if(uncOn && k===S.sel && f.dm!==undefined){ c.strokeStyle=col; c.globalAlpha=0.6; c.lineWidth=1.2; c.setLineDash([6,4]);
+        ln(c,X(0),Y(f.cs),X(1),Y(f.cs+f.ms)); ln(c,X(0),Y(f.ch),X(1),Y(f.ch+f.mh)); c.setLineDash([]); c.globalAlpha=1; }
+      c.strokeStyle=col; c.lineWidth=1.7; c.globalAlpha=0.9; ln(c,X(0),Y(f.c),X(1),Y(f.c+f.m)); c.globalAlpha=1;
+    }
+    a.forEach(function(p){ var x=X(p.l), y=Y(Rof(p)), e;
+      if(uncOn){ e=dR(p)/y1*ph; c.strokeStyle=INK; c.lineWidth=1.1; ln(c,x,y-e,x,y+e); ln(c,x-3.5,y-e,x+3.5,y-e); ln(c,x-3.5,y+e,x+3.5,y+e); }
+      c.lineCap='round'; c.strokeStyle='#fff'; c.lineWidth=4.2; mark(c,x,y,q,CFG[k].mk); c.strokeStyle=col; c.lineWidth=1.9; mark(c,x,y,q,CFG[k].mk); c.lineCap='butt'; });
+  });
+  if(S.on && S.dI>0){ c.lineWidth=1.6; c.setLineDash([3,3]); disc(c,X(S.l),Y(S.dV/S.dI),7.5,null,CFG[S.sel].col); c.setLineDash([]); }
+  c.restore();
+}
+function mark(c,x,y,q,mk){ c.beginPath(); if(mk==='x'){ c.moveTo(x-q,y-q); c.lineTo(x+q,y+q); c.moveTo(x-q,y+q); c.lineTo(x+q,y-q); } else { c.moveTo(x-q,y); c.lineTo(x+q,y); c.moveTo(x,y-q); c.lineTo(x,y+q); } c.stroke(); }
+
+//  Table, legend, method, findings
+function wname(){ return S.sel==='nichrome'?'nichrome wire':'unknown wire'; }
+function renderTable(){
+  var a=WD[S.sel].pts, tb=$('rs-tbody'), fresh=null; tb.innerHTML='';
+  a.forEach(function(p,i){
+    var tr=document.createElement('tr'); if(p===lastNew){ tr.className='rs-new'; fresh=tr; }
+    tr.innerHTML='<td>'+p.l.toFixed(3)+'</td><td>'+p.V.toFixed(2)+'</td><td>'+p.I.toFixed(2)+'</td><td class="rs-rc'+(showR?'':' rs-off')+'">'+Rtxt(p)+'</td>'+
+      '<td class="rs-d"><button type="button" class="rs-x" aria-label="Delete the reading at '+p.l.toFixed(3)+' metres" data-i="'+i+'">&#215;</button></td>';
+    tb.appendChild(tr);
+  });
+  if(fresh){ var sc=$('rs-scroll'), hh=root.querySelector('.rs-table thead').offsetHeight, top=fresh.offsetTop, bot=top+fresh.offsetHeight;
+    if(top-hh<sc.scrollTop) sc.scrollTop=top-hh; else if(bot>sc.scrollTop+sc.clientHeight) sc.scrollTop=bot-sc.clientHeight; }
+  root.querySelector('th.rs-rc').classList.toggle('rs-off',!showR);
+  $('rs-empty').classList.toggle('rs-off',a.length>0);
+  $('rs-empty').textContent='No readings for the '+wname()+' yet. Set a length, close the switch and press "Record reading".';
+  $('rs-count').textContent=CFG[S.sel].name+': '+a.length+(a.length===1?' reading':' readings');
+}
+function renderLegend(){
+  var h=''; ORDER.forEach(function(k){ if(WD[k].pts.length) h+='<span><i style="color:'+CFG[k].col+'">'+(CFG[k].mk==='x'?'&#215;':'+')+'</i>'+CFG[k].name.toLowerCase()+'</span>'; });
+  $('rs-legend').innerHTML=h||'<span>Your readings are plotted here as you record them.</span>';
+  $('rs-fit').textContent=fitOn?'Hide best fit':'Draw best fit'; $('rs-fit').setAttribute('aria-pressed',fitOn); $('rs-fit').classList.toggle('rs-held',fitOn);
+}
+function renderMethod(){
+  var w=WD[S.sel], a=w.pts, nd=w.p.filter(function(x){ return x!==null; }).length, span=a.length? a[a.length-1].l-a[0].l : 0;
+  var st=[
+    ['On the micrometer, check the zero reading with the jaws closed, then measure the diameter of the wire in at least three places. <em>('+Math.min(nd,3)+' of 3)</em>', w.z!==null && nd>=3],
+    ['On the circuit, set the moving clip to a known length, close the switch and record the voltmeter and ammeter readings.', a.length>=1],
+    ['Repeat about every 10 cm over the whole wire, opening the switch between readings. <em>('+Math.min(a.length,8)+' of 8)</em>', a.length>=8 && span>=0.6],
+    ['Plot resistance against length and draw the line of best fit.', fitOn && a.length>=5],
+    ['Find the cross-sectional area from <span class="rs-q">A</span> = \u03C0<span class="rs-q">r</span><sup>2</sup>, then the resistivity from <span class="rs-q">\u03C1</span> = gradient \u00D7 <span class="rs-q">A</span>.', w.ok]
+  ];
+  if(S.sel==='mystery') st.push(['Compare your resistivity with the known values below to identify the metal.', w.id]);
+  $('rs-steps').innerHTML=st.map(function(s){ return '<li'+(s[1]?' class="rs-done"':'')+'>'+s[0]+'</li>'; }).join('');
+  $('rs-tip').innerHTML = S.sel==='nichrome' ? 'Keep the switch closed only while you take a reading. A large current heats the wire, and its resistance rises as it warms.'
+    : 'Known resistivities in \u03A9 m: constantan 4.9 \u00D7 10<sup>\u22127</sup>, stainless steel 7.2 \u00D7 10<sup>\u22127</sup>, nichrome 1.1 \u00D7 10<sup>\u22126</sup>, Kanthal 1.4 \u00D7 10<sup>\u22126</sup>.';
+}
+function renderDia(){
+  var w=WD[S.sel], d=dia(S.sel), h, b='';
+  b+='<button type="button" class="rs-btn" data-p="-1" aria-pressed="'+(M.place===-1)+'"><span>Jaws closed</span><b>'+(w.z===null?'':mm(w.z)+' mm')+'</b></button>';
+  PL.forEach(function(n,i){ b+='<button type="button" class="rs-btn" data-p="'+i+'" aria-pressed="'+(M.place===i)+'"><span>Place '+n+'</span><b>'+(w.p[i]===null?'':mm(w.p[i])+' mm')+'</b></button>'; });
+  $('rs-places').innerHTML=b;
+  if(!d) h='Close the micrometer on the wire at each place and read the scale. Your diameter readings are collected here.';
+  else h='Mean of '+d.n+(d.n===1?' reading':' readings')+' = '+d.mean.toFixed(3)+' mm. '+
+    (d.z===null?'<b>Zero reading not checked yet</b>, so this may include a zero error.' : d.z===0?'Zero reading 0.00 mm, so <b>diameter = '+d.d.toFixed(3)+' mm</b>.'
+      : 'Zero error '+d.z.toFixed(2)+' mm to subtract, so <b>diameter = '+d.d.toFixed(3)+' mm</b>.');
+  $('rs-dsum').innerHTML=h;
+}
+function renderFind(){
+  var el=$('rs-find'), k=S.sel, a=WD[k].pts, f=fit(k), d=dia(k), h, rho, pg, pd, pr;
+  el.classList.toggle('rs-off',!fitOn); if(!fitOn) return;
+  if(a.length<5 || !f){ $('rs-fittxt').innerHTML='<p>Record at least five lengths for the '+wname()+' and the best-fit line will be analysed here.</p>'; $('rs-calc').classList.add('rs-off'); return; }
+  $('rs-calc').classList.remove('rs-off');
+  h='<p>Best-fit line: gradient = <b>'+sfn(f.m,3)+' \u03A9 m<sup>\u22121</sup></b>'+
+    (uncOn && f.dm!==undefined? ', between '+sfn(f.mh,3)+' and '+sfn(f.ms,3)+' for the shallowest and steepest lines through the error bars, so \u00B1 '+sfn(f.dm,2)+' \u03A9 m<sup>\u22121</sup>' : '')+'.</p>';
+  if(f.c>0.025) h+='<p>The line meets the resistance axis at about '+f.c.toFixed(2)+' \u03A9 instead of the origin. The contact resistance of the clips adds a little to every reading, which shifts the line up without changing its gradient.</p>';
+  $('rs-fittxt').innerHTML=h;
+  $('rs-work').setAttribute('aria-pressed',workOn); $('rs-work').classList.toggle('rs-held',workOn); $('rs-work').textContent=workOn?'Hide working':'Show working';
+  $('rs-worktxt').classList.toggle('rs-off',!workOn);
+  if(workOn){
+    if(!d) h='<p>Measure the diameter with the micrometer first: the area of cross-section is needed to turn the gradient into a resistivity.</p>';
+    else { rho=rhoOf(k);
+      h='<p>Diameter = '+d.d.toFixed(3)+' mm'+(d.z?' (mean reading '+d.mean.toFixed(3)+' mm minus the zero error '+d.z.toFixed(2)+' mm)':'')+', so radius = '+sci(d.d*1e-3/2,3)+' m.</p>'+
+        '<p><span class="rs-q">A</span> = \u03C0<span class="rs-q">r</span><sup>2</sup> = '+sci(Math.PI*d.d*d.d*1e-6/4,3)+' m<sup>2</sup>.</p>'+
+        '<p><span class="rs-q">\u03C1</span> = gradient \u00D7 <span class="rs-q">A</span> = '+sfn(f.m,3)+' \u00D7 '+sci(Math.PI*d.d*d.d*1e-6/4,3)+' = <b>'+sci(rho,3)+' \u03A9 m</b>.</p>';
+      if(uncOn && f.dm!==undefined){ pg=100*f.dm/f.m; pd=100*d.u/d.d; pr=pg+2*pd;
+        h+='<p>Uncertainty: gradient \u00B1 '+sfn(pg,2)+'%; diameter \u00B1 '+mm(d.u)+' mm, which is \u00B1 '+sfn(pd,2)+'% and counts twice because <span class="rs-q">A</span> depends on <span class="rs-q">d</span><sup>2</sup>. '+
+           'Total '+sfn(pg,2)+' + 2 \u00D7 '+sfn(pd,2)+' = '+sfn(pr,2)+'%, so <b><span class="rs-q">\u03C1</span> = '+pm(rho,rho*pr/100)+' \u03A9 m</b>.</p>'; }
+      if(k==='nichrome') h+='<p>Nichrome is usually quoted as about 1.1 \u00D7 10<sup>\u22126</sup> \u03A9 m.</p>';
+    }
+    $('rs-worktxt').innerHTML=h;
+  }
+  var idEl=$('rs-id'); idEl.classList.toggle('rs-off',k!=='mystery');
+  if(k==='mystery' && !idEl.innerHTML) idEl.innerHTML='<span>The metal is</span>'+IDS.map(function(m){ return '<button type="button" class="rs-btn rs-sm" data-m="'+m+'">'+MAT[m].name+'</button>'; }).join('');
+}
+function renderKit(){
+  $('rs-kit').innerHTML='<b>110 cm of '+(S.sel==='nichrome'?'nichrome':'unknown')+' wire</b> taped along a metre rule';
+}
+function renderAll(){ renderTable(); renderLegend(); renderMethod(); renderDia(); renderFind(); dirty=true; }
+function say(t){ $('rs-status').textContent=t; }
+function fb(t,good){ var el=$('rs-fb'); el.classList.toggle('rs-off',!t); el.innerHTML=t||''; el.style.color=good?'#0b6b3a':(good===false?'#a01228':''); }
+
+//  Controls
+var range=$('rs-range');
+function setClip(v){ v=clamp(Math.round(v*1000)/1000,0.05,1); if(v!==S.l){ S.l=v; contact(); } range.value=v; $('rs-lv-txt').textContent=v.toFixed(3); dirty=true; }
+function setSwitch(on){ S.on=on; var b=$('rs-sw'); b.textContent=on?'Open the switch':'Close the switch'; b.setAttribute('aria-pressed',on); b.classList.toggle('rs-held',on); dirty=true; }
+function setView(v){ S.view=v; Array.prototype.forEach.call($('rs-seg').children,function(b){ b.setAttribute('aria-pressed',b.getAttribute('data-v')===v); });
+  $('rs-pane-circuit').classList.toggle('rs-off',v!=='circuit'); $('rs-pane-mic').classList.toggle('rs-off',v!=='mic');
+  if(v==='mic'){ stopAuto(); setSwitch(false); } S.lcd=0; dirty=true; }
+function setPlace(i){ M.place=i; M.target=micTarget(); M.show=M.target+0.55; M.tries=0; $('rs-min').value=''; renderDia();
+  say(i<0?'Jaws closed with nothing between them. Read the scale: is there a zero error?':'Micrometer closed on the wire at place '+PL[i]+'. Read the sleeve, then the thimble.'); }
+function select(k){
+  stopAuto(); S.sel=k; S.dT=0; lastNew=null; workOn=false; fb('');
+  Array.prototype.forEach.call($('rs-tabs').children,function(t){ t.setAttribute('aria-selected',t.getAttribute('data-k')===k); });
+  setSwitch(false); contact(); M.place=-1; M.target=micTarget(); M.show=M.target+0.55; M.tries=0; $('rs-min').value=''; $('rs-m').value=''; $('rs-e').value='';
+  renderKit(); renderAll();
+  say(S.view==='mic'?'Start with the jaws closed to check the zero reading.':'The '+wname()+' is in the circuit. Drag the right-hand clip or use the slider to set the length.');
+}
+function record(quiet){
+  if(!S.on){ say('The switch is open, so there is no current. Close the switch to take a reading.'); return; }
+  if(S.dI<=0){ say('The ammeter reads zero. Wait for a reading before recording.'); return; }
+  var a=WD[S.sel].pts; if(a.length>=60){ say('The table is full. Delete some readings or clear it.'); return; }
+  lastNew={l:S.l, V:S.dV, I:S.dI}; a.push(lastNew); a.sort(function(u,v){ return u.l-v.l; });
+  renderAll(); if(!quiet) say('Recorded '+S.dV.toFixed(2)+' V and '+S.dI.toFixed(2)+' A at '+S.l.toFixed(3)+' m. Open the switch before moving the clip.');
+}
+function stopAuto(msg){ if(!AUTO) return; AUTO=null; $('rs-auto').textContent='Collect a full set'; $('rs-auto').classList.remove('rs-held'); if(msg) say(msg); }
+function runAuto(now){
+  var A=AUTO;
+  if(A.ph===0){ setSwitch(false); setClip(A.q[A.k]); A.ph=1; A.t=now; }
+  else if(A.ph===1 && now-A.t>170){ setSwitch(true); A.ph=2; A.t=now; }
+  else if(A.ph===2 && now-A.t>330){ S.gV=gauss(); S.gI=gauss(); S.tn=now; read(); record(true); setSwitch(false); A.ph=0; A.k++;
+    if(A.k>=A.q.length) stopAuto('Ten lengths recorded, with the switch opened between readings.'); }
+}
+function micRecord(reveal){
+  var w=WD[S.sel], t=M.target, inp=$('rs-min'), v;
+  if(reveal){ v=Math.round(t*100)/100; inp.value=v.toFixed(2); }
+  else { v=parseFloat(String(inp.value).replace(',','.')); if(!isFinite(v)){ say('Type your reading in millimetres, for example 0.47.'); return; } }
+  if(Math.abs(v-t)>0.0061){ M.tries++;
+    say(Math.abs(Math.abs(v-t)-0.5)<0.0061? 'Close, but check the sleeve again: is a half-millimetre mark showing below the line?'
+      : M.tries<2? 'Not quite. Reading = sleeve reading + thimble reading \u00D7 0.01 mm.'
+      : 'Not quite. The sleeve shows '+(Math.floor(t/0.5+1e-6)*0.5).toFixed(1)+' mm; add the thimble division that lines up with the sleeve line, \u00D7 0.01 mm.'); return; }
+  v=Math.round(v*1000)/1000; if(M.place<0) w.z=v; else w.p[M.place]=v;
+  renderAll(); say((reveal?'The reading is ':'Correct: ')+v.toFixed(2)+' mm'+(M.place<0?(v?', so every reading on this micrometer is '+v.toFixed(2)+' mm too big.':', so there is no zero error.'):' at place '+PL[M.place]+'.'));
+}
+function checkRho(){
+  var k=S.sel, w=WD[k], m=parseFloat(String($('rs-m').value).replace(',','.')), e=parseInt(String($('rs-e').value).replace('\u2212','-'),10), T=rhoOf(k), Traw=rhoOf(k,true), v, r, lg, n;
+  if(!dia(k)){ fb('Measure the diameter with the micrometer first.',false); return; }
+  if(!isFinite(m) || !isFinite(e)){ fb('Enter your value in standard form, for example 1.05 \u00D7 10<sup>\u22126</sup>.',false); return; }
+  v=m*Math.pow(10,e); r=v/T; lg=Math.log10(Math.abs(r)); n=Math.round(lg);
+  if(Math.abs(r-1)<=0.04){ w.ok=true; fb('That agrees with your gradient and diameter: \u03C1 = '+sci(T,3)+' \u03A9 m.',true); renderMethod(); return; }
+  w.ok=false; renderMethod();
+  fb( Math.abs(v/Traw-1)<=0.03 && w.z ? 'That matches the diameter before the zero error is subtracted. Correct the diameter first.'
+    : Math.abs(r/4-1)<=0.05 ? 'About 4 times too big. Check the area: <span class="rs-q">A</span> = \u03C0<span class="rs-q">r</span><sup>2</sup> needs the radius, which is half the diameter.'
+    : Math.abs(r*4-1)<=0.05 ? 'About 4 times too small. Check that you halved the diameter only once to get the radius.'
+    : (n!==0 && Math.abs(r/Math.pow(10,n)-1)<=0.05) ? 'The digits agree, but the power of ten is out by 10<sup>'+minus(n)+'</sup>. Convert the diameter to metres before working out the area (1 mm = 10<sup>\u22123</sup> m).'
+    : (Math.abs(lg-Math.log10(4)-Math.round(lg-Math.log10(4)))<0.03) ? 'Check two things: use the radius, not the diameter, and convert millimetres to metres before working out the area.'
+    : 'Not within 4% of the value your gradient and diameter give. Check each step: radius in metres, area, then gradient \u00D7 area.', false);
+}
+
+range.addEventListener('input',function(){ stopAuto(); setClip(parseFloat(range.value)); });
+$('rs-dn').addEventListener('click',function(){ stopAuto(); setClip(S.l-0.001); });
+$('rs-up').addEventListener('click',function(){ stopAuto(); setClip(S.l+0.001); });
+function ptr(e){ var r=cv.getBoundingClientRect(), g=geo(cv.clientWidth,cv.clientHeight); setClip(Math.round((e.clientX-r.left-g.x0)/(g.x1-g.x0)*200)/200); }
+cv.addEventListener('pointerdown',function(e){ var r=cv.getBoundingClientRect(); if(e.clientY-r.top<cv.clientHeight*0.5) return; stopAuto(); drag=true; try{ cv.setPointerCapture(e.pointerId); }catch(err){} ptr(e); e.preventDefault(); });
+cv.addEventListener('pointermove',function(e){ var r=cv.getBoundingClientRect(); cv.style.cursor=(e.clientY-r.top>=cv.clientHeight*0.5)?'ew-resize':'default'; if(drag) ptr(e); });
+['pointerup','pointercancel'].forEach(function(n){ cv.addEventListener(n,function(){ drag=false; }); });
+$('rs-sw').addEventListener('click',function(){ stopAuto(); setSwitch(!S.on); say(S.on?'Switch closed. Record the reading, then open the switch again.':'Switch open: no current, so the wire is not being heated.'); });
+$('rs-rec').addEventListener('click',function(){ stopAuto(); record(false); });
+$('rs-auto').addEventListener('click',function(){
+  if(AUTO){ stopAuto('Stopped.'); return; }
+  AUTO={q:[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1], k:0, ph:0, t:0}; $('rs-auto').textContent='Stop'; $('rs-auto').classList.add('rs-held'); say('Recording every 10 cm along the wire\u2026'); });
+$('rs-new').addEventListener('click',function(){ stopAuto(); newKit(); fitOn=false; $('rs-id').innerHTML=''; setClip(0.5); select(S.sel); say('New apparatus on the bench: different wires, cell and micrometer. All readings cleared.'); });
+$('rs-tabs').addEventListener('click',function(e){ var t=e.target.closest('.rs-tab'); if(t) select(t.getAttribute('data-k')); });
+$('rs-seg').addEventListener('click',function(e){ var b=e.target.closest('.rs-btn'); if(!b) return; setView(b.getAttribute('data-v'));
+  say(S.view==='mic'?'Choose where to measure, read the scale and type your reading. Start with the jaws closed.':'Drag the right-hand clip or use the slider to set the length.'); });
+$('rs-places').addEventListener('click',function(e){ var b=e.target.closest('.rs-btn'); if(b) setPlace(parseInt(b.getAttribute('data-p'),10)); });
+$('rs-mrec').addEventListener('click',function(){ micRecord(false); });
+$('rs-mshow').addEventListener('click',function(){ micRecord(true); });
+$('rs-min').addEventListener('keydown',function(e){ if(e.key==='Enter') micRecord(false); });
+$('rs-fit').addEventListener('click',function(){ fitOn=!fitOn; lastNew=null; renderAll(); });
+$('rs-unc').addEventListener('change',function(){ uncOn=this.checked; lastNew=null; renderAll(); });
+$('rs-showr').addEventListener('change',function(){ showR=this.checked; lastNew=null; renderTable(); });
+$('rs-chk').addEventListener('click',checkRho);
+$('rs-m').addEventListener('keydown',function(e){ if(e.key==='Enter') checkRho(); });
+$('rs-e').addEventListener('keydown',function(e){ if(e.key==='Enter') checkRho(); });
+$('rs-work').addEventListener('click',function(){ workOn=!workOn; renderFind(); });
+$('rs-id').addEventListener('click',function(e){ var b=e.target.closest('.rs-btn'); if(!b) return; var m=b.getAttribute('data-m'), w=WD.mystery, T=rhoOf('mystery');
+  if(m===KIT.w.mystery.mat){ w.id=true; fb('Yes. The wire is '+MAT[m].name+', resistivity about '+sci(MAT[m].rho,2)+' \u03A9 m'+(T?'; you measured '+sci(T,2)+' \u03A9 m.':'.'),true); }
+  else fb('Not '+MAT[m].name+'. Compare your resistivity with the known values under the method again.',false);
+  renderMethod(); });
+$('rs-clear').addEventListener('click',function(){ stopAuto(); WD[S.sel].pts=[]; lastNew=null; renderAll(); say('Circuit readings for the '+wname()+' cleared. Your diameter readings are kept.'); });
+$('rs-tbody').addEventListener('click',function(e){ var b=e.target.closest('.rs-x'); if(!b) return; stopAuto(); WD[S.sel].pts.splice(parseInt(b.getAttribute('data-i'),10),1); lastNew=null; renderAll(); });
+$('rs-copy').addEventListener('click',function(){
+  var t='length / m\tp.d. / V\tcurrent / A'+(showR?'\tresistance / \u03A9':'')+'\n';
+  WD[S.sel].pts.forEach(function(p){ t+=p.l.toFixed(3)+'\t'+p.V.toFixed(2)+'\t'+p.I.toFixed(2)+(showR?'\t'+Rtxt(p):'')+'\n'; });
+  function ok(){ say('Table copied. Paste it into a spreadsheet.'); }
+  function old(){ var ta=document.createElement('textarea'); ta.value=t; ta.setAttribute('readonly',''); ta.style.cssText='position:absolute;left:-9999px;top:0;'; root.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); ok(); }catch(err){ say('Copying is blocked in this browser. Select the table and copy it by hand.'); } root.removeChild(ta); }
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok,old); else old();
+});
+$('rs-png').addEventListener('click',function(){ drawGraph(); var a=document.createElement('a'); a.download='resistance-length-graph.png'; a.href=grCv.toDataURL('image/png'); root.appendChild(a); a.click(); root.removeChild(a); });
+
+//  Main loop
+var last=0, tempTxt='';
+function frame(now){
+  var dt=clamp((now-last)/1000,0,0.1); last=now;
+  if(AUTO) runAuto(now);
+  step(dt,now);
+  var t='wire at '+Math.round(20+S.dT)+' \u00B0C'; if(t!==tempTxt){ tempTxt=t; $('rs-temp').textContent=t; }
+  if(S.view==='circuit') drawCircuit(dt); else drawMic(dt);
+  if(dirty){ dirty=false; drawGraph(); }
+  requestAnimationFrame(frame);
+}
+function redraw(){ S.lcd=0; dirty=true; }
+if(window.ResizeObserver){ new ResizeObserver(redraw).observe(root); } else window.addEventListener('resize',redraw);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+
+newKit(); setClip(0.5); contact(); select('nichrome');
+requestAnimationFrame(function(t){ last=t; frame(t); });
+  })();
+  </script>
+</div>
+<!-- ======================= END EMBED ROOT ======================= -->
+
+</body>
+</html>
