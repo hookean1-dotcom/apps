@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>I–V characteristics of a metal wire and a filament lamp (WJEC AS Physics)</title>
+</head>
+<body style="margin:0;background:#e3ebe8;">
+
+<!-- ================================================================== -->
+<!--  EMBED ROOT: everything below is scoped under #djp-iv-sim           -->
+<!-- ================================================================== -->
+<div id="djp-iv-sim">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+    #djp-iv-sim{
+      --bench:#e9f0ed; --card:#ffffff; --rule:#c6d3cf; --rule-soft:#e1e9e6;
+      --ink:#14222a; --soft:#46585f;
+      --teal:#0b5d5a; --teal-dk:#07423f; --wash:#dcefe9;
+      --meter:#f1c22e; --meter-dk:#b98c0b; --lcd:#c6d0b7; --lcd-ink:#1b2416;
+      --wire:#1c4fd6; --lamp:#c96200; --diode:#b01668;
+      box-sizing:border-box; width:100%; min-height:560px; text-align:left;
+      background:var(--bench); color:var(--ink);
+      font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+      font-size:14px; line-height:1.4; font-weight:400;
+      border:1px solid var(--rule); border-radius:10px; overflow:hidden;
+      container-type:inline-size;
+    }
+    #djp-iv-sim *{ box-sizing:border-box; }
+    #djp-iv-sim .iv-q{ font-family:'Cambria Math',Cambria,'Times New Roman',Times,serif; font-style:italic; font-weight:400; }
+    #djp-iv-sim .iv-off{ display:none !important; }
+
+    /* ---- header ---- */
+    #djp-iv-sim .iv-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:18px 20px 14px; background:var(--card); border-bottom:1px solid var(--rule); }
+    #djp-iv-sim .iv-title{ margin:0; padding:0; font-family:inherit; font-size:22px; line-height:1.15; font-weight:700; letter-spacing:-0.01em; color:var(--ink); text-transform:none; }
+    #djp-iv-sim .iv-title .iv-q{ font-size:1.08em; }
+    #djp-iv-sim .iv-sub{ margin:5px 0 0; padding:0; font-size:14px; line-height:1.35; color:var(--soft); max-width:62ch; }
+
+    /* ---- buttons ---- */
+    #djp-iv-sim .iv-btn{
+      appearance:none; -webkit-appearance:none; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+      margin:0; width:auto; min-height:38px; padding:8px 13px;
+      font-family:inherit; font-size:14px; font-weight:600; line-height:1.15; font-style:normal; letter-spacing:0; text-transform:none; text-shadow:none; text-decoration:none;
+      color:var(--ink); background:var(--card); border:1px solid #9fb0ab; border-radius:7px; box-shadow:none; cursor:pointer;
+    }
+    #djp-iv-sim .iv-btn:hover{ border-color:var(--teal); color:var(--teal-dk); }
+    #djp-iv-sim .iv-btn:active{ transform:translateY(1px); }
+    #djp-iv-sim .iv-btn:focus-visible, #djp-iv-sim .iv-tab:focus-visible, #djp-iv-sim .iv-range:focus-visible, #djp-iv-sim .iv-x:focus-visible, #djp-iv-sim .iv-check input:focus-visible{ outline:3px solid #f1c22e; outline-offset:2px; }
+    #djp-iv-sim .iv-btn.iv-go{ background:var(--teal); border-color:var(--teal); color:#fff; }
+    #djp-iv-sim .iv-btn.iv-go:hover{ background:var(--teal-dk); border-color:var(--teal-dk); color:#fff; }
+    #djp-iv-sim .iv-btn.iv-held{ background:var(--wash); border-color:var(--teal); color:var(--teal-dk); }
+    #djp-iv-sim .iv-btn.iv-sm{ min-height:30px; padding:5px 10px; font-size:13px; font-weight:400; }
+    #djp-iv-sim .iv-btn.iv-sq{ min-width:38px; padding:8px 0; font-size:18px; line-height:1; }
+
+    /* ---- component tabs ---- */
+    #djp-iv-sim .iv-tabs{ display:flex; gap:0; padding:12px 14px 0; flex-wrap:wrap; }
+    #djp-iv-sim .iv-tab{
+      appearance:none; -webkit-appearance:none; margin:0 6px 0 0; width:auto; padding:9px 14px 9px 12px; min-height:40px;
+      font-family:inherit; font-size:14px; font-weight:600; line-height:1.15; font-style:normal; letter-spacing:0; text-transform:none; text-shadow:none;
+      display:inline-flex; align-items:center; gap:8px; cursor:pointer; box-shadow:none;
+      color:var(--soft); background:transparent; border:1px solid transparent; border-bottom:none; border-radius:8px 8px 0 0;
+    }
+    #djp-iv-sim .iv-tab:hover{ color:var(--ink); }
+    #djp-iv-sim .iv-tab[aria-selected="true"]{ color:var(--ink); background:var(--card); border-color:var(--rule); position:relative; top:1px; }
+    #djp-iv-sim .iv-tab i{ font-style:normal; font-weight:700; font-size:17px; line-height:0.8; width:12px; text-align:center; }
+    #djp-iv-sim .iv-tab small{ font-size:12.5px; font-weight:400; color:var(--soft); }
+
+    /* ---- layout ---- */
+    #djp-iv-sim .iv-grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.12fr); grid-template-areas:"bench results" "method results"; grid-template-rows:auto 1fr; gap:12px; padding:0 14px 14px; }
+    #djp-iv-sim .iv-card{ background:var(--card); border:1px solid var(--rule); border-radius:8px; }
+    #djp-iv-sim .iv-bench{ grid-area:bench; border-top-left-radius:0; padding:12px; display:flex; flex-direction:column; gap:10px; }
+    #djp-iv-sim .iv-results{ grid-area:results; padding:12px; display:flex; flex-direction:column; gap:10px; min-width:0; }
+    #djp-iv-sim .iv-method{ grid-area:method; padding:12px 14px 13px; }
+
+    /* ---- circuit ---- */
+    #djp-iv-sim .iv-circuit{ border:1px solid var(--rule-soft); border-radius:6px; overflow:hidden; }
+    #djp-iv-sim .iv-circuit canvas{ display:block; width:100%; height:300px; }
+    #djp-iv-sim .iv-kit{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:7px 10px; border-top:1px solid var(--rule-soft); font-size:13px; color:var(--soft); background:#f6f9f8; }
+    #djp-iv-sim .iv-kit b{ color:var(--ink); font-weight:600; }
+    #djp-iv-sim .iv-temp{ font-variant-numeric:tabular-nums; white-space:nowrap; }
+
+    /* ---- meters ---- */
+    #djp-iv-sim .iv-meters{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #djp-iv-sim .iv-meter{ background:var(--meter); border:1px solid var(--meter-dk); border-radius:9px; padding:8px 8px 7px; box-shadow:inset 0 -3px 0 rgba(120,88,0,.28); }
+    #djp-iv-sim .iv-meter canvas{ display:block; width:100%; height:64px; border-radius:4px; background:var(--lcd); border:2px solid #23291f; }
+    #djp-iv-sim .iv-mcap{ margin-top:6px; font-size:13px; line-height:1.25; color:#2b2204; font-weight:700; }
+    #djp-iv-sim .iv-mcap b{ font-weight:700; }
+    #djp-iv-sim .iv-mcap span{ display:block; font-weight:400; }
+
+    /* ---- supply ---- */
+    #djp-iv-sim .iv-supply{ border:1px solid var(--rule); border-radius:8px; padding:9px 11px 11px; }
+    #djp-iv-sim .iv-srow{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    #djp-iv-sim .iv-slab{ font-weight:600; }
+    #djp-iv-sim .iv-slab span{ font-weight:400; color:var(--soft); }
+    #djp-iv-sim .iv-sval{ font-variant-numeric:tabular-nums; font-weight:700; white-space:nowrap; }
+    #djp-iv-sim .iv-dial{ display:flex; align-items:center; gap:9px; }
+    #djp-iv-sim .iv-range{ -webkit-appearance:none; appearance:none; flex:1 1 auto; min-width:0; width:100%; height:26px; margin:0; padding:0; background:transparent; border:none; cursor:pointer; }
+    #djp-iv-sim .iv-range::-webkit-slider-runnable-track{ height:8px; border-radius:4px; background:linear-gradient(90deg,#cfe1dc,#0b5d5a); }
+    #djp-iv-sim .iv-range::-moz-range-track{ height:8px; border-radius:4px; background:linear-gradient(90deg,#cfe1dc,#0b5d5a); }
+    #djp-iv-sim .iv-range::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:24px; height:24px; margin-top:-8px; border-radius:50%; background:#fff; border:3px solid var(--teal); box-shadow:0 1px 3px rgba(8,40,38,.35); }
+    #djp-iv-sim .iv-range::-moz-range-thumb{ width:19px; height:19px; border-radius:50%; background:#fff; border:3px solid var(--teal); box-shadow:0 1px 3px rgba(8,40,38,.35); }
+
+    #djp-iv-sim .iv-actions{ display:flex; flex-wrap:wrap; gap:8px; }
+    #djp-iv-sim .iv-actions .iv-go{ flex:1 1 150px; }
+    #djp-iv-sim .iv-status{ margin:0; padding:8px 11px; min-height:36px; font-size:13.5px; line-height:1.35; color:var(--teal-dk); background:var(--wash); border-radius:6px; }
+
+    /* ---- graph ---- */
+    #djp-iv-sim .iv-graph{ border:1px solid var(--rule-soft); border-radius:6px; overflow:hidden; }
+    #djp-iv-sim .iv-graph canvas{ display:block; width:100%; height:372px; }
+    #djp-iv-sim .iv-gtools{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+    #djp-iv-sim .iv-legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:13px; color:var(--soft); }
+    #djp-iv-sim .iv-legend span{ display:inline-flex; align-items:center; gap:6px; }
+    #djp-iv-sim .iv-legend i{ font-style:normal; font-weight:700; font-size:17px; line-height:0.8; }
+    #djp-iv-sim .iv-gbtns{ display:flex; gap:7px; flex-wrap:wrap; }
+    #djp-iv-sim .iv-find{ border-left:4px solid var(--teal); background:#f3f8f6; border-radius:0 6px 6px 0; padding:9px 12px; font-size:14px; line-height:1.45; max-width:78ch; }
+    #djp-iv-sim .iv-find p{ margin:0; padding:0; }
+    #djp-iv-sim .iv-find p + p{ margin-top:6px; }
+    #djp-iv-sim .iv-find b{ font-weight:700; }
+
+    /* ---- results table ---- */
+    #djp-iv-sim .iv-tablebox{ border:1px solid var(--rule); border-radius:6px; overflow:hidden; display:flex; flex-direction:column; flex:1 1 auto; min-height:236px; }
+    #djp-iv-sim .iv-thead{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding:7px 9px 7px 11px; border-bottom:1px solid var(--rule); background:#f6f9f8; }
+    #djp-iv-sim .iv-count{ font-weight:600; }
+    #djp-iv-sim .iv-ttools{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    #djp-iv-sim .iv-check{ display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--ink); cursor:pointer; margin:0; font-weight:400; }
+    #djp-iv-sim .iv-check input{ width:16px; height:16px; margin:0; accent-color:var(--teal); }
+    #djp-iv-sim .iv-scroll{ flex:1 1 0; min-height:0; overflow-y:auto; }
+    #djp-iv-sim .iv-table{ width:100%; margin:0; border-collapse:separate; border-spacing:0; border:none; font-size:14px; font-variant-numeric:tabular-nums; background:var(--card); }
+    #djp-iv-sim .iv-short{ display:none; }
+    #djp-iv-sim .iv-table th{ white-space:nowrap; position:sticky; top:0; background:var(--card); color:var(--ink); font-weight:600; text-align:right; padding:6px 12px; border:none; border-bottom:1px solid var(--rule); }
+    #djp-iv-sim .iv-table td{ text-align:right; padding:4px 12px; border:none; border-bottom:1px solid var(--rule-soft); color:var(--ink); background:transparent; }
+    #djp-iv-sim .iv-table td.iv-n, #djp-iv-sim .iv-table th.iv-n{ text-align:left; color:var(--soft); width:38px; padding-right:0; }
+    #djp-iv-sim .iv-table td.iv-d, #djp-iv-sim .iv-table th.iv-d{ width:38px; padding:0 6px 0 0; }
+    #djp-iv-sim .iv-table tr.iv-new td{ animation:ivflash 1.1s ease-out; }
+    @keyframes ivflash{ from{ background:#fbe9a6; } to{ background:transparent; } }
+    #djp-iv-sim .iv-x{ appearance:none; -webkit-appearance:none; margin:0; width:26px; height:26px; min-height:0; padding:0; border:none; border-radius:5px; background:transparent; color:var(--soft); font-family:inherit; font-size:17px; font-weight:400; line-height:1; cursor:pointer; box-shadow:none; }
+    #djp-iv-sim .iv-x:hover{ background:#fbe3e6; color:#a01228; }
+    #djp-iv-sim .iv-empty{ margin:0; padding:16px 12px; color:var(--soft); font-size:13.5px; }
+
+    /* ---- method ---- */
+    #djp-iv-sim .iv-h3{ margin:0 0 7px; padding:0; font-family:inherit; font-size:15px; line-height:1.2; font-weight:700; color:var(--ink); text-transform:none; letter-spacing:0; }
+    #djp-iv-sim .iv-steps{ list-style:none; margin:0; padding:0; counter-reset:ivs; }
+    #djp-iv-sim .iv-steps li{ counter-increment:ivs; position:relative; margin:0; padding:4px 0 4px 31px; font-size:14px; line-height:1.4; color:var(--ink); list-style:none; background:none; }
+    #djp-iv-sim .iv-steps li::before{ content:counter(ivs); position:absolute; left:0; top:4px; width:21px; height:21px; border-radius:50%; border:1.5px solid #8ea39d; color:var(--soft); font-size:12px; font-weight:700; line-height:18px; text-align:center; background:var(--card); }
+    #djp-iv-sim .iv-steps li.iv-done::before{ content:"\2713"; background:var(--teal); border-color:var(--teal); color:#fff; }
+    #djp-iv-sim .iv-steps li em{ font-style:normal; color:var(--soft); white-space:nowrap; }
+    #djp-iv-sim .iv-tip{ margin:8px 0 0; padding:8px 0 0; border-top:1px solid var(--rule-soft); font-size:13.5px; line-height:1.4; color:var(--soft); }
+
+    @media (prefers-reduced-motion:reduce){ #djp-iv-sim .iv-table tr.iv-new td{ animation:none; } }
+
+    @container (max-width:900px){
+      #djp-iv-sim .iv-grid{ grid-template-columns:minmax(0,1fr); grid-template-areas:"bench" "results" "method"; grid-template-rows:auto; }
+      #djp-iv-sim .iv-graph canvas{ height:340px; }
+      #djp-iv-sim .iv-tablebox{ flex:none; min-height:0; }
+      #djp-iv-sim .iv-scroll{ flex:none; max-height:270px; }
+    }
+    @container (max-width:520px){
+      #djp-iv-sim .iv-head{ flex-direction:column; align-items:flex-start; padding:14px 14px 12px; }
+      #djp-iv-sim .iv-title{ font-size:19px; }
+      #djp-iv-sim .iv-tabs{ padding:10px 8px 0; }
+      #djp-iv-sim .iv-tab{ padding:8px 9px; margin-right:2px; font-size:13.5px; }
+      #djp-iv-sim .iv-tab small{ display:none; }
+      #djp-iv-sim .iv-grid{ padding:0 8px 8px; gap:8px; }
+      #djp-iv-sim .iv-bench, #djp-iv-sim .iv-results{ padding:8px; }
+      #djp-iv-sim .iv-circuit canvas{ height:270px; }
+      #djp-iv-sim .iv-graph canvas{ height:300px; }
+      #djp-iv-sim .iv-meter canvas{ height:52px; }
+      #djp-iv-sim .iv-table td, #djp-iv-sim .iv-table th{ padding-left:6px; padding-right:8px; }
+      #djp-iv-sim .iv-long{ display:none; }
+      #djp-iv-sim .iv-short{ display:inline; }
+    }
+  </style>
+
+  <div class="iv-head">
+    <div>
+      <h2 class="iv-title"><span class="iv-q">I</span>–<span class="iv-q">V</span> characteristics of a metal wire and a filament lamp</h2>
+      <p class="iv-sub">WJEC AS Physics, Unit 2.2 Resistance. Take your own readings and decide whether each component obeys Ohm's law.</p>
+    </div>
+    <button type="button" class="iv-btn" id="iv-new" title="Swap in a different wire, lamp and diode and clear all readings">New apparatus</button>
+  </div>
+
+  <div class="iv-tabs" role="tablist" aria-label="Component under test" id="iv-tabs">
+    <button type="button" class="iv-tab" role="tab" data-k="wire"><i style="color:var(--wire)">&#215;</i>Metal wire</button>
+    <button type="button" class="iv-tab" role="tab" data-k="lamp"><i style="color:var(--lamp)">+</i>Filament lamp</button>
+    <button type="button" class="iv-tab" role="tab" data-k="diode"><i style="color:var(--diode)">&#215;</i>Diode <small>(extension)</small></button>
+  </div>
+
+  <div class="iv-grid">
+
+    <!-- APPARATUS -->
+    <div class="iv-card iv-bench">
+      <div class="iv-circuit">
+        <canvas id="iv-cv" role="img" aria-label="Circuit diagram: variable d.c. supply, switch and ammeter in series with the component; voltmeter in parallel with the component"></canvas>
+        <div class="iv-kit"><span id="iv-kit"></span><span class="iv-temp" id="iv-temp"></span></div>
+      </div>
+
+      <div class="iv-meters">
+        <div class="iv-meter"><canvas id="iv-lv" role="img" aria-label="Voltmeter display"></canvas><div class="iv-mcap">Voltmeter<span>p.d. across the component</span></div></div>
+        <div class="iv-meter"><canvas id="iv-la" role="img" aria-label="Ammeter display"></canvas><div class="iv-mcap"><b id="iv-acap">Ammeter</b><span>current in the component</span></div></div>
+      </div>
+
+      <div class="iv-supply">
+        <div class="iv-srow"><span class="iv-slab">Variable d.c. supply <span id="iv-pol"></span></span><span class="iv-sval">dial at <span id="iv-dialv">0.0</span> V</span></div>
+        <div class="iv-dial">
+          <button type="button" class="iv-btn iv-sq" id="iv-dn" aria-label="Turn the supply down one step">&#8722;</button>
+          <input type="range" class="iv-range" id="iv-range" min="0" max="12" step="0.1" value="0" aria-label="Supply dial setting in volts">
+          <button type="button" class="iv-btn iv-sq" id="iv-up" aria-label="Turn the supply up one step">+</button>
+        </div>
+      </div>
+
+      <div class="iv-actions">
+        <button type="button" class="iv-btn" id="iv-sw" aria-pressed="false">Close the switch</button>
+        <button type="button" class="iv-btn" id="iv-rev" aria-pressed="false">Swap supply connections</button>
+        <button type="button" class="iv-btn iv-go" id="iv-rec">Record reading</button>
+        <button type="button" class="iv-btn" id="iv-auto">Collect a full set</button>
+      </div>
+      <p class="iv-status" id="iv-status" aria-live="polite"></p>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="iv-card iv-results">
+      <div class="iv-graph"><canvas id="iv-gr" role="img" aria-label="Graph of current against potential difference for the recorded readings"></canvas></div>
+      <div class="iv-gtools">
+        <div class="iv-legend" id="iv-legend"></div>
+        <div class="iv-gbtns">
+          <button type="button" class="iv-btn iv-sm" id="iv-fit" aria-pressed="false">Draw best fit</button>
+          <button type="button" class="iv-btn iv-sm" id="iv-png">Save graph image</button>
+        </div>
+      </div>
+      <div class="iv-find iv-off" id="iv-find"></div>
+
+      <div class="iv-tablebox">
+        <div class="iv-thead">
+          <span class="iv-count" id="iv-count"></span>
+          <div class="iv-ttools">
+            <label class="iv-check"><input type="checkbox" id="iv-showr" checked> Show <span class="iv-q">R</span> = <span class="iv-q">V</span> / <span class="iv-q">I</span></label>
+            <button type="button" class="iv-btn iv-sm" id="iv-copy" title="Copy the table so it can be pasted into a spreadsheet">Copy table</button>
+            <button type="button" class="iv-btn iv-sm" id="iv-clear">Clear</button>
+          </div>
+        </div>
+        <div class="iv-scroll" id="iv-scroll">
+          <table class="iv-table">
+            <thead><tr><th class="iv-n"></th><th><span class="iv-long">p.d.</span><span class="iv-short iv-q">V</span> / V</th><th><span class="iv-long">current</span><span class="iv-short iv-q">I</span> / <span id="iv-ith">A</span></th><th class="iv-rc"><span class="iv-long">resistance</span><span class="iv-short iv-q">R</span> / &#937;</th><th class="iv-d"></th></tr></thead>
+            <tbody id="iv-tbody"></tbody>
+          </table>
+          <p class="iv-empty" id="iv-empty"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- METHOD -->
+    <div class="iv-card iv-method">
+      <h3 class="iv-h3">Method</h3>
+      <ol class="iv-steps" id="iv-steps"></ol>
+      <p class="iv-tip" id="iv-tip"></p>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    "use strict";
+    var root=document.getElementById('djp-iv-sim'); if(!root) return;
+    var $=function(id){ return root.querySelector('#'+id); };
+    var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+    var INK='#14222a', SOFT='#46585f', TEAL='#0b5d5a', TAU=6.2832;
+    var FONT='"Atkinson Hyperlegible Next","Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+
+    function rnd(a,b){ return a+Math.random()*(b-a); }
+    function gauss(){ return Math.sqrt(-2*Math.log(1-Math.random()))*Math.cos(TAU*Math.random()); }
+    function clamp(x,a,b){ return x<a?a:(x>b?b:x); }
+    function sfn(x,n){ if(!isFinite(x)) return '\u2014'; var s=x.toPrecision(Math.max(1,n)); return s.indexOf('e')>=0? String(Number(s)) : s; }
+    function sigs(s){ return s.replace(/[^0-9]/g,'').replace(/^0+/,'').length; }
+    function minus(s){ return String(s).replace('-','\u2212'); }
+
+    // ------------------------------------------------------------------
+    //  Components.  k converts amps to the ammeter's unit.
+    //  rV, rI = meter resolution; pV, pI = fractional random error.
+    // ------------------------------------------------------------------
+    var CFG={
+      wire:{ name:'Metal wire', max:12, step:0.1, dp:1, rV:0.01, rI:0.01, pV:0.003, pI:0.008, k:1, iu:'A', idp:2, col:'#1c4fd6', mk:'x', grp:['wire','lamp'],
+             fwd:[0,0.5,1,1.5,2,3,4,5,6,7,8,9,10,11,12], rvs:[1,2,3,4,6,8,10,12] },
+      lamp:{ name:'Filament lamp', max:12, step:0.1, dp:1, rV:0.01, rI:0.01, pV:0.003, pI:0.008, k:1, iu:'A', idp:2, col:'#c96200', mk:'+', grp:['wire','lamp'],
+             fwd:[0,0.2,0.5,1,1.5,2,3,4,5,6,7,8,9,10,11,12], rvs:[0.5,1,2,3,4,6,8,10,12] },
+      diode:{ name:'Diode', max:3, step:0.05, dp:2, rV:0.01, rI:0.1, pV:0.002, pI:0.006, k:1000, iu:'mA', idp:1, col:'#b01668', mk:'x', grp:['diode'],
+             fwd:[0,0.3,0.5,0.6,0.7,0.8,1,1.25,1.5,1.75,2,2.5,3], rvs:[0.5,1,2,3] }
+    };
+    var ORDER=['wire','lamp','diode'];
+
+    // ------------------------------------------------------------------
+    //  Apparatus: re-randomised on every load and by "New apparatus"
+    // ------------------------------------------------------------------
+    var KIT, D, S, AUTO=null, fitOn=false, showR=true, dirty=true, lastNew=null;
+    function newKit(){
+      var g=[[28,0.376],[30,0.315],[32,0.274]][Math.floor(Math.random()*3)];
+      var A=Math.PI*Math.pow(g[1]*1e-3/2,2);
+      var Rh=6*rnd(0.93,1.07), Pr=144/Rh;                    // lamp: hot resistance at 12 V
+      KIT={ swg:g[0], dia:g[1],
+            Rw:4.9e-7*rnd(0.97,1.03)*1.0/A,                  // 1 m of constantan, R = rho l / A
+            Rh:Rh, R0:Rh/Math.pow(2700/293,1.2),             // tungsten: R proportional to T^1.2
+            a:0.92*Pr/(Math.pow(2700,4)-7.37e9), b:0.08*Pr/2407,
+            Is:3e-8*Math.exp(rnd(-0.5,0.5)), nVt:0.05*rnd(0.95,1.05), Rp:22,
+            r:rnd(0.10,0.20), cal:rnd(0.975,1.025) };        // supply + ammeter resistance; dial calibration
+      D={wire:[],lamp:[],diode:[]};
+      S={ sel:(S&&S.sel)||'wire', dial:0, on:false, rev:false, Tl:293, Tw:293, V:0, I:0, gV:gauss(), gI:gauss(), tn:0, dV:0, dI:0 };
+    }
+
+    // ---- lamp: filament temperature follows power in minus power lost ----
+    function lamp(e,dt){
+      var n=Math.max(1,Math.ceil(dt/0.002)), h=dt/n*(AUTO?5:1), R, I, k;   // automatic collection runs the filament in time-lapse
+      for(k=0;k<n;k++){
+        R=KIT.R0*Math.pow(S.Tl/293,1.2); I=e/(R+KIT.r);
+        S.Tl+=h*(I*I*R - KIT.a*(Math.pow(S.Tl,4)-7.37e9) - KIT.b*(S.Tl-293))/0.0008;
+        if(S.Tl<293) S.Tl=293;
+      }
+      R=KIT.R0*Math.pow(S.Tl/293,1.2); I=e/(R+KIT.r); return [I*R,I];
+    }
+    // ---- diode in series with its protective resistor ----
+    function dI(V){ return KIT.Is*(Math.exp(Math.min(V,1.2)/KIT.nVt)-1); }
+    function diode(e){
+      var lo=Math.min(e,0), hi=Math.max(e,0), m, k;
+      for(k=0;k<40;k++){ m=(lo+hi)/2; if(m+dI(m)*(KIT.Rp+KIT.r)>e) hi=m; else lo=m; }
+      m=(lo+hi)/2; return [m,dI(m)];
+    }
+    function step(dt,now){
+      var e=S.on? S.dial*KIT.cal*(S.rev?-1:1) : 0, V=0, I=0, R, o;
+      if(S.sel==='wire'){ R=KIT.Rw*(1+2e-5*(S.Tw-293)); I=e/(R+KIT.r); V=I*R; }
+      S.Tw+=dt*((S.sel==='wire'?V*I:0)-0.3*(S.Tw-293))/2.4;
+      o=lamp(S.sel==='lamp'?e:0,dt); if(S.sel==='lamp'){ V=o[0]; I=o[1]; }
+      if(S.sel==='diode'){ o=diode(e); V=o[0]; I=o[1]; }
+      S.V=V; S.I=I;
+      if(now-S.tn>420){ S.tn=now; S.gV=gauss(); S.gI=gauss(); }
+      read();
+    }
+    // ---- what the meters display: true value + random error, rounded to the resolution ----
+    function read(){
+      var c=CFG[S.sel], V=S.V, I=S.I*c.k;
+      var sv=c.pV*Math.abs(V)+0.3*c.rV*Math.min(1,Math.abs(V)/(5*c.rV));
+      var si=c.pI*Math.abs(I)+0.3*c.rI*Math.min(1,Math.abs(I)/(5*c.rI));
+      var dV=Math.round((V+S.gV*sv)/c.rV)*c.rV, dIv=Math.round((I+S.gI*si)/c.rI)*c.rI;
+      if(Math.abs(dV)<c.rV/2) dV=0; if(Math.abs(dIv)<c.rI/2) dIv=0;
+      if(dV!==S.dV || dIv!==S.dI || S.lcd!==S.sel){ S.dV=dV; S.dI=dIv; S.lcd=S.sel; drawLCD(lvCv,dV,2,'V'); drawLCD(laCv,dIv,c.idp,c.iu); dirty=true; }
+    }
+
+    // ------------------------------------------------------------------
+    //  Canvas helpers
+    // ------------------------------------------------------------------
+    function hid(cv){
+      var dpr=Math.min(3,window.devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight, ctx=cv.getContext('2d');
+      if(cv._w!==w || cv._h!==h || cv._d!==dpr){ cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr)); cv._w=w; cv._h=h; cv._d=dpr; }
+      ctx.setTransform(dpr,0,0,dpr,0,0); return {ctx:ctx,w:w,h:h};
+    }
+    function ln(c,x1,y1,x2,y2){ c.beginPath(); c.moveTo(x1,y1); c.lineTo(x2,y2); c.stroke(); }
+    function disc(c,x,y,r,fill,stroke){ c.beginPath(); c.arc(x,y,r,0,TAU); if(fill){ c.fillStyle=fill; c.fill(); } if(stroke){ c.strokeStyle=stroke; c.stroke(); } }
+    function label(c,t,x,y,al,font,col){ c.font=font||('400 12.5px '+FONT); c.fillStyle=col||SOFT; c.textAlign=al||'center'; c.textBaseline='alphabetic'; c.fillText(t,x,y); }
+
+    // ------------------------------------------------------------------
+    //  Seven-segment LCD
+    // ------------------------------------------------------------------
+    var SEG={'0':'abcdef','1':'bc','2':'abged','3':'abgcd','4':'fgbc','5':'afgcd','6':'afgecd','7':'abc','8':'abcdefg','9':'abcdfg','-':'g',' ':''};
+    function segs(c,x,y,w,h,on){
+      var t=h*0.115, g=t*0.22, q=t/2, m=h/2, i, s;
+      function H(yy){ c.moveTo(x+q+g,yy); c.lineTo(x+t+g,yy-q); c.lineTo(x+w-t-g,yy-q); c.lineTo(x+w-q-g,yy); c.lineTo(x+w-t-g,yy+q); c.lineTo(x+t+g,yy+q); c.closePath(); }
+      function Vt(xx,y1,y2){ c.moveTo(xx,y1+g); c.lineTo(xx+q,y1+q+g); c.lineTo(xx+q,y2-q-g); c.lineTo(xx,y2-g); c.lineTo(xx-q,y2-q-g); c.lineTo(xx-q,y1+q+g); c.closePath(); }
+      c.beginPath();
+      for(i=0;i<on.length;i++){ s=on.charAt(i);
+        if(s==='a') H(y+q); else if(s==='g') H(y+m); else if(s==='d') H(y+h-q);
+        else if(s==='f') Vt(x+q,y+q,y+m); else if(s==='e') Vt(x+q,y+m,y+h-q);
+        else if(s==='b') Vt(x+w-q,y+q,y+m); else Vt(x+w-q,y+m,y+h-q); }
+      c.fill();
+    }
+    function drawLCD(cv,val,dp,unit){
+      var d=hid(cv), c=d.ctx, W=d.w, H=d.h; c.clearRect(0,0,W,H);
+      var h=Math.min(H*0.66,(W-64)/3.6), w=h*0.52, gap=h*0.24, n=4, y=(H-h)/2;
+      var uw=unit.length>1?38:26, x0=Math.max(8,(W-uw-(n+1)*(w+gap))/2), i, x;
+      var str=Math.abs(val).toFixed(dp), digits=str.replace('.',''), dot=digits.length-dp;
+      while(digits.length<n){ digits=' '+digits; dot++; }
+      c.save(); c.transform(1,0,-0.07,1,H*0.035,0);
+      for(i=0;i<=n;i++){                      // cell 0 is the minus sign
+        x=x0+i*(w+gap);
+        c.fillStyle='rgba(27,36,22,0.075)'; segs(c,x,y,w,h,i===0?'g':'abcdefg');
+        c.fillStyle='#1b2416';
+        if(i===0){ if(val<0) segs(c,x,y,w,h,'g'); }
+        else segs(c,x,y,w,h,SEG[digits.charAt(i-1)]||'');
+        if(i===dot && i>0){ c.fillRect(x+w+gap*0.22,y+h-h*0.12,h*0.12,h*0.12); }
+      }
+      c.restore();
+      label(c,unit,W-9,y+h,'right','700 '+Math.round(h*0.44)+'px '+FONT,'#1b2416');
+    }
+
+    // ------------------------------------------------------------------
+    //  Circuit diagram, laid out as in the WJEC guide:
+    //  supply and switch along the top, ammeter on the left,
+    //  component along the bottom with the voltmeter across it.
+    // ------------------------------------------------------------------
+    var cv=$('iv-cv'), lvCv=$('iv-lv'), laCv=$('iv-la'), grCv=$('iv-gr'), flow=0;
+    function drawCircuit(dt){
+      var d=hid(cv), c=d.ctx, W=d.w, H=d.h; c.clearRect(0,0,W,H);
+      c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+      var L=Math.max(36,W*0.13), R=W-L, T=50, B=H-108, Vy=H-34, cx=(L+R)/2, my=(T+B)/2, mr=17;
+      var sx=L+(R-L)*0.30, kx=L+(R-L)*0.72, tap=Math.min((R-L)*0.30,100), sel=S.sel;
+      var hw=sel==='wire'?30:(sel==='lamp'?13:10), cfg=CFG[sel];
+      var dir=S.rev?-1:1, Ik=Math.abs(S.I)*cfg.k, live=S.on && Ik>(sel==='diode'?0.3:0.004);
+
+      // wires
+      c.strokeStyle=INK; c.lineWidth=1.8; c.lineCap='butt'; c.lineJoin='miter';
+      c.beginPath();
+      c.moveTo(sx-5,T); c.lineTo(L,T); c.lineTo(L,my-mr);
+      c.moveTo(L,my+mr); c.lineTo(L,B); c.lineTo(cx-hw,B);
+      c.moveTo(cx+hw,B); c.lineTo(R,B);
+      if(sel==='diode'){ c.lineTo(R,my+24); c.moveTo(R,my-24); }
+      c.lineTo(R,T); c.lineTo(kx+15,T);
+      c.moveTo(kx-15,T); c.lineTo(sx+5,T);
+      c.moveTo(cx-tap,B); c.lineTo(cx-tap,Vy); c.lineTo(cx-mr,Vy);
+      c.moveTo(cx+tap,B); c.lineTo(cx+tap,Vy); c.lineTo(cx+mr,Vy);
+      c.stroke();
+      disc(c,cx-tap,B,3.2,INK); disc(c,cx+tap,B,3.2,INK);
+
+      // conventional current markers (none in the voltmeter branch: its resistance is very high)
+      if(live){
+        var P=[[sx,T],[L,T],[L,B],[R,B],[R,T],[sx,T]], tot=0, i, seg=[], sp=46, u, s, a, b, f;
+        for(i=0;i<5;i++){ seg[i]=Math.abs(P[i+1][0]-P[i][0])+Math.abs(P[i+1][1]-P[i][1]); tot+=seg[i]; }
+        var frac=clamp(Ik/(sel==='diode'?100:2),0.08,1.3);
+        if(!RM) flow=(flow+dir*dt*(22+70*frac))%sp; if(flow<0) flow+=sp;
+        c.fillStyle=TEAL;
+        for(u=flow;u<tot;u+=sp){ s=u; for(i=0;i<5;i++){ if(s<=seg[i]) break; s-=seg[i]; } if(i>4) continue;
+          a=P[i]; b=P[i+1]; f=s/seg[i]; c.beginPath(); c.arc(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f,2.7,0,TAU); c.fill(); }
+      }
+
+      // variable d.c. supply: long thin plate is the positive terminal
+      c.fillStyle='#fff'; c.fillRect(sx-4,T-5,8,10);
+      var px=sx-5*dir, nx=sx+5*dir;
+      c.strokeStyle=INK; c.lineWidth=1.8; ln(c,px,T-15,px,T+15);
+      c.lineWidth=4.5; ln(c,nx,T-8,nx,T+8);
+      c.lineWidth=1.6; ln(c,sx-15,T+16,sx+15,T-19);
+      c.beginPath(); c.moveTo(sx+17.5,T-22); c.lineTo(sx+8.5,T-17.5); c.lineTo(sx+13.5,T-12); c.closePath(); c.fillStyle=INK; c.fill();
+      label(c,dir>0?'+':'\u2212',sx-19,T-9,'center','700 15px '+FONT,INK);
+      label(c,dir>0?'\u2212':'+',sx+19,T+21,'center','700 15px '+FONT,INK);
+      label(c,'variable d.c. supply',sx,T-32);
+
+      // switch
+      c.fillStyle='#fff'; c.fillRect(kx-12,T-4,24,8);
+      c.strokeStyle=INK; c.lineWidth=1.8;
+      if(S.on) ln(c,kx-15,T,kx+15,T); else ln(c,kx-15,T,kx+11,T-16);
+      disc(c,kx-15,T,3.2,'#fff',INK); disc(c,kx+15,T,3.2,'#fff',INK);
+      label(c,S.on?'switch closed':'switch open',kx,T+20);
+
+      // meters
+      c.lineWidth=1.8;
+      disc(c,L,my,mr,'#fff',INK); label(c,sel==='diode'?'mA':'A',L,my+(sel==='diode'?5:6),'center',(sel==='diode'?'700 14px ':'700 17px ')+FONT,INK);
+      disc(c,cx,Vy,mr,'#fff',INK); label(c,'V',cx,Vy+6,'center','700 17px '+FONT,INK);
+
+      // protective resistor for the diode
+      if(sel==='diode'){
+        c.fillStyle='#fff'; c.strokeStyle=INK; c.lineWidth=1.8; c.beginPath(); c.rect(R-8,my-24,16,48); c.fill(); c.stroke();
+        label(c,'protective',R-15,my-3,'right'); label(c,'resistor',R-15,my+13,'right');
+      }
+
+      // component under test
+      c.lineWidth=1.8; c.strokeStyle=INK;
+      if(sel==='wire'){
+        var w=clamp((S.Tw-293)/70,0,1);
+        c.fillStyle='rgb(255,'+Math.round(255-38*w)+','+Math.round(255-95*w)+')';
+        c.beginPath(); c.rect(cx-30,B-9,60,18); c.fill(); c.stroke();
+        label(c,'metal wire',cx,B-18);
+      } else if(sel==='lamp'){
+        var gl=Math.pow(clamp((S.Tl-850)/1850,0,1),1.4);
+        if(gl>0.01){ var gr=c.createRadialGradient(cx,B,4,cx,B,16+34*gl);
+          gr.addColorStop(0,'rgba(255,190,60,'+(0.85*gl)+')'); gr.addColorStop(1,'rgba(255,190,60,0)');
+          c.fillStyle=gr; c.beginPath(); c.arc(cx,B,16+34*gl,0,TAU); c.fill(); }
+        disc(c,cx,B,13,gl>0.01?'rgb(255,'+Math.round(255-25*gl)+','+Math.round(255-150*gl)+')':'#fff',INK);
+        ln(c,cx-9.2,B-9.2,cx+9.2,B+9.2); ln(c,cx-9.2,B+9.2,cx+9.2,B-9.2);
+        label(c,'filament lamp',cx,B-24-22*gl);
+      } else {
+        ln(c,cx-10,B,cx+10,B);
+        c.fillStyle=(S.I*cfg.k>0.3)?'#f3c9df':'#fff';
+        c.beginPath(); c.moveTo(cx-10,B-10); c.lineTo(cx-10,B+10); c.lineTo(cx+9,B); c.closePath(); c.fill(); c.stroke();
+        c.lineWidth=2.4; ln(c,cx+10,B-10,cx+10,B+10);
+        label(c,'diode',cx,B-18);
+        label(c,S.on&&S.dial>0?(S.rev?'reverse bias':'forward bias'):'',cx,B+26);
+      }
+      if(live){ disc(c,12,H-13,2.7,TEAL); label(c,'conventional current',20,H-9,'left','400 12px '+FONT); }
+    }
+
+    // ------------------------------------------------------------------
+    //  Graph of current against p.d. on graph paper
+    // ------------------------------------------------------------------
+    function axes(){
+      var c=CFG[S.sel], neg=S.rev, top, ys, y1;
+      c.grp.forEach(function(k){ D[k].forEach(function(p){ if(p.V<0) neg=true; }); });
+      if(S.sel==='diode') return {x0:neg?-3:0, x1:1, xs:neg?0.5:0.2, y0:neg?-20:0, y1:120, ys:20};
+      top=1.04*12*Math.max(1/(KIT.Rw+KIT.r),1/(KIT.Rh+KIT.r));
+      ys=[0.1,0.2,0.5,1,2,5].filter(function(s){ return top/s<=6; })[0]; y1=Math.ceil(top/ys-1e-9)*ys;
+      return {x0:neg?-12:0, x1:12, xs:2, y0:neg?-y1:0, y1:y1, ys:ys};
+    }
+    function linfit(a){
+      var n=a.length, sx=0, sy=0, sxx=0, sxy=0; a.forEach(function(p){ sx+=p.V; sy+=p.I; sxx+=p.V*p.V; sxy+=p.V*p.I; });
+      var den=n*sxx-sx*sx; if(n<3 || Math.abs(den)<1e-9) return null;
+      var m=(n*sxy-sx*sy)/den; return {m:m, c:(sy-m*sx)/n};
+    }
+    function smooth(a,rV){                               // monotone cubic through the (merged) readings
+      var xs=[], ys=[], cnt=[], i, j;
+      a.forEach(function(p){ j=xs.length-1; if(j>=0 && p.V-xs[j]<2.5*rV){ ys[j]=(ys[j]*cnt[j]+p.I)/(cnt[j]+1); xs[j]=(xs[j]*cnt[j]+p.V)/(cnt[j]+1); cnt[j]++; } else { xs.push(p.V); ys.push(p.I); cnt.push(1); } });
+      var n=xs.length; if(n<4) return null;
+      var dl=[], m=[]; for(i=0;i<n-1;i++) dl[i]=(ys[i+1]-ys[i])/(xs[i+1]-xs[i]);
+      m[0]=dl[0]; m[n-1]=dl[n-2]; for(i=1;i<n-1;i++) m[i]=(dl[i-1]*dl[i]<=0)?0:2*dl[i-1]*dl[i]/(dl[i-1]+dl[i]);
+      return {a:xs[0], b:xs[n-1], f:function(x){ var k=0; while(k<n-2 && x>xs[k+1]) k++;
+        var h=xs[k+1]-xs[k], t=(x-xs[k])/h, t2=t*t, t3=t2*t;
+        return (2*t3-3*t2+1)*ys[k]+(t3-2*t2+t)*h*m[k]+(-2*t3+3*t2)*ys[k+1]+(t3-t2)*h*m[k+1]; }};
+    }
+    function expfit(a){
+      var sw=0, sx=0, sy=0, sxx=0, sxy=0, n=0;
+      a.forEach(function(p){ if(p.I>=2){ var w=p.I*p.I, y=Math.log(p.I); n++; sw+=w; sx+=w*p.V; sy+=w*y; sxx+=w*p.V*p.V; sxy+=w*p.V*y; } });
+      var den=sw*sxx-sx*sx; if(n<3 || Math.abs(den)<1e-12) return null;
+      var b=(sw*sxy-sx*sy)/den, a0=(sy-b*sx)/sw; if(b<=0) return null;
+      return {a:a[0].V, b:a[a.length-1].V, f:function(x){ return Math.exp(a0+b*x); }};
+    }
+    function drawGraph(){
+      var d=hid(grCv), c=d.ctx, W=d.w, H=d.h, cfg=CFG[S.sel], ax=axes();
+      var pL=58, pR=16, pT=16, pB=44, pw=W-pL-pR, ph=H-pT-pB, i, v, n, px, k;
+      function X(x){ return pL+(x-ax.x0)/(ax.x1-ax.x0)*pw; }
+      function Y(y){ return pT+(1-(y-ax.y0)/(ax.y1-ax.y0))*ph; }
+      c.clearRect(0,0,W,H); c.fillStyle='#fff'; c.fillRect(0,0,W,H);
+      c.fillStyle='#fbfefc'; c.fillRect(pL,pT,pw,ph);
+
+      // graph paper: fine squares, heavier lines at each labelled value
+      var nx=Math.round((ax.x1-ax.x0)/ax.xs), ny=Math.round((ax.y1-ax.y0)/ax.ys);
+      var mx=(pw/nx>=58)?10:5, my=(ph/ny>=58)?10:5;
+      c.lineWidth=1; c.strokeStyle='#d5eae1'; c.beginPath();
+      for(i=0;i<=nx*mx;i++){ px=Math.round(pL+pw*i/(nx*mx))+0.5; c.moveTo(px,pT); c.lineTo(px,pT+ph); }
+      for(i=0;i<=ny*my;i++){ px=Math.round(pT+ph*i/(ny*my))+0.5; c.moveTo(pL,px); c.lineTo(pL+pw,px); }
+      c.stroke();
+      c.strokeStyle='#8fc6b2'; c.beginPath();
+      for(i=0;i<=nx;i++){ px=Math.round(pL+pw*i/nx)+0.5; c.moveTo(px,pT); c.lineTo(px,pT+ph); }
+      for(i=0;i<=ny;i++){ px=Math.round(pT+ph*i/ny)+0.5; c.moveTo(pL,px); c.lineTo(pL+pw,px); }
+      c.stroke();
+      // axes through the origin
+      c.strokeStyle=INK; c.lineWidth=1.6; ln(c,Math.round(X(0))+0.5,pT,Math.round(X(0))+0.5,pT+ph); ln(c,pL,Math.round(Y(0))+0.5,pL+pw,Math.round(Y(0))+0.5);
+      // numbers
+      var xd=ax.xs<1?1:0, yd=ax.ys<1?1:0;
+      for(i=0;i<=nx;i++){ v=ax.x0+i*ax.xs; if(Math.abs(v)<1e-9) v=0; label(c,minus(v.toFixed(xd)),pL+pw*i/nx,pT+ph+17,'center','400 12.5px '+FONT,INK); }
+      for(i=0;i<=ny;i++){ v=ax.y0+i*ax.ys; if(Math.abs(v)<1e-9) v=0; label(c,minus(v.toFixed(yd)),pL-8,pT+ph-ph*i/ny+4.5,'right','400 12.5px '+FONT,INK); }
+      label(c,'p.d. / V',pL+pw/2,H-8,'center','600 13.5px '+FONT,INK);
+      c.save(); c.translate(15,pT+ph/2); c.rotate(-Math.PI/2); label(c,'current / '+cfg.iu,0,0,'center','600 13.5px '+FONT,INK); c.restore();
+
+      c.save(); c.beginPath(); c.rect(pL,pT,pw,ph); c.clip();
+      // best-fit line or smooth curve
+      if(fitOn) cfg.grp.forEach(function(key){
+        var a=D[key], f, s, x; c.strokeStyle=CFG[key].col; c.lineWidth=1.7; c.globalAlpha=0.85;
+        if(key==='wire'){ f=linfit(a); if(f){ ln(c,X(ax.x0),Y(f.m*ax.x0+f.c),X(ax.x1),Y(f.m*ax.x1+f.c)); } }
+        else { s=(key==='diode')? expfit(a) : smooth(a,CFG[key].rV); if(s){ c.beginPath(); n=Math.max(60,Math.round(pw));
+          for(k=0;k<=n;k++){ x=s.a+(s.b-s.a)*k/n; if(k===0) c.moveTo(X(x),Y(s.f(x))); else c.lineTo(X(x),Y(s.f(x))); } c.stroke(); } }
+        c.globalAlpha=1;
+      });
+      // plotted points
+      cfg.grp.forEach(function(key){
+        var q=CFG[key].mk==='x'?4.2:5.4; c.lineWidth=1.9; c.lineCap='round';
+        D[key].forEach(function(p){ var x=X(p.V), y=Y(p.I);
+          c.strokeStyle='#fff'; c.lineWidth=4.2; mark(c,x,y,q,CFG[key].mk);
+          c.strokeStyle=CFG[key].col; c.lineWidth=1.9; mark(c,x,y,q,CFG[key].mk); });
+        c.lineCap='butt';
+      });
+      // where the present meter readings would plot
+      if(S.on){ c.lineWidth=1.6; c.setLineDash([3,3]); disc(c,X(S.dV),Y(S.dI),7.5,null,cfg.col); c.setLineDash([]); }
+      c.restore();
+    }
+    function mark(c,x,y,q,mk){ c.beginPath(); if(mk==='x'){ c.moveTo(x-q,y-q); c.lineTo(x+q,y+q); c.moveTo(x-q,y+q); c.lineTo(x+q,y-q); } else { c.moveTo(x-q,y); c.lineTo(x+q,y); c.moveTo(x,y-q); c.lineTo(x,y+q); } c.stroke(); }
+
+    // ------------------------------------------------------------------
+    //  Table, legend, method checklist, findings
+    // ------------------------------------------------------------------
+    // R = V / I, quoted to the same number of significant figures as the less precise reading
+    function resOf(p,key){ var c=CFG[key||S.sel]; if(p.I===0) return '\u2014';
+      return minus(sfn(p.V/(p.I/c.k), Math.min(sigs(p.V.toFixed(2)),sigs(p.I.toFixed(c.idp))))); }
+    function renderTable(){
+      var c=CFG[S.sel], a=D[S.sel], tb=$('iv-tbody'); tb.innerHTML='';
+      var fresh=null;
+      a.forEach(function(p,i){
+        var tr=document.createElement('tr'); if(p===lastNew){ tr.className='iv-new'; fresh=tr; }
+        tr.innerHTML='<td class="iv-n">'+(i+1)+'</td><td>'+minus(p.V.toFixed(2))+'</td><td>'+minus(p.I.toFixed(c.idp))+'</td>'+
+          '<td class="iv-rc'+(showR?'':' iv-off')+'">'+resOf(p)+'</td>'+
+          '<td class="iv-d"><button type="button" class="iv-x" aria-label="Delete reading '+(i+1)+'" data-i="'+i+'">&#215;</button></td>';
+        tb.appendChild(tr);
+      });
+      if(fresh){ var sc=$('iv-scroll'), hh=root.querySelector('.iv-table thead').offsetHeight, top=fresh.offsetTop, bot=top+fresh.offsetHeight;
+        if(top-hh<sc.scrollTop) sc.scrollTop=top-hh; else if(bot>sc.scrollTop+sc.clientHeight) sc.scrollTop=bot-sc.clientHeight; }
+      $('iv-ith').textContent=c.iu;
+      root.querySelector('th.iv-rc').classList.toggle('iv-off',!showR);
+      $('iv-empty').classList.toggle('iv-off',a.length>0);
+      $('iv-empty').textContent='No readings for the '+c.name.toLowerCase()+' yet. Close the switch, set the supply and press "Record reading".';
+      $('iv-count').textContent=c.name+': '+a.length+(a.length===1?' reading':' readings');
+    }
+    function renderLegend(){
+      var c=CFG[S.sel], h='';
+      c.grp.forEach(function(k){ if(D[k].length) h+='<span><i style="color:'+CFG[k].col+'">'+(CFG[k].mk==='x'?'&#215;':'+')+'</i>'+CFG[k].name.toLowerCase()+'</span>'; });
+      $('iv-legend').innerHTML=h||'<span>Your readings are plotted here as you record them.</span>';
+      $('iv-fit').textContent=fitOn?'Hide best fit':'Draw best fit';
+      $('iv-fit').setAttribute('aria-pressed',fitOn); $('iv-fit').classList.toggle('iv-held',fitOn);
+    }
+    function renderMethod(){
+      var c=CFG[S.sel], a=D[S.sel], pos=0, neg=0, hi=0, other=S.sel==='wire'?'lamp':'wire', need=S.sel==='diode'?3:4;
+      a.forEach(function(p){ if(p.V<0) neg++; else { pos++; hi=Math.max(hi,p.d); } });
+      var st=[
+        ['Start with the supply at its minimum, then close the switch.', S.on||a.length>0],
+        ['Increase the p.d. a little at a time. Record the current and the p.d. each time, right across the range. <em>('+Math.min(pos,8)+' of 8)</em>', pos>=8 && hi>=0.7*c.max],
+        [S.sel==='diode'?'Swap the supply connections to put the diode in reverse bias, and take more readings. <em>('+Math.min(neg,need)+' of '+need+')</em>'
+                        :'Swap the supply connections and repeat, to get the negative half of the graph. <em>('+Math.min(neg,need)+' of '+need+')</em>', neg>=need],
+        [S.sel==='wire'?'Draw the line of best fit on the graph of current against p.d.':'Draw a smooth curve of best fit on the graph of current against p.d.', fitOn && a.length>=5]
+      ];
+      if(S.sel!=='diode') st.push(['Repeat with the '+CFG[other].name.toLowerCase()+' and compare the two graphs.', D[other].length>=8]);
+      $('iv-steps').innerHTML=st.map(function(s){ return '<li'+(s[1]?' class="iv-done"':'')+'>'+s[0]+'</li>'; }).join('');
+      $('iv-tip').innerHTML = S.sel==='wire' ? 'Open the switch between readings so the wire stays close to room temperature. Constantan is used because its resistance hardly changes if it does warm up.'
+        : S.sel==='lamp' ? 'Give the readings a moment to settle after each change: the filament takes time to reach a steady temperature.'
+        : 'The protective resistor limits the current so the diode is not damaged. The voltmeter is across the diode only, so it still reads the diode\u2019s own p.d.';
+    }
+    function renderFind(){
+      var el=$('iv-find'), a=D[S.sel], c=CFG[S.sel], h='', f, q, lo, hi, on, anyNeg;
+      if(!fitOn){ el.classList.add('iv-off'); return; }
+      el.classList.remove('iv-off');
+      if(a.length<5){ el.innerHTML='<p>Record at least five readings for the '+c.name.toLowerCase()+' and the graph will be analysed here.</p>'; return; }
+      if(S.sel==='wire'){
+        f=linfit(a);
+        if(f && f.m>0){ h='<p>The points lie on a straight line of gradient <b>'+f.m.toFixed(3)+' A V\u207B\u00B9</b>, so the resistance of the wire is 1 \u00F7 gradient = <b>'+sfn(1/f.m,3)+' \u03A9</b>.</p>'+
+          '<p>The line passes through the origin'+(Math.abs(f.c)>0.03?' to within the scatter of the readings':'')+', so the current is directly proportional to the p.d. <b>The wire obeys Ohm\u2019s law</b>, provided its temperature stays constant.</p>'; }
+        else h='<p>Take readings over a wider range of p.d. to find the gradient.</p>';
+      } else if(S.sel==='lamp'){
+        q=a.filter(function(p){ return p.I!==0 && p.V!==0; }).sort(function(u,v){ return Math.abs(u.V)-Math.abs(v.V); });
+        if(q.length>=2){ lo=q[0]; hi=q[q.length-1];
+          h='<p>The graph is a curve, so the current is not directly proportional to the p.d. <b>The filament lamp does not obey Ohm\u2019s law.</b></p>'+
+            '<p>Its resistance <span class="iv-q">V</span> / <span class="iv-q">I</span> rises from <b>'+resOf(lo)+' \u03A9</b> at '+minus(lo.V.toFixed(2))+' V to <b>'+resOf(hi)+' \u03A9</b> at '+minus(hi.V.toFixed(2))+' V. A larger current heats the filament; its ions vibrate more, so free electrons collide with them more often and the resistance increases.</p>'+
+            '<p>Find the resistance at a point from <span class="iv-q">V</span> / <span class="iv-q">I</span> at that point, not from the gradient of the curve.</p>'; }
+        else h='<p>Take readings over a wider range of p.d.</p>';
+      } else {
+        on=null; anyNeg=false; a.forEach(function(p){ if(p.V<0) anyNeg=true; if(on===null && p.I>=1) on=p.V; });
+        h='<p>'+(on!==null?'Almost no current flows until the p.d. reaches about <b>'+on.toFixed(2)+' V</b>; above that the current rises very steeply.':'So far the current is close to zero. Turn the supply up further in forward bias.')+
+          (anyNeg?' In reverse bias the current stays at zero: the diode conducts in one direction only.':' Swap the supply connections to see what happens in reverse bias.')+'</p>'+
+          '<p>The graph is not a straight line through the origin, so <b>the diode does not obey Ohm\u2019s law</b>.</p>';
+      }
+      el.innerHTML=h;
+    }
+    function renderKit(){
+      $('iv-kit').innerHTML = S.sel==='wire' ? '<b>1.00 m of constantan wire</b>, '+KIT.swg+' swg, on a wooden batten'
+        : S.sel==='lamp' ? '<b>Filament lamp</b> rated 12 V, 24 W'
+        : '<b>Silicon diode</b> with a '+KIT.Rp+' \u03A9 protective resistor';
+      $('iv-acap').textContent=S.sel==='diode'?'Milliammeter':'Ammeter';
+    }
+    function renderAll(){ renderTable(); renderLegend(); renderMethod(); renderFind(); dirty=true; }
+    function say(t){ $('iv-status').textContent=t; }
+
+    // ------------------------------------------------------------------
+    //  Controls
+    // ------------------------------------------------------------------
+    var range=$('iv-range');
+    function setDial(v){ var c=CFG[S.sel]; v=clamp(Math.round(v/c.step)*c.step,0,c.max); S.dial=v; range.value=v; $('iv-dialv').textContent=v.toFixed(c.dp); }
+    function setSwitch(on){ S.on=on; var b=$('iv-sw'); b.textContent=on?'Open the switch':'Close the switch'; b.setAttribute('aria-pressed',on); b.classList.toggle('iv-held',on); renderMethod(); dirty=true; }
+    function setRev(rev){ S.rev=rev; var b=$('iv-rev'); b.setAttribute('aria-pressed',rev); b.classList.toggle('iv-held',rev);
+      $('iv-pol').textContent=rev?'(connections reversed)':''; dirty=true; }
+    function select(k){
+      stopAuto(); S.sel=k; var c=CFG[k];
+      Array.prototype.forEach.call($('iv-tabs').children,function(t){ t.setAttribute('aria-selected',t.getAttribute('data-k')===k); });
+      range.max=c.max; range.step=c.step; setRev(false); setDial(0); setSwitch(false); lastNew=null;
+      renderKit(); renderAll();
+      say(D[k].length? 'Switch opened and supply turned to minimum. Your '+c.name.toLowerCase()+' readings are still in the table.'
+                      : 'The '+c.name.toLowerCase()+' is connected. Close the switch, then turn up the supply.');
+    }
+    function record(quiet){
+      if(!S.on){ say('The switch is open, so there is no current. Close the switch to take a reading.'); return; }
+      var a=D[S.sel]; if(a.length>=80){ say('The table is full. Delete some readings or clear it.'); return; }
+      lastNew={V:S.dV, I:S.dI, d:S.dial}; a.push(lastNew); a.sort(function(u,v){ return u.V-v.V || u.I-v.I; });
+      renderAll();
+      if(!quiet) say('Recorded '+minus(S.dV.toFixed(2))+' V and '+minus(S.dI.toFixed(CFG[S.sel].idp))+' '+CFG[S.sel].iu+'.');
+    }
+    function stopAuto(msg){ if(!AUTO) return; AUTO=null; $('iv-auto').textContent='Collect a full set'; $('iv-auto').classList.remove('iv-held'); if(msg) say(msg); }
+    function startAuto(){
+      if(AUTO){ stopAuto('Stopped.'); return; }
+      var c=CFG[S.sel], q=[]; c.fwd.forEach(function(v){ q.push([false,v]); }); c.rvs.forEach(function(v){ q.push([true,v]); });
+      AUTO={q:q, k:0, armed:false, t:0, ref:0, rt:0};
+      $('iv-auto').textContent='Stop'; $('iv-auto').classList.add('iv-held'); setSwitch(true); say('Collecting readings in both directions\u2026');
+    }
+    function runAuto(now){
+      var A=AUTO, s;
+      if(!A.armed){ s=A.q[A.k]; if(S.rev!==s[0]){ setDial(0); setRev(s[0]); } setDial(s[1]); A.armed=true; A.t=now; A.ref=S.I; A.rt=now; return; }
+      if(now-A.rt>140){                                  // wait for the current to settle before reading
+        var settled=Math.abs(S.I-A.ref)<=0.003*Math.abs(S.I)+1e-7; A.ref=S.I; A.rt=now;
+        if(settled && now-A.t>300){ S.gV=gauss(); S.gI=gauss(); S.tn=now; read(); record(true); A.armed=false; A.k++;
+          if(A.k>=A.q.length){ setDial(0); setRev(false); setSwitch(false); stopAuto('Full set recorded. Supply turned to minimum and switch opened.'); } }
+      }
+    }
+
+    range.addEventListener('input',function(){ stopAuto(); setDial(parseFloat(range.value)); });
+    $('iv-dn').addEventListener('click',function(){ stopAuto(); setDial(S.dial-CFG[S.sel].step); });
+    $('iv-up').addEventListener('click',function(){ stopAuto(); setDial(S.dial+CFG[S.sel].step); });
+    $('iv-sw').addEventListener('click',function(){ stopAuto(); setSwitch(!S.on); say(S.on?'Switch closed.'+(S.dial===0?' Turn up the supply and record a reading at each setting.':''):'Switch open: no current.'); });
+    $('iv-rev').addEventListener('click',function(){ stopAuto(); setDial(0); setRev(!S.rev);
+      say(S.rev?'Supply turned to minimum and its connections swapped. The meters will now read negative values.':'Supply turned to minimum and its connections put back the original way round.'); });
+    $('iv-rec').addEventListener('click',function(){ stopAuto(); record(false); });
+    $('iv-auto').addEventListener('click',startAuto);
+    $('iv-new').addEventListener('click',function(){ stopAuto(); newKit(); fitOn=false; select(S.sel); say('New apparatus on the bench: a different wire, lamp and diode. All readings cleared.'); });
+    $('iv-tabs').addEventListener('click',function(e){ var t=e.target.closest('.iv-tab'); if(t) select(t.getAttribute('data-k')); });
+    $('iv-fit').addEventListener('click',function(){ fitOn=!fitOn; lastNew=null; renderAll(); });
+    $('iv-showr').addEventListener('change',function(){ showR=this.checked; lastNew=null; renderTable(); });
+    $('iv-clear').addEventListener('click',function(){ stopAuto(); D[S.sel]=[]; lastNew=null; renderAll(); say('Readings for the '+CFG[S.sel].name.toLowerCase()+' cleared.'); });
+    $('iv-tbody').addEventListener('click',function(e){ var b=e.target.closest('.iv-x'); if(!b) return; stopAuto(); D[S.sel].splice(parseInt(b.getAttribute('data-i'),10),1); lastNew=null; renderAll(); });
+    $('iv-copy').addEventListener('click',function(){
+      var c=CFG[S.sel], t='p.d. / V\tcurrent / '+c.iu+(showR?'\tresistance / \u03A9':'')+'\n';
+      D[S.sel].forEach(function(p){ t+=p.V.toFixed(2)+'\t'+p.I.toFixed(c.idp)+(showR?'\t'+(p.I===0?'':resOf(p).replace('\u2212','-')):'')+'\n'; });
+      function ok(){ say('Table copied. Paste it into a spreadsheet.'); }
+      function old(){ var ta=document.createElement('textarea'); ta.value=t; ta.setAttribute('readonly',''); ta.style.cssText='position:absolute;left:-9999px;top:0;'; root.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); ok(); }catch(err){ say('Copying is blocked in this browser. Select the table and copy it by hand.'); } root.removeChild(ta); }
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok,old); else old();
+    });
+    $('iv-png').addEventListener('click',function(){ drawGraph(); var a=document.createElement('a'); a.download='iv-graph-'+S.sel+'.png'; a.href=grCv.toDataURL('image/png'); root.appendChild(a); a.click(); root.removeChild(a); });
+
+    // ------------------------------------------------------------------
+    //  Main loop
+    // ------------------------------------------------------------------
+    var last=0, tempTxt='';
+    function frame(now){
+      var dt=clamp((now-last)/1000,0,0.1); last=now;
+      if(AUTO) runAuto(now);
+      step(dt,now);
+      var t = S.sel==='wire' ? 'wire at '+Math.round(S.Tw-273)+' \u00B0C'
+            : S.sel==='lamp' ? 'filament at '+(S.Tl<373?Math.round(S.Tl-273):Math.round((S.Tl-273)/10)*10)+' \u00B0C' : '';
+      if(t!==tempTxt){ tempTxt=t; $('iv-temp').textContent=t; }
+      drawCircuit(dt);
+      if(dirty){ dirty=false; drawGraph(); }
+      requestAnimationFrame(frame);
+    }
+    function redraw(){ S.lcd=null; dirty=true; }
+    if(window.ResizeObserver){ var ro=new ResizeObserver(redraw); ro.observe(root); } else window.addEventListener('resize',redraw);
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
+
+    newKit(); select('wire');
+    requestAnimationFrame(function(t){ last=t; frame(t); });
+  })();
+  </script>
+</div>
+<!-- ======================= END EMBED ROOT ======================= -->
+
+</body>
+</html>
