@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resistance and the shape of a conductor</title>
+</head>
+<body style="margin:0;background:#e4e9f1;">
+
+<!-- ================================================================== -->
+<!--  EMBED ROOT: everything below is scoped under #djp-rshape-sim       -->
+<!-- ================================================================== -->
+<div id="djp-rshape-sim">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&display=swap');
+
+#djp-rshape-sim{
+  --bg:#edf1f7; --card:#ffffff; --line:#cbd5e3; --line-soft:#e3e9f2;
+  --ink:#101a2e; --soft:#46546d;
+  --acc:#0b57d0; --acc-dk:#083f99; --wash:#e3ecfc;
+  --navy:#0f1b33; --good:#0a6b3c; --warn:#9a4a00;
+  box-sizing:border-box; width:100%; min-height:520px; text-align:left;
+  background:var(--bg); color:var(--ink);
+  font-family:'Lexend',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:14px; line-height:1.45; font-weight:400;
+  border:1px solid var(--line); border-radius:12px; overflow:hidden;
+  container-type:inline-size;
+}
+#djp-rshape-sim *{ box-sizing:border-box; }
+#djp-rshape-sim .rz-q{ font-family:'Cambria Math',Cambria,'Times New Roman',Times,serif; font-style:italic; font-weight:400; font-size:1.1em; }
+#djp-rshape-sim .rz-off{ display:none !important; }
+#djp-rshape-sim sup{ font-size:0.72em; line-height:0; vertical-align:super; position:static; }
+#djp-rshape-sim b{ color:inherit; }
+
+/* ---- header ---- */
+#djp-rshape-sim .rz-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; padding:18px 20px 14px; background:var(--card); border-bottom:1px solid var(--line); }
+#djp-rshape-sim .rz-title{ margin:0; padding:0; font-family:inherit; font-size:23px; line-height:1.15; font-weight:600; letter-spacing:-0.015em; color:var(--ink); text-transform:none; }
+#djp-rshape-sim .rz-sub{ margin:5px 0 0; padding:0; font-size:14px; line-height:1.4; color:var(--soft); max-width:62ch; }
+
+/* ---- buttons ---- */
+#djp-rshape-sim .rz-btn{
+  appearance:none; -webkit-appearance:none; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  margin:0; width:auto; min-height:38px; padding:8px 13px;
+  font-family:inherit; font-size:14px; font-weight:500; line-height:1.15; font-style:normal; letter-spacing:0; text-transform:none; text-shadow:none; text-decoration:none;
+  color:var(--ink); background:var(--card); border:1px solid #9eabc0; border-radius:8px; box-shadow:none; cursor:pointer;
+}
+#djp-rshape-sim .rz-btn:hover{ border-color:var(--acc); color:var(--acc-dk); }
+#djp-rshape-sim .rz-btn:active{ transform:translateY(1px); }
+#djp-rshape-sim .rz-btn:focus-visible, #djp-rshape-sim .rz-range:focus-visible, #djp-rshape-sim .rz-check input:focus-visible{ outline:3px solid #f5b400; outline-offset:2px; }
+#djp-rshape-sim .rz-btn.rz-go{ background:var(--acc); border-color:var(--acc); color:#fff; }
+#djp-rshape-sim .rz-btn.rz-go:hover{ background:var(--acc-dk); border-color:var(--acc-dk); color:#fff; }
+#djp-rshape-sim .rz-btn.rz-sm{ min-height:32px; padding:5px 11px; font-size:13px; }
+
+/* ---- layout ---- */
+#djp-rshape-sim .rz-grid{ display:grid; grid-template-columns:minmax(0,1.75fr) minmax(0,1fr); gap:12px; padding:14px; align-items:start; }
+#djp-rshape-sim .rz-col{ display:flex; flex-direction:column; gap:12px; min-width:0; }
+#djp-rshape-sim .rz-card{ background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; }
+#djp-rshape-sim .rz-h3{ margin:0 0 8px; padding:0; font-family:inherit; font-size:15px; line-height:1.25; font-weight:600; color:var(--ink); text-transform:none; letter-spacing:0; }
+
+/* ---- stage ---- */
+#djp-rshape-sim .rz-stage{ padding:0; overflow:hidden; }
+#djp-rshape-sim .rz-stage canvas{ display:block; width:100%; height:330px; touch-action:pan-y; }
+#djp-rshape-sim .rz-say{ margin:0; padding:10px 14px; min-height:62px; font-size:14px; line-height:1.45; color:var(--ink); border-top:1px solid var(--line-soft); background:#f7f9fc; }
+#djp-rshape-sim .rz-note{ margin:0; padding:0 14px 10px; font-size:12.5px; line-height:1.4; color:var(--soft); background:#f7f9fc; }
+
+/* ---- resistance readout ---- */
+#djp-rshape-sim .rz-read{ background:var(--navy); color:#fff; border-radius:10px; padding:14px 16px 14px; border:1px solid var(--navy); }
+#djp-rshape-sim .rz-rlab{ font-size:13px; color:#b7c6e2; font-weight:500; }
+#djp-rshape-sim .rz-rval{ display:flex; align-items:baseline; gap:9px; margin-top:2px; font-size:46px; line-height:1.1; font-weight:600; letter-spacing:-0.02em; font-variant-numeric:tabular-nums; white-space:nowrap; }
+#djp-rshape-sim .rz-rval span{ font-size:30px; font-weight:500; color:#9cc2ff; letter-spacing:0; }
+#djp-rshape-sim .rz-rsub{ margin-top:3px; font-size:13px; color:#d6e0f3; }
+#djp-rshape-sim .rz-gauge{ position:relative; height:10px; margin:16px 0 0; border-radius:5px; background:linear-gradient(90deg,#2a6fe0,#34b3a0 45%,#f0b429 72%,#e8603c); }
+#djp-rshape-sim .rz-mark{ position:absolute; top:-5px; width:4px; height:20px; margin-left:-2px; border-radius:2px; background:#fff; box-shadow:0 0 0 2px var(--navy); transition:left .18s ease-out; }
+#djp-rshape-sim .rz-flag{ position:absolute; top:-9px; width:0; height:0; margin-left:-7px; border-left:7px solid transparent; border-right:7px solid transparent; border-top:9px solid #ffd257; }
+#djp-rshape-sim .rz-ticks{ position:relative; height:17px; margin-top:6px; font-size:11px; color:#b7c6e2; font-variant-numeric:tabular-nums; }
+#djp-rshape-sim .rz-ticks span{ position:absolute; top:0; transform:translateX(-50%); white-space:nowrap; }
+
+/* ---- controls ---- */
+#djp-rshape-sim .rz-metals{ display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:6px; }
+#djp-rshape-sim .rz-metal{
+  appearance:none; -webkit-appearance:none; margin:0; width:auto; min-height:58px; padding:7px 2px 6px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px;
+  font-family:inherit; font-size:12.5px; font-weight:500; line-height:1.1; letter-spacing:0; text-transform:none; text-shadow:none; white-space:nowrap;
+  color:var(--ink); background:var(--card); border:1px solid #9eabc0; border-radius:8px; box-shadow:none; cursor:pointer;
+}
+#djp-rshape-sim .rz-metal:hover{ border-color:var(--acc); }
+#djp-rshape-sim .rz-metal:focus-visible{ outline:3px solid #f5b400; outline-offset:2px; }
+#djp-rshape-sim .rz-metal[aria-pressed="true"]{ border-color:var(--acc); background:var(--wash); box-shadow:inset 0 0 0 1px var(--acc); }
+#djp-rshape-sim .rz-sw{ width:34px; height:14px; border-radius:7px; border:1px solid rgba(16,26,46,.45); }
+#djp-rshape-sim .rz-slide{ margin-top:12px; }
+#djp-rshape-sim .rz-srow{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px; }
+#djp-rshape-sim .rz-slab{ font-weight:600; font-size:14.5px; }
+#djp-rshape-sim .rz-sval{ font-variant-numeric:tabular-nums; font-weight:600; font-size:15px; white-space:nowrap; }
+#djp-rshape-sim .rz-dial{ display:flex; align-items:center; gap:9px; }
+#djp-rshape-sim .rz-range{ -webkit-appearance:none; appearance:none; flex:1 1 auto; min-width:0; width:100%; height:30px; margin:0; padding:0; background:transparent; border:none; cursor:pointer; }
+#djp-rshape-sim .rz-range::-webkit-slider-runnable-track{ height:8px; border-radius:4px; background:linear-gradient(90deg,#cddcf5,#0b57d0); }
+#djp-rshape-sim .rz-range::-moz-range-track{ height:8px; border-radius:4px; background:linear-gradient(90deg,#cddcf5,#0b57d0); }
+#djp-rshape-sim .rz-range::-webkit-slider-thumb{ -webkit-appearance:none; appearance:none; width:26px; height:26px; margin-top:-9px; border-radius:50%; background:#fff; border:3px solid var(--acc); box-shadow:0 1px 3px rgba(10,30,80,.35); }
+#djp-rshape-sim .rz-range::-moz-range-thumb{ width:20px; height:20px; border-radius:50%; background:#fff; border:3px solid var(--acc); box-shadow:0 1px 3px rgba(10,30,80,.35); }
+
+/* ---- comparison, calculation, target ---- */
+#djp-rshape-sim .rz-rows{ display:grid; grid-template-columns:auto 1fr; gap:4px 0; margin:0; font-size:14px; }
+#djp-rshape-sim .rz-rows dt{ margin:0; padding:0 12px 0 0; color:var(--soft); font-weight:400; }
+#djp-rshape-sim .rz-rows dd{ margin:0; padding:0; text-align:right; font-variant-numeric:tabular-nums; font-weight:500; }
+#djp-rshape-sim .rz-rows .rz-big{ padding-top:6px; border-top:1px solid var(--line-soft); font-weight:600; color:var(--ink); }
+#djp-rshape-sim .rz-rows dd.rz-big{ font-size:16px; color:var(--acc-dk); }
+#djp-rshape-sim .rz-ref{ margin:0 0 8px; font-size:12.5px; color:var(--soft); }
+#djp-rshape-sim .rz-foot{ margin-top:10px; }
+#djp-rshape-sim .rz-check{ display:flex; align-items:center; gap:8px; margin:0; font-size:15px; font-weight:600; color:var(--ink); cursor:pointer; }
+#djp-rshape-sim .rz-check input{ width:17px; height:17px; margin:0; accent-color:var(--acc); }
+#djp-rshape-sim .rz-calc{ margin:9px 0 0; padding:0; font-size:14px; line-height:1.9; font-variant-numeric:tabular-nums; }
+#djp-rshape-sim .rz-calc div{ white-space:nowrap; overflow-x:auto; }
+#djp-rshape-sim .rz-calc .rz-res{ margin-top:4px; padding-top:4px; border-top:1px solid var(--line-soft); font-weight:600; }
+#djp-rshape-sim .rz-tmsg{ margin:0 0 9px; font-size:14px; line-height:1.45; }
+#djp-rshape-sim .rz-tmsg b{ font-weight:600; }
+#djp-rshape-sim .rz-tmsg.rz-hit{ color:var(--good); font-weight:500; }
+
+@container (max-width:860px){
+  #djp-rshape-sim .rz-grid{ grid-template-columns:minmax(0,1fr); }
+  #djp-rshape-sim .rz-col{ display:contents; }
+  #djp-rshape-sim .rz-stage{ order:1; } #djp-rshape-sim .rz-read{ order:2; } #djp-rshape-sim .rz-ctrl{ order:3; }
+  #djp-rshape-sim .rz-comp{ order:4; } #djp-rshape-sim .rz-calcbox{ order:5; } #djp-rshape-sim .rz-target{ order:6; }
+}
+@container (max-width:560px){
+  #djp-rshape-sim .rz-head{ flex-direction:column; align-items:flex-start; padding:14px 14px 12px; }
+  #djp-rshape-sim .rz-title{ font-size:20px; }
+  #djp-rshape-sim .rz-grid{ padding:8px; gap:8px; }
+  #djp-rshape-sim .rz-stage canvas{ height:250px; }
+  #djp-rshape-sim .rz-metals{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+  #djp-rshape-sim .rz-rval{ font-size:40px; }
+  #djp-rshape-sim .rz-say{ min-height:84px; }
+}
+  </style>
+
+  <div class="rz-head">
+    <div>
+      <h2 class="rz-title">Resistance and the shape of a conductor</h2>
+      <p class="rz-sub">Stretch the cylinder, make it fatter or thinner, or swap the metal, and watch what happens to its resistance.</p>
+    </div>
+    <button type="button" class="rz-btn" id="rz-reset">Start again</button>
+  </div>
+
+  <div class="rz-grid">
+    <div class="rz-col">
+      <div class="rz-card rz-stage">
+        <canvas id="rz-cv" role="img" aria-label="A metal cylinder with a wire connected to each end. Its length and diameter follow the sliders."></canvas>
+        <p class="rz-say" id="rz-say" aria-live="polite"></p>
+        <p class="rz-note" id="rz-note"></p>
+      </div>
+
+      <div class="rz-card rz-ctrl">
+        <h3 class="rz-h3">Metal</h3>
+        <div class="rz-metals" id="rz-metals"></div>
+
+        <div class="rz-slide">
+          <div class="rz-srow"><label class="rz-slab" for="rz-len" style="margin:0;">Length</label><span class="rz-sval" id="rz-lenv"></span></div>
+          <div class="rz-dial">
+            <button type="button" class="rz-btn rz-sm" id="rz-lh">Halve</button>
+            <input type="range" class="rz-range" id="rz-len" min="0.1" max="3" step="0.01" value="1">
+            <button type="button" class="rz-btn rz-sm" id="rz-ld">Double</button>
+          </div>
+        </div>
+        <div class="rz-slide">
+          <div class="rz-srow"><label class="rz-slab" for="rz-dia" style="margin:0;">Diameter</label><span class="rz-sval" id="rz-diav"></span></div>
+          <div class="rz-dial">
+            <button type="button" class="rz-btn rz-sm" id="rz-dh">Halve</button>
+            <input type="range" class="rz-range" id="rz-dia" min="0.1" max="2" step="0.01" value="1">
+            <button type="button" class="rz-btn rz-sm" id="rz-dd">Double</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rz-col">
+      <div class="rz-read">
+        <div class="rz-rlab">Resistance of the cylinder</div>
+        <div class="rz-rval"><b id="rz-r" style="font-weight:600;">0.0214</b><span>&#937;</span></div>
+        <div class="rz-rsub" id="rz-rsub"></div>
+        <div class="rz-gauge" aria-hidden="true"><div class="rz-flag rz-off" id="rz-flag"></div><div class="rz-mark" id="rz-mark"></div></div>
+        <div class="rz-ticks" aria-hidden="true" id="rz-ticks"></div>
+      </div>
+
+      <div class="rz-card rz-comp">
+        <h3 class="rz-h3">What changed?</h3>
+        <p class="rz-ref" id="rz-ref"></p>
+        <dl class="rz-rows" id="rz-rows"></dl>
+        <div class="rz-foot"><button type="button" class="rz-btn rz-sm" id="rz-setref">Compare from this shape</button></div>
+      </div>
+
+      <div class="rz-card rz-calcbox">
+        <label class="rz-check"><input type="checkbox" id="rz-showcalc" checked> Show the calculation</label>
+        <div class="rz-calc" id="rz-calc"></div>
+      </div>
+
+      <div class="rz-card rz-target">
+        <h3 class="rz-h3">Hit a target</h3>
+        <p class="rz-tmsg" id="rz-tmsg"></p>
+        <button type="button" class="rz-btn rz-sm rz-go" id="rz-tnew">Give me a target</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function(){
+"use strict";
+var root=document.getElementById('djp-rshape-sim'); if(!root) return;
+var $=function(id){ return root.querySelector('#'+id); };
+var RM=window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+var SHOW_CALC=true;                        // set to false to start with the calculation hidden
+var INK='#101a2e', TAU=6.2832, LMAX=3, LMIN=0.1, DMAX=2, DMIN=0.1;
+var FONT='Lexend,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';
+
+// resistivities at 20 degrees C, in ohm metres
+var METALS=[
+  {name:'Copper',    rho:1.68e-8, col:[205,120,56]},
+  {name:'Silver',    rho:1.59e-8, col:[226,229,234]},
+  {name:'Gold',      rho:2.44e-8, col:[228,180,54]},
+  {name:'Aluminium', rho:2.65e-8, col:[184,194,206]},
+  {name:'Tungsten',  rho:5.60e-8, col:[96,106,124]},
+  {name:'Iron',      rho:9.71e-8, col:[128,116,108]},
+  {name:'Nichrome',  rho:1.10e-6, col:[160,156,146]}
+];
+var TARGETS=[0.05,0.1,0.22,0.47,1,2.2,4.7,10,22,47,100];
+
+var S={m:0, l:1, d:1, ref:{m:0,l:1,d:1}, target:null, hit:false};
+var dirty=true;
+
+function clamp(x,a,b){ return x<a?a:(x>b?b:x); }
+function minus(s){ return String(s).replace(/-/g,'\u2212'); }
+function area(d){ return Math.PI*Math.pow(d*1e-3/2,2); }             // d in mm, A in square metres
+function res(m,l,d){ return METALS[m].rho*l/area(d); }
+function sf3(x){ var s=x.toPrecision(3); return s.indexOf('e')>=0? String(Number(s)) : s; }
+function sci(x,n){ var e=Math.floor(Math.log10(Math.abs(x))), m=x/Math.pow(10,e); if(Number(m.toFixed(n-1))>=10){ m/=10; e++; }
+  return m.toFixed(n-1)+' \u00D7 10<sup>'+minus(e)+'</sup>'; }
+function fac(x){ return Math.abs(x-1)<0.005? 'no change' : (x>1? '\u00D7 '+sf3(x) : '\u00F7 '+sf3(1/x)); }
+function num2(x){ return Number(x.toPrecision(2)).toLocaleString('en-GB'); }
+function times(x){ return num2(x)+' times'; }
+function shade(c,f){ var t=f<0?0:255, a=Math.abs(f); return 'rgb('+Math.round(c[0]+(t-c[0])*a)+','+Math.round(c[1]+(t-c[1])*a)+','+Math.round(c[2]+(t-c[2])*a)+')'; }
+function lower(i){ return METALS[i].name.toLowerCase(); }
+
+// ---- canvas ----
+var cv=$('rz-cv');
+function hid(cv){
+  var dpr=Math.min(3,window.devicePixelRatio||1), w=cv.clientWidth, h=cv.clientHeight, ctx=cv.getContext('2d');
+  if(cv._w!==w || cv._h!==h || cv._d!==dpr){ cv.width=Math.max(1,Math.round(w*dpr)); cv.height=Math.max(1,Math.round(h*dpr)); cv._w=w; cv._h=h; cv._d=dpr; }
+  ctx.setTransform(dpr,0,0,dpr,0,0); return {ctx:ctx,w:w,h:h};
+}
+function geom(W,H){
+  var pad=Math.max(58,W*0.12), maxLen=W-2*pad, ryMax=H*0.30, Lpx=Math.max(12,maxLen*S.l/LMAX), ry=Math.max(2.5,ryMax*S.d/DMAX);
+  return {cy:H*0.45, maxLen:maxLen, ryMax:ryMax, Lpx:Lpx, ry:ry, rx:Math.max(1.5,ry*0.3), x0:(W-Lpx)/2, x1:(W+Lpx)/2};
+}
+// free electrons: u runs along the cylinder, v across it
+var EL=[], i;
+for(i=0;i<300;i++) EL.push({u:Math.random(), v:Math.random()*2-1, p:Math.random()*TAU});
+
+function label(c,t,x,y,al,font,col){ c.font=font||('500 13px '+FONT); c.fillStyle=col||INK; c.textAlign=al||'center'; c.textBaseline='alphabetic'; c.fillText(t,x,y); }
+function draw(dt,now){
+  var d=hid(cv), c=d.ctx, W=d.w, H=d.h; if(!W) return;
+  var g=geom(W,H), cy=g.cy, ry=g.ry, rx=g.rx, x0=g.x0, x1=g.x1, col=METALS[S.m].col, k, e, n, gr, t;
+  gr=c.createLinearGradient(0,0,0,H); gr.addColorStop(0,'#eef3fa'); gr.addColorStop(1,'#d7e1ee'); c.fillStyle=gr; c.fillRect(0,0,W,H);
+
+  // shadow on the bench
+  c.fillStyle='rgba(22,40,80,0.13)'; c.beginPath(); c.ellipse((x0+x1)/2+4,cy+ry+15,g.Lpx/2+rx+6,6+ry*0.07,0,0,TAU); c.fill();
+
+  // connecting wires: bare ends soldered to the two faces
+  c.lineCap='round';
+  c.strokeStyle='#c22f3d'; c.lineWidth=7; c.beginPath(); c.moveTo(-6,cy); c.lineTo(x0-rx-20,cy); c.stroke();
+  c.strokeStyle='#27324a'; c.beginPath(); c.moveTo(W+6,cy); c.lineTo(x1+rx+20,cy); c.stroke();
+  c.strokeStyle='#b9773c'; c.lineWidth=3; c.beginPath(); c.moveTo(x0-rx-20,cy); c.lineTo(x0-rx+1,cy); c.stroke();
+  c.lineCap='butt';
+
+  // cylinder body
+  c.beginPath(); c.moveTo(x0,cy-ry); c.lineTo(x1,cy-ry); c.ellipse(x1,cy,rx,ry,0,-TAU/4,TAU/4); c.lineTo(x0,cy+ry); c.ellipse(x0,cy,rx,ry,0,TAU/4,TAU*0.75); c.closePath();
+  gr=c.createLinearGradient(0,cy-ry,0,cy+ry);
+  gr.addColorStop(0,shade(col,-0.3)); gr.addColorStop(0.2,shade(col,0.5)); gr.addColorStop(0.42,shade(col,0.04)); gr.addColorStop(0.8,shade(col,-0.2)); gr.addColorStop(1,shade(col,-0.42));
+  c.fillStyle=gr; c.fill(); c.strokeStyle=shade(col,-0.62); c.lineWidth=1.2; c.stroke();
+
+  // free electrons drifting through the metal
+  c.save(); c.clip();
+  n=clamp(Math.round(g.Lpx*2*ry/430),3,EL.length);
+  for(k=0;k<n;k++){ e=EL[k]; if(!RM){ e.u+=dt*30/g.Lpx; if(e.u>=1) e.u-=1; }
+    t=cy+(e.v*0.82+0.1*Math.sin(now/420+e.p))*Math.max(0,ry-3.2);
+    c.beginPath(); c.arc(x0+e.u*g.Lpx,t,2.3,0,TAU); c.fillStyle='#0b57d0'; c.fill(); c.lineWidth=0.9; c.strokeStyle='rgba(255,255,255,0.85)'; c.stroke(); }
+  c.restore();
+
+  // the end face nearest to us
+  c.beginPath(); c.ellipse(x1,cy,rx,ry,0,0,TAU);
+  gr=c.createLinearGradient(0,cy-ry,0,cy+ry); gr.addColorStop(0,shade(col,0.42)); gr.addColorStop(1,shade(col,-0.12));
+  c.fillStyle=gr; c.fill(); c.strokeStyle=shade(col,-0.62); c.lineWidth=1.2; c.stroke();
+  c.lineCap='round'; c.strokeStyle='#b9773c'; c.lineWidth=3; c.beginPath(); c.moveTo(x1,cy); c.lineTo(x1+rx+20,cy); c.stroke(); c.lineCap='butt';
+  c.fillStyle='#8f9bb0'; c.beginPath(); c.arc(x1,cy,Math.min(3.4,ry*0.8),0,TAU); c.fill();
+
+  // length marker
+  var ly=cy+ry+33; c.strokeStyle=INK; c.fillStyle=INK; c.lineWidth=1.3;
+  c.beginPath(); c.moveTo(x0,ly); c.lineTo(x1,ly); c.moveTo(x0,ly-6); c.lineTo(x0,ly+6); c.moveTo(x1,ly-6); c.lineTo(x1,ly+6); c.stroke();
+  if(g.Lpx>26){ c.beginPath(); c.moveTo(x0,ly); c.lineTo(x0+8,ly-4); c.lineTo(x0+8,ly+4); c.closePath(); c.fill(); c.beginPath(); c.moveTo(x1,ly); c.lineTo(x1-8,ly-4); c.lineTo(x1-8,ly+4); c.closePath(); c.fill(); }
+  label(c,'length '+S.l.toFixed(2)+' m',(x0+x1)/2,ly+21,'center','500 13.5px '+FONT);
+
+  // diameter marker
+  var dx=x1+rx+10, txt='diameter '+S.d.toFixed(2)+' mm', tw;
+  c.beginPath(); c.moveTo(dx,cy-ry); c.lineTo(dx,cy+ry); c.moveTo(dx-5,cy-ry); c.lineTo(dx+5,cy-ry); c.moveTo(dx-5,cy+ry); c.lineTo(dx+5,cy+ry); c.stroke();
+  c.font='500 13.5px '+FONT; tw=c.measureText(txt).width;
+  label(c,txt,clamp(dx,tw/2+8,W-tw/2-8),cy-ry-12,'center','500 13.5px '+FONT);
+}
+
+// ---- panels ----
+function sayDefault(){ return 'Use the sliders, or drag the end or the top edge of the cylinder. The blue dots are free electrons drifting through the metal.'; }
+function render(msg){
+  var R=res(S.m,S.l,S.d), r0=S.ref, R0=res(r0.m,r0.l,r0.d), A=area(S.d), M=METALS[S.m], pos, h, q;
+  $('rz-len').value=S.l; $('rz-dia').value=S.d;
+  $('rz-lenv').textContent=S.l.toFixed(2)+' m'; $('rz-diav').textContent=S.d.toFixed(2)+' mm';
+  $('rz-r').textContent=sf3(R);
+  $('rz-rsub').textContent=lower(S.m)+', '+S.l.toFixed(2)+' m long, '+S.d.toFixed(2)+' mm across';
+  pos=clamp((Math.log10(R)+4)/7,0,1); $('rz-mark').style.left=(pos*100)+'%';
+  Array.prototype.forEach.call($('rz-metals').children,function(b,j){ b.setAttribute('aria-pressed',j===S.m); });
+
+  // comparison with the reference shape
+  $('rz-ref').textContent='Compared with '+lower(r0.m)+', '+r0.l.toFixed(2)+' m long and '+r0.d.toFixed(2)+' mm across:';
+  $('rz-rows').innerHTML=
+    '<dt>Length</dt><dd>'+fac(S.l/r0.l)+'</dd>'+
+    '<dt>Diameter</dt><dd>'+fac(S.d/r0.d)+'</dd>'+
+    '<dt>Area of cross-section</dt><dd>'+fac(Math.pow(S.d/r0.d,2))+'</dd>'+
+    '<dt>Metal</dt><dd>'+(S.m===r0.m?'no change':lower(S.m)+', resistivity '+fac(M.rho/METALS[r0.m].rho))+'</dd>'+
+    '<dt class="rz-big">Resistance</dt><dd class="rz-big">'+fac(R/R0)+'</dd>';
+
+  // calculation
+  $('rz-calc').innerHTML=
+    '<div>resistivity of '+lower(S.m)+', <span class="rz-q">\u03C1</span> = '+sci(M.rho,3)+' \u03A9 m</div>'+
+    '<div>length, <span class="rz-q">l</span> = '+S.l.toFixed(2)+' m</div>'+
+    '<div>radius, <span class="rz-q">r</span> = '+(S.d/2).toFixed(3)+' mm = '+sci(S.d*1e-3/2,3)+' m</div>'+
+    '<div>area, <span class="rz-q">A</span> = \u03C0<span class="rz-q">r</span><sup>2</sup> = '+sci(A,3)+' m<sup>2</sup></div>'+
+    '<div class="rz-res"><span class="rz-q">R</span> = <span class="rz-q">\u03C1 l</span> / <span class="rz-q">A</span> = '+sf3(R)+' \u03A9</div>';
+
+  // target
+  var tm=$('rz-tmsg'), fl=$('rz-flag');
+  fl.classList.toggle('rz-off',S.target===null); tm.classList.remove('rz-hit');
+  if(S.target===null) tm.innerHTML='Can you build a cylinder with a resistance you are asked for? You will need to choose the metal as well as the shape.';
+  else { fl.style.left=(clamp((Math.log10(S.target)+4)/7,0,1)*100)+'%'; q=R/S.target; h='Make <b>'+sf3(S.target)+' \u03A9</b>, to within 2%. ';
+    if(Math.abs(q-1)<=0.02){ S.hit=true; tm.classList.add('rz-hit'); h='Target hit: '+sf3(R)+' \u03A9 using '+lower(S.m)+'. Can you do it again with a different metal?'; }
+    else if(q<1) h+= q>0.8? 'Close: yours is '+Math.round((1-q)*100)+'% too small.' : 'Yours is about '+times(1/q)+' too small.';
+    else h+= q<1.25? 'Close: yours is '+Math.round((q-1)*100)+'% too big.' : 'Yours is about '+times(q)+' too big.';
+    tm.innerHTML=h; }
+  $('rz-tnew').textContent=S.target===null?'Give me a target':'New target';
+
+  if(msg!==undefined) $('rz-say').textContent=msg||sayDefault();
+  dirty=true;
+}
+function note(){
+  var W=cv.clientWidth, H=cv.clientHeight, g, k; if(!W) return;
+  g=geom(W,H); k=(2*g.ryMax/(DMAX*1e-3))/(g.maxLen/LMAX);
+  $('rz-note').textContent='Not to scale: the diameter is drawn about '+Math.round(k/50)*50+' times bigger than the length, so that you can see both change.';
+}
+
+// ---- changing things ----
+function setLen(v,why){
+  var old=S.l, want=v; v=clamp(Math.round(v*100)/100,LMIN,LMAX); S.l=v;
+  if(why==='btn' && v!==old && Math.abs(v-want)>0.006){ render('This model stops at '+v.toFixed(2)+' m, so the length changed by less than a factor of 2. Check "What changed?" for the real factor.'); return; }
+  render(v===old? (why==='btn'? 'The cylinder is already as '+(old>=LMAX?'long':'short')+' as this model allows.' : undefined)
+    : v>old? 'Longer: each electron has further to travel and collides with more ions on the way, so the resistance goes up. Twice the length gives twice the resistance.'
+    : 'Shorter: each electron has less far to travel and makes fewer collisions on the way, so the resistance goes down. Half the length gives half the resistance.');
+}
+function setDia(v,why){
+  var old=S.d, want=v; v=clamp(Math.round(v*100)/100,DMIN,DMAX); S.d=v;
+  if(why==='btn' && v!==old && Math.abs(v-want)>0.006){ render('This model stops at '+v.toFixed(2)+' mm, so the diameter changed by less than a factor of 2. Check "What changed?" for the real factor.'); return; }
+  render(v===old? (why==='btn'? 'The cylinder is already as '+(old>=DMAX?'wide':'narrow')+' as this model allows.' : undefined)
+    : v>old? 'Wider: there is more room for electrons to flow side by side, so the resistance goes down. Twice the diameter gives four times the area, and only a quarter of the resistance.'
+    : 'Narrower: there is less room for electrons to flow side by side, so the resistance goes up. Half the diameter gives a quarter of the area, and four times the resistance.');
+}
+function setMetal(j){
+  var old=S.m, q; if(j===old) return; S.m=j; q=METALS[j].rho/METALS[old].rho;
+  render('Same shape, different metal. '+(q>0.5
+    ? 'The resistivity of '+lower(j)+' is '+times(q)+' that of '+lower(old)+', so the resistance is now '+times(q)+' what it was.'
+    : 'The resistivity of '+lower(old)+' is '+times(1/q)+' that of '+lower(j)+', so the resistance has dropped to 1/'+num2(1/q)+' of what it was.'));
+}
+
+// metal buttons
+METALS.forEach(function(M,j){
+  var b=document.createElement('button'); b.type='button'; b.className='rz-metal'; b.setAttribute('aria-pressed','false');
+  b.innerHTML='<span class="rz-sw" style="background:linear-gradient(180deg,'+shade(M.col,0.45)+','+shade(M.col,0)+' 55%,'+shade(M.col,-0.3)+')"></span>'+M.name;
+  b.addEventListener('click',function(){ setMetal(j); });
+  $('rz-metals').appendChild(b);
+});
+$('rz-ticks').innerHTML=[0.001,0.01,0.1,1,10,100].map(function(v){ return '<span style="left:'+((Math.log10(v)+4)/7*100)+'%">'+v+(v===1?' \u03A9':'')+'</span>'; }).join('');
+
+$('rz-len').addEventListener('input',function(){ setLen(parseFloat(this.value)); });
+$('rz-dia').addEventListener('input',function(){ setDia(parseFloat(this.value)); });
+$('rz-lh').addEventListener('click',function(){ setLen(S.l/2,'btn'); });
+$('rz-ld').addEventListener('click',function(){ setLen(S.l*2,'btn'); });
+$('rz-dh').addEventListener('click',function(){ setDia(S.d/2,'btn'); });
+$('rz-dd').addEventListener('click',function(){ setDia(S.d*2,'btn'); });
+$('rz-setref').addEventListener('click',function(){ S.ref={m:S.m,l:S.l,d:S.d}; render('Comparison restarted. Every change from now on is measured against this cylinder.'); });
+$('rz-reset').addEventListener('click',function(){ S.m=0; S.l=1; S.d=1; S.ref={m:0,l:1,d:1}; S.target=null; S.hit=false; render(''); });
+$('rz-showcalc').addEventListener('change',function(){ $('rz-calc').classList.toggle('rz-off',!this.checked); });
+$('rz-tnew').addEventListener('click',function(){
+  var R=res(S.m,S.l,S.d), t; do{ t=TARGETS[Math.floor(Math.random()*TARGETS.length)]; } while(t===S.target || Math.abs(R/t-1)<0.3);
+  S.target=t; S.hit=false; render('New target: the yellow flag on the scale shows where '+sf3(t)+' \u03A9 is.');
+});
+
+// dragging the cylinder itself
+var drag=null;
+function where(e){ var r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top, g:geom(cv.clientWidth,cv.clientHeight), W:cv.clientWidth}; }
+function grip(p){ var g=p.g;
+  if(Math.abs(p.x-g.x1)<=Math.max(18,g.rx+10) && Math.abs(p.y-g.cy)<=g.ry+16) return 'len';
+  if(p.x>g.x0-6 && p.x<g.x1-8 && Math.abs(Math.abs(p.y-g.cy)-g.ry)<=12) return 'dia';
+  return null; }
+function pull(p){ if(drag==='len') setLen(2*Math.abs(p.x-p.W/2)/p.g.maxLen*LMAX); else setDia(Math.abs(p.y-p.g.cy)/p.g.ryMax*DMAX); }
+cv.addEventListener('pointerdown',function(e){ var p=where(e); drag=grip(p); if(!drag) return; try{ cv.setPointerCapture(e.pointerId); }catch(err){} e.preventDefault(); });
+cv.addEventListener('pointermove',function(e){ var p=where(e), k=drag||grip(p); cv.style.cursor=k==='len'?'ew-resize':(k==='dia'?'ns-resize':'default'); if(drag) pull(p); });
+['pointerup','pointercancel'].forEach(function(n){ cv.addEventListener(n,function(){ drag=null; }); });
+
+// ---- loop ----
+var last=0;
+function frame(now){
+  var dt=clamp((now-last)/1000,0,0.1); last=now;
+  if(!RM || dirty){ dirty=false; draw(dt,now); }
+  requestAnimationFrame(frame);
+}
+function resized(){ note(); dirty=true; }
+if(window.ResizeObserver){ new ResizeObserver(resized).observe(root); } else window.addEventListener('resize',resized);
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ dirty=true; });
+
+if(!SHOW_CALC){ $('rz-showcalc').checked=false; $('rz-calc').classList.add('rz-off'); }
+render(''); note();
+requestAnimationFrame(function(t){ last=t; frame(t); });
+})();
+  </script>
+</div>
+<!-- ======================= END EMBED ROOT ======================= -->
+
+</body>
+</html>
