@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en-GB" style="height:100%">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bayes' table</title>
+</head>
+<body style="margin:0;height:100%">
+<style>
+#bayesTable{
+  --ink:#16233F;--muted:#55637D;--mist:#E8EEF6;--line:#C6D3E4;--teal:#0E6B73;--tealDark:#0A535A;--belief:#B416B4;
+  box-sizing:border-box;width:100%;height:100%;min-height:640px;overflow:auto;
+  background:var(--mist);color:var(--ink);
+  font-family:"Gill Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif;
+  font-size:17px;line-height:1.45;padding:22px 24px 30px;text-align:left;
+}
+#bayesTable *,#bayesTable *::before,#bayesTable *::after{box-sizing:border-box}
+#bayesTable [hidden]{display:none!important}
+#bayesTable .bt-wrap{max-width:1120px;margin:0 auto}
+#bayesTable .bt-head{margin:0 0 18px}
+#bayesTable .bt-title{font:700 38px/1.05 "Gill Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif;letter-spacing:-.01em;margin:0 0 8px;padding:0;color:var(--ink);border:0;background:none;text-transform:none}
+#bayesTable .bt-intro{margin:0;padding:0;max-width:74ch;color:var(--ink);font-size:17px;line-height:1.45}
+#bayesTable .bt-main{display:grid;grid-template-columns:minmax(0,520px) minmax(300px,1fr);gap:34px;align-items:start}
+#bayesTable.bt-narrow .bt-main{display:flex;flex-direction:column;align-items:stretch;gap:16px}
+#bayesTable.bt-narrow .bt-stage,#bayesTable.bt-narrow .bt-panel{display:contents}
+#bayesTable.bt-narrow .bt-canvas{order:1}
+#bayesTable.bt-narrow .bt-legend{order:2;margin:-6px 0 0}
+#bayesTable.bt-narrow .bt-clue{order:3}
+#bayesTable.bt-narrow .bt-actions{order:4}
+#bayesTable.bt-narrow .bt-check{order:5}
+#bayesTable.bt-narrow .bt-result{order:6}
+#bayesTable.bt-narrow .bt-row{order:7}
+#bayesTable.bt-narrow .bt-hint{order:8;margin:0}
+#bayesTable.bt-narrow .bt-logwrap{order:9}
+#bayesTable .bt-stage{min-width:0}
+#bayesTable .bt-canvas{display:block;width:100%;max-width:520px;height:520px;margin:0 auto;touch-action:none;cursor:crosshair;border-radius:14px;outline:none}
+#bayesTable .bt-canvas.bt-locked{touch-action:auto;cursor:default}
+#bayesTable .bt-canvas:focus-visible{outline:3px solid var(--belief);outline-offset:3px}
+#bayesTable .bt-hint{margin:8px 0 0;padding:0;font-size:15px;color:var(--muted);line-height:1.4}
+#bayesTable .bt-legend{display:flex;flex-wrap:wrap;gap:6px 20px;margin:12px 0 0;padding:0;font-size:15px;color:var(--ink)}
+#bayesTable .bt-key{display:inline-flex;align-items:center;gap:7px}
+#bayesTable .bt-sw{display:inline-block;width:14px;height:14px;border-radius:50%;flex:0 0 auto}
+#bayesTable .bt-sw-white{background:#fff;border:2px solid var(--ink)}
+#bayesTable .bt-sw-orange{background:#F28A1B;border:1.5px solid #9A4D00}
+#bayesTable .bt-sw-bayes{background:#fff;border:3px solid var(--belief)}
+#bayesTable .bt-sw-you{width:auto;height:auto;border-radius:0;font-weight:700;font-size:19px;line-height:14px;color:var(--ink)}
+
+#bayesTable .bt-panel{min-width:0;max-width:540px;display:flex;flex-direction:column;gap:18px;margin-top:10px}
+#bayesTable .bt-clue{position:relative;background:var(--ink);color:#fff;border-radius:16px;padding:18px 20px 18px}
+#bayesTable .bt-clue::before{content:"";position:absolute;left:-13px;top:34px;border:11px solid transparent;border-left-width:0;border-right:14px solid var(--ink)}
+#bayesTable.bt-narrow .bt-clue::before{left:36px;top:-13px;border:11px solid transparent;border-top-width:0;border-bottom:14px solid var(--ink)}
+#bayesTable .bt-cluecount{font-size:15px;color:#BCC8DF;margin:0 0 4px}
+#bayesTable .bt-cluetext{font-size:29px;line-height:1.14;font-weight:700;margin:0;color:#fff}
+#bayesTable .bt-cluenote{font-size:15.5px;line-height:1.4;color:#DCE4F2;margin:10px 0 0}
+#bayesTable .bt-clue.bt-pop .bt-cluetext{animation:bt-pop .28s ease-out}
+@keyframes bt-pop{from{opacity:.2;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#bayesTable .bt-clue.bt-pop .bt-cluetext{animation:none}}
+
+#bayesTable .bt-actions{display:flex;gap:10px;flex-wrap:wrap}
+#bayesTable .bt-btn{font:inherit;font-size:17px;font-weight:600;line-height:1.2;min-height:46px;padding:11px 18px;margin:0;border-radius:10px;border:1.5px solid var(--ink);background:#fff;color:var(--ink);cursor:pointer;flex:1 1 170px}
+#bayesTable .bt-btn:hover{background:#F1F5FB}
+#bayesTable .bt-btn.bt-primary{background:var(--teal);border-color:var(--teal);color:#fff}
+#bayesTable .bt-btn.bt-primary:hover{background:var(--tealDark);border-color:var(--tealDark)}
+#bayesTable .bt-btn:disabled,#bayesTable .bt-btn.bt-primary:disabled{background:#DCE3EC;border-color:#DCE3EC;color:#5F6B80;cursor:not-allowed}
+#bayesTable .bt-btn.bt-small{font-size:16px;min-height:42px;padding:8px 12px;flex:1 1 104px}
+#bayesTable .bt-btn.bt-ten{flex:0 1 auto}
+#bayesTable .bt-btn:focus-visible,#bayesTable .bt-check input:focus-visible{outline:3px solid var(--belief);outline-offset:2px}
+#bayesTable .bt-check{display:flex;align-items:center;gap:10px;font-size:16.5px;cursor:pointer;margin:0;color:var(--ink)}
+#bayesTable .bt-check input{width:20px;height:20px;margin:0;accent-color:var(--belief);flex:0 0 auto}
+#bayesTable .bt-row{display:flex;gap:10px;flex-wrap:wrap}
+
+#bayesTable .bt-result{background:#fff;border:1.5px solid var(--ink);border-radius:12px;padding:16px 18px 18px}
+#bayesTable .bt-rhead{font-size:25px;line-height:1.15;font-weight:700;margin:0 0 4px}
+#bayesTable .bt-verdict{margin:0 0 14px;font-size:16px;color:var(--ink)}
+#bayesTable .bt-bars{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px 12px;align-items:center;font-size:16px;margin:0 0 18px}
+#bayesTable .bt-bartrack{height:12px;background:#E6ECF4;border-radius:6px;overflow:hidden}
+#bayesTable .bt-bar{display:block;height:100%;border-radius:6px;background:var(--ink)}
+#bayesTable .bt-bar.bt-bar-bayes{background:var(--belief)}
+#bayesTable .bt-bar.bt-bar-more{background:#D98AD9}
+#bayesTable .bt-bar.bt-bar-centre{background:#8D99AE}
+#bayesTable .bt-barval{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+#bayesTable .bt-subtitle{font-size:17px;font-weight:700;margin:0 0 2px}
+#bayesTable .bt-subnote{font-size:15.5px;line-height:1.4;color:var(--ink);margin:0 0 6px}
+#bayesTable .bt-surf{display:block;width:100%;height:250px}
+#bayesTable .bt-more{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 0}
+#bayesTable .bt-explain{margin:14px 0 0;font-size:16px;line-height:1.45;color:var(--ink)}
+#bayesTable .bt-explain + .bt-explain{margin-top:8px}
+
+#bayesTable .bt-logtitle{font-size:15px;color:var(--muted);margin:0 0 4px}
+#bayesTable .bt-log{list-style:none;margin:0;padding:0;max-height:150px;overflow:auto;font-size:15.5px;border-left:3px solid var(--line)}
+#bayesTable .bt-log li{margin:0;padding:3px 0 3px 12px;color:var(--ink)}
+#bayesTable .bt-log li.bt-empty{color:var(--muted)}
+#bayesTable.bt-narrow{padding:16px 14px 24px}
+#bayesTable.bt-narrow .bt-head{margin-bottom:14px}
+#bayesTable.bt-narrow .bt-title{font-size:31px}
+#bayesTable.bt-narrow .bt-cluetext{font-size:25px}
+#bayesTable.bt-narrow .bt-panel{max-width:none;margin-top:0}
+</style>
+
+<div id="bayesTable">
+  <div class="bt-wrap">
+    <div class="bt-head">
+      <h1 class="bt-title">Bayes' table</h1>
+      <p class="bt-intro">You are sitting with your back to a square table. Throw a white ball over your shoulder so that it lands on the table, then throw orange balls after it. For each orange ball you are told only which way it landed from the white one. Work out where the white ball is.</p>
+    </div>
+
+    <div class="bt-main">
+      <div class="bt-stage">
+        <canvas class="bt-canvas" tabindex="0" role="img" aria-label="Your clipboard, with a square drawn for the table top and north at the top. Tap or drag inside the square to mark your guess, or use the arrow keys."></canvas>
+        <div class="bt-legend">
+          <span class="bt-key"><span class="bt-sw bt-sw-you" aria-hidden="true">&times;</span>Your guesses, numbered by throw</span>
+          <span class="bt-key bt-key-bayes" hidden><span class="bt-sw bt-sw-bayes" aria-hidden="true"></span>Bayes' estimate, with likely spots shaded</span>
+          <span class="bt-key bt-key-white" hidden><span class="bt-sw bt-sw-white" aria-hidden="true"></span>White ball</span>
+          <span class="bt-key bt-key-orange" hidden><span class="bt-sw bt-sw-orange" aria-hidden="true"></span>Orange balls, in the order thrown</span>
+        </div>
+        <p class="bt-hint">North is at the top of your clipboard, the same way round as the table. The table is 60&nbsp;cm square.</p>
+      </div>
+
+      <div class="bt-panel">
+        <div class="bt-clue" aria-live="polite">
+          <p class="bt-cluecount"></p>
+          <p class="bt-cluetext"></p>
+          <p class="bt-cluenote"></p>
+        </div>
+
+        <div class="bt-actions">
+          <button type="button" class="bt-btn bt-primary bt-throw">Throw the white ball</button>
+          <button type="button" class="bt-btn bt-ten bt-throw10" hidden>Throw 10</button>
+          <button type="button" class="bt-btn bt-look">Turn round and look</button>
+        </div>
+
+        <label class="bt-check"><input type="checkbox" class="bt-bayes"><span>Shade how likely each spot is (Bayes' belief)</span></label>
+
+        <div class="bt-result" hidden>
+          <p class="bt-rhead"></p>
+          <p class="bt-verdict"></p>
+          <div class="bt-bars"></div>
+          <p class="bt-subtitle">How likely each spot is, as a surface</p>
+          <p class="bt-subnote bt-surfnote"></p>
+          <canvas class="bt-surf" role="img" aria-label="Three-dimensional surface over the table top. Its height shows how likely each spot is to hold the white ball."></canvas>
+          <div class="bt-more">
+            <button type="button" class="bt-btn bt-small bt-more1">Throw 1 more</button>
+            <button type="button" class="bt-btn bt-small bt-more10">Throw 10 more</button>
+            <button type="button" class="bt-btn bt-small bt-more100">Throw 100 more</button>
+          </div>
+          <p class="bt-explain bt-explain1"></p>
+          <p class="bt-explain bt-explain2"></p>
+        </div>
+
+        <div class="bt-row">
+          <button type="button" class="bt-btn bt-again">Start again</button>
+        </div>
+
+        <div class="bt-logwrap">
+          <p class="bt-logtitle">Clues so far</p>
+          <ol class="bt-log"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('bayesTable');
+if(!root){return;}
+function q(s){return root.querySelector(s);}
+
+var T=60,TARGET=5;
+var FF='"Gill Sans","Gill Sans MT",Calibri,"Trebuchet MS",sans-serif';
+var C={ink:'#16233F',muted:'#55637D',board:'#B98B5C',boardEdge:'#8C6238',paper:'#FFFFFF',table:'#2A9BA3',tableEdge:'#17666D',orange:'#F28A1B',orangeEdge:'#9A4D00',belief:'#B416B4',rgb:'190,24,190'};
+
+var cv=q('.bt-canvas'),ctx=cv.getContext('2d'),main=q('.bt-main');
+var surf=q('.bt-surf'),sctx=surf.getContext('2d');
+var el={
+  count:q('.bt-cluecount'),text:q('.bt-cluetext'),note:q('.bt-cluenote'),clue:q('.bt-clue'),
+  bThrow:q('.bt-throw'),bThrow10:q('.bt-throw10'),bLook:q('.bt-look'),bAgain:q('.bt-again'),b1:q('.bt-more1'),b10:q('.bt-more10'),b100:q('.bt-more100'),
+  actions:q('.bt-actions'),bayes:q('.bt-bayes'),check:q('.bt-check'),
+  log:q('.bt-log'),result:q('.bt-result'),rhead:q('.bt-rhead'),verdict:q('.bt-verdict'),bars:q('.bt-bars'),
+  surfnote:q('.bt-surfnote'),ex1:q('.bt-explain1'),ex2:q('.bt-explain2'),
+  kBayes:q('.bt-key-bayes'),kWhite:q('.bt-key-white'),kOrange:q('.bt-key-orange')
+};
+
+var S=null,G={w:0,h:0,p:0,side:0,sx:0,sy:0},dpr=1,dragging=false,raf=0,lastW=-1;
+var reduce=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+/* ---------- maths ---------- */
+var LF=[0];
+function lfact(n){for(var i=LF.length;i<=n;i++){LF[i]=LF[i-1]+Math.log(i);}return LF[n];}
+/* Belief about a position p (0 to 1) after a balls landed below it and b above: Beta(a+1, b+1) */
+function dens(a,b,m){
+  var out=[],k=lfact(a+b+1)-lfact(a)-lfact(b),i,p;
+  for(i=0;i<m;i++){p=(i+0.5)/m;out.push(Math.exp(a*Math.log(p)+b*Math.log(1-p)+k));}
+  return out;
+}
+function err(gx,gy){var dx=(gx-S.tx)*T,dy=(gy-S.ty)*T;return Math.sqrt(dx*dx+dy*dy);}
+function bayesX(){return (S.W+1)/(S.throws.length+2);}
+function bayesY(){return (S.So+1)/(S.throws.length+2);}
+function cm(v){return (v<9.95?v.toFixed(1):String(Math.round(v)))+'\u00A0cm';}
+function clamp(v,a,b){return v<a?a:(v>b?b:v);}
+function balls(n){return n+(n===1?' orange ball':' orange balls');}
+
+/* ---------- game ---------- */
+/* x runs west to east, y runs south to north, both 0 to 1 */
+function newGame(){
+  if(raf){cancelAnimationFrame(raf);raf=0;}
+  S={tx:Math.random(),ty:Math.random(),white:false,throws:[],guesses:[],fresh:false,batch:null,W:0,E:0,N:0,So:0,revealed:false,rt:1,nGame:0,eYou:null,eBay:0};
+  el.log.innerHTML='';
+  el.clue.classList.remove('bt-pop');
+  sync();
+  resize(true);
+}
+function addThrow(){
+  var t={u:Math.random(),v:Math.random()};
+  t.west=t.u<S.tx;t.south=t.v<S.ty;
+  S.throws.push(t);
+  if(t.west){S.W++;}else{S.E++;}
+  if(t.south){S.So++;}else{S.N++;}
+  return t;
+}
+function words(t){return (t.south?'south':'north')+' and '+(t.west?'west':'east');}
+function pop(){
+  el.clue.classList.remove('bt-pop');
+  void el.clue.offsetWidth;
+  el.clue.classList.add('bt-pop');
+}
+function throwBalls(k){
+  if(S.revealed){return;}
+  if(!S.white){S.white=true;sync();pop();draw();return;}
+  var first=S.throws.length+1,c={N:0,S:0,W:0,E:0},frag=document.createDocumentFragment(),items=[],i,t,li;
+  for(i=0;i<k;i++){
+    t=addThrow();items.push(t);
+    if(t.south){c.S++;}else{c.N++;}
+    if(t.west){c.W++;}else{c.E++;}
+  }
+  for(i=items.length-1;i>=0;i--){
+    li=document.createElement('li');
+    li.textContent='Orange ball '+(first+i)+': '+words(items[i]);
+    frag.appendChild(li);
+  }
+  var empty=el.log.querySelector('.bt-empty');
+  if(empty){el.log.removeChild(empty);}
+  el.log.insertBefore(frag,el.log.firstChild);
+  el.log.scrollTop=0;
+  S.fresh=true;S.batch={first:first,k:k,c:c};
+  sync();pop();draw();
+}
+/* You may look after any number of throws, with or without an up-to-date guess */
+function look(){
+  if(S.revealed||!S.white){return;}
+  var n=S.throws.length,g=S.guesses.length?S.guesses[S.guesses.length-1]:null;
+  S.revealed=true;S.nGame=n;
+  S.eYou=g?err(g.x,g.y):null;S.eBay=err(bayesX(),bayesY());
+  renderResult();
+  sync();pop();
+  drawSurface();
+  if(reduce||!n){S.rt=1;draw();return;}
+  var t0=performance.now(),dur=clamp(n*160,500,1500);
+  S.rt=0;
+  (function step(now){
+    S.rt=clamp((now-t0)/dur,0,1);
+    draw();
+    if(S.rt<1){raf=requestAnimationFrame(step);}else{raf=0;}
+  })(t0);
+}
+function throwMore(k){
+  if(!S.revealed){return;}
+  for(var i=0;i<k;i++){addThrow();}
+  renderResult();
+  draw();
+  drawSurface();
+}
+
+/* ---------- interface text ---------- */
+function sync(){
+  var n=S.throws.length,g=S.guesses.length,b=S.batch;
+  if(S.revealed){
+    el.count.textContent='After '+balls(S.nGame);
+    el.text.textContent='There is the table';
+    el.note.textContent=g?'Your crosses are drawn on the table top, so you can see how each guess did.':'The white ball and every orange ball are where they landed.';
+  }else if(!S.white){
+    el.count.textContent='The table is behind you';
+    el.text.textContent='Throw the white ball over your shoulder';
+    el.note.textContent='No turning round to look.';
+  }else if(!n){
+    el.count.textContent='You heard it land on the table';
+    el.text.textContent='Where is the white ball?';
+    el.note.textContent='You have no information yet, so the middle is as good a guess as any. Throw an orange ball to find out more.';
+  }else{
+    if(b.k===1){
+      el.count.textContent='Orange ball '+n+' landed';
+      var w=words(S.throws[n-1]);
+      el.text.textContent=w.charAt(0).toUpperCase()+w.slice(1)+' of the white ball';
+    }else{
+      el.count.textContent='Orange balls '+b.first+' to '+n+' landed';
+      el.text.textContent=b.c.N+' north, '+b.c.S+' south; '+b.c.W+' west, '+b.c.E+' east';
+    }
+    if(S.fresh){el.note.textContent='Which way does that push your guess? Mark guess '+n+' inside the square, throw again, or turn round and look.';}
+    else if(n>=TARGET){el.note.textContent='Guess '+n+' is marked. Turn round and look whenever you like, or keep throwing to firm it up.';}
+    else{el.note.textContent='Drag guess '+n+' if you want to adjust it, then throw another ball.';}
+  }
+  el.bThrow.textContent=S.white?'Throw an orange ball':'Throw the white ball';
+  el.bThrow10.hidden=!S.white;
+  el.bLook.disabled=!S.white;
+  var lookFirst=g>0&&!S.fresh&&n>=TARGET;
+  el.bThrow.classList.toggle('bt-primary',!lookFirst);
+  el.bLook.classList.toggle('bt-primary',lookFirst);
+  el.actions.hidden=S.revealed;
+  el.check.hidden=S.revealed;
+  el.bAgain.textContent=S.revealed?'Play again':'Start again';
+  el.bAgain.classList.toggle('bt-primary',S.revealed);
+  el.result.hidden=!S.revealed;
+  el.kBayes.hidden=!(S.revealed||el.bayes.checked);
+  el.kWhite.hidden=!S.revealed;
+  el.kOrange.hidden=!S.revealed;
+  cv.classList.toggle('bt-locked',S.revealed);
+  if(!n&&!el.log.firstChild){
+    var li=document.createElement('li');li.className='bt-empty';li.textContent='No orange balls thrown yet.';el.log.appendChild(li);
+  }
+}
+function barRow(label,val,max,cls){
+  var a=document.createElement('span');a.textContent=label;
+  var t=document.createElement('span');t.className='bt-bartrack';
+  var b=document.createElement('span');b.className='bt-bar'+(cls?' '+cls:'');b.style.width=Math.max(2,100*val/max)+'%';
+  t.appendChild(b);
+  var v=document.createElement('span');v.className='bt-barval';v.textContent=cm(val);
+  el.bars.appendChild(a);el.bars.appendChild(t);el.bars.appendChild(v);
+}
+function renderResult(){
+  var n=S.throws.length,n0=S.nGame,you=S.eYou,bay=S.eBay,cen=err(0.5,0.5),now=err(bayesX(),bayesY()),more=n>n0;
+  var g=S.guesses.length?S.guesses[S.guesses.length-1]:null,has=you!==null;
+  var mx=Math.max(has?you:0,bay,cen,more?now:0,0.1),v;
+  if(!has){
+    el.rhead.textContent='You did not mark a guess';
+    v=n0?'Here is how Bayes did with the '+(n0===1?'one clue':n0+' clues')+' you had.':'With no orange balls thrown, all Bayes can say is the middle.';
+  }else{
+    el.rhead.textContent=(g.n===n0?'Your final guess was ':'Your last guess was ')+cm(you)+' out';
+    if(Math.abs(you-bay)<0.5){v='You and Bayes finished level.';}
+    else if(you<bay){v='You beat Bayes this time. Keep playing, though: over many games his estimate is very hard to beat.';}
+    else{v='Bayes was closer this time.';}
+    if(g.n<n0){v+=' You last moved your cross after '+balls(g.n)+'; Bayes used all '+n0+'.';}
+    else if(you>=bay+0.5){v='Bayes was closer this time, using exactly the same clues.';}
+  }
+  el.verdict.textContent=v;
+  el.bars.innerHTML='';
+  if(has){barRow('You, after '+g.n,you,mx,'');}
+  barRow('Bayes, after '+n0,bay,mx,'bt-bar-bayes');
+  if(more){barRow('Bayes, after '+n,now,mx,'bt-bar-more');}
+  barRow('The middle',cen,mx,'bt-bar-centre');
+  el.surfnote.textContent=more?
+    'After '+balls(n)+'. The more you throw, the more the surface piles up into a peak over the white ball.':
+    (n<30?'After '+balls(n)+' it is only a gentle hill. Throw more and watch it pile up into a peak over the white ball.':'After '+balls(n)+'. Throw more and the peak over the white ball gets narrower still.');
+  var fx=bayesX(),fy=bayesY();
+  el.ex1.textContent='How Bayes gets his estimate: '+S.W+' of the '+balls(n)+' landed west of the white ball, so he puts it ('+S.W+' + 1) \u00F7 ('+n+' + 2) = '+fx.toFixed(2)+' of the way across from the west edge. '+S.So+' landed south of it, giving ('+S.So+' + 1) \u00F7 ('+n+' + 2) = '+fy.toFixed(2)+' of the way up from the south edge.';
+  el.ex2.textContent='The white ball was really '+S.tx.toFixed(2)+' of the way across and '+S.ty.toFixed(2)+' of the way up.';
+}
+
+/* ---------- drawing the clipboard ---------- */
+function rr(c,x,y,w,h,r){
+  c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.arcTo(x+w,y,x+w,y+r,r);c.lineTo(x+w,y+h-r);c.arcTo(x+w,y+h,x+w-r,y+h,r);
+  c.lineTo(x+r,y+h);c.arcTo(x,y+h,x,y+h-r,r);c.lineTo(x,y+r);c.arcTo(x,y,x+r,y,r);c.closePath();
+}
+function X(gx){return G.sx+gx*G.side;}
+function Y(gy){return G.sy+(1-gy)*G.side;}
+function cross(x,y,s,col,lw){
+  ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(x-s,y-s);ctx.lineTo(x+s,y+s);ctx.moveTo(x+s,y-s);ctx.lineTo(x-s,y+s);ctx.stroke();
+}
+function ballAt(x,y,r,fill,edge,lw){
+  ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();
+  ctx.lineWidth=lw;ctx.strokeStyle=edge;ctx.stroke();
+}
+/* tally marks in gates of five, as on a clipboard */
+function tally(n,x,y,maxW,centre){
+  if(n<=0){return;}
+  if(n>15){
+    ctx.font='700 18px '+FF;ctx.fillStyle=C.ink;ctx.textAlign=centre?'center':'left';ctx.textBaseline='top';
+    ctx.fillText(String(n),x,y-1);return;
+  }
+  var gw=22,gap=9,hgt=15,per=Math.max(1,Math.floor((maxW+gap)/(gw+gap))),gates=Math.ceil(n/5),g,r,c,rowN,x0,gx,gy,m,i;
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.lineCap='round';ctx.beginPath();
+  for(g=0;g<gates;g++){
+    r=Math.floor(g/per);c=g%per;rowN=Math.min(per,gates-r*per);
+    x0=centre?x-(rowN*gw+(rowN-1)*gap)/2:x;
+    gx=x0+c*(gw+gap);gy=y+r*(hgt+8);m=Math.min(5,n-g*5);
+    for(i=0;i<Math.min(m,4);i++){ctx.moveTo(gx+2+i*6,gy);ctx.lineTo(gx+2+i*6,gy+hgt);}
+    if(m===5){ctx.moveTo(gx-2,gy+hgt-3);ctx.lineTo(gx+gw+2,gy+3);}
+  }
+  ctx.stroke();
+}
+function resize(force){
+  var w=Math.floor(cv.clientWidth);
+  if(!w){return;}
+  if(!force&&w===lastW){return;}
+  lastW=w;
+  G.w=w;G.h=Math.round(w*1.0);G.p=Math.round(w*0.04);
+  G.side=Math.round((w-2*G.p)*0.63);G.sx=Math.round((w-G.side)/2);G.sy=Math.round(G.p+w*0.155);
+  dpr=Math.min(window.devicePixelRatio||1,2.5);
+  cv.style.height=G.h+'px';
+  cv.width=Math.round(w*dpr);cv.height=Math.round(G.h*dpr);
+  draw();
+}
+function draw(){
+  var g=G;
+  if(!g.w||!S){return;}
+  var w=g.w,h=g.h,p=g.p,sx=g.sx,sy=g.sy,sd=g.side,cx=sx+sd/2,cy=sy+sd/2,n=S.throws.length,show=S.revealed||el.bayes.checked,i,j;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.clearRect(0,0,w,h);
+
+  /* board and paper */
+  rr(ctx,0.5,0.5,w-1,h-1,13);ctx.fillStyle=C.board;ctx.fill();ctx.strokeStyle=C.boardEdge;ctx.lineWidth=1;ctx.stroke();
+  ctx.save();ctx.shadowColor='rgba(60,35,10,.35)';ctx.shadowBlur=8;ctx.shadowOffsetY=2;
+  ctx.fillStyle=C.paper;ctx.fillRect(p,p,w-2*p,h-2*p);ctx.restore();
+
+  /* the square: paper while you play, the table top once you look */
+  if(S.revealed){
+    ctx.save();ctx.shadowColor='rgba(10,40,45,.4)';ctx.shadowBlur=10;ctx.shadowOffsetY=4;
+    ctx.fillStyle=C.table;ctx.fillRect(sx,sy,sd,sd);ctx.restore();
+  }
+  if(show&&S.white){
+    var m=48,px=dens(S.W,S.E,m),py=dens(S.So,S.N,m),d,a,xa,xb,ya,yb;
+    for(i=0;i<m;i++){
+      xa=Math.round(sx+sd*i/m);xb=Math.round(sx+sd*(i+1)/m);
+      for(j=0;j<m;j++){
+        d=px[i]*py[j];a=0.8*(1-Math.exp(-d/6));
+        if(a<0.004){continue;}
+        ya=Math.round(sy+sd*(1-(j+1)/m));yb=Math.round(sy+sd*(1-j/m));
+        ctx.fillStyle='rgba('+C.rgb+','+a.toFixed(3)+')';
+        ctx.fillRect(xa,ya,xb-xa,yb-ya);
+      }
+    }
+  }
+  ctx.strokeStyle=S.revealed?C.tableEdge:C.ink;ctx.lineWidth=S.revealed?3:2.4;ctx.lineJoin='round';
+  ctx.strokeRect(sx,sy,sd,sd);
+
+  /* compass letters and tallies */
+  var mw=sx-p,fs=w<440?18:21;
+  ctx.fillStyle=C.ink;ctx.font='700 '+fs+'px '+FF;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('N',cx,sy-26);
+  ctx.fillText('S',cx,sy+sd+27);
+  ctx.fillText('W',sx-mw/2,cy-18);
+  ctx.fillText('E',sx+sd+mw/2,cy-18);
+  tally(S.N,cx+20,sy-34,sd/2-24,false);
+  tally(S.So,cx+20,sy+sd+19,sd/2-24,false);
+  tally(S.W,sx-mw/2,cy+2,mw-12,true);
+  tally(S.E,sx+sd+mw/2,cy+2,mw-12,true);
+
+  /* clip */
+  var cw=w*0.36,ch=Math.max(18,w*0.05),cxx=(w-cw)/2,cyy=h-p-ch*0.5;
+  var gr=ctx.createLinearGradient(0,cyy,0,cyy+ch);gr.addColorStop(0,'#E3E8EE');gr.addColorStop(1,'#98A3B0');
+  rr(ctx,cxx,cyy,cw,ch,5);ctx.fillStyle=gr;ctx.fill();ctx.strokeStyle='#6B7684';ctx.lineWidth=1;ctx.stroke();
+  rr(ctx,cxx+cw*0.3,cyy-ch*0.45,cw*0.4,ch*0.6,4);ctx.fillStyle='#B4BDC8';ctx.fill();ctx.stroke();
+
+  if(!S.white){
+    ctx.fillStyle=C.muted;ctx.font='600 '+(w<440?14:16)+'px '+FF;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('The table top',cx,cy);
+  }
+
+  /* the table as it really is */
+  var numbered=S.nGame<=12,R=numbered?clamp(sd*0.034,8,12):(S.nGame<=40?5.5:3.4),extra=n-S.nGame;
+  if(S.revealed){
+    for(i=S.nGame;i<n;i++){
+      ctx.beginPath();ctx.arc(X(S.throws[i].u),Y(S.throws[i].v),2.6,0,Math.PI*2);ctx.fillStyle='rgba(255,196,120,'+clamp(150/extra,0.3,0.75).toFixed(2)+')';ctx.fill();
+    }
+    for(i=0;i<S.nGame;i++){
+      var ap=clamp(S.rt*S.nGame-i,0,1);
+      if(ap<=0){break;}
+      var bxp=X(S.throws[i].u),byp=Y(S.throws[i].v);
+      ballAt(bxp,byp,R*(0.4+0.6*ap),C.orange,C.orangeEdge,numbered?1.5:1);
+      if(numbered&&ap>=1){
+        ctx.fillStyle=C.ink;ctx.font='700 '+Math.round(R*1.25)+'px '+FF;ctx.textAlign='center';ctx.textBaseline='middle';
+        ctx.fillText(String(i+1),bxp,byp+1);
+      }
+    }
+    if(S.guesses.length){
+      var lg=S.guesses[S.guesses.length-1];
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.setLineDash([6,5]);ctx.beginPath();
+      ctx.moveTo(X(lg.x),Y(lg.y));ctx.lineTo(X(S.tx),Y(S.ty));ctx.stroke();ctx.setLineDash([]);
+    }
+    ctx.save();ctx.shadowColor='rgba(0,0,0,.35)';ctx.shadowBlur=6;ctx.shadowOffsetY=2;
+    ballAt(X(S.tx),Y(S.ty),Math.max(R+2,10),'#fff',C.ink,2.2);ctx.restore();
+  }
+
+  /* Bayes' estimate */
+  if(show&&S.white){
+    ctx.beginPath();ctx.arc(X(bayesX()),Y(bayesY()),8,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=3.5;ctx.strokeStyle=C.belief;ctx.stroke();
+  }
+
+  /* your guesses, numbered like subscripts */
+  var k,gs=S.guesses,last=gs.length-1,qx,qy;
+  for(k=0;k<gs.length;k++){
+    qx=X(gs[k].x);qy=Y(gs[k].y);
+    if(k===last){cross(qx,qy,10,'#fff',7.5);cross(qx,qy,10,C.ink,3.2);}
+    else{cross(qx,qy,6,'#fff',5);cross(qx,qy,6,C.ink,2);}
+    ctx.font=(k===last?'700 15px ':'600 13px ')+FF;ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.lineWidth=4;ctx.strokeStyle='#fff';ctx.lineJoin='round';
+    var ox=k===last?13:9,oy=k===last?11:8;
+    ctx.strokeText(String(gs[k].n),qx+ox,qy+oy);ctx.fillStyle=C.ink;ctx.fillText(String(gs[k].n),qx+ox,qy+oy);
+  }
+}
+
+/* ---------- the belief as a surface over the table ---------- */
+function drawSurface(){
+  if(!S||!S.revealed){return;}
+  var w=Math.floor(surf.clientWidth),h=250;
+  if(!w){return;}
+  var c=sctx,M=34,px=dens(S.W,S.E,M),py=dens(S.So,S.N,M),mx=0,im=0,jm=0,i,j;
+  surf.width=Math.round(w*dpr);surf.height=Math.round(h*dpr);
+  c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,w,h);
+  for(i=0;i<M;i++){for(j=0;j<M;j++){if(px[i]*py[j]>mx){mx=px[i]*py[j];im=i;jm=j;}}}
+  var th=0.3,cs=Math.cos(th),sn=Math.sin(th),scl=Math.min(w*0.6,250),tilt=0.46,ox=w/2,oy=h-scl*tilt*0.5*(cs+sn)-30;
+  function P(x,y,z){var a=x-0.5,b=y-0.5;return [ox+scl*(a*cs-b*sn),oy-scl*tilt*(a*sn+b*cs)-z];}
+  function poly(pts){c.beginPath();c.moveTo(pts[0][0],pts[0][1]);for(var k=1;k<pts.length;k++){c.lineTo(pts[k][0],pts[k][1]);}c.closePath();}
+  var Z=Math.min(h*0.5,P((im+0.5)/M,(jm+0.5)/M,0)[1]-12)*(1-Math.exp(-mx/25));
+  /* table top with a little thickness */
+  var a0=P(0,0,0),a1=P(1,0,0),a2=P(1,1,0),a3=P(0,1,0),tk=9;
+  poly([a0,a1,[a1[0],a1[1]+tk],[a0[0],a0[1]+tk]]);c.fillStyle=C.tableEdge;c.fill();
+  poly([a0,a3,[a3[0],a3[1]+tk],[a0[0],a0[1]+tk]]);c.fillStyle='#125A60';c.fill();
+  poly([a0,a1,a2,a3]);c.fillStyle=C.table;c.fill();
+  var wb=P(S.tx,S.ty,0);
+  c.beginPath();c.ellipse(wb[0],wb[1]-3,6,5,0,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=1.5;c.strokeStyle=C.ink;c.stroke();
+  /* surface, drawn far side first */
+  function zz(i,j){return Z*px[i]*py[j]/mx;}
+  function nd(i,j){return P((i+0.5)/M,(j+0.5)/M,zz(i,j));}
+  function skirt(i1,j1,i2,j2){
+    var b1=P((i1+0.5)/M,(j1+0.5)/M,0),b2=P((i2+0.5)/M,(j2+0.5)/M,0);
+    poly([nd(i1,j1),nd(i2,j2),b2,b1]);c.fillStyle='rgba('+C.rgb+',.34)';c.fill();
+  }
+  var e;
+  for(e=M-2;e>=0;e--){skirt(e,M-1,e+1,M-1);skirt(M-1,e,M-1,e+1);}
+  c.lineWidth=0.6;c.lineJoin='round';
+  for(j=M-2;j>=0;j--){
+    for(i=M-2;i>=0;i--){
+      var hgt=(zz(i,j)+zz(i+1,j)+zz(i+1,j+1)+zz(i,j+1))/(4*Math.max(Z,1e-6));
+      poly([nd(i,j),nd(i+1,j),nd(i+1,j+1),nd(i,j+1)]);
+      c.fillStyle='rgba('+C.rgb+','+(0.34+0.3*hgt).toFixed(3)+')';c.fill();
+      c.strokeStyle='rgba(110,8,120,.45)';c.stroke();
+    }
+  }
+  for(e=M-2;e>=0;e--){skirt(e,0,e+1,0);skirt(0,e,0,e+1);}
+  /* the white ball again, so it can be seen through the surface */
+  c.globalAlpha=0.9;c.beginPath();c.ellipse(wb[0],wb[1]-3,6,5,0,0,Math.PI*2);c.fillStyle='#fff';c.fill();c.lineWidth=1.5;c.strokeStyle=C.ink;c.stroke();c.globalAlpha=1;
+  c.fillStyle=C.ink;c.font='700 15px '+FF;c.textAlign='center';c.textBaseline='middle';
+  var lab=[['N',0.5,1.12],['S',0.5,-0.17],['W',-0.09,0.5],['E',1.09,0.5]],q0;
+  for(i=0;i<4;i++){q0=P(lab[i][1],lab[i][2],0);c.fillText(lab[i][0],q0[0],q0[1]+(lab[i][0]==='S'?6:0));}
+}
+
+/* ---------- input ---------- */
+function setGuess(gx,gy){
+  var n=S.throws.length,was=S.fresh;
+  if(!n){return false;}
+  if(S.fresh||!S.guesses.length){S.guesses.push({x:gx,y:gy,n:n});S.fresh=false;}
+  else{var g=S.guesses[S.guesses.length-1];g.x=gx;g.y=gy;}
+  if(was){sync();}
+  draw();
+  return true;
+}
+function fromEvent(e){
+  var r=cv.getBoundingClientRect();
+  return {x:clamp((e.clientX-r.left-G.sx)/G.side,0,1),y:clamp(1-(e.clientY-r.top-G.sy)/G.side,0,1),mx:e.clientX-r.left,my:e.clientY-r.top};
+}
+cv.addEventListener('pointerdown',function(e){
+  if(S.revealed||!S.throws.length){return;}
+  var f=fromEvent(e),pad=16;
+  if(f.mx<G.sx-pad||f.mx>G.sx+G.side+pad||f.my<G.sy-pad||f.my>G.sy+G.side+pad){return;}
+  dragging=true;
+  try{cv.setPointerCapture(e.pointerId);}catch(x){}
+  setGuess(f.x,f.y);
+  e.preventDefault();
+});
+cv.addEventListener('pointermove',function(e){if(dragging&&!S.revealed){var f=fromEvent(e);setGuess(f.x,f.y);}});
+function endDrag(){dragging=false;}
+cv.addEventListener('pointerup',endDrag);
+cv.addEventListener('pointercancel',endDrag);
+cv.addEventListener('keydown',function(e){
+  if(S.revealed||!S.throws.length){return;}
+  var s=e.shiftKey?0.05:0.01,dx=0,dy=0;
+  if(e.key==='ArrowLeft'){dx=-s;}else if(e.key==='ArrowRight'){dx=s;}else if(e.key==='ArrowUp'){dy=s;}else if(e.key==='ArrowDown'){dy=-s;}else{return;}
+  e.preventDefault();
+  var b=S.guesses.length?S.guesses[S.guesses.length-1]:{x:0.5,y:0.5};
+  setGuess(clamp(b.x+dx,0,1),clamp(b.y+dy,0,1));
+});
+el.bThrow.addEventListener('click',function(){throwBalls(1);});
+el.bThrow10.addEventListener('click',function(){throwBalls(10);});
+el.bLook.addEventListener('click',look);
+el.bAgain.addEventListener('click',newGame);
+el.b1.addEventListener('click',function(){throwMore(1);});
+el.b10.addEventListener('click',function(){throwMore(10);});
+el.b100.addEventListener('click',function(){throwMore(100);});
+el.bayes.addEventListener('change',function(){sync();draw();});
+
+function onResize(){
+  root.classList.toggle('bt-narrow',root.clientWidth<800);
+  resize(false);
+  drawSurface();
+}
+if(window.ResizeObserver){var ro=new ResizeObserver(onResize);ro.observe(root);ro.observe(main);}
+else{window.addEventListener('resize',onResize);}
+
+newGame();
+onResize();
+})();
+</script>
+</body>
+</html>
