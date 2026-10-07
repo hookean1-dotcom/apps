@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contamination vs Irradiation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>html,body{margin:0;padding:0;background:#EDF2F4}</style>
+</head>
+<body>
+<div id="ci-sim">
+<style>
+/* Layout: shared control strip over two matched lab scenes (same source, same actions, two outcomes), then tasks, summary, quiz. */
+#ci-sim{--bg:#EDF2F4;--panel:#FFFFFF;--stage:#F6F9FA;--ink:#12232E;--muted:#4C5F6B;--line:#C9D5DB;--track:#E1E9ED;--hazard:#F2B705;--alpha:#C2306F;--beta:#1565C0;--gamma:#147A55;--hit:#D92D20;--ok:#1B6E4A;--okbg:#E3F3EA;--nobg:#FBE6E3;--src:#3A566B;
+--fd:'Bricolage Grotesque','Trebuchet MS','Segoe UI',sans-serif;--fb:'Atkinson Hyperlegible','Segoe UI',Verdana,sans-serif;--fm:'IBM Plex Mono',Consolas,'Courier New',monospace;
+box-sizing:border-box;width:100%;min-height:600px;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:16px;line-height:1.5;padding-block:28px 40px;padding-inline:16px;color-scheme:light;-webkit-text-size-adjust:100%}
+#ci-sim *,#ci-sim *::before,#ci-sim *::after{box-sizing:border-box}
+#ci-sim .ci-wrap{max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+#ci-sim .ci-head{display:flex;flex-direction:column;gap:10px}
+#ci-sim .ci-eyebrow{margin:0;font:600 .75rem/1.2 var(--fm);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+#ci-sim .ci-title{margin:0;font:800 2.6rem/1.02 var(--fd);letter-spacing:-.02em;text-wrap:balance}
+#ci-sim .ci-tape{height:8px;width:132px;border-radius:2px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 9px,var(--ink) 9px 14px)}
+#ci-sim .ci-lede{margin:0;font-size:1.0625rem;max-width:44rem}
+#ci-sim .ci-h2{margin:0;font:800 1.5rem/1.1 var(--fd);letter-spacing:-.01em}
+#ci-sim .ci-controls{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px}
+#ci-sim .ci-g{display:flex;flex-direction:column;gap:6px;min-width:0}
+#ci-sim .ci-gl{font:600 .6875rem/1.2 var(--fm);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#ci-sim .ci-seg{display:flex}
+#ci-sim .ci-btn{font:700 .9375rem/1 var(--fb);color:var(--ink);background:var(--panel);border:1.5px solid var(--ink);border-radius:5px;padding:10px 12px;min-height:40px;cursor:pointer}
+#ci-sim .ci-btn:hover{background:var(--bg)}
+#ci-sim .ci-seg .ci-btn{border-radius:0}
+#ci-sim .ci-seg .ci-btn+.ci-btn{margin-left:-1.5px}
+#ci-sim .ci-seg .ci-btn:first-child{border-radius:5px 0 0 5px}
+#ci-sim .ci-seg .ci-btn:last-child{border-radius:0 5px 5px 0}
+#ci-sim .ci-btn[aria-pressed="true"]{background:var(--ink);color:#fff}
+#ci-sim .ci-btn[data-type="a"][aria-pressed="true"]{background:var(--alpha);border-color:var(--alpha)}
+#ci-sim .ci-btn[data-type="b"][aria-pressed="true"]{background:var(--beta);border-color:var(--beta)}
+#ci-sim .ci-btn[data-type="g"][aria-pressed="true"]{background:var(--gamma);border-color:var(--gamma)}
+#ci-sim .ci-btn:focus-visible,#ci-sim .ci-range:focus-visible,#ci-sim .ci-opt:focus-visible{outline:3px solid var(--hazard);outline-offset:2px;position:relative;z-index:1}
+#ci-sim .ci-row{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+#ci-sim .ci-range{width:210px;max-width:100%;accent-color:var(--ink);margin:0;height:28px}
+#ci-sim .ci-out{font:600 1rem/1 var(--fm);font-variant-numeric:tabular-nums;min-width:4.2em}
+#ci-sim .ci-scenes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:18px}
+#ci-sim .ci-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+#ci-sim .ci-def{margin:4px 0 0;color:var(--muted)}
+#ci-sim .ci-stage{height:250px;background:var(--stage);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+#ci-sim .ci-cv{display:block;width:100%;height:100%}
+#ci-sim .ci-sub{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:flex-end;min-height:62px}
+#ci-sim .ci-note{margin:0;font-size:.9375rem;color:var(--muted);min-height:62px;display:flex;align-items:center}
+#ci-sim .ci-read{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:12px 16px;border-top:1px solid var(--line);padding-top:12px}
+#ci-sim .ci-r{display:flex;flex-direction:column;gap:6px;min-width:0}
+#ci-sim .ci-v{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;min-height:26px}
+#ci-sim .ci-num{font:600 1.375rem/1 var(--fm);font-variant-numeric:tabular-nums}
+#ci-sim .ci-u{font-size:.875rem;color:var(--muted)}
+#ci-sim .ci-chip{font:700 .8125rem/1 var(--fb);padding:5px 8px;border-radius:3px;background:var(--okbg);color:var(--ok)}
+#ci-sim .ci-chip.ci-hot{background:var(--hazard);color:var(--ink)}
+#ci-sim .ci-bar{display:flex;flex:1 1 70px;height:14px;background:var(--track);border-radius:3px;overflow:hidden}
+#ci-sim .ci-bs{display:block;height:100%;width:0;background:var(--src);transition:width .25s}
+#ci-sim .ci-bc{display:block;height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--hazard) 0 6px,var(--ink) 6px 8px);transition:width .25s}
+#ci-sim .ci-lvl{font:700 .9375rem/1 var(--fb);min-width:4.6em}
+#ci-sim .ci-cap{margin:0;min-height:6em}
+#ci-sim .ci-legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.875rem;color:var(--muted)}
+#ci-sim .ci-lg{display:inline-flex;align-items:center;gap:6px}
+#ci-sim .ci-sw{display:inline-block;width:16px;height:5px;border-radius:3px}
+#ci-sim .ci-sw-a{background:var(--alpha)}#ci-sim .ci-sw-b{background:var(--beta);height:3px}#ci-sim .ci-sw-g{background:var(--gamma);height:3px}
+#ci-sim .ci-sw-at{width:10px;height:10px;border-radius:50%;background:var(--hazard);border:1.5px solid var(--ink)}
+#ci-sim .ci-sw-hit{width:10px;height:10px;border-radius:50%;border:2px solid var(--hit)}
+#ci-sim .ci-sw-s{width:14px;height:10px;background:var(--src)}
+#ci-sim .ci-sw-c{width:14px;height:10px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 4px,var(--ink) 4px 6px)}
+#ci-sim .ci-sec{display:flex;flex-direction:column;gap:12px}
+#ci-sim .ci-tasks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:12px}
+#ci-sim .ci-task{display:grid;grid-template-columns:32px 1fr;gap:4px 12px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;min-width:0}
+#ci-sim .ci-tn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font:600 .9375rem/1 var(--fm)}
+#ci-sim .ci-task.ci-done .ci-tn{background:var(--ok);border-color:var(--ok);color:#fff}
+#ci-sim .ci-tt{margin:0;font-weight:700;align-self:center}
+#ci-sim .ci-tf{margin:0;grid-column:2;color:var(--muted)}
+#ci-sim .ci-task.ci-done .ci-tf{color:var(--ink)}
+#ci-sim .ci-tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:6px}
+#ci-sim .ci-table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9375rem}
+#ci-sim .ci-table .ci-th,#ci-sim .ci-table .ci-td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+#ci-sim .ci-table .ci-th{font-weight:700}
+#ci-sim .ci-table .ci-hd{font:800 1.0625rem/1.2 var(--fd);border-bottom:1.5px solid var(--ink)}
+#ci-sim .ci-table .ci-last{border-bottom:0}
+#ci-sim .ci-quiz{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:12px}
+#ci-sim .ci-q{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+#ci-sim .ci-qt{margin:0;font-weight:700}
+#ci-sim .ci-opts{display:flex;flex-direction:column;gap:6px}
+#ci-sim .ci-opt{font:400 .9375rem/1.35 var(--fb);color:var(--ink);text-align:left;background:var(--panel);border:1.5px solid var(--line);border-radius:5px;padding:9px 12px;cursor:pointer}
+#ci-sim .ci-opt:hover:not(:disabled){border-color:var(--ink)}
+#ci-sim .ci-opt:disabled{cursor:default;opacity:1}
+#ci-sim .ci-opt.ci-ok{background:var(--okbg);border-color:var(--ok);color:var(--ink);font-weight:700}
+#ci-sim .ci-opt.ci-no{background:var(--nobg);border-color:var(--hit);color:var(--ink)}
+#ci-sim .ci-fb{margin:0;font-size:.9375rem}
+@media (max-width:640px){#ci-sim .ci-title{font-size:2rem}#ci-sim .ci-h2{font-size:1.3125rem}#ci-sim .ci-cap{min-height:7.5em}}
+@media (prefers-reduced-motion:reduce){#ci-sim .ci-bs,#ci-sim .ci-bc{transition:none}}
+</style>
+<div class="ci-wrap">
+<header class="ci-head">
+<p class="ci-eyebrow">GCSE Physics · Radioactivity</p>
+<h1 class="ci-title">Contamination or irradiation?</h1>
+<div class="ci-tape"></div>
+<p class="ci-lede">Two people stand near the same radioactive source. One is only <b>irradiated</b>. The other has also been <b>contaminated</b>. Every control below acts on both scenes, so you can see which actions protect each person.</p>
+</header>
+
+<section class="ci-controls" aria-label="Controls for both scenes">
+<div class="ci-g"><span class="ci-gl" id="ci-l-type">Radiation emitted</span>
+<div class="ci-seg" role="group" aria-labelledby="ci-l-type">
+<button type="button" class="ci-btn" id="ci-type-a" data-type="a" aria-pressed="false">α Alpha</button>
+<button type="button" class="ci-btn" id="ci-type-b" data-type="b" aria-pressed="false">β Beta</button>
+<button type="button" class="ci-btn" id="ci-type-g" data-type="g" aria-pressed="true">γ Gamma</button>
+</div></div>
+<div class="ci-g"><span class="ci-gl" id="ci-l-src">The source</span>
+<div class="ci-seg" role="group" aria-labelledby="ci-l-src">
+<button type="button" class="ci-btn" id="ci-src-out" data-lock="0" aria-pressed="true">On the bench</button>
+<button type="button" class="ci-btn" id="ci-src-in" data-lock="1" aria-pressed="false">In lead box</button>
+</div></div>
+<div class="ci-g"><label class="ci-gl" for="ci-dist">Distance from the source</label>
+<div class="ci-row"><input class="ci-range" id="ci-dist" type="range" min="0.3" max="2" step="0.05" value="0.5"><output class="ci-out" id="ci-dist-out" for="ci-dist">0.50 m</output></div></div>
+<div class="ci-g"><span class="ci-gl">Simulation</span>
+<div class="ci-row"><button type="button" class="ci-btn" id="ci-pause">Pause</button><button type="button" class="ci-btn" id="ci-reset">Reset</button></div></div>
+</section>
+
+<div class="ci-scenes">
+<article class="ci-panel">
+<div><h2 class="ci-h2">Irradiation</h2><p class="ci-def">Radiation from a source outside the body reaches the person. No radioactive material touches them.</p></div>
+<div class="ci-stage"><canvas class="ci-cv" id="ci-cv-irr" role="img" aria-label="Animation of radiation from a source on a bench travelling towards a person"></canvas></div>
+<p class="ci-note">Nothing to wash off here. The only radioactive atoms are sealed inside the source.</p>
+<div class="ci-read">
+<div class="ci-r"><span class="ci-gl">Radioactive atoms on or in the person</span><span class="ci-v"><b class="ci-num" id="ci-n-irr">0</b><span class="ci-chip" id="ci-chip-irr">Not radioactive</span></span></div>
+<div class="ci-r"><span class="ci-gl">Dose rate to living cells</span><span class="ci-v"><span class="ci-bar"><i class="ci-bs" id="ci-bs-irr"></i><i class="ci-bc" id="ci-bc-irr"></i></span><b class="ci-lvl" id="ci-lv-irr">Medium</b></span></div>
+<div class="ci-r"><span class="ci-gl">Total dose so far</span><span class="ci-v"><b class="ci-num" id="ci-d-irr">0</b><span class="ci-u">units</span></span></div>
+</div>
+<p class="ci-cap" id="ci-cap-irr" aria-live="polite"></p>
+</article>
+
+<article class="ci-panel">
+<div><h2 class="ci-h2">Contamination</h2><p class="ci-def">Radioactive atoms from the source have got onto or into the person. They are now carrying a source with them.</p></div>
+<div class="ci-stage"><canvas class="ci-cv" id="ci-cv-con" role="img" aria-label="Animation of radioactive atoms on a person giving out radiation"></canvas></div>
+<div class="ci-sub">
+<div class="ci-g"><span class="ci-gl" id="ci-l-loc">Where are the atoms?</span>
+<div class="ci-seg" role="group" aria-labelledby="ci-l-loc">
+<button type="button" class="ci-btn" id="ci-loc-skin" data-loc="skin" aria-pressed="true">On the skin</button>
+<button type="button" class="ci-btn" id="ci-loc-in" data-loc="in" aria-pressed="false">Inside the body</button>
+</div></div>
+<button type="button" class="ci-btn" id="ci-wash">Wash the skin</button>
+</div>
+<div class="ci-read">
+<div class="ci-r"><span class="ci-gl">Radioactive atoms on or in the person</span><span class="ci-v"><b class="ci-num" id="ci-n-con">12</b><span class="ci-chip ci-hot" id="ci-chip-con">Radioactive</span></span></div>
+<div class="ci-r"><span class="ci-gl">Dose rate to living cells</span><span class="ci-v"><span class="ci-bar"><i class="ci-bs" id="ci-bs-con"></i><i class="ci-bc" id="ci-bc-con"></i></span><b class="ci-lvl" id="ci-lv-con">Medium</b></span></div>
+<div class="ci-r"><span class="ci-gl">Total dose so far</span><span class="ci-v"><b class="ci-num" id="ci-d-con">0</b><span class="ci-u">units</span></span></div>
+</div>
+<p class="ci-cap" id="ci-cap-con" aria-live="polite"></p>
+</article>
+</div>
+
+<div class="ci-legend" aria-label="Key">
+<span class="ci-lg"><i class="ci-sw ci-sw-a"></i>alpha particle</span>
+<span class="ci-lg"><i class="ci-sw ci-sw-b"></i>beta particle</span>
+<span class="ci-lg"><i class="ci-sw ci-sw-g"></i>gamma ray</span>
+<span class="ci-lg"><i class="ci-sw ci-sw-at"></i>radioactive atom</span>
+<span class="ci-lg"><i class="ci-sw ci-sw-hit"></i>ionisation in living cells</span>
+<span class="ci-lg"><i class="ci-sw ci-sw-s"></i>dose from the source</span>
+<span class="ci-lg"><i class="ci-sw ci-sw-c"></i>dose from atoms on or in the person</span>
+</div>
+
+<section class="ci-sec">
+<h2 class="ci-h2">Investigate</h2>
+<ol class="ci-tasks" id="ci-tasks"></ol>
+</section>
+
+<section class="ci-sec">
+<h2 class="ci-h2">Side by side</h2>
+<div class="ci-tablewrap"><table class="ci-table">
+<thead><tr><th class="ci-th ci-hd" scope="col"></th><th class="ci-th ci-hd" scope="col">Irradiation</th><th class="ci-th ci-hd" scope="col">Contamination</th></tr></thead>
+<tbody>
+<tr><th class="ci-th" scope="row">What it is</th><td class="ci-td">An object is exposed to nuclear radiation from a source outside it.</td><td class="ci-td">Unwanted radioactive atoms get onto or into an object.</td></tr>
+<tr><th class="ci-th" scope="row">Does the object become radioactive?</th><td class="ci-td">No. It gives out no radiation of its own.</td><td class="ci-td">It carries radioactive atoms, so it gives out radiation wherever it goes.</td></tr>
+<tr><th class="ci-th" scope="row">When exposure stops</th><td class="ci-td">As soon as the source is shielded or taken away.</td><td class="ci-td">Only when the atoms are removed or have decayed.</td></tr>
+<tr><th class="ci-th" scope="row">Protection</th><td class="ci-td">Shielding, more distance, less time near the source.</td><td class="ci-td">Gloves, tongs and protective clothing so atoms cannot transfer. Wash off or remove anything contaminated.</td></tr>
+<tr><th class="ci-th" scope="row">Most hazardous radiation</th><td class="ci-td">Gamma and beta, because they can travel through air and into the body.</td><td class="ci-td">Alpha, if the atoms get inside the body. It is the most ionising.</td></tr>
+<tr><th class="ci-th ci-last" scope="row">Example</th><td class="ci-td ci-last">Gamma rays used to sterilise surgical instruments.</td><td class="ci-td ci-last">Radioactive dust on clothing, or breathing in radon gas.</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="ci-sec">
+<h2 class="ci-h2">Check your understanding</h2>
+<div class="ci-quiz" id="ci-quiz"></div>
+</section>
+</div>
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('ci-sim');if(!root)return;
+function $(s){return root.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(root.querySelectorAll(s))}
+var COL={ink:'#12232E',muted:'#4C5F6B',line:'#C9D5DB',fig:'#BFCED7',figD:'#A7B9C4',inner:'#E2EAEE',hazard:'#F2B705',a:'#C2306F',b:'#1565C0',g:'#147A55',hit:'#D92D20',lead:'#4E5D68',leadL:'#6B7B86',water:'#3FA7D6'};
+var SPEED={a:120,b:300,g:380};
+var N=12,TAU=Math.PI*2;
+var S={type:'g',locked:false,lockA:0,dist:0.5,loc:'skin',paused:false,alive:[],spawn:1,wash:-1,washed:false,washMsg:''};
+var SKIN=[['armL',.12],['armL',.48],['armL',.84],['handL',0],['head',205],['head',160],['head',-35],['armR',.3],['armR',.75],['legL',.35],['legL',.8],['legR',.55]];
+var INS=[[-.22,.14],[.2,.18],[-.05,.27],[.25,.36],[-.27,.4],[.02,.5],[-.14,.61],[.18,.64],[0,.76],[-.2,.82],[.22,.86],[.06,.38]];
+var TASKS=[
+{t:'Lock the source in its lead box.',f:'Irradiation stops the moment the source is shielded. The contaminated person is still being exposed, because the radioactive atoms are on them and not in the box.',ok:function(){return S.locked}},
+{t:'Put the source back on the bench, then move both people 2.0 m away.',f:'Distance cuts irradiation. It does nothing for contamination, because the atoms travel with the person.',ok:function(){return !S.locked&&S.dist>=1.95}},
+{t:'With the atoms on the skin, wash the contaminated person.',f:'Removing the radioactive atoms is the only way to stop the exposure from contamination. An irradiated person has nothing to wash off, because they never became radioactive.',ok:function(){return S.washed}},
+{t:'Choose alpha, then compare atoms on the skin with atoms inside the body.',f:'Outside the body alpha is the least hazardous, because it cannot get through air or the outer layer of skin. Inside the body it is the most hazardous, because all of its energy is absorbed by living cells.',ok:function(){return S.type==='a'&&S.loc==='in'}}];
+var QUIZ=[
+{q:'A sealed gamma source is used to sterilise a pack of surgical instruments. Afterwards, the instruments are',o:['radioactive for a few hours','not radioactive','radioactive until they are washed'],a:1,y:'Correct. Irradiation exposes an object to radiation but leaves no radioactive atoms behind.',n:'Think about whether any radioactive atoms were transferred to the instruments.'},
+{q:'A technician gets radioactive liquid on her sleeve and walks out of the lab. Is she still being exposed?',o:['No, she has moved away from the source','Yes, the radioactive atoms have gone with her','Only if the liquid emits gamma rays'],a:1,y:'Correct. This is contamination, so the source of radiation is on her clothing until it is removed.',n:'Where are the radioactive atoms now?'},
+{q:'Which source is the most dangerous to breathe in as a dust?',o:['An alpha source','A beta source','A gamma source'],a:0,y:'Correct. Alpha is the most ionising, and inside the body every particle is absorbed by living cells.',n:'Inside the body, the most ionising radiation does the most damage.'},
+{q:'Which action reduces irradiation but does nothing about contamination already on your skin?',o:['Washing with soap and water','Taking off contaminated gloves','Moving further from the source'],a:2,y:'Correct. Contamination moves with you, so distance from the original source does not help.',n:'Which of these leaves the radioactive atoms exactly where they are?'}];
+
+function mk(key){var cv=$('#ci-cv-'+key);return{key:key,cv:cv,ctx:cv.getContext('2d'),W:0,H:0,parts:[],fl:[],acc:0,dose:0}}
+var scenes=[mk('irr'),mk('con')];
+function seed(anim){for(var i=0;i<N;i++)S.alive[i]=true;S.spawn=anim?0:1;S.wash=-1;S.washMsg='';scenes[1].parts=[];scenes[1].fl=[]}
+function count(){var n=0;for(var i=0;i<N;i++)if(S.alive[i])n++;return n}
+
+function geo(sc){var W=sc.W,H=sc.H,floor=H-30,fh=Math.min(H*0.64,172,W*0.4),hr=fh*0.105,tw=fh*0.27,aw=fh*0.075,armX=tw/2+aw/2+fh*0.012,half=armX+aw/2,padL=Math.max(30,W*0.07),m=(W-padL-2*half-12)/2;
+var front=padL+S.dist*m,px=front+half,headY=floor-fh+hr,tTop=headY+hr+fh*0.025,tBot=floor-fh*0.45;
+return{W:W,H:H,floor:floor,fh:fh,hr:hr,tw:tw,aw:aw,armX:armX,half:half,m:m,sx:padL,sy:tTop+(tBot-tTop)*0.45,front:front,px:px,headY:headY,tTop:tTop,tBot:tBot,armBot:tBot+fh*0.05}}
+function atomPos(i,g){
+if(S.loc==='in'){var p=INS[i];return{x:g.px+p[0]*g.tw,y:g.tTop+p[1]*(g.tBot-g.tTop),nx:0,ny:0}}
+var k=SKIN[i][0],t=SKIN[i][1],a;
+if(k==='armL')return{x:g.px-g.armX-g.aw/2,y:g.tTop+8+t*(g.armBot-g.tTop-14),nx:-1,ny:0};
+if(k==='armR')return{x:g.px+g.armX+g.aw/2,y:g.tTop+8+t*(g.armBot-g.tTop-14),nx:1,ny:0};
+if(k==='handL')return{x:g.px-g.armX,y:g.armBot,nx:0,ny:1};
+if(k==='head'){a=t*Math.PI/180;return{x:g.px+Math.cos(a)*g.hr,y:g.headY-Math.sin(a)*g.hr,nx:Math.cos(a),ny:-Math.sin(a)}}
+if(k==='legL')return{x:g.px-g.tw/2,y:g.tBot+t*(g.floor-g.tBot),nx:-1,ny:0};
+return{x:g.px+g.tw/2,y:g.tBot+t*(g.floor-g.tBot),nx:1,ny:0}}
+function rayRect(ox,oy,dx,dy,x0,y0,x1,y1){var t0=-1e9,t1=1e9,a,b,c;
+if(Math.abs(dx)<1e-9){if(ox<x0||ox>x1)return null}else{a=(x0-ox)/dx;b=(x1-ox)/dx;if(a>b){c=a;a=b;b=c}t0=Math.max(t0,a);t1=Math.min(t1,b)}
+if(Math.abs(dy)<1e-9){if(oy<y0||oy>y1)return null}else{a=(y0-oy)/dy;b=(y1-oy)/dy;if(a>b){c=a;a=b;b=c}t0=Math.max(t0,a);t1=Math.min(t1,b)}
+return(t1>=t0&&t1>0&&t0>0)?[t0,t1]:null}
+function hitBody(g,ox,oy,dx,dy){var a=rayRect(ox,oy,dx,dy,g.px-g.half,g.tTop,g.px+g.half,g.floor),b=rayRect(ox,oy,dx,dy,g.px-g.hr,g.headY-g.hr,g.px+g.hr,g.headY+g.hr);
+if(a&&b)return a[0]<b[0]?a:b;return a||b}
+function aRange(g){return Math.max(7,0.05*g.m)+Math.random()*3}
+function emitSrc(sc,g){var th=Math.random()*TAU,dx=Math.cos(th),dy=Math.sin(th),T=S.type,p={x:g.sx,y:g.sy,dx:dx,dy:dy,d:0,max:1e9,fl:0,T:T,fade:0},h;
+if(T==='a'){p.max=aRange(g)+9;p.fade=1}
+else{h=hitBody(g,g.sx,g.sy,dx,dy);
+if(T==='b'){p.max=(0.55+Math.random()*0.45)*g.m;p.fade=1;if(h&&h[0]<p.max){p.max=h[0]+3+Math.random()*9;p.fl=1;p.fade=0}}
+else if(h&&Math.random()<0.3){p.max=h[0]+Math.random()*(h[1]-h[0]);p.fl=1}}
+sc.parts.push(p)}
+function emitAtom(sc,g,pos){var th=Math.random()*TAU,dx=Math.cos(th),dy=Math.sin(th),T=S.type,p={x:pos.x,y:pos.y,dx:dx,dy:dy,d:0,max:1e9,fl:0,T:T,fade:0},inw;
+if(S.loc==='in'){if(T==='a'){p.max=5;p.fl=2}else if(T==='b'){p.max=7+Math.random()*9;p.fl=1}else if(Math.random()<0.18){p.max=5+Math.random()*16;p.fl=1}}
+else{inw=dx*pos.nx+dy*pos.ny<0;
+if(T==='a'){p.max=inw?2.5:aRange(g);p.fade=1}
+else if(T==='b'){if(inw){p.max=6+Math.random()*8;p.fl=1}else{p.max=(0.55+Math.random()*0.45)*g.m;p.fade=1}}
+else if(inw&&Math.random()<0.22){p.max=5+Math.random()*g.tw*0.8;p.fl=1}}
+sc.parts.push(p)}
+
+function srcRate(){if(S.locked||S.type==='a')return 0;var ge=Math.pow(0.3/S.dist,2);
+if(S.type==='g')return 60*ge;return 60*ge*Math.max(0,1-S.dist*S.dist)}
+var CON={skin:{a:3,b:45,g:12},in:{a:100,b:65,g:18}};
+function conRate(){return S.spawn<1?0:CON[S.loc][S.type]*count()/N}
+function rates(key){return{s:srcRate(),c:key==='con'?conRate():0}}
+function lvl(v){return v<0.5?'None':v<6?'Very low':v<20?'Low':v<50?'Medium':v<80?'High':'Very high'}
+
+function step(dt){var i,j,p,v,sc,g,r;
+S.lockA+=((S.locked?1:0)-S.lockA)*Math.min(1,dt*10);
+if(S.spawn<1)S.spawn=Math.min(1,S.spawn+dt/0.8);
+if(S.wash>=0){S.wash+=dt/0.9;if(S.wash>=1){S.wash=-1;if(S.loc==='skin'){for(i=0;i<N;i++)S.alive[i]=false;S.washed=true}}}
+for(j=0;j<scenes.length;j++){sc=scenes[j];if(sc.W<60)continue;g=geo(sc);
+if(!S.locked){sc.acc+=dt*(S.type==='a'?34:26);while(sc.acc>=1){sc.acc-=1;emitSrc(sc,g)}}
+if(sc.key==='con'&&S.spawn>=1&&!(S.wash>=0&&S.loc==='skin')){for(i=0;i<N;i++)if(S.alive[i]&&Math.random()<1.5*dt)emitAtom(sc,g,atomPos(i,g))}
+for(i=sc.parts.length-1;i>=0;i--){p=sc.parts[i];v=SPEED[p.T]*dt;p.x+=p.dx*v;p.y+=p.dy*v;p.d+=v;
+if(p.d>=p.max){if(p.fl)sc.fl.push({x:p.x,y:p.y,t:0,big:p.fl===2});sc.parts.splice(i,1)}
+else if(p.x<-30||p.x>sc.W+30||p.y<-30||p.y>sc.H+30)sc.parts.splice(i,1)}
+for(i=sc.fl.length-1;i>=0;i--){sc.fl[i].t+=dt/0.45;if(sc.fl[i].t>=1)sc.fl.splice(i,1)}
+r=rates(sc.key);sc.dose+=(r.s+r.c)*dt*0.05}}
+
+function rr(c,x,y,w,h,r){r=Math.min(r,w/2,h/2);c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.arcTo(x+w,y,x+w,y+r,r);c.lineTo(x+w,y+h-r);c.arcTo(x+w,y+h,x+w-r,y+h,r);c.lineTo(x+r,y+h);c.arcTo(x,y+h,x,y+h-r,r);c.lineTo(x,y+r);c.arcTo(x,y,x+r,y,r);c.closePath()}
+function drawFig(c,g,inside){var lw=g.tw*0.44;
+c.fillStyle=COL.figD;rr(c,g.px-g.armX-g.aw/2,g.tTop+2,g.aw,g.armBot-g.tTop-2,g.aw/2);c.fill();rr(c,g.px+g.armX-g.aw/2,g.tTop+2,g.aw,g.armBot-g.tTop-2,g.aw/2);c.fill();
+c.fillStyle=COL.fig;rr(c,g.px-g.tw/2,g.tBot-8,lw,g.floor-g.tBot+8,lw*0.35);c.fill();rr(c,g.px+g.tw/2-lw,g.tBot-8,lw,g.floor-g.tBot+8,lw*0.35);c.fill();
+rr(c,g.px-g.tw/2,g.tTop,g.tw,g.tBot-g.tTop+2,g.tw*0.3);c.fill();
+c.beginPath();c.arc(g.px,g.headY,g.hr,0,TAU);c.fill();
+if(inside){var th=g.tBot-g.tTop;c.fillStyle=COL.inner;rr(c,g.px-g.tw*0.38,g.tTop+th*0.06,g.tw*0.76,th*0.88,g.tw*0.26);c.fill()}}
+function drawSrc(c,g){var a=S.lockA,i,R=5.5;
+c.strokeStyle=COL.muted;c.lineWidth=3;c.lineCap='butt';c.beginPath();c.moveTo(g.sx,g.floor);c.lineTo(g.sx,g.sy+8);c.stroke();
+c.fillStyle=COL.muted;rr(c,g.sx-13,g.floor-4,26,4,1.5);c.fill();
+c.fillStyle=COL.ink;rr(c,g.sx-11,g.sy-9,22,18,4);c.fill();
+c.fillStyle=COL.hazard;c.beginPath();c.arc(g.sx,g.sy,R,0,TAU);c.fill();
+c.fillStyle=COL.ink;for(i=0;i<3;i++){var s=-Math.PI/2-Math.PI/6+i*TAU/3;c.beginPath();c.arc(g.sx,g.sy,R*0.86,s,s+Math.PI/3);c.arc(g.sx,g.sy,R*0.3,s+Math.PI/3,s,true);c.closePath();c.fill()}
+c.beginPath();c.arc(g.sx,g.sy,R*0.17,0,TAU);c.fill();
+if(a>0.01){c.save();c.globalAlpha=Math.min(1,a*1.3);c.translate(0,-(1-a)*34);
+c.fillStyle=COL.lead;rr(c,g.sx-21,g.sy-20,42,39,4);c.fill();c.fillStyle=COL.leadL;rr(c,g.sx-23,g.sy-23,46,9,3);c.fill();
+c.fillStyle='#fff';c.font='600 12px "IBM Plex Mono",Consolas,monospace';c.textAlign='center';c.textBaseline='middle';c.fillText('Pb',g.sx,g.sy+3);c.restore()}}
+function drawPart(c,p,g){var col=COL[p.T],al=1,k,n,bx,by,o;
+if(p.fade){al=Math.max(0,Math.min(1,(p.max-p.d)/(p.T==='a'?5:0.14*g.m)))}
+c.globalAlpha=al;c.strokeStyle=col;c.lineCap='round';
+if(p.T==='a'){c.lineWidth=3.2;c.beginPath();c.moveTo(p.x-p.dx*Math.min(5,p.d),p.y-p.dy*Math.min(5,p.d));c.lineTo(p.x,p.y);c.stroke()}
+else if(p.T==='b'){c.lineWidth=1.7;c.beginPath();c.moveTo(p.x-p.dx*Math.min(10,p.d),p.y-p.dy*Math.min(10,p.d));c.lineTo(p.x,p.y);c.stroke()}
+else{c.lineWidth=1.5;n=Math.min(11,Math.floor(p.d/2));c.beginPath();for(k=0;k<=n;k++){o=Math.sin((p.d-k*2)*0.6)*2.6;bx=p.x-p.dx*k*2-p.dy*o;by=p.y-p.dy*k*2+p.dx*o;if(k)c.lineTo(bx,by);else c.moveTo(bx,by)}c.stroke()}
+c.globalAlpha=1}
+function draw(sc){var c=sc.ctx,W=sc.W,H=sc.H,g,i,d,x,p,f,r,t,e;if(W<60)return;g=geo(sc);
+c.clearRect(0,0,W,H);
+c.strokeStyle=COL.line;c.lineWidth=1.5;c.beginPath();c.moveTo(0,g.floor+0.75);c.lineTo(W,g.floor+0.75);c.stroke();
+c.font='500 11px "IBM Plex Mono",Consolas,monospace';c.textAlign='center';c.textBaseline='alphabetic';c.fillStyle=COL.muted;c.strokeStyle=COL.muted;c.lineWidth=1;
+for(d=0;d<=2.001;d+=0.5){x=Math.round(g.sx+d*g.m)+0.5;c.beginPath();c.moveTo(x,g.floor+1);c.lineTo(x,g.floor+7);c.stroke();c.fillText(d===2?'2.0 m':d===0?'0':d.toFixed(1),x,g.floor+21)}
+c.fillStyle=COL.ink;c.beginPath();c.moveTo(g.front,g.floor+1);c.lineTo(g.front-4,g.floor+8);c.lineTo(g.front+4,g.floor+8);c.closePath();c.fill();
+drawFig(c,g,sc.key==='con'&&S.loc==='in');
+c.fillStyle=COL.muted;c.fillText(S.locked?'lead box':'source',Math.max(g.sx,30),g.sy-(S.locked?30:17));
+if(sc.key==='con'){e=S.spawn<1?1-Math.pow(1-S.spawn,3):1;
+for(i=0;i<N;i++){if(!S.alive[i])continue;p=atomPos(i,g);x=g.sx+(p.x-g.sx)*e;var y=g.sy+(p.y-g.sy)*e,al=1;
+if(S.wash>=0&&S.loc==='skin'){y+=S.wash*34;al=1-S.wash}
+c.globalAlpha=al;c.fillStyle=COL.hazard;c.strokeStyle=COL.ink;c.lineWidth=1.4;c.beginPath();c.arc(x,y,3.4,0,TAU);c.fill();c.stroke();c.globalAlpha=1}}
+for(i=0;i<sc.parts.length;i++)drawPart(c,sc.parts[i],g);
+for(i=0;i<sc.fl.length;i++){f=sc.fl[i];t=f.t;r=(f.big?5:3)+(f.big?11:7)*t;c.globalAlpha=1-t;c.strokeStyle=COL.hit;c.lineWidth=f.big?2.4:1.8;c.beginPath();c.arc(f.x,f.y,r,0,TAU);c.stroke();
+if(t<0.4){c.fillStyle=COL.hit;c.beginPath();c.arc(f.x,f.y,f.big?2.6:1.8,0,TAU);c.fill()}c.globalAlpha=1}
+drawSrc(c,g);
+if(sc.key==='con'&&S.wash>=0){c.strokeStyle=COL.water;c.lineWidth=2;c.lineCap='round';c.globalAlpha=0.85;
+for(i=0;i<9;i++){x=g.px-g.half+i*(2*g.half/8);var yy=g.floor-g.fh-26+S.wash*(g.fh+40)+(i%3)*15;if(yy<g.floor-8){c.beginPath();c.moveTo(x,yy);c.lineTo(x,Math.min(g.floor-2,yy+9));c.stroke()}}c.globalAlpha=1}}
+
+var E={};['n-irr','n-con','chip-irr','chip-con','bs-irr','bs-con','bc-irr','bc-con','lv-irr','lv-con','d-irr','d-con','cap-irr','cap-con','dist-out','dist','pause','wash'].forEach(function(k){E[k]=$('#ci-'+k)});
+var cache={};
+function put(k,v){if(cache[k]!==v){cache[k]=v;E[k].textContent=v}}
+function wid(k,v){v=Math.max(0,Math.min(100,v)).toFixed(1)+'%';if(cache[k]!==v){cache[k]=v;E[k].style.width=v}}
+function capIrr(){var T=S.type;
+if(S.locked)return'The lead box absorbs the radiation, so the exposure stops at once. No radioactive atoms were left on the person, so they are not radioactive and nothing needs cleaning.';
+if(T==='a')return'Alpha particles travel only a few centimetres in air, so none reach the person. Outside the body, alpha is the least hazardous radiation.';
+if(T==='b')return S.dist<1?'Beta particles reach the person, pass through the skin and ionise living cells near the surface. Move further away and fewer arrive.':'Beta particles travel about a metre in air. At this distance none reach the person.';
+return'Gamma rays travel a long way in air and pass into the body. Most go straight through, but some ionise living cells on the way. Further from the source the rays are more spread out, so fewer hit the person.'}
+function capCon(){var T=S.type,n=count(),s,src=srcRate()>0.5?' The source on the bench is also irradiating the person.':'';
+if(n===0)return'The radioactive atoms have been washed off, so the contamination has gone.'+(src||' The person is no longer being exposed.');
+if(S.loc==='skin'){s='The atoms sit on the skin and go wherever the person goes. ';
+s+=T==='a'?'Alpha particles are stopped by the dead outer layer of skin, so very few living cells are damaged.':T==='b'?'Beta particles pass through the skin and ionise the living cells underneath.':'Gamma rays leave in every direction. Those heading into the body mostly pass through, and a few ionise cells.'}
+else{s='The atoms have been breathed in or swallowed, so they cannot be washed off. ';
+s+=T==='a'?'Every alpha particle is absorbed by living cells right next to it. Alpha is the most ionising radiation, so this is the most dangerous case.':T==='b'?'Beta particles are absorbed within the body, ionising the cells around each atom.':'Most gamma rays escape from the body without being absorbed, so they do less damage than alpha or beta would here.'}
+return s+(S.washMsg?' '+S.washMsg:'')+src}
+function ui(){var n=count();
+scenes.forEach(function(sc){var k=sc.key,r=rates(k);
+var tot=r.s+r.c,w=tot>0?Math.sqrt(Math.min(tot,120)/120)*100:0;wid('bs-'+k,tot>0?w*r.s/tot:0);wid('bc-'+k,tot>0?w*r.c/tot:0);put('lv-'+k,lvl(tot));put('d-'+k,String(Math.floor(sc.dose)))});
+put('n-con',String(S.spawn<1?0:n));
+var hot=n>0;if(cache.hot!==hot){cache.hot=hot;E['chip-con'].textContent=hot?'Radioactive':'Not radioactive';E['chip-con'].className='ci-chip'+(hot?' ci-hot':'')}
+put('cap-irr',capIrr());put('cap-con',capCon());
+TASKS.forEach(function(t,i){if(!t.done&&t.ok()){t.done=true;t.li.className='ci-task ci-done';t.num.textContent='✓';t.find.hidden=false}})}
+function press(sel,attr,val){$$(sel).forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute(attr)===val?'true':'false')})}
+function clearParts(){scenes.forEach(function(sc){sc.parts=[];sc.fl=[]})}
+function redraw(){scenes.forEach(draw)}
+
+$$('[data-type]').forEach(function(b){b.addEventListener('click',function(){S.type=b.getAttribute('data-type');press('[data-type]','data-type',S.type);clearParts();ui();redraw()})});
+$$('[data-lock]').forEach(function(b){b.addEventListener('click',function(){S.locked=b.getAttribute('data-lock')==='1';press('[data-lock]','data-lock',S.locked?'1':'0');ui()})});
+$$('[data-loc]').forEach(function(b){b.addEventListener('click',function(){S.loc=b.getAttribute('data-loc');press('[data-loc]','data-loc',S.loc);seed(true);ui();redraw()})});
+E.dist.addEventListener('input',function(){S.dist=parseFloat(E.dist.value);put('dist-out',S.dist.toFixed(2)+' m');ui();redraw()});
+E.wash.addEventListener('click',function(){if(S.wash>=0)return;if(S.loc==='skin'){if(count()>0&&S.spawn>=1)S.wash=0}else{S.wash=0;S.washMsg='Washing only cleans the skin. The atoms inside are still there.'}ui()});
+E.pause.addEventListener('click',function(){S.paused=!S.paused;E.pause.textContent=S.paused?'Play':'Pause'});
+$('#ci-reset').addEventListener('click',function(){S.type='g';S.locked=false;S.dist=0.5;S.loc='skin';E.dist.value='0.5';put('dist-out','0.50 m');
+press('[data-type]','data-type','g');press('[data-lock]','data-lock','0');press('[data-loc]','data-loc','skin');
+clearParts();scenes.forEach(function(sc){sc.dose=0});seed(true);ui();redraw()});
+
+(function(){var ol=$('#ci-tasks');TASKS.forEach(function(t,i){var li=document.createElement('li');li.className='ci-task';
+var n=document.createElement('span');n.className='ci-tn';n.textContent=String(i+1);
+var p=document.createElement('p');p.className='ci-tt';p.textContent=t.t;
+var f=document.createElement('p');f.className='ci-tf';f.textContent=t.f;f.hidden=true;
+li.appendChild(n);li.appendChild(p);li.appendChild(f);ol.appendChild(li);t.li=li;t.num=n;t.find=f});
+var qz=$('#ci-quiz');QUIZ.forEach(function(q,qi){var d=document.createElement('div');d.className='ci-q';
+var p=document.createElement('p');p.className='ci-qt';p.textContent=(qi+1)+'. '+q.q;d.appendChild(p);
+var os=document.createElement('div');os.className='ci-opts';var fb=document.createElement('p');fb.className='ci-fb';fb.hidden=true;fb.setAttribute('aria-live','polite');
+q.o.forEach(function(o,oi){var b=document.createElement('button');b.type='button';b.className='ci-opt';b.id='ci-q'+qi+'o'+oi;b.textContent=o;
+b.addEventListener('click',function(){fb.hidden=false;if(oi===q.a){b.className='ci-opt ci-ok';fb.textContent=q.y;Array.prototype.forEach.call(os.children,function(x){x.disabled=true})}
+else{b.className='ci-opt ci-no';b.disabled=true;fb.textContent='Not quite. '+q.n}});os.appendChild(b)});
+d.appendChild(os);d.appendChild(fb);qz.appendChild(d)})})();
+
+function size(sc){var r=sc.cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2.5),w=Math.round(r.width),h=Math.round(r.height);
+if(w<1||h<1)return;sc.W=w;sc.H=h;sc.cv.width=Math.round(w*dpr);sc.cv.height=Math.round(h*dpr);sc.ctx.setTransform(dpr,0,0,dpr,0,0);draw(sc)}
+scenes.forEach(function(sc){if(window.ResizeObserver){new ResizeObserver(function(){size(sc)}).observe(sc.cv.parentNode)}size(sc)});
+if(!window.ResizeObserver)window.addEventListener('resize',function(){scenes.forEach(size)});
+
+seed(false);
+var primed=false;
+function prime(){if(primed||scenes[0].W<60)return;primed=true;for(var i=0;i<45;i++)step(1/30);scenes.forEach(function(sc){sc.dose=0})}
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){S.paused=true;E.pause.textContent='Play'}
+var last=0,uiT=0;
+function loop(ts){var dt=Math.min(0.05,(ts-last)/1000||0);last=ts;prime();
+if(!S.paused){step(dt)}
+redraw();uiT+=dt;if(uiT>0.12||S.paused){uiT=0;ui()}
+window.requestAnimationFrame(loop)}
+prime();ui();redraw();window.requestAnimationFrame(loop);
+})();
+</script>
+</div>
+</body>
+</html>
