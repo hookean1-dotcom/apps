@@ -1,0 +1,555 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Superconductivity Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: cryostat bench. Material rack on the left, instrument panel (readouts, R–T plot, wire model, cooling controls) on the right, study notes and quiz below. Heat = amber, cold = cryo cyan. */
+#scl{--bg:#eef3f6;--surface:#fbfdfe;--surface-2:#e3ebf1;--ink:#12233a;--muted:#4b5f73;--line:#c5d2dc;--cold:#08779a;--cold-bright:#14acd6;--cold-soft:#d2edf5;--heat:#ad4c0c;--heat-bright:#ee7a28;--heat-soft:#f9e4d2;--low:#3247a6;--low-soft:#e1e6f7;--good:#1b7444;--good-soft:#dcf0e3;--bad:#ad3529;--bad-soft:#f7e0dc;
+--f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;--f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;--f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+font-family:var(--f-body);color:var(--ink);background:var(--bg);width:100%;min-height:100%;box-sizing:border-box;padding:24px 16px 48px;line-height:1.5;font-size:15px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #scl{--bg:#0c1520;--surface:#122030;--surface-2:#1a2a3c;--ink:#e3ecf3;--muted:#9db0c2;--line:#2b3e53;--cold:#4cc9ea;--cold-bright:#4cd3f5;--cold-soft:#0f3444;--heat:#f39150;--heat-bright:#f5873b;--heat-soft:#3a2416;--low:#93a8ff;--low-soft:#1f2850;--good:#5fd393;--good-soft:#123323;--bad:#f08a7e;--bad-soft:#3b1a17;color-scheme:dark}}
+:root[data-theme="dark"] #scl{--bg:#0c1520;--surface:#122030;--surface-2:#1a2a3c;--ink:#e3ecf3;--muted:#9db0c2;--line:#2b3e53;--cold:#4cc9ea;--cold-bright:#4cd3f5;--cold-soft:#0f3444;--heat:#f39150;--heat-bright:#f5873b;--heat-soft:#3a2416;--low:#93a8ff;--low-soft:#1f2850;--good:#5fd393;--good-soft:#123323;--bad:#f08a7e;--bad-soft:#3b1a17;color-scheme:dark}
+body:has(#scl){background:#eef3f6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body:has(#scl){background:#0c1520}}
+:root[data-theme="dark"] body:has(#scl){background:#0c1520}
+#scl *,#scl *::before,#scl *::after{box-sizing:border-box}
+#scl .wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:28px}
+#scl h1,#scl h2,#scl h3{font-family:var(--f-display);margin:0;text-wrap:balance;line-height:1.15}
+#scl p{margin:0}
+#scl button{font:inherit;color:inherit;cursor:pointer}
+#scl button:focus-visible,#scl input:focus-visible{outline:3px solid var(--cold-bright);outline-offset:2px}
+#scl .eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#scl .hero{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end}
+#scl .hero h1{font-size:clamp(34px,6vw,62px);font-weight:800;letter-spacing:-.02em}
+#scl .hero h1 span{color:var(--cold)}
+#scl .hero p.lede{max-width:62ch;color:var(--muted);font-size:16px;margin-top:10px}
+#scl .zero{font-family:var(--f-mono);font-weight:700;font-size:clamp(28px,5vw,46px);color:var(--cold);border:2px solid var(--cold);border-radius:6px;padding:6px 16px;line-height:1.1;white-space:nowrap}
+#scl .zero small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+#scl .lab{display:grid;grid-template-columns:290px minmax(0,1fr);gap:20px;align-items:start}
+#scl .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+#scl .rack{display:flex;flex-direction:column;gap:16px}
+#scl .group h3{font-size:13px;font-family:var(--f-mono);font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;gap:8px}
+#scl .group h3 em{font-style:normal;font-weight:500;color:var(--muted)}
+#scl .group.low h3{color:var(--low)}
+#scl .group.high h3{color:var(--cold)}
+#scl .group.ctl h3{color:var(--heat)}
+#scl .mats{display:flex;flex-direction:column;gap:6px}
+#scl .mat{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;background:var(--surface-2);border:1.5px solid transparent;border-radius:7px;padding:7px 10px}
+#scl .mat:hover{border-color:var(--line)}
+#scl .mat[aria-pressed="true"]{border-color:var(--ink);background:var(--surface)}
+#scl .mat b{font-family:var(--f-mono);font-size:13px}
+#scl .mat span{font-size:12.5px;color:var(--muted);grid-column:1}
+#scl .mat i{font-style:normal;font-family:var(--f-mono);font-size:12px;grid-row:1/3;grid-column:2;align-self:center;padding:2px 7px;border-radius:999px;background:var(--surface);border:1px solid var(--line)}
+#scl .group.low .mat i{color:var(--low)}
+#scl .group.high .mat i{color:var(--cold)}
+#scl .note h3{font-size:19px;margin-bottom:4px}
+#scl .note .tag{display:inline-block;font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-bottom:8px}
+#scl .tag.low{background:var(--low-soft);color:var(--low)}
+#scl .tag.high{background:var(--cold-soft);color:var(--cold)}
+#scl .tag.metal{background:var(--heat-soft);color:var(--heat)}
+#scl .note p{font-size:14px;color:var(--muted)}
+#scl .note dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:10px 0 0;font-size:13.5px}
+#scl .note dt{color:var(--muted)}
+#scl .note dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+#scl .bench{display:flex;flex-direction:column;gap:14px;min-width:0}
+#scl .reads{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+#scl .read{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0}
+#scl .read label{display:block;font-size:12px;color:var(--muted);font-family:var(--f-mono);letter-spacing:.04em}
+#scl .read output{display:block;font-family:var(--f-mono);font-weight:700;font-size:clamp(18px,2.3vw,26px);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#scl .read small{display:block;font-size:12px;color:var(--muted);font-family:var(--f-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#scl .read.r output{color:var(--heat)}
+#scl .is-sc .read.r output{color:var(--cold)}
+#scl .statusbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+#scl .pill{font-family:var(--f-mono);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:var(--heat-soft);color:var(--heat);transition:background .3s,color .3s}
+#scl .is-sc .pill{background:var(--cold);color:var(--surface)}
+#scl .pill.trans{background:var(--low-soft);color:var(--low)}
+#scl .coolnote{font-size:13.5px;color:var(--muted)}
+#scl .plot{padding:12px 12px 8px}
+#scl .plot-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:6px}
+#scl .plot-head h3{font-size:16px}
+#scl .seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+#scl .seg button{background:transparent;border:0;padding:5px 10px;font-size:13px}
+#scl .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+#scl .ctrls-mini{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#scl .chk{display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+#scl .canvas-box{position:relative;width:100%;height:340px}
+#scl .canvas-box.wire{height:96px;border-radius:8px;overflow:hidden;background:var(--surface-2)}
+#scl canvas{display:block;width:100%;height:100%}
+#scl .hint{font-size:12.5px;color:var(--low);background:var(--low-soft);padding:3px 9px;border-radius:999px}
+#scl .cap{font-size:13px;color:var(--muted);margin-top:6px}
+#scl .temp{display:flex;flex-direction:column;gap:12px}
+#scl .slider-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center}
+#scl .slider-row label{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+#scl input[type=range]{width:100%;accent-color:var(--cold)}
+#scl .nudges{display:flex;gap:4px}
+#scl .btn{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:6px 10px;font-size:13.5px}
+#scl .btn:hover{border-color:var(--muted)}
+#scl .btn.mono{font-family:var(--f-mono);font-size:12.5px}
+#scl .coolants{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+#scl .coolant{display:flex;flex-direction:column;align-items:flex-start;gap:0;text-align:left;padding:8px 10px}
+#scl .coolant b{font-family:var(--f-mono);font-size:15px}
+#scl .coolant span{font-size:12.5px;color:var(--muted)}
+#scl .coolant.run{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+#scl .coolant.run span{color:var(--surface);opacity:.8}
+#scl .missions h3{font-size:16px;margin-bottom:4px;display:flex;justify-content:space-between}
+#scl .missions h3 em{font-style:normal;font-family:var(--f-mono);font-size:13px;color:var(--good)}
+#scl .missions ul{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:7px}
+#scl .missions li{display:grid;grid-template-columns:18px 1fr;gap:8px;font-size:13.5px;align-items:start}
+#scl .missions li::before{content:"";width:16px;height:16px;border-radius:4px;border:1.5px solid var(--line);margin-top:2px}
+#scl .missions li.done{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--good)}
+#scl .missions li.done::before{background:var(--good);border-color:var(--good);box-shadow:inset 0 0 0 3px var(--surface)}
+#scl .sect-head{display:flex;flex-direction:column;gap:4px;max-width:70ch}
+#scl .sect-head h2{font-size:clamp(24px,3.4vw,34px);letter-spacing:-.01em}
+#scl .sect-head p{color:var(--muted)}
+#scl .facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+#scl .fact{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+#scl .fact h3{font-size:18px}
+#scl .fact p,#scl .fact li{font-size:14.5px}
+#scl .fact ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+#scl .fact .eq{font-family:var(--f-mono);background:var(--surface-2);padding:8px 10px;border-radius:6px;font-size:13.5px;overflow-x:auto}
+#scl .tip{border-left:3px solid var(--low);background:var(--low-soft);padding:8px 10px;border-radius:0 6px 6px 0;font-size:14px}
+#scl .tip b{color:var(--low)}
+#scl .tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+#scl table{border-collapse:collapse;width:100%;min-width:640px;font-size:14px}
+#scl th,#scl td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+#scl th{font-family:var(--f-mono);font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:500}
+#scl td.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+#scl th.n{text-align:right}
+#scl tbody tr{cursor:pointer}
+#scl tbody tr:hover{background:var(--surface-2)}
+#scl tbody tr:last-child td{border-bottom:0}
+#scl .quiz-top{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+#scl .score{font-family:var(--f-mono);font-weight:700;font-size:18px}
+#scl .qs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#scl .q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+#scl .q .qn{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+#scl .q p.stem{font-weight:700}
+#scl .opts{display:flex;flex-direction:column;gap:6px}
+#scl .opt{text-align:left;background:var(--surface-2);border:1.5px solid transparent;border-radius:7px;padding:8px 10px;font-size:14px}
+#scl .opt:hover:not(:disabled){border-color:var(--line)}
+#scl .opt:disabled{cursor:default}
+#scl .opt.right{background:var(--good-soft);border-color:var(--good)}
+#scl .opt.wrong{background:var(--bad-soft);border-color:var(--bad)}
+#scl .fb{font-size:14px;padding:8px 10px;border-radius:6px;background:var(--surface-2)}
+#scl .fb b.ok{color:var(--good)}
+#scl .fb b.no{color:var(--bad)}
+@media (max-width:980px){#scl .lab{grid-template-columns:1fr}#scl .rack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}#scl .facts{grid-template-columns:repeat(2,minmax(0,1fr))}#scl .coolants{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){#scl .hero{grid-template-columns:1fr}#scl .rack{grid-template-columns:1fr}#scl .reads{grid-template-columns:repeat(2,minmax(0,1fr))}#scl .facts,#scl .qs{grid-template-columns:1fr}#scl .coolants{grid-template-columns:repeat(2,minmax(0,1fr))}#scl .canvas-box{height:280px}#scl .slider-row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){#scl *{transition:none!important}}
+</style>
+
+<div id="scl">
+<div class="wrap">
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">WJEC A-level Physics · AS Unit 2 · Resistance</div>
+    <h1>Superconductivity <span>Lab</span></h1>
+    <p class="lede">Pick a material, cool it down and watch its resistance. Below its critical temperature a superconductor's resistance does not just get small. It becomes exactly zero.</p>
+  </div>
+  <div class="zero" aria-hidden="true"><small>Target reading</small>0.000 Ω</div>
+</header>
+
+<section class="lab" aria-label="Virtual cryostat">
+  <aside class="rack">
+    <div class="panel" id="sc-picker"></div>
+    <div class="panel note" id="sc-note"></div>
+    <div class="panel missions">
+      <h3>Lab missions <em id="sc-mcount">0 / 6</em></h3>
+      <p class="cap" style="margin:0">Complete these on the bench. They tick themselves off.</p>
+      <ul id="sc-missions"></ul>
+    </div>
+  </aside>
+
+  <div class="bench" id="sc-bench">
+    <div class="reads">
+      <div class="read"><label>Temperature T</label><output id="sc-T">293.0 K</output><small id="sc-C">θ = 19.9 °C</small></div>
+      <div class="read r"><label>Resistance R</label><output id="sc-R">—</output><small id="sc-rho">ρ = —</small></div>
+      <div class="read"><label>p.d. V = IR</label><output id="sc-V">—</output><small>I = 2.00 A</small></div>
+      <div class="read"><label>Power P = I²R</label><output id="sc-P">—</output><small id="sc-Pn">heating in sample</small></div>
+    </div>
+
+    <div class="statusbar">
+      <span class="pill" id="sc-pill">Normal state</span>
+      <span class="coolnote" id="sc-coolnote"></span>
+    </div>
+
+    <div class="panel plot">
+      <div class="plot-head">
+        <h3>Resistance against temperature</h3>
+        <div class="ctrls-mini">
+          <span class="hint" id="sc-hint" hidden>Low T<sub>c</sub>: zoom in to see the drop</span>
+          <label class="chk"><input type="checkbox" id="sc-curve" checked> Show full curve</label>
+          <div class="seg" role="group" aria-label="Temperature axis range">
+            <button type="button" id="sc-zf" aria-pressed="true">0–300 K</button>
+            <button type="button" id="sc-zt" aria-pressed="false">Zoom to T<sub>c</sub></button>
+          </div>
+        </div>
+      </div>
+      <div class="canvas-box"><canvas id="sc-graph" aria-label="Graph of resistance against temperature"></canvas></div>
+      <p class="cap">Dots are readings from your data logger. The faint line is the full curve for this material. Sample: wire 1.00 m long, cross-sectional area 0.100 mm², constant current 2.00 A.</p>
+    </div>
+
+    <div class="panel">
+      <div class="canvas-box wire"><canvas id="sc-wire" aria-label="Model of free electrons moving through the lattice"></canvas></div>
+      <p class="cap">Inside the sample. Positive lattice ions vibrate more at higher temperature, so free electrons collide with them more often and transfer energy to the lattice (amber sparks). Below T<sub>c</sub> the electrons flow with no energy dissipated. Why this happens is beyond the A-level course.</p>
+    </div>
+
+    <div class="panel temp">
+      <div class="slider-row">
+        <label for="sc-slider">Set T</label>
+        <input type="range" id="sc-slider" min="0" max="1000" step="1" value="980">
+        <div class="nudges">
+          <button type="button" class="btn mono" data-n="-1">−1 K</button>
+          <button type="button" class="btn mono" data-n="-0.1">−0.1</button>
+          <button type="button" class="btn mono" data-n="0.1">+0.1</button>
+          <button type="button" class="btn mono" data-n="1">+1 K</button>
+        </div>
+      </div>
+      <div class="coolants">
+        <button type="button" class="btn coolant" data-t="293"><b>293 K</b><span>Room temperature</span></button>
+        <button type="button" class="btn coolant" data-t="195"><b>195 K</b><span>Dry ice (solid CO₂)</span></button>
+        <button type="button" class="btn coolant" data-t="77"><b>77 K</b><span>Liquid nitrogen</span></button>
+        <button type="button" class="btn coolant" data-t="4.2"><b>4.2 K</b><span>Liquid helium</span></button>
+        <button type="button" class="btn coolant run" id="sc-run"><b>Cool-down run</b><span>Log 293 K → 1.5 K</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" style="gap:16px" aria-labelledby="sc-learn">
+  <div class="sect-head">
+    <div class="eyebrow">What you need to know</div>
+    <h2 id="sc-learn">The WJEC essentials</h2>
+    <p>Everything here is what the specification expects. Use the bench above to check each point for yourself.</p>
+  </div>
+  <div class="facts">
+    <div class="fact">
+      <h3>What is a superconductor?</h3>
+      <p>A material whose <b>resistivity, and so resistance, becomes zero</b> when it is cooled below its <b>critical temperature, T<sub>c</sub></b>.</p>
+      <p>Each superconducting material has its own value of T<sub>c</sub>. Above T<sub>c</sub> it behaves like an ordinary conductor.</p>
+    </div>
+    <div class="fact">
+      <h3>The R–T graph</h3>
+      <ul>
+        <li><b>Superconductor:</b> R falls gradually as T falls, then drops suddenly to zero at T<sub>c</sub> and stays at zero below it.</li>
+        <li><b>Ordinary metal (copper):</b> R falls as T falls but never reaches zero, even close to 0 K.</li>
+      </ul>
+      <p class="tip"><b>Exam tip:</b> draw a vertical drop at T<sub>c</sub>, then a line along the T axis. Label T<sub>c</sub> on the axis.</p>
+    </div>
+    <div class="fact">
+      <h3>Why a metal's resistance rises with T</h3>
+      <p>At higher temperature the positive ions in the lattice vibrate with greater amplitude. Free electrons collide with them more often, so their mean drift velocity is lower for the same p.d. and the resistance is greater.</p>
+      <div class="eq">I = nAvq &nbsp;·&nbsp; R = ρl / A</div>
+    </div>
+    <div class="fact">
+      <h3>Low vs high temperature</h3>
+      <ul>
+        <li><b style="color:var(--low)">Low-temperature</b> superconductors have T<sub>c</sub> below 77 K, mostly metals and alloys (Hg, Pb, Nb, NbTi). They need liquid helium at 4.2 K, which is expensive and scarce.</li>
+        <li><b style="color:var(--cold)">High-temperature</b> superconductors have T<sub>c</sub> above 77 K, the boiling point of nitrogen. They are ceramic copper oxides (e.g. YBCO) and can be cooled with cheap, plentiful liquid nitrogen.</li>
+      </ul>
+      <p class="cap" style="margin:0">"High" is relative: the record T<sub>c</sub> at normal pressure is still about −139 °C.</p>
+    </div>
+    <div class="fact">
+      <h3>Uses</h3>
+      <p>With R = 0 a current flows with <b>no energy dissipated as heat</b>, so very large currents can produce very strong magnetic fields.</p>
+      <ul>
+        <li><b>MRI scanners:</b> coils of niobium–titanium wire cooled by liquid helium.</li>
+        <li><b>Particle accelerators:</b> the LHC's 1232 dipole magnets use NbTi at 1.9 K, carrying about 11 800 A.</li>
+        <li>Also: maglev trains and low-loss power cables.</li>
+      </ul>
+    </div>
+    <div class="fact">
+      <h3>Worked example</h3>
+      <p>A magnet coil carries a current of 400 A. Compare the power dissipated in a copper coil of resistance 0.050 Ω with a superconducting coil.</p>
+      <div class="eq">Copper: P = I²R = 400² × 0.050 = 8000 W<br>Superconductor: P = 400² × 0 = 0 W</div>
+      <p>The copper coil would need 8 kW just to stay switched on, and that energy heats the coil.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" style="gap:16px" aria-labelledby="sc-tbl">
+  <div class="sect-head">
+    <div class="eyebrow">Specimen cabinet</div>
+    <h2 id="sc-tbl">Critical temperatures compared</h2>
+    <p>Select a row to load that material onto the bench. Remember T / K = θ / °C + 273.15.</p>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Material</th><th>Formula</th><th>Class</th><th class="n">T<sub>c</sub> / K</th><th class="n">T<sub>c</sub> / °C</th><th>Coolant that works</th></tr></thead>
+    <tbody id="sc-rows"></tbody>
+  </table></div>
+</section>
+
+<section class="wrap" style="gap:16px" aria-labelledby="sc-quiz">
+  <div class="quiz-top">
+    <div class="sect-head">
+      <div class="eyebrow">Check yourself</div>
+      <h2 id="sc-quiz">Exam-style quick quiz</h2>
+    </div>
+    <div class="ctrls-mini"><span class="score" id="sc-score">0 / 0</span><button type="button" class="btn" id="sc-reset">Reset quiz</button></div>
+  </div>
+  <div class="qs" id="sc-qs"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+(function(){
+var root=document.getElementById('scl');
+function $(s){return root.querySelector(s);}
+var I=2.0, TMIN=1.5, TMAX=300;
+var M=[
+ {id:'hg',name:'Mercury',f:'Hg',cls:'low',Tc:4.15,R300:9.6,rrr:40,T0:30,w:0.02,note:'The first superconductor. Heike Kamerlingh Onnes discovered it in 1911, three years after he first liquefied helium. Mercury is a liquid at room temperature (it freezes at 234 K), so he used it in a thin glass tube.'},
+ {id:'pb',name:'Lead',f:'Pb',cls:'low',Tc:7.19,R300:2.1,rrr:30,T0:40,w:0.03,note:'An everyday metal that becomes a superconductor when dipped in liquid helium.'},
+ {id:'nb',name:'Niobium',f:'Nb',cls:'low',Tc:9.25,R300:1.5,rrr:30,T0:50,w:0.04,note:'Has the highest critical temperature of any pure element at normal pressure. Used to make superconducting accelerating cavities.'},
+ {id:'nbti',name:'Niobium–titanium',f:'NbTi',cls:'low',Tc:9.5,R300:6.0,rrr:1.3,T0:40,w:0.1,note:'An alloy that is easy to draw into wire. It is the workhorse for MRI scanner magnets and the LHC\'s magnets, all cooled with liquid helium.'},
+ {id:'nb3sn',name:'Niobium–tin',f:'Nb₃Sn',cls:'low',Tc:18.3,R300:8.0,rrr:5,T0:60,w:0.2,note:'Brittle but can carry huge currents in strong fields. Used in the most powerful magnets, such as those for fusion research.'},
+ {id:'mgb2',name:'Magnesium diboride',f:'MgB₂',cls:'low',Tc:39,R300:1.5,rrr:10,T0:90,w:0.4,note:'A cheap compound with a surprisingly high T<sub>c</sub>, but still well below 77 K, so liquid nitrogen is not cold enough.'},
+ {id:'ybco',name:'Yttrium barium copper oxide',f:'YBa₂Cu₃O₇',sh:'YBCO',cls:'high',Tc:92,R300:25,rrr:50,T0:0,w:1.2,note:'Discovered in 1987: the first superconductor with T<sub>c</sub> above 77 K, so it works in liquid nitrogen. It is a brittle ceramic.'},
+ {id:'bscco',name:'Bismuth strontium calcium copper oxide',f:'Bi-2223',sh:'BSCCO',cls:'high',Tc:110,R300:35,rrr:40,T0:0,w:1.5,note:'Made into flat tapes for superconducting power cables cooled with liquid nitrogen.'},
+ {id:'tl',name:'Thallium barium calcium copper oxide',f:'Tl-2223',cls:'high',Tc:125,R300:30,rrr:40,T0:0,w:1.6,note:'Another copper-oxide ceramic. Thallium is very toxic, which limits its use.'},
+ {id:'hgc',name:'Mercury barium calcium copper oxide',f:'HgBa₂Ca₂Cu₃O₈',sh:'Hg-1223',cls:'high',Tc:134,R300:30,rrr:40,T0:0,w:1.8,note:'Holds the record T<sub>c</sub> at normal atmospheric pressure, about 134 K (−139 °C). Still far below room temperature.'},
+ {id:'cu',name:'Copper',f:'Cu',cls:'metal',Tc:0,R300:0.168,rrr:100,T0:55,w:1,note:'An ordinary metal and an excellent conductor at room temperature, but it never becomes a superconductor. Its resistance levels off at a small value as T approaches 0 K.'}
+];
+var cur=M[0],T=293,target=null,rate=1.6,sweeping=false,trail=[],zoom='full',showCurve=true,dirty=true,lastLog=-1;
+var done={};
+
+function g(t,T0){if(!T0)return t;var t4=t*t*t*t;return t*t4/(t4+Math.pow(T0,4));}
+function Rn(m,t){var r0=m.R300/m.rrr;return r0+(m.R300-r0)*g(t,m.T0)/g(300,m.T0);}
+function R(m,t){if(m.Tc&&t<m.Tc)return 0;return Rn(m,t);}
+function coolFor(m){if(!m.Tc)return'None. Never superconducts';if(m.Tc>77)return'Liquid nitrogen (77 K)';if(m.Tc>4.2)return'Liquid helium (4.2 K)';return'Pumped liquid helium (below 4.2 K)';}
+function t2p(t){return 1000*Math.pow((t-TMIN)/(TMAX-TMIN),0.4);}
+function p2t(p){return TMIN+(TMAX-TMIN)*Math.pow(p/1000,2.5);}
+var SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+function sci(x){if(x===0)return'0';var e=Math.floor(Math.log10(x)),m=x/Math.pow(10,e);if(m>=9.995){m/=10;e++;}return m.toFixed(2)+' × 10'+String(e).split('').map(function(c){return SUP[c];}).join('');}
+function sig(x,u){if(x===0)return'0.000 '+u;var a=Math.abs(x);var pre=[[1,''],[1e-3,'m'],[1e-6,'µ'],[1e-9,'n']];for(var i=0;i<pre.length;i++){if(a>=pre[i][0]*0.9995||i===pre.length-1){var v=x/pre[i][0];var d=v>=100?1:v>=10?2:3;return v.toFixed(d)+' '+pre[i][1]+u;}}}
+function fmtT(t){return t<20?t.toFixed(2):t.toFixed(1);}
+function esc(s){return s;}
+
+/* Picker */
+function buildPicker(){
+ var groups=[['low','Low-temperature','T<sub>c</sub> &lt; 77 K'],['high','High-temperature','T<sub>c</sub> &gt; 77 K'],['metal','Control metal','no T<sub>c</sub>']];
+ var h='';groups.forEach(function(gp){
+  h+='<div class="group '+(gp[0]==='metal'?'ctl':gp[0])+'"><h3>'+gp[1]+' <em>'+gp[2]+'</em></h3><div class="mats">';
+  M.filter(function(m){return m.cls===gp[0];}).forEach(function(m){
+   h+='<button type="button" class="mat" data-id="'+m.id+'" aria-pressed="false"><b>'+(m.sh||m.f)+'</b><span>'+m.name+'</span><i>'+(m.Tc?m.Tc+' K':'—')+'</i></button>';
+  });h+='</div></div>';});
+ var p=$('#sc-picker');p.innerHTML=h;p.style.display='flex';p.style.flexDirection='column';p.style.gap='16px';
+ p.addEventListener('click',function(e){var b=e.target.closest('.mat');if(b)select(b.dataset.id);});
+}
+function select(id){
+ cur=M.filter(function(m){return m.id===id;})[0];trail=[];sweeping=false;
+ root.querySelectorAll('.mat').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.id===id?'true':'false');});
+ var c=cur.Tc?(cur.Tc-273.15).toFixed(1)+' °C':'—';
+ var lab={low:'Low-temperature superconductor',high:'High-temperature superconductor',metal:'Ordinary metal'}[cur.cls];
+ $('#sc-note').innerHTML='<span class="tag '+cur.cls+'">'+lab+'</span><h3>'+cur.name+'</h3><p>'+cur.note+'</p><dl><dt>Formula</dt><dd>'+cur.f+'</dd><dt>T<sub>c</sub></dt><dd>'+(cur.Tc?cur.Tc+' K ('+c+')':'none')+'</dd><dt>R at 293 K</dt><dd>'+sig(R(cur,293),'Ω')+'</dd><dt>Coolant</dt><dd>'+coolFor(cur)+'</dd></dl>';
+ initElectrons();update();
+}
+
+/* Readouts */
+function update(){
+ var r=R(cur,T),sc=cur.Tc&&r===0;
+ $('#sc-T').textContent=fmtT(T)+' K';
+ $('#sc-C').textContent='θ = '+(T-273.15).toFixed(1)+' °C';
+ $('#sc-R').textContent=sig(r,'Ω');
+ $('#sc-rho').textContent='ρ = RA/l = '+(r===0?'0':sci(r*1e-7))+' Ω m';
+ $('#sc-V').textContent=sig(I*r,'V');
+ var P=I*I*r;$('#sc-P').textContent=sig(P,'W');
+ $('#sc-Pn').textContent=sc?'no heating at all':'heating in sample';
+ root.classList.toggle('is-sc',!!sc);
+ var pill=$('#sc-pill');pill.classList.remove('trans');
+ if(sc)pill.textContent='Superconducting · R = 0';
+ else if(cur.Tc&&T<cur.Tc*1.04+0.2){pill.textContent='Just above Tc';pill.classList.add('trans');}
+ else pill.textContent='Normal state';
+ var cn;
+ if(T>=77)cn='Reachable with liquid nitrogen (77 K) or warmer.';
+ else if(T>=4.2)cn='Below 77 K: needs liquid helium (4.2 K) or a cryocooler.';
+ else cn='Below 4.2 K: needs pumped liquid helium.';
+ if(cur.Tc)cn+=sc?' '+cur.f.replace(/<[^>]+>/g,'')+' is below its Tᶜ of '+cur.Tc+' K.':' Tᶜ for this material is '+cur.Tc+' K.';
+ else cn+=' Copper has no critical temperature.';
+ $('#sc-coolnote').textContent=cn;
+ var sl=$('#sc-slider');if(document.activeElement!==sl)sl.value=Math.round(t2p(T));
+ $('#sc-hint').hidden=!(cur.Tc&&cur.Tc<40&&zoom==='full'&&T<60);
+ checkMissions(r);dirty=true;
+}
+function log(){
+ if(Math.abs(T-lastLog)<(T<20?0.04:0.6)&&trail.length)return;
+ lastLog=T;trail.push([T,R(cur,T)]);if(trail.length>900)trail.shift();
+}
+function setT(t,logIt){T=Math.max(TMIN,Math.min(TMAX,t));if(logIt)log();update();}
+
+/* Missions */
+var MS=[
+ ['onnes','Repeat Onnes\'s 1911 discovery: make mercury superconduct.',function(r){return cur.id==='hg'&&r===0;}],
+ ['ln2','Make a material superconduct using only liquid nitrogen (77 K or warmer).',function(r){return cur.cls==='high'&&r===0&&T>=76.95;}],
+ ['cu','Cool copper below 5 K. Is its resistance zero?',function(r){return cur.id==='cu'&&T<=5;}],
+ ['mid','Find the drop: set YBCO within 1 K of its critical temperature (92 K).',function(r){return cur.id==='ybco'&&Math.abs(T-92)<=1;}],
+ ['rec','Superconduct the record holder: highest Tᶜ at normal pressure.',function(r){return cur.id==='hgc'&&r===0;}],
+ ['run','Log a full cool-down run from room temperature.',function(){return false;}]
+];
+function renderMissions(){
+ var n=0;$('#sc-missions').innerHTML=MS.map(function(m){if(done[m[0]])n++;return'<li class="'+(done[m[0]]?'done':'')+'">'+m[1]+'</li>';}).join('');
+ $('#sc-mcount').textContent=n+' / '+MS.length;
+}
+function checkMissions(r){var ch=false;MS.forEach(function(m){if(!done[m[0]]&&m[2](r)){done[m[0]]=true;ch=true;}});if(ch)renderMissions();}
+
+/* Graph */
+var gc=$('#sc-graph'),gx=gc.getContext('2d'),wc=$('#sc-wire'),wx=wc.getContext('2d'),dpr=1;
+function fit(c){dpr=window.devicePixelRatio||1;c.width=Math.round(c.clientWidth*dpr);c.height=Math.round(c.clientHeight*dpr);}
+var ro=new ResizeObserver(function(){fit(gc);fit(wc);initElectrons();dirty=true;});ro.observe(gc);ro.observe(wc);
+function nice(x){var e=Math.floor(Math.log10(x)),f=x/Math.pow(10,e);return(f<1.5?1:f<3?2:f<7?5:10)*Math.pow(10,e);}
+function cv(n){return getComputedStyle(root).getPropertyValue(n).trim();}
+function zoomMax(m){if(!m.Tc)return 30;return Math.max(10,Math.ceil(m.Tc*1.6/nice(m.Tc*1.6/6))*nice(m.Tc*1.6/6));}
+function drawGraph(){
+ var W=gc.clientWidth,H=gc.clientHeight;if(!W)return;
+ gx.setTransform(dpr,0,0,dpr,0,0);gx.clearRect(0,0,W,H);
+ var C={ink:cv('--ink'),mu:cv('--muted'),li:cv('--line'),co:cv('--cold'),cb:cv('--cold-bright'),cs:cv('--cold-soft'),he:cv('--heat'),hb:cv('--heat-bright'),lo:cv('--low'),su:cv('--surface')};
+ var mono=cv('--f-mono');
+ var L=62,Rp=16,Tp=14,B=40,pw=W-L-Rp,ph=H-Tp-B;
+ var xmax=zoom==='tc'?zoomMax(cur):300;
+ var pts=[],i,n=360;for(i=0;i<=n;i++)pts.push(TMIN*0+xmax*i/n);
+ pts=pts.filter(function(t){return t>=0&&t<=xmax;}).sort(function(a,b){return a-b;});
+ var ymax=0;pts.forEach(function(t){ymax=Math.max(ymax,R(cur,Math.max(t,0.01)));});
+ var ys=nice(ymax*1.1/5);ymax=Math.ceil(ymax*1.1/ys)*ys;
+ var xs=nice(xmax/6);
+ function X(t){return L+pw*t/xmax;}function Y(r){return Tp+ph*(1-r/ymax);}
+ // superconducting region
+ if(cur.Tc&&cur.Tc<xmax){
+  gx.fillStyle=C.cs;gx.fillRect(L,Tp,X(cur.Tc)-L,ph);
+  if(X(cur.Tc)-L>110){gx.fillStyle=C.co;gx.font='600 12px '+mono;gx.textAlign='center';gx.fillText('superconducting',(L+X(cur.Tc))/2,Tp+ph*0.55);gx.fillText('R = 0',(L+X(cur.Tc))/2,Tp+ph*0.55+16);}
+ }
+ // grid
+ gx.lineWidth=1;gx.font='11px '+mono;gx.fillStyle=C.mu;
+ gx.textAlign='right';gx.textBaseline='middle';
+ for(var y=0;y<=ymax+1e-9;y+=ys){var yy=Math.round(Y(y))+0.5;gx.strokeStyle=C.li;gx.globalAlpha=y?0.6:1;gx.beginPath();gx.moveTo(L,yy);gx.lineTo(L+pw,yy);gx.stroke();gx.globalAlpha=1;gx.fillText(fmtAxis(y,ys),L-8,yy);}
+ gx.textAlign='center';gx.textBaseline='top';
+ for(var x=0;x<=xmax+1e-9;x+=xs){var xx=Math.round(X(x))+0.5;gx.strokeStyle=C.li;gx.globalAlpha=x?0.45:1;gx.beginPath();gx.moveTo(xx,Tp);gx.lineTo(xx,Tp+ph);gx.stroke();gx.globalAlpha=1;gx.fillText(fmtAxis(x,xs),xx,Tp+ph+6);}
+ gx.fillStyle=C.ink;gx.font='600 12px '+mono;gx.fillText('T / K',L+pw/2,Tp+ph+22);
+ gx.save();gx.translate(14,Tp+ph/2);gx.rotate(-Math.PI/2);gx.textBaseline='middle';gx.fillText('R / Ω',0,0);gx.restore();
+ // coolant reference lines
+ var refs=[[4.2,'liquid He'],[77,'liquid N₂'],[195,'dry ice']],lastX=-99;
+ gx.font='10.5px '+mono;gx.textAlign='left';gx.textBaseline='top';
+ refs.forEach(function(rf){if(rf[0]>=xmax)return;var xx=X(rf[0]);gx.strokeStyle=C.lo;gx.globalAlpha=0.45;gx.setLineDash([2,4]);gx.beginPath();gx.moveTo(xx,Tp);gx.lineTo(xx,Tp+ph);gx.stroke();gx.setLineDash([]);gx.globalAlpha=0.9;if(xx-lastX>70){gx.fillStyle=C.lo;gx.fillText(rf[1]+' '+rf[0]+' K',xx+4,Tp+3);lastX=xx;}gx.globalAlpha=1;});
+ // Tc line
+ if(cur.Tc&&cur.Tc<xmax){var tx=X(cur.Tc);gx.strokeStyle=C.co;gx.lineWidth=1.5;gx.setLineDash([5,4]);gx.beginPath();gx.moveTo(tx,Tp);gx.lineTo(tx,Tp+ph);gx.stroke();gx.setLineDash([]);gx.fillStyle=C.co;gx.font='700 12px '+mono;var lbl='Tc = '+cur.Tc+' K';var lw=gx.measureText(lbl).width;var lx=tx+6+lw>L+pw?tx-6-lw:tx+6;gx.fillText(lbl,lx,Tp+20);}
+ // curve
+ if(showCurve){gx.strokeStyle=C.ink;gx.globalAlpha=0.32;gx.lineWidth=2;gx.lineJoin='miter';gx.beginPath();
+  var tc=cur.Tc&&cur.Tc<xmax?cur.Tc:0;
+  if(tc){gx.moveTo(X(0),Y(0));gx.lineTo(X(tc),Y(0));gx.lineTo(X(tc),Y(Rn(cur,tc)));}
+  var first=!tc;pts.forEach(function(t){if(t<=tc)return;var px=X(t),py=Y(Rn(cur,Math.max(t,0.01)));if(first){gx.moveTo(px,py);first=false;}else gx.lineTo(px,py);});
+  gx.stroke();gx.globalAlpha=1;}
+ // trail
+ trail.forEach(function(p){if(p[0]>xmax)return;gx.fillStyle=p[1]===0&&cur.Tc?C.co:C.he;gx.beginPath();gx.arc(X(p[0]),Y(p[1]),2.4,0,7);gx.fill();});
+ // current point
+ var r=R(cur,T);
+ if(T<=xmax){var px=X(T),py=Y(r),col=(r===0&&cur.Tc)?C.cb:C.hb;
+  gx.strokeStyle=col;gx.globalAlpha=0.5;gx.setLineDash([3,3]);gx.lineWidth=1;gx.beginPath();gx.moveTo(px,py);gx.lineTo(px,Tp+ph);gx.moveTo(px,py);gx.lineTo(L,py);gx.stroke();gx.setLineDash([]);gx.globalAlpha=0.25;
+  gx.fillStyle=col;gx.beginPath();gx.arc(px,py,13,0,7);gx.fill();gx.globalAlpha=1;gx.beginPath();gx.arc(px,py,6.5,0,7);gx.fill();gx.strokeStyle=C.su;gx.lineWidth=2;gx.stroke();}
+ else{gx.fillStyle=C.mu;gx.font='12px '+mono;gx.textAlign='right';gx.fillText('current T is off this scale →',L+pw-4,Tp+40);}
+}
+function fmtAxis(v,s){if(v===0)return'0';var d=s>=1?0:Math.min(4,Math.ceil(-Math.log10(s)));return v.toFixed(d);}
+
+/* Wire model */
+var el=[],ions=[],sparks=[],t0=0,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function initElectrons(){
+ var W=wc.clientWidth,H=wc.clientHeight;if(!W)return;
+ ions=[];var cols=Math.max(8,Math.round(W/46));for(var c=0;c<cols;c++)for(var r=0;r<2;r++)ions.push({x:(c+0.5+(r?0.5:0))*W/cols,y:H*(r?0.66:0.34),ph:Math.random()*7,ph2:Math.random()*7});
+ el=[];var ne=Math.round(W/22);for(var i=0;i<ne;i++)el.push({x:Math.random()*W,y:H*0.2+Math.random()*H*0.6,vx:60,vy:0});
+}
+function drawWire(dt,time){
+ var W=wc.clientWidth,H=wc.clientHeight;if(!W)return;
+ wx.setTransform(dpr,0,0,dpr,0,0);wx.clearRect(0,0,W,H);
+ var r=R(cur,T),sc=cur.Tc&&r===0,rel=r/R(cur,300),C={co:cv('--cold-bright'),he:cv('--heat-bright'),ink:cv('--ink'),mu:cv('--muted')};
+ // glow
+ wx.fillStyle=sc?C.co:C.he;wx.globalAlpha=sc?0.16:0.05+0.3*Math.sqrt(rel);wx.fillRect(0,0,W,H);wx.globalAlpha=1;
+ var amp=reduce?0:1+6*Math.sqrt(T/300);
+ wx.fillStyle=C.mu;
+ ions.forEach(function(o){var dx=amp*Math.sin(time*0.02+o.ph),dy=amp*Math.cos(time*0.017+o.ph2);wx.globalAlpha=0.55;wx.beginPath();wx.arc(o.x+dx,o.y+dy,6,0,7);wx.fill();wx.globalAlpha=1;wx.fillStyle=cv('--surface');wx.font='bold 9px sans-serif';wx.textAlign='center';wx.textBaseline='middle';wx.fillText('+',o.x+dx,o.y+dy+0.5);wx.fillStyle=C.mu;});
+ var rateC=reduce?0:4*rel,drift=sc?140:90;
+ el.forEach(function(e){
+  if(!reduce){
+   if(!sc&&Math.random()<rateC*dt){e.vx=-40+Math.random()*80;e.vy=-60+Math.random()*120;sparks.push({x:e.x,y:e.y,a:1});}
+   e.vx+=(drift-e.vx)*Math.min(1,dt*(sc?6:2.5));e.vy*=Math.max(0,1-dt*3);
+   if(sc){e.vy+=(H*0.5-e.y)*0.0;}
+   e.x+=e.vx*dt;e.y+=e.vy*dt;
+   if(e.y<H*0.12){e.y=H*0.12;e.vy=Math.abs(e.vy);}if(e.y>H*0.88){e.y=H*0.88;e.vy=-Math.abs(e.vy);}
+   if(e.x>W+4)e.x=-4;if(e.x<-6)e.x=W;
+  }
+  wx.fillStyle=sc?C.co:C.ink;
+  if(sc){wx.globalAlpha=0.35;wx.fillRect(e.x-14,e.y-1.2,14,2.4);wx.globalAlpha=1;}
+  wx.beginPath();wx.arc(e.x,e.y,2.6,0,7);wx.fill();
+ });
+ sparks=sparks.filter(function(s){s.a-=dt*2.2;if(s.a<=0)return false;wx.strokeStyle=C.he;wx.globalAlpha=s.a;wx.lineWidth=1.5;wx.beginPath();wx.arc(s.x,s.y,(1-s.a)*9+2,0,7);wx.stroke();wx.globalAlpha=1;return true;});
+ if(sparks.length>200)sparks.splice(0,sparks.length-200);
+ wx.font='600 11px '+cv('--f-mono');wx.textAlign='left';wx.textBaseline='top';wx.fillStyle=sc?cv('--cold'):cv('--heat');
+ wx.fillText(sc?'no collisions that dissipate energy':'collisions: '+(rel<0.02?'very few':rel<0.3?'some':'many'),8,6);
+ wx.textAlign='right';wx.fillStyle=C.mu;wx.fillText('electron flow →',W-8,H-17);
+}
+
+/* Loop */
+var last=0;
+function frame(ts){
+ var dt=Math.min(0.05,(ts-last)/1000||0);last=ts;
+ if(target!==null){
+  var lt=Math.log(T),lg=Math.log(target),k=Math.min(1,dt*rate);
+  var nt=Math.exp(lt+(lg-lt)*k);
+  if(sweeping)nt=Math.max(target,T-Math.max(0.15,T*0.55)*dt);
+  if(Math.abs(Math.log(nt/target))<0.0015||(sweeping&&nt<=target+1e-6)){nt=target;target=null;if(sweeping){sweeping=false;done.run=true;renderMissions();}}
+  setT(nt,true);
+ }
+ if(dirty){drawGraph();dirty=false;}
+ drawWire(dt,ts);
+ requestAnimationFrame(frame);
+}
+
+/* Controls */
+var sl=$('#sc-slider');
+sl.addEventListener('input',function(){target=null;sweeping=false;setT(p2t(+sl.value),true);});
+root.querySelectorAll('[data-n]').forEach(function(b){b.addEventListener('click',function(){target=null;sweeping=false;setT(Math.round((T+ +b.dataset.n)*100)/100,true);});});
+root.querySelectorAll('[data-t]').forEach(function(b){b.addEventListener('click',function(){sweeping=false;rate=1.6;target=+b.dataset.t;});});
+$('#sc-run').addEventListener('click',function(){trail=[];lastLog=-1;T=293;sweeping=true;target=TMIN;update();});
+function setZoom(z){zoom=z;$('#sc-zf').setAttribute('aria-pressed',z==='full');$('#sc-zt').setAttribute('aria-pressed',z==='tc');update();}
+$('#sc-zf').addEventListener('click',function(){setZoom('full');});
+$('#sc-zt').addEventListener('click',function(){setZoom('tc');});
+$('#sc-curve').addEventListener('change',function(e){showCurve=e.target.checked;dirty=true;});
+try{window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){dirty=true;});}catch(e){}
+new MutationObserver(function(){dirty=true;}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+
+/* Table */
+$('#sc-rows').innerHTML=M.slice().sort(function(a,b){return a.Tc-b.Tc;}).map(function(m){
+ var lab={low:'Low-T',high:'High-T',metal:'Ordinary metal'}[m.cls];
+ return'<tr data-id="'+m.id+'" tabindex="0"><td>'+m.name+'</td><td>'+m.f+'</td><td><span class="tag '+m.cls+'">'+lab+'</span></td><td class="n">'+(m.Tc||'—')+'</td><td class="n">'+(m.Tc?(m.Tc-273.15).toFixed(1):'—')+'</td><td>'+coolFor(m)+'</td></tr>';}).join('');
+function pickRow(e){var tr=e.target.closest('tr[data-id]');if(!tr)return;if(e.type==='keydown'&&e.key!=='Enter'&&e.key!==' ')return;e.preventDefault();select(tr.dataset.id);$('#sc-picker').scrollIntoView({behavior:reduce?'auto':'smooth',block:'nearest'});}
+$('#sc-rows').addEventListener('click',pickRow);$('#sc-rows').addEventListener('keydown',pickRow);
+
+/* Quiz */
+var Q=[
+ {s:'State what is meant by the critical temperature of a superconductor.',o:['The temperature at which the material melts','The temperature below which the resistance (resistivity) of the material becomes zero','The temperature at which the resistance is a minimum but not zero','The temperature of liquid nitrogen, 77 K'],a:1,e:'Below T<sub>c</sub> the resistivity, and so resistance, is zero. Every superconducting material has its own T<sub>c</sub>.'},
+ {s:'Which describes the R–T graph of a superconductor as it is cooled?',o:['R falls steadily and reaches zero at 0 K','R stays constant then rises at T<sub>c</sub>','R falls gradually, then drops suddenly to zero at T<sub>c</sub>','R falls in a straight line that passes through the origin'],a:2,e:'Above T<sub>c</sub> it behaves like a metal. At T<sub>c</sub> the resistance drops abruptly to zero and stays there.'},
+ {s:'Why are high-temperature superconductors cheaper to operate?',o:['They do not need cooling at all','Their T<sub>c</sub> is above 77 K, so they can be cooled with liquid nitrogen instead of liquid helium','They have a lower resistance above T<sub>c</sub>','They are made from cheap metals'],a:1,e:'Liquid nitrogen (77 K) is cheap and plentiful. Liquid helium (4.2 K) is expensive and scarce.'},
+ {s:'A superconducting MRI coil carries a current of 150 A. What power is dissipated in the coil?',o:['0 W','150 W','22.5 kW','It depends on the p.d. across the coil'],a:0,e:'P = I²R and R = 0, so P = 0. That is why superconductors can carry huge currents without overheating.'},
+ {s:'Explain why the resistance of a copper wire increases with temperature.',o:['More free electrons are released as the wire gets hotter','The lattice ions vibrate with greater amplitude, so free electrons collide with them more often','The wire expands, so it gets longer','The electrons move faster, so the current is larger'],a:1,e:'More frequent collisions with the vibrating ions reduce the mean drift velocity of the free electrons, so R increases.'},
+ {s:'YBCO has a critical temperature of 92 K. What is this in °C?',o:['+365 °C','−92 °C','−181 °C','−273 °C'],a:2,e:'θ / °C = T / K − 273.15 = 92 − 273.15 ≈ −181 °C. "High temperature" is still very cold.'},
+ {s:'A student cools samples of YBCO and mercury using liquid nitrogen at 77 K. What happens?',o:['Both become superconducting','Only YBCO becomes superconducting','Only mercury becomes superconducting','Neither becomes superconducting'],a:1,e:'YBCO has T<sub>c</sub> = 92 K, above 77 K. Mercury has T<sub>c</sub> = 4.15 K, so it needs liquid helium cooled a little below its boiling point. Test it on the bench.'},
+ {s:'Which of these is a use of superconductors named in the WJEC specification?',o:['Heating elements in kettles','Filaments in light bulbs','The strong electromagnets in particle accelerators','Fuses in plugs'],a:2,e:'Superconducting electromagnets are used in particle accelerators and MRI scanners. Heaters, filaments and fuses all rely on resistance.'}
+];
+var ans={};
+function renderQuiz(){
+ $('#sc-qs').innerHTML=Q.map(function(q,i){
+  var a=ans[i];var h='<div class="q"><span class="qn">Question '+(i+1)+'</span><p class="stem">'+q.s+'</p><div class="opts">';
+  q.o.forEach(function(o,j){var cl='';if(a!==undefined){if(j===q.a)cl='right';else if(j===a)cl='wrong';}h+='<button type="button" class="opt '+cl+'" data-q="'+i+'" data-o="'+j+'"'+(a!==undefined?' disabled':'')+'>'+o+'</button>';});
+  h+='</div>';if(a!==undefined)h+='<p class="fb"><b class="'+(a===q.a?'ok':'no')+'">'+(a===q.a?'Correct.':'Not quite.')+'</b> '+q.e+'</p>';
+  return h+'</div>';}).join('');
+ var k=Object.keys(ans),s=k.filter(function(i){return ans[i]===Q[i].a;}).length;
+ $('#sc-score').textContent=s+' / '+k.length+(k.length===Q.length?'  ·  '+Math.round(100*s/Q.length)+'%':'');
+}
+$('#sc-qs').addEventListener('click',function(e){var b=e.target.closest('.opt');if(!b||b.disabled)return;ans[b.dataset.q]=+b.dataset.o;renderQuiz();});
+$('#sc-reset').addEventListener('click',function(){ans={};renderQuiz();});
+
+buildPicker();renderMissions();renderQuiz();fit(gc);fit(wc);select('hg');setT(293,true);
+requestAnimationFrame(frame);
+})();
+</script>
+
+</body></html>
