@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="en-GB" style="height:100%">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Decay Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: drawer of kit | dark lab bench (the hero) | instrument rack; phone, dice tray and missions float over the lab */
+#rdlab{
+  --paper:#e9eef4; --panel:#ffffff; --ink:#152238; --muted:#56657d; --line:#d2dbe7; --soft:#f3f6fa;
+  --bench:#202c3c; --bench2:#2a3a4f; --teal:#0a8b82; --teal2:#e1f4f2; --hazard:#ffc531;
+  --alpha:#e5484d; --beta:#2f7cf6; --gamma:#8a5cf6; --lcd:#0f1d18; --lcdtxt:#86ffb4; --warn:#d9480f;
+  --f-disp:"Chakra Petch","Bahnschrift","Segoe UI",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,-apple-system,sans-serif;
+  position:relative; width:100%; height:100%; min-height:780px; box-sizing:border-box;
+  display:flex; flex-direction:column; overflow:hidden; background:var(--paper); color:var(--ink);
+  font-family:var(--f-body); font-size:14px; line-height:1.4; color-scheme:light;
+}
+#rdlab *, #rdlab *::before, #rdlab *::after{box-sizing:border-box}
+#rdlab button{font-family:inherit; font-size:inherit; color:inherit; cursor:pointer}
+#rdlab button:focus-visible, #rdlab input:focus-visible, #rdlab select:focus-visible, #rdlab canvas:focus-visible{outline:3px solid var(--hazard); outline-offset:2px}
+#rdlab [hidden]{display:none !important}
+#rdlab .rl-btn{border:1px solid var(--line); background:var(--panel); border-radius:9px; padding:7px 12px; font-weight:600; transition:background .15s,border-color .15s,transform .05s}
+#rdlab .rl-btn:hover{border-color:#9fb0c6; background:var(--soft)}
+#rdlab .rl-btn:active{transform:translateY(1px)}
+#rdlab .rl-btn.pri{background:var(--teal); border-color:var(--teal); color:#fff}
+#rdlab .rl-btn.pri:hover{background:#077a72}
+#rdlab .rl-btn.on{background:var(--ink); border-color:var(--ink); color:#fff}
+#rdlab .rl-btn.sm{padding:5px 9px; font-size:13px; border-radius:7px}
+
+/* top bar */
+#rdlab .rl-top{display:flex; align-items:center; gap:12px; padding:10px 16px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap}
+#rdlab .rl-brand{display:flex; align-items:center; gap:10px; margin-right:6px}
+#rdlab .rl-logo{width:34px; height:34px; border-radius:9px; background:var(--ink); display:grid; place-items:center}
+#rdlab .rl-brand h1{font-family:var(--f-disp); font-size:21px; letter-spacing:.06em; margin:0; text-transform:uppercase; line-height:1}
+#rdlab .rl-brand small{display:block; color:var(--muted); font-size:12px; letter-spacing:.02em}
+#rdlab .rl-loc{display:flex; align-items:center; gap:8px; padding:6px 12px 6px 8px; border-radius:999px; background:var(--soft); border:1px solid var(--line); min-width:0}
+#rdlab .rl-loc i{width:22px; height:22px; border-radius:50%; background:var(--ink); display:grid; place-items:center; flex:none}
+#rdlab .rl-loc i::after{content:""; width:8px; height:8px; border-radius:50%; background:var(--hazard)}
+#rdlab .rl-loc.out i{background:var(--teal)}
+#rdlab .rl-loc b{font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+#rdlab .rl-loc span{color:var(--muted); font-size:12px; white-space:nowrap}
+#rdlab .rl-spacer{flex:1}
+#rdlab .rl-seg{display:inline-flex; border:1px solid var(--line); border-radius:9px; overflow:hidden; background:var(--panel)}
+#rdlab .rl-seg button{border:0; background:transparent; padding:6px 10px; font-weight:700; font-family:var(--f-disp); font-size:13px}
+#rdlab .rl-seg button[aria-pressed="true"]{background:var(--ink); color:#fff}
+#rdlab .rl-seglabel{font-size:12px; color:var(--muted); margin-right:4px}
+#rdlab .rl-topbtns{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+#rdlab .rl-badge{display:inline-grid; place-items:center; min-width:18px; height:18px; padding:0 5px; border-radius:9px; background:var(--alpha); color:#fff; font-size:11px; font-weight:800; margin-left:6px}
+
+/* main grid */
+#rdlab .rl-main{flex:1; display:grid; grid-template-columns:252px minmax(0,1fr) 292px; min-height:0}
+#rdlab .rl-drawer{min-width:0; background:var(--panel); border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0}
+#rdlab .rl-tabs{display:grid; grid-template-columns:repeat(4,1fr); border-bottom:1px solid var(--line)}
+#rdlab .rl-tabs button{border:0; background:transparent; padding:11px 2px 9px; font-size:12px; font-weight:700; color:var(--muted); border-bottom:3px solid transparent; letter-spacing:.02em}
+#rdlab .rl-tabs button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--teal)}
+#rdlab .rl-pane{padding:12px; overflow:auto; display:flex; flex-direction:column; gap:8px; min-height:0; flex:1}
+#rdlab .rl-pane h3{font-size:11px; text-transform:uppercase; letter-spacing:.09em; color:var(--muted); margin:6px 2px 0}
+#rdlab .rl-pane p.note{margin:0; font-size:12.5px; color:var(--muted); padding:0 2px}
+#rdlab .rl-card{display:flex; align-items:center; gap:10px; text-align:left; width:100%; border:1px solid var(--line); background:var(--panel); border-radius:11px; padding:9px 10px; transition:border-color .15s, background .15s}
+#rdlab .rl-card:hover{border-color:#9fb0c6}
+#rdlab .rl-card.sel{border-color:var(--teal); background:var(--teal2); box-shadow:inset 0 0 0 1px var(--teal)}
+#rdlab .rl-card .ic{width:36px; height:36px; border-radius:9px; display:grid; place-items:center; flex:none; font-family:var(--f-disp); font-weight:700; font-size:19px; color:#fff}
+#rdlab .rl-card .tx{min-width:0; flex:1}
+#rdlab .rl-card .tx b{display:block; font-size:13.5px}
+#rdlab .rl-card .tx small{display:block; color:var(--muted); font-size:12px; line-height:1.3}
+#rdlab .rl-card .tag{font-size:10.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 6px; border-radius:5px; background:var(--hazard); color:var(--ink)}
+#rdlab .rl-sw{width:34px; height:20px; border-radius:10px; background:var(--line); position:relative; flex:none; transition:background .15s}
+#rdlab .rl-sw::after{content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; transition:left .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+#rdlab .rl-card.sel .rl-sw{background:var(--teal)}
+#rdlab .rl-card.sel .rl-sw::after{left:16px}
+
+/* bench */
+#rdlab .rl-benchwrap{position:relative; min-width:0; min-height:0; background:var(--bench); display:flex; flex-direction:column}
+#rdlab .rl-bench{flex:1; width:100%; min-height:300px; display:block; touch-action:none; cursor:default}
+#rdlab .rl-helper{position:absolute; left:12px; bottom:12px; display:flex; align-items:center; gap:6px; background:rgba(13,20,31,.86); border:1px solid #3b4d66; border-radius:12px; padding:7px; color:#e6edf6}
+#rdlab .rl-helper button{border:1px solid #415572; background:#22324a; color:#e6edf6; border-radius:7px; padding:5px 8px; font-weight:700; font-family:var(--f-disp); font-size:12px}
+#rdlab .rl-helper button:hover{background:#2d4160}
+#rdlab .rl-helper canvas{width:190px; height:52px; border-radius:7px; display:block; background:#fff7cc}
+#rdlab .rl-helper label{display:flex; align-items:center; gap:5px; font-size:12px; padding:0 4px; white-space:nowrap}
+#rdlab .rl-helper output{font-family:var(--f-disp); font-weight:700; font-size:15px; min-width:58px; text-align:right; color:var(--hazard)}
+#rdlab .rl-hint{position:absolute; left:50%; top:16px; transform:translateX(-50%); background:rgba(13,20,31,.82); color:#dfe8f3; padding:8px 14px; border-radius:10px; font-size:13px; text-align:center; max-width:90%; pointer-events:none; border:1px solid #3b4d66}
+
+/* rack */
+#rdlab .rl-rack{background:var(--paper); border-left:1px solid var(--line); overflow:auto; padding:12px; display:flex; flex-direction:column; gap:12px; min-height:0}
+#rdlab .rl-empty{border:2px dashed var(--line); border-radius:14px; padding:18px; color:var(--muted); font-size:13px; text-align:center}
+#rdlab .rl-inst{flex:none; background:var(--panel); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+#rdlab .rl-inst header{display:flex; align-items:center; gap:8px; padding:8px 10px 8px 12px; border-bottom:1px solid var(--line)}
+#rdlab .rl-inst header b{font-family:var(--f-disp); text-transform:uppercase; letter-spacing:.08em; font-size:13px; flex:1}
+#rdlab .rl-inst header .dot{width:10px; height:10px; border-radius:50%}
+#rdlab .rl-inst header button{border:0; background:transparent; color:var(--muted); font-size:18px; line-height:1; padding:0 4px}
+#rdlab .rl-inst .body{padding:10px 12px 12px; display:flex; flex-direction:column; gap:9px}
+#rdlab .rl-lcd{background:var(--lcd); border-radius:9px; padding:8px 12px; display:flex; align-items:baseline; justify-content:flex-end; gap:8px; box-shadow:inset 0 2px 6px rgba(0,0,0,.5)}
+#rdlab .rl-lcd .v{font-family:var(--f-disp); font-weight:700; font-size:36px; color:var(--lcdtxt); font-variant-numeric:tabular-nums; letter-spacing:.04em; line-height:1.05; text-shadow:0 0 10px rgba(134,255,180,.35)}
+#rdlab .rl-lcd .u{font-family:var(--f-disp); color:#4fb37b; font-size:13px; min-width:44px}
+#rdlab .rl-lcd.over .v{color:#ff6b6b; text-shadow:0 0 10px rgba(255,90,90,.5)}
+#rdlab .rl-lcd .flag{font-family:var(--f-disp); color:#4fb37b; font-size:11px; margin-right:auto; align-self:flex-start; letter-spacing:.1em}
+#rdlab .rl-bar{display:grid; grid-template-columns:repeat(24,1fr); gap:2px; height:10px}
+#rdlab .rl-bar i{border-radius:2px; background:#dfe6ef}
+#rdlab .rl-bar i.lit{background:var(--teal)}
+#rdlab .rl-bar i.lit.hi{background:var(--warn)}
+#rdlab .rl-scale{display:flex; justify-content:space-between; font-size:10.5px; color:var(--muted); font-family:var(--f-disp); margin-top:-5px}
+#rdlab .rl-row{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+#rdlab .rl-led{width:12px; height:12px; border-radius:50%; background:#3b1a1a; border:1px solid #000; transition:background .05s}
+#rdlab .rl-led.on{background:#ff4d4d; box-shadow:0 0 8px #ff4d4d}
+#rdlab canvas.rl-clock{width:150px; height:150px; display:block; margin:0 auto}
+#rdlab canvas.rl-log{width:100%; height:160px; display:block; border-radius:8px; background:var(--soft)}
+#rdlab select.rl-sel{border:1px solid var(--line); border-radius:7px; padding:5px 6px; background:var(--panel); font:inherit; font-size:13px; color:var(--ink)}
+#rdlab .rl-small{font-size:12px; color:var(--muted)}
+
+/* overlays */
+#rdlab .rl-scrim{position:absolute; inset:0; background:rgba(15,24,38,.55); z-index:40; display:flex; align-items:center; justify-content:center; padding:16px}
+#rdlab .rl-notes{position:absolute; top:62px; left:50%; transform:translateX(-50%); width:min(420px,calc(100% - 32px)); z-index:70; display:flex; flex-direction:column; gap:8px; pointer-events:none}
+#rdlab .rl-note{pointer-events:auto; background:rgba(255,255,255,.97); border:1px solid var(--line); border-radius:16px; padding:10px 14px; box-shadow:0 10px 30px rgba(15,24,38,.25); display:flex; gap:10px; align-items:flex-start; animation:rlIn .3s ease-out}
+#rdlab .rl-note .av{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; color:#fff; font-weight:800; flex:none; font-size:14px}
+#rdlab .rl-note > div > b{display:block; font-size:13px}
+#rdlab .rl-note p{margin:2px 0 0; font-size:13px; color:var(--ink)}
+#rdlab .rl-note small{color:var(--muted); font-size:11px}
+@keyframes rlIn{from{transform:translateY(-12px); opacity:.3}to{transform:none; opacity:1}}
+
+/* phone */
+#rdlab .rl-phone{position:absolute; right:20px; bottom:20px; z-index:60; width:300px; height:610px; max-height:calc(100% - 80px); border-radius:46px; background:#11151c; padding:10px; box-shadow:0 30px 60px rgba(10,18,30,.45), inset 0 0 0 2px #3a4251}
+#rdlab .rl-ph{position:relative; width:100%; height:100%; border-radius:37px; overflow:hidden; background:linear-gradient(160deg,#173a52 0%,#0f5d63 45%,#d9a441 140%); display:flex; flex-direction:column; color:#fff}
+#rdlab .rl-ph-status{display:flex; justify-content:space-between; align-items:center; padding:12px 24px 4px; font-size:13px; font-weight:700; position:relative; z-index:2}
+#rdlab .rl-ph-island{position:absolute; top:9px; left:50%; transform:translateX(-50%); width:92px; height:26px; background:#000; border-radius:14px; z-index:3}
+#rdlab .rl-ph-scr{flex:1; overflow:auto; position:relative; min-height:0}
+#rdlab .rl-ph-home{display:block; width:110px; height:5px; margin:8px auto 9px; border-radius:3px; background:rgba(255,255,255,.85); border:0; padding:0}
+#rdlab .rl-ph.light .rl-ph-home{background:#1b2433}
+#rdlab .rl-ph.light{background:#f4f6f9; color:#121a26}
+#rdlab .rl-apps{display:grid; grid-template-columns:repeat(4,1fr); gap:16px 6px; padding:26px 16px}
+#rdlab .rl-app{border:0; background:transparent; color:#fff; display:flex; flex-direction:column; align-items:center; gap:6px; font-size:11.5px; font-weight:600; padding:0}
+#rdlab .rl-app i{width:52px; height:52px; border-radius:15px; display:grid; place-items:center; font-style:normal; font-weight:800; font-size:20px; box-shadow:0 4px 10px rgba(0,0,0,.25); font-family:var(--f-disp); position:relative}
+#rdlab .rl-app i em{position:absolute; top:-5px; right:-5px; background:#ff3b30; color:#fff; font-style:normal; font-size:11px; min-width:20px; height:20px; border-radius:10px; display:grid; place-items:center; font-family:var(--f-body)}
+#rdlab .rl-ph-widget{margin:4px 16px 0; padding:14px; border-radius:20px; background:rgba(255,255,255,.16); backdrop-filter:blur(8px)}
+#rdlab .rl-ph-widget b{font-family:var(--f-disp); font-size:34px; display:block; line-height:1}
+#rdlab .rl-ph-dock{position:absolute; bottom:6px; left:12px; right:12px; padding:10px; border-radius:26px; background:rgba(255,255,255,.18); display:flex; justify-content:space-around}
+#rdlab .rl-ph-hdr{display:flex; align-items:center; gap:8px; padding:8px 14px 8px; font-weight:800; font-size:17px}
+#rdlab .rl-ph-hdr button{border:0; background:transparent; color:var(--teal); font-weight:700; padding:2px 0; font-size:14px}
+#rdlab .rl-ph-tabs{display:flex; gap:4px; margin:0 14px 8px; background:#e3e8ef; border-radius:9px; padding:3px}
+#rdlab .rl-ph-tabs button{flex:1; border:0; background:transparent; border-radius:7px; padding:5px; font-size:12.5px; font-weight:700; color:#3b475a}
+#rdlab .rl-ph-tabs button[aria-selected="true"]{background:#fff; color:#121a26; box-shadow:0 1px 2px rgba(0,0,0,.12)}
+#rdlab .rl-dialnum{font-family:var(--f-disp); font-size:34px; text-align:center; min-height:48px; letter-spacing:.06em; padding:4px 10px}
+#rdlab .rl-keys{display:grid; grid-template-columns:repeat(3,64px); gap:12px 18px; justify-content:center}
+#rdlab .rl-keys button{width:64px; height:64px; border-radius:50%; border:0; background:#e3e8ef; color:#121a26; font-size:26px; font-weight:500; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1}
+#rdlab .rl-keys button small{font-size:9px; letter-spacing:.15em; font-weight:700; color:#5d6a7e}
+#rdlab .rl-keys button:active{background:#c7d0dc}
+#rdlab .rl-callbtn{width:64px; height:64px; border-radius:50%; border:0; background:#22c55e; color:#fff; display:grid; place-items:center; margin:14px auto 0}
+#rdlab .rl-callbtn.end{background:#ef4444}
+#rdlab .rl-list{display:flex; flex-direction:column; margin:0 10px}
+#rdlab .rl-list button{display:flex; align-items:center; gap:10px; text-align:left; border:0; border-bottom:1px solid #e1e6ee; background:transparent; padding:9px 6px; color:#121a26}
+#rdlab .rl-list .av{width:34px; height:34px; border-radius:50%; display:grid; place-items:center; color:#fff; font-weight:800; font-size:13px; flex:none}
+#rdlab .rl-list .t{flex:1; min-width:0}
+#rdlab .rl-list .t b{display:block; font-size:13.5px}
+#rdlab .rl-list .t small{display:block; color:#617089; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+#rdlab .rl-list .n{font-family:var(--f-disp); font-weight:700; color:#617089}
+#rdlab .rl-call{display:flex; flex-direction:column; align-items:center; padding:36px 18px 18px; gap:8px; text-align:center; height:100%}
+#rdlab .rl-call .big{width:84px; height:84px; border-radius:50%; display:grid; place-items:center; font-size:30px; font-weight:800; background:rgba(255,255,255,.18)}
+#rdlab .rl-call h4{margin:6px 0 0; font-size:22px}
+#rdlab .rl-call .st{opacity:.8; font-size:13px}
+#rdlab .rl-bubble{background:rgba(255,255,255,.95); color:#121a26; border-radius:16px 16px 16px 4px; padding:10px 12px; font-size:13.5px; text-align:left; margin-top:14px; animation:rlIn .3s}
+#rdlab .rl-thread{display:flex; flex-direction:column; gap:8px; padding:6px 12px 16px}
+#rdlab .rl-thread .m{background:#e6ebf2; border-radius:16px 16px 16px 4px; padding:9px 12px; font-size:13px; max-width:92%}
+#rdlab .rl-thread .m small{display:block; color:#617089; font-size:11px; margin-top:4px}
+#rdlab .rl-rail{padding:0 12px 16px; display:flex; flex-direction:column; gap:8px}
+#rdlab .rl-railhero{margin:0 12px 10px; border-radius:16px; padding:14px; background:linear-gradient(120deg,#ff5a3c,#ffb02e); color:#1a1205}
+#rdlab .rl-railhero b{font-family:var(--f-disp); font-size:20px; display:block}
+#rdlab .rl-deal{display:flex; align-items:center; gap:10px; border:1px solid #e1e6ee; border-radius:14px; padding:10px; background:#fff; text-align:left; color:#121a26}
+#rdlab .rl-deal .p{font-family:var(--f-disp); font-weight:700; font-size:18px; color:#d0391b}
+#rdlab .rl-deal .t{flex:1}
+#rdlab .rl-deal .t b{display:block}
+#rdlab .rl-deal .t small{color:#617089; font-size:12px}
+#rdlab .rl-in{width:100%; border:1px solid #cfd7e2; border-radius:10px; padding:9px 10px; font:inherit; font-size:14px; background:#fff; color:#121a26}
+#rdlab .rl-ticket{margin:0 12px; border-radius:18px; background:#fff; color:#121a26; padding:14px; border:1px solid #e1e6ee; display:flex; flex-direction:column; gap:6px}
+#rdlab .rl-ticket canvas{width:150px; height:150px; margin:6px auto; display:block; image-rendering:pixelated}
+#rdlab .rl-ticket .route{font-family:var(--f-disp); font-size:18px; font-weight:700}
+#rdlab .rl-prog{height:6px; border-radius:3px; background:#e1e6ee; overflow:hidden}
+#rdlab .rl-prog i{display:block; height:100%; width:0; background:#ff5a3c}
+
+/* dice lab */
+#rdlab .rl-dice{width:min(1080px,100%); max-height:100%; background:var(--panel); border-radius:18px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 30px 70px rgba(10,18,30,.45)}
+#rdlab .rl-dice > header{display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--line); flex-wrap:wrap}
+#rdlab .rl-dice > header h2{margin:0; font-family:var(--f-disp); font-size:20px; letter-spacing:.03em}
+#rdlab .rl-dice > header p{margin:0; color:var(--muted); font-size:13px; flex:1; min-width:180px}
+#rdlab .rl-dbody{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); gap:14px; padding:14px 16px 16px; overflow:auto; min-height:0}
+#rdlab .rl-felt{width:100%; aspect-ratio:16/10; max-width:100%; border-radius:14px; display:block; background:#1d6b4f}
+#rdlab .rl-dctl{display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:10px}
+#rdlab .rl-dctl input[type="number"]{width:96px; border:1px solid var(--line); border-radius:8px; padding:7px 8px; font:inherit; font-family:var(--f-disp); font-weight:700; font-size:15px; color:var(--ink); background:var(--panel)}
+#rdlab .rl-stat{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px}
+#rdlab .rl-stat div{background:var(--soft); border-radius:10px; padding:8px 10px}
+#rdlab .rl-stat small{display:block; color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.07em}
+#rdlab .rl-stat b{font-family:var(--f-disp); font-size:22px; font-variant-numeric:tabular-nums}
+#rdlab canvas.rl-dgraph{width:100%; height:250px; display:block; border-radius:12px; background:var(--soft)}
+#rdlab .rl-tablewrap{max-height:190px; overflow:auto; border:1px solid var(--line); border-radius:10px; margin-top:10px}
+#rdlab table.rl-t{width:100%; border-collapse:collapse; font-size:13px; font-variant-numeric:tabular-nums}
+#rdlab table.rl-t th{position:sticky; top:0; background:var(--soft); text-align:right; padding:6px 10px; font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); border-bottom:1px solid var(--line)}
+#rdlab table.rl-t td{text-align:right; padding:5px 10px; border-bottom:1px solid #edf1f6}
+#rdlab table.rl-t th:first-child, #rdlab table.rl-t td:first-child{text-align:left}
+#rdlab .rl-chk{display:flex; align-items:center; gap:6px; font-size:13px}
+
+/* missions */
+#rdlab .rl-mis{position:absolute; top:0; right:0; bottom:0; width:min(470px,100%); z-index:50; background:var(--panel); border-left:1px solid var(--line); box-shadow:-20px 0 50px rgba(10,18,30,.25); display:flex; flex-direction:column}
+#rdlab .rl-mis > header{display:flex; align-items:center; gap:10px; padding:12px 16px; border-bottom:1px solid var(--line)}
+#rdlab .rl-mis > header h2{margin:0; font-family:var(--f-disp); font-size:19px; flex:1; letter-spacing:.03em}
+#rdlab .rl-misbody > *{flex:none}
+#rdlab .rl-misbody{overflow:auto; padding:14px 16px 24px; display:flex; flex-direction:column; gap:12px; min-height:0}
+#rdlab .rl-mcard{display:flex; gap:12px; align-items:center; width:100%; text-align:left; border:1px solid var(--line); background:var(--panel); border-radius:13px; padding:12px}
+#rdlab .rl-mcard:hover{border-color:#9fb0c6}
+#rdlab .rl-mcard .num{width:40px; height:40px; border-radius:11px; background:var(--ink); color:#fff; font-family:var(--f-disp); font-weight:700; font-size:18px; display:grid; place-items:center; flex:none}
+#rdlab .rl-mcard .t{flex:1; min-width:0}
+#rdlab .rl-mcard .t b{display:block; font-size:14.5px}
+#rdlab .rl-mcard .t small{color:var(--muted); font-size:12.5px}
+#rdlab .rl-prog2{font-family:var(--f-disp); font-size:12px; color:var(--teal); font-weight:700; white-space:nowrap}
+#rdlab .rl-mis h3{font-family:var(--f-disp); margin:4px 0 0; font-size:17px; letter-spacing:.02em}
+#rdlab .rl-mis h4{margin:6px 0 0; font-size:12px; text-transform:uppercase; letter-spacing:.09em; color:var(--muted)}
+#rdlab .rl-mis p{margin:0; max-width:62ch}
+#rdlab .rl-steps{display:flex; flex-direction:column; gap:6px}
+#rdlab .rl-steps label{display:flex; gap:9px; align-items:flex-start; padding:8px 10px; border-radius:10px; background:var(--soft); font-size:13.5px}
+#rdlab .rl-steps input{margin-top:3px; accent-color:var(--teal); width:16px; height:16px; flex:none}
+#rdlab .rl-steps label.done span{color:var(--muted); text-decoration:line-through}
+#rdlab .rl-steps code, #rdlab .rl-mis code{font-family:var(--f-disp); font-weight:700; background:var(--hazard); color:var(--ink); padding:0 5px; border-radius:4px}
+#rdlab .rl-mtable{overflow-x:auto; border:1px solid var(--line); border-radius:10px}
+#rdlab .rl-mtable table{border-collapse:collapse; width:100%; font-size:13px}
+#rdlab .rl-mtable th{background:var(--soft); font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); padding:6px 8px; text-align:left; border-bottom:1px solid var(--line)}
+#rdlab .rl-mtable td{padding:4px 6px; border-bottom:1px solid #edf1f6}
+#rdlab .rl-mtable td:first-child{font-weight:600; white-space:nowrap; padding-left:8px}
+#rdlab .rl-mtable input{width:100%; min-width:62px; border:1px solid var(--line); border-radius:6px; padding:5px 6px; font:inherit; font-family:var(--f-disp); font-variant-numeric:tabular-nums; background:var(--panel); color:var(--ink)}
+#rdlab .rl-q{border:1px solid var(--line); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px}
+#rdlab .rl-q p{font-weight:600}
+#rdlab .rl-q .opts{display:flex; flex-direction:column; gap:6px}
+#rdlab .rl-q .opts button{text-align:left; border:1px solid var(--line); background:var(--panel); border-radius:9px; padding:8px 10px}
+#rdlab .rl-q .opts button.right{background:#dcf7e9; border-color:#1f9d5a}
+#rdlab .rl-q .opts button.wrong{background:#fde4e4; border-color:#d33}
+#rdlab .rl-q .why{font-size:13px; color:var(--ink); background:var(--teal2); border-radius:8px; padding:8px 10px}
+#rdlab canvas.rl-mplot{width:100%; height:200px; display:block; border-radius:10px; background:var(--soft)}
+
+@media (max-width:1000px){
+  #rdlab{height:auto; min-height:0; overflow:visible}
+  #rdlab .rl-main{grid-template-columns:minmax(0,1fr); grid-template-rows:auto auto auto}
+  #rdlab .rl-drawer{border-right:0; border-bottom:1px solid var(--line)}
+  #rdlab .rl-pane{flex-direction:row; flex-wrap:nowrap; overflow-x:auto; max-height:none}
+  #rdlab .rl-pane h3, #rdlab .rl-pane p.note{display:none}
+  #rdlab .rl-pane .rl-card{width:200px; flex:none}
+  #rdlab .rl-pane p.note.keep{display:block; flex:none; width:220px; align-self:center}
+  #rdlab .rl-bench{height:380px; flex:none}
+  #rdlab .rl-rack{border-left:0; display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); align-items:start}
+  #rdlab .rl-dbody{grid-template-columns:1fr}
+  #rdlab .rl-phone{position:absolute; top:70px; bottom:auto; right:50%; transform:translateX(50%); height:600px; max-height:none}
+  #rdlab .rl-scrim{align-items:flex-start}
+  #rdlab .rl-mis{position:absolute; top:0; bottom:auto; min-height:100%}
+}
+@media (max-width:560px){
+  #rdlab .rl-top{gap:8px; padding:8px 12px}
+  #rdlab .rl-brand small{display:none}
+  #rdlab .rl-spacer{display:none}
+  #rdlab .rl-helper{left:6px; right:6px; bottom:6px; flex-wrap:wrap; justify-content:center}
+  #rdlab .rl-helper canvas{width:150px}
+  #rdlab .rl-phone{width:286px}
+}
+@media (prefers-reduced-motion:reduce){ #rdlab *{animation:none !important; transition:none !important} }
+</style>
+</head>
+<body style="margin:0;height:100%;background:#e9eef4">
+
+
+<div id="rdlab">
+  <header class="rl-top">
+    <div class="rl-brand">
+      <div class="rl-logo" aria-hidden="true"><canvas id="rl-logo" width="68" height="68" style="width:26px;height:26px"></canvas></div>
+      <div><h1>Decay Lab</h1><small>Radioactivity bench, phone and dice</small></div>
+    </div>
+    <div class="rl-loc" id="rl-loc" title="Where your lab is"><i></i><b id="rl-locname">Lead-lined basement</b><span id="rl-locsub">locked in</span></div>
+    <div class="rl-spacer"></div>
+    <div class="rl-topbtns">
+      <span class="rl-seglabel">Time</span>
+      <div class="rl-seg" role="group" aria-label="Simulation speed" id="rl-speed">
+        <button type="button" data-s="1" aria-pressed="true">×1</button><button type="button" data-s="5" aria-pressed="false">×5</button><button type="button" data-s="20" aria-pressed="false">×20</button>
+      </div>
+      <button class="rl-btn" type="button" id="rl-missbtn">Missions</button>
+      <button class="rl-btn pri" type="button" id="rl-phonebtn">Phone<span class="rl-badge" id="rl-phbadge" hidden>1</span></button>
+      <button class="rl-btn" type="button" id="rl-tidy" title="Put everything away">Tidy up</button>
+    </div>
+  </header>
+
+  <div class="rl-main">
+    <aside class="rl-drawer">
+      <div class="rl-tabs" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-tab="src">Sources</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="abs">Absorbers</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="eq">Kit</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="tray">Samples</button>
+      </div>
+      <div class="rl-pane" id="rl-pane"></div>
+    </aside>
+
+    <section class="rl-benchwrap">
+      <canvas class="rl-bench" id="rl-bench" tabindex="0" aria-label="Lab bench. Drag the source along the rail, or use the arrow keys to move it 1 mm at a time."></canvas>
+      <div class="rl-hint" id="rl-hint">Pick a source from the left, then drag it along the rail towards the GM tube.</div>
+      <div class="rl-helper" id="rl-helper">
+        <button type="button" data-n="-1" title="Move 1 cm towards the tube">«</button>
+        <button type="button" data-n="-0.1" title="Move 1 mm towards the tube">‹</button>
+        <canvas id="rl-loupe" width="380" height="104" aria-label="Magnified ruler"></canvas>
+        <button type="button" data-n="0.1" title="Move 1 mm away">›</button>
+        <button type="button" data-n="1" title="Move 1 cm away">»</button>
+        <label><input type="checkbox" id="rl-showd"> show</label><output id="rl-dout">–</output>
+      </div>
+    </section>
+
+    <aside class="rl-rack" id="rl-rack">
+      <div class="rl-empty" id="rl-rackempty">Your instruments appear here. Open <b>Kit</b> and switch on the ratemeter to get started.</div>
+
+      <section class="rl-inst" data-inst="ratemeter" hidden>
+        <header><span class="dot" style="background:#ff7a1a"></span><b>Ratemeter</b><button type="button" data-close="ratemeter" aria-label="Put away">×</button></header>
+        <div class="body">
+          <div class="rl-lcd" id="rl-rmlcd"><span class="flag" id="rl-rmflag"></span><span class="v" id="rl-rmv">0</span><span class="u" id="rl-rmu">c/s</span></div>
+          <div class="rl-bar" id="rl-rmbar"></div>
+          <div class="rl-scale"><span>0.1</span><span>1</span><span>10</span><span>100</span><span>1000 c/s</span></div>
+          <div class="rl-row">
+            <div class="rl-seg" id="rl-rmunit"><button type="button" data-u="cps" aria-pressed="true">counts/s</button><button type="button" data-u="cpm" aria-pressed="false">counts/min</button></div>
+            <button type="button" class="rl-btn sm" id="rl-rmhold">Hold</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="rl-inst" data-inst="counter" hidden>
+        <header><span class="dot" style="background:#2f9df6"></span><b>Counter</b><button type="button" data-close="counter" aria-label="Put away">×</button></header>
+        <div class="body">
+          <div class="rl-lcd"><span class="flag"><span class="rl-led" id="rl-led"></span></span><span class="v" id="rl-cv">000000</span><span class="u">counts</span></div>
+          <div class="rl-row">
+            <button type="button" class="rl-btn sm pri" id="rl-cgo">Start</button>
+            <button type="button" class="rl-btn sm" id="rl-creset">Reset</button>
+            <button type="button" class="rl-btn sm" id="rl-cbeep" aria-pressed="false">Sound off</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="rl-inst" data-inst="clock" hidden>
+        <header><span class="dot" style="background:#6b7a90"></span><b>Wall clock</b><button type="button" data-close="clock" aria-label="Put away">×</button></header>
+        <div class="body"><canvas class="rl-clock" id="rl-clock" width="300" height="300"></canvas></div>
+      </section>
+
+      <section class="rl-inst" data-inst="stopclock" hidden>
+        <header><span class="dot" style="background:#1fbf75"></span><b>Stopclock</b><button type="button" data-close="stopclock" aria-label="Put away">×</button></header>
+        <div class="body">
+          <div class="rl-lcd"><span class="flag" id="rl-sflag"></span><span class="v" id="rl-sv">00:00.0</span><span class="u">min:s</span></div>
+          <div class="rl-row">
+            <button type="button" class="rl-btn sm pri" id="rl-sgo">Start</button>
+            <button type="button" class="rl-btn sm" id="rl-ssplit">Hold</button>
+            <button type="button" class="rl-btn sm" id="rl-sreset">Reset</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="rl-inst" data-inst="logger" hidden>
+        <header><span class="dot" style="background:#8a5cf6"></span><b>Data logger</b><button type="button" data-close="logger" aria-label="Put away">×</button></header>
+        <div class="body">
+          <canvas class="rl-log" id="rl-log"></canvas>
+          <div class="rl-row">
+            <button type="button" class="rl-btn sm pri" id="rl-lgo">Record</button>
+            <select class="rl-sel" id="rl-lint" aria-label="Logging interval"><option value="1">every 1 s</option><option value="5" selected>every 5 s</option><option value="10">every 10 s</option><option value="30">every 30 s</option></select>
+            <button type="button" class="rl-btn sm" id="rl-lclear">Clear</button>
+            <button type="button" class="rl-btn sm" id="rl-lcopy">Copy data</button>
+          </div>
+          <div class="rl-small" id="rl-lnote">Counts each interval, shown as counts/min. Time runs with the lab clock.</div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="rl-notes" id="rl-notes" aria-live="polite"></div>
+
+  <div class="rl-phone" id="rl-phone" hidden>
+    <div class="rl-ph" id="rl-ph">
+      <div class="rl-ph-island"></div>
+      <div class="rl-ph-status"><span id="rl-phtime">09:41</span><span>5G ▮▮▮ 86%</span></div>
+      <div class="rl-ph-scr" id="rl-phscr"></div>
+      <button class="rl-ph-home" type="button" id="rl-phhome" aria-label="Home screen"></button>
+    </div>
+  </div>
+
+  <div class="rl-scrim" id="rl-dicescrim" hidden>
+    <div class="rl-dice" role="dialog" aria-modal="true" aria-labelledby="rl-dtitle">
+      <header>
+        <h2 id="rl-dtitle">The Head's dice tray</h2>
+        <p id="rl-dsub">Each throw, every die showing a six is removed. Watch how the number left falls.</p>
+        <button type="button" class="rl-btn" id="rl-dclose">Return the dice</button>
+      </header>
+      <div class="rl-dbody">
+        <div>
+          <canvas class="rl-felt" id="rl-felt"></canvas>
+          <div class="rl-dctl">
+            <label for="rl-dn" class="rl-small">Dice</label><input id="rl-dn" type="number" min="1" max="32000" value="12" inputmode="numeric">
+            <button type="button" class="rl-btn sm" data-dn="12">12</button><button type="button" class="rl-btn sm" data-dn="120">120</button><button type="button" class="rl-btn sm" data-dn="1000">1000</button><button type="button" class="rl-btn sm" data-dn="32000">32 000</button>
+          </div>
+          <div class="rl-dctl">
+            <button type="button" class="rl-btn" id="rl-dshow">Tip out the dice</button>
+            <button type="button" class="rl-btn pri" id="rl-dthrow" disabled>Throw</button>
+            <button type="button" class="rl-btn" id="rl-dauto" disabled>Auto</button>
+            <button type="button" class="rl-btn" id="rl-dreset">Reset</button>
+          </div>
+          <div class="rl-stat" id="rl-dstat"></div>
+        </div>
+        <div>
+          <canvas class="rl-dgraph" id="rl-dgraph"></canvas>
+          <div class="rl-dctl">
+            <label class="rl-chk"><input type="checkbox" id="rl-dpred"> prediction</label>
+            <label class="rl-chk" id="rl-dhalfwrap"><input type="checkbox" id="rl-dhalf"> halving lines</label>
+            <label class="rl-chk"><input type="checkbox" id="rl-dghost" checked> last run</label>
+            <span class="rl-spacer" style="flex:1"></span>
+            <button type="button" class="rl-btn sm" id="rl-dcopy">Copy table</button>
+          </div>
+          <div class="rl-tablewrap"><table class="rl-t" id="rl-dtable"></table></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rl-mis" id="rl-mis" hidden>
+    <header><button type="button" class="rl-btn sm" id="rl-misback" hidden>‹ All</button><h2 id="rl-mistitle">Missions</h2><button type="button" class="rl-btn sm" id="rl-misclose">Close</button></header>
+    <div class="rl-misbody" id="rl-misbody"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var root=document.getElementById('rdlab');
+function $(s){return root.querySelector(s)}
+function $$(s){return Array.prototype.slice.call(root.querySelectorAll(s))}
+function el(tag,attrs,html){var e=document.createElement(tag);if(attrs)for(var k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k]);}if(html!=null)e.innerHTML=html;return e}
+var store={get:function(k,d){try{var v=localStorage.getItem('decaylab.'+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set:function(k,v){try{localStorage.setItem('decaylab.'+k,JSON.stringify(v))}catch(e){}}};
+function clamp(x,a,b){return x<a?a:x>b?b:x}
+function fmt(n){return n.toLocaleString('en-GB')}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+/* ---------- data ---------- */
+var CITY={};
+"Bedford:16.5|Luton:18|Dunstable:20.6|Leighton Buzzard:15.5|Biggleswade:16.4|Sandy:20.3|Reading:17.5|Bracknell:18.3|Maidenhead:20.8|Newbury:20.5|Windsor:19.8|Wokingham:14.2|Abingdon:13.6|Aylesbury:22.3|Milton Keynes:15.7|Slough:22.3|Buckingham:14.9|High Wycombe:22.1|Cambridge:14.3|Wisbech:17.9|Ely:19.3|March:15.8|Whittlesey:18.4|Chatteris:17.9|Linton:21.4|Chester:17.3|Stockport:16.4|Birkenhead:19.2|Wallasey:17.6|Runcorn:21.6|Macclesfield:16.4|Crewe:14.2|Bodmin:53.4|Truro:66.2|Camborne:323|Redruth:215|St. Austell:83|Falmouth:248.8|Penzance:104.5|Newquay:52|Carlisle:22.1|Whitehaven:14.1|Workington:20.8|Penrith:18.9|Keswick:30.1|Brampton:13.8|Derby:17.5|Chesterfield:16.9|Ilkeston:14|Swadlincote:16.5|Buxton:14.9|Matlock:21.4|Ashbourne:14.3|Exeter:20.6|Plymouth:40.6|Torquay:33|Paignton:70.2|Barnstaple:25.4|Tiverton:59.5|Newton Abbot:53.6|Tavistock:160.4|Dorchester:20.1|Poole:20.6|Weymouth:14.1|Sherborne:13.7|Wimborne Minster:18.8|Shaftesbury:20.2|Durham:16.3|Sunderland:14|Stockton-on-Tees:16.9|Darlington:20.3|Hartlepool:13.9|Gateshead:19|Washington:18.9|Chelmsford:18.1|Basildon:14.7|Romford:20.6|Southend:22.1|Colchester:22.4|Harlow:20|Brentwood:18.7|West Ham:18.4|Gloucester:15.8|Bristol:28.6|Cheltenham:19.4|Stroud:21.2|Cirencester:27.6|Tewkesbury:21|Winchester:19.6|Southampton:15.3|Portsmouth:20.8|Bournemouth:14.5|Basingstoke:16.8|Hereford:26.8|Ross-on-Wye:25.8|Leominster:16.6|Ledbury:23|Bromyard:25.8|Kington:25|Hertford:22.4|Watford:17.4|St. Albans:15.9|Hemel Hempstead:21.4|Stevenage:21.9|Hatfield:22|Huntingdon:20.7|St. Ives:17.7|St. Neots:14.4|Ramsey:19.5|Yaxley:17.2|Maidstone:16.6|Canterbury:18.1|Bromley:16.3|Rochester:21|Margate:18.5|Folkestone:24.5|Dover:23|Greenwich:17.6|Lancaster:16.9|Liverpool:19.3|Manchester:21.1|Preston:20.4|Bolton:20.1|Warrington:22.1|Barrow-in-Furness:22.2|Leicester:17.6|Loughborough:19.1|Hinckley:15|Melton Mowbray:15|Coalville:22.4|Lutterworth:13.7|Lincoln:19|Grimsby:16|Scunthorpe:15.7|Boston:17.9|Grantham:20.3|Stamford:15.2|Skegness:21.7|Louth:17.5|London:18.9|Harrow:14.9|Enfield:22.3|Staines:15.7|Ealing:14.6|Potters Bar:14.6|Westminster:19.9|Norwich:18.3|Great Yarmouth:16.6|King's Lynn:20.6|Dereham:14.5|Cromer:19.5|Hunstanton:21.2|Northampton:17.7|Peterborough:21.4|Corby:18.9|Kettering:16.8|Wellingborough:16.7|Alnwick:16.5|Newcastle-upon-Tyne:21.3|Morpeth:15.8|Hexham:14.4|Berwick-upon-Tweed:20|Nottingham:18|Mansfield:15.6|Worksop:18.2|Newark:19.8|Retford:17.9|Southwell:17.5|Oxford:14.7|Banbury:21.2|Witney:15.1|Bicester:20.1|Henley-on-Thames:13.9|Carterton:17.5|Thame:18.6|Oakham:17.4|Uppingham:14.5|Shrewsbury:17.1|Telford:13.5|Oswestry:17|Bridgnorth:25.4|Whitchurch:14.1|Market Drayton:19.3|Ludlow:25.6|Taunton:18.8|Bath:22|Weston-super-Mare:13.7|Yeovil:18.2|Bridgwater:21.5|Wells:26.8|Glastonbury:21.8|Stafford:21.2|Stoke-on-Trent:21.3|Wolverhampton:14.8|Walsall:14.7|Cannock:15.9|Lichfield:19.2|Ipswich:22.2|Bury St. Edmunds:20.6|Lowestoft:19.9|Felixstowe:15.9|Sudbury:21.1|Haverhill:15|Bungay:14|Guildford:13.8|Croydon:21.3|Woking:18.4|Sutton:17.3|Kingston-on-Thames:16.6|Wandsworth:19.9|Wimbledon:20.8|Brixton:13.8|Chichester:18.9|Brighton:21.5|Worthing:17.4|Crawley:22|Hastings:20.4|Eastbourne:19.8|Bognor Regis:20.5|Horsham:16.7|Warwick:19.2|Birmingham:16.6|Coventry:18.5|Nuneaton:20.5|Rugby:28.2|Solihull:29.8|Stratford-upon-Avon:28.3|Appleby:14.1|Kendal:31.2|Windermere:30.6|Ambleside:31.5|Kirkby Lonsdale:24.6|Trowbridge:20.5|Salisbury:15.8|Swindon:27.9|Chippenham:16.8|Devizes:14.7|Marlborough:22.3|Warminster:15.4|Worcester:20.4|Dudley:21.1|Kidderminster:20.2|Stourbridge:45.8|Halesowen:14.5|Malvern:19.3|Evesham:29.9|Northallerton:19.6|Middlesbrough:13.6|Scarborough:18.5|Whitby:21.8|Beverley:18.1|Hull:22.2|Bridlington:26.8|Driffield:22.4|Hornsea:19.6|Filey:19.1|Wakefield:17.7|Leeds:19|Sheffield:27.3|Bradford:19.2|Halifax:16.3|Harrogate:16.8|York:21.1|Beaumaris:22.5|Holyhead:17.6|Llangefni:23.5|Amlwch:46.7|Menai Bridge:31.3|Brecon:60.7|Builth Wells:22.1|Hay-on-Wye:17.9|Talgarth:26.6|Llanwrtyd Wells:23|Caernarfon:22.4|Bangor:16.9|Llandudno:16.1|Conwy:17.3|Pwllheli:28.1|Porthmadog:28.3|Carmarthen:53.1|Llanelli:44.2|Ammanford:18.4|Llandovery:21.3|Kidwelly:52.6|St. Clears:21.8|Cardigan:92.6|Aberystwyth:19.3|Lampeter:28.3|New Quay:30.6|Tregaron:21.5|Denbigh:23.2|Wrexham:28.1|Ruthin:57.3|Abergele:25|Llangollen:21.5|Mold:21.8|Flint:28.8|Rhyl:21.4|Prestatyn:15.7|Connah's Quay:13.6|Holywell:29.2|Buckley:56.4|St. Asaph:14.3|Cardiff:20.6|Swansea:20.2|Merthyr Tydfil:18.8|Barry:41.3|Caerphilly:20.2|Bridgend:14.6|Neath:22.4|Pontypridd:19.6|Dolgellau:44.8|Bala:51.9|Tywyn:62.9|Blaenau Ffestiniog:20.4|Barmouth:35.2|Harlech:13.9|Monmouth:30.5|Blackwood:16.9|Cwmbran:18.7|Abergavenny:25.5|Chepstow:21|Tredegar:19.2|Montgomery:44.1|Newtown:55|Welshpool:26.1|Machynlleth:53.2|Llanidloes:24.9|Pembroke:48.3|Milford Haven:48.8|Haverfordwest:42.1|Fishguard:46.2|Tenby:19.4|St. David's:18.2|Presteigne:82.4|Llandrindod Wells:61.6|Knighton:75.7|Rhayader:48.3|New Radnor:30.4|Aberdeen:69.8|Peterhead:56.8|Fraserburgh:61.5|Inverurie:54.3|Ellon:22.4|Turriff:29.1|Forfar:22.3|Dundee:30|Arbroath:19.5|Brechin:29.1|Inveraray:16.7|Oban:20.6|Dunoon:14.5|Campbeltown:19.2|Lochgilphead:19.5|Tobermory:22.2|Ayr:21.7|Kilmarnock:17.6|Irvine:18.4|Saltcoats:21|Kilwinning:25.1|Largs:28.2|Troon:27.4|Cumnock:24.6|Banff:28.9|Buckie:30.2|Keith:21.8|Macduff:25.3|Portsoy:24.2|Dufftown:30.1|Greenlaw:25.3|Duns:26.7|Eyemouth:18.2|Lauder:24.5|Coldstream:18.1|Rothesay:26.1|Millport:30.6|Brodick:59.4|Lochranza:28.2|Cromarty:28.7|Ullapool:25.5|Wick:19.9|Thurso:28.7|Halkirk:20.8|Castletown:21.1|Clackmannan:18.8|Alloa:22.9|Tillicoultry:27.4|Tullibody:21.6|Dumfries:22.8|Annan:30.5|Lockerbie:28.6|Moffat:26.1|Sanquhar:30.7|Langholm:22.8|Gretna:26.9|Dumbarton:14.5|Clydebank:15.2|Cumbernauld:19.8|Helensburgh:21.6|Alexandria:17.7|Kirkintilloch:14|Haddington:14.7|North Berwick:18.3|Dunbar:14.6|Tranent:14.9|East Linton:16.9|Cupar:19|Dunfermline:19.4|Glenrothes:22.5|Kirkcaldy:22.2|St. Andrews:22.6|Cowdenbeath:20.4|Burntisland:15.3|Inverness:22.1|Fort William:19.9|Kingussie:28.8|Newtonmore:22.6|Portree:24|Stonehaven:19.2|Banchory:20.8|Laurencekirk:17.6|Inverbervie:21.9|Kinross:18|Milnathort:17.3|Kirkcudbright:17.5|Castle Douglas:21.9|Dalbeattie:20|New Galloway:15.8|Lanark:18.2|Glasgow:13.6|East Kilbride:18.2|Hamilton:22.1|Motherwell:16.1|Coatbridge:17.1|Carluke:20.3|Edinburgh:19.1|Musselburgh:24.2|Penicuik:14.6|Dalkeith:16.8|Bonnyrigg:15|Elgin:17.5|Forres:31.4|Rothes:27.9|Lossiemouth:18|Fochabers:18.8|Nairn:26.8|Auldearn:21.8|Cawdor:21.6|Ferness:15.7|Kirkwall:14.5|Stromness:17.3|Balfour:16|Peebles:16.7|Innerleithen:19.6|West Linton:20.1|Perth:20.9|Crieff:18.1|Pitlochry:18.4|Callander:19.6|Blairgowrie:14.9|Rattray:20.9|Coupar Angus:19.5|Kincardine:17.1|Renfrew:28.5|Paisley:16.5|Greenock:15.4|Johnstone:14.2|Port Glasgow:17.5|Barrhead:19|Kilmalcolm:20.1|Dingwall:15.2|Stornoway:17.7|Tain:15.2|Alness:20.1|Invergordon:29.2|Jedburgh:21.9|Hawick:15.4|Kelso:20.7|Melrose:14.4|Roxburgh:15|Selkirk:14.2|Clovenfords:21.7|Galashiels:22|Lerwick:18.6|Scalloway:16.2|Baltasound:16.7|Stirling:23|Falkirk:15.6|Grangemouth:17.8|Kilsyth:15.8|Bridge of Allan:16.5|Denny:18.1|Alva:22.4|Dornoch:19.5|Helmsdale:23.4|Brora:24.9|Golspie:21.4|Lairg:22.3|Durness:20.7|Tongue:13.7|Linlithgow:17.2|Livingston:14.5|Broxburn:27.2|Whitburn:15.8|Armadale:18.1|Bathgate:21.1|Wigtown:30.7|Stranraer:18.1|Newton Stewart:19.4|Whithorn:16|Belfast:13.7|Derry:49.7|Londonderry:49.7|Antrim:13.8|Armagh:28|Ballycastle:26.5|Coleraine:14.9|Letterkenny:27.9|Cavan:17.2|Monaghan:26.5".split('|').forEach(function(p){var i=p.lastIndexOf(':');CITY[p.slice(0,i)]=parseFloat(p.slice(i+1))});
+var CITY_NAMES=Object.keys(CITY).sort();
+var SRC={
+  alpha:{name:'Alpha source',iso:'Americium-241',sym:'α',col:'#e5484d',type:'alpha'},
+  beta:{name:'Beta source',iso:'Strontium-90',sym:'β',col:'#2f7cf6',type:'beta'},
+  gamma:{name:'Gamma source',iso:'Cobalt-60',sym:'γ',col:'#8a5cf6',type:'gamma'}
+};
+var ABS=[
+  {id:'tissue',name:'Tissue paper',sub:'0.05 mm',mm:0.3,col:'#fbfbff',edge:'#c9cbe0',T:{alpha:0.0,beta:0.98,gamma:1}},
+  {id:'paper',name:'Paper',sub:'one sheet',mm:0.4,col:'#ffffff',edge:'#bfc7d6',T:{alpha:0,beta:0.95,gamma:1}},
+  {id:'foil',name:'Aluminium foil',sub:'0.02 mm',mm:0.3,col:'#d9dee6',edge:'#9aa5b5',T:{alpha:0,beta:0.9,gamma:1}},
+  {id:'al1',name:'Aluminium',sub:'1 mm',mm:1,col:'#c3ccd8',edge:'#8592a6',T:{alpha:0,beta:0.3,gamma:0.985}},
+  {id:'al2',name:'Aluminium',sub:'2 mm',mm:2,col:'#b7c1cf',edge:'#7d8a9e',T:{alpha:0,beta:0.06,gamma:0.97}},
+  {id:'al5',name:'Aluminium',sub:'5 mm',mm:5,col:'#aab5c4',edge:'#738197',T:{alpha:0,beta:0,gamma:0.93}},
+  {id:'pb2',name:'Lead',sub:'2 mm',mm:2,col:'#59606b',edge:'#2f343b',T:{alpha:0,beta:0.004,gamma:0.89}},
+  {id:'pb8',name:'Lead',sub:'8 mm',mm:8,col:'#4c525c',edge:'#2a2e34',T:{alpha:0,beta:0,gamma:0.63}},
+  {id:'pb25',name:'Lead',sub:'25 mm',mm:25,col:'#3f444c',edge:'#202328',T:{alpha:0,beta:0,gamma:0.24}}
+];
+var ISO={
+  '170':{id:'cl40',name:'Chlorine-40',T:81},
+  '171':{id:'na25',name:'Sodium-25',T:59.1},
+  '172':{id:'o19',name:'Oxygen-19',T:26.9},
+  '173':{id:'n16',name:'Nitrogen-16',T:7.13},
+  '174':{id:'al28',name:'Aluminium-28',T:134.5},
+  '175':{id:'fe61',name:'Iron-61',T:358.8},
+  '176':{id:'cl38',name:'Chlorine-38',T:2234}
+};
+var SAMPLES=[
+  {id:'banana',name:'Banana',ico:'🍌',cpm:5},
+  {id:'nuts',name:'Brazil nuts',ico:'🥜',cpm:14},
+  {id:'coffee',name:'Mug of coffee',ico:'☕',cpm:7},
+  {id:'salt',name:'Low-sodium salt',ico:'🧂',cpm:30,sub:'potassium chloride'},
+  {id:'pork',name:'Pork chop',ico:'🥩',cpm:1},
+  {id:'granite',name:'Cornish granite',ico:'🪨',cpm:55},
+  {id:'lime',name:'Pembrokeshire limestone',ico:'⬜',cpm:2},
+  {id:'pocket',name:'Antique pocket watch',ico:'⏱️',cpm:950,sub:'glow-in-the-dark dial'},
+  {id:'smart',name:'Smartwatch',ico:'⌚',cpm:0,sub:'confiscated in Year 10'},
+  {id:'plate',name:'Old orange-glazed plate',ico:'🍽️',cpm:320,sub:'1950s glaze'},
+  {id:'spoon',name:'Canteen spoon',ico:'🥄',cpm:0,sub:'not returned'}
+];
+var EQUIP=[
+  {id:'ratemeter',name:'Ratemeter',sub:'Live count rate',col:'#ff7a1a',sym:'R'},
+  {id:'counter',name:'Counter',sub:'Totals every click',col:'#2f9df6',sym:'C'},
+  {id:'clock',name:'Wall clock',sub:'Sweep second hand',col:'#6b7a90',sym:'◷'},
+  {id:'stopclock',name:'Stopclock',sub:'With hold for readings',col:'#1fbf75',sym:'S'},
+  {id:'ruler',name:'Ruler helper',sub:'Magnifier and nudge buttons',col:'#e0a400',sym:'cm'},
+  {id:'logger',name:'Data logger',sub:'Graphs count rate over time',col:'#8a5cf6',sym:'~'},
+  {id:'phone',name:'Phone',sub:'Call for samples and dice',col:'#0a8b82',sym:'☎'}
+];
+
+/* ---------- state ---------- */
+var S={
+  t:0, speed:1, startDate:new Date(),
+  home:store.get('home','Monmouth'),
+  loc:{name:'Lead-lined basement',bg:0.3,basement:true},
+  item:null, d:6, abs:null,
+  inst:{ratemeter:false,counter:false,clock:false,stopclock:false,ruler:true,logger:false},
+  rm:{est:0,unit:'cps',hold:false,held:0},
+  cnt:{run:false,n:0,beep:false,beepT:0,warned:false},
+  sw:{run:false,t:0,hold:false,held:0},
+  log:{run:false,int:5,acc:0,cts:0,t0:0,pts:[]},
+  isotopes:{}, trayIn:false, flash:0, tab:'src'
+};
+if(!CITY[S.home])S.home='Monmouth';
+
+/* ---------- audio: hard-capped very low, no volume control ---------- */
+var AC=null,master=null;
+function audio(){if(AC)return AC;try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=0.02;master.connect(AC.destination)}catch(e){AC=null}return AC}
+var clickBuf=null;
+function click(){var a=audio();if(!a)return;if(!clickBuf){clickBuf=a.createBuffer(1,Math.floor(a.sampleRate*0.004),a.sampleRate);var d=clickBuf.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3)}var s=a.createBufferSource();s.buffer=clickBuf;s.connect(master);s.start()}
+
+/* ---------- physics ---------- */
+var D0=0.6, RANGE=25;
+function geo(d){return 1/((d+D0)*(d+D0))}
+function alphaF(d){var a=2.9,b=3.8;if(d<=a)return 1;if(d>=b)return 0;var x=(d-a)/(b-a);return 1-x*x*(3-2*x)}
+function absT(type){if(!S.abs)return 1;var a=ABS.filter(function(x){return x.id===S.abs})[0];return a?a.T[type]:1}
+function itemRate(){ // counts per second reaching the tube from the bench item
+  var it=S.item;if(!it)return 0;var d=S.d;
+  if(it.k==='src'){
+    if(it.id==='alpha')return 200*geo(d)*alphaF(d)*absT('alpha');
+    if(it.id==='beta')return 6800*geo(d)*Math.exp(-0.012*d)*absT('beta');
+    if(it.id==='gamma')return 240*geo(d)*absT('gamma');
+  }
+  if(it.k==='iso'){var s=S.isotopes[it.id];if(!s)return 0;var age=S.t-s.t0;return s.K*Math.pow(2,-age/s.T)*geo(d)*Math.exp(-0.012*d)*absT('beta')}
+  if(it.k==='smp'){var m=SAMPLES.filter(function(x){return x.id===it.id})[0];return m.cpm/60*geo(d)/geo(0.5)}
+  return 0;
+}
+function trueRate(){return S.loc.bg/60+itemRate()}
+function poisson(m){if(m<=0)return 0;if(m>30){var u=1-Math.random(),v=Math.random();var z=Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);return Math.max(0,Math.round(m+Math.sqrt(m)*z))}var L=Math.exp(-m),k=0,p=1;do{k++;p*=Math.random()}while(p>L);return k-1}
+function binom(n,p){if(n<200){var c=0;for(var i=0;i<n;i++)if(Math.random()<p)c++;return c}return Math.min(n,poisson(n*p))}
+
+/* ---------- logo ---------- */
+(function(){var c=$('#rl-logo'),x=c.getContext('2d');x.translate(34,34);x.fillStyle='#ffc531';for(var i=0;i<3;i++){x.beginPath();x.moveTo(0,0);x.arc(0,0,30,(i*120-90-30)*Math.PI/180,(i*120-90+30)*Math.PI/180);x.closePath();x.fill()}x.fillStyle='#152238';x.beginPath();x.arc(0,0,11,0,7);x.fill();x.fillStyle='#ffc531';x.beginPath();x.arc(0,0,7,0,7);x.fill()})();
+
+/* ---------- notifications ---------- */
+var AV={caretaker:['#d97706','CT'],staff:['#0a8b82','ST'],iso:['#2f7cf6','CI'],head:['#7c3aed','HT'],rail:['#ff5a3c','RG'],teacher:['#e5484d','T'],net:['#475569','5G'],police:['#1e3a8a','999']};
+var threads=[];var unread=0;
+function addMsg(who,from,text){var th=threads.filter(function(t){return t.from===from})[0];if(!th){th={from:from,who:who,msgs:[]};threads.unshift(th)}else{threads.splice(threads.indexOf(th),1);threads.unshift(th)}th.msgs.push({text:text,t:clockStr(true)});th.unread=true;unread++;updBadge()}
+function updBadge(){var b=$('#rl-phbadge');b.hidden=!unread;b.textContent=unread}
+function notify(who,from,text,keep){var a=AV[who]||AV.net;var n=el('div',{class:'rl-note'},'<div class="av" style="background:'+a[0]+'">'+a[1]+'</div><div><b>'+esc(from)+'</b><p>'+text+'</p><small>now</small></div>');$('#rl-notes').appendChild(n);setTimeout(function(){n.style.transition='opacity .4s';n.style.opacity='0';setTimeout(function(){n.remove()},420)},keep||5200);if(who!=='teacher'&&who!=='net')addMsg(who,from,text.replace(/<[^>]+>/g,''))}
+
+/* ---------- location ---------- */
+function setLoc(name){if(name==='basement'){S.loc={name:'Lead-lined basement',bg:0.3,basement:true}}else{S.loc={name:name,bg:CITY[name]||20,basement:false}}
+  $('#rl-locname').textContent=S.loc.name;$('#rl-locsub').textContent=S.loc.basement?'locked in':(name===S.home?'home':'visiting');$('#rl-loc').classList.toggle('out',!S.loc.basement)}
+
+/* ---------- drawer ---------- */
+function icon(bg,txt,fg){return '<span class="ic" style="background:'+bg+(fg?';color:'+fg:'')+'">'+txt+'</span>'}
+function renderPane(){
+  var p=$('#rl-pane'),h='';
+  $$('.rl-tabs button').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===S.tab?'true':'false')});
+  if(S.tab==='src'){
+    h+='<h3>Sealed sources</h3>';
+    Object.keys(SRC).forEach(function(k){var s=SRC[k];var sel=S.item&&S.item.k==='src'&&S.item.id===k;h+='<button type="button" class="rl-card'+(sel?' sel':'')+'" data-place="src:'+k+'">'+icon(s.col,s.sym)+'<span class="tx"><b>'+s.name+'</b><small>'+s.iso+'</small></span></button>'});
+    var keys=Object.keys(S.isotopes);
+    h+='<h3>Deliveries</h3>';
+    if(!keys.length)h+='<p class="note">Short half-life samples arrive here when you phone the isotope supplier (numbers 170 to 176).</p>';
+    keys.forEach(function(k){var s=S.isotopes[k];var sel=S.item&&S.item.k==='iso'&&S.item.id===k;h+='<button type="button" class="rl-card'+(sel?' sel':'')+'" data-place="iso:'+k+'">'+icon('#0f766e','⚗')+'<span class="tx"><b>'+s.name+'</b><small>delivered '+s.when+'</small></span>'+(s.fresh?'<span class="tag">new</span>':'')+'</button>'});
+    h+='<p class="note">Tap to put it on the bench. Tap again to take it off.</p>';
+  }else if(S.tab==='abs'){
+    h+='<h3>Absorber holder</h3>';
+    h+='<button type="button" class="rl-card'+(!S.abs?' sel':'')+'" data-abs="">'+icon('#e9eef4','–','#56657d')+'<span class="tx"><b>No absorber</b><small>Clear path to the tube</small></span></button>';
+    ABS.forEach(function(a){h+='<button type="button" class="rl-card'+(S.abs===a.id?' sel':'')+'" data-abs="'+a.id+'">'+'<span class="ic" style="background:'+a.col+';border:2px solid '+a.edge+'"></span><span class="tx"><b>'+a.name+'</b><small>'+a.sub+'</small></span></button>'});
+    h+='<p class="note">The holder sits 0.8 cm in front of the tube, so the source cannot come closer than 1.2 cm while an absorber is in.</p>';
+  }else if(S.tab==='eq'){
+    h+='<h3>Equipment cupboard</h3>';
+    EQUIP.forEach(function(e){var on=e.id==='phone'?!$('#rl-phone').hidden:S.inst[e.id];h+='<button type="button" class="rl-card'+(on?' sel':'')+'" data-eq="'+e.id+'">'+icon(e.col,e.sym)+'<span class="tx"><b>'+e.name+'</b><small>'+e.sub+'</small></span><span class="rl-sw"></span></button>'});
+  }else{
+    if(!S.trayIn){h+='<p class="note keep" style="display:block;font-size:13.5px">The tray of everyday samples is in the staffroom. Phone <code style="font-family:var(--f-disp);font-weight:700;background:var(--hazard);padding:0 5px;border-radius:4px">200</code> and someone will bring it down.</p><button type="button" class="rl-card" data-eq="phone">'+icon('#0a8b82','☎')+'<span class="tx"><b>Open the phone</b><small>Dial 200 for the staffroom</small></span></button>'}
+    else{h+='<h3>Staffroom tray</h3>';SAMPLES.forEach(function(m){var sel=S.item&&S.item.k==='smp'&&S.item.id===m.id;h+='<button type="button" class="rl-card'+(sel?' sel':'')+'" data-place="smp:'+m.id+'">'+'<span class="ic" style="background:#f3f6fa;font-size:20px">'+m.ico+'</span><span class="tx"><b>'+m.name+'</b>'+(m.sub?'<small>'+m.sub+'</small>':'')+'</span></button>'});h+='<p class="note">Samples are tested right next to the tube. Read the ratemeter in counts/min.</p>'}
+  }
+  p.innerHTML=h;
+}
+$('.rl-tabs').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.tab=b.dataset.tab;renderPane()});
+$('#rl-pane').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;audio();
+  if(b.dataset.place){var pr=b.dataset.place.split(':');var same=S.item&&S.item.k===pr[0]&&S.item.id===pr[1];
+    if(same){S.item=null}else{S.item={k:pr[0],id:pr[1]};if(pr[0]==='smp')S.d=S.abs?1.2:0.5;else if(pr[0]==='iso'){S.d=S.abs?1.2:0.5;S.isotopes[pr[1]].fresh=false}else if(S.d<minD())S.d=minD()}
+    $('#rl-hint').hidden=!!S.item;renderPane();updHelper()}
+  else if(b.dataset.abs!=null){S.abs=b.dataset.abs||null;if(S.d<minD())S.d=minD();renderPane();updHelper()}
+  else if(b.dataset.eq){toggleEq(b.dataset.eq)}
+});
+function minD(){return S.abs?1.2:0.5}
+function toggleEq(id,force){if(id==='phone'){showPhone(force!=null?force:$('#rl-phone').hidden);renderPane();return}
+  S.inst[id]=force!=null?force:!S.inst[id];renderRack();renderPane()}
+function renderRack(){var any=false;$$('.rl-inst').forEach(function(s){var on=!!S.inst[s.dataset.inst];s.hidden=!on;if(on)any=true});$('#rl-rackempty').hidden=any;$('#rl-helper').hidden=!S.inst.ruler;fitAll()}
+$('#rl-rack').addEventListener('click',function(e){var b=e.target.closest('[data-close]');if(b)toggleEq(b.dataset.close,false)});
+
+/* ---------- canvases (DPR + ResizeObserver) ---------- */
+var CV={};
+function setupCanvas(id,draw){var c=$(id);CV[id]={c:c,x:c.getContext('2d'),w:0,h:0,draw:draw};return CV[id]}
+function fit(o){var r=o.c.getBoundingClientRect();if(!r.width||!r.height)return;var dpr=Math.min(window.devicePixelRatio||1,2);var W=Math.round(r.width*dpr),H=Math.round(r.height*dpr);if(o.c.width!==W||o.c.height!==H){o.c.width=W;o.c.height=H}o.w=r.width;o.h=r.height;o.x.setTransform(dpr,0,0,dpr,0,0)}
+function fitAll(){for(var k in CV)fit(CV[k])}
+var ro=window.ResizeObserver?new ResizeObserver(function(){fitAll();for(var k in CV)if(CV[k].draw)CV[k].draw()}):null;
+
+/* ---------- bench ---------- */
+var bench=setupCanvas('#rl-bench');
+var parts=[];
+var geom={};
+function benchGeom(){var W=bench.w,H=bench.h;RANGE=W<620?15:25;var tubeX=Math.max(96,Math.min(150,W*0.13));var ppc=(W-tubeX-34)/RANGE;var railY=Math.round(H*0.64);geom={W:W,H:H,tubeX:tubeX,ppc:ppc,railY:railY};return geom}
+function xOf(d){return geom.tubeX+d*geom.ppc}
+function rr(x,X,Y,w,h,r){x.beginPath();x.moveTo(X+r,Y);x.arcTo(X+w,Y,X+w,Y+h,r);x.arcTo(X+w,Y+h,X,Y+h,r);x.arcTo(X,Y+h,X,Y,r);x.arcTo(X,Y,X+w,Y,r);x.closePath()}
+function drawScene(x,g){
+  var W=g.W,H=g.H;
+  if(S.loc.basement){
+    x.fillStyle='#1b232e';x.fillRect(0,0,W,g.railY+40);
+    x.strokeStyle='rgba(255,255,255,.05)';x.lineWidth=1;
+    for(var yy=0;yy<g.railY;yy+=36){for(var xx=((yy/36)%2)*40;xx<W;xx+=80){x.strokeRect(xx+.5,yy+.5,80,36)}}
+    x.fillStyle='rgba(255,197,49,.13)';x.font='700 '+Math.max(18,Math.min(42,W/22))+'px "Chakra Petch",sans-serif';x.textAlign='right';x.fillText('LEAD-LINED · NO WINDOWS',W-24,52);
+    var gr=x.createRadialGradient(W*0.55,0,0,W*0.55,0,H*0.8);gr.addColorStop(0,'rgba(255,220,150,.10)');gr.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=gr;x.fillRect(0,0,W,H);
+  }else{
+    x.fillStyle='#253246';x.fillRect(0,0,W,g.railY+40);
+    var wx=W*0.52,wy=20,ww=Math.min(W*0.42,420),wh=Math.max(70,g.railY*0.48);
+    var sky=x.createLinearGradient(0,wy,0,wy+wh);sky.addColorStop(0,'#7cc4f0');sky.addColorStop(1,'#d9f0fb');x.fillStyle=sky;x.fillRect(wx,wy,ww,wh);
+    var hs=hash(S.loc.name);x.fillStyle='#5aa469';x.beginPath();x.moveTo(wx,wy+wh);for(var i=0;i<=8;i++){x.lineTo(wx+ww*i/8,wy+wh*(0.62+0.18*Math.sin(hs*0.37+i*1.3)))}x.lineTo(wx+ww,wy+wh);x.fill();
+    x.fillStyle='#3e7f52';x.beginPath();x.moveTo(wx,wy+wh);for(i=0;i<=8;i++){x.lineTo(wx+ww*i/8,wy+wh*(0.78+0.1*Math.cos(hs*0.21+i*1.7)))}x.lineTo(wx+ww,wy+wh);x.fill();
+    x.fillStyle='rgba(255,255,255,.9)';x.beginPath();x.arc(wx+ww*0.8,wy+wh*0.25,wh*0.1,0,7);x.fill();
+    x.strokeStyle='#d6dde7';x.lineWidth=6;x.strokeRect(wx,wy,ww,wh);x.lineWidth=3;x.beginPath();x.moveTo(wx+ww/2,wy);x.lineTo(wx+ww/2,wy+wh);x.stroke();
+    x.fillStyle='#0f5d63';var lab=S.loc.name.toUpperCase();x.font='700 13px "Chakra Petch",sans-serif';var tw=x.measureText(lab).width+20;rr(x,wx+10,wy+wh-30,tw,22,4);x.fill();x.fillStyle='#fff';x.textAlign='left';x.fillText(lab,wx+20,wy+wh-14);
+  }
+  // bench top
+  var bt=x.createLinearGradient(0,g.railY+20,0,H);bt.addColorStop(0,'#33465f');bt.addColorStop(1,'#26364a');x.fillStyle=bt;x.fillRect(0,g.railY+20,W,H-g.railY-20);
+  x.fillStyle='#41587a';x.fillRect(0,g.railY+20,W,3);
+}
+function hash(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)}
+function drawBench(){
+  var x=bench.x;if(!bench.w)return;var g=benchGeom();var W=g.W,H=g.H,ty=g.railY-28;
+  x.clearRect(0,0,W,H);drawScene(x,g);
+  // rail
+  x.fillStyle='#8696ad';rr(x,g.tubeX-6,g.railY+6,W-g.tubeX-10,8,4);x.fill();
+  x.fillStyle='#b8c4d4';x.fillRect(g.tubeX-6,g.railY+6,W-g.tubeX-10,2);
+  // ruler
+  if(S.inst.ruler){var ry=g.railY+26;x.fillStyle='#ffd84d';x.fillRect(g.tubeX,ry,RANGE*g.ppc+1,26);x.strokeStyle='#c49b00';x.strokeRect(g.tubeX+.5,ry+.5,RANGE*g.ppc,25);
+    x.strokeStyle='#2b2100';x.fillStyle='#2b2100';x.textAlign='center';x.font='600 11px "Chakra Petch",sans-serif';
+    for(var mm=0;mm<=RANGE*10;mm++){var X=Math.round(g.tubeX+mm*g.ppc/10)+.5;var big=mm%10===0,half=mm%5===0;if(!big&&!half&&g.ppc<16)continue;x.beginPath();x.moveTo(X,ry);x.lineTo(X,ry+(big?11:half?7:4));x.lineWidth=1;x.stroke();if(big&&((mm/10)%(g.ppc<14?5:1)===0||mm===0))x.fillText(mm/10,X,ry+22)}
+  }
+  // GM tube
+  var tx=g.tubeX;x.fillStyle='#d5dbe4';rr(x,12,ty-14,tx-12,28,6);x.fill();x.fillStyle='#9aa6b8';x.fillRect(12,ty-14,18,28);
+  x.fillStyle='#e8edf3';x.fillRect(36,ty-14,tx-60,4);
+  x.fillStyle='#7d8798';rr(x,tx-14,ty-17,14,34,3);x.fill();
+  x.fillStyle=S.flash>0?'rgba(255,240,140,'+(0.4+0.6*S.flash)+')':'#2a2f38';x.fillRect(tx-3,ty-11,3,22);
+  if(S.flash>0){var fg=x.createRadialGradient(tx,ty,0,tx,ty,30);fg.addColorStop(0,'rgba(255,236,120,'+0.55*S.flash+')');fg.addColorStop(1,'rgba(255,236,120,0)');x.fillStyle=fg;x.beginPath();x.arc(tx,ty,30,0,7);x.fill()}
+  x.fillStyle='#152238';x.font='700 11px "Chakra Petch",sans-serif';x.textAlign='center';x.fillText('GM TUBE',(12+tx)/2+6,ty+4);
+  // cable
+  x.strokeStyle='#0d1118';x.lineWidth=4;x.beginPath();x.moveTo(14,ty);x.bezierCurveTo(-10,ty,6,ty-80,40,ty-100);x.lineTo(60,0);x.stroke();
+  // stand under tube
+  x.fillStyle='#55657c';x.fillRect(tx-40,ty+14,10,g.railY-ty-6);rr(x,tx-56,g.railY+2,42,12,3);x.fill();
+  // absorber
+  if(S.abs){var a=ABS.filter(function(q){return q.id===S.abs})[0];var ax=xOf(0.8);var aw=Math.max(3,a.mm*g.ppc/10);x.fillStyle=a.col;x.strokeStyle=a.edge;x.lineWidth=1.5;x.fillRect(ax-aw/2,ty-46,aw,80);x.strokeRect(ax-aw/2,ty-46,aw,80);x.fillStyle='#55657c';x.fillRect(ax-8,ty+34,16,g.railY-ty-26);
+    x.fillStyle='#dfe7f1';x.font='600 11px Figtree,sans-serif';x.textAlign='center';x.fillText(a.name+' '+a.sub,ax,ty-54)}
+  // particles
+  for(var i=0;i<parts.length;i++){var p=parts[i];x.globalAlpha=Math.max(0,Math.min(1,p.life));
+    if(p.type==='alpha'){x.fillStyle='#ff6b6e';x.beginPath();x.arc(p.x,p.y,3.2,0,7);x.fill();x.strokeStyle='rgba(255,107,110,.4)';x.lineWidth=3;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.vx*0.05,p.y-p.vy*0.05);x.stroke()}
+    else if(p.type==='beta'){x.fillStyle='#7fb2ff';x.beginPath();x.arc(p.x,p.y,1.8,0,7);x.fill();x.strokeStyle='rgba(127,178,255,.45)';x.lineWidth=1.5;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.vx*0.03,p.y-p.vy*0.03+Math.sin(p.ph)*3);x.stroke()}
+    else if(p.type==='gamma'){x.strokeStyle='#c4a6ff';x.lineWidth=1.6;x.beginPath();var L=26;for(var k=0;k<=L;k+=2){var f=k/L;var px=p.x-p.vx*0.02*f,py=p.y-p.vy*0.02*f+Math.sin(k*0.9+p.ph)*2.5;if(k===0)x.moveTo(px,py);else x.lineTo(px,py)}x.stroke()}
+    else{x.strokeStyle='rgba(255,255,255,.35)';x.lineWidth=1;x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.vx*0.04,p.y-p.vy*0.04);x.stroke()}
+  }x.globalAlpha=1;
+  // item
+  if(S.item){var sx=xOf(S.d);
+    x.fillStyle='#55657c';x.fillRect(sx+6,ty+14,8,g.railY-ty-6);rr(x,sx-6,g.railY+1,34,14,3);x.fill();
+    if(S.item.k==='src'){var s=SRC[S.item.id];x.fillStyle='#c9d2de';rr(x,sx,ty-18,30,36,5);x.fill();x.fillStyle=s.col;rr(x,sx,ty-14,6,28,2);x.fill();x.fillStyle='#152238';x.font='700 16px "Chakra Petch",sans-serif';x.textAlign='center';x.fillText(s.sym,sx+18,ty+6);
+      x.fillStyle='#ffc531';x.font='700 11px "Chakra Petch",sans-serif';x.fillText(s.iso.toUpperCase(),sx+15,ty-26)}
+    else if(S.item.k==='iso'){var iso=S.isotopes[S.item.id];x.fillStyle='rgba(220,240,255,.85)';rr(x,sx,ty-20,24,38,6);x.fill();x.fillStyle='#e6f7f2';x.fillRect(sx+3,ty-2,18,17);x.fillStyle='#0f766e';x.fillRect(sx,ty-24,24,7);
+      x.fillStyle='#ffc531';x.font='700 11px "Chakra Petch",sans-serif';x.textAlign='center';x.fillText(iso.name.toUpperCase(),sx+12,ty-32)}
+    else{var m=SAMPLES.filter(function(q){return q.id===S.item.id})[0];x.font='30px "Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';x.textAlign='left';x.fillText(m.ico,sx-2,ty+12);x.fillStyle='#ffc531';x.font='700 11px "Chakra Petch",sans-serif';x.fillText(m.name.toUpperCase(),sx-4,ty-26)}
+    // drag handle
+    x.strokeStyle=dragging?'#ffc531':'rgba(255,255,255,.35)';x.setLineDash([4,4]);x.lineWidth=1;x.beginPath();x.moveTo(sx+.5,ty+22);x.lineTo(sx+.5,g.railY+26);x.stroke();x.setLineDash([]);
+    if(S.inst.ruler){x.fillStyle='#ff3b30';x.beginPath();x.moveTo(sx,g.railY+26);x.lineTo(sx-5,g.railY+19);x.lineTo(sx+5,g.railY+19);x.fill()}
+  }
+}
+var dragging=false;
+function benchPos(e){var r=bench.c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+bench.c.addEventListener('pointerdown',function(e){if(!S.item)return;var p=benchPos(e);var sx=xOf(S.d);if(Math.abs(p.x-sx-10)<44&&p.y>geom.railY-100&&p.y<geom.railY+40){dragging=true;bench.c.setPointerCapture(e.pointerId);audio()}});
+bench.c.addEventListener('pointermove',function(e){var p=benchPos(e);if(dragging){S.d=clamp(Math.round((p.x-geom.tubeX-10)/geom.ppc*10)/10,minD(),RANGE);updHelper()}else if(S.item){var sx=xOf(S.d);bench.c.style.cursor=(Math.abs(p.x-sx-10)<44&&p.y>geom.railY-100&&p.y<geom.railY+40)?'grab':'default'}});
+function endDrag(){dragging=false}
+bench.c.addEventListener('pointerup',endDrag);bench.c.addEventListener('pointercancel',endDrag);
+bench.c.addEventListener('keydown',function(e){if(!S.item)return;var st=e.shiftKey?1:0.1;if(e.key==='ArrowRight'||e.key==='ArrowUp'){nudge(st);e.preventDefault()}else if(e.key==='ArrowLeft'||e.key==='ArrowDown'){nudge(-st);e.preventDefault()}});
+function nudge(v){if(!S.item)return;S.d=clamp(Math.round((S.d+v)*10)/10,minD(),RANGE);updHelper()}
+$('#rl-helper').addEventListener('click',function(e){var b=e.target.closest('button[data-n]');if(b)nudge(parseFloat(b.dataset.n))});
+$('#rl-showd').addEventListener('change',updHelper);
+
+/* loupe */
+var loupe=$('#rl-loupe'),lx=loupe.getContext('2d');
+function updHelper(){
+  var W=loupe.width,H=loupe.height;lx.fillStyle='#ffe36b';lx.fillRect(0,0,W,H);
+  var d=S.item?S.d:0;var ppm=W/30;// 3 cm window
+  lx.strokeStyle='#2b2100';lx.fillStyle='#2b2100';lx.textAlign='center';lx.font='700 24px "Chakra Petch",sans-serif';
+  var start=Math.floor((d-1.5)*10);
+  for(var mm=start;mm<=start+31;mm++){if(mm<0)continue;var X=W/2+(mm-d*10)*ppm;var big=mm%10===0,half=mm%5===0;lx.lineWidth=big?3:2;lx.beginPath();lx.moveTo(X,0);lx.lineTo(X,big?44:half?32:20);lx.stroke();if(big)lx.fillText(mm/10,X,82)}
+  lx.fillStyle='#ff3b30';lx.fillRect(W/2-2,0,4,H);
+  lx.fillStyle='rgba(0,0,0,.08)';lx.fillRect(0,H-6,W,6);
+  $('#rl-dout').textContent=S.item?($('#rl-showd').checked?S.d.toFixed(1)+' cm':'? cm'):'–';
+}
+
+/* ---------- instruments ---------- */
+var barEls=[];(function(){var b=$('#rl-rmbar');for(var i=0;i<24;i++){var s=el('i');b.appendChild(s);barEls.push(s)}})();
+$('#rl-rmunit').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.rm.unit=b.dataset.u;$$('#rl-rmunit button').forEach(function(q){q.setAttribute('aria-pressed',q===b?'true':'false')})});
+$('#rl-rmhold').addEventListener('click',function(){S.rm.hold=!S.rm.hold;S.rm.held=S.rm.est;this.classList.toggle('on',S.rm.hold);this.textContent=S.rm.hold?'Release':'Hold'});
+$('#rl-cgo').addEventListener('click',function(){audio();S.cnt.run=!S.cnt.run;this.textContent=S.cnt.run?'Stop':'Start';this.classList.toggle('pri',!S.cnt.run)});
+$('#rl-creset').addEventListener('click',function(){S.cnt.n=0});
+$('#rl-cbeep').addEventListener('click',function(){audio();S.cnt.beep=!S.cnt.beep;S.cnt.beepT=0;this.textContent=S.cnt.beep?'Sound on':'Sound off';this.classList.toggle('on',S.cnt.beep);this.setAttribute('aria-pressed',S.cnt.beep)});
+$('#rl-sgo').addEventListener('click',function(){S.sw.run=!S.sw.run;this.textContent=S.sw.run?'Stop':'Start';this.classList.toggle('pri',!S.sw.run)});
+$('#rl-ssplit').addEventListener('click',function(){S.sw.hold=!S.sw.hold;S.sw.held=S.sw.t;this.textContent=S.sw.hold?'Release':'Hold';this.classList.toggle('on',S.sw.hold)});
+$('#rl-sreset').addEventListener('click',function(){S.sw.t=0;S.sw.hold=false;$('#rl-ssplit').textContent='Hold';$('#rl-ssplit').classList.remove('on')});
+$('#rl-lgo').addEventListener('click',function(){S.log.run=!S.log.run;if(S.log.run&&!S.log.pts.length){S.log.t0=S.t}S.log.int=parseFloat($('#rl-lint').value);S.log.acc=0;S.log.cts=0;this.textContent=S.log.run?'Stop':'Record';this.classList.toggle('pri',!S.log.run)});
+$('#rl-lint').addEventListener('change',function(){S.log.int=parseFloat(this.value);S.log.acc=0;S.log.cts=0});
+$('#rl-lclear').addEventListener('click',function(){S.log.pts=[];S.log.t0=S.t;S.log.acc=0;S.log.cts=0;drawLog()});
+$('#rl-lcopy').addEventListener('click',function(){var t='time (s)\tcount rate (counts/min)\n'+S.log.pts.map(function(p){return p[0].toFixed(0)+'\t'+p[1].toFixed(0)}).join('\n');copyText(t,this)});
+function copyText(t,btn){var done=function(){var o=btn.textContent;btn.textContent='Copied';setTimeout(function(){btn.textContent=o},1400)};try{navigator.clipboard.writeText(t).then(done,function(){fallbackCopy(t);done()})}catch(e){fallbackCopy(t);done()}}
+function fallbackCopy(t){var ta=el('textarea');ta.value=t;ta.style.position='absolute';ta.style.left='-9999px';root.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}ta.remove()}
+
+function updInstruments(){
+  if(S.inst.ratemeter){var r=S.rm.hold?S.rm.held:S.rm.est;var over=!S.rm.hold&&trueRate()>1000;var lcd=$('#rl-rmlcd');lcd.classList.toggle('over',over);
+    $('#rl-rmv').textContent=over?'OVER':(S.rm.unit==='cps'?Math.round(r):Math.round(r*60));$('#rl-rmu').textContent=S.rm.unit==='cps'?'c/s':'c/min';$('#rl-rmflag').textContent=S.rm.hold?'HOLD':'';
+    var lv=over?24:r<=0.1?0:clamp(Math.round((Math.log10(r)+1)/4*24),0,24);for(var i=0;i<24;i++){barEls[i].className=i<lv?(i>=20?'lit hi':'lit'):''}}
+  if(S.inst.counter){$('#rl-cv').textContent=String(Math.min(S.cnt.n,999999)).padStart(6,'0')}
+  if(S.inst.stopclock){var t=S.sw.hold?S.sw.held:S.sw.t;var m=Math.floor(t/60),s=t-m*60;$('#rl-sv').textContent=String(m).padStart(2,'0')+':'+(s<10?'0':'')+s.toFixed(1);$('#rl-sflag').textContent=S.sw.hold?'HOLD':S.sw.run?'RUN':''}
+  if(S.inst.clock)drawClock();
+}
+var clk=setupCanvas('#rl-clock',function(){drawClock()});
+function simDate(){return new Date(S.startDate.getTime()+S.t*1000)}
+function clockStr(short){var d=simDate();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function drawClock(){var x=clk.x,w=clk.w;if(!w)return;var r=w/2-4,c=w/2;x.clearRect(0,0,w,w);
+  x.fillStyle='#fff';x.strokeStyle='#152238';x.lineWidth=5;x.beginPath();x.arc(c,c,r,0,7);x.fill();x.stroke();
+  for(var i=0;i<60;i++){var a=i*Math.PI/30;var big=i%5===0;x.strokeStyle=big?'#152238':'#9aa6b8';x.lineWidth=big?3:1;x.beginPath();x.moveTo(c+Math.sin(a)*(r-4),c-Math.cos(a)*(r-4));x.lineTo(c+Math.sin(a)*(r-(big?14:9)),c-Math.cos(a)*(r-(big?14:9)));x.stroke()}
+  x.fillStyle='#152238';x.font='600 12px "Chakra Petch",sans-serif';x.textAlign='center';x.textBaseline='middle';for(i=1;i<=12;i++){var a2=i*Math.PI/6;x.fillText(i,c+Math.sin(a2)*(r-26),c-Math.cos(a2)*(r-26))}x.textBaseline='alphabetic';
+  var d=simDate();var sec=d.getSeconds()+d.getMilliseconds()/1000,mn=d.getMinutes()+sec/60,hr=(d.getHours()%12)+mn/60;
+  function hand(a,len,wd,col){x.strokeStyle=col;x.lineWidth=wd;x.lineCap='round';x.beginPath();x.moveTo(c-Math.sin(a)*len*0.15,c+Math.cos(a)*len*0.15);x.lineTo(c+Math.sin(a)*len,c-Math.cos(a)*len);x.stroke()}
+  hand(hr*Math.PI/6,r*0.5,5,'#152238');hand(mn*Math.PI/30,r*0.75,3.5,'#152238');hand(sec*Math.PI/30,r*0.85,1.6,'#e5484d');x.fillStyle='#e5484d';x.beginPath();x.arc(c,c,4,0,7);x.fill();x.lineCap='butt'}
+var logc=setupCanvas('#rl-log',function(){drawLog()});
+function niceMax(v){if(v<=0)return 10;var p=Math.pow(10,Math.floor(Math.log10(v)));var n=v/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+function drawAxes(x,w,h,pad,xmax,ymax,xl,yl){
+  x.fillStyle='#56657d';x.strokeStyle='#d2dbe7';x.lineWidth=1;x.font='600 10.5px "Chakra Petch",sans-serif';
+  for(var i=0;i<=5;i++){var Y=h-pad.b-(h-pad.t-pad.b)*i/5;x.beginPath();x.moveTo(pad.l,Y+.5);x.lineTo(w-pad.r,Y+.5);x.stroke();x.textAlign='right';x.fillText(fmtAx(ymax*i/5),pad.l-5,Y+3.5)}
+  for(i=0;i<=5;i++){var X=pad.l+(w-pad.l-pad.r)*i/5;x.textAlign='center';x.fillText(fmtAx(xmax*i/5),X,h-pad.b+14)}
+  x.fillStyle='#152238';x.font='700 11px Figtree,sans-serif';x.textAlign='center';x.fillText(xl,pad.l+(w-pad.l-pad.r)/2,h-3);x.save();x.translate(11,pad.t+(h-pad.t-pad.b)/2);x.rotate(-Math.PI/2);x.fillText(yl,0,0);x.restore()}
+function fmtAx(v){return Math.abs(v)>=1000?fmt(Math.round(v)):(Math.round(v*100)/100).toString()}
+function drawLog(){var x=logc.x,w=logc.w,h=logc.h;if(!w)return;x.clearRect(0,0,w,h);var pts=S.log.pts;var pad={l:44,r:10,t:10,b:30};
+  var xm=niceMax(Math.max(60,pts.length?pts[pts.length-1][0]:0)),ym=niceMax(Math.max(10,Math.max.apply(null,pts.map(function(p){return p[1]}).concat([0]))*1.1));
+  drawAxes(x,w,h,pad,xm,ym,'time / s','counts/min');
+  x.strokeStyle='#8a5cf6';x.lineWidth=1.5;x.beginPath();pts.forEach(function(p,i){var X=pad.l+(w-pad.l-pad.r)*p[0]/xm,Y=h-pad.b-(h-pad.t-pad.b)*p[1]/ym;if(i)x.lineTo(X,Y);else x.moveTo(X,Y)});x.stroke();
+  x.fillStyle='#8a5cf6';pts.forEach(function(p){var X=pad.l+(w-pad.l-pad.r)*p[0]/xm,Y=h-pad.b-(h-pad.t-pad.b)*p[1]/ym;x.beginPath();x.arc(X,Y,2.6,0,7);x.fill()});
+  if(!pts.length){x.fillStyle='#56657d';x.font='500 12px Figtree,sans-serif';x.textAlign='center';x.fillText('Press Record to start logging',w/2,h/2)}}
+
+/* ---------- main loop ---------- */
+var last=performance.now(),visAcc=0,bgAcc=0,phoneTick=0;
+function spawn(type,fromX,toTube,y){var g=geom,ty=g.railY-28;var ang=(Math.random()-0.5)*0.5;var sp=type==='alpha'?160:type==='beta'?420:620;if(type==='gamma'||type==='beta')ang*=1.6;
+  var dir=toTube?-1:1;var p={x:fromX,y:ty+(Math.random()-0.5)*14,vx:dir*sp*Math.cos(ang),vy:sp*Math.sin(ang),type:type,life:1,ph:Math.random()*6,start:fromX,checked:false};parts.push(p)}
+function step(now){
+  var dtR=Math.min(0.1,(now-last)/1000);last=now;var dt=dtR*S.speed;S.t+=dt;
+  var R=trueRate();var Rm=R/(1+R*1.5e-4);
+  var n=poisson(Rm*dt);
+  // ratemeter estimator (time constant depends on range)
+  var tau=S.rm.unit==='cps'?2:5;var k=Math.exp(-dt/tau);S.rm.est=S.rm.est*k+n/tau;
+  if(n>0){S.flash=1;if(S.cnt.run){S.cnt.n+=n;if(S.inst.counter){var led=$('#rl-led');led.classList.add('on');clearTimeout(led._t);led._t=setTimeout(function(){led.classList.remove('on')},40)}
+      if(S.cnt.beep){click();if(n>1&&n<6)for(var j=1;j<n;j++)setTimeout(click,j*dtR*1000/n)}}}
+  S.flash=Math.max(0,S.flash-dtR*7);
+  if(S.cnt.beep&&S.cnt.run){S.cnt.beepT+=dtR;if(S.cnt.beepT>40){S.cnt.beep=false;var b=$('#rl-cbeep');b.textContent='Sound off';b.classList.remove('on');notify('teacher','Message from your teacher','That\'s enough beeping! The sound is off now. Switch it back on if you really need it.')}}
+  if(S.sw.run)S.sw.t+=dt;
+  if(S.log.run){S.log.acc+=dt;S.log.cts+=n;if(S.log.acc>=S.log.int){S.log.pts.push([S.t-S.log.t0,S.log.cts*60/S.log.acc]);S.log.acc=0;S.log.cts=0;if(S.inst.logger)drawLog()}}
+  // visual particles
+  if(S.item&&geom.W){var it=S.item,type='gamma';if(it.k==='src')type=SRC[it.id].type;else if(it.k==='iso')type='beta';else type='smp';
+    var visRate=type==='smp'?Math.min(12,itemRate()*4):Math.min(28,8+itemRate()*0.3);if(type==='smp'&&itemRate()<0.01)visRate=0;
+    visAcc+=visRate*dtR;while(visAcc>=1){visAcc-=1;spawn(type==='smp'?(Math.random()<0.5?'beta':'gamma'):type,xOf(S.d),true)}}
+  bgAcc+=Math.min(3,S.loc.bg/20)*dtR*(S.loc.basement?0.05:1);if(bgAcc>=1&&geom.W){bgAcc=0;parts.push({x:Math.random()*geom.W,y:-5,vx:(Math.random()-0.5)*200,vy:500,type:'cos',life:1,ph:0})}
+  var g=geom;
+  for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.x+=p.vx*dtR;p.y+=p.vy*dtR;p.ph+=dtR*20;
+    if(p.type==='alpha'){var trav=Math.abs(p.x-p.start)/g.ppc;if(trav>3.4)p.life-=dtR*6}
+    if(S.abs&&!p.checked&&p.type!=='cos'&&p.x<=xOf(0.8)){p.checked=true;if(Math.random()>absT(p.type)){p.vx*=0.05;p.vy*=0.05;p.life=Math.min(p.life,0.35)}}
+    if(p.x<g.tubeX&&p.type!=='cos'){p.life=0}
+    p.life-=dtR*(p.type==='cos'?0.8:0.15);
+    if(p.life<=0||p.y>g.H+10||p.x<-10||p.x>g.W+10)parts.splice(i,1)}
+  drawBench();updInstruments();
+  phoneTick+=dtR;if(phoneTick>0.5){phoneTick=0;$('#rl-phtime').textContent=clockStr();if(curView==='home')drawWidget()}
+  requestAnimationFrame(step);
+}
+
+/* ---------- speed / tidy ---------- */
+$('#rl-speed').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;S.speed=parseFloat(b.dataset.s);$$('#rl-speed button').forEach(function(q){q.setAttribute('aria-pressed',q===b?'true':'false')})});
+$('#rl-tidy').addEventListener('click',function(){S.item=null;S.abs=null;for(var k in S.inst)S.inst[k]=(k==='ruler');S.cnt.run=false;S.cnt.beep=false;S.sw.run=false;S.log.run=false;
+  $('#rl-cgo').textContent='Start';$('#rl-cgo').classList.add('pri');$('#rl-sgo').textContent='Start';$('#rl-sgo').classList.add('pri');$('#rl-lgo').textContent='Record';$('#rl-lgo').classList.add('pri');$('#rl-cbeep').textContent='Sound off';$('#rl-cbeep').classList.remove('on');
+  showPhone(false);$('#rl-hint').hidden=false;renderRack();renderPane();updHelper()});
+
+/* ---------- phone ---------- */
+var CONTACTS=[
+  {n:'101',name:"Head Teacher's office",sub:'Tray of dice',who:'head'},
+  {n:'102',name:"Head's PA",sub:'The other tray of dice',who:'head'},
+  {n:'200',name:'Science staffroom',sub:'Tray of everyday samples',who:'staff'},
+  {n:'505',name:'Caretaker',sub:'Keys to the basement',who:'caretaker'},
+  {n:'170',name:'Cymru Isotopes · Cl-40',sub:'Chlorine-40',who:'iso'},
+  {n:'171',name:'Cymru Isotopes · Na-25',sub:'Sodium-25',who:'iso'},
+  {n:'172',name:'Cymru Isotopes · O-19',sub:'Oxygen-19',who:'iso'},
+  {n:'173',name:'Cymru Isotopes · N-16',sub:'Nitrogen-16',who:'iso'},
+  {n:'174',name:'Cymru Isotopes · Al-28',sub:'Aluminium-28',who:'iso'},
+  {n:'175',name:'Cymru Isotopes · Fe-61',sub:'Iron-61',who:'iso'},
+  {n:'176',name:'Cymru Isotopes · Cl-38',sub:'Chlorine-38',who:'iso'},
+  {n:'631',name:'RailGo deals',sub:'Special offers',who:'rail'},
+  {n:'632',name:'RailGo bookings',sub:'Go anywhere',who:'rail'}
+];
+var curView='home',dialStr='',dialTab='keypad',recents=[],badCalls=0;
+var scr=$('#rl-phscr');
+function showPhone(on){$('#rl-phone').hidden=!on;if(on){audio();if(curView==='home')phHome()}if(S.tab==='eq')renderPane()}
+$('#rl-phonebtn').addEventListener('click',function(){showPhone($('#rl-phone').hidden)});
+$('#rl-phhome').addEventListener('click',function(){if(curView==='home')showPhone(false);else phHome()});
+function light(on){$('#rl-ph').classList.toggle('light',on)}
+function hdr(title,back){return '<div class="rl-ph-hdr">'+(back?'<button type="button" data-go="home">‹ Home</button>':'')+'<span style="flex:1;text-align:'+(back?'right':'left')+'">'+title+'</span></div>'}
+function phHome(){curView='home';light(false);
+  scr.innerHTML='<div class="rl-ph-widget"><small id="rl-wday"></small><b id="rl-wtime"></b><small id="rl-wloc"></small></div>'+
+  '<div class="rl-apps">'+
+  '<button type="button" class="rl-app" data-app="dial"><i style="background:#22c55e">☎</i>Phone</button>'+
+  '<button type="button" class="rl-app" data-app="msgs"><i style="background:#2f7cf6">✉'+(unread?'<em>'+unread+'</em>':'')+'</i>Messages</button>'+
+  '<button type="button" class="rl-app" data-app="rail"><i style="background:linear-gradient(135deg,#ff5a3c,#ffb02e)">R</i>RailGo</button>'+
+  '<button type="button" class="rl-app" data-app="set"><i style="background:#64748b">⚙</i>Settings</button>'+
+  '</div>'+
+  '<div class="rl-ph-dock"><button type="button" class="rl-app" data-app="dial"><i style="background:#22c55e">☎</i></button><button type="button" class="rl-app" data-app="msgs"><i style="background:#2f7cf6">✉</i></button><button type="button" class="rl-app" data-app="rail"><i style="background:linear-gradient(135deg,#ff5a3c,#ffb02e)">R</i></button></div>';
+  drawWidget()}
+function drawWidget(){var t=$('#rl-wtime');if(!t)return;var d=simDate();t.textContent=clockStr();$('#rl-wday').textContent=d.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});$('#rl-wloc').textContent=S.loc.basement?'No GPS signal · basement':'📍 '+S.loc.name}
+scr.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;audio();
+  if(b.dataset.app){({dial:phDial,msgs:phMsgs,rail:function(){phRail('deals')},set:phSet})[b.dataset.app]();return}
+  if(b.dataset.go==='home'){phHome();return}
+  if(b.dataset.key!=null){if(dialStr.length<12)dialStr+=b.dataset.key;$('#rl-dnum').textContent=dialStr;return}
+  if(b.dataset.del!=null){dialStr=dialStr.slice(0,-1);$('#rl-dnum').textContent=dialStr;return}
+  if(b.dataset.dtab){dialTab=b.dataset.dtab;phDial();return}
+  if(b.dataset.call!=null){var num=b.dataset.call||dialStr;if(num)placeCall(num);return}
+  if(b.dataset.end!=null){endCall();return}
+  if(b.dataset.thread!=null){phThread(+b.dataset.thread);return}
+  if(b.dataset.rtab){phRail(b.dataset.rtab);return}
+  if(b.dataset.dest){phTickets(b.dataset.dest,b.dataset.deal==='1');return}
+  if(b.dataset.buy){phTicket(b.dataset.buy,b.dataset.fare,b.dataset.price);return}
+  if(b.dataset.board){travel(b.dataset.board);return}
+  if(b.dataset.home!=null){var v=$('#rl-sethome').value;if(CITY[v]){S.home=v;store.set('home',v);b.textContent='Saved';setTimeout(function(){b.textContent='Save home town'},1200)}return}
+  if(b.dataset.reset!=null){setLoc('basement');phHome();return}
+  if(b.dataset.search!=null){var q=$('#rl-q').value.trim();var m=CITY_NAMES.filter(function(c){return c.toLowerCase()===q.toLowerCase()})[0];if(m)phTickets(m,false);else{$('#rl-qmsg').textContent=q?'No station called "'+q+'". Try the suggestions.':'Type a town name.'}return}
+});
+scr.addEventListener('input',function(e){if(e.target.id==='rl-q'){var q=e.target.value.toLowerCase();var hits=q.length<2?[]:CITY_NAMES.filter(function(c){return c.toLowerCase().indexOf(q)===0}).slice(0,6);$('#rl-sugg').innerHTML=hits.map(function(c){return '<button type="button" data-dest="'+esc(c)+'"><span class="t"><b>'+esc(c)+'</b></span><span class="n">›</span></button>'}).join('')}});
+function phDial(){curView='dial';light(true);var h=hdr('Phone',true)+'<div class="rl-ph-tabs"><button type="button" data-dtab="keypad" aria-selected="'+(dialTab==='keypad')+'">Keypad</button><button type="button" data-dtab="contacts" aria-selected="'+(dialTab==='contacts')+'">Contacts</button><button type="button" data-dtab="recents" aria-selected="'+(dialTab==='recents')+'">Recents</button></div>';
+  if(dialTab==='keypad'){var L={1:'',2:'ABC',3:'DEF',4:'GHI',5:'JKL',6:'MNO',7:'PQRS',8:'TUV',9:'WXYZ',0:'+'};h+='<div class="rl-dialnum" id="rl-dnum">'+dialStr+'</div><div class="rl-keys">';['1','2','3','4','5','6','7','8','9','*','0','#'].forEach(function(k){h+='<button type="button" data-key="'+k+'">'+k+'<small>'+(L[k]||'&nbsp;')+'</small></button>'});h+='</div><div style="display:flex;justify-content:center;align-items:center;gap:22px;margin-top:4px"><span style="width:44px"></span><button type="button" class="rl-callbtn" data-call="" aria-label="Call"><svg width="26" height="26" viewBox="0 0 24 24"><path fill="#fff" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"></path></svg></button><button type="button" data-del="" style="width:44px;border:0;background:transparent;font-size:22px;color:#5d6a7e" aria-label="Delete">⌫</button></div>'}
+  else if(dialTab==='contacts'){h+='<div class="rl-list">'+CONTACTS.map(function(c){var a=AV[c.who];return '<button type="button" data-call="'+c.n+'"><span class="av" style="background:'+a[0]+'">'+a[1]+'</span><span class="t"><b>'+c.name+'</b><small>'+c.sub+'</small></span><span class="n">'+c.n+'</span></button>'}).join('')+'</div><p style="font-size:11.5px;color:#617089;margin:10px 16px">Old worksheets that give a number still work. Type it on the keypad.</p>'}
+  else{h+=recents.length?'<div class="rl-list">'+recents.map(function(r){return '<button type="button" data-call="'+r.n+'"><span class="t"><b>'+esc(r.name)+'</b><small>'+r.t+'</small></span><span class="n">'+r.n+'</span></button>'}).join('')+'</div>':'<p style="text-align:center;color:#617089;margin-top:40px">No recent calls</p>'}
+  scr.innerHTML=h}
+var callTimer=null,callAfter=null;
+function lookup(n){return CONTACTS.filter(function(c){return c.n===n})[0]}
+function placeCall(num){var c=lookup(num);var name=c?c.name:(num==='999'||num==='112'?'Emergency':num);recents.unshift({n:num,name:name,t:clockStr()});recents=recents.slice(0,12);dialStr='';
+  curView='call';light(false);var a=c?AV[c.who]:(num==='999'||num==='112'?AV.police:AV.net);
+  scr.innerHTML='<div class="rl-call"><div class="big" style="background:'+a[0]+'">'+a[1]+'</div><h4>'+esc(name)+'</h4><div class="st" id="rl-cst">calling…</div><div id="rl-cbody" style="width:100%"></div><div style="flex:1"></div><button type="button" class="rl-callbtn end" data-end="" aria-label="End call"><svg width="28" height="28" viewBox="0 0 24 24"><path fill="#fff" d="M12 9c-1.6 0-3.1.3-4.6.7v3.1c0 .4-.2.7-.6.9-1 .5-1.9 1.1-2.7 1.8-.2.2-.4.3-.7.3s-.5-.1-.7-.3L.3 13.1A1 1 0 0 1 0 12.4c0-.3.1-.5.3-.7A16.9 16.9 0 0 1 12 7c4.5 0 8.6 1.8 11.7 4.7.2.2.3.4.3.7s-.1.5-.3.7l-2.4 2.4c-.2.2-.4.3-.7.3s-.5-.1-.7-.3c-.8-.7-1.7-1.3-2.7-1.8-.3-.2-.6-.5-.6-.9V9.7C15.1 9.3 13.6 9 12 9z"></path></svg></button></div>';
+  clearTimeout(callTimer);callTimer=setTimeout(function(){answer(num)},1300)}
+function say(t,cls){var b=$('#rl-cbody');if(!b)return;b.innerHTML+='<div class="rl-bubble">'+t+'</div>'}
+function answer(num){var st=$('#rl-cst');if(st)st.textContent='connected';var c=lookup(num);callAfter=null;
+  if(num==='999'||num==='112'){if(st)st.textContent='not connected';say('This lab phone cannot reach the emergency services. Only ever call 999 when there is a real emergency.');return}
+  if(num==='100'||num==='0'){say('Operator services are not available from this line.');return}
+  if(!c){badCalls++;if(st)st.textContent='call failed';say('The number you have dialled has not been recognised. Check the number and try again.');if(badCalls>=3){badCalls=0;setTimeout(function(){notify('net','Your network','Please stop dialling random numbers. The phone is lab equipment, not a toy.')},1500)}return}
+  badCalls=0;
+  if(num==='101'||num==='102'){var mode=num==='101'?'decay':'date';say(num==='101'?'Head Teacher\'s office. Ah, the famous dice tray. I\'ll send it straight down. Count them back in, please!':'Head\'s PA speaking. You want the <b>other</b> tray? In this game the sixes stay where they land. Bringing it now.');callAfter=function(){openDice(mode)};return}
+  if(num==='200'){if(S.trayIn){say('You already have our tray! Bring it back when you\'re done, especially the mug.')}else{say('Staffroom. Yes, the tray of bits for testing. Someone\'s bringing it down now. We\'d like the coffee back, please.');callAfter=function(){S.trayIn=true;S.tab='tray';renderPane();notify('staff','Science staffroom','Here\'s the tray of samples. Test each one right next to the GM tube. Can we have them all back later?')}}return}
+  if(num==='505'){if(S.loc.basement){say('Caretaker here. Stuck in the basement again? On my way with the keys.');callAfter=function(){setLoc(S.home);notify('caretaker','Caretaker','Door\'s open. It\'s a lovely day in '+S.home+'. Shame you\'re stuck inside doing physics!')}}else{say('You\'re not in the basement. Don\'t waste my time!')}return}
+  if(ISO[num]){var iso=ISO[num];say('Cymru Isotopes despatch desk. One sample of <b>'+iso.name+'</b> coming up. It\'s on its way by drone and will land on your bench in a few seconds.');callAfter=function(){setTimeout(function(){deliver(num)},1600)};return}
+  if(num==='631'){say('Welcome to RailGo deals! Opening this week\'s special offers in the app…');callAfter=function(){phRail('deals')};return}
+  if(num==='632'){say('RailGo bookings. Opening the journey planner. Where would you like to go?');callAfter=function(){phRail('search')};return}
+}
+function endCall(){clearTimeout(callTimer);var f=callAfter;callAfter=null;phHome();if(f)f()}
+function deliver(num){var iso=ISO[num];var K=60*(0.9+Math.random()*0.2);S.isotopes[iso.id]={name:iso.name,T:iso.T,t0:S.t,K:K,when:clockStr(),fresh:true};
+  if(S.item&&S.item.k==='iso'&&S.item.id===iso.id){}// replaced in place: fresh sample
+  S.tab='src';renderPane();
+  notify('iso','Cymru Isotopes','Your <b>'+iso.name+'</b> has landed. We turned it into a salt so it is easy to handle. Its half-life is short, so start measuring straight away. Invoice to follow.',7000)}
+function phMsgs(){curView='msgs';light(true);var h=hdr('Messages',true);if(!threads.length)h+='<p style="text-align:center;color:#617089;margin-top:40px">No messages yet</p>';else h+='<div class="rl-list">'+threads.map(function(t,i){var a=AV[t.who];var lm=t.msgs[t.msgs.length-1];return '<button type="button" data-thread="'+i+'"><span class="av" style="background:'+a[0]+'">'+a[1]+'</span><span class="t"><b>'+esc(t.from)+(t.unread?' <span style="color:#2f7cf6">●</span>':'')+'</b><small>'+esc(lm.text)+'</small></span><span class="n" style="font-size:11px">'+lm.t+'</span></button>'}).join('')+'</div>';scr.innerHTML=h}
+function phThread(i){var t=threads[i];if(t.unread){t.unread=false;unread=Math.max(0,unread-t.msgs.length);updBadge()}curView='thread';light(true);scr.innerHTML='<div class="rl-ph-hdr"><button type="button" data-app="msgs">‹ Back</button><span style="flex:1;text-align:right">'+esc(t.from)+'</span></div><div class="rl-thread">'+t.msgs.map(function(m){return '<div class="m">'+esc(m.text)+'<small>'+m.t+'</small></div>'}).join('')+'</div>'}
+var DEALS=['Falmouth','Tenby','Camborne','Penzance','Aberdeen','Edinburgh','Brecon','Llandrindod Wells','Cardiff','London','Tavistock','Redruth'];
+function price(name,mult){return (8+hash(name)%46+(mult||0)).toFixed(2)}
+function phRail(tab){curView='rail';light(true);var h=hdr('RailGo',true)+'<div class="rl-ph-tabs"><button type="button" data-rtab="deals" aria-selected="'+(tab==='deals')+'">Deals</button><button type="button" data-rtab="search" aria-selected="'+(tab==='search')+'">Journey planner</button></div>';
+  if(tab==='deals'){h+='<div class="rl-railhero"><b>Half-price weekenders</b><small>From '+esc(S.loc.basement?'your school':S.loc.name)+'. Off-peak returns.</small></div><div class="rl-rail">'+DEALS.filter(function(d){return d!==S.loc.name}).slice(0,8).map(function(d){return '<button type="button" class="rl-deal" data-dest="'+d+'" data-deal="1"><span class="t"><b>'+d+'</b><small>Off-peak return</small></span><span class="p">£'+(price(d)/2).toFixed(2)+'</span></button>'}).join('')+'</div>'}
+  else{h+='<div class="rl-rail"><label style="font-size:12px;color:#617089">To</label><input class="rl-in" id="rl-q" placeholder="Type a town, e.g. Falmouth" autocomplete="off"><div class="rl-list" id="rl-sugg" style="margin:0"></div><div id="rl-qmsg" style="font-size:12px;color:#d0391b"></div><button type="button" class="rl-btn pri" data-search="">Find trains</button><button type="button" class="rl-deal" data-dest="'+esc(S.home)+'"><span class="t"><b>Home: '+esc(S.home)+'</b><small>Change this in Settings</small></span><span class="n">›</span></button></div>'}
+  scr.innerHTML=h}
+function phTickets(dest,deal){curView='tix';light(true);var base=parseFloat(price(dest));if(deal)base=base/2;var fares=[['Advance single',base*0.8],['Off-peak return',base],['Anytime return',base*2.1]];
+  scr.innerHTML='<div class="rl-ph-hdr"><button type="button" data-rtab="'+(deal?'deals':'search')+'">‹ Back</button><span style="flex:1;text-align:right">Tickets</span></div><div class="rl-rail"><div style="font-family:var(--f-disp);font-size:20px;font-weight:700">'+esc(S.loc.basement?'School':S.loc.name)+' → '+esc(dest)+'</div><small style="color:#617089">Next train in 4 min · journey time compressed for science</small>'+fares.map(function(f){return '<button type="button" class="rl-deal" data-buy="'+esc(dest)+'" data-fare="'+f[0]+'" data-price="'+f[1].toFixed(2)+'"><span class="t"><b>'+f[0]+'</b><small>Standard class</small></span><span class="p">£'+f[1].toFixed(2)+'</span></button>'}).join('')+'<small style="color:#617089">No real money is spent. Your school has a very generous travel budget.</small></div>'}
+function phTicket(dest,fare,pr){curView='ticket';light(true);scr.innerHTML='<div class="rl-ph-hdr"><button type="button" data-go="home">‹ Home</button><span style="flex:1;text-align:right">eTicket</span></div><div class="rl-ticket"><small style="color:#617089">'+esc(fare)+' · £'+pr+'</small><div class="route">'+esc(S.loc.basement?'School':S.loc.name)+' → '+esc(dest)+'</div><canvas id="rl-qr" width="29" height="29"></canvas><button type="button" class="rl-btn pri" data-board="'+esc(dest)+'">Board the train</button><div class="rl-prog"><i id="rl-prog"></i></div></div>';
+  var c=$('#rl-qr'),x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,29,29);x.fillStyle='#121a26';var h=hash(dest+fare);for(var i=0;i<29;i++)for(var j=0;j<29;j++){h=(h*1103515245+12345)&0x7fffffff;if(h%2)x.fillRect(i,j,1,1)}[[0,0],[22,0],[0,22]].forEach(function(p){x.fillStyle='#121a26';x.fillRect(p[0],p[1],7,7);x.fillStyle='#fff';x.fillRect(p[0]+1,p[1]+1,5,5);x.fillStyle='#121a26';x.fillRect(p[0]+2,p[1]+2,3,3)})}
+function travel(dest){var p=$('#rl-prog');var t0=performance.now();(function anim(){var f=Math.min(1,(performance.now()-t0)/2200);if(p)p.style.width=(f*100)+'%';if(f<1)requestAnimationFrame(anim);else{setLoc(dest);phHome();notify('rail','RailGo','Welcome to <b>'+esc(dest)+'</b>. Your lab kit has travelled with you. Take a background reading!')}})()}
+function phSet(){curView='set';light(true);scr.innerHTML=hdr('Settings',true)+'<div class="rl-rail"><label for="rl-sethome" style="font-size:12px;color:#617089">Home town (where the caretaker lets you out)</label><input class="rl-in" id="rl-sethome" list="rl-cities" value="'+esc(S.home)+'"><datalist id="rl-cities">'+CITY_NAMES.map(function(c){return '<option value="'+esc(c)+'"></option>'}).join('')+'</datalist><button type="button" class="rl-btn pri" data-home="">Save home town</button><hr style="border:0;border-top:1px solid #e1e6ee;width:100%"><button type="button" class="rl-btn" data-reset="">Go back to the basement</button><small style="color:#617089">Teachers: set the home town once and it is remembered on this device.</small></div>'}
+
+/* ---------- dice lab ---------- */
+var DL={mode:'decay',N0:12,faces:null,six:null,shown:false,rows:[],prev:null,auto:null,anim:0,seed:0};
+var felt=setupCanvas('#rl-felt',function(){drawFelt()}),dg=setupCanvas('#rl-dgraph',function(){drawDGraph()});
+function openDice(mode){DL.mode=mode;$('#rl-dicescrim').hidden=false;showPhone(false);
+  $('#rl-dtitle').textContent=mode==='decay'?'The Head\'s dice tray':'The other dice tray';
+  $('#rl-dsub').textContent=mode==='decay'?'Every die that lands on a six is removed, like a nucleus that has decayed. Watch how the number left falls.':'Here the sixes stay put and the rest are thrown again. Sixes are like argon atoms, the others like potassium. Track the ratio.';
+  $('#rl-dhalfwrap').hidden=mode!=='decay';dReset(true);fitAll();drawFelt();drawDGraph()}
+$('#rl-dclose').addEventListener('click',function(){stopAuto();$('#rl-dicescrim').hidden=true});
+root.addEventListener('click',function(e){var b=e.target.closest('[data-dn]');if(b){$('#rl-dn').value=b.dataset.dn;dReset()}});
+$('#rl-dn').addEventListener('change',dReset);
+function readN(){var v=Math.round(parseFloat($('#rl-dn').value));if(isNaN(v)||v<1){if(v<0)notify('teacher','The Head','Not even the Head can have a negative number of dice!');v=12}if(v>32000){notify('teacher','The Head','Sorry, I only have 32 000 dice.');v=32000}$('#rl-dn').value=v;return v}
+function dReset(keepPrev){stopAuto();if(DL.rows.length>1&&keepPrev!==true)DL.prev={mode:DL.mode,N0:DL.N0,rows:DL.rows.slice()};DL.N0=readN();DL.shown=false;DL.rows=[];DL.faces=null;DL.six=null;
+  $('#rl-dthrow').disabled=true;$('#rl-dauto').disabled=true;$('#rl-dshow').disabled=false;renderDTable();drawFelt();drawDGraph();dStats()}
+$('#rl-dreset').addEventListener('click',function(){dReset()});
+$('#rl-dshow').addEventListener('click',function(){DL.N0=readN();var n=DL.N0;DL.faces=new Uint8Array(n);DL.six=new Uint8Array(n);for(var i=0;i<n;i++)DL.faces[i]=1+Math.floor(Math.random()*5);DL.shown=true;
+  DL.rows=[{k:0,thrown:0,six:0,left:n,sixTot:0}];DL.seed=Math.random()*1000;$('#rl-dthrow').disabled=false;$('#rl-dauto').disabled=false;$('#rl-dshow').disabled=true;renderDTable();drawFelt();drawDGraph();dStats()});
+function dThrow(){if(!DL.shown)return;var last=DL.rows[DL.rows.length-1];
+  if(DL.mode==='decay'){if(last.left<=0){stopAuto();return}var n=last.left;var f=new Uint8Array(n),sixes=0;for(var i=0;i<n;i++){f[i]=1+Math.floor(Math.random()*6);if(f[i]===6)sixes++}DL.faces=f;DL.rows.push({k:last.k+1,thrown:n,six:sixes,left:n-sixes});}
+  else{var N=DL.N0,ns=0,newS=0;for(i=0;i<N;i++){if(!DL.six[i]){DL.faces[i]=1+Math.floor(Math.random()*6);if(DL.faces[i]===6){DL.six[i]=1;newS++}}if(DL.six[i])ns++}DL.rows.push({k:last.k+1,thrown:N-last.sixTot,six:newS,sixTot:ns,left:N-ns})}
+  DL.anim=performance.now();DL.seed=Math.random()*1000;renderDTable();drawDGraph();dStats();animFelt();
+  var L=DL.rows[DL.rows.length-1];if((DL.mode==='decay'&&L.left===0)||(DL.mode==='date'&&L.left===0)||DL.rows.length>60)stopAuto()}
+$('#rl-dthrow').addEventListener('click',dThrow);
+$('#rl-dauto').addEventListener('click',function(){if(DL.auto)stopAuto();else{DL.auto=setInterval(dThrow,650);this.textContent='Stop';this.classList.add('on')}});
+function stopAuto(){if(DL.auto)clearInterval(DL.auto);DL.auto=null;var b=$('#rl-dauto');b.textContent='Auto';b.classList.remove('on')}
+function animFelt(){var go=function(){drawFelt();if(performance.now()-DL.anim<450)requestAnimationFrame(go)};go()}
+function drawDie(x,cx,cy,s,face,rot,hot,removed){x.save();x.translate(cx,cy);x.rotate(rot);x.globalAlpha=removed?0.28:1;
+  x.fillStyle='rgba(0,0,0,.25)';rr(x,-s/2+2,-s/2+3,s,s,s*0.2);x.fill();
+  x.fillStyle=hot?'#fff3f3':'#fbfaf6';rr(x,-s/2,-s/2,s,s,s*0.2);x.fill();x.strokeStyle=hot?'#e5484d':'#cfc9b8';x.lineWidth=hot?2.4:1;x.stroke();
+  var P={1:[[0,0]],2:[[-1,-1],[1,1]],3:[[-1,-1],[0,0],[1,1]],4:[[-1,-1],[1,-1],[-1,1],[1,1]],5:[[-1,-1],[1,-1],[0,0],[-1,1],[1,1]],6:[[-1,-1],[1,-1],[-1,0],[1,0],[-1,1],[1,1]]}[face];
+  x.fillStyle=hot?'#c81e1e':'#1d2433';var q=s*0.26,pr=Math.max(1,s*0.085);P.forEach(function(p){x.beginPath();x.arc(p[0]*q,p[1]*q,pr,0,7);x.fill()});x.restore()}
+function rnd(i,k){var v=Math.sin((i+1)*12.9898+k*78.233+DL.seed)*43758.5453;return v-Math.floor(v)}
+function drawFelt(){var x=felt.x,w=felt.w,h=felt.h;if(!w)return;
+  var g=x.createRadialGradient(w/2,h/2,10,w/2,h/2,w*0.7);g.addColorStop(0,'#24845f');g.addColorStop(1,'#145a40');x.fillStyle=g;x.fillRect(0,0,w,h);
+  x.strokeStyle='#5b3a1e';x.lineWidth=10;x.strokeRect(5,5,w-10,h-10);
+  if(!DL.shown){x.fillStyle='rgba(255,255,255,.85)';x.font='600 15px Figtree,sans-serif';x.textAlign='center';x.fillText(fmt(DL.N0)+' dice in the box. Press "Tip out the dice".',w/2,h/2);return}
+  var last=DL.rows[DL.rows.length-1];var tot=DL.mode==='decay'?(DL.faces?DL.faces.length:0):DL.N0;var showN=Math.min(tot,DL.mode==='decay'&&DL.rows.length>1?tot:tot,160);
+  var lastRow=DL.rows[DL.rows.length-1];
+  var cols=Math.ceil(Math.sqrt(showN*w/h)),rows=Math.ceil(showN/Math.max(1,cols));var cw=(w-30)/Math.max(1,cols),ch=(h-40)/Math.max(1,rows);var s=Math.min(46,Math.min(cw,ch)*0.72);
+  var t=Math.min(1,(performance.now()-DL.anim)/450);
+  for(var i=0;i<showN;i++){var c=i%cols,r=Math.floor(i/cols);var cx=15+cw*(c+0.5)+(rnd(i,1)-0.5)*cw*0.25,cy=15+ch*(r+0.5)+(rnd(i,2)-0.5)*ch*0.25;var rot=(rnd(i,3)-0.5)*0.9;
+    var face=DL.faces[i];if(t<1){face=1+Math.floor(Math.random()*6);rot+=(1-t)*6*(rnd(i,4)-0.5);cy-=(1-t)*Math.sin(t*Math.PI)*16}
+    var hot=face===6;var removed=false;if(DL.mode==='date')hot=DL.six[i]&&t>=1;
+    drawDie(x,cx,cy,s,face,rot,hot&&t>=1,false)}
+  x.fillStyle='rgba(0,0,0,.45)';rr(x,12,h-34,w-24,24,8);x.fill();x.fillStyle='#fff';x.font='600 12.5px Figtree,sans-serif';x.textAlign='left';
+  var msg=DL.mode==='decay'?(DL.rows.length>1?'Throw '+last.k+': '+fmt(last.six)+' sixes (red) are taken away. '+fmt(last.left)+' dice left.':fmt(tot)+' dice ready to throw.'):(DL.rows.length>1?'Throw '+last.k+': '+fmt(last.sixTot)+' sixes stay, '+fmt(last.left)+' others.':fmt(tot)+' dice, no sixes yet.');
+  if(tot>showN)msg+='  (showing '+showN+' of '+fmt(tot)+')';x.fillText(msg,22,h-17)}
+function ratio(r){return r.left?r.sixTot/r.left:0}
+function dStats(){var L=DL.rows[DL.rows.length-1]||{k:0,left:DL.N0,six:0,sixTot:0};var h;
+  if(DL.mode==='decay')h='<div><small>Throws</small><b>'+L.k+'</b></div><div><small>Sixes last throw</small><b>'+fmt(L.six||0)+'</b></div><div><small>Dice left</small><b>'+fmt(L.left)+'</b></div>';
+  else h='<div><small>Throws</small><b>'+L.k+'</b></div><div><small>Sixes : others</small><b>'+fmt(L.sixTot||0)+' : '+fmt(L.left)+'</b></div><div><small>Ratio</small><b>'+ratio(L).toFixed(3)+'</b></div>';
+  $('#rl-dstat').innerHTML=h}
+function renderDTable(){var t=$('#rl-dtable');var h;
+  if(DL.mode==='decay'){h='<thead><tr><th>Throw</th><th>Dice thrown</th><th>Sixes</th><th>Remaining</th></tr></thead><tbody>'+DL.rows.map(function(r){return '<tr><td>'+r.k+'</td><td>'+(r.k?fmt(r.thrown):'–')+'</td><td>'+(r.k?fmt(r.six):'–')+'</td><td>'+fmt(r.left)+'</td></tr>'}).join('')}
+  else{h='<thead><tr><th>Throw</th><th>Sixes</th><th>Others</th><th>Ratio sixes : others</th></tr></thead><tbody>'+DL.rows.map(function(r){return '<tr><td>'+r.k+'</td><td>'+fmt(r.sixTot)+'</td><td>'+fmt(r.left)+'</td><td>'+ratio(r).toFixed(3)+'</td></tr>'}).join('')}
+  t.innerHTML=h+'</tbody>';var w=t.parentNode;w.scrollTop=w.scrollHeight}
+$('#rl-dcopy').addEventListener('click',function(){var rows=DL.rows.map(function(r){return DL.mode==='decay'?[r.k,r.k?r.thrown:'',r.k?r.six:'',r.left].join('\t'):[r.k,r.sixTot,r.left,ratio(r).toFixed(3)].join('\t')});copyText((DL.mode==='decay'?'throw\tthrown\tsixes\tremaining\n':'throw\tsixes\tothers\tratio\n')+rows.join('\n'),this)});
+['#rl-dpred','#rl-dhalf','#rl-dghost'].forEach(function(id){$(id).addEventListener('change',drawDGraph)});
+function drawDGraph(){var x=dg.x,w=dg.w,h=dg.h;if(!w)return;x.clearRect(0,0,w,h);var pad={l:54,r:14,t:14,b:32};
+  var rows=DL.rows,dec=DL.mode==='decay';var kmax=Math.max(20,rows.length?rows[rows.length-1].k:0);
+  var prev=$('#rl-dghost').checked&&DL.prev&&DL.prev.mode===DL.mode?DL.prev:null;if(prev)kmax=Math.max(kmax,prev.rows[prev.rows.length-1].k);kmax=Math.ceil(kmax/5)*5;
+  var val=function(r){return dec?r.left:ratio(r)};
+  var ymax=dec?niceMax(Math.max(DL.N0,prev?prev.N0:0)):niceMax(Math.max(2,rows.length?Math.min(60,Math.max.apply(null,rows.map(ratio))):2,prev?Math.min(60,Math.max.apply(null,prev.rows.map(ratio))):0));
+  drawAxes(x,w,h,pad,kmax,ymax,'number of throws',dec?'dice remaining':'ratio sixes : others');
+  var X=function(k){return pad.l+(w-pad.l-pad.r)*k/kmax},Y=function(v){return h-pad.b-(h-pad.t-pad.b)*Math.min(v,ymax*1.02)/ymax};
+  if(dec&&$('#rl-dhalf').checked&&DL.N0){x.strokeStyle='#d9480f';x.setLineDash([5,4]);x.lineWidth=1;[0.5,0.25,0.125].forEach(function(f,i){x.beginPath();x.moveTo(pad.l,Y(DL.N0*f)+.5);x.lineTo(w-pad.r,Y(DL.N0*f)+.5);x.stroke();x.fillStyle='#d9480f';x.font='700 10.5px "Chakra Petch",sans-serif';x.textAlign='right';x.fillText(['½','¼','⅛'][i],w-pad.r-2,Y(DL.N0*f)-3)});x.setLineDash([])}
+  if($('#rl-dpred').checked&&DL.N0){x.strokeStyle='#0a8b82';x.lineWidth=2;x.setLineDash([6,4]);x.beginPath();for(var k=0;k<=kmax;k+=0.25){var p=Math.pow(5/6,k);var v=dec?DL.N0*p:(1-p)/p;if(k)x.lineTo(X(k),Y(v));else x.moveTo(X(k),Y(v))}x.stroke();x.setLineDash([])}
+  function cross(px,py,col,sz){x.strokeStyle=col;x.lineWidth=2;x.beginPath();x.moveTo(px-sz,py-sz);x.lineTo(px+sz,py+sz);x.moveTo(px+sz,py-sz);x.lineTo(px-sz,py+sz);x.stroke()}
+  if(prev){var sc=dec&&DL.N0?1:1;prev.rows.forEach(function(r){cross(X(r.k),Y(dec?r.left:ratio(r)),'#b3bfd0',3.5)})}
+  rows.forEach(function(r){cross(X(r.k),Y(val(r)),'#e5484d',4.5)});
+  if(!rows.length){x.fillStyle='#56657d';x.font='500 13px Figtree,sans-serif';x.textAlign='center';x.fillText('Your results are plotted here, throw by throw.',w/2,h/2)}
+  if(prev){x.font='600 11px Figtree,sans-serif';x.textAlign='right';x.fillStyle='#8593a8';x.fillText('grey: last run ('+fmt(prev.N0)+' dice)',w-pad.r-4,pad.t+12)}}
+
+/* ---------- missions ---------- */
+var MIS=[
+ {id:'m1',title:'Alpha, beta, gamma',sub:'How far does each kind of radiation reach?',kit:'Ratemeter, ruler helper',
+  steps:['Switch on the <b>ratemeter</b> in Kit. Put the <b>gamma</b> source on the bench.','Watch the ratemeter for 10 seconds without touching anything. Does the reading stay still?','Drag the gamma source right up to the tube, then slowly away. Note what happens to the reading.','Swap to <b>beta</b>. Bring it close until the display reads OVER. Move it back until you first get a proper number.','Swap to <b>alpha</b>. Use the nudge buttons to find the furthest distance where it still gives a reading above background.'],
+  table:{head:['Source','Reading at 1.6 cm (c/s)','Furthest distance it is detected (cm)'],rows:['Alpha','Beta','Gamma']},
+  checks:[{q:'The source and tube are not moving, but the reading keeps jumping about. Why?',o:['The ratemeter is faulty','Radioactive decay is random, so the number of decays each second varies','The source is getting weaker every second'],a:1,why:'Each nucleus decays at random. Even with a steady source, the count in any one second goes up and down around an average.'},
+          {q:'Roughly how far does alpha radiation travel in air?',o:['A few millimetres','A few centimetres','A few metres'],a:1,why:'Alpha particles are big and highly ionising, so they lose their energy quickly. They stop after about 3 to 5 cm of air.'}]},
+ {id:'m2',title:'Stopping power',sub:'Which absorbers stop which radiation?',kit:'Ratemeter, absorbers',
+  steps:['Put a source on the bench and set it to <b>1.6 cm</b> from the tube.','Open <b>Absorbers</b> and try each one in turn. Record the ratemeter reading each time.','Repeat for all three sources. Keep the distance at 1.6 cm every time.'],
+  table:{head:['Absorber','Alpha','Beta','Gamma'],rows:['None','Tissue paper','Aluminium foil','Aluminium 1 mm','Aluminium 2 mm','Lead 2 mm','Lead 8 mm']},
+  checks:[{q:'Which is the thinnest absorber that stops alpha?',o:['Tissue paper','Aluminium 2 mm','Lead 8 mm'],a:0,why:'Even a sheet of tissue paper absorbs alpha particles completely.'},
+          {q:'Which absorber reduces gamma the most?',o:['Aluminium 2 mm','Lead 2 mm','Lead 8 mm'],a:2,why:'Gamma is reduced by dense, thick materials. Even 8 mm of lead only absorbs part of it. No absorber here stops it completely.'},
+          {q:'Why must the distance stay at 1.6 cm for every reading?',o:['To make it a fair test, so only the absorber changes','Because the tube only works at 1.6 cm','To stop the source overheating'],a:0,why:'Distance also changes the count rate. Keeping it fixed means any change is caused by the absorber.'}]},
+ {id:'m3',title:'Inverse square law',sub:'How does gamma count rate depend on distance?',kit:'Ratemeter (counts/min), ruler helper',
+  steps:['Switch the ratemeter to <b>counts/min</b>. Measure the background first with nothing on the bench.','Put the <b>gamma</b> source at 2.0 cm. Wait for the reading to settle, then take your best reading.','Move it out 1 cm at a time to 10 cm, recording each time.','Subtract the background from each reading. Press <b>Plot</b> to graph corrected rate against 1/d².'],
+  table:{head:['d (cm)','1/d² (cm⁻²)','Rate (c/min)','Corrected rate'],rows:['2','3','4','5','6','7','8','9','10'],calc:true},plot:true,
+  checks:[{q:'If you double the distance from a gamma source, the count rate (above background) becomes…',o:['half as big','a quarter as big','twice as big'],a:1,why:'Gamma spreads out in all directions, so intensity falls as 1/d². Doubling d divides the rate by 2² = 4.'},
+          {q:'Close to the tube the points stop fitting a straight line through the origin. One reason is…',o:['The ruler is wrong near zero','The radioactive material is not exactly at the front of the source, and the tube is not a single point','Gamma rays slow down near the tube'],a:1,why:'The real distance from the radioactive material to the sensitive part of the tube is a little more than the ruler reading. Close up, that extra bit matters a lot.'}]},
+ {id:'m4',title:'Background radiation',sub:'Radiation all around us, everywhere you go',kit:'Counter, wall clock, phone',
+  steps:['You start in a lead-lined basement. Switch on the ratemeter. Can it measure anything?','Phone the caretaker on <code>505</code> to be let out.','Get out the <b>counter</b> and <b>wall clock</b>. Start the counter when the second hand reaches 12 and stop it one minute later. Do this three times.','Switch on the counter sound for a short while. Can you hear a rhythm?','Phone the staffroom on <code>200</code>. Test each sample right next to the tube.','Use RailGo (<code>631</code> or <code>632</code>) to visit two other towns and measure the background there.'],
+  table:{head:['Place','Count 1','Count 2','Count 3','Average'],rows:['Basement','Home town','Town 2:','Town 3:'],avg:true},
+  checks:[{q:'Why do we repeat the one-minute count three times and average?',o:['Because radioactivity is random, so one reading may not be typical','Because the counter gets tired','So the background goes up'],a:0,why:'Random processes give different results each time. An average of several readings is more reliable.'},
+          {q:'Parts of Cornwall have a much higher background than most of the UK. The main reason is…',o:['More sunshine','Granite rock that releases radon gas','More nuclear power stations'],a:1,why:'Granite contains uranium. It decays to radon, a radioactive gas that seeps into buildings.'},
+          {q:'The antique pocket watch reads very high. Why?',o:['Its dial was painted with radium paint so it glows','Steel is radioactive','It was confiscated'],a:0,why:'Until the 1960s, watch dials were painted with luminous paint containing radium. It is an alpha emitter and stays radioactive for thousands of years.'}]},
+ {id:'m5',title:'Half-life',sub:'Timing a sample as it fades away',kit:'Ratemeter or data logger, stopclock, phone',
+  steps:['Phone Cymru Isotopes on <code>171</code> for sodium-25. Put the sample 0.5 cm from the tube.','Either: start the stopclock and use <b>Hold</b> to note the time when the count rate falls to half, then to a quarter…','Or: switch on the <b>data logger</b>, press Record, and read the half-life from the graph.','Repeat with oxygen-19 (<code>172</code>) and nitrogen-16 (<code>173</code>). Use time ×5 or ×20 for chlorine-38 (<code>176</code>).'],
+  table:{head:['Isotope','Starting rate (c/min)','Time to fall to half (s)','Half to quarter (s)'],rows:['Sodium-25','Oxygen-19','Nitrogen-16','Chlorine-40']},
+  checks:[{q:'The time to fall from full to half compared with the time from half to quarter is…',o:['shorter','the same','longer'],a:1,why:'That is what a constant half-life means: each halving takes the same time, whatever the starting activity.'},
+          {q:'Nitrogen-16 is hard to measure accurately because…',o:['its half-life is only about 7 seconds, so the count rate falls before the ratemeter can settle','it gives off alpha','it has a very long half-life'],a:0,why:'A ratemeter averages over a few seconds, so it lags behind a rapidly changing rate. Repeat and average, or use the logger.'}]},
+ {id:'m6',title:'Tumbling dice',sub:'A model of radioactive decay',kit:'Phone the Head on 101',
+  steps:['Phone the Head\'s office on <code>101</code>. Start with 12 dice. How many sixes do you expect on the first throw?','Throw, remove the sixes, and keep going for 20 throws. Is the graph smooth?','Reset and repeat with 12 dice. Grey crosses show your last run. Is it the same?','Try 120, then 1000, then 32 000 dice. What happens to the smoothness?','Switch on <b>halving lines</b>. Find how many throws it takes to fall to half for each starting number.'],
+  table:{head:['Dice at start','Throws to fall to half','Half to quarter'],rows:['1000','2000','4000','10000','32000']},
+  checks:[{q:'With 12 dice, how many do you expect to show a six on one throw?',o:['1','2','6'],a:1,why:'Each die has a 1 in 6 chance. One sixth of 12 is 2, on average.'},
+          {q:'Does the number of throws to halve depend on how many dice you start with?',o:['Yes, more dice take longer','No, it is always about 3.8 throws','Yes, more dice take fewer throws'],a:1,why:'Each die behaves independently. 5/6 of them survive each throw, and (5/6)ⁿ = ½ when n ≈ 3.8, whatever the start.'},
+          {q:'Why do 32 000 dice give a much smoother curve than 12?',o:['Random variations average out with large numbers','Big dice are less random','The computer cheats'],a:0,why:'With huge numbers the fraction removed each throw is very close to 1/6. That is why real samples with billions of atoms give smooth decay curves.'}]},
+ {id:'m7',title:'Dating rocks',sub:'Potassium–argon ages from a ratio',kit:'Phone the Head\'s PA on 102',
+  steps:['Phone <code>102</code>. In this tray the sixes stay where they land. Start with 12 dice and watch the ratio of sixes to others.','Try 10 000, 20 000 and 30 000 dice for 10 throws each. Compare the curves.','Switch on <b>prediction</b>. The curve is the same shape for any number of dice.','Now apply it to rocks. Potassium-40 decays to argon-40 with a half-life of 1300 million years. About 90% of decays make argon.'],
+  table:{head:['Time (million years)','Potassium left','Argon formed','Argon : potassium'],rows:['0','1300','2600','3900','5200']},
+  checks:[{q:'Start with 30 000 potassium atoms. After 2600 million years (2 half-lives), what is the argon : potassium ratio?',o:['0.9','2.7','3.0'],a:1,why:'7500 potassium left, 22 500 decayed, 90% of that is 20 250 argon. 20 250 ÷ 7500 = 2.7.'},
+          {q:'A volcanic rock has an argon : potassium ratio of 3. Its age is closest to…',o:['1.3 billion years','2.8 billion years','4.6 billion years'],a:1,why:'A ratio of 2.7 is 2.6 billion years, and 6.3 is 3.9 billion years. A ratio of 3 is a little over 2.6 billion, about 2.8 billion years.'},
+          {q:'If some argon gas escaped from the rock, its age would seem…',o:['younger than it really is','older than it really is','the same'],a:0,why:'Less argon gives a smaller ratio. A smaller ratio points to a younger age.'}]}
+];
+var MD=store.get('missions',{});
+function saveMD(){store.set('missions',MD)}
+function mprog(m){var d=MD[m.id]||{};var n=0;(d.steps||[]).forEach(function(s){if(s)n++});return n+'/'+m.steps.length}
+$('#rl-missbtn').addEventListener('click',function(){var p=$('#rl-mis');p.hidden=!p.hidden;if(!p.hidden)misList()});
+$('#rl-misclose').addEventListener('click',function(){$('#rl-mis').hidden=true});
+$('#rl-misback').addEventListener('click',misList);
+function misList(){$('#rl-misback').hidden=true;$('#rl-mistitle').textContent='Missions';var b=$('#rl-misbody');
+  b.innerHTML='<p style="color:var(--muted)">Seven investigations. Each has steps to tick off, a results table and quick questions to check what you found. Your entries stay on this device.</p>'+MIS.map(function(m,i){return '<button type="button" class="rl-mcard" data-m="'+i+'"><span class="num">'+(i+1)+'</span><span class="t"><b>'+m.title+'</b><small>'+m.sub+'</small></span><span class="rl-prog2">'+mprog(m)+'</span></button>'}).join('')}
+$('#rl-misbody').addEventListener('click',function(e){var b=e.target.closest('[data-m]');if(b){misOpen(+b.dataset.m);return}
+  var o=e.target.closest('[data-opt]');if(o){var q=o.closest('.rl-q');var m=MIS[+q.dataset.mi],qi=+q.dataset.qi,c=m.checks[qi];var pick=+o.dataset.opt;q.querySelectorAll('[data-opt]').forEach(function(x,i){x.classList.remove('right','wrong');if(i===c.a&&pick===c.a)x.classList.add('right')});if(pick!==c.a)o.classList.add('wrong');var w=q.querySelector('.why');w.hidden=false;w.innerHTML=(pick===c.a?'<b>Correct.</b> ':'<b>Not quite.</b> ')+c.why;return}
+  if(e.target.closest('#rl-mplotbtn'))drawMPlot();
+  if(e.target.closest('#rl-mcopy')){var t=e.target.closest('#rl-mcopy');copyText(tableText(),t)}});
+var curM=null;
+function misOpen(i){var m=MIS[i];curM=i;var d=MD[m.id]=MD[m.id]||{steps:[],cells:{}};$('#rl-misback').hidden=false;$('#rl-mistitle').textContent=(i+1)+'. '+m.title;
+  var h='<p>'+m.sub+(/[?.!]$/.test(m.sub)?' ':'. ')+'<span style="color:var(--muted)">You need: '+m.kit+'.</span></p><h4>Steps</h4><div class="rl-steps">'+m.steps.map(function(s,j){var ck=d.steps[j];return '<label class="'+(ck?'done':'')+'"><input type="checkbox" data-step="'+j+'" '+(ck?'checked':'')+'><span>'+s+'</span></label>'}).join('')+'</div>';
+  h+='<h4>Results</h4><div class="rl-mtable"><table><thead><tr>'+m.table.head.map(function(x){return '<th>'+x+'</th>'}).join('')+'</tr></thead><tbody>';
+  m.table.rows.forEach(function(r,ri){h+='<tr><td>'+r+'</td>';for(var c=1;c<m.table.head.length;c++){var key=ri+'_'+c;var v=d.cells[key]||'';
+      if(m.table.calc&&c===1)h+='<td style="font-family:var(--f-disp)">'+(1/(parseFloat(r)*parseFloat(r))).toFixed(4)+'</td>';
+      else if(m.table.avg&&c===4)h+='<td><output data-avg="'+ri+'" style="font-family:var(--f-disp);font-weight:700"></output></td>';
+      else h+='<td><input data-cell="'+key+'" value="'+esc(v)+'" inputmode="decimal" aria-label="'+esc(r+' '+m.table.head[c])+'"></td>'}h+='</tr>'});
+  h+='</tbody></table></div><div class="rl-row">'+(m.plot?'<button type="button" class="rl-btn sm" id="rl-mplotbtn">Plot corrected rate against 1/d²</button>':'')+'<button type="button" class="rl-btn sm" id="rl-mcopy">Copy table</button></div>'+(m.plot?'<canvas class="rl-mplot" id="rl-mplot"></canvas>':'');
+  h+='<h4>Quick check</h4>'+m.checks.map(function(c,qi){return '<div class="rl-q" data-mi="'+i+'" data-qi="'+qi+'"><p>'+c.q+'</p><div class="opts">'+c.o.map(function(o,oi){return '<button type="button" data-opt="'+oi+'">'+o+'</button>'}).join('')+'</div><div class="why" hidden></div></div>'}).join('');
+  var b=$('#rl-misbody');b.innerHTML=h;b.scrollTop=0;updAvg();if(m.plot){mplot=setupCanvas('#rl-mplot',drawMPlot);if(ro)ro.observe(mplot.c);fit(mplot);drawMPlot()}}
+var mplot=null;
+$('#rl-misbody').addEventListener('change',function(e){var c=e.target.closest('[data-step]');if(c){var m=MIS[curM];MD[m.id].steps[+c.dataset.step]=c.checked;c.parentNode.classList.toggle('done',c.checked);saveMD()}});
+$('#rl-misbody').addEventListener('input',function(e){var c=e.target.closest('[data-cell]');if(c){var m=MIS[curM];MD[m.id].cells[c.dataset.cell]=c.value;saveMD();updAvg()}});
+function updAvg(){var m=MIS[curM];if(!m||!m.table.avg)return;var d=MD[m.id];$$('[data-avg]').forEach(function(o){var ri=o.dataset.avg;var v=[1,2,3].map(function(c){return parseFloat(d.cells[ri+'_'+c])}).filter(function(x){return !isNaN(x)});o.textContent=v.length?(v.reduce(function(a,b){return a+b},0)/v.length).toFixed(1):''})}
+function tableText(){var m=MIS[curM],d=MD[m.id];return m.table.head.join('\t')+'\n'+m.table.rows.map(function(r,ri){var a=[r];for(var c=1;c<m.table.head.length;c++){if(m.table.calc&&c===1)a.push((1/(parseFloat(r)*parseFloat(r))).toFixed(4));else if(m.table.avg&&c===4){var o=root.querySelector('[data-avg="'+ri+'"]');a.push(o?o.textContent:'')}else a.push(d.cells[ri+'_'+c]||'')}return a.join('\t')}).join('\n')}
+function drawMPlot(){if(!mplot||!mplot.w)return;var m=MIS[curM];if(!m||!m.plot)return;var d=MD[m.id],x=mplot.x,w=mplot.w,h=mplot.h;x.clearRect(0,0,w,h);var pts=[];
+  m.table.rows.forEach(function(r,ri){var y=parseFloat(d.cells[ri+'_3']);if(isNaN(y))y=parseFloat(d.cells[ri+'_2']);if(!isNaN(y))pts.push([1/(parseFloat(r)*parseFloat(r)),y])});
+  var pad={l:50,r:12,t:12,b:32};var xm=niceMax(0.25),ym=niceMax(Math.max(10,Math.max.apply(null,pts.map(function(p){return p[1]}).concat([0]))*1.1));
+  drawAxes(x,w,h,pad,xm,ym,'1/d² (cm⁻²)','corrected rate (c/min)');
+  var X=function(v){return pad.l+(w-pad.l-pad.r)*v/xm},Y=function(v){return h-pad.b-(h-pad.t-pad.b)*v/ym};
+  if(pts.length>=2){var sxy=0,sxx=0;pts.forEach(function(p){sxy+=p[0]*p[1];sxx+=p[0]*p[0]});var k=sxy/sxx;x.strokeStyle='#0a8b82';x.lineWidth=1.5;x.setLineDash([5,4]);x.beginPath();x.moveTo(X(0),Y(0));x.lineTo(X(xm),Y(Math.min(ym,k*xm)));x.stroke();x.setLineDash([])}
+  pts.forEach(function(p){x.strokeStyle='#8a5cf6';x.lineWidth=2;var px=X(p[0]),py=Y(p[1]);x.beginPath();x.moveTo(px-4,py-4);x.lineTo(px+4,py+4);x.moveTo(px+4,py-4);x.lineTo(px-4,py+4);x.stroke()});
+  if(!pts.length){x.fillStyle='#56657d';x.font='500 12px Figtree,sans-serif';x.textAlign='center';x.fillText('Fill in the table, then press Plot.',w/2,h/2)}}
+
+/* ---------- boot ---------- */
+setLoc('basement');renderPane();renderRack();updHelper();
+if(ro){[bench,clk,logc,felt,dg].forEach(function(o){ro.observe(o.c)})}else{window.addEventListener('resize',function(){fitAll()})}
+fitAll();drawLog();
+requestAnimationFrame(function(t){last=t;step(t)});
+})();
+</script>
+
+</body>
+</html>
