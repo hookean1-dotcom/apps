@@ -1,0 +1,670 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Feynman Diagram Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: lab bench — particle picker | graph-paper diagram stage | vertex bookkeeping card */
+:root{
+  --paper:#edf3f2; --card:#ffffff; --ink:#122133; --muted:#516476; --rule:#cbd9d9; --grid:#e4eded;
+  --fermion:#1d4c8c; --photon:#b86e00; --weak:#b0215f; --strong:#1f7f53; --accent:#0a7380;
+  --ok:#1b7f45; --bad:#bf3626; --glow:#f2a516; --chipbg:#f4f8f8;
+  --f-display:'Bricolage Grotesque','Trebuchet MS',sans-serif;
+  --f-body:'Atkinson Hyperlegible',Verdana,Arial,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0d1720; --card:#15212c; --ink:#e3ecf2; --muted:#9fb2c2; --rule:#2a3b4a; --grid:#1b2935;
+  --fermion:#86b6ff; --photon:#f3b24c; --weak:#ff74b0; --strong:#62d69c; --accent:#52c8d4;
+  --ok:#62d690; --bad:#ff7c68; --glow:#ffd166; --chipbg:#1a2733; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0d1720; --card:#15212c; --ink:#e3ecf2; --muted:#9fb2c2; --rule:#2a3b4a; --grid:#1b2935;
+  --fermion:#86b6ff; --photon:#f3b24c; --weak:#ff74b0; --strong:#62d69c; --accent:#52c8d4;
+  --ok:#62d690; --bad:#ff7c68; --glow:#ffd166; --chipbg:#1a2733; color-scheme:dark}
+body{background:var(--paper);color:var(--ink)}
+#fdl{font-family:var(--f-body);font-size:16px;line-height:1.5;color:var(--ink);background:var(--paper);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:20px 36px;max-width:1260px;margin:0 auto;width:100%;min-height:400px}
+#fdl *,#fdl *::before,#fdl *::after{box-sizing:border-box}
+#fdl button{font-family:inherit;color:inherit}
+#fdl button:focus-visible,#fdl input:focus-visible,#fdl summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#fdl .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;padding-bottom:16px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+#fdl .eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+#fdl h1{font-family:var(--f-display);font-weight:800;font-size:clamp(1.9rem,4.4vw,2.8rem);letter-spacing:-.025em;margin:0;line-height:1.05;text-wrap:balance}
+#fdl h1 .wavy{text-decoration:underline wavy var(--photon);text-decoration-thickness:2px;text-underline-offset:8px}
+#fdl .tabs{display:flex;gap:4px;background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:4px}
+#fdl .tab{font-weight:700;font-size:.95rem;border:0;background:transparent;color:var(--muted);padding:9px 20px;border-radius:999px;cursor:pointer}
+#fdl .tab:hover{color:var(--ink)}
+#fdl .tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+#fdl h2{font-family:var(--f-display);font-weight:800;font-size:1.45rem;letter-spacing:-.015em;margin:0 0 4px;line-height:1.15;text-wrap:balance}
+#fdl h3{font-family:var(--f-mono);font-weight:600;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+#fdl p{margin:0}
+#fdl .card{background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:18px;min-width:0}
+#fdl .ov{text-decoration:overline;text-decoration-thickness:1.5px}
+/* explore */
+#fdl .ex{display:grid;grid-template-columns:210px minmax(0,1fr) minmax(0,340px);gap:20px;align-items:start}
+#fdl .picker{display:flex;flex-direction:column;gap:16px;min-width:0}
+#fdl .grp{display:flex;flex-direction:column;gap:6px;min-width:0}
+#fdl .pick{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:10px;padding:8px 10px;cursor:pointer;font-size:.93rem;line-height:1.25}
+#fdl .pick:hover{background:var(--card);border-color:var(--rule)}
+#fdl .pick[aria-pressed="true"]{background:var(--card);border-color:var(--ink);font-weight:700}
+#fdl .dot{width:10px;height:10px;border-radius:50%;flex:0 0 10px}
+#fdl .f-em{background:var(--photon)} #fdl .f-weak{background:var(--weak)} #fdl .f-strong{background:var(--strong)}
+@media (max-width:1060px){
+  #fdl .ex{grid-template-columns:minmax(0,1fr) minmax(0,320px)}
+  #fdl .picker{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:12px 20px}
+  #fdl .grp{flex-direction:row;flex-wrap:wrap;align-items:center}
+  #fdl .grp h3{width:100%;margin:0}
+  #fdl .pick{width:auto;border-color:var(--rule);background:var(--card)}
+}
+@media (max-width:740px){#fdl .ex{grid-template-columns:minmax(0,1fr)}}
+#fdl .stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+#fdl .diag{position:relative;width:100%;aspect-ratio:600/460;max-width:100%;background-color:var(--card);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:5% 6.52%;border:1px solid var(--rule);border-radius:14px;overflow:hidden}
+#fdl .diag canvas{display:block;width:100%;height:100%}
+#fdl .controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px 16px}
+#fdl .play{width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);cursor:pointer;font-size:1rem;flex:0 0 44px}
+#fdl .scrub{flex:1 1 180px;display:flex;align-items:center;gap:10px;min-width:0}
+#fdl .scrub input{flex:1;min-width:0;accent-color:var(--accent)}
+#fdl .mono{font-family:var(--f-mono);font-size:.8rem;color:var(--muted)}
+#fdl .switch{display:inline-flex;align-items:center;gap:8px;font-size:.92rem;font-weight:700;cursor:pointer;user-select:none}
+#fdl .switch input{width:18px;height:18px;accent-color:var(--weak)}
+#fdl .switch[aria-disabled="true"]{opacity:.45;cursor:not-allowed}
+#fdl .info{display:flex;flex-direction:column;gap:14px}
+#fdl .eq{font-family:var(--f-mono);font-weight:600;font-size:1.08rem;padding:10px 12px;background:var(--chipbg);border-radius:10px;overflow-x:auto;white-space:nowrap}
+#fdl .badges{display:flex;flex-wrap:wrap;gap:6px}
+#fdl .badge{font-size:.8rem;font-weight:700;padding:3px 10px;border-radius:999px;border:1.5px solid currentColor}
+#fdl .c-em{color:var(--photon)} #fdl .c-weak{color:var(--weak)} #fdl .c-strong{color:var(--strong)}
+#fdl .facts{font-size:.95rem;color:var(--ink)}
+#fdl .qnote{font-size:.85rem;color:var(--muted);border-left:3px solid var(--weak);padding-left:10px}
+#fdl .vt{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums;font-size:.88rem}
+#fdl .vt caption{text-align:left;font-weight:700;padding-bottom:6px;font-size:.88rem}
+#fdl .vt th,#fdl .vt td{padding:5px 6px;border-bottom:1px solid var(--rule);text-align:center}
+#fdl .vt th:first-child,#fdl .vt td:first-child{text-align:left}
+#fdl .vt thead th{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+#fdl .vt td.ok{color:var(--ok);font-weight:700} #fdl .vt td.bad{color:var(--bad);font-weight:700}
+#fdl .tables{display:flex;flex-direction:column;gap:14px}
+#fdl .forces{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:20px}
+@media (max-width:740px){#fdl .forces{grid-template-columns:minmax(0,1fr)}}
+#fdl .force{border-top:4px solid currentColor;background:var(--card);border-radius:4px 4px 12px 12px;padding:14px 16px;border-left:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+#fdl .force b{display:block;font-family:var(--f-display);font-size:1.05rem;margin-bottom:2px}
+#fdl .force span{color:var(--ink);font-size:.9rem;display:block}
+#fdl details.howto{margin-top:20px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:4px 18px}
+#fdl details.howto summary{cursor:pointer;font-weight:700;padding:12px 0;font-family:var(--f-display);font-size:1.1rem}
+#fdl .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px 22px;padding:4px 0 18px;margin:0;list-style:none;counter-reset:r}
+#fdl .rules li{counter-increment:r;font-size:.93rem;padding-left:34px;position:relative}
+#fdl .rules li::before{content:counter(r);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--paper);font:600 .78rem/24px var(--f-mono);text-align:center}
+/* build */
+#fdl .bd{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:860px){#fdl .bd{grid-template-columns:minmax(0,1fr)}}
+#fdl .slot{position:absolute;transform:translate(-50%,-50%);min-width:46px;height:40px;padding:0 10px;border-radius:10px;border:2px dashed var(--muted);background:var(--card);font-weight:700;font-size:1.05rem;cursor:pointer;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+#fdl .slot.filled{border-style:solid;border-color:var(--fermion);color:var(--fermion)}
+#fdl .slot.boson.filled{border-color:var(--accent);color:var(--accent)}
+#fdl .slot.sel{box-shadow:0 0 0 4px var(--glow);border-color:var(--ink)}
+#fdl .slot .ph{color:var(--muted);font-weight:400;font-size:.85rem}
+#fdl .seg{display:flex;flex-wrap:wrap;gap:6px}
+#fdl .segb{border:1px solid var(--rule);background:var(--card);border-radius:999px;padding:7px 14px;font-weight:700;font-size:.88rem;cursor:pointer}
+#fdl .segb:disabled{opacity:.4;cursor:not-allowed}
+#fdl .segb[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+#fdl .target{display:flex;flex-direction:column;gap:6px}
+#fdl .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+#fdl .chip{border:1px solid var(--rule);background:var(--chipbg);border-radius:10px;padding:8px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15}
+#fdl .chip:hover{border-color:var(--ink)}
+#fdl .chip b{font-size:1.15rem}
+#fdl .chip small{font-size:.7rem;color:var(--muted);text-align:center}
+#fdl .chip.bos b{color:var(--accent)}
+#fdl .row{display:flex;flex-wrap:wrap;gap:8px}
+#fdl .btn{border:0;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;background:var(--ink);color:var(--paper);font-size:.93rem}
+#fdl .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+#fdl .fb{border-radius:12px;padding:12px 14px;font-size:.93rem;background:var(--chipbg);border-left:4px solid var(--muted)}
+#fdl .fb.good{border-left-color:var(--ok)} #fdl .fb.badf{border-left-color:var(--bad)}
+#fdl .fb ul{margin:6px 0 0;padding-left:18px}
+#fdl .fb strong{display:block}
+#fdl .score{display:flex;gap:18px;font-family:var(--f-mono);font-size:.82rem;color:var(--muted)}
+#fdl .score b{color:var(--ink);font-size:1rem}
+#fdl .panel{display:flex;flex-direction:column;gap:16px}
+/* quiz */
+#fdl .qz{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+#fdl .qhead{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+#fdl .bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden}
+#fdl .bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+#fdl .qprompt{font-size:1.12rem;font-weight:700;text-wrap:balance}
+#fdl .qdiag{max-width:520px;margin:0 auto;width:100%}
+#fdl .opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+@media (max-width:560px){#fdl .opts{grid-template-columns:minmax(0,1fr)}}
+#fdl .opt{text-align:left;border:1.5px solid var(--rule);background:var(--card);border-radius:12px;padding:12px 14px;cursor:pointer;font-size:.98rem;line-height:1.3}
+#fdl .opt:hover:not(:disabled){border-color:var(--ink)}
+#fdl .opt:disabled{cursor:default}
+#fdl .opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--card))}
+#fdl .opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
+#fdl .opt small{color:var(--muted);font-size:.8rem}
+#fdl .end{text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;padding:24px}
+#fdl .big{font-family:var(--f-display);font-weight:800;font-size:3.2rem;line-height:1}
+@media (prefers-reduced-motion:reduce){#fdl .bar i{transition:none}}
+</style>
+
+<div id="fdl">
+  <header class="top">
+    <div>
+      <p class="eyebrow">AQA A-level Physics · 3.2.1.4 Particle interactions</p>
+      <h1>Feynman <span class="wavy">Diagram</span> Lab</h1>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button class="tab" role="tab" id="t-explore" aria-selected="true" aria-controls="p-explore">Explore</button>
+      <button class="tab" role="tab" id="t-build" aria-selected="false" aria-controls="p-build">Build</button>
+      <button class="tab" role="tab" id="t-quiz" aria-selected="false" aria-controls="p-quiz">Quiz</button>
+    </div>
+  </header>
+
+  <section id="p-explore" role="tabpanel" aria-labelledby="t-explore">
+    <div class="ex">
+      <nav class="picker" id="picker" aria-label="Interactions"></nav>
+      <div class="stage">
+        <div class="diag" id="dEx"><canvas id="cvEx" aria-label="Feynman diagram"></canvas></div>
+        <div class="controls">
+          <button class="play" id="play" aria-label="Pause animation">❚❚</button>
+          <div class="scrub"><span class="mono">time</span><input type="range" id="scrub" min="0" max="100" value="100" aria-label="Time through the interaction"></div>
+          <div class="seg" role="group" aria-label="Diagram level"><button class="segb" id="lvP" aria-pressed="true">Particle level (n, p)</button><button class="segb" id="lvQ" aria-pressed="false">Quark level (u, d)</button></div>
+        </div>
+      </div>
+      <div class="info" id="info"></div>
+    </div>
+
+    <div class="forces">
+      <div class="force c-em"><b>Electromagnetic</b><span>Exchange particle: virtual photon, γ. Acts between charged particles. Infinite range.</span></div>
+      <div class="force c-weak"><b>Weak</b><span>Exchange particles: W⁺ and W⁻ bosons. They have rest mass, so the range is tiny (about 10⁻¹⁸ m). Changes quark or lepton type.</span></div>
+      <div class="force c-strong"><b>Strong (between nucleons)</b><span>Exchange particle: the pion. Felt by hadrons only. Range about 3 fm.</span></div>
+    </div>
+
+    <details class="howto" id="howto" open>
+      <summary>How to read a Feynman diagram</summary>
+      <ol class="rules">
+        <li><b>Time runs up the page.</b> Particles enter at the bottom and leave at the top. Left and right only separate the particles; they are not a distance scale.</li>
+        <li><b>Straight lines are particles</b> such as electrons, neutrinos and nucleons. The arrow shows the direction each particle travels.</li>
+        <li><b>The wavy line is the exchange particle</b> (gauge boson). It carries momentum, energy and, for W bosons, charge from one particle to the other.</li>
+        <li><b>Each vertex is an interaction.</b> Charge, baryon number and lepton number must be the same just before and just after every vertex.</li>
+        <li><b>W bosons change particle type.</b> A d quark becomes a u quark, or an electron becomes an electron neutrino. Photons and pions leave the particle unchanged.</li>
+      </ol>
+    </details>
+  </section>
+
+  <section id="p-build" role="tabpanel" aria-labelledby="t-build" hidden>
+    <div class="bd">
+      <div class="stage">
+        <div class="diag" id="dB"><canvas id="cvB" aria-label="Diagram you are building"></canvas><div id="slots"></div></div>
+        <p class="mono">Tap a box on the diagram, then tap a particle. Time runs upwards.</p>
+      </div>
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <div class="seg" role="group" aria-label="Mode">
+            <button class="segb" id="mChal" aria-pressed="true">Challenges</button>
+            <button class="segb" id="mFree" aria-pressed="false">Free build</button>
+          </div>
+          <div class="score"><span>Score <b id="sc">0</b></span><span>Streak <b id="st">0</b></span></div>
+        </div>
+        <div class="card target" id="target"></div>
+        <div>
+          <h3>Particles and quarks</h3>
+          <div class="chips" id="chipsF"></div>
+        </div>
+        <div>
+          <h3>Exchange particles</h3>
+          <div class="chips" id="chipsB"></div>
+        </div>
+        <div class="row">
+          <button class="btn" id="check">Check diagram</button>
+          <button class="btn ghost" id="clear">Clear</button>
+          <button class="btn ghost" id="reveal">Show answer</button>
+          <button class="btn ghost" id="next">Next challenge →</button>
+        </div>
+        <div class="fb" id="fb" aria-live="polite">Fill every box, then check. Each vertex must conserve charge, baryon number and lepton number.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="p-quiz" role="tabpanel" aria-labelledby="t-quiz" hidden>
+    <div class="qz card" id="qz"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+"use strict";
+var root=document.getElementById('fdl');
+var VW=600,VH=460;
+var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- particle data (charge and baryon number stored ×3) ---------- */
+var P={
+  em:{l:'e⁻',q:-3,Le:1,k:'lepton',n:'electron'},
+  ep:{l:'e⁺',q:3,Le:-1,k:'lepton',n:'positron'},
+  ve:{l:'νₑ',q:0,Le:1,k:'lepton',n:'electron neutrino'},
+  vb:{l:'νₑ',bar:1,q:0,Le:-1,k:'lepton',n:'electron antineutrino'},
+  mu:{l:'μ⁻',q:-3,Lm:1,k:'lepton',n:'muon'},
+  p:{l:'p',q:3,B:3,k:'hadron',n:'proton'},
+  n:{l:'n',q:0,B:3,k:'hadron',n:'neutron'},
+  u:{l:'u',q:2,B:1,k:'quark',n:'up quark'},
+  d:{l:'d',q:-1,B:1,k:'quark',n:'down quark'},
+  g:{l:'γ',q:0,k:'boson',f:'em',n:'virtual photon'},
+  Wp:{l:'W⁺',q:3,k:'boson',f:'weak',n:'W⁺ boson'},
+  Wm:{l:'W⁻',q:-3,k:'boson',f:'weak',n:'W⁻ boson'},
+  pi:{l:'π⁰',q:0,k:'boson',f:'strong',n:'neutral pion'}
+};
+function g(id,k){return (P[id]&&P[id][k])||0;}
+function fq(q){if(q===0)return '0';var s=q>0?'+':'−',a=Math.abs(q);return a%3===0?s+(a/3):s+a+'/3';}
+function fn(n){return n===0?'0':(n>0?'+':'−')+Math.abs(n);}
+function H(id){var p=P[id];if(!p)return '?';return p.bar?'<span class="ov">'+p.l.charAt(0)+'</span>'+p.l.slice(1):p.l;}
+
+/* ---------- interactions ---------- */
+var INTS=[
+ {id:'ee',name:'Electron–electron repulsion',f:'em',tpl:'scatter',inL:'em',outL:'em',boson:'g',inR:'em',outR0:'em',
+  eq:'e⁻ + e⁻ → e⁻ + e⁻',
+  facts:'Like charges repel. The two electrons exchange a virtual photon, which transfers momentum so they push apart. Photons only couple to charged particles, so neutrinos never take part in electromagnetic interactions.'},
+ {id:'bm',name:'β⁻ decay',f:'weak',tpl:'decay',inL:'n',outL:'p',boson:'Wm',outR0:'em',outR1:'vb',quark:['inL','outL'],
+  eq:'n → p + e⁻ + ν̄ₑ',qeq:'d → u + e⁻ + ν̄ₑ',
+  facts:'A neutron decays into a proton. The W⁻ boson is very short-lived and decays almost immediately into an electron and an electron antineutrino.',
+  qtxt:'At quark level a down quark changes into an up quark: d → u + W⁻. The neutron (udd) becomes a proton (uud).'},
+ {id:'bp',name:'β⁺ decay',f:'weak',tpl:'decay',inL:'p',outL:'n',boson:'Wp',outR0:'ep',outR1:'ve',quark:['inL','outL'],
+  eq:'p → n + e⁺ + νₑ',qeq:'u → d + e⁺ + νₑ',
+  facts:'Happens to protons inside proton-rich nuclei. A free proton cannot decay this way because it has less mass than a neutron. The W⁺ decays into a positron and an electron neutrino.',
+  qtxt:'At quark level an up quark changes into a down quark: u → d + W⁺. The proton (uud) becomes a neutron (udd).'},
+ {id:'ec',name:'Electron capture',f:'weak',tpl:'scatter',inL:'p',outL:'n',boson:'Wp',inR:'em',outR0:'ve',quark:['inL','outL'],
+  eq:'p + e⁻ → n + νₑ',qeq:'u + e⁻ → d + νₑ',
+  facts:'A proton-rich nucleus captures one of its own inner-shell electrons. The proton turns into a neutron by emitting a W⁺, which is absorbed by the electron. An electron neutrino leaves.',
+  qtxt:'At quark level: u → d + W⁺, then W⁺ + e⁻ → νₑ.'},
+ {id:'epc',name:'Electron–proton collision',f:'weak',tpl:'scatter',inL:'em',outL:'ve',boson:'Wm',inR:'p',outR0:'n',quark:['inR','outR0'],
+  eq:'e⁻ + p → n + νₑ',qeq:'e⁻ + u → νₑ + d',
+  facts:'Same particles in and out as electron capture, but here a high-energy electron collides with a proton. The electron emits a W⁻ and becomes an electron neutrino. The W⁻ turns the proton into a neutron. Notice the exchange particle is W⁻, not W⁺.',
+  qtxt:'At quark level: W⁻ + u → d.'},
+ {id:'vn',name:'Neutrino–neutron interaction',f:'weak',tpl:'scatter',inL:'n',outL:'p',boson:'Wm',inR:'ve',outR0:'em',quark:['inL','outL'],
+  eq:'νₑ + n → p + e⁻',qeq:'νₑ + d → u + e⁻',
+  facts:'Neutrinos feel only the weak interaction (and gravity), which is why they pass through the Earth almost unhindered. The neutron emits a W⁻ and becomes a proton. The neutrino absorbs it and becomes an electron.',
+  qtxt:'At quark level: d → u + W⁻.'},
+ {id:'avp',name:'Antineutrino–proton interaction',f:'weak',tpl:'scatter',inL:'p',outL:'n',boson:'Wp',inR:'vb',outR0:'ep',quark:['inL','outL'],
+  eq:'ν̄ₑ + p → n + e⁺',qeq:'ν̄ₑ + u → d + e⁺',
+  facts:'This is how antineutrinos were first detected, by Cowan and Reines in 1956, using the flood of antineutrinos from a nuclear reactor. The proton emits a W⁺ and becomes a neutron. The antineutrino absorbs it and becomes a positron.',
+  qtxt:'At quark level: u → d + W⁺.'},
+ {id:'pn',name:'Strong force between nucleons',f:'strong',tpl:'scatter',inL:'p',outL:'p',boson:'pi',inR:'n',outR0:'n',
+  eq:'p + n → p + n',
+  facts:'In the AQA specification the pion is the exchange particle of the strong nuclear force between nucleons. Here a proton and a neutron exchange a neutral pion. Leptons do not feel the strong force.'}
+];
+var FN={em:'Electromagnetic',weak:'Weak',strong:'Strong'};
+function toQ(I){var c={};for(var k in I)c[k]=I[k];I.quark.forEach(function(s){c[s]=c[s]==='n'?'d':c[s]==='p'?'u':c[s];});
+  c.lvl='q';c.base=I.id;c.id=I.id+'_q';c.name=I.name+' (quark level)';c.eq=I.qeq;c.facts=I.qtxt+' The other two quarks in the nucleon are spectators and are not drawn.';return c;}
+INTS.forEach(function(I){if(I.quark)I.lvl='p';});
+var QINTS=INTS.filter(function(I){return I.quark;}).map(toQ),ALL=INTS.concat(QINTS);
+function eqH(t){return t.replace('ν̄ₑ','<span class="ov">ν</span>ₑ');}
+
+/* ---------- geometry ---------- */
+var GEO={
+  scatter:{A:[225,228],B:[385,228],e:{inL:[115,405],outL:[115,52],inR:[495,405],outR0:[495,52]}},
+  decay:{A:[205,292],B:[392,165],e:{inL:[132,410],outL:[132,52],outR0:[300,48],outR1:[528,64]}}
+};
+function lines(tpl){
+  var G=GEO[tpl],L=[{s:'inL',a:G.e.inL,b:G.A,d:'in'},{s:'outL',a:G.A,b:G.e.outL,d:'out'}];
+  if(tpl==='scatter')L.push({s:'inR',a:G.e.inR,b:G.B,d:'in'},{s:'outR0',a:G.B,b:G.e.outR0,d:'out'});
+  else L.push({s:'outR0',a:G.B,b:G.e.outR0,d:'out'},{s:'outR1',a:G.B,b:G.e.outR1,d:'out'});
+  return L;
+}
+function slotKeys(tpl){return tpl==='scatter'?['inL','outL','boson','inR','outR0']:['inL','outL','boson','outR0','outR1'];}
+function anchor(tpl,s){
+  var G=GEO[tpl];
+  if(s==='boson'){var A=G.A,B=G.B,dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy);return [(A[0]+B[0])/2+dy/L*34,(A[1]+B[1])/2-dx/L*34];}
+  var p=G.e[s];return s.indexOf('in')===0?[p[0],p[1]+26]:[p[0],p[1]-24];
+}
+function vertsOf(c){
+  return [{nm:'Left',bef:[c.inL],aft:[c.outL,c.boson]},
+          c.tpl==='scatter'?{nm:'Right',bef:[c.inR,c.boson],aft:[c.outR0]}:{nm:'Right',bef:[c.boson],aft:[c.outR0,c.outR1]}];
+}
+function sum(a,k){var s=0;for(var i=0;i<a.length;i++)s+=g(a[i],k);return s;}
+
+/* ---------- colours ---------- */
+function tok(){var cs=getComputedStyle(root),o={};['ink','muted','card','fermion','photon','weak','strong','accent','ok','bad','glow','rule'].forEach(function(k){o[k]=cs.getPropertyValue('--'+k).trim();});return o;}
+function bosCol(C,id){var f=P[id]&&P[id].f;return f==='em'?C.photon:f==='weak'?C.weak:f==='strong'?C.strong:C.muted;}
+
+/* ---------- canvas ---------- */
+function fit(cv){
+  var w=cv.clientWidth,h=cv.clientHeight,d=window.devicePixelRatio||1;
+  if(!w||!h)return 0;
+  var W=Math.round(w*d),Hh=Math.round(h*d);
+  if(cv.width!==W||cv.height!==Hh){cv.width=W;cv.height=Hh;}
+  return w/VW*d;
+}
+function label(ctx,id,x,y,col,big){
+  var p=P[id];ctx.fillStyle=col;ctx.font='700 '+(big?28:24)+'px "Atkinson Hyperlegible", Verdana, sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  if(!p){ctx.fillText('?',x,y);return;}
+  ctx.fillText(p.l,x,y);
+  if(p.bar){var w=ctx.measureText(p.l).width,w1=ctx.measureText(p.l.charAt(0)).width,x0=x-w/2;
+    ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x0,y-14);ctx.lineTo(x0+w1,y-14);ctx.stroke();}
+}
+function lerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
+function wavy(ctx,A,B,amp,wl){
+  var dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,n=Math.max(2,Math.round(L/wl));
+  ctx.beginPath();
+  for(var i=0;i<=120;i++){var t=i/120,s=Math.sin(t*n*2*Math.PI)*amp*Math.min(1,t*8,(1-t)*8);
+    var x=A[0]+dx*t-uy*s,y=A[1]+dy*t+ux*s;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+  ctx.stroke();
+}
+function arrow(ctx,a,b,col){
+  var m=lerp(a,b,.55),an=Math.atan2(b[1]-a[1],b[0]-a[0]);
+  ctx.save();ctx.translate(m[0],m[1]);ctx.rotate(an);ctx.fillStyle=col;
+  ctx.beginPath();ctx.moveTo(9,0);ctx.lineTo(-7,-7);ctx.lineTo(-7,7);ctx.closePath();ctx.fill();ctx.restore();
+}
+/* o: {t, hide, noLabels, vstate:[..], dim} */
+function draw(cv,c,o){
+  o=o||{};var s=fit(cv);if(!s)return;var ctx=cv.getContext('2d'),C=tok();
+  ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,cv.width,cv.height);ctx.setTransform(s,0,0,s,0,0);
+  ctx.lineCap='round';ctx.lineJoin='round';
+  // time axis
+  ctx.strokeStyle=C.muted;ctx.fillStyle=C.muted;ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(34,400);ctx.lineTo(34,90);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(34,78);ctx.lineTo(27,94);ctx.lineTo(41,94);ctx.closePath();ctx.fill();
+  ctx.save();ctx.translate(22,250);ctx.rotate(-Math.PI/2);ctx.font='600 15px "IBM Plex Mono", monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('time',0,0);ctx.restore();
+  if(c.lvl){ctx.fillStyle=C.weak;ctx.font='600 15px "IBM Plex Mono", monospace';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText(c.lvl==='q'?'QUARK LEVEL':'PARTICLE LEVEL',588,12);}
+  var G=GEO[c.tpl],L=lines(c.tpl);
+  // fermion lines
+  L.forEach(function(l){var col=c[l.s]?C.fermion:C.muted;ctx.strokeStyle=col;ctx.lineWidth=3.5;ctx.setLineDash(c[l.s]?[]:[8,8]);
+    ctx.beginPath();ctx.moveTo(l.a[0],l.a[1]);ctx.lineTo(l.b[0],l.b[1]);ctx.stroke();ctx.setLineDash([]);arrow(ctx,l.a,l.b,col);});
+  // boson
+  var bc=c.boson?bosCol(C,c.boson):C.muted;ctx.strokeStyle=bc;ctx.lineWidth=3.5;
+  if(c.boson==='pi'){ctx.setLineDash([10,8]);ctx.beginPath();ctx.moveTo(G.A[0],G.A[1]);ctx.lineTo(G.B[0],G.B[1]);ctx.stroke();ctx.setLineDash([]);}
+  else wavy(ctx,G.A,G.B,9,22);
+  // labels
+  if(!o.noLabels){
+    L.forEach(function(l){var p=anchor(c.tpl,l.s);var hid=o.hide===l.s;label(ctx,hid?null:c[l.s],p[0],p[1],hid?C.glow:C.ink,hid);});
+    var bp=anchor(c.tpl,'boson');label(ctx,o.hide==='boson'?null:c.boson,bp[0],bp[1],o.hide==='boson'?C.glow:bc,o.hide==='boson');
+  }
+  // vertices
+  var t=o.t;
+  [G.A,G.B].forEach(function(v,i){
+    var st=o.vstate&&o.vstate[i],col=st==='ok'?C.ok:st==='bad'?C.bad:C.ink,r=7;
+    if(t!=null){var tv=i===0?.36:.62;var f=Math.max(0,1-Math.abs(t-tv)/.07);if(f>0){ctx.fillStyle=C.glow;ctx.globalAlpha=.35*f;ctx.beginPath();ctx.arc(v[0],v[1],22*f+8,0,7);ctx.fill();ctx.globalAlpha=1;}}
+    if(st){ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();ctx.arc(v[0],v[1],16,0,7);ctx.stroke();}
+    ctx.fillStyle=col;ctx.beginPath();ctx.arc(v[0],v[1],r,0,7);ctx.fill();
+  });
+  // moving particles
+  if(t!=null&&t<.999){
+    var pts=[];
+    L.forEach(function(l){
+      if(l.d==='in'){
+        // left particle arrives at A by 0.36; right particle (scatter) arrives at B by 0.62
+        var end=l.s==='inL'?.36:.62;if(t<=end)pts.push(lerp(l.a,l.b,t/end));
+      }else{
+        var st0=l.s==='outL'?.36:.62;if(t>=st0)pts.push(lerp(l.a,l.b,(t-st0)/(1-st0)));
+      }
+    });
+    if(t>=.36&&t<=.62)pts.push(lerp(G.A,G.B,(t-.36)/.26));
+    ctx.fillStyle=C.glow;ctx.shadowColor=C.glow;ctx.shadowBlur=14;
+    pts.forEach(function(p){ctx.beginPath();ctx.arc(p[0],p[1],7,0,7);ctx.fill();});
+    ctx.shadowBlur=0;
+  }
+}
+
+/* ---------- tabs ---------- */
+var tabs=['explore','build','quiz'],active='explore';
+tabs.forEach(function(n){document.getElementById('t-'+n).addEventListener('click',function(){show(n);});});
+function show(n){active=n;tabs.forEach(function(m){document.getElementById('t-'+m).setAttribute('aria-selected',m===n?'true':'false');document.getElementById('p-'+m).hidden=m!==n;});
+  if(n==='quiz'&&!Q.qs.length)newRound();redrawAll();}
+
+/* ---------- explore ---------- */
+var ex={i:1,t:1,playing:!reduce,quark:false};
+var picker=document.getElementById('picker');
+['em','weak','strong'].forEach(function(f){
+  var gdiv=document.createElement('div');gdiv.className='grp';gdiv.innerHTML='<h3>'+FN[f]+'</h3>';
+  INTS.forEach(function(I,i){if(I.f!==f)return;var b=document.createElement('button');b.className='pick';b.dataset.i=i;
+    b.innerHTML='<span class="dot f-'+f+'"></span><span>'+I.name+'</span>';b.addEventListener('click',function(){ex.i=i;ex.t=0;renderEx();});gdiv.appendChild(b);});
+  picker.appendChild(gdiv);
+});
+function exCfg(){var I=INTS[ex.i];return ex.quark&&I.quark?toQ(I):I;}
+function vTable(c,showLm){
+  var V=vertsOf(c),h='';
+  V.forEach(function(v){
+    var ar=v.bef.map(H).join(' + ')+' → '+v.aft.map(H).join(' + ');
+    h+='<table class="vt"><caption>'+v.nm+' vertex: '+ar+'</caption><thead><tr><th>Quantity</th><th>Before</th><th>After</th><th></th></tr></thead><tbody>';
+    var rows=[['q','Charge Q',fq],['B','Baryon no. B',fq],['Le','Lepton no. Lₑ',fn]];if(showLm)rows.push(['Lm','Lepton no. L<sub>μ</sub>',fn]);
+    rows.forEach(function(r){var b=sum(v.bef,r[0]),a=sum(v.aft,r[0]),ok=a===b;
+      h+='<tr><td>'+r[1]+'</td><td>'+r[2](b)+'</td><td>'+r[2](a)+'</td><td class="'+(ok?'ok':'bad')+'">'+(ok?'✓':'✗')+'</td></tr>';});
+    h+='</tbody></table>';
+  });
+  return h;
+}
+function renderEx(){
+  var I=INTS[ex.i],c=exCfg();
+  picker.querySelectorAll('.pick').forEach(function(b){b.setAttribute('aria-pressed',+b.dataset.i===ex.i?'true':'false');});
+  var lq=ex.quark&&I.quark,qb=document.getElementById('lvQ');
+  document.getElementById('lvP').setAttribute('aria-pressed',lq?'false':'true');qb.setAttribute('aria-pressed',lq?'true':'false');
+  qb.disabled=!I.quark;qb.title=I.quark?'':'No quark change in this interaction';
+  var h='<div class="card" style="display:flex;flex-direction:column;gap:12px"><div><h3>'+(lq?'Quark level':'Particle level')+'</h3><h2>'+I.name+'</h2></div>'+
+    '<div class="eq">'+eqH(I.eq)+'</div>'+(I.quark?'<div class="eq">'+eqH(I.qeq)+'</div>':'')+
+    '<div class="badges"><span class="badge c-'+I.f+'">'+FN[I.f]+' interaction</span><span class="badge c-'+I.f+'">Exchange: '+P[I.boson].n+'</span></div>'+
+    '<p class="facts">'+I.facts+'</p>'+
+    (I.quark?'<p class="qnote"><b>'+(lq?'Quark level.':'At quark level.')+'</b> '+I.qtxt+(lq?' Only the quark that changes is drawn; the other two are spectators.':' Switch to the quark-level diagram to see it.')+'</p>':'<p class="qnote">No quark changes type here, so only a particle-level diagram is needed.</p>')+
+    '</div><div class="card tables"><h3>Conservation at each vertex</h3>'+vTable(c,false)+'</div>';
+  document.getElementById('info').innerHTML=h;
+  drawEx();
+}
+function drawEx(){draw(document.getElementById('cvEx'),exCfg(),{t:ex.t});document.getElementById('scrub').value=Math.round(ex.t*100);}
+var playB=document.getElementById('play');
+function setPlay(p){ex.playing=p;playB.textContent=p?'❚❚':'▶';playB.setAttribute('aria-label',p?'Pause animation':'Play animation');}
+playB.addEventListener('click',function(){if(!ex.playing&&ex.t>=1)ex.t=0;setPlay(!ex.playing);});
+document.getElementById('scrub').addEventListener('input',function(e){setPlay(false);ex.t=e.target.value/100;drawEx();});
+document.getElementById('lvP').addEventListener('click',function(){ex.quark=false;renderEx();});
+document.getElementById('lvQ').addEventListener('click',function(){ex.quark=true;renderEx();});
+
+/* ---------- build ---------- */
+var B={mode:'chal',tpl:'decay',s:{},sel:'inL',ci:0,order:[],score:0,streak:0,vstate:null,t:null,done:false};
+var FERM=['em','ep','ve','vb','mu','p','n','u','d'],BOS=['g','Wp','Wm','pi'];
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x;}return a;}
+B.order=shuffle(ALL.map(function(_,i){return i;}));
+function chip(id,bos){var b=document.createElement('button');b.className='chip'+(bos?' bos':'');b.innerHTML='<b>'+H(id)+'</b><small>'+P[id].n+'</small>';b.addEventListener('click',function(){place(id);});return b;}
+FERM.forEach(function(id){document.getElementById('chipsF').appendChild(chip(id,0));});
+BOS.forEach(function(id){document.getElementById('chipsB').appendChild(chip(id,1));});
+function curChal(){return ALL[B.order[B.ci%B.order.length]];}
+function bcfg(){var c={tpl:B.tpl};slotKeys(B.tpl).forEach(function(k){c[k]=B.s[k]||null;});return c;}
+function resetB(){B.s={};B.sel='inL';B.vstate=null;B.t=null;B.done=false;}
+function setFb(cls,html){var f=document.getElementById('fb');f.className='fb'+(cls?' '+cls:'');f.innerHTML=html;}
+function renderTarget(){
+  var t=document.getElementById('target');
+  document.getElementById('mChal').setAttribute('aria-pressed',B.mode==='chal'?'true':'false');
+  document.getElementById('mFree').setAttribute('aria-pressed',B.mode==='free'?'true':'false');
+  document.getElementById('reveal').hidden=B.mode!=='chal';document.getElementById('next').hidden=B.mode!=='chal';
+  if(B.mode==='chal'){var I=curChal();
+    t.innerHTML='<h3>Challenge '+((B.ci%B.order.length)+1)+' of '+B.order.length+'</h3><div class="badges"><span class="badge c-'+I.f+'">'+(I.lvl==='q'?'Quark level':'Particle level')+'</span></div><h2>'+I.name+'</h2><div class="eq">'+eqH(I.eq)+'</div><p class="mono">Draw it with one exchange particle. You choose which particle goes on which side.</p>';
+  }else{
+    t.innerHTML='<h3>Free build</h3><p>Invent your own interaction. The lab checks whether nature would allow it.</p><div class="seg" role="group" aria-label="Diagram shape"><button class="segb" data-tpl="scatter" aria-pressed="'+(B.tpl==='scatter')+'">2 in → 2 out</button><button class="segb" data-tpl="decay" aria-pressed="'+(B.tpl==='decay')+'">1 in → 3 out (decay)</button></div>';
+    t.querySelectorAll('[data-tpl]').forEach(function(b){b.addEventListener('click',function(){B.tpl=b.dataset.tpl;resetB();renderB();setFb('','New diagram shape. Fill every box, then check.');});});
+  }
+}
+function renderSlots(){
+  var box=document.getElementById('slots');box.innerHTML='';
+  slotKeys(B.tpl).forEach(function(k){
+    var p=anchor(B.tpl,k),b=document.createElement('button');
+    b.className='slot'+(k==='boson'?' boson':'')+(B.s[k]?' filled':'')+(B.sel===k?' sel':'');
+    b.style.left=(p[0]/VW*100)+'%';b.style.top=(p[1]/VH*100)+'%';
+    b.innerHTML=B.s[k]?H(B.s[k]):'<span class="ph">'+(k==='boson'?'exchange':'+')+'</span>';
+    b.setAttribute('aria-label',(k==='boson'?'Exchange particle':({inL:'Left incoming',outL:'Left outgoing',inR:'Right incoming',outR0:'Right outgoing',outR1:'Right outgoing 2'})[k])+(B.s[k]?': '+P[B.s[k]].n:': empty'));
+    b.addEventListener('click',function(){B.sel=k;renderSlots();});
+    box.appendChild(b);
+  });
+}
+function renderB(){renderTarget();renderSlots();drawB();}
+function drawB(){draw(document.getElementById('cvB'),bcfg(),{noLabels:true,vstate:B.vstate,t:B.t});}
+function place(id){
+  var keys=slotKeys(B.tpl),k=B.sel;
+  if(!k){k=keys.filter(function(x){return !B.s[x];})[0]||keys[0];}
+  B.s[k]=id;B.vstate=null;B.t=null;B.done=false;
+  var nxt=keys.filter(function(x){return !B.s[x];});B.sel=nxt[0]||null;
+  renderSlots();drawB();
+}
+function validate(c){
+  var keys=slotKeys(c.tpl),errs=[],vs=['ok','ok'];
+  if(keys.some(function(k){return !c[k];}))return {empty:true};
+  keys.forEach(function(k){var bos=P[c[k]].k==='boson';
+    if(k==='boson'&&!bos){errs.push('The wavy line must be an exchange particle (γ, W⁺, W⁻ or π⁰), not '+P[c[k]].n+'.');vs=['bad','bad'];}
+    if(k!=='boson'&&bos){errs.push(P[c[k]].n+' is an exchange particle. Straight lines need real particles such as electrons, neutrinos or nucleons.');}});
+  if(errs.length)return {errs:errs,vs:vs};
+  var V=vertsOf(c);
+  V.forEach(function(v,i){
+    [['q','charge',fq],['B','baryon number',fq],['Le','electron lepton number',fn],['Lm','muon lepton number',fn]].forEach(function(r){
+      var b=sum(v.bef,r[0]),a=sum(v.aft,r[0]);
+      if(a!==b){vs[i]='bad';errs.push(v.nm+' vertex: '+r[1]+' before = '+r[2](b)+', after = '+r[2](a)+'.');}
+    });
+  });
+  // coupling rules
+  var pairs=[[c.inL,c.outL,0]];if(c.tpl==='scatter')pairs.push([c.inR,c.outR0,1]);
+  var bo=c.boson;
+  pairs.forEach(function(pr){
+    if(bo==='g'){
+      if(pr[0]!==pr[1]){vs[pr[2]]='bad';errs.push('A photon cannot change one particle into another, so the particle leaving a γ vertex must be the same as the one arriving. Changing type needs a W boson.');}
+      else if(g(pr[0],'q')===0){vs[pr[2]]='bad';errs.push(P[pr[0]].n+'s are neutral, so they cannot emit or absorb a photon.');}
+    }
+    if(bo==='pi'&&(P[pr[0]].k!=='hadron'||P[pr[1]].k!=='hadron')){vs[pr[2]]='bad';
+      if(P[pr[0]].k==='quark'||P[pr[1]].k==='quark')errs.push('In the AQA course the pion is exchanged between whole nucleons (p and n), not single quarks.');
+      else errs.push('Leptons do not feel the strong force, so they cannot emit or absorb a pion.');}
+  });
+  if(c.tpl==='decay'&&bo==='g'&&(g(c.outR0,'q')===0)){vs[1]='bad';errs.push('A photon can only produce charged particles.');}
+  if(c.tpl==='decay'&&bo==='pi'){vs[1]='bad';errs.push('In this course the pion is only exchanged between nucleons, not decayed into leptons.');}
+  // dedupe
+  errs=errs.filter(function(e,i){return errs.indexOf(e)===i;});
+  return {errs:errs,vs:vs};
+}
+function ms(a){return a.slice().sort().join('|');}
+function checkB(){
+  var c=bcfg(),r=validate(c);
+  if(r.empty){setFb('badf','<strong>Some boxes are still empty.</strong>Every line needs a particle and the wavy line needs an exchange particle.');return;}
+  B.vstate=r.vs;
+  if(r.errs.length){B.streak=0;updScore();drawB();setFb('badf','<strong>Not allowed by nature yet.</strong><ul>'+r.errs.map(function(e){return '<li>'+e+'</li>';}).join('')+'</ul>');return;}
+  B.t=0;
+  if(B.mode==='free'){setFb('good','<strong>Allowed.</strong>Charge, baryon number and lepton number are conserved at both vertices. This is a '+FN[P[c.boson].f].toLowerCase()+' interaction.');return;}
+  var I=curChal(),ini=c.tpl==='scatter'?[c.inL,c.inR]:[c.inL],fin=c.tpl==='scatter'?[c.outL,c.outR0]:[c.outL,c.outR0,c.outR1];
+  var Ii=I.tpl==='scatter'?[I.inL,I.inR]:[I.inL],If=I.tpl==='scatter'?[I.outL,I.outR0]:[I.outL,I.outR0,I.outR1];
+  if(ms(ini)!==ms(Ii)||ms(fin)!==ms(If)){B.streak=0;updScore();setFb('badf','<strong>A valid diagram, but a different reaction.</strong>Everything is conserved, but the particles going in and coming out do not match '+I.eq+'.');return;}
+  if(c.boson!==I.boson){
+    var bid=I.base||I.id;
+    var note=bid==='ec'?'For electron capture, AQA draws the proton emitting a W⁺. A W⁻ from the electron is how the electron–proton collision is drawn.':
+             bid==='epc'?'For an electron–proton collision, AQA draws the electron emitting a W⁻. A W⁺ from the proton is how electron capture is drawn.':
+             'Your exchange particle carries charge the other way. It is conserved, but the standard AQA diagram uses '+P[I.boson].l+'.';
+    B.streak=0;updScore();setFb('badf','<strong>Nearly. Conserved, but not the standard diagram.</strong>'+note);return;
+  }
+  if(!B.done){B.score++;B.streak++;B.done=true;}updScore();
+  setFb('good','<strong>Correct. '+(B.streak>2?B.streak+' in a row!':'Well drawn.')+'</strong>'+I.facts);
+}
+function updScore(){document.getElementById('sc').textContent=B.score;document.getElementById('st').textContent=B.streak;}
+document.getElementById('check').addEventListener('click',checkB);
+document.getElementById('clear').addEventListener('click',function(){resetB();renderB();setFb('','Cleared. Fill every box, then check.');});
+document.getElementById('reveal').addEventListener('click',function(){var I=curChal();resetB();slotKeys(I.tpl).forEach(function(k){B.s[k]=I[k];});B.sel=null;B.done=true;B.vstate=['ok','ok'];B.t=0;B.streak=0;updScore();renderB();setFb('','<strong>Model answer.</strong>'+I.facts);});
+function loadChal(){var I=curChal();B.tpl=I.tpl;resetB();renderB();setFb('','Fill every box, then check. Each vertex must conserve charge, baryon number and lepton number.');}
+document.getElementById('next').addEventListener('click',function(){B.ci++;loadChal();});
+document.getElementById('mChal').addEventListener('click',function(){B.mode='chal';loadChal();});
+document.getElementById('mFree').addEventListener('click',function(){B.mode='free';resetB();renderB();setFb('','Choose a shape, fill every box, then check.');});
+
+/* ---------- quiz ---------- */
+var Q={qs:[],i:0,score:0,answered:false};
+var CONC=[
+ {p:'What is the exchange particle of the electromagnetic force?',o:['Virtual photon','W⁺ boson','Pion','Gluon'],a:0,e:'Electromagnetic interactions between charged particles are carried by virtual photons.'},
+ {p:'Why does the weak interaction have such a short range?',o:['W bosons have a large rest mass','W bosons are electrically charged','W bosons only act on neutrinos','W bosons travel slower than photons'],a:0,e:'The W bosons are massive (about 80 GeV/c²), so they can only exist very briefly and travel a very short distance, around 10⁻¹⁸ m.'},
+ {p:'Which quark change happens in β⁺ decay?',o:['u → d','d → u','u → s','d → s'],a:0,e:'A proton (uud) becomes a neutron (udd), so one up quark becomes a down quark, emitting a W⁺.'},
+ {p:'Which quark change happens in β⁻ decay?',o:['d → u','u → d','s → u','d → s'],a:0,e:'A neutron (udd) becomes a proton (uud), so one down quark becomes an up quark, emitting a W⁻.'},
+ {p:'Which particle can never take part in an electromagnetic interaction?',o:['Electron neutrino','Positron','Proton','Electron'],a:0,e:'Neutrinos have no charge, so they cannot emit or absorb photons. They interact only by the weak interaction (and gravity).'},
+ {p:'Which conservation law rules out n → p + e⁻ + νₑ?',o:['Lepton number','Charge','Baryon number','Energy'],a:0,e:'Before: Lₑ = 0. After: e⁻ (+1) + νₑ (+1) = +2. The real decay produces an antineutrino (Lₑ = −1), giving 0.'},
+ {p:'What does a vertex on a Feynman diagram represent?',o:['A point where particles interact and quantities are conserved','The position where a particle is created from nothing','The moment a particle stops moving','The distance between two particles'],a:0,e:'Each vertex is an interaction point. Charge, baryon number and lepton number are conserved at every vertex.'},
+ {p:'In the AQA specification, what is the exchange particle of the strong nuclear force between nucleons?',o:['Pion','Kaon','Virtual photon','W⁻ boson'],a:0,e:'Pions are exchanged between nucleons. Leptons do not feel the strong force.'},
+ {p:'Why can a free proton not undergo β⁺ decay?',o:['A proton has less mass than a neutron','A proton has no down quarks','Charge would not be conserved','Protons do not feel the weak interaction'],a:0,e:'The products (n + e⁺ + νₑ) have more mass than a proton. Inside a nucleus, the binding energy change can supply the energy.'},
+ {p:'Electron capture and an electron–proton collision have the same particles in and out. How do their Feynman diagrams differ?',o:['Capture uses W⁺ from the proton; collision uses W⁻ from the electron','Capture uses a photon; collision uses a W boson','Capture uses W⁻; collision uses a pion','They are identical'],a:0,e:'In capture the proton emits a W⁺ that the electron absorbs. In the collision the electron emits a W⁻ that the proton absorbs.'}
+];
+function qBoson(I){
+  var opts=shuffle(BOS).map(function(id){return {h:'<b>'+H(id)+'</b> <small>'+P[id].n+'</small>',ok:id===I.boson};});
+  var e;
+  if(I.boson==='g')e='The particles keep their identity and are charged, so this is electromagnetic. The exchange particle is a virtual photon.';
+  else if(I.boson==='pi')e='Two nucleons interacting through the strong force exchange a pion.';
+  else e='At the left vertex '+H(I.inL)+' becomes '+H(I.outL)+'. A change of particle type means the weak interaction. Charge: '+fq(g(I.inL,'q'))+' = '+fq(g(I.outL,'q'))+' + Q, so the W has charge '+fq(P[I.boson].q)+': it is '+H(I.boson)+'.';
+  return {cfg:I,hide:'boson',p:'Which exchange particle is missing?',opts:opts,e:e};
+}
+function qMissing(I){
+  var outs=I.tpl==='scatter'?['outL','outR0']:['outL','outR0','outR1'];
+  var s=outs[Math.floor(Math.random()*outs.length)],ans=I[s];
+  var pool=shuffle(FERM.filter(function(x){return x!==ans&&x!=='mu'&&(I.lvl==='q'?(x!=='p'&&x!=='n'):P[x].k!=='quark');})).slice(0,3);pool.push(ans);
+  var opts=shuffle(pool).map(function(id){return {h:'<b>'+H(id)+'</b> <small>'+P[id].n+'</small>',ok:id===ans};});
+  var v=vertsOf(I)[s==='outL'?0:1],others=v.aft.slice();others.splice(others.indexOf(ans),1);
+  var need=function(k){return sum(v.bef,k)-sum(others,k);};
+  var e=v.nm+' vertex: '+v.bef.map(H).join(' + ')+' → '+others.map(H).join(' + ')+' + ?. Conservation gives the missing particle charge '+fq(need('q'))+', baryon number '+fq(need('B'))+' and lepton number '+fn(need('Le'))+'. That is the '+P[ans].n+' ('+H(ans)+').';
+  return {cfg:I,hide:s,p:'Which particle should replace the ?',opts:opts,e:e};
+}
+function qName(I){
+  var same=ALL.filter(function(x){return x!==I&&(x.lvl==='q')===(I.lvl==='q');});
+  var pool=shuffle(same).slice(0,3);pool.push(I);
+  var opts=shuffle(pool).map(function(x){return {h:x.name.replace(' (quark level)',''),ok:x===I};});
+  return {cfg:I,p:'Which interaction does this diagram show?',opts:opts,e:I.eq+'. '+I.facts};
+}
+function qConc(c){
+  var opts=c.o.map(function(t,i){return {h:t,ok:i===c.a};});
+  return {p:c.p,opts:shuffle(opts),e:c.e};
+}
+function newRound(){
+  var a=shuffle(INTS.filter(function(x){return !x.quark;}).concat(shuffle(INTS.filter(function(x){return x.quark;})).slice(0,3),QINTS)),b=shuffle(ALL),qs=[];
+  a=shuffle(a);
+  for(var i=0;i<3;i++)qs.push(qBoson(a[i]));
+  for(i=3;i<6;i++)qs.push(qMissing(a[i]));
+  var nm=b.filter(function(x){var k=x.base||x.id;return k!=='epc'&&k!=='ec';});
+  qs.push(qName(nm[0]),qName(nm[1]));
+  var lv=a.slice(0,6).some(function(x){return x.lvl==='q';});
+  if(!lv)qs[3]=qMissing(QINTS[Math.floor(Math.random()*QINTS.length)]);
+  shuffle(CONC).slice(0,2).forEach(function(c){qs.push(qConc(c));});
+  Q.qs=shuffle(qs);Q.i=0;Q.score=0;Q.answered=false;renderQ();
+}
+function renderQ(){
+  var z=document.getElementById('qz');
+  if(Q.i>=Q.qs.length){
+    var pc=Q.score/Q.qs.length,msg=pc>=.9?'Exam ready. Excellent work.':pc>=.7?'Strong. Review the explanations for the ones you missed.':pc>=.5?'Getting there. Try the Build challenges, then have another go.':'Spend some time in Explore, stepping through each vertex, then try again.';
+    z.innerHTML='<div class="end"><h3>Round complete</h3><div class="big">'+Q.score+' / '+Q.qs.length+'</div><p>'+msg+'</p><button class="btn" id="again">Try another round</button></div>';
+    document.getElementById('again').addEventListener('click',newRound);return;
+  }
+  var q=Q.qs[Q.i];
+  z.innerHTML='<div class="qhead"><h3 style="margin:0">Question '+(Q.i+1)+' of '+Q.qs.length+'</h3><span class="score"><span>Score <b>'+Q.score+'</b></span></span></div>'+
+    '<div class="bar"><i style="width:'+(Q.i/Q.qs.length*100)+'%"></i></div>'+
+    '<p class="qprompt">'+q.p+'</p>'+
+    (q.cfg?'<div class="qdiag"><div class="diag" id="dQ"><canvas id="cvQ" aria-label="Quiz diagram"></canvas></div></div>':'')+
+    '<div class="opts" id="opts"></div><div id="qfb" aria-live="polite"></div>';
+  var oz=document.getElementById('opts');
+  q.opts.forEach(function(o){var b=document.createElement('button');b.className='opt';b.innerHTML=o.h;b.addEventListener('click',function(){answer(b,o);});oz.appendChild(b);});
+  Q.answered=false;
+  if(q.cfg){var d=document.getElementById('dQ');roQ.disconnect();roQ.observe(d);drawQ();}
+}
+function drawQ(){var q=Q.qs[Q.i];if(!q||!q.cfg)return;var cv=document.getElementById('cvQ');if(cv)draw(cv,q.cfg,{hide:Q.answered?null:q.hide});}
+function answer(btn,o){
+  if(Q.answered)return;Q.answered=true;var q=Q.qs[Q.i];
+  var bs=document.querySelectorAll('#opts .opt');
+  bs.forEach(function(b,i){b.disabled=true;if(q.opts[i].ok)b.classList.add('right');});
+  if(o.ok)Q.score++;else btn.classList.add('wrong');
+  document.getElementById('qfb').innerHTML='<div class="fb '+(o.ok?'good':'badf')+'"><strong>'+(o.ok?'Correct.':'Not quite.')+'</strong>'+q.e+'</div><div class="row" style="margin-top:12px;justify-content:flex-end"><button class="btn" id="qn">'+(Q.i+1<Q.qs.length?'Next question →':'See results')+'</button></div>';
+  document.getElementById('qn').addEventListener('click',function(){Q.i++;renderQ();});
+  drawQ();
+}
+
+/* ---------- loop & resizing ---------- */
+var last=0;
+function loop(ts){
+  var dt=last?Math.min(.05,(ts-last)/1000):0;last=ts;
+  if(active==='explore'&&ex.playing){ex.t+=dt/3.2;if(ex.t>1.25)ex.t=0;var tt=ex.t;ex.t=Math.min(tt,1);drawEx();ex.t=tt;}
+  if(active==='build'&&B.t!=null){B.t+=dt/2.6;if(B.t>=1){B.t=null;}drawB();}
+  requestAnimationFrame(loop);
+}
+function redrawAll(){if(active==='explore')drawEx();if(active==='build')drawB();if(active==='quiz')drawQ();}
+var ro=new ResizeObserver(function(){redrawAll();});
+ro.observe(document.getElementById('dEx'));ro.observe(document.getElementById('dB'));
+var roQ=new ResizeObserver(function(){drawQ();});
+if(window.matchMedia)matchMedia('(prefers-color-scheme: dark)').addEventListener('change',redrawAll);
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(redrawAll);
+
+setPlay(ex.playing);
+renderEx();
+loadChal();
+requestAnimationFrame(loop);
+})();
+</script>
+
+</body></html>
