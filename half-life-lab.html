@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Half-Life Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Familjen+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: graph-paper lab notebook — tabbed sequence, two-column workbench cards that stack on phones */
+#hl-app{
+  --bg:#edf2f5; --surface:#ffffff; --ink:#14293b; --muted:#4c6274; --line:#cddae3;
+  --accent:#0a7d78; --accent-ink:#ffffff; --accent-soft:#d6efec;
+  --amber:#a86400; --amber-soft:#fcebcc; --rose:#b0306a; --rose-soft:#f8dbe8;
+  --paper:#fbfdfe; --grid-minor:#e1ecf1; --grid-major:#bcd2de; --decay:#d6e0e7; --chip:#e3ebf0;
+  --good:#1d7536; --good-soft:#dcf1e1; --bad:#ad2a20; --bad-soft:#fae0dd;
+  --f-display:'Familjen Grotesk','Segoe UI',system-ui,sans-serif;
+  --f-body:'Atkinson Hyperlegible',system-ui,'Segoe UI',sans-serif;
+  --f-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  font-family:var(--f-body); color:var(--ink); background:var(--bg);
+  font-size:16px; line-height:1.5; width:100%; height:100%; min-height:640px;
+  box-sizing:border-box; padding:20px 16px 32px; overflow-x:hidden;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) #hl-app{
+    --bg:#0e1920; --surface:#15232d; --ink:#e2ecf2; --muted:#9fb3c2; --line:#2a3d4a;
+    --accent:#3cc3b9; --accent-ink:#04211e; --accent-soft:#163b3a;
+    --amber:#f2aa45; --amber-soft:#3d2d14; --rose:#f27fac; --rose-soft:#43202f;
+    --paper:#111e27; --grid-minor:#1b2b36; --grid-major:#2d4555; --decay:#2a3b47; --chip:#213340;
+    --good:#66d184; --good-soft:#163222; --bad:#ff8f84; --bad-soft:#3e1d1a; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"] #hl-app{
+  --bg:#0e1920; --surface:#15232d; --ink:#e2ecf2; --muted:#9fb3c2; --line:#2a3d4a;
+  --accent:#3cc3b9; --accent-ink:#04211e; --accent-soft:#163b3a;
+  --amber:#f2aa45; --amber-soft:#3d2d14; --rose:#f27fac; --rose-soft:#43202f;
+  --paper:#111e27; --grid-minor:#1b2b36; --grid-major:#2d4555; --decay:#2a3b47; --chip:#213340;
+  --good:#66d184; --good-soft:#163222; --bad:#ff8f84; --bad-soft:#3e1d1a; color-scheme:dark;
+}
+#hl-app *,#hl-app *::before,#hl-app *::after{box-sizing:border-box}
+#hl-app [hidden]{display:none!important}
+#hl-app .hl-wrap{max-width:1140px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+#hl-app .hl-head{display:flex;gap:14px;align-items:center}
+#hl-app .hl-badge{flex:none;width:56px;height:56px;border-radius:14px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:21px}
+#hl-app .hl-badge sub{font-size:13px;vertical-align:-2px}
+#hl-app .hl-h1{font-family:var(--f-display);font-weight:700;font-size:32px;line-height:1.1;margin:0;letter-spacing:-0.01em;text-wrap:balance}
+#hl-app .hl-sub{margin:4px 0 0;color:var(--muted);font-size:15px}
+#hl-app .hl-tabs{display:flex;flex-wrap:wrap;gap:2px 4px;border-bottom:1px solid var(--line)}
+#hl-app .hl-tab{font:inherit;font-weight:700;font-size:14.5px;color:var(--muted);background:transparent;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:10px 10px 9px;cursor:pointer;display:flex;align-items:center;gap:8px;border-radius:6px 6px 0 0}
+#hl-app .hl-tab:hover{color:var(--ink);background:var(--chip)}
+#hl-app .hl-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+#hl-app .hl-tn{font-family:var(--f-mono);font-size:12px;width:22px;height:22px;border-radius:50%;display:inline-grid;place-items:center;background:var(--chip);color:var(--muted)}
+#hl-app .hl-tab[aria-selected="true"] .hl-tn{background:var(--accent);color:var(--accent-ink)}
+#hl-app :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#hl-app .hl-panel{display:flex;flex-direction:column;gap:16px}
+#hl-app .hl-cols{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+#hl-app .hl-cols>*{flex:1 1 320px;min-width:0}
+#hl-app .hl-cols>.hl-wide{flex:1.6 1 440px}
+#hl-app .hl-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+#hl-app .hl-h2{font-family:var(--f-display);font-weight:700;font-size:20px;line-height:1.2;margin:0;text-wrap:balance}
+#hl-app .hl-h3{font-family:var(--f-display);font-weight:600;font-size:16.5px;margin:0}
+#hl-app .hl-p{margin:0;max-width:68ch}
+#hl-app .hl-muted{color:var(--muted)}
+#hl-app .hl-small{font-size:14px}
+#hl-app .hl-cv{position:relative;width:100%;aspect-ratio:16/10;min-height:220px;max-width:100%}
+#hl-app .hl-cv canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block;border-radius:6px}
+#hl-app .hl-cv.hl-click canvas{cursor:crosshair}
+#hl-app .hl-ctrls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#hl-app .hl-btn{font:inherit;font-weight:700;font-size:14.5px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;line-height:1.3}
+#hl-app .hl-btn:hover{border-color:var(--accent)}
+#hl-app .hl-btn.hl-pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+#hl-app .hl-btn.hl-pri:hover{filter:brightness(1.08)}
+#hl-app .hl-btn:disabled{opacity:.45;cursor:default}
+#hl-app .hl-field{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:700;color:var(--muted)}
+#hl-app select,#hl-app .hl-in{font:inherit;font-size:15px;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:8px;padding:7px 10px}
+#hl-app .hl-in{width:120px;font-family:var(--f-mono)}
+#hl-app input[type="range"]{width:100%;accent-color:var(--accent)}
+#hl-app input[type="checkbox"]{accent-color:var(--accent);width:18px;height:18px}
+#hl-app .hl-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#hl-app .hl-stat{background:var(--chip);border-radius:10px;padding:10px 12px}
+#hl-app .hl-stat b{display:block;font-family:var(--f-mono);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
+#hl-app .hl-stat span{font-size:12.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);font-weight:700}
+#hl-app .hl-def{background:var(--accent-soft);border-color:transparent}
+#hl-app .hl-def .hl-big{font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.35;margin:0}
+#hl-app .hl-list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+#hl-app .hl-steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+#hl-app .hl-steps li{display:flex;gap:10px;counter-increment:s}
+#hl-app .hl-steps li::before{content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:var(--ink);color:var(--bg);font-family:var(--f-mono);font-size:12.5px;display:grid;place-items:center;margin-top:1px}
+#hl-app .hl-tw{overflow-x:auto;max-width:100%}
+#hl-app .hl-tbl{border-collapse:collapse;width:100%;font-size:15px}
+#hl-app .hl-tbl th{text-align:left;font-size:12.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px 10px;border-bottom:2px solid var(--line);vertical-align:bottom}
+#hl-app .hl-tbl td{padding:7px 10px;border-bottom:1px solid var(--line);font-family:var(--f-mono);font-variant-numeric:tabular-nums;transition:background .25s}
+#hl-app .hl-tbl td.hl-txt{font-family:var(--f-body)}
+#hl-app .hl-tbl td.hl-a{background:var(--amber-soft);color:var(--ink);font-weight:600}
+#hl-app .hl-tbl td.hl-b{background:var(--rose-soft);color:var(--ink);font-weight:600}
+#hl-app .hl-tbl td.hl-c{background:var(--accent-soft);font-weight:600}
+#hl-app .hl-tbl td.hl-q{color:var(--muted)}
+#hl-app .hl-explain{background:var(--chip);border-radius:10px;padding:12px 14px;min-height:76px}
+#hl-app .hl-explain p{margin:0}
+#hl-app .hl-dots{display:flex;gap:6px;align-items:center}
+#hl-app .hl-dot{width:9px;height:9px;border-radius:50%;background:var(--line)}
+#hl-app .hl-dot.on{background:var(--accent)}
+#hl-app .hl-ans{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#hl-app .hl-unit{font-weight:700;color:var(--muted)}
+#hl-app .hl-fb{border-radius:10px;padding:10px 14px;margin:0}
+#hl-app .hl-fb.good{background:var(--good-soft);color:var(--good)}
+#hl-app .hl-fb.bad{background:var(--bad-soft);color:var(--bad)}
+#hl-app .hl-fb.info{background:var(--chip);color:var(--ink)}
+#hl-app .hl-work{margin:0;padding:12px 14px 12px 32px;background:var(--chip);border-radius:10px;display:flex;flex-direction:column;gap:4px}
+#hl-app .hl-read{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#hl-app .hl-read div{border-radius:10px;padding:8px 12px;background:var(--chip)}
+#hl-app .hl-read .hl-ra{background:var(--amber-soft)}
+#hl-app .hl-read .hl-rb{background:var(--rose-soft)}
+#hl-app .hl-read .hl-rr{grid-column:1/-1;background:var(--accent-soft)}
+#hl-app .hl-read span{display:block;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;font-weight:700;color:var(--muted)}
+#hl-app .hl-read b{font-family:var(--f-mono);font-size:18px;font-weight:600;font-variant-numeric:tabular-nums}
+#hl-app .hl-mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+#hl-app .hl-q{font-size:16.5px;margin:0}
+#hl-app .hl-score{font-family:var(--f-mono);font-weight:600;background:var(--ink);color:var(--bg);border-radius:999px;padding:3px 12px;font-size:14px}
+#hl-app .hl-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+#hl-app .hl-tag{font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+#hl-app .hl-key{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--muted)}
+#hl-app .hl-key i{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:-1px;margin-right:6px}
+@media (max-width:560px){
+  #hl-app .hl-h1{font-size:26px}
+  #hl-app .hl-tab{font-size:13.5px;padding:8px 7px}
+  #hl-app .hl-card{padding:14px}
+  #hl-app .hl-stat b{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){#hl-app *{transition:none!important}}
+</style>
+<style>
+body{margin:0;background:#edf2f5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) body{background:#0e1920}}
+:root[data-theme="dark"] body{background:#0e1920}
+</style>
+
+</head>
+<body>
+<div id="hl-app">
+<div class="hl-wrap">
+  <header class="hl-head">
+    <div class="hl-badge" aria-hidden="true">T<sub>½</sub></div>
+    <div>
+      <h1 class="hl-h1">Half-Life Lab</h1>
+      <p class="hl-sub">Radioactive decay, count rates, and finding half-life from tables and graphs</p>
+    </div>
+  </header>
+
+  <nav class="hl-tabs" role="tablist" aria-label="Sections">
+    <button class="hl-tab" role="tab" id="hl-t1" aria-controls="hl-p1" aria-selected="true" data-p="hl-p1"><span class="hl-tn">1</span>Random decay</button>
+    <button class="hl-tab" role="tab" id="hl-t2" aria-controls="hl-p2" aria-selected="false" data-p="hl-p2" tabindex="-1"><span class="hl-tn">2</span>Data tables</button>
+    <button class="hl-tab" role="tab" id="hl-t3" aria-controls="hl-p3" aria-selected="false" data-p="hl-p3" tabindex="-1"><span class="hl-tn">3</span>Graph: one reading</button>
+    <button class="hl-tab" role="tab" id="hl-t4" aria-controls="hl-p4" aria-selected="false" data-p="hl-p4" tabindex="-1"><span class="hl-tn">4</span>Graph: several readings</button>
+    <button class="hl-tab" role="tab" id="hl-t5" aria-controls="hl-p5" aria-selected="false" data-p="hl-p5" tabindex="-1"><span class="hl-tn">5</span>Practise</button>
+  </nav>
+
+  <!-- 1 RANDOM DECAY -->
+  <section class="hl-panel" id="hl-p1" role="tabpanel" aria-labelledby="hl-t1">
+    <div class="hl-cols">
+      <div class="hl-card hl-wide">
+        <div>
+          <h2 class="hl-h2">A sample of unstable nuclei</h2>
+          <p class="hl-p hl-muted">Each dot is one nucleus. Press <b>Run for one half-life</b> and count how many are left.</p>
+        </div>
+        <div class="hl-cv"><canvas id="hl-nuc" aria-label="Grid of nuclei, decaying at random"></canvas></div>
+        <div class="hl-ctrls">
+          <button class="hl-btn hl-pri" id="hl-one">Run for one half-life</button>
+          <button class="hl-btn" id="hl-run">Run</button>
+          <button class="hl-btn" id="hl-reset">Reset</button>
+          <label class="hl-field" for="hl-n">Nuclei
+            <select id="hl-n"><option value="100">100</option><option value="400" selected>400</option><option value="1600">1600</option></select>
+          </label>
+        </div>
+        <div class="hl-key"><span><i style="background:var(--accent)"></i>Undecayed</span><span><i style="background:var(--decay)"></i>Decayed</span></div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-stats">
+          <div class="hl-stat"><span>Undecayed</span><b id="hl-s-u">400</b></div>
+          <div class="hl-stat"><span>Decayed</span><b id="hl-s-d">0</b></div>
+          <div class="hl-stat"><span>Half-lives</span><b id="hl-s-t">0.00</b></div>
+        </div>
+        <div class="hl-cv"><canvas id="hl-live" aria-label="Graph of undecayed nuclei against time"></canvas></div>
+        <p class="hl-p hl-small hl-muted">The dashed curve is the prediction: half left after 1 half-life, a quarter after 2, an eighth after 3. Your run wobbles around it because decay is random. The wobble is smaller with more nuclei.</p>
+      </div>
+    </div>
+    <div class="hl-cols">
+      <div class="hl-card hl-def">
+        <span class="hl-tag">Definition</span>
+        <p class="hl-big">The half-life of a radioactive isotope is the time taken for half of the undecayed nuclei in a sample to decay.</p>
+        <p class="hl-p">It is also the time taken for the <b>activity</b> (or the count rate) of a sample to fall to half of its starting value.</p>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">Key ideas</h3>
+        <ul class="hl-list">
+          <li>Decay is <b>random</b>. You cannot predict which nucleus will decay next, or when.</li>
+          <li><b>Activity</b> is the number of nuclei that decay each second, measured in becquerels. 1&nbsp;Bq = 1 decay per second.</li>
+          <li>A Geiger–Müller tube and counter measure the <b>count rate</b>, in counts per second or counts per minute.</li>
+          <li><b>Background radiation</b> adds to every reading. Subtract it before you look for halving.</li>
+          <li>The activity of a source <b>decreases</b> over time, because fewer undecayed nuclei are left.</li>
+        </ul>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">Different isotopes, different half-lives</h3>
+        <div class="hl-tw">
+          <table class="hl-tbl">
+            <thead><tr><th>Isotope</th><th>Half-life</th></tr></thead>
+            <tbody>
+              <tr><td class="hl-txt">Radon-220</td><td>56 seconds</td></tr>
+              <tr><td class="hl-txt">Technetium-99m</td><td>6 hours</td></tr>
+              <tr><td class="hl-txt">Iodine-131</td><td>8 days</td></tr>
+              <tr><td class="hl-txt">Cobalt-60</td><td>5.3 years</td></tr>
+              <tr><td class="hl-txt">Carbon-14</td><td>5700 years</td></tr>
+              <tr><td class="hl-txt">Uranium-238</td><td>4.5 billion years</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 DATA TABLES -->
+  <section class="hl-panel" id="hl-p2" role="tabpanel" aria-labelledby="hl-t2" hidden>
+    <div class="hl-cols">
+      <div class="hl-card">
+        <div class="hl-row"><h2 class="hl-h2">Worked example</h2><div class="hl-dots" id="hl-wdots"></div></div>
+        <div class="hl-tw"><table class="hl-tbl" id="hl-wtbl"></table></div>
+        <div class="hl-explain" id="hl-wtxt"></div>
+        <div class="hl-ctrls">
+          <button class="hl-btn" id="hl-wback">Back</button>
+          <button class="hl-btn hl-pri" id="hl-wnext">Next step</button>
+        </div>
+      </div>
+      <div class="hl-card">
+        <div class="hl-row"><h2 class="hl-h2">Your turn</h2>
+          <label class="hl-field" for="hl-tb"><input type="checkbox" id="hl-tb" checked>Include background</label>
+        </div>
+        <p class="hl-p" id="hl-tq"></p>
+        <div class="hl-tw"><table class="hl-tbl" id="hl-ttbl"></table></div>
+        <div class="hl-ans">
+          <label class="hl-field" for="hl-tans">Half-life =</label>
+          <input class="hl-in" id="hl-tans" inputmode="decimal" autocomplete="off">
+          <span class="hl-unit" id="hl-tunit">min</span>
+          <button class="hl-btn hl-pri" id="hl-tcheck">Check</button>
+          <button class="hl-btn" id="hl-tshow">Show method</button>
+          <button class="hl-btn" id="hl-tnew">New table</button>
+        </div>
+        <p class="hl-fb" id="hl-tfb" hidden></p>
+      </div>
+    </div>
+    <div class="hl-cols">
+      <div class="hl-card">
+        <h3 class="hl-h3">Method for a table of count rates</h3>
+        <ol class="hl-steps">
+          <li><span>If a background count rate is given, subtract it from every reading.</span></li>
+          <li><span>Pick a corrected count rate in the table, usually the first one.</span></li>
+          <li><span>Find the time when the corrected count rate has fallen to half of that value.</span></li>
+          <li><span>Half-life = the time between those two readings. Check it with another pair if you can.</span></li>
+        </ol>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">Counting half-lives</h3>
+        <p class="hl-p">If the count rate halves several times, count the halvings. For 1600 → 800 → 400 → 200 in 12 hours, that is 3 half-lives, so the half-life is 12 ÷ 3 = 4 hours.</p>
+        <p class="hl-p hl-muted hl-small">Real readings jump about because decay is random. That is why plotting a graph and drawing a smooth curve usually gives a better value.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 GRAPH: ONE READING -->
+  <section class="hl-panel" id="hl-p3" role="tabpanel" aria-labelledby="hl-t3" hidden>
+    <div class="hl-cols">
+      <div class="hl-card hl-wide">
+        <div>
+          <h2 class="hl-h2">Half-life from one reading</h2>
+          <p class="hl-p hl-muted">Drag the slider to choose any starting count rate. The half-life comes out the same wherever you start.</p>
+        </div>
+        <div class="hl-cv"><canvas id="hl-g3" aria-label="Decay curve with construction lines for one half-life reading"></canvas></div>
+        <label class="hl-field" for="hl-c1" style="flex-direction:column;align-items:stretch;gap:4px">
+          <span>Starting count rate: <span class="hl-mono" id="hl-c1v">800</span> counts/min</span>
+          <input type="range" id="hl-c1" min="300" max="800" step="10" value="800">
+        </label>
+        <div class="hl-ctrls">
+          <button class="hl-btn hl-pri" id="hl-g3anim">Draw the lines</button>
+          <button class="hl-btn" id="hl-g3new">New source</button>
+        </div>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">Steps</h3>
+        <ol class="hl-steps">
+          <li><span>Choose a count rate on the vertical axis. The first value on the curve is the easiest.</span></li>
+          <li><span>Draw a line across to the curve, then down to the time axis. Read the time <b>t₁</b>.</span></li>
+          <li><span>Halve the count rate. Draw across and down again. Read the time <b>t₂</b>.</span></li>
+          <li><span>Half-life = t₂ − t₁</span></li>
+        </ol>
+        <div class="hl-read">
+          <div class="hl-ra"><span>Count rate</span><b id="hl-r3a">800</b></div>
+          <div class="hl-ra"><span>Time t₁</span><b id="hl-r3t1">0.0</b></div>
+          <div class="hl-rb"><span>Half of it</span><b id="hl-r3b">400</b></div>
+          <div class="hl-rb"><span>Time t₂</span><b id="hl-r3t2">0.0</b></div>
+          <div class="hl-rr"><span>Half-life = t₂ − t₁</span><b id="hl-r3r">0.0</b></div>
+        </div>
+        <p class="hl-p hl-small hl-muted">Times are read to the nearest half of a small square, as you would with a ruler and pencil.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 GRAPH: SEVERAL READINGS -->
+  <section class="hl-panel" id="hl-p4" role="tabpanel" aria-labelledby="hl-t4" hidden>
+    <div class="hl-cols">
+      <div class="hl-card hl-wide">
+        <div>
+          <h2 class="hl-h2">Half-life from several readings</h2>
+          <p class="hl-p hl-muted">Keep halving the count rate and read the time each time. Then take the mean of the half-life values.</p>
+        </div>
+        <div class="hl-cv"><canvas id="hl-g4" aria-label="Decay curve with several halvings marked"></canvas></div>
+        <div class="hl-ctrls">
+          <button class="hl-btn hl-pri" id="hl-g4anim">Draw the lines</button>
+          <button class="hl-btn" id="hl-g4new">New graph</button>
+          <label class="hl-field" for="hl-g4n">Halvings
+            <select id="hl-g4n"><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option></select>
+          </label>
+          <label class="hl-field" for="hl-g4pts"><input type="checkbox" id="hl-g4pts" checked>Show measured points</label>
+        </div>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">Readings from the curve</h3>
+        <div class="hl-tw"><table class="hl-tbl" id="hl-g4tbl"></table></div>
+        <div class="hl-explain" id="hl-g4sum"></div>
+        <p class="hl-p hl-small hl-muted" id="hl-g4true"></p>
+      </div>
+    </div>
+    <div class="hl-cols">
+      <div class="hl-card">
+        <h3 class="hl-h3">Why take several readings?</h3>
+        <ul class="hl-list">
+          <li>Each reading from a graph has a small reading error. Averaging several values makes the result more reliable.</li>
+          <li>Measured points scatter because decay is random. Draw a smooth curve of best fit through them and take your readings from the <b>curve</b>, not from single points.</li>
+          <li>Each time interval should be about the same. If one is very different, check that reading again.</li>
+        </ul>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">A quick shortcut</h3>
+        <p class="hl-p">The mean of the intervals is the same as the total time divided by the number of half-lives. For 960 → 120 counts/min, that is 3 halvings. If it takes 7.2 hours, the half-life is 7.2 ÷ 3 = 2.4 hours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 PRACTISE -->
+  <section class="hl-panel" id="hl-p5" role="tabpanel" aria-labelledby="hl-t5" hidden>
+    <div class="hl-row"><h2 class="hl-h2">Practise</h2><span class="hl-score" id="hl-score">Score 0 / 0</span></div>
+    <div class="hl-cols">
+      <div class="hl-card hl-wide">
+        <h3 class="hl-h3">Read the half-life from the graph</h3>
+        <p class="hl-p hl-muted hl-small">Tap the graph to draw guide lines to both axes. Take more than one reading for the best answer.</p>
+        <div class="hl-cv hl-click"><canvas id="hl-g5" aria-label="Practice decay graph. Tap to place guide lines."></canvas></div>
+        <div class="hl-ans">
+          <label class="hl-field" for="hl-g5ans">Half-life =</label>
+          <input class="hl-in" id="hl-g5ans" inputmode="decimal" autocomplete="off">
+          <span class="hl-unit" id="hl-g5unit">min</span>
+          <button class="hl-btn hl-pri" id="hl-g5check">Check</button>
+          <button class="hl-btn" id="hl-g5show">Show method</button>
+          <button class="hl-btn" id="hl-g5new">New graph</button>
+        </div>
+        <p class="hl-fb" id="hl-g5fb" hidden></p>
+      </div>
+      <div class="hl-card">
+        <h3 class="hl-h3">Calculations</h3>
+        <p class="hl-q" id="hl-cq"></p>
+        <div class="hl-ans">
+          <input class="hl-in" id="hl-cans" inputmode="decimal" autocomplete="off" aria-label="Your answer">
+          <span class="hl-unit" id="hl-cunit"></span>
+          <button class="hl-btn hl-pri" id="hl-ccheck">Check</button>
+        </div>
+        <div class="hl-ctrls">
+          <button class="hl-btn" id="hl-cshow">Show working</button>
+          <button class="hl-btn" id="hl-cnew">Next question</button>
+        </div>
+        <p class="hl-fb" id="hl-cfb" hidden></p>
+        <ol class="hl-work" id="hl-cwork" hidden></ol>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('hl-app');
+function $(id){return document.getElementById(id);}
+var REDUCE=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var MONO="'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace";
+var BODY="'Atkinson Hyperlegible', system-ui, 'Segoe UI', sans-serif";
+function tok(n){return getComputedStyle(root).getPropertyValue(n).trim()||'#888';}
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function clamp(x,a,b){return Math.max(a,Math.min(b,x));}
+function dps(step){return Math.max(0,-Math.floor(Math.log10(step)+1e-9));}
+function num(x,dp){var s=(Math.round(x*Math.pow(10,dp))/Math.pow(10,dp)).toFixed(dp);return s==='-0'?'0':s;}
+function nf(x){x=+(+x).toFixed(4);return Number.isInteger(x)?x.toLocaleString('en-GB'):String(x);}
+function niceStep(range,n){var raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<1.5?1:m<3?2:m<7?5:10)*p;}
+
+/* ---------- canvas views ---------- */
+var views=[];
+function view(cv,draw){
+  var v={cv:cv,ctx:cv.getContext('2d'),w:0,h:0,draw:draw,map:null};
+  v.redraw=function(){if(v.w<2)return;var d=window.devicePixelRatio||1;v.ctx.setTransform(d,0,0,d,0,0);v.draw(v);};
+  var size=function(){var r=cv.parentNode.getBoundingClientRect();if(r.width<2||r.height<2){v.w=0;return;}
+    var d=window.devicePixelRatio||1;v.w=r.width;v.h=r.height;cv.width=Math.round(r.width*d);cv.height=Math.round(r.height*d);v.redraw();};
+  if(window.ResizeObserver){new ResizeObserver(size).observe(cv.parentNode);}else{window.addEventListener('resize',size);setTimeout(size,50);}
+  v.size=size;views.push(v);return v;
+}
+function redrawAll(){views.forEach(function(v){v.redraw();});}
+if(window.matchMedia){var mq=window.matchMedia('(prefers-color-scheme: dark)');if(mq.addEventListener)mq.addEventListener('change',redrawAll);}
+new MutationObserver(redrawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class']});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(redrawAll);
+
+function animate(fn,dur,done){
+  if(REDUCE){fn(1);if(done)done();return;}
+  var t0=null;
+  function st(ts){if(t0===null)t0=ts;var f=clamp((ts-t0)/dur,0,1);fn(f);if(f<1)requestAnimationFrame(st);else if(done)done();}
+  requestAnimationFrame(st);
+}
+
+/* label with background box */
+function tag(ctx,text,x,y,col,align,base,bg){
+  ctx.font='600 12px '+MONO;ctx.textAlign=align||'left';ctx.textBaseline=base||'bottom';
+  var w=ctx.measureText(text).width,h=15;
+  var bx=align==='center'?x-w/2:align==='right'?x-w:x;
+  var by=base==='top'?y:base==='middle'?y-h/2:y-h+2;
+  ctx.fillStyle=bg;ctx.fillRect(bx-3,by-1,w+6,h);
+  ctx.fillStyle=col;ctx.fillText(text,x,y);
+}
+
+/* ---------- generic graph ---------- */
+function plot(v,g){
+  var ctx=v.ctx,w=v.w,h=v.h;ctx.clearRect(0,0,w,h);
+  var C={ink:tok('--ink'),muted:tok('--muted'),paper:tok('--paper'),gmin:tok('--grid-minor'),gmaj:tok('--grid-major'),accent:tok('--accent')};
+  var small=w<480;
+  var L=small?52:64,R=12,T=12,B=small?40:46;
+  var pw=w-L-R,ph=h-T-B;
+  function X(t){return L+t/g.tMax*pw;} function Y(c){return T+ph-c/g.cMax*ph;}
+  v.map={L:L,T:T,pw:pw,ph:ph,X:X,Y:Y,g:g};
+  ctx.fillStyle=C.paper;ctx.fillRect(L,T,pw,ph);
+  var ts=g.tStep,cs=g.cStep,tm=ts/5,cm=cs/5,i,x,y;
+  function grid(st,sc,col){ctx.strokeStyle=col;ctx.lineWidth=1;ctx.beginPath();
+    for(i=1;i*st<=g.tMax+1e-9;i++){x=Math.round(X(i*st))+.5;ctx.moveTo(x,T);ctx.lineTo(x,T+ph);}
+    for(i=1;i*sc<=g.cMax+1e-9;i++){y=Math.round(Y(i*sc))+.5;ctx.moveTo(L,y);ctx.lineTo(L+pw,y);}ctx.stroke();}
+  if(X(tm)-X(0)>=3.5)grid(tm,cm,C.gmin);
+  grid(ts,cs,C.gmaj);
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,T+ph);ctx.lineTo(L+pw,T+ph);ctx.stroke();
+  ctx.fillStyle=C.muted;ctx.font=(small?11:12)+'px '+MONO;
+  var tdp=dps(ts),cdp=dps(cs),te=(X(ts)-X(0))<34?2:1,ce=(Y(0)-Y(cs))<18?2:1;
+  ctx.textAlign='center';ctx.textBaseline='top';
+  for(i=0;i*ts<=g.tMax+1e-9;i++){if(i%te)continue;ctx.fillText(num(i*ts,tdp),X(i*ts),T+ph+5);}
+  ctx.textAlign='right';ctx.textBaseline='middle';
+  for(i=0;i*cs<=g.cMax+1e-9;i++){if(i%ce)continue;ctx.fillText(nf(+num(i*cs,cdp)),L-6,Y(i*cs));}
+  ctx.fillStyle=C.ink;ctx.font='700 '+(small?11.5:13)+'px '+BODY;ctx.textAlign='center';ctx.textBaseline='bottom';
+  ctx.fillText(g.xLabel,L+pw/2,h-2);
+  ctx.save();ctx.translate(3,T+ph/2);ctx.rotate(-Math.PI/2);ctx.textBaseline='top';ctx.fillText(g.yLabel,0,0);ctx.restore();
+
+  ctx.save();ctx.beginPath();ctx.rect(L,T,pw,ph);ctx.clip();
+  (g.curves||[]).forEach(function(cv){
+    ctx.strokeStyle=cv.col||C.accent;ctx.lineWidth=cv.w||2.5;ctx.setLineDash(cv.dash||[]);ctx.beginPath();
+    for(var k=0;k<=320;k++){var t=g.tMax*k/320,c=cv.f(t);if(k)ctx.lineTo(X(t),Y(c));else ctx.moveTo(X(t),Y(c));}
+    ctx.stroke();ctx.setLineDash([]);
+  });
+  (g.series||[]).forEach(function(s){
+    if(s.pts.length<2)return;ctx.strokeStyle=s.col;ctx.lineWidth=s.w||2.2;ctx.beginPath();
+    s.pts.forEach(function(p,k){if(k)ctx.lineTo(X(p.t),Y(p.c));else ctx.moveTo(X(p.t),Y(p.c));});ctx.stroke();
+  });
+  if(g.points){ctx.strokeStyle=C.ink;ctx.lineWidth=1.8;
+    g.points.forEach(function(p){var px=X(p.t),py=Y(p.c);ctx.beginPath();ctx.moveTo(px-4,py-4);ctx.lineTo(px+4,py+4);ctx.moveTo(px+4,py-4);ctx.lineTo(px-4,py+4);ctx.stroke();});}
+  ctx.restore();
+
+  if(g.marker){var mx=X(g.marker.t),my=Y(g.marker.c);ctx.strokeStyle=C.ink;ctx.lineWidth=1.3;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.moveTo(L,my);ctx.lineTo(mx,my);ctx.lineTo(mx,T+ph);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(mx,my,3.5,0,Math.PI*2);ctx.fill();}
+
+  var rd=g.readings||[],P=g.P==null?rd.length:g.P,yb=T+ph;
+  rd.forEach(function(r,k){
+    var f=clamp(P-k,0,1);if(f<=0)return;
+    var x1=X(r.t),y1=Y(r.c),hl=x1-L,vl=yb-y1,d=f*(hl+vl);
+    ctx.strokeStyle=r.col;ctx.lineWidth=1.8;ctx.setLineDash([7,4]);ctx.beginPath();ctx.moveTo(L,y1);
+    ctx.lineTo(L+Math.min(d,hl),y1);if(d>hl)ctx.lineTo(x1,y1+(d-hl));ctx.stroke();ctx.setLineDash([]);
+    if(d>=hl){ctx.fillStyle=r.col;ctx.beginPath();ctx.arc(x1,y1,4.5,0,Math.PI*2);ctx.fill();}
+    if(f>=1){
+      tag(ctx,nf(r.c),L+5,y1-3,r.col,'left','bottom',C.paper);
+      tag(ctx,r.tl,x1+4,yb-4,r.col,'left','bottom',C.paper);
+    }
+  });
+  if(g.intervals){
+    for(var k=1;k<rd.length;k++){
+      if(P-k<1)continue;
+      var a=X(rd[k-1].t),b=X(rd[k].t),ay=yb-30-(k%2)*18;
+      ctx.strokeStyle=C.ink;ctx.fillStyle=C.ink;ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(a+2,ay);ctx.lineTo(b-2,ay);ctx.stroke();
+      [[a+2,1],[b-2,-1]].forEach(function(q){ctx.beginPath();ctx.moveTo(q[0],ay);ctx.lineTo(q[0]+6*q[1],ay-4);ctx.lineTo(q[0]+6*q[1],ay+4);ctx.closePath();ctx.fill();});
+      if(b-a>26)tag(ctx,rd[k].il,(a+b)/2,ay-3,C.ink,'center','bottom',C.paper);
+    }
+  }
+}
+
+function makeGraph(C0,T,u,n,yLabel){
+  var tRaw=(n+1.3)*T,tStep=niceStep(tRaw,6),tMax=Math.ceil(tRaw/tStep-1e-9)*tStep;
+  var cRaw=C0*1.05,cStep=niceStep(cRaw,5),cMax=Math.ceil(cRaw/cStep-1e-9)*cStep;
+  return {C0:C0,T:T,u:u,n:n,tStep:tStep,tMax:tMax,cStep:cStep,cMax:cMax,prec:tStep/10,
+    xLabel:'Time ('+u+')',yLabel:yLabel||'Count rate (counts/min)',
+    curves:[{f:function(t){return C0*Math.pow(.5,t/T);}}]};
+}
+function readingsFor(g,n){
+  var dp=dps(g.prec),out=[],cols=[tok('--amber'),tok('--rose')];
+  for(var i=0;i<=n;i++){
+    var tr=i?Math.round(i*g.T/g.prec)*g.prec:0;
+    out.push({c:g.C0/Math.pow(2,i),t:i*g.T,tr:tr,tl:num(tr,dp),col:cols[i%2]});
+  }
+  for(i=1;i<=n;i++)out[i].il=num(out[i].tr-out[i-1].tr,dp);
+  return out;
+}
+
+/* ---------- tabs ---------- */
+var tabs=[].slice.call(root.querySelectorAll('.hl-tab'));
+function showTab(btn,focus){
+  tabs.forEach(function(b){var on=b===btn;b.setAttribute('aria-selected',on);b.tabIndex=on?0:-1;$(b.dataset.p).hidden=!on;});
+  if(focus)btn.focus();
+  views.forEach(function(v){v.size();});
+  try{localStorage.setItem('hl-tab',btn.id);}catch(e){}
+}
+tabs.forEach(function(b,i){
+  b.addEventListener('click',function(){showTab(b);});
+  b.addEventListener('keydown',function(e){var j=null;if(e.key==='ArrowRight')j=(i+1)%tabs.length;if(e.key==='ArrowLeft')j=(i-1+tabs.length)%tabs.length;if(j!==null){e.preventDefault();showTab(tabs[j],true);}});
+});
+
+/* ---------- 1. decay simulation ---------- */
+var SEC_PER_HL=2.6,HL_MAX=6;
+var sim={N:400,nuc:[],t:0,alive:400,running:false,target:null,last:0,hist:[]};
+var vN=view($('hl-nuc'),drawNuc),vL=view($('hl-live'),drawLive);
+function simReset(){
+  stopSim();sim.N=+$('hl-n').value;sim.nuc=[];
+  for(var i=0;i<sim.N;i++)sim.nuc.push({d:false,at:-1e9,jx:Math.random()-.5,jy:Math.random()-.5});
+  sim.t=0;sim.alive=sim.N;sim.hist=[{t:0,c:sim.N}];updStats();vN.redraw();vL.redraw();
+}
+function updStats(){$('hl-s-u').textContent=sim.alive;$('hl-s-d').textContent=sim.N-sim.alive;$('hl-s-t').textContent=sim.t.toFixed(2);}
+function stopSim(){sim.running=false;sim.target=null;$('hl-run').textContent='Run';}
+function startSim(target){
+  if(sim.t>=HL_MAX-1e-6||sim.alive===0)simReset();
+  sim.target=target==null?null:Math.min(HL_MAX,target);
+  sim.running=true;$('hl-run').textContent='Pause';sim.last=performance.now();requestAnimationFrame(frame);
+}
+function frame(ts){
+  if(!sim.running)return;
+  var dt=Math.min(.05,Math.max(0,(ts-sim.last)/1000));sim.last=ts;
+  var dh=dt/SEC_PER_HL,end=sim.target==null?HL_MAX:sim.target;
+  if(sim.t+dh>=end)dh=end-sim.t;
+  var p=1-Math.pow(2,-dh);
+  for(var i=0;i<sim.N;i++){var n=sim.nuc[i];if(!n.d&&Math.random()<p){n.d=true;n.at=ts;sim.alive--;}}
+  sim.t+=dh;sim.hist.push({t:sim.t,c:sim.alive});
+  if(sim.t>=end-1e-9||sim.alive===0){sim.t=Math.round(sim.t*1e6)/1e6;stopSim();}
+  updStats();vN.redraw();vL.redraw();
+  if(sim.running)requestAnimationFrame(frame);
+}
+function drawNuc(v){
+  var ctx=v.ctx,w=v.w,h=v.h;ctx.clearRect(0,0,w,h);
+  ctx.fillStyle=tok('--paper');ctx.fillRect(0,0,w,h);
+  var N=sim.N,cols=Math.ceil(Math.sqrt(N*w/h)),rows=Math.ceil(N/cols),cell=Math.min(w/cols,h/rows);
+  var ox=(w-cols*cell)/2,oy=(h-rows*cell)/2,r=cell*.33,now=performance.now();
+  var cA=tok('--accent'),cD=tok('--decay'),cF=tok('--amber');
+  for(var i=0;i<N;i++){
+    var n=sim.nuc[i],x=ox+(i%cols+.5+n.jx*.18)*cell,y=oy+(Math.floor(i/cols)+.5+n.jy*.18)*cell;
+    ctx.fillStyle=n.d?cD:cA;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();
+    var age=now-n.at;
+    if(n.d&&age<420){ctx.strokeStyle=cF;ctx.globalAlpha=1-age/420;ctx.lineWidth=Math.max(1.2,r*.35);ctx.beginPath();ctx.arc(x,y,r*(1+age/300),0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
+  }
+}
+function drawLive(v){
+  var N=sim.N;
+  plot(v,{tMax:6,tStep:1,cMax:N,cStep:N/4,xLabel:'Time (half-lives)',yLabel:'Undecayed nuclei',
+    curves:[{f:function(t){return N*Math.pow(.5,t);},col:tok('--muted'),w:1.6,dash:[6,5]}],
+    series:[{pts:sim.hist,col:tok('--accent'),w:2.6}]});
+}
+$('hl-run').addEventListener('click',function(){if(sim.running)stopSim();else startSim(null);});
+$('hl-one').addEventListener('click',function(){if(sim.t>=HL_MAX-1e-6)simReset();startSim(Math.floor(sim.t+1e-6)+1);});
+$('hl-reset').addEventListener('click',simReset);
+$('hl-n').addEventListener('change',simReset);
+simReset();
+
+/* ---------- 2. tables: worked example ---------- */
+var W={t:[0,2,4,6,8,10],c:[960,679,480,339,240,170],B:30,step:0};
+var WS=[
+  {txt:'A GM tube is placed near a radioactive source and the count rate is measured every 2 minutes. The background count rate is <b>30 counts/min</b>. Find the half-life.',corr:false,hi:[]},
+  {txt:'<b>Step 1.</b> Subtract the background from every measured reading. For example, 990 − 30 = 960. This corrected count rate comes from the source alone.',corr:true,hi:[[0,2,'c'],[1,2,'c'],[2,2,'c'],[3,2,'c'],[4,2,'c'],[5,2,'c']]},
+  {txt:'<b>Step 2.</b> Start with the first corrected reading, 960 counts/min. Half of 960 is <b>480 counts/min</b>.',corr:true,hi:[[0,2,'a'],[2,2,'b']]},
+  {txt:'<b>Step 3.</b> Read the times for these two values: 0 min and 4 min. Half-life = 4 − 0 = <b>4 minutes</b>.',corr:true,hi:[[0,0,'a'],[0,2,'a'],[2,0,'b'],[2,2,'b']]},
+  {txt:'<b>Check.</b> 480 → 240 counts/min takes from 4 min to 8 min. That is 4 minutes again, so the half-life is consistent.',corr:true,hi:[[2,0,'a'],[2,2,'a'],[4,0,'b'],[4,2,'b']]},
+  {txt:'<b>Another way.</b> 960 → 480 → 240 is two half-lives, and it takes 8 minutes. Half-life = 8 ÷ 2 = <b>4 minutes</b>. Notice that halving the <i>measured</i> 990 would give the wrong answer.',corr:true,hi:[[0,2,'a'],[2,2,'b'],[4,2,'a'],[0,0,'a'],[4,0,'a']]}
+];
+function renderW(){
+  var s=WS[W.step],hi={};s.hi.forEach(function(h){hi[h[0]+'_'+h[1]]=h[2];});
+  var html='<thead><tr><th>Time (min)</th><th>Measured count rate (counts/min)</th><th>Corrected count rate (counts/min)</th></tr></thead><tbody>';
+  for(var i=0;i<W.t.length;i++){
+    var cells=[W.t[i],W.c[i]+W.B,s.corr?W.c[i]:'?'];
+    html+='<tr>'+cells.map(function(v,j){var cl=hi[i+'_'+j];var k=cl?'hl-'+cl:(j===2&&!s.corr?'hl-q':'');return '<td class="'+k+'">'+v+'</td>';}).join('')+'</tr>';
+  }
+  $('hl-wtbl').innerHTML=html+'</tbody>';
+  $('hl-wtxt').innerHTML='<p>'+s.txt+'</p>';
+  $('hl-wdots').innerHTML=WS.map(function(_,i){return '<span class="hl-dot'+(i<=W.step?' on':'')+'"></span>';}).join('');
+  $('hl-wback').disabled=W.step===0;
+  $('hl-wnext').textContent=W.step===WS.length-1?'Start again':'Next step';
+}
+$('hl-wnext').addEventListener('click',function(){W.step=W.step===WS.length-1?0:W.step+1;renderW();});
+$('hl-wback').addEventListener('click',function(){if(W.step>0){W.step--;renderW();}});
+renderW();
+
+/* ---------- 2. tables: your turn ---------- */
+var TT=null;
+function genTable(){
+  var o=rnd([{T:4,u:'min',k:2},{T:2,u:'min',k:1},{T:30,u:'s',k:2},{T:20,u:'s',k:1},{T:6,u:'hours',k:2},{T:8,u:'days',k:2},{T:3,u:'hours',k:1},{T:15,u:'s',k:1},{T:12,u:'years',k:2},{T:10,u:'min',k:2}]);
+  var C0=rnd([640,800,960,1200,1280,1600,2400,3200]),bg=$('hl-tb').checked?rnd([18,20,24,25,30,35,40]):0;
+  var step=o.T/o.k,rows=o.k===2?7:6,t=[],c=[];
+  for(var i=0;i<rows;i++){t.push(+(i*step).toFixed(3));c.push(Math.round(C0*Math.pow(.5,i*step/o.T)));}
+  TT={T:o.T,u:o.u,k:o.k,t:t,c:c,bg:bg,done:false,show:false};
+  $('hl-tq').innerHTML='The count rate from a radioactive source was measured every '+nf(step)+' '+o.u+'.'+(bg?' The background count rate is <b>'+bg+' counts/min</b>.':' The readings have already been corrected for background radiation.')+' Use the table to find the half-life.';
+  $('hl-tunit').textContent=o.u;$('hl-tans').value='';$('hl-tfb').hidden=true;renderT();
+}
+function renderT(){
+  var s=TT,html='<thead><tr><th>Time ('+s.u+')</th><th>'+(s.bg?'Measured':'Corrected')+' count rate (counts/min)</th>'+(s.show&&s.bg?'<th>Corrected (counts/min)</th>':'')+'</tr></thead><tbody>';
+  for(var i=0;i<s.t.length;i++){
+    var cl=s.show?(i===0?'hl-a':i===s.k?'hl-b':i===2*s.k?'hl-a':''):'';
+    html+='<tr><td class="'+cl+'">'+nf(s.t[i])+'</td><td class="'+(s.bg&&s.show?'':cl)+'">'+(s.c[i]+s.bg)+'</td>'+(s.show&&s.bg?'<td class="'+cl+'">'+s.c[i]+'</td>':'')+'</tr>';
+  }
+  $('hl-ttbl').innerHTML=html+'</tbody>';
+}
+function tMethod(){
+  var s=TT,c0=s.c[0],c1=s.c[s.k];
+  return (s.bg?'Subtract the background: '+(c0+s.bg)+' − '+s.bg+' = '+c0+' counts/min. ':'')+
+    'Half of '+c0+' is '+c1+' counts/min, reached at '+nf(s.t[s.k])+' '+s.u+'. Half-life = '+nf(s.t[s.k])+' − 0 = <b>'+nf(s.T)+' '+s.u+'</b>.';
+}
+$('hl-tcheck').addEventListener('click',function(){
+  var a=parseAns($('hl-tans').value),fb=$('hl-tfb');fb.hidden=false;
+  if(isNaN(a)){fb.className='hl-fb info';fb.textContent='Type a number for the half-life.';return;}
+  if(Math.abs(a-TT.T)<=TT.T*0.01){fb.className='hl-fb good';fb.innerHTML='Correct. '+tMethod();TT.show=true;renderT();}
+  else{
+    var msg='Not quite. ';
+    if(TT.bg)msg+='Did you subtract the background count rate of '+TT.bg+' counts/min first? ';
+    msg+='Find the time for the corrected count rate to fall from '+TT.c[0]+' to half of that value.';
+    fb.className='hl-fb bad';fb.textContent=msg;
+  }
+});
+$('hl-tshow').addEventListener('click',function(){TT.show=true;renderT();var fb=$('hl-tfb');fb.hidden=false;fb.className='hl-fb info';fb.innerHTML=tMethod();});
+$('hl-tnew').addEventListener('click',genTable);
+$('hl-tb').addEventListener('change',genTable);
+$('hl-tans').addEventListener('keydown',function(e){if(e.key==='Enter')$('hl-tcheck').click();});
+genTable();
+
+/* ---------- 3. graph: one reading ---------- */
+var G3;
+function newG3(){
+  var prev=G3?G3.T:0,T;do{T=rnd([1.8,2.4,2.8,3.2,3.6,4.4]);}while(T===prev);
+  G3=makeGraph(800,T,'min',2.4,'Corrected count rate (counts/min)');G3.intervals=true;G3.P=2;
+  upd3();
+}
+function upd3(){
+  var C1=+$('hl-c1').value,g=G3,dp=dps(g.prec),cA=tok('--amber'),cB=tok('--rose');
+  var t1=g.T*Math.log2(g.C0/C1),t2=t1+g.T,r1=Math.round(t1/g.prec)*g.prec,r2=Math.round(t2/g.prec)*g.prec;
+  g.readings=[{c:C1,t:t1,tl:'t₁ = '+num(r1,dp),col:cA},{c:C1/2,t:t2,tl:'t₂ = '+num(r2,dp),col:cB,il:num(r2-r1,dp)}];
+  $('hl-c1v').textContent=C1;$('hl-r3a').textContent=C1+' counts/min';$('hl-r3b').textContent=(C1/2)+' counts/min';
+  $('hl-r3t1').textContent=num(r1,dp)+' min';$('hl-r3t2').textContent=num(r2,dp)+' min';
+  $('hl-r3r').textContent=num(r2,dp)+' − '+num(r1,dp)+' = '+num(r2-r1,dp)+' min';
+  v3.redraw();
+}
+var v3=view($('hl-g3'),function(v){if(G3)plot(v,G3);});
+$('hl-c1').addEventListener('input',function(){G3.P=2;upd3();});
+$('hl-g3anim').addEventListener('click',function(){animate(function(f){G3.P=f*2;v3.redraw();},2600);});
+$('hl-g3new').addEventListener('click',function(){newG3();animate(function(f){G3.P=f*2;v3.redraw();},2600);});
+newG3();
+
+/* ---------- 4. graph: several readings ---------- */
+var SRC=[{T:2.35,u:'hours'},{T:1.65,u:'min'},{T:6.3,u:'days'},{T:3.8,u:'min'},{T:27,u:'s'},{T:12.6,u:'years'},{T:4.6,u:'hours'},{T:43,u:'s'}];
+var G4,src4;
+function newG4(keep){
+  if(!keep){var prev=src4;do{src4=rnd(SRC);}while(src4===prev);src4.C0=rnd([960,800,1200,1600,640]);}
+  var n=+$('hl-g4n').value;
+  G4=makeGraph(src4.C0,src4.T,src4.u,n,'Corrected count rate (counts/min)');G4.intervals=true;
+  var pts=[],dt=G4.tStep/2;
+  for(var t=0;t<=G4.tMax+1e-9;t+=dt){pts.push({t:t,c:src4.C0*Math.pow(.5,t/src4.T)*(1+(Math.random()-.5)*.09)});}
+  G4.allPts=pts;G4.points=$('hl-g4pts').checked?pts:null;
+  G4.readings=readingsFor(G4,n);G4.P=G4.readings.length;
+  render4();v4.redraw();
+}
+function render4(){
+  var r=G4.readings,u=G4.u,n=r.length-1,dp=dps(G4.prec);
+  var html='<thead><tr><th>Count rate (counts/min)</th><th>Time read ('+u+')</th><th>Interval ('+u+')</th></tr></thead><tbody>';
+  r.forEach(function(x,i){var cl=i%2?'hl-b':'hl-a';html+='<tr><td class="'+cl+'">'+nf(x.c)+'</td><td>'+x.tl+'</td><td>'+(i?x.il:'—')+'</td></tr>';});
+  $('hl-g4tbl').innerHTML=html+'</tbody>';
+  var ivs=r.slice(1).map(function(x){return x.il;}),total=r[n].tr,mean=total/n;
+  $('hl-g4sum').innerHTML='<p>Mean half-life = ('+ivs.join(' + ')+') ÷ '+n+' = <b>'+num(mean,Math.min(dp+1,3))+' '+u+'</b></p><p class="hl-small hl-muted" style="margin-top:6px">Same as total time ÷ number of half-lives: '+num(total,dp)+' ÷ '+n+'</p>';
+  $('hl-g4true').textContent='Half-life used to draw this curve: '+nf(G4.T)+' '+u+'. The mean is usually closer to it than a single reading.';
+}
+var v4=view($('hl-g4'),function(v){if(G4)plot(v,G4);});
+function anim4(){var n=G4.readings.length;animate(function(f){G4.P=f*n;v4.redraw();},900*n);}
+$('hl-g4anim').addEventListener('click',anim4);
+$('hl-g4new').addEventListener('click',function(){newG4(false);anim4();});
+$('hl-g4n').addEventListener('change',function(){newG4(true);anim4();});
+$('hl-g4pts').addEventListener('change',function(){G4.points=this.checked?G4.allPts:null;v4.redraw();});
+newG4(false);
+
+/* ---------- 5. practise ---------- */
+var score={ok:0,n:0};
+function bump(ok){score.n++;if(ok)score.ok++;$('hl-score').textContent='Score '+score.ok+' / '+score.n;}
+function parseAns(s){
+  s=String(s).trim().replace(/,/g,'').replace(/[a-zA-Z\s]+$/,'').trim();
+  var pct=false;if(s.slice(-1)==='%'){pct=true;s=s.slice(0,-1).trim();}
+  var m=s.match(/^(-?\d*\.?\d+)\s*\/\s*(\d*\.?\d+)$/),v=m?(+m[1])/(+m[2]):(/^-?\d*\.?\d+$/.test(s)?parseFloat(s):NaN);
+  return isFinite(v)?(pct?v/100:v):NaN;
+}
+var G5,P5={tried:false};
+function newG5(){
+  var s=rnd(SRC.concat([{T:3.1,u:'min'},{T:5.4,u:'days'},{T:18,u:'s'}]));
+  G5=makeGraph(rnd([800,960,1200,1600]),s.T,s.u,3.2,'Corrected count rate (counts/min)');
+  G5.readings=null;G5.marker=null;G5.intervals=true;P5={tried:false};
+  $('hl-g5unit').textContent=s.u;$('hl-g5ans').value='';$('hl-g5fb').hidden=true;v5.redraw();
+}
+var v5=view($('hl-g5'),function(v){if(G5)plot(v,G5);});
+$('hl-g5').addEventListener('click',function(e){
+  var m=v5.map;if(!m)return;var r=this.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+  if(x<m.L||x>m.L+m.pw||y<m.T||y>m.T+m.ph)return;
+  G5.marker={t:(x-m.L)/m.pw*G5.tMax,c:(m.T+m.ph-y)/m.ph*G5.cMax};v5.redraw();
+});
+function g5Method(){
+  var r=readingsFor(G5,3),u=G5.u,dp=dps(G5.prec);G5.readings=r;G5.marker=null;
+  animate(function(f){G5.P=f*4;v5.redraw();},2800);
+  return 'Halve from '+nf(r[0].c)+': '+r.map(function(x){return nf(x.c);}).join(' → ')+' counts/min. Intervals '+r.slice(1).map(function(x){return x.il;}).join(', ')+' '+u+'. Mean = '+num(r[3].tr,dp)+' ÷ 3 ≈ <b>'+num(r[3].tr/3,Math.min(dp+1,3))+' '+u+'</b>.';
+}
+$('hl-g5check').addEventListener('click',function(){
+  var a=parseAns($('hl-g5ans').value),fb=$('hl-g5fb');fb.hidden=false;
+  if(isNaN(a)){fb.className='hl-fb info';fb.textContent='Type a number for the half-life.';return;}
+  var tol=Math.max(.05*G5.T,1.5*G5.prec),ok=Math.abs(a-G5.T)<=tol;
+  if(!P5.tried){bump(ok);P5.tried=true;}
+  if(ok){fb.className='hl-fb good';fb.innerHTML='Good reading. The half-life is about '+nf(G5.T)+' '+G5.u+'. '+g5Method();}
+  else{fb.className='hl-fb bad';fb.textContent='Not within reading accuracy. Start at '+nf(G5.C0)+' counts/min, find where the curve reaches '+nf(G5.C0/2)+', and read the time. Then try halving again.';}
+});
+$('hl-g5show').addEventListener('click',function(){var fb=$('hl-g5fb');fb.hidden=false;fb.className='hl-fb info';fb.innerHTML=g5Method();P5.tried=true;});
+$('hl-g5new').addEventListener('click',newG5);
+$('hl-g5ans').addEventListener('keydown',function(e){if(e.key==='Enter')$('hl-g5check').click();});
+newG5();
+
+/* calculations */
+var ISO=[{n:'iodine-131',T:8,u:'days'},{n:'sodium-24',T:15,u:'hours'},{n:'technetium-99m',T:6,u:'hours'},{n:'cobalt-60',T:5.3,u:'years'},{n:'radon-222',T:3.8,u:'days'},{n:'strontium-90',T:29,u:'years'},{n:'carbon-14',T:5700,u:'years'},{n:'caesium-137',T:30,u:'years'}];
+var AS=[800,1600,2400,3200,4800,6400,9600,12000];
+var CQ=null;
+function chain(a,n){var s=[a];for(var i=1;i<=n;i++)s.push(a/Math.pow(2,i));return s.map(nf).join(' → ');}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
+function newQ(){
+  var prev=CQ?CQ.type:'',type;do{type=rnd(['a','b','c','d','e']);}while(type===prev);
+  var n=2+Math.floor(Math.random()*3),iso=rnd(ISO),t=+(n*iso.T).toFixed(2),q={type:type,tried:false};
+  if(type==='a'){var A0=rnd(AS),A=A0/Math.pow(2,n);
+    q.text='A sample of '+iso.n+' has an activity of '+nf(A0)+' Bq. The half-life of '+iso.n+' is '+nf(iso.T)+' '+iso.u+'. Calculate the activity of the sample after '+nf(t)+' '+iso.u+'.';
+    q.unit='Bq';q.ans=A;q.work=['Number of half-lives = '+nf(t)+' ÷ '+nf(iso.T)+' = '+n,'Halve '+n+' times: '+chain(A0,n),'Activity = <b>'+nf(A)+' Bq</b>'];}
+  if(type==='b'){var T=rnd([2,3,4,5,6,8,10,12,15,20]),u=rnd(['minutes','hours','days']),B0=rnd(AS),B1=B0/Math.pow(2,n),tt=n*T;
+    q.text='The activity of a radioactive sample falls from '+nf(B0)+' Bq to '+nf(B1)+' Bq in '+tt+' '+u+'. Calculate the half-life of the sample.';
+    q.unit=u;q.ans=T;q.work=[chain(B0,n)+' Bq is '+n+' halvings, so '+n+' half-lives','Half-life = '+tt+' ÷ '+n+' = <b>'+T+' '+u+'</b>'];}
+  if(type==='c'){var C0=rnd(AS),C=C0/Math.pow(2,n);
+    q.text='The corrected count rate from a sample of '+iso.n+' is '+nf(C0)+' counts/min. The half-life of '+iso.n+' is '+nf(iso.T)+' '+iso.u+'. How long will it take for the corrected count rate to fall to '+nf(C)+' counts/min?';
+    q.unit=iso.u;q.ans=t;q.work=[chain(C0,n)+' counts/min is '+n+' half-lives','Time = '+n+' × '+nf(iso.T)+' = <b>'+nf(t)+' '+iso.u+'</b>'];}
+  if(type==='d'){var d=Math.pow(2,n);
+    q.text='The half-life of '+iso.n+' is '+nf(iso.T)+' '+iso.u+'. What fraction of the original '+iso.n+' nuclei will still be undecayed after '+nf(t)+' '+iso.u+'? (You can type a fraction such as 1/2.)';
+    q.unit='';q.ans=1/d;q.work=['Number of half-lives = '+nf(t)+' ÷ '+nf(iso.T)+' = '+n,'Each half-life leaves half: '+Array(n).fill('½').join(' × '),'Fraction left = <b>1/'+d+'</b>'];}
+  if(type==='e'){n=2+Math.floor(Math.random()*2);var bg=rnd([20,25,30,40]),Cc=rnd([640,800,960,1280,1600]),R=Cc+bg,T2=rnd([3,4,5,6,8,12]),u2=rnd(['minutes','hours','days']),Cn=Cc/Math.pow(2,n);
+    q.text='A GM tube measures a count rate of '+R+' counts/min from a source. The background count rate is '+bg+' counts/min. The half-life of the source is '+T2+' '+u2+'. What count rate will the GM tube measure after '+(n*T2)+' '+u2+'?';
+    q.unit='counts/min';q.ans=Cn+bg;q.work=['Corrected count rate now = '+R+' − '+bg+' = '+Cc+' counts/min',(n*T2)+' ÷ '+T2+' = '+n+' half-lives: '+chain(Cc,n),'The background does not halve, so add it back: '+nf(Cn)+' + '+bg+' = <b>'+nf(Cn+bg)+' counts/min</b>'];}
+  CQ=q;$('hl-cq').textContent=cap(q.text);$('hl-cunit').textContent=q.unit;$('hl-cans').value='';
+  $('hl-cfb').hidden=true;$('hl-cwork').hidden=true;
+}
+function showWork(){var w=$('hl-cwork');w.innerHTML=CQ.work.map(function(x){return '<li>'+x+'</li>';}).join('');w.hidden=false;}
+$('hl-ccheck').addEventListener('click',function(){
+  var a=parseAns($('hl-cans').value),fb=$('hl-cfb');fb.hidden=false;
+  if(isNaN(a)){fb.className='hl-fb info';fb.textContent='Type a number'+(CQ.type==='d'?' or a fraction.':'.');return;}
+  var ok=Math.abs(a-CQ.ans)<=Math.max(1e-9,Math.abs(CQ.ans)*0.01);
+  if(!CQ.tried){bump(ok);CQ.tried=true;}
+  if(ok){fb.className='hl-fb good';fb.textContent='Correct.';showWork();}
+  else{fb.className='hl-fb bad';fb.textContent=CQ.type==='e'?'Not quite. Remember that only the source’s count rate halves, not the background.':'Not quite. Work out how many half-lives there are first.';}
+});
+$('hl-cshow').addEventListener('click',function(){CQ.tried=true;showWork();});
+$('hl-cnew').addEventListener('click',newQ);
+$('hl-cans').addEventListener('keydown',function(e){if(e.key==='Enter')$('hl-ccheck').click();});
+newQ();
+
+try{var saved=localStorage.getItem('hl-tab');if(saved&&$(saved))showTab($(saved));}catch(e){}
+})();
+</script>
+</body>
+</html>
