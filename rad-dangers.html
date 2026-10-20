@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dangers of Radioactivity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: companion to Uses of Radioactivity — topic rail | live simulation stage | key-ideas card; rose accent marks the "harm" half of the pair */
+:root{
+  --bg:#F1F0F4;--panel:#FFFFFF;--ink:#1C1A2B;--muted:#5D5A70;--line:#D9D6E2;--soft:#F1E4EB;
+  --accent:#A1275B;--accent-ink:#FFFFFF;--amber:#B87200;
+  --al:#D2462E;--be:#2563C9;--ga:#7B3FC4;
+  --scene:#FAF9FC;--metal:#9AA4B1;--good:#1D8352;--bad:#C2372A;
+  --cell:#F6DDE3;--celledge:#C98C9C;--nuc:#E9C2CF;--dna:#1F7A68;
+  --skin:#EFD3C3;--skinedge:#9C7360;--organ:#D9A2A8;
+  --film:#F3F1EA;--lead:#4E5560;--plastic:#BFD9EA;--paper:#F6F2E6;
+  --rock:#B7AFA3;--rock2:#A39A8D;--clay:#C9A27A;--concrete:#C3C6CA;--soil:#C9B089;--grass:#7FA65A;
+  --s1:#C98316;--s2:#8C6A4A;--s3:#2F6FD0;--s4:#2F9446;--s5:#8A4FD0;--s6:#7C8796;
+  --f-disp:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#110F18;--panel:#1A1724;--ink:#ECE9F3;--muted:#A6A1B8;--line:#2E2A3C;--soft:#2A1A26;
+  --accent:#F07BAA;--accent-ink:#2A0716;--amber:#F0AE36;
+  --al:#FF7C5E;--be:#72A9FF;--ga:#BD8FF7;
+  --scene:#15121E;--metal:#6F7A88;--good:#46C281;--bad:#FF6B5E;
+  --cell:#3A2430;--celledge:#8A5466;--nuc:#4A2C3A;--dna:#5BD2B4;
+  --skin:#5A4339;--skinedge:#B08A76;--organ:#7A4650;
+  --film:#E3DFD3;--lead:#2E333A;--plastic:#3D5E73;--paper:#D3CCBA;
+  --rock:#4A4540;--rock2:#3C3833;--clay:#6E5536;--concrete:#4A4E54;--soil:#5F4C34;--grass:#4E7234;
+  --s1:#F2A93B;--s2:#C09370;--s3:#6FA6FF;--s4:#5FD07A;--s5:#BC8BFF;--s6:#9AA6B6;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#110F18;--panel:#1A1724;--ink:#ECE9F3;--muted:#A6A1B8;--line:#2E2A3C;--soft:#2A1A26;
+  --accent:#F07BAA;--accent-ink:#2A0716;--amber:#F0AE36;
+  --al:#FF7C5E;--be:#72A9FF;--ga:#BD8FF7;
+  --scene:#15121E;--metal:#6F7A88;--good:#46C281;--bad:#FF6B5E;
+  --cell:#3A2430;--celledge:#8A5466;--nuc:#4A2C3A;--dna:#5BD2B4;
+  --skin:#5A4339;--skinedge:#B08A76;--organ:#7A4650;
+  --film:#E3DFD3;--lead:#2E333A;--plastic:#3D5E73;--paper:#D3CCBA;
+  --rock:#4A4540;--rock2:#3C3833;--clay:#6E5536;--concrete:#4A4E54;--soil:#5F4C34;--grass:#4E7234;
+  --s1:#F2A93B;--s2:#C09370;--s3:#6FA6FF;--s4:#5FD07A;--s5:#BC8BFF;--s6:#9AA6B6;color-scheme:dark}
+body{background:var(--bg)}
+#rdg{width:100%;height:100%;min-height:600px;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#rdg *{box-sizing:border-box}
+#rdg [hidden]{display:none!important}
+#rdg .shell{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+#rdg .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+#rdg .brand{display:flex;gap:14px;align-items:center;min-width:0}
+#rdg .mark{width:48px;height:46px;flex:none;color:var(--accent)}
+#rdg .eyebrow{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+#rdg h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);line-height:1.05;margin:2px 0 0;letter-spacing:-.01em;text-wrap:balance}
+#rdg .tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px;flex-wrap:wrap}
+#rdg .tabs button{font:600 15px var(--f-body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 16px;cursor:pointer}
+#rdg .tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+#rdg button:focus-visible,#rdg input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#rdg .apps{display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:18px;align-items:start}
+#rdg .rail{display:flex;flex-direction:column;gap:14px}
+#rdg .grp{display:flex;flex-direction:column;gap:4px}
+#rdg .grp h3{font:700 12px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 2px 10px}
+#rdg .nav{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:600 15.5px var(--f-body);color:var(--ink);background:none;border:1px solid transparent;border-radius:10px;padding:9px 12px;cursor:pointer}
+#rdg .nav:hover{background:var(--soft)}
+#rdg .nav[aria-current="true"]{background:var(--panel);border-color:var(--line);box-shadow:inset 3px 0 0 var(--accent)}
+#rdg .stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+#rdg .stage h2{font-family:var(--f-disp);font-weight:800;font-size:26px;line-height:1.1;margin:0;text-wrap:balance}
+#rdg .lede{margin:4px 0 0;color:var(--muted);max-width:68ch}
+#rdg .cvwrap{background:var(--scene);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#rdg canvas{display:block;width:100%;height:auto;aspect-ratio:5/3;touch-action:pan-y}
+#rdg .hint{font-size:14.5px;color:var(--muted);margin:0}
+#rdg .hint b{color:var(--ink)}
+#rdg .ctls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end}
+#rdg .ctl{display:flex;flex-direction:column;gap:4px;min-width:0}
+#rdg .lab{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#rdg .lab b{font-family:var(--f-mono);font-weight:700;color:var(--ink);letter-spacing:0;text-transform:none;margin-left:4px}
+#rdg .seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px;flex-wrap:wrap}
+#rdg .seg button{font:600 14.5px var(--f-body);color:var(--ink);background:none;border:0;border-radius:6px;padding:6px 12px;cursor:pointer;min-width:38px}
+#rdg .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#rdg .btn{font:700 14.5px var(--f-body);border-radius:9px;padding:9px 15px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+#rdg .btn:hover{border-color:var(--accent)}
+#rdg .btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+#rdg input[type=range]{width:200px;max-width:100%;accent-color:var(--accent)}
+#rdg .ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+#rdg .ri{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:0}
+#rdg .ri .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#rdg .ri .v{font:700 16px var(--f-mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#rdg .ri.ok .v{color:var(--good)}#rdg .ri.bad .v{color:var(--bad)}#rdg .ri.warn .v{color:var(--amber)}
+#rdg .note{font-size:15px;background:var(--soft);border-radius:10px;padding:10px 14px;margin:0}
+#rdg .note.ok{border-left:4px solid var(--good)}#rdg .note.bad{border-left:4px solid var(--bad)}
+#rdg .facts{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+#rdg .facts h3{font:700 12.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0}
+#rdg .facts h4{font-family:var(--f-disp);font-size:17px;margin:0 0 3px}
+#rdg .facts p{margin:0;font-size:15px}
+#rdg .tip{background:var(--soft);border-radius:10px;padding:12px 14px}
+#rdg .tip h4{color:var(--accent)}
+#rdg .mini{width:100%;border-collapse:collapse;font-size:14.5px}
+#rdg .mini th,#rdg .mini td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+#rdg .mini th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#rdg .mini th.gk{text-transform:none;font-size:15px;color:var(--ink)}
+#rdg .mbar{display:flex;align-items:center;gap:8px;font:600 13px var(--f-mono)}
+#rdg .mbar i{display:block;height:9px;border-radius:5px;background:var(--bad);min-width:2px}
+#rdg .tw{overflow-x:auto}
+/* sort + check */
+#rdg .sortv{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;align-items:start}
+#rdg .check{display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:860px}
+#rdg .duo{display:flex;flex-direction:column;gap:18px;min-width:0}
+#rdg .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+#rdg .card h2{font-family:var(--f-disp);font-size:24px;line-height:1.15;margin:0;text-wrap:balance}
+#rdg .card ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+#rdg .sitem{display:flex;flex-direction:column;gap:8px;padding:12px 0;border-top:1px solid var(--line)}
+#rdg .sitem .q{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+#rdg .sitem .q span{flex:1 1 260px;min-width:0}
+#rdg .sitem .seg button{font-size:14px}
+#rdg .sitem .seg button.ok{background:var(--good);color:#fff}
+#rdg .sitem .seg button.bad{background:var(--bad);color:#fff}
+#rdg .sitem .fb{font-size:14.5px;color:var(--muted);margin:0}
+#rdg .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#rdg .vs>div{background:var(--bg);border-radius:10px;padding:12px}
+#rdg .vs h4{margin:0 0 4px;font-family:var(--f-disp);font-size:17px}
+#rdg .vs p{margin:0;font-size:15px}
+#rdg .opts{display:flex;flex-direction:column;gap:8px}
+#rdg .opt{text-align:left;font:600 15.5px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;display:flex;gap:10px}
+#rdg .opt .l{font-family:var(--f-mono);color:var(--muted)}
+#rdg .opt:hover:not(:disabled){border-color:var(--accent)}
+#rdg .opt:disabled{cursor:default}
+#rdg .opt.ok{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+#rdg .opt.bad{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+#rdg .qhead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+#rdg .bar{height:6px;background:var(--soft);border-radius:9px;overflow:hidden}
+#rdg .bar i{display:block;height:100%;background:var(--accent);width:0}
+#rdg .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+#rdg .small{font-size:13.5px;color:var(--muted);margin:0}
+@media (max-width:1150px){
+  #rdg .apps{grid-template-columns:minmax(0,1fr) 280px}
+  #rdg .rail{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:6px 14px}
+  #rdg .grp{flex-direction:row;flex-wrap:wrap;align-items:center}
+  #rdg .grp h3{margin:0 4px 0 0;width:100%}
+  #rdg .nav{width:auto}
+}
+@media (max-width:820px){
+  #rdg .apps,#rdg .sortv{grid-template-columns:minmax(0,1fr)}
+  #rdg .vs{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  #rdg .nav{font-size:14px;padding:6px 9px}
+  #rdg .stage h2{font-size:22px}
+  #rdg .tabs button{padding:6px 11px;font-size:14px}
+}
+</style>
+
+</head>
+<body style="margin:0">
+<div id="rdg">
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 50 46" aria-hidden="true"><path d="M25 3 L47 42 L3 42 Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"></path><circle cx="25" cy="29" r="2.6" fill="currentColor"></circle><path d="M25 29 L19.5 19.5 A11 11 0 0 1 30.5 19.5 Z" fill="currentColor"></path><path d="M25 29 L36 29 A11 11 0 0 1 30.5 38.5 Z" fill="currentColor"></path><path d="M25 29 L19.5 38.5 A11 11 0 0 1 14 29 Z" fill="currentColor"></path><circle cx="25" cy="29" r="4.6" fill="var(--bg)"></circle><circle cx="25" cy="29" r="2.6" fill="currentColor"></circle></svg>
+      <div><div class="eyebrow">Edexcel International GCSE Physics · Topic 7</div><h1>Dangers of Radioactivity</h1></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" data-view="apps" aria-selected="true">Simulations</button>
+      <button type="button" role="tab" data-view="sort" aria-selected="false">Contamination or irradiation?</button>
+      <button type="button" role="tab" data-view="check" aria-selected="false">Check yourself</button>
+    </div>
+  </header>
+
+  <section class="view apps" data-v="apps">
+    <nav class="rail" id="rdg-rail" aria-label="Simulations"></nav>
+    <div class="stage">
+      <div><h2 id="rdg-title"></h2><p class="lede" id="rdg-lede"></p></div>
+      <div class="cvwrap"><canvas id="rdg-cv" width="800" height="480" aria-label="Interactive simulation"></canvas></div>
+      <p class="hint" id="rdg-hint"></p>
+      <div class="ctls" id="rdg-ctls"></div>
+      <div class="ro" id="rdg-ro" aria-live="polite"></div>
+      <div id="rdg-extra"></div>
+    </div>
+    <aside class="facts" id="rdg-facts"></aside>
+  </section>
+
+  <section class="view sortv" data-v="sort" hidden>
+    <div class="card" id="rdg-sort"></div>
+    <div class="duo">
+      <div class="card">
+        <h3 class="lab">The difference</h3>
+        <div class="vs">
+          <div><h4>Irradiation</h4><p>Radiation reaches an object from a source outside it. It stops when the source is removed or shielded. The object does <b>not</b> become radioactive.</p></div>
+          <div><h4>Contamination</h4><p>Radioactive atoms get onto or into an object or person. Radiation keeps coming until the material is removed or has decayed.</p></div>
+        </div>
+        <p class="small">Contamination is usually more dangerous: you cannot walk away from it, and inside the body the radiation is absorbed by living cells.</p>
+      </div>
+      <div class="card">
+        <h3 class="lab">Which radiation is most dangerous?</h3>
+        <div class="tw"><table class="mini">
+          <thead><tr><th></th><th>Outside the body</th><th>Inside the body</th></tr></thead>
+          <tbody>
+            <tr><td><b>α</b></td><td>Least: stopped by the dead outer layer of skin</td><td><b>Most</b>: strongly ionising, all absorbed by nearby cells</td></tr>
+            <tr><td><b>β</b></td><td>Dangerous: passes through skin into tissue</td><td>Dangerous: absorbed by tissue</td></tr>
+            <tr><td><b>γ</b></td><td>Dangerous: reaches internal organs</td><td>Least: weakly ionising, most escapes</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view check" data-v="check" hidden>
+    <div class="card">
+      <h3 class="lab">Reducing the risk</h3>
+      <div class="vs">
+        <div><h4>In the school laboratory</h4><p>Handle sources with long tongs and hold them at arm’s length. Never point a source at anyone. Return it to its lead-lined box as soon as possible. Do not eat or drink, and wash your hands afterwards.</p></div>
+        <div><h4>At work</h4><p>Wear a dosimeter badge to record the dose received. Stand behind lead or concrete screens, use remote handling for strong sources, wear lead aprons where needed and keep exposure times short.</p></div>
+      </div>
+    </div>
+    <div class="card" id="rdg-quiz"></div>
+  </section>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const R=document.getElementById('rdg');
+const $=s=>R.querySelector(s), $$=s=>[...R.querySelectorAll(s)];
+const cv=$('#rdg-cv'), ctx=cv.getContext('2d');
+const LW=800,LH=480; let dpr=1,sc=1;
+function resize(){const r=cv.getBoundingClientRect(); if(!r.width)return; dpr=Math.min(2.5,window.devicePixelRatio||1); sc=r.width/LW; cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*LH/LW*dpr);}
+new ResizeObserver(resize).observe(cv);
+const C={};
+const KEYS='bg panel ink muted line soft accent amber al be ga scene metal good bad cell celledge nuc dna skin skinedge organ film lead plastic paper rock rock2 clay concrete soil grass s1 s2 s3 s4 s5 s6'.split(' ');
+function readC(){const s=getComputedStyle(R);KEYS.forEach(k=>C[k]=s.getPropertyValue('--'+k).trim());}
+readC();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(readC,30));}catch(e){}
+new MutationObserver(()=>setTimeout(readC,30)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class','style']});
+
+const rnd=(a,b)=>a+Math.random()*(b-a), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const gauss=()=>Math.sqrt(-2*Math.log(Math.random()||1e-9))*Math.cos(6.2832*Math.random());
+const F=(w,s,m)=>`${w} ${s}px ${m?'"JetBrains Mono",ui-monospace,monospace':'"Source Sans 3","Segoe UI",system-ui,sans-serif'}`;
+function T(s,x,y,o={}){ctx.font=F(o.w||600,o.s||15,o.m);ctx.fillStyle=o.c||C.ink;ctx.textAlign=o.a||'center';ctx.textBaseline=o.b||'middle';ctx.fillText(s,x,y);}
+function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);}
+function circ(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);}
+function line(pts,col,w,dash){ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.setLineDash(dash||[]);ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.setLineDash([]);}
+function tag(s,x,y,o={}){ctx.font=F(o.w||700,o.s||14,o.m);const w=ctx.measureText(s).width+16,h=(o.s||14)+12;x=clamp(x,w/2+4,LW-w/2-4);rr(x-w/2,y-h/2,w,h,6);ctx.fillStyle=o.bg||C.panel;ctx.fill();ctx.strokeStyle=o.bd||C.line;ctx.lineWidth=1.5;ctx.stroke();T(s,x,y+1,{...o,w:o.w||700,s:o.s||14});}
+function wrapT(s,x,y,w,lh,o={}){ctx.font=F(o.w||400,o.s||14);let ln='',yy=y;for(const wd of s.split(' ')){const t=ln?ln+' '+wd:wd;if(ctx.measureText(t).width>w&&ln){T(ln,x,yy,{...o,w:o.w||400,a:'left',b:'top'});ln=wd;yy+=lh;}else ln=t;}if(ln)T(ln,x,yy,{...o,w:o.w||400,a:'left',b:'top'});return yy+lh;}
+function drawRad(t,x,y,ang,a){ctx.globalAlpha=a==null?1:clamp(a,0,1);
+  if(t==='a'){ctx.fillStyle=C.al;circ(x,y,4.6);ctx.fill();}
+  else if(t==='b'){ctx.fillStyle=C.be;circ(x,y,2.7);ctx.fill();}
+  else{ctx.strokeStyle=C.ga;ctx.lineWidth=2;ctx.beginPath();const c=Math.cos(ang),s=Math.sin(ang);for(let i=0;i<=12;i++){const d=-i*1.7,w=Math.sin(i*1.25)*3.4;const px=x+c*d-s*w,py=y+s*d+c*w;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}
+  ctx.globalAlpha=1;}
+const fmt=n=>Math.round(n).toLocaleString('en-GB');
+const sig2=n=>{if(n<=0)return 0;const p=Math.pow(10,Math.floor(Math.log10(n))-1);return Math.round(n/p)*p;};
+const RADS=[['a','α'],['b','β'],['g','γ']], GL={a:'α',b:'β',g:'γ'}, RN={a:'alpha',b:'beta',g:'gamma'};
+
+const ctlBox=$('#rdg-ctls');
+const seg=(id,label,opts,val,gid)=>`<div class="ctl"${gid?` id="rdg-g-${gid}"`:''}><span class="lab">${label}</span><div class="seg" role="group" aria-label="${label}" data-seg="${id}">${opts.map(o=>`<button type="button" data-v="${o[0]}" aria-pressed="${o[0]===val}">${o[1]}</button>`).join('')}</div></div>`;
+const slider=(id,label,min,max,step,val)=>`<label class="ctl" for="rdg-${id}"><span class="lab">${label}<b id="rdg-${id}-v"></b></span><input type="range" id="rdg-${id}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`;
+const btn=(id,label,cls)=>`<button type="button" class="btn ${cls||''}" id="rdg-${id}">${label}</button>`;
+function onSeg(id,fn){ctlBox.querySelector(`[data-seg="${id}"]`).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setSeg(id,b.dataset.v);fn(b.dataset.v);});}
+function setSeg(id,v){ctlBox.querySelectorAll(`[data-seg="${id}"] button`).forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.v===v)));}
+function onBtn(id,fn){$('#rdg-'+id).addEventListener('click',fn);}
+function onSlider(id,fn,f){const el=$('#rdg-'+id),v=$('#rdg-'+id+'-v');el.addEventListener('input',()=>{v.textContent=f(+el.value);fn(+el.value);});v.textContent=f(+el.value);el._lab=()=>{v.textContent=f(+el.value);};return el;}
+let S={};
+
+/* ============ 1. IONISATION AND CELLS ============ */
+const NUC={x:455,y:250,r:100};
+const CHR=[[415,215,.6],[480,203,-.4],[518,252,1.4],[448,254,-1.1],[490,298,.3],[406,290,1.0]].map(([x,y,a])=>{const p=[];for(let s=-27;s<=27;s+=3)p.push([x+Math.cos(a)*s,y+Math.sin(a)*s]);return {x,y,a,p};});
+const SPC={a:()=>5+Math.random()*3,b:()=>-Math.log(Math.random()||1e-6)*38,g:()=>-Math.log(Math.random()||1e-6)*170};
+const OUT={none:['No DNA damage','ok'],rep:['DNA damaged, then repaired','ok'],mut:['Mutation: may lead to cancer','bad'],kill:['Cell killed','bad']};
+const TAL={a:{n:0,none:0,rep:0,mut:0,kill:0},b:{n:0,none:0,rep:0,mut:0,kill:0},g:{n:0,none:0,rep:0,mut:0,kill:0}};
+function shoot(t,y0){let x=46,y=y0,ang=0,d=0;const max=t==='a'?520:1600,pts=[[x,y]],ions=[],brk=[];let nx=SPC[t]();
+ while(d<max&&x<820&&y>-20&&y<500){x+=Math.cos(ang)*4;y+=Math.sin(ang)*4;d+=4;if(t==='b'&&d%24===0)ang+=gauss()*.22;pts.push([x,y]);
+  while(d>=nx){const ix=x+rnd(-2,2),iy=y+rnd(-2,2);ions.push([ix,iy,d]);
+   if((ix-NUC.x)**2+(iy-NUC.y)**2<NUC.r**2)CHR.forEach((c,ci)=>{if(c.p.some(q=>(q[0]-ix)**2+(q[1]-iy)**2<36)&&!brk.some(b=>b[3]===ci&&(b[0]-ix)**2+(b[1]-iy)**2<64))brk.push([ix,iy,d,ci]);});
+   nx+=SPC[t]();}}
+ const b=brk.length,r=Math.random();let out;
+ if(!b)out='none';else{const pk=b>=3?.6:b===2?.35:.1,pm=b>=3?.3:b===2?.3:.2;out=r<pk?'kill':r<pk+pm?'mut':'rep';}
+ return {t,pts,ions,brk,out,len:d};}
+const cells={id:'cells',grp:'How radiation harms',name:'Ionisation and cells',
+title:'How radiation damages cells',
+lede:'Ionising radiation knocks electrons out of atoms in a cell, turning them into ions. If this happens in DNA, the DNA can break.',
+hint:'<b>Click on the cell</b> to fire along that line, or press <b>Fire</b>. Compare how many ions α, β and γ make, then fire 20 shots of each to build up the tally.',
+facts:{h:[['What “ionising” means','Radiation removes electrons from atoms, turning them into ions. Alpha makes a dense trail of ions over a short distance. Beta makes fewer, spread out. Gamma makes very few.'],
+ ['What happens next','If DNA is damaged, the cell may repair it, the cell may die, or the DNA may be changed. A change in DNA is a <b>mutation</b>. A mutated cell may divide out of control, which is cancer.'],
+ ['Large doses','A large dose kills many cells at once. This damages tissue, causing burns and radiation sickness.']],
+ tip:'A full answer links the steps: radiation <b>ionises</b> atoms in cells → this can damage <b>DNA</b> → a <b>mutation</b> → may lead to <b>cancer</b>.'},
+controls:()=>seg('src','Radiation',RADS,'a')+btn('fire','Fire','pri')+btn('f20','Fire 20 at random')+btn('clr','Reset tally'),
+setup(){S={src:'a',aim:250,shot:null,cur:0,done:true};
+ onSeg('src',v=>{S.src=v;});onBtn('fire',()=>this.fire(S.aim));
+ onBtn('f20',()=>{for(let i=0;i<19;i++){const s=shoot(S.src,rnd(70,430));this.count(s);}this.fire(rnd(70,430));});
+ onBtn('clr',()=>{for(const k in TAL)TAL[k]={n:0,none:0,rep:0,mut:0,kill:0};});
+ this.fire(250);},
+fire(y){S.aim=y;S.shot=shoot(S.src,y);S.cur=0;S.done=false;},
+count(s){const t=TAL[s.t];t.n++;t[s.out]++;},
+pointer(type,x,y){if(type==='down')this.fire(clamp(y,40,440));},
+update(dt){if(!S.shot||S.done)return;S.cur+=({a:300,b:600,g:900})[S.shot.t]*dt;if(S.cur>=S.shot.len){S.cur=S.shot.len;S.done=true;this.count(S.shot);}},
+draw(){const s=S.shot;
+ [[-40,70,130,100],[860,80,140,110],[-30,430,130,100],[850,430,140,100],[440,-60,200,90],[430,545,220,100]].forEach(([x,y,a,b])=>{ctx.beginPath();ctx.ellipse(x,y,a,b,0,0,6.2832);ctx.fillStyle=C.cell;ctx.globalAlpha=.6;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle=C.celledge;ctx.lineWidth=2.5;ctx.stroke();});
+ ctx.beginPath();ctx.ellipse(440,250,320,198,0,0,6.2832);ctx.fillStyle=C.cell;ctx.fill();ctx.strokeStyle=C.celledge;ctx.lineWidth=3;ctx.stroke();
+ circ(NUC.x,NUC.y,NUC.r);ctx.fillStyle=C.nuc;ctx.fill();ctx.strokeStyle=C.celledge;ctx.lineWidth=2;ctx.stroke();
+ for(const c of CHR){const ca=Math.cos(c.a),sa=Math.sin(c.a);for(const sg of [1,-1]){ctx.strokeStyle=C.dna;ctx.lineWidth=2.2;ctx.beginPath();for(let k=-27;k<=27;k++){const o=Math.sin(k*.35)*4*sg,px=c.x+ca*k-sa*o,py=c.y+sa*k+ca*o;k>-27?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}}
+ T('nucleus',NUC.x,NUC.y+NUC.r-14,{s:12.5,c:C.muted,w:700});
+ T('DNA in chromosomes',612,150,{s:12.5,c:C.muted,w:700,a:'left'});line([[608,152],[536,226]],C.muted,1);
+ T('cell membrane',640,82,{s:12.5,c:C.muted,w:700});
+ rr(6,S.aim-15,40,30,6);ctx.fillStyle=C.ink;ctx.fill();ctx.fillStyle=({a:C.al,b:C.be,g:C.ga})[S.src];ctx.fillRect(42,S.aim-6,5,12);
+ if(s){const n=Math.min(s.pts.length-1,Math.floor(S.cur/4));const col=({a:C.al,b:C.be,g:C.ga})[s.t];
+  ctx.globalAlpha=.35;line(s.pts.slice(0,n+1),col,1.5);ctx.globalAlpha=1;
+  for(const io of s.ions){if(io[2]>S.cur)break;ctx.fillStyle=C.amber;circ(io[0],io[1],2.6);ctx.fill();}
+  for(const b of s.brk){if(b[2]>S.cur)continue;ctx.strokeStyle=C.bad;ctx.lineWidth=3;line([[b[0]-5,b[1]-5],[b[0]+5,b[1]+5]],C.bad,3);line([[b[0]-5,b[1]+5],[b[0]+5,b[1]-5]],C.bad,3);}
+  if(!S.done){const p=s.pts[n];const q=s.pts[Math.max(0,n-1)];drawRad(s.t,p[0],p[1],Math.atan2(p[1]-q[1],p[0]-q[0]));}
+  else{const o=OUT[s.out];tag(o[0],440,30,{c:o[1]==='ok'?C.good:C.bad,s:15});}}
+ ctx.fillStyle=C.amber;circ(24,466,4);ctx.fill();T('ion made',34,466,{a:'left',s:13,c:C.muted});
+ line([[110,461],[120,471]],C.bad,3);line([[110,471],[120,461]],C.bad,3);T('DNA break',128,466,{a:'left',s:13,c:C.muted});},
+read(){const s=S.shot;if(!s)return [];const ions=s.ions.filter(i=>i[2]<=S.cur).length,br=s.brk.filter(b=>b[2]<=S.cur).length;
+ return [['Radiation',RN[s.t]],['Ions made',fmt(ions)],['DNA breaks',String(br),br?'bad':'ok'],['Outcome',S.done?OUT[s.out][0]:'…',S.done?OUT[s.out][1]:'']];},
+extra(){const row=k=>{const t=TAL[k];if(!t.n)return `<tr><td><b>${GL[k]}</b></td><td colspan="4" class="small">Not fired yet</td></tr>`;const p=v=>Math.round(v/t.n*100)+'%';return `<tr><td><b>${GL[k]}</b> (${t.n})</td><td>${p(t.none+t.rep)}</td><td>${p(t.mut)}</td><td>${p(t.kill)}</td></tr>`;};
+ return `<div class="tw"><table class="mini"><thead><tr><th>Tally</th><th>No lasting harm</th><th>Mutation</th><th>Cell killed</th></tr></thead><tbody>${row('a')}${row('b')}${row('g')}</tbody></table></div>`;}
+};
+
+/* ============ 2. INSIDE OR OUTSIDE THE BODY ============ */
+const BODY=[{c:1,x:470,y:92,r:34},{x:412,y:132,w:116,h:196,r:40},{x:374,y:142,w:30,h:160,r:15},{x:536,y:142,w:30,h:160,r:15},{x:422,y:318,w:42,h:150,r:16},{x:476,y:318,w:42,h:150,r:16}];
+const inB=(x,y)=>BODY.some(b=>b.c?(x-b.x)**2+(y-b.y)**2<b.r*b.r:x>b.x&&x<b.x+b.w&&y>b.y&&y<b.y+b.h);
+const HARM={out:{a:.03,b:.45,g:.35},in:{a:1,b:.5,g:.2}};
+const BMSG={out:{a:'α is stopped by the dead outer layer of skin',b:'β passes through skin into the tissue below',g:'γ passes right through, reaching internal organs'},
+ in:{a:'Every α particle is absorbed by nearby living cells',b:'β is absorbed by tissue inside the body',g:'Most γ escapes: it is weakly ionising'}};
+const SEEN={};
+const body={id:'body',grp:'How radiation harms',name:'Inside or outside the body',
+title:'Inside or outside the body?',
+lede:'How dangerous a source is depends on where it is. Outside the body, penetration matters most. Inside the body, ionising power matters most.',
+hint:'Try all six combinations of <b>source position</b> and <b>radiation</b>. The damage meter fills the table below.',
+facts:{h:[['Outside the body','Alpha is the least dangerous: it cannot get through the dead outer layer of skin. Beta and gamma are more dangerous because they penetrate into the body and reach living cells and organs.'],
+ ['Inside the body','Alpha is the most dangerous. It is strongly ionising, and inside the body all of it is absorbed by living cells nearby. Gamma is the least dangerous inside because most of it passes straight out.'],
+ ['How sources get inside','By breathing in radioactive gas or dust (such as radon), by swallowing contaminated food or water, or through a cut.']],
+ tip:'Give the reason with the answer: alpha is most dangerous inside the body <b>because it is the most strongly ionising</b> and is absorbed by the surrounding tissue.'},
+controls:()=>seg('pos','Source position',[['out','Outside, near the skin'],['in','Inside: swallowed']],'out')+seg('src','Radiation',RADS,'a'),
+setup(){S={pos:'out',src:'a',p:[],m:0,mk:[],e:0,tp:0};
+ onSeg('pos',v=>{S.pos=v;S.p.length=0;S.tp=0;});onSeg('src',v=>{S.src=v;S.p.length=0;S.tp=0;});},
+update(dt){const t=S.src,ins=S.pos==='in',sx=ins?455:262,sy=ins?235:236;
+ S.e+=dt*(t==='a'?34:28);while(S.e>=1){S.e--;const an=ins?rnd(0,6.2832):rnd(-.3,.3);const sp=({a:150,b:280,g:420})[t];
+  S.p.push({x:sx,y:sy,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,d:0,inb:ins,pen:t==='a'?(ins?rnd(8,14):0):t==='b'?(ins?rnd(20,70):rnd(10,40)):0});}
+ for(const q of S.p){const sx0=q.x;q.x+=q.vx*dt;q.y+=q.vy*dt;const st=Math.hypot(q.vx,q.vy)*dt;q.d+=st;const ib=inB(q.x,q.y);
+  if(t==='a'){if(ins){if(q.d>q.pen){q.gone=1;S.mk.push({x:q.x,y:q.y,l:2.5,h:1});}}else if(ib){q.gone=1;S.mk.push({x:q.x,y:q.y,l:2,h:0});}}
+  else if(t==='b'){if(ins){if(q.d>q.pen){q.gone=1;if(ib)S.mk.push({x:q.x,y:q.y,l:2.5,h:1});}}else if(ib){q.pen-=st;if(q.pen<=0){q.gone=1;S.mk.push({x:q.x,y:q.y,l:2.5,h:1});}}}
+  else if(ib&&Math.random()<st*.006)S.mk.push({x:q.x,y:q.y,l:2.5,h:1});
+  if(q.x<-20||q.x>820||q.y<-20||q.y>500)q.gone=1;}
+ S.p=S.p.filter(q=>!q.gone);S.mk.forEach(m=>m.l-=dt);S.mk=S.mk.filter(m=>m.l>0);if(S.mk.length>600)S.mk.splice(0,S.mk.length-600);
+ const H=HARM[S.pos][t];S.m+=(H-S.m)*Math.min(1,dt*1.6);S.tp+=dt;if(S.tp>1.6)SEEN[S.pos+t]=H;},
+draw(){const ins=S.pos==='in';
+ ctx.lineJoin='round';
+ for(const b of BODY){ctx.strokeStyle=C.skinedge;ctx.lineWidth=7;if(b.c){circ(b.x,b.y,b.r);}else rr(b.x,b.y,b.w,b.h,b.r);ctx.stroke();}
+ for(const b of BODY){ctx.fillStyle=C.skin;if(b.c){circ(b.x,b.y,b.r);}else rr(b.x,b.y,b.w,b.h,b.r);ctx.fill();}
+ ctx.fillStyle=C.organ;ctx.beginPath();ctx.ellipse(440,180,20,32,0,0,6.2832);ctx.ellipse(500,180,20,32,0,0,6.2832);ctx.fill();
+ ctx.beginPath();ctx.ellipse(458,240,26,17,-.2,0,6.2832);ctx.fill();
+ T('lungs',470,150,{s:11.5,c:C.ink,w:700});T('stomach',458,268,{s:11.5,c:C.ink,w:700});
+ if(ins){ctx.shadowColor=C.amber;ctx.shadowBlur=14;circ(455,235,6);ctx.fillStyle=C.amber;ctx.fill();ctx.shadowBlur=0;}
+ else{rr(222,222,40,28,6);ctx.fillStyle=C.ink;ctx.fill();ctx.fillStyle=({a:C.al,b:C.be,g:C.ga})[S.src];ctx.fillRect(259,231,5,10);T('source',242,268,{s:12.5,c:C.muted,w:700});}
+ for(const m of S.mk){ctx.globalAlpha=clamp(m.l/1.2,0,1)*(m.h?.85:.7);ctx.fillStyle=m.h?C.bad:C.muted;circ(m.x,m.y,m.h?3.2:2.6);ctx.fill();}ctx.globalAlpha=1;
+ for(const q of S.p)drawRad(S.src,q.x,q.y,Math.atan2(q.vy,q.vx));
+ const mx=660,my=70,mh=300;T('Damage to',mx+30,my-34,{s:13,w:700,c:C.muted});T('living cells',mx+30,my-18,{s:13,w:700,c:C.muted});
+ rr(mx,my,60,mh,10);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.line;ctx.lineWidth=2;ctx.stroke();
+ const h=Math.max(3,S.m*(mh-8));rr(mx+4,my+mh-4-h,52,h,7);ctx.fillStyle=C.bad;ctx.fill();
+ T('high',mx+68,my+8,{a:'left',s:12,c:C.muted});T('low',mx+68,my+mh-8,{a:'left',s:12,c:C.muted});
+ tag(BMSG[S.pos][S.src],200,440,{s:13,c:S.pos==='out'&&S.src==='a'?C.good:C.ink});
+ ctx.fillStyle=C.bad;circ(560,466,4);ctx.fill();T('ionisation in living cells',570,466,{a:'left',s:12.5,c:C.muted});
+ if(!ins&&S.src==='a'){ctx.fillStyle=C.muted;circ(400,20,4);ctx.fill();T('absorbed by dead skin',410,20,{a:'left',s:12.5,c:C.muted});}},
+read(){return [['Source',S.pos==='in'?'Inside the body':'Outside the body'],['Radiation',RN[S.src]],['Damage level',['Very low','Low','Medium','High','Very high'][Math.min(4,Math.floor(HARM[S.pos][S.src]*5))],HARM[S.pos][S.src]>.4?'bad':'ok']];},
+extra(){const cell=k=>SEEN[k]==null?'<td class="small">try it</td>':`<td><span class="mbar"><i style="width:${Math.round(SEEN[k]*90)+2}px"></i></span></td>`;
+ return `<div class="tw"><table class="mini"><thead><tr><th>Damage found</th><th class="gk">α</th><th class="gk">β</th><th class="gk">γ</th></tr></thead><tbody><tr><td>Outside</td>${cell('outa')}${cell('outb')}${cell('outg')}</tr><tr><td>Inside</td>${cell('ina')}${cell('inb')}${cell('ing')}</tr></tbody></table></div>`;}
+};
+
+/* ============ 3. TIME, DISTANCE, SHIELDING ============ */
+const XD=d=>110+630*Math.log10(d)/2;
+const SH={none:[1,1,1],paper:[0,.9,1],al:[0,0,.95],lead:[0,0,.3]};
+const SHN={none:'No shield',paper:'Paper',al:'Aluminium, 5 mm',lead:'Lead, 2 cm'};
+function rateT(t,d,sh){const k=SH[sh][t==='a'?0:t==='b'?1:2];
+ if(t==='a')return k*500/(d*d)*Math.max(0,1-Math.pow(d/5.5,4));
+ if(t==='b')return k*2000/(d*d)*Math.max(0,1-(d/100)**2);
+ return k*1500/(d*d);}
+const BG=.5;
+const tds={id:'tds',grp:'Protection',name:'Time, distance, shielding',
+title:'Time, distance and shielding',
+lede:'Three ways to reduce the dose from a source: spend less time near it, keep further away, and put absorbing material in between.',
+hint:'Change the <b>distance</b>, <b>shield</b> and <b>time</b> for each source. Aim to get the counts down to the level of background radiation.',
+facts:{h:[['Time','The dose received is proportional to the time spent near the source. Halve the time and you halve the dose.'],
+ ['Distance','The count rate falls quickly as you move away. Alpha only travels a few centimetres in air and beta up to about a metre. Use tongs and hold sources at arm’s length.'],
+ ['Shielding','Paper stops alpha. A few millimetres of aluminium stop beta. Gamma is never stopped completely, but thick lead or concrete reduces it a lot.']],
+ tip:'Lab rules: use <b>tongs</b>, hold the source at arm’s length, never point it at anyone, and return it to its <b>lead-lined box</b> straight after use.'},
+controls:()=>seg('src','Source',RADS,'g')+seg('sh','Shield',[['none','None'],['paper','Paper'],['al','Aluminium'],['lead','Lead']],'none')+slider('d','Distance',15,100,1,50)+slider('t','Time near source',1,60,1,10),
+setup(){S={src:'g',sh:'none',d:10**(50/50),T:10,p:[],e:0,show:0,acc:0,fl:0};
+ onSeg('src',v=>{S.src=v;S.p.length=0;});onSeg('sh',v=>{S.sh=v;});
+ onSlider('d',v=>{S.d=10**(v/50);},v=>{const d=10**(v/50);return d>=99.5?'1.00 m':d<10?d.toFixed(1)+' cm':Math.round(d)+' cm';});
+ onSlider('t',v=>{S.T=v;},v=>v+' min');S.show=rateT('g',S.d,'none')+BG;},
+update(dt){const R=rateT(S.src,S.d,S.sh)+BG;
+ S.acc+=dt;if(S.acc>.3){S.acc=0;const m=Math.max(0,R+gauss()*Math.sqrt(R/.3));S.show=S.show*.5+m*.5;}
+ if(Math.random()<Math.min(R,30)*dt)S.fl=.06;S.fl=Math.max(0,S.fl-dt);
+ const t=S.src;S.e+=dt*40;while(S.e>=1){S.e--;const an=rnd(-.2,.2),sp=({a:170,b:360,g:520})[t];
+  S.p.push({x:112,y:306,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,max:t==='a'?XD(rnd(3.5,5.5)):t==='b'?XD(rnd(30,100)):900,chk:0});}
+ const shx=XD(1.5);
+ for(const q of S.p){if(q.st){q.l-=dt;continue;}q.x+=q.vx*dt;q.y+=q.vy*dt;
+  if(!q.chk&&q.x>=shx-4&&S.sh!=='none'){q.chk=1;const k=SH[S.sh][t==='a'?0:t==='b'?1:2];if(Math.random()>k){q.st=1;q.l=.3;q.x=shx-5;}}
+  if(!q.st&&(q.x>=q.max||q.y>328||q.y<240)){q.st=1;q.l=.3;}}
+ S.p=S.p.filter(q=>!q.st||q.l>0);if(S.p.length>500)S.p.splice(0,S.p.length-500);},
+draw(){const x=XD(S.d),R=rateT(S.src,S.d,S.sh);
+ ctx.fillStyle=C.metal;ctx.fillRect(0,330,800,10);
+ [1,2,5,10,20,50,100].forEach(d=>{const tx=XD(d);line([[tx,340],[tx,350]],C.ink,1.5);T(d===100?'1 m':d+' cm',tx,362,{s:12.5,m:1,w:500});});
+ T('distance from source (each step is ×10)',XD(10),384,{s:12,c:C.muted});
+ rr(66,282,46,48,6);ctx.fillStyle=C.lead;ctx.fill();T('source',89,268,{s:12.5,w:700,c:C.muted});
+ ctx.fillStyle=({a:C.al,b:C.be,g:C.ga})[S.src];ctx.fillRect(108,300,5,12);
+ if(S.sh!=='none'){const shx=XD(1.5);const col={paper:C.paper,al:C.metal,lead:C.lead}[S.sh];const w={paper:3,al:7,lead:16}[S.sh];
+  ctx.fillStyle=col;ctx.fillRect(shx-w/2,236,w,94);ctx.strokeStyle=C.ink;ctx.lineWidth=1;ctx.strokeRect(shx-w/2,236,w,94);T(SHN[S.sh],shx-8,224,{s:12.5,w:700,a:'left'});}
+ for(const q of S.p)drawRad(S.src,q.x,q.y,Math.atan2(q.vy,q.vx),q.st?q.l/.3:1);
+ rr(x,296,56,20,5);ctx.fillStyle=S.fl>0?C.amber:C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.stroke();ctx.fillStyle=C.ink;ctx.fillRect(x,296,5,20);
+ line([[x+28,316],[x+28,330]],C.ink,3);
+ ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x+56,306);ctx.bezierCurveTo(x+110,306,690,180,690,112);ctx.stroke();
+ rr(600,40,180,72,10);ctx.fillStyle=C.ink;ctx.fill();T(S.show<10?S.show.toFixed(1):fmt(S.show),690,68,{m:1,w:700,s:24,c:C.panel});T('counts per second',690,95,{s:12,c:C.panel,w:600});
+ T('Geiger–Müller tube',Math.min(x+28,720),280,{s:12.5,c:C.muted,w:700});
+ const job=R*S.T*60,bg=BG*S.T*60,m=Math.max(job,bg,1),bx=250,bw=520;
+ T(`During ${S.T} min near the source`,20,414,{a:'left',s:13,w:700});
+ T('extra counts from source',20,440,{a:'left',s:12.5,c:C.muted});rr(bx,432,Math.max(2,bw*job/m),14,4);ctx.fillStyle=C.bad;ctx.fill();
+ if(bx+bw*job/m>700)T(fmt(job),bx+bw*job/m-8,440,{a:'right',s:12.5,m:1,w:700,c:'#FFFFFF'});else T(fmt(job),bx+Math.max(2,bw*job/m)+8,440,{a:'left',s:12.5,m:1,w:700});
+ T('background counts',20,464,{a:'left',s:12.5,c:C.muted});rr(bx,456,Math.max(2,bw*bg/m),14,4);ctx.fillStyle=C.muted;ctx.fill();T(fmt(bg),bx+Math.max(2,bw*bg/m)+8,464,{a:'left',s:12.5,m:1,w:700});
+ tag(S.d>=99.5?'1.00 m':S.d<10?S.d.toFixed(1)+' cm':Math.round(S.d)+' cm',x+28,250,{m:1,s:13});},
+read(){const R=rateT(S.src,S.d,S.sh),job=R*S.T*60,bg=BG*S.T*60,r=job/bg;
+ return [['Count rate',(S.show<10?S.show.toFixed(1):fmt(S.show))+' /s'],['Extra counts',fmt(job)],['Background counts',fmt(bg)],
+ ['Compared with background',r<1?'Less than background':r<10?'Up to 10× background':fmt(sig2(r))+'× background',r<1?'ok':r<10?'warn':'bad']];}
+};
+
+/* ============ 4. FILM BADGE ============ */
+const WN=['Open window','Plastic','Aluminium','Lead'];
+const TR={a:[0,0,0,0],b:[1,.35,0,0],g:[1,1,.9,.45]};
+const WX=i=>196+i*110;
+const MYS=[['b','β only'],['g','γ only'],['bg','β and γ'],['none','No radiation']];
+const badge={id:'badge',grp:'Protection',name:'Dosimeter badge',
+title:'Film badge dosimeter',
+lede:'People who work with radiation wear a badge containing photographic film. Radiation darkens the film, and filters in the holder show which type of radiation it was.',
+hint:'In <b>Explore</b>, switch radiations on and watch the film darken behind each window. Then try <b>Read a badge</b> to identify a worker’s exposure.',
+facts:{h:[['How it works','Ionising radiation darkens photographic film. The more radiation, the darker the film. The film is developed regularly to check each worker’s dose.'],
+ ['The filters','Beta is absorbed by aluminium and partly by plastic. Gamma passes through all the filters, although lead reduces it. The pattern of darkening shows the type of radiation.'],
+ ['Why no alpha?','Alpha cannot get through the badge case or the paper wrapping round the film. It is no danger from outside the body anyway.']],
+ tip:'Dark behind the open window and plastic only → <b>beta</b>. Dark behind every window, even lead → <b>gamma</b>. Who wears them: radiographers, nuclear power workers, research scientists.'},
+controls:()=>seg('mode','Mode',[['ex','Explore'],['my','Read a badge']],'ex')
+ +`<div class="ctl" id="rdg-g-rad"><span class="lab">Radiation reaching the badge</span><div class="seg" role="group" aria-label="Radiation" id="rdg-multi">${RADS.map(r=>`<button type="button" data-v="${r[0]}" aria-pressed="${r[0]==='b'}">${r[1]}</button>`).join('')}</div></div>`
+ +`<div class="ctl" id="rdg-g-new">${btn('newf','New film')}</div>`
+ +seg('ans','The worker received',MYS,'','my')+`<div class="ctl" id="rdg-g-nb" hidden>${btn('newb','Next badge','pri')}</div>`,
+setup(){S={mode:'ex',on:{a:false,b:true,g:false},D:[0,0,0,0],p:[],e:0,mys:null,ans:null};
+ $('#rdg-multi').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const v=b.dataset.v;S.on[v]=!S.on[v];b.setAttribute('aria-pressed',String(S.on[v]));});
+ onBtn('newf',()=>{S.D=[0,0,0,0];});
+ onSeg('mode',v=>{S.mode=v;this.vis();if(v==='my')this.newM();else{S.D=[0,0,0,0];}});
+ onSeg('ans',v=>{S.ans=v;});onBtn('newb',()=>this.newM());this.vis();},
+vis(){const ex=S.mode==='ex';$('#rdg-g-rad').hidden=!ex;$('#rdg-g-new').hidden=!ex;$('#rdg-g-my').hidden=ex;$('#rdg-g-nb').hidden=ex;S.p.length=0;},
+newM(){let k;do{k=MYS[Math.floor(Math.random()*4)][0];}while(S.mys&&k===S.mys.k&&Math.random()<.7);
+ const B=k.includes('b')?rnd(3,7):0,G=k.includes('g')?rnd(3,7):0;S.mys={k};S.D=[0,1,2,3].map(w=>B*TR.b[w]+G*TR.g[w]);S.ans=null;setSeg('ans','');},
+update(dt){if(S.mode!=='ex')return;
+ for(const r of ['a','b','g'])if(S.on[r])for(let w=0;w<4;w++)S.D[w]+=TR[r][w]*dt*.9;
+ for(const r of ['a','b','g'])if(S.on[r]){S.e+=dt*14;while(S.e>=1){S.e--;S.p.push({t:r,x:rnd(180,620),y:-10,v:({a:170,b:300,g:380})[r]});}}
+ for(const q of S.p){if(q.st){q.l-=dt;continue;}q.y+=q.v*dt;
+  const w=[0,1,2,3].find(i=>q.x>WX(i)&&q.x<WX(i)+90);
+  if(w==null){if(q.y>=120){q.st=1;q.l=.3;q.y=120;}}
+  else if(!q.chk&&q.y>=160){q.chk=1;if(Math.random()>TR[q.t][w]){q.st=1;q.l=.3;q.y=160;}}
+  else if(q.y>250){q.st=1;q.l=.25;}}
+ S.p=S.p.filter(q=>!q.st||q.l>0);},
+draw(){rr(170,120,460,190,18);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.stroke();
+ rr(360,96,80,32,8);ctx.fillStyle=C.metal;ctx.fill();ctx.strokeStyle=C.ink;ctx.stroke();
+ for(let i=0;i<4;i++){const x=WX(i);T(WN[i],x+45,142,{s:12.5,w:700});
+  rr(x,160,90,120,6);ctx.fillStyle=C.film;ctx.fill();
+  if(i===1){ctx.fillStyle=C.plastic;ctx.globalAlpha=.75;ctx.fill();ctx.globalAlpha=1;}
+  if(i===2){ctx.fillStyle=C.metal;ctx.fill();}
+  if(i===3){ctx.fillStyle=C.lead;ctx.fill();}
+  ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.stroke();}
+ T('Badge holder',400,296,{s:12,c:C.muted,w:700});
+ for(const q of S.p)drawRad(q.t,q.x,q.y,Math.PI/2,q.st?q.l/.3:1);
+ T(S.mode==='ex'?'Developed film (darker = more radiation)':'Developed film from a worker’s badge',170,334,{a:'left',s:13,w:700,c:C.muted});
+ rr(170,346,460,100,8);ctx.fillStyle=C.film;ctx.fill();ctx.strokeStyle=C.line;ctx.lineWidth=1.5;ctx.stroke();
+ for(let i=0;i<4;i++){const x=WX(i),a=1-Math.exp(-S.D[i]/5);ctx.fillStyle=`rgba(24,22,30,${a.toFixed(3)})`;rr(x,356,90,72,4);ctx.fill();
+  T(['open','plastic','Al','lead'][i],x+45,438,{s:11.5,c:'#5D5A70',w:700});}
+ if(S.mode==='ex'&&S.on.a&&!S.on.b&&!S.on.g)tag('α cannot get through the badge case or film wrapper',400,54,{s:13,c:C.bad});
+ if(S.mode==='my')tag('Which radiation did this worker receive?',400,54,{s:14});},
+read(){const o=S.D.map((d,i)=>[WN[i],Math.round((1-Math.exp(-d/5))*100)+'% dark']);
+ if(S.mode==='my'&&S.ans){const ok=S.ans===S.mys.k;o.push([ok?'Correct':'Not quite',ok?'Well read':'Look at the filters again',ok?'ok':'bad']);}
+ return o;},
+extra(){if(S.mode!=='my'||!S.ans)return '';const k=S.mys.k,ok=S.ans===k;
+ const ex={b:'Dark behind the open window, lighter behind plastic and clear behind aluminium and lead. Aluminium absorbs beta, so this is beta only.',
+  g:'Every window is darkened, including behind lead, and the open window and plastic are the same. Only gamma gets through lead.',
+  bg:'Darkening behind lead shows gamma. The open window is much darker than behind aluminium, so beta was present too.',
+  none:'The film is clear behind every window: no beta or gamma reached the badge. (Alpha could never be recorded.)'}[k];
+ return `<p class="note ${ok?'ok':'bad'}"><b>${ok?'Correct.':'The answer is: '+MYS.find(m=>m[0]===k)[1]+'.'}</b> ${ex}</p>`;}
+};
+
+/* ============ 5. BACKGROUND RADIATION ============ */
+const BGS=[['Radon gas','s1','n','A radioactive gas that seeps out of rocks such as granite and can collect inside buildings. Breathed into the lungs, it emits alpha particles. It is the largest source for most people. Ventilating homes and sealing floors reduces it.'],
+ ['Rocks and buildings','s2','n','Gamma rays from radioactive isotopes in the ground and in building materials such as stone, brick and concrete.'],
+ ['Cosmic rays','s3','n','High-energy particles from the Sun and outer space. The atmosphere absorbs most of them, so the dose is higher at high altitude and on flights.'],
+ ['Food and drink','s4','n','Small amounts of radioactive isotopes, such as potassium-40 and carbon-14, are in everything we eat and drink, so they are inside our bodies too.'],
+ ['Medical','s5','m','X-rays, CT scans and nuclear medicine. Man-made. Doctors use them only when the benefit to the patient outweighs the risk.'],
+ ['Other man-made','s6','m','Fallout from past nuclear weapons tests, accidents such as Chernobyl and Fukushima, and discharges from the nuclear industry. Less than 1% of the UK average.']];
+const LOC={uk:['UK average',[1.30,.35,.33,.27,.41,.02]],corn:['Living in Cornwall',[6.30,.60,.33,.27,.41,.02]],pilot:['Airline pilot',[1.30,.35,2.30,.27,.41,.02]]};
+const DC={x:210,y:236,R:150,r:88};
+const bgr={id:'bg',grp:'Around us',name:'Background radiation',
+title:'Background radiation',
+lede:'We are exposed to low levels of ionising radiation all the time. Most of it comes from natural sources. It cannot be avoided.',
+hint:'<b>Click a slice</b> or a row to read about each source. Change the <b>person</b> to see how background radiation varies.',
+facts:{h:[['What it is','Ionising radiation from natural and man-made sources around us. The amount depends on where you live, your job and your medical treatment.'],
+ ['Why granite areas are higher','Granite contains uranium. Uranium decays to radon gas, which seeps into homes. Parts of Cornwall and Devon have the highest radon levels in the UK.'],
+ ['Measuring a source','Always measure the background count rate first, then subtract it from readings taken with the source.']],
+ tip:'<b>Natural:</b> radon gas, rocks and buildings, cosmic rays, food and drink. <b>Man-made:</b> medical uses, nuclear weapons testing, nuclear accidents and the nuclear industry.'},
+controls:()=>seg('loc','Person',[['uk','UK average'],['corn','Living in Cornwall'],['pilot','Airline pilot']],'uk')+seg('hl','Highlight',[['all','All'],['n','Natural'],['m','Man-made']],'all'),
+setup(){S={loc:'uk',hl:'all',sel:0,v:LOC.uk[1].slice()};
+ onSeg('loc',v=>{S.loc=v;});onSeg('hl',v=>{S.hl=v;});},
+pointer(type,x,y){if(type!=='down')return;const dx=x-DC.x,dy=y-DC.y,r=Math.hypot(dx,dy);
+ if(r>DC.r-10&&r<DC.R+14||r<DC.R&&r>DC.r){let a=Math.atan2(dy,dx)+Math.PI/2;if(a<0)a+=6.2832;const tot=S.v.reduce((p,c)=>p+c,0);let acc=0;for(let i=0;i<6;i++){acc+=S.v[i]/tot*6.2832;if(a<=acc){S.sel=i;return;}}}
+ if(x>430)for(let i=0;i<6;i++)if(y>50+i*42&&y<50+i*42+40)S.sel=i;},
+update(dt){const tg=LOC[S.loc][1];S.v=S.v.map((v,i)=>v+(tg[i]-v)*Math.min(1,dt*5));},
+draw(){const tot=S.v.reduce((p,c)=>p+c,0);let a0=-Math.PI/2;
+ for(let i=0;i<6;i++){const a=S.v[i]/tot*6.2832,mid=a0+a/2,off=i===S.sel?9:0,ox=Math.cos(mid)*off,oy=Math.sin(mid)*off;
+  ctx.globalAlpha=S.hl==='all'||S.hl===BGS[i][2]?1:.18;ctx.beginPath();ctx.arc(DC.x+ox,DC.y+oy,DC.R,a0,a0+a);ctx.arc(DC.x+ox,DC.y+oy,DC.r,a0+a,a0,true);ctx.closePath();ctx.fillStyle=C[BGS[i][1]];ctx.fill();
+  ctx.strokeStyle=C.scene;ctx.lineWidth=2;ctx.stroke();
+  if(a>.3){const lx=DC.x+ox+Math.cos(mid)*(DC.R+DC.r)/2,ly=DC.y+oy+Math.sin(mid)*(DC.R+DC.r)/2;T(Math.round(S.v[i]/tot*100)+'%',lx,ly,{s:14,w:700,c:'#FFFFFF',m:1});}
+  ctx.globalAlpha=1;a0+=a;}
+ T(tot.toFixed(1),DC.x,DC.y-10,{s:34,w:700,m:1});T('mSv per year',DC.x,DC.y+20,{s:13,c:C.muted,w:700});
+ tag(LOC[S.loc][0],DC.x,DC.y+DC.R+30,{s:14});
+ for(let i=0;i<6;i++){const y=50+i*42,act=i===S.sel;ctx.globalAlpha=S.hl==='all'||S.hl===BGS[i][2]?1:.35;
+  if(act){rr(436,y,348,38,8);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C[BGS[i][1]];ctx.lineWidth=2;ctx.stroke();}
+  rr(448,y+11,16,16,4);ctx.fillStyle=C[BGS[i][1]];ctx.fill();
+  T(BGS[i][0],474,y+20,{a:'left',s:15,w:act?700:600});T(BGS[i][2]==='n'?'natural':'man-made',650,y+20,{a:'left',s:12,c:C.muted,w:600});
+  T(S.v[i].toFixed(2),774,y+20,{a:'right',s:13.5,m:1,w:700});ctx.globalAlpha=1;}
+ const b=BGS[S.sel];T(b[0],440,320,{a:'left',s:17,w:700,c:C[b[1]]});wrapT(b[3],440,334,340,19,{s:14.5,c:C.ink});
+ T('dose in millisieverts (mSv) per year; approximate values. You do not need this unit for the exam.',20,468,{a:'left',s:12,c:C.muted,w:500});},
+read(){const v=LOC[S.loc][1],tot=v.reduce((p,c)=>p+c,0),nat=v[0]+v[1]+v[2]+v[3];let mi=0;v.forEach((x,i)=>{if(x>v[mi])mi=i;});
+ return [['Total per year',tot.toFixed(1)+' mSv'],['From natural sources',Math.round(nat/tot*100)+'%'],['From man-made sources',Math.round((tot-nat)/tot*100)+'%'],['Largest source',BGS[mi][0]]];}
+};
+
+/* ============ 6. RADIOACTIVE WASTE ============ */
+const WST={L:{n:'Low-level',A0:20,mix:[[1,.6],[30,.4]],ex:'Used gloves, protective clothing, paper towels and laboratory equipment from hospitals, laboratories and power stations.',how:'Compacted, sealed in metal containers and buried in concrete vaults close to the surface.'},
+ I:{n:'Intermediate-level',A0:2000,mix:[[5,.5],[30,.495],[5000,.005]],ex:'Metal parts from inside reactors, fuel cladding, filters and resins.',how:'Mixed with concrete inside stainless steel drums and kept in shielded stores. The plan is to move it deep underground.'},
+ H:{n:'High-level',A0:1e6,mix:[[30,.5],[29,.45],[432,.045],[24100,.005]],ex:'Waste from used nuclear fuel. It is so radioactive that it gets hot.',how:'Cooled in water for years, turned into glass (vitrified), sealed in steel canisters and stored. The plan is to bury it deep underground in stable rock.'}};
+const actW=(w,t)=>w.A0*w.mix.reduce((s,[h,f])=>s+f*Math.pow(.5,t/h),0);
+function safeT(w){let lo=0,hi=1e7;for(let i=0;i<80;i++){const m=(lo+hi)/2;if(actW(w,m)>1)lo=m;else hi=m;}return hi;}
+const GX=t=>480+290*Math.log10(Math.max(1,t))/6, GY=a=>400-(clamp(Math.log10(Math.max(a,1e-3)),-1,7)+1)/8*330;
+const yrs=t=>t<10?t.toFixed(1):fmt(sig2(t));
+const waste={id:'waste',grp:'Around us',name:'Radioactive waste',
+title:'Radioactive waste',
+lede:'Waste from power stations, hospitals and laboratories stays radioactive for a long time, so it must be stored safely until its activity has fallen to a safe level.',
+hint:'Choose a <b>type of waste</b>, then drag the <b>time</b> slider or press <b>Fast forward</b>. Note how long each type must be stored.',
+facts:{h:[['The problems','Some waste stays radioactive for thousands of years. It must not leak into groundwater, rivers or the food chain. It must be kept secure so it cannot be stolen. High-level waste is hot. People far in the future must know where it is.'],
+ ['Reducing the risk','Seal the waste in containers, store it in stable places away from people and water, monitor it, and for the longest-lived waste bury it deep underground in stable rock.'],
+ ['About this model','Real waste contains many isotopes. This model uses a few typical half-lives to show the pattern.']],
+ tip:'Use half-lives to explain storage times: waste with a long half-life must be stored for many half-lives before its activity falls to a safe level.'},
+controls:()=>seg('w','Type of waste',[['L','Low-level'],['I','Intermediate-level'],['H','High-level']],'H')+slider('t','Time stored',0,120,1,30)+btn('ff','Fast forward','pri'),
+setup(){S={w:'H',v:30,play:false};
+ onSeg('w',v=>{S.w=v;});
+ S.sl=onSlider('t',v=>{S.v=v;},v=>yrs(10**(v/20))+(10**(v/20)<1.05?' year':' years'));
+ onBtn('ff',()=>{S.play=!S.play;if(S.play&&S.v>=120){S.v=0;}$('#rdg-ff').textContent=S.play?'Pause':'Fast forward';});},
+update(dt){if(S.play){S.v=Math.min(120,S.v+dt*10);S.sl.value=S.v;S.sl._lab();if(S.v>=120){S.play=false;$('#rdg-ff').textContent='Fast forward';}}},
+draw(){const w=WST[S.w],t=10**(S.v/20),A=actW(w,t),g=clamp(Math.log10(Math.max(A,1))/Math.log10(w.A0),0,1);
+ const glow=(x,y,wd,h)=>{if(g<=0)return;ctx.shadowColor=C.amber;ctx.shadowBlur=24*g;rr(x,y,wd,h,4);ctx.fillStyle=C.amber;ctx.globalAlpha=.25+.75*g;ctx.fill();ctx.globalAlpha=1;ctx.shadowBlur=0;};
+ if(S.w==='H'){ctx.fillStyle=C.grass;ctx.fillRect(0,64,400,6);ctx.fillStyle=C.rock;ctx.fillRect(0,70,400,410);ctx.fillStyle=C.rock2;for(let i=0;i<5;i++)ctx.fillRect(0,110+i*70,400,24);
+  rr(250,40,70,24,3);ctx.fillStyle=C.concrete;ctx.fill();line([[285,64],[285,330]],C.ink,3);
+  rr(60,320,320,78,10);ctx.fillStyle=C.scene;ctx.fill();rr(100,330,200,58,8);ctx.fillStyle=C.clay;ctx.fill();
+  rr(126,340,148,38,8);ctx.fillStyle=C.metal;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.stroke();glow(140,348,120,22);
+  line([[30,64],[30,358]],C.ink,1.5);line([[24,64],[36,64]],C.ink,1.5);line([[24,358],[36,358]],C.ink,1.5);
+  ctx.save();ctx.translate(18,210);ctx.rotate(-Math.PI/2);T('about 500 m',0,0,{s:12.5,w:700});ctx.restore();
+  T('glass block in a steel canister',200,416,{s:12.5,w:700});T('surrounded by clay, in a tunnel in stable rock',200,434,{s:12.5,c:C.muted,w:600});}
+ else if(S.w==='I'){ctx.fillStyle=C.grass;ctx.fillRect(0,330,400,6);ctx.fillStyle=C.soil;ctx.fillRect(0,336,400,144);
+  rr(40,110,330,226,6);ctx.fillStyle=C.concrete;ctx.fill();rr(62,132,286,204,4);ctx.fillStyle=C.scene;ctx.fill();
+  for(let r=0;r<3;r++)for(let c=0;c<5;c++){const x=78+c*54,y=272-r*64;rr(x,y,40,60,4);ctx.fillStyle=C.metal;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.2;ctx.stroke();glow(x+8,y+10,24,40);}
+  T('thick concrete walls',205,96,{s:12.5,w:700});T('steel drums: waste set in concrete',205,372,{s:12.5,w:700});T('in a shielded store',205,390,{s:12.5,c:C.muted,w:600});}
+ else{ctx.fillStyle=C.grass;ctx.fillRect(0,150,400,6);ctx.fillStyle=C.soil;ctx.fillRect(0,156,400,324);
+  rr(50,170,310,30,4);ctx.fillStyle=C.clay;ctx.fill();T('clay and soil cap',205,185,{s:12,w:700});
+  rr(50,200,310,130,4);ctx.fillStyle=C.concrete;ctx.fill();
+  for(let r=0;r<2;r++)for(let c=0;c<6;c++){const x=66+c*48,y=214+r*56;rr(x,y,40,46,3);ctx.fillStyle=C.metal;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.2;ctx.stroke();glow(x+6,y+8,28,30);}
+  T('concrete vault a few metres underground',205,352,{s:12.5,w:700});T('compacted waste in metal containers',205,370,{s:12.5,c:C.muted,w:600});}
+ tag(w.n+' waste',200,22,{s:14});
+ line([[480,60],[480,400],[775,400]],C.ink,2);
+ [0,1,2,3,4,5,6].forEach(k=>{const x=GX(10**k);line([[x,400],[x,406]],C.ink,1.5);if(k!==5)T(k===6?'1 million':k===4?'10k':fmt(10**k),k===6?776:x,418,{s:11,m:1,w:500,a:k===6?'right':'center'});});
+ T('time stored / years (each step ×10; k = thousand)',628,440,{s:12.5,c:C.muted});
+ [0,2,4,6].forEach(k=>T(k===6?'1 million':fmt(10**k),474,GY(10**k),{a:'right',s:11,m:1,w:500}));T('0.1',474,GY(.1),{a:'right',s:11,m:1,w:500});
+ T('activity (× safe level)',412,44,{a:'left',s:12.5,c:C.muted,w:700});
+ line([[480,GY(1)],[775,GY(1)]],C.good,1.8,[6,4]);T('safe level',486,GY(1)+11,{a:'left',s:12,c:C.good,w:700});
+ ctx.strokeStyle=C.accent;ctx.lineWidth=3;ctx.beginPath();for(let k=0;k<=240;k++){const tt=10**(k/40),y=GY(actW(w,tt));k?ctx.lineTo(GX(tt),y):ctx.moveTo(GX(tt),y);}ctx.stroke();
+ const st=safeT(w);if(st<1e6){line([[GX(st),GY(1)],[GX(st),400]],C.good,1.2,[3,3]);}
+ const x=GX(t),y=GY(A);line([[x,y],[x,400]],C.ga,1.5);circ(x,y,7);ctx.fillStyle=C.ga;ctx.fill();ctx.strokeStyle=C.panel;ctx.lineWidth=3;ctx.stroke();
+ tag(yrs(t)+' years',clamp(x,540,740),y<120?y+30:y-26,{m:1,s:13});},
+read(){const w=WST[S.w],t=10**(S.v/20),A=actW(w,t),st=safeT(w),lh=w.mix.reduce((m,c)=>Math.max(m,c[0]),0);
+ return [['Time stored',yrs(t)+' years'],['Activity',(A>=10?fmt(sig2(A)):A.toFixed(2))+'× safe level'],['Longest half-life',fmt(lh)+' years'],['Safe after about',fmt(sig2(st))+' years'],['Status',A>1?'Still dangerous':'Below safe level',A>1?'bad':'ok']];},
+extra(){const w=WST[S.w];return `<p class="note"><b>${w.n} waste.</b> ${w.ex} <b>Treatment:</b> ${w.how}</p>`;}
+};
+
+const APPS=[cells,body,tds,badge,bgr,waste];
+let cur=null,view='apps';
+const rail=$('#rdg-rail');
+const grps=[...new Set(APPS.map(a=>a.grp))];
+rail.innerHTML=grps.map(g=>`<div class="grp"><h3>${g}</h3>${APPS.filter(a=>a.grp===g).map(a=>`<button type="button" class="nav" data-app="${a.id}">${a.name}</button>`).join('')}</div>`).join('');
+rail.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)select(b.dataset.app);});
+let lastRO='',lastEx='',roT=0;
+function select(id){cur=APPS.find(a=>a.id===id);
+ $$('.nav').forEach(b=>b.setAttribute('aria-current',String(b.dataset.app===id)));
+ $('#rdg-title').textContent=cur.title;$('#rdg-lede').textContent=cur.lede;$('#rdg-hint').innerHTML=cur.hint;
+ ctlBox.innerHTML=cur.controls();const f=cur.facts;
+ $('#rdg-facts').innerHTML=`<h3>Key ideas</h3>${f.h.map(([h,p])=>`<div><h4>${h}</h4><p>${p}</p></div>`).join('')}<div class="tip"><h4>Exam tip</h4><p>${f.tip}</p></div>`;
+ cv.style.touchAction=cur.pointer?'none':'pan-y';cv.style.cursor=cur.pointer?'pointer':'default';
+ cur.setup();lastRO=null;lastEx=null;roT=1;}
+function renderRO(){const h=cur.read().map(r=>`<div class="ri ${r[2]||''}"><div class="k">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('');if(h!==lastRO){$('#rdg-ro').innerHTML=h;lastRO=h;}
+ const ex=cur.extra?cur.extra():'';if(ex!==lastEx){$('#rdg-extra').innerHTML=ex;lastEx=ex;}}
+const lp=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*LW,(e.clientY-r.top)/r.height*LH];};
+cv.addEventListener('pointerdown',e=>{if(cur.pointer)cur.pointer('down',...lp(e));});
+let last=performance.now();
+function frame(t){const dt=clamp((t-last)/1000,0,.05);last=t;
+ if(cur&&view==='apps'&&cv.width){cur.update(dt);ctx.setTransform(dpr*sc,0,0,dpr*sc,0,0);ctx.fillStyle=C.scene;ctx.fillRect(0,0,LW,LH);ctx.lineCap='butt';ctx.lineJoin='miter';cur.draw();
+  roT+=dt;if(roT>.15){roT=0;renderRO();}}
+ requestAnimationFrame(frame);}
+select('cells');requestAnimationFrame(frame);
+
+$$('.tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));$$('.view').forEach(v=>v.hidden=v.dataset.v!==view);if(view==='apps')resize();}));
+
+/* ============ SORT ============ */
+const SORT=[['A patient has an X-ray of a broken arm.','i','The X-rays come from a machine outside the body and stop when it is switched off.'],
+ ['Radon gas from the ground is breathed into a person’s lungs.','c','Radioactive atoms are now inside the body and keep emitting alpha particles there.'],
+ ['Fruit is exposed to gamma rays to kill bacteria.','i','The gamma source stays outside the fruit. The fruit does not become radioactive.'],
+ ['Dust from a nuclear accident settles on a farmer’s crops.','c','Radioactive material is now on the crops and can be eaten.'],
+ ['A technician stands near a gamma source during an experiment.','i','The source is outside the body. Moving away or adding shielding stops the exposure.'],
+ ['A patient is injected with a technetium-99m tracer.','c','The radioactive tracer is deliberately put inside the body. It stays there until it decays or is excreted.'],
+ ['Radioactive iodine from a leak gets into milk that people drink.','c','The radioactive atoms are swallowed and taken into the body.'],
+ ['Airline crew receive extra cosmic rays on long flights.','i','The radiation comes from outside. Nothing radioactive gets onto or into the crew.'],
+ ['Radioactive liquid is spilled onto a worker’s gloves.','c','The radioactive material is on the gloves. They must be removed and disposed of safely.'],
+ ['A tumour is treated with gamma beams from outside the body.','i','The source is outside the body. The patient does not become radioactive.']];
+const sAns=SORT.map(()=>null);
+function renderSort(){const done=sAns.filter(a=>a!=null).length,score=sAns.filter((a,i)=>a===SORT[i][1]).length;
+ $('#rdg-sort').innerHTML=`<div class="qhead"><span class="lab">Sort each situation</span><span class="lab">Score <b>${score} / ${done}</b></span></div><h2>Contamination or irradiation?</h2>
+ <div>${SORT.map((s,i)=>{const a=sAns[i],ok=a===s[1];const b=(v,l)=>`<button type="button" data-i="${i}" data-v="${v}" aria-pressed="${a===v}" class="${a===v?(ok?'ok':'bad'):''}">${l}</button>`;
+  return `<div class="sitem"><div class="q"><span>${s[0]}</span><div class="seg" role="group" aria-label="Answer">${b('i','Irradiation')}${b('c','Contamination')}</div></div>${a!=null?`<p class="fb"><b style="color:var(--${ok?'good':'bad'})">${ok?'Correct.':'It is '+(s[1]==='c'?'contamination':'irradiation')+'.'}</b> ${s[2]}</p>`:''}</div>`;}).join('')}</div>
+ ${done===SORT.length?`<div class="row"><button type="button" class="btn" id="rdg-sreset">Start again</button></div>`:''}`;
+ const r=$('#rdg-sreset');if(r)r.addEventListener('click',()=>{sAns.fill(null);renderSort();});}
+$('#rdg-sort').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(!b)return;sAns[+b.dataset.i]=b.dataset.v;renderSort();});
+renderSort();
+
+/* ============ QUIZ ============ */
+const QZ=[
+ {q:'How can ionising radiation lead to cancer?',o:['It heats cells until they stop working','It ionises atoms in cells, which can damage DNA and cause mutations','It makes every cell it passes through radioactive','It removes oxygen from the blood'],a:1,e:'Ionisation can damage DNA. A mutated cell may divide uncontrollably, forming a tumour.'},
+ {q:'Which type of radiation is most dangerous inside the body?',o:['Alpha','Beta','Gamma','All are equally dangerous'],a:0,e:'Alpha is the most strongly ionising, and inside the body all of it is absorbed by nearby living cells.'},
+ {q:'Why is an alpha source outside the body not very dangerous?',o:['Alpha particles are not ionising','Alpha particles are absorbed by the dead outer layer of skin','Alpha particles travel too slowly','Alpha particles are deflected by the body'],a:1,e:'Alpha cannot penetrate the dead outer layer of skin, so it does not reach living cells.'},
+ {q:'Which of these is NOT a source of background radiation?',o:['Radon gas','Cosmic rays','Food and drink','Radio waves from a mobile phone mast'],a:3,e:'Radio waves are not ionising radiation, so they are not part of background radiation.'},
+ {q:'What is the largest source of background radiation for most people in the UK?',o:['Medical X-rays','Nuclear power stations','Radon gas','Cosmic rays'],a:2,e:'Radon gas from rocks such as granite gives about half of the average dose.'},
+ {q:'A film badge darkens behind the open window and the plastic, but not behind the aluminium or lead. What did the worker receive?',o:['Alpha only','Beta only','Gamma only','Beta and gamma'],a:1,e:'Aluminium absorbs beta. Gamma would have darkened the film behind aluminium and lead as well.'},
+ {q:'Which precaution gives NO protection from gamma rays from a source on the bench?',o:['Standing behind a lead screen','Moving further away','Wearing rubber gloves','Spending less time near the source'],a:2,e:'Gamma passes straight through gloves. Gloves only help prevent contamination of the hands.'},
+ {q:'Which of these is contamination?',o:['Having a chest X-ray','Breathing in radioactive dust','Standing near a gamma source','Food sterilised by gamma rays'],a:1,e:'The radioactive material is now inside the body. The other three are irradiation.'},
+ {q:'Why is high-level waste turned into glass before storage?',o:['Glass is a solid that does not dissolve, so the waste cannot leak out in water','Glass absorbs all the gamma rays','Glass makes the waste stop being radioactive','Glass is cheaper than steel'],a:0,e:'Vitrified waste is stable and insoluble, which reduces the risk of radioactive material reaching groundwater.'},
+ {q:'Why must some radioactive waste be stored for thousands of years?',o:['It contains isotopes with very long half-lives','It gets more radioactive as it ages','It is kept in case it is needed again','Its gamma rays travel very slowly'],a:0,e:'With a long half-life, the activity takes many thousands of years to fall to a safe level.'},
+ {q:'Waste has an activity of 3200 Bq. Its half-life is 30 years. What is its activity after 120 years?',o:['800 Bq','400 Bq','200 Bq','100 Bq'],a:2,e:'120 years is four half-lives: 3200 → 1600 → 800 → 400 → 200 Bq.'},
+ {q:'A student measures 18 counts per minute with no source present and 250 counts per minute with a source. What is the count rate due to the source?',o:['268 counts per minute','250 counts per minute','232 counts per minute','14 counts per minute'],a:2,e:'Subtract background: 250 − 18 = 232 counts per minute.'}];
+let qi=0,qs=0,qa=null;
+function renderQuiz(){const el=$('#rdg-quiz');
+ if(qi>=QZ.length){el.innerHTML=`<span class="lab">Check yourself</span><h2>You scored ${qs} out of ${QZ.length}</h2><p>${qs>=10?'Excellent. You can explain the dangers and how the risks are reduced.':qs>=7?'Good. Go back to the simulations for the questions you missed.':'Work through the simulations again, reading the key ideas for each.'}</p><div class="row"><button type="button" class="btn pri" id="rdg-again">Try again</button></div>`;
+  $('#rdg-again').addEventListener('click',()=>{qi=0;qs=0;qa=null;renderQuiz();});return;}
+ const q=QZ[qi];
+ el.innerHTML=`<div class="qhead"><span class="lab">Question ${qi+1} of ${QZ.length}</span><span class="lab">Score <b>${qs}</b></span></div><div class="bar"><i style="width:${qi/QZ.length*100}%"></i></div>
+ <h2>${q.q}</h2><div class="opts">${q.o.map((o,i)=>`<button type="button" class="opt ${qa==null?'':i===q.a?'ok':i===qa?'bad':''}" data-o="${i}" ${qa!=null?'disabled':''}><span class="l">${'ABCD'[i]}</span><span>${o}</span></button>`).join('')}</div>
+ ${qa!=null?`<p class="note ${qa===q.a?'ok':'bad'}"><b>${qa===q.a?'Correct.':'Not quite.'}</b> ${q.e}</p><div class="row"><button type="button" class="btn pri" id="rdg-nextq">${qi===QZ.length-1?'See score':'Next question'}</button></div>`:''}`;
+ el.querySelectorAll('[data-o]').forEach(b=>b.addEventListener('click',()=>{if(qa!=null)return;qa=+b.dataset.o;if(qa===q.a)qs++;renderQuiz();}));
+ const n=$('#rdg-nextq');if(n)n.addEventListener('click',()=>{qi++;qa=null;renderQuiz();});}
+renderQuiz();
+})();
+</script>
+
+</body>
+</html>

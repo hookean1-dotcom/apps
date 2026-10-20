@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Uses of Radioactivity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: instrument-bench app — application rail | live apparatus stage | "why this source" data card */
+:root{
+  --bg:#EEF2F4;--panel:#FFFFFF;--ink:#132232;--muted:#566476;--line:#D3DCE3;--soft:#E2EDF3;
+  --accent:#0B6B93;--accent-ink:#FFFFFF;--amber:#B87200;
+  --al:#D2462E;--be:#2563C9;--ga:#7B3FC4;
+  --scene:#F8FAFB;--metal:#9AA7B4;--wall:#BCC5CD;--soil:#C9B089;--grass:#7FA65A;--tissue:#EBDDD6;
+  --paper:#F6F2E6;--box:#CC9D66;--smoke:#6E7882;--good:#1D8352;--bad:#C2372A;--bac:#2F9446;
+  --f-disp:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0D141B;--panel:#141E28;--ink:#E4EBF1;--muted:#9AA9B8;--line:#283544;--soft:#173041;
+  --accent:#4FB3DF;--accent-ink:#04202C;--amber:#F0AE36;
+  --al:#FF7C5E;--be:#72A9FF;--ga:#BD8FF7;
+  --scene:#101A23;--metal:#6F7E8D;--wall:#3B4754;--soil:#5F4C34;--grass:#4E7234;--tissue:#3E4652;
+  --paper:#D3CCBA;--box:#8F6A40;--smoke:#A9B2BB;--good:#46C281;--bad:#FF6B5E;--bac:#5FD07A;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D141B;--panel:#141E28;--ink:#E4EBF1;--muted:#9AA9B8;--line:#283544;--soft:#173041;
+  --accent:#4FB3DF;--accent-ink:#04202C;--amber:#F0AE36;
+  --al:#FF7C5E;--be:#72A9FF;--ga:#BD8FF7;
+  --scene:#101A23;--metal:#6F7E8D;--wall:#3B4754;--soil:#5F4C34;--grass:#4E7234;--tissue:#3E4652;
+  --paper:#D3CCBA;--box:#8F6A40;--smoke:#A9B2BB;--good:#46C281;--bad:#FF6B5E;--bac:#5FD07A;color-scheme:dark}
+body{background:var(--bg)}
+#rau{width:100%;height:100%;min-height:600px;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;padding-block:20px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#rau *{box-sizing:border-box}
+#rau .shell{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+#rau .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px}
+#rau .brand{display:flex;gap:14px;align-items:center;min-width:0}
+#rau .mark{width:46px;height:46px;flex:none;color:var(--accent)}
+#rau .eyebrow{font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:700}
+#rau h1{font-family:var(--f-disp);font-weight:800;font-size:clamp(26px,3.4vw,38px);line-height:1.05;margin:2px 0 0;letter-spacing:-.01em;text-wrap:balance}
+#rau .tabs{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px;flex-wrap:wrap}
+#rau .tabs button{font:600 15px var(--f-body);color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 16px;cursor:pointer}
+#rau .tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+#rau button:focus-visible,#rau input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+#rau .view[hidden]{display:none!important}
+/* apps view */
+#rau .apps{display:grid;grid-template-columns:220px minmax(0,1fr) 300px;gap:18px;align-items:start}
+#rau .rail{display:flex;flex-direction:column;gap:14px}
+#rau .grp{display:flex;flex-direction:column;gap:4px}
+#rau .grp h3{font:700 12px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 2px 10px}
+#rau .nav{display:flex;align-items:center;gap:10px;width:100%;text-align:left;font:600 15.5px var(--f-body);color:var(--ink);background:none;border:1px solid transparent;border-radius:10px;padding:8px 10px;cursor:pointer}
+#rau .nav:hover{background:var(--soft)}
+#rau .nav[aria-current="true"]{background:var(--panel);border-color:var(--line);box-shadow:0 1px 0 var(--line)}
+#rau .chip{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;font:700 15px var(--f-mono);color:#fff;flex:none}
+#rau .r-a{background:var(--al)}#rau .r-b{background:var(--be)}#rau .r-g{background:var(--ga)}
+#rau .stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+#rau .stage h2{font-family:var(--f-disp);font-weight:800;font-size:26px;line-height:1.1;margin:0;text-wrap:balance}
+#rau .lede{margin:4px 0 0;color:var(--muted);max-width:68ch}
+#rau .cvwrap{background:var(--scene);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+#rau canvas{display:block;width:100%;height:auto;aspect-ratio:5/3;touch-action:pan-y}
+#rau .hint{font-size:14.5px;color:var(--muted);margin:0}
+#rau .hint b{color:var(--ink)}
+#rau .ctls{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end}
+#rau .ctl{display:flex;flex-direction:column;gap:4px;min-width:0}
+#rau .lab{font-size:12.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#rau .lab b{font-family:var(--f-mono);font-weight:700;color:var(--ink);letter-spacing:0;text-transform:none;margin-left:4px}
+#rau .seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px;flex-wrap:wrap}
+#rau .seg button{font:600 14.5px var(--f-body);color:var(--ink);background:none;border:0;border-radius:6px;padding:6px 12px;cursor:pointer;min-width:38px}
+#rau .seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+#rau .btn{font:700 14.5px var(--f-body);border-radius:9px;padding:9px 15px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+#rau .btn:hover{border-color:var(--accent)}
+#rau .btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+#rau input[type=range]{width:200px;max-width:100%;accent-color:var(--accent)}
+#rau input[type=number]{font:600 16px var(--f-mono);width:150px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink)}
+#rau .ro{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+#rau .ri{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 12px;min-width:0}
+#rau .ri .k{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#rau .ri .v{font:700 16px var(--f-mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+#rau .ri.ok .v{color:var(--good)}#rau .ri.bad .v{color:var(--bad)}#rau .ri.warn .v{color:var(--amber)}
+#rau .note{font-size:15px;background:var(--soft);border-radius:10px;padding:10px 14px;margin:0}
+#rau .note.ok{border-left:4px solid var(--good)}#rau .note.bad{border-left:4px solid var(--bad)}
+#rau .facts{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px}
+#rau .facts h3{font:700 12.5px var(--f-body);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0}
+#rau .spec{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin:0;font-size:15px}
+#rau .spec dt{color:var(--muted)}#rau .spec dd{margin:0;font-weight:700}
+#rau .facts h4{font-family:var(--f-disp);font-size:17px;margin:0 0 3px}
+#rau .facts p{margin:0;font-size:15px}
+#rau .tip{background:var(--soft);border-radius:10px;padding:12px 14px}
+#rau .tip h4{color:var(--accent)}
+#rau .puz{display:flex;flex-direction:column;gap:10px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+#rau .puz p{margin:0}
+#rau .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+/* choose view */
+#rau .choose{display:grid;grid-template-columns:300px minmax(0,1fr);gap:18px;align-items:start}
+#rau .sclist{display:flex;flex-direction:column;gap:6px}
+#rau .sc{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:left;font:600 15px var(--f-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+#rau .sc[aria-current="true"]{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+#rau .st{font:700 11.5px var(--f-body);letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:2px 8px;white-space:nowrap;color:var(--muted);background:var(--soft)}
+#rau .st.ok{color:var(--good)}#rau .st.bad{color:var(--bad)}
+#rau .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+#rau .card h2{font-family:var(--f-disp);font-size:24px;line-height:1.15;margin:0;text-wrap:balance}
+#rau .isos{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+#rau .iso{display:flex;flex-direction:column;gap:4px;text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer}
+#rau .iso:hover{border-color:var(--accent)}
+#rau .iso .n{font-weight:700;font-size:16px}
+#rau .iso .m{display:flex;gap:8px;align-items:center;font:500 13.5px var(--f-mono);color:var(--muted)}
+#rau .iso .chip{width:22px;height:22px;font-size:13px}
+#rau .iso.pick-ok{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+#rau .iso.pick-bad{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+#rau .tblw{overflow-x:auto}
+#rau table{border-collapse:collapse;width:100%;min-width:560px;font-size:15px}
+#rau th,#rau td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+#rau th{font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+#rau .small{font-size:13.5px;color:var(--muted);margin:0}
+/* check view */
+#rau .check{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px;align-items:start}
+#rau .duo{display:flex;flex-direction:column;gap:18px}
+#rau .card ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+#rau .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#rau .vs>div{background:var(--bg);border-radius:10px;padding:12px}
+#rau .vs h4{margin:0 0 4px;font-family:var(--f-disp);font-size:17px}
+#rau .vs p{margin:0;font-size:15px}
+#rau .opts{display:flex;flex-direction:column;gap:8px}
+#rau .opt{text-align:left;font:600 15.5px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;display:flex;gap:10px}
+#rau .opt .l{font-family:var(--f-mono);color:var(--muted)}
+#rau .opt:hover:not(:disabled){border-color:var(--accent)}
+#rau .opt:disabled{cursor:default}
+#rau .opt.ok{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+#rau .opt.bad{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+#rau .qhead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+#rau .bar{height:6px;background:var(--soft);border-radius:9px;overflow:hidden}
+#rau .bar i{display:block;height:100%;background:var(--accent);width:0}
+@media (max-width:1150px){
+  #rau .apps{grid-template-columns:minmax(0,1fr) 280px}
+  #rau .rail{grid-column:1/-1;flex-direction:row;flex-wrap:wrap;gap:6px 14px}
+  #rau .grp{flex-direction:row;flex-wrap:wrap;align-items:center}
+  #rau .grp h3{margin:0 4px 0 0;width:100%}
+  #rau .nav{width:auto}
+}
+@media (max-width:820px){
+  #rau .apps,#rau .choose,#rau .check{grid-template-columns:minmax(0,1fr)}
+  #rau .vs{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  #rau .nav{font-size:14px;padding:6px 8px}
+  #rau .stage h2{font-size:22px}
+  #rau .tabs button{padding:6px 11px;font-size:14px}
+}
+</style>
+
+</head>
+<body style="margin:0">
+<div id="rau">
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="2.5"></circle><circle cx="24" cy="24" r="4" fill="currentColor"></circle><path d="M24 24 L14.5 7.5 A19 19 0 0 1 33.5 7.5 Z" fill="currentColor"></path><path d="M24 24 L43 24 A19 19 0 0 1 33.5 40.5 Z" fill="currentColor"></path><path d="M24 24 L14.5 40.5 A19 19 0 0 1 5 24 Z" fill="currentColor"></path><circle cx="24" cy="24" r="7.5" fill="var(--bg)"></circle><circle cx="24" cy="24" r="4" fill="currentColor"></circle></svg>
+      <div><div class="eyebrow">Edexcel International GCSE Physics · Topic 7</div><h1>Uses of Radioactivity</h1></div>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button type="button" role="tab" data-view="apps" aria-selected="true">Applications</button>
+      <button type="button" role="tab" data-view="choose" aria-selected="false">Choose the isotope</button>
+      <button type="button" role="tab" data-view="check" aria-selected="false">Check yourself</button>
+    </div>
+  </header>
+
+  <section class="view apps" data-v="apps">
+    <nav class="rail" id="rau-rail" aria-label="Applications"></nav>
+    <div class="stage">
+      <div><h2 id="rau-title"></h2><p class="lede" id="rau-lede"></p></div>
+      <div class="cvwrap"><canvas id="rau-cv" width="800" height="480" aria-label="Interactive simulation"></canvas></div>
+      <p class="hint" id="rau-hint"></p>
+      <div class="ctls" id="rau-ctls"></div>
+      <div class="ro" id="rau-ro" aria-live="polite"></div>
+    </div>
+    <aside class="facts" id="rau-facts"></aside>
+  </section>
+
+  <section class="view choose" data-v="choose" hidden>
+    <div class="sclist" id="rau-sclist"></div>
+    <div class="duo">
+      <div class="card" id="rau-scard"></div>
+      <div class="card">
+        <h3 class="lab">Properties of the three radiations</h3>
+        <div class="tblw"><table>
+          <thead><tr><th>Radiation</th><th>What it is</th><th>Ionising</th><th>Absorbed by</th><th>Range in air</th></tr></thead>
+          <tbody>
+            <tr><td><span class="chip r-a">α</span></td><td>Helium nucleus (2 protons, 2 neutrons)</td><td>Strongly</td><td>A sheet of paper, or skin</td><td>A few cm</td></tr>
+            <tr><td><span class="chip r-b">β</span></td><td>Fast-moving electron from the nucleus</td><td>Moderately</td><td>A few mm of aluminium</td><td>Up to about a metre</td></tr>
+            <tr><td><span class="chip r-g">γ</span></td><td>Electromagnetic wave</td><td>Weakly</td><td>Reduced by thick lead or concrete</td><td>Very long</td></tr>
+          </tbody>
+        </table></div>
+        <p class="small">To choose a source, ask two questions. Which radiation can do the job (pass through, or be partly absorbed)? Which half-life suits the job (steady for years, or gone in hours)?</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="view check" data-v="check" hidden>
+    <div class="duo">
+      <div class="card">
+        <h3 class="lab">Irradiation or contamination?</h3>
+        <div class="vs">
+          <div><h4>Irradiation</h4><p>An object is exposed to radiation from a source outside it. It stops as soon as the source is removed or shielded. The object does <b>not</b> become radioactive.</p></div>
+          <div><h4>Contamination</h4><p>Radioactive material gets onto or into an object or person. It keeps emitting radiation until it is removed or has decayed, so it is harder to deal with.</p></div>
+        </div>
+        <p class="small">Alpha emitters are most dangerous if swallowed or breathed in: inside the body every alpha particle is absorbed by nearby cells.</p>
+      </div>
+      <div class="card">
+        <h3 class="lab">Dangers and reducing the risk</h3>
+        <ul>
+          <li>Ionising radiation can damage cells and tissue and cause mutations in DNA, which may lead to cancer.</li>
+          <li><b>Time:</b> spend as little time as possible near a source.</li>
+          <li><b>Distance:</b> handle sources with long tongs and never point them at anyone.</li>
+          <li><b>Shielding:</b> store sources in lead-lined boxes; use lead aprons or screens.</li>
+          <li>Workers wear dosimeter badges to monitor the dose they receive.</li>
+          <li>Radioactive waste with a long half-life must be stored securely for a very long time.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card" id="rau-quiz"></div>
+  </section>
+</div>
+</div>
+
+<script>
+(function(){
+'use strict';
+const R=document.getElementById('rau');
+const $=s=>R.querySelector(s), $$=s=>[...R.querySelectorAll(s)];
+const cv=$('#rau-cv'), ctx=cv.getContext('2d');
+const LW=800,LH=480; let dpr=1,sc=1;
+function resize(){const r=cv.getBoundingClientRect(); if(!r.width)return; dpr=Math.min(2.5,window.devicePixelRatio||1); sc=r.width/LW; cv.width=Math.round(r.width*dpr); cv.height=Math.round(r.width*LH/LW*dpr);}
+new ResizeObserver(resize).observe(cv);
+const C={};
+function readC(){const s=getComputedStyle(R);['bg','panel','ink','muted','line','soft','accent','amber','al','be','ga','scene','metal','wall','soil','grass','tissue','paper','box','smoke','good','bad','bac'].forEach(k=>C[k]=s.getPropertyValue('--'+k).trim());}
+readC();
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(readC,30));}catch(e){}
+new MutationObserver(()=>setTimeout(readC,30)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme','class','style']});
+
+/* helpers */
+const rnd=(a,b)=>a+Math.random()*(b-a), clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const gauss=()=>Math.sqrt(-2*Math.log(Math.random()||1e-9))*Math.cos(6.2832*Math.random());
+const F=(w,s,m)=>`${w} ${s}px ${m?'"JetBrains Mono",ui-monospace,monospace':'"Source Sans 3","Segoe UI",system-ui,sans-serif'}`;
+function T(s,x,y,o={}){ctx.font=F(o.w||600,o.s||15,o.m);ctx.fillStyle=o.c||C.ink;ctx.textAlign=o.a||'center';ctx.textBaseline=o.b||'middle';ctx.fillText(s,x,y);}
+function rr(x,y,w,h,r){ctx.beginPath();if(ctx.roundRect)ctx.roundRect(x,y,w,h,r);else ctx.rect(x,y,w,h);}
+function circ(x,y,r){ctx.beginPath();ctx.arc(x,y,r,0,6.2832);}
+function line(pts,col,w,dash){ctx.strokeStyle=col;ctx.lineWidth=w||2;ctx.setLineDash(dash||[]);ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.setLineDash([]);}
+function tag(s,x,y,o={}){ctx.font=F(o.w||700,o.s||14,o.m);const w=ctx.measureText(s).width+16,h=(o.s||14)+12;x=clamp(x,w/2+4,LW-w/2-4);rr(x-w/2,y-h/2,w,h,6);ctx.fillStyle=o.bg||C.panel;ctx.fill();ctx.strokeStyle=o.bd||C.line;ctx.lineWidth=1.5;ctx.stroke();T(s,x,y+1,{...o,w:o.w||700,s:o.s||14});}
+function drawRad(t,x,y,ang,a){ctx.globalAlpha=a==null?1:clamp(a,0,1);
+  if(t==='a'){ctx.fillStyle=C.al;circ(x,y,4.6);ctx.fill();}
+  else if(t==='b'){ctx.fillStyle=C.be;circ(x,y,2.7);ctx.fill();}
+  else{ctx.strokeStyle=C.ga;ctx.lineWidth=2;ctx.beginPath();const c=Math.cos(ang),s=Math.sin(ang);for(let i=0;i<=12;i++){const d=-i*1.7,w=Math.sin(i*1.25)*3.4;const px=x+c*d-s*w,py=y+s*d+c*w;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}
+  ctx.globalAlpha=1;}
+const fmt=n=>Math.round(n).toLocaleString('en-GB');
+const RADS=[['a','α'],['b','β'],['g','γ']];
+const RN={a:'alpha',b:'beta',g:'gamma'};
+
+/* control builders */
+const ctlBox=$('#rau-ctls');
+const seg=(id,label,opts,val)=>`<div class="ctl"><span class="lab">${label}</span><div class="seg" role="group" aria-label="${label}" data-seg="${id}">${opts.map(o=>`<button type="button" data-v="${o[0]}" aria-pressed="${o[0]===val}">${o[1]}</button>`).join('')}</div></div>`;
+const slider=(id,label,min,max,step,val)=>`<label class="ctl" for="rau-${id}"><span class="lab">${label}<b id="rau-${id}-v"></b></span><input type="range" id="rau-${id}" min="${min}" max="${max}" step="${step}" value="${val}"></label>`;
+const btn=(id,label,cls)=>`<button type="button" class="btn ${cls||''}" id="rau-${id}">${label}</button>`;
+function onSeg(id,fn){const g=ctlBox.querySelector(`[data-seg="${id}"]`);g.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;setSeg(id,b.dataset.v);fn(b.dataset.v);});}
+function setSeg(id,v){ctlBox.querySelectorAll(`[data-seg="${id}"] button`).forEach(x=>x.setAttribute('aria-pressed',x.dataset.v===v));}
+function onBtn(id,fn){$('#rau-'+id).addEventListener('click',fn);}
+function onSlider(id,fn,f){const el=$('#rau-'+id),v=$('#rau-'+id+'-v');const h=()=>{v.textContent=f(+el.value);fn(+el.value);};el.addEventListener('input',h);v.textContent=f(+el.value);el._lab=()=>{v.textContent=f(+el.value);};return el;}
+
+let S={};
+
+/* ============ 1. SMOKE DETECTOR ============ */
+const SMK={a:{ion:1,range:205,sp:230},b:{ion:.06,range:3000,sp:430},g:{ion:.012,range:3000,sp:620}};
+const smoke={id:'smoke',grp:'Industry & home',name:'Smoke detector',rad:'a',
+title:'Smoke detector',
+lede:'Alpha particles from americium-241 ionise the air between two charged plates, so a small current flows. Smoke absorbs the alpha particles, the current falls and the alarm sounds.',
+hint:'Press <b>Blow smoke</b> and watch the ammeter. Then swap to a β or γ source to see why alpha is the right choice.',
+facts:{iso:'Americium-241',rad:'a',half:'432 years',
+ why:'Alpha particles are strongly ionising, so they make plenty of ions in a short gap of air and a measurable current flows. They are absorbed by a few centimetres of air and by the plastic case, so no radiation escapes into the room.',
+ hw:'A half-life of hundreds of years means the activity hardly changes during the life of the detector, so the current stays steady and the source never needs replacing.',
+ tip:'Smoke particles absorb the alpha particles and pick up the ions, so the current <b>falls</b>. It is the fall in current that triggers the alarm.'},
+controls:()=>seg('src','Source',RADS,'a')+btn('smoke','Blow smoke','pri')+btn('clear','Clear the air'),
+setup(){S={src:'a',p:[],ions:[],sm:[],I:1,e:0,fl:0,s:0};
+ onSeg('src',v=>{S.src=v;S.p.length=0;});
+ onBtn('smoke',()=>{for(let i=0;i<40;i++)S.sm.push({x:rnd(600,700),y:rnd(150,330),vx:rnd(-75,-40),vy:rnd(-10,10),r:rnd(8,14),life:rnd(10,15)});});
+ onBtn('clear',()=>{S.sm.length=0;});},
+update(dt){const P=SMK[S.src];
+ S.e+=dt*20;while(S.e>=1){S.e--;const an=rnd(-.32,.32);S.p.push({x:195,y:240,vx:Math.cos(an)*P.sp,vy:Math.sin(an)*P.sp,d:0});}
+ let n=0;
+ for(const m of S.sm){if(m.x>540)m.x+=m.vx*dt;else{m.vx*=Math.pow(.7,dt);m.x+=(m.vx-14)*dt;}
+  m.vy+=gauss()*30*dt;m.vy*=Math.pow(.5,dt);m.y=clamp(m.y+m.vy*dt,112,384);m.x=Math.max(112,m.x);m.life-=dt;
+  if(m.x>200&&m.x<520&&m.y>148&&m.y<332)n++;}
+ S.sm=S.sm.filter(m=>m.life>0);S.s=Math.min(1,n/26);
+ for(const q of S.p){q.x+=q.vx*dt;q.y+=q.vy*dt;q.d+=P.sp*dt;
+  if(q.x>200&&q.x<520&&q.y>150&&q.y<330&&Math.random()<P.ion*dt*8)S.ions.push({x:q.x,y:q.y,q:1},{x:q.x,y:q.y,q:-1});
+  if(S.src==='a')for(const m of S.sm){if((m.x-q.x)**2+(m.y-q.y)**2<m.r*m.r){q.d=1e9;break;}}}
+ S.p=S.p.filter(q=>q.d<P.range&&q.x<830&&q.y>-20&&q.y<500);
+ for(const o of S.ions){o.y-=o.q*75*dt;o.x+=gauss()*12*dt;for(const m of S.sm){if((m.x-o.x)**2+(m.y-o.y)**2<m.r*m.r&&Math.random()<dt*6){o.dead=1;break;}}}
+ S.ions=S.ions.filter(o=>!o.dead&&o.y>150&&o.y<330);if(S.ions.length>420)S.ions.splice(0,S.ions.length-420);
+ const It=P.ion*(1-.88*S.s);S.I+=(It-S.I)*Math.min(1,dt*2.5);S.fl+=dt;},
+alarm(){return S.src==='a'?S.I<.6:true;},
+draw(){const P=SMK[S.src];
+ rr(90,96,520,300,20);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.line;ctx.lineWidth=2;ctx.stroke();
+ T('Ionisation chamber inside the detector case',112,118,{a:'left',s:14,c:C.muted});
+ ctx.fillStyle=C.scene;for(let i=0;i<6;i++){rr(603,160+i*30,12,16,3);ctx.fill();}
+ T('vents',590,355,{s:12,c:C.muted,a:'right'});
+ ctx.fillStyle=C.metal;ctx.fillRect(200,138,320,10);ctx.fillRect(200,332,320,10);
+ T('−',186,143,{s:22,w:700});T('+',186,337,{s:22,w:700});
+ rr(148,222,47,36,6);ctx.fillStyle=C.metal;ctx.fill();ctx.fillStyle=C.al;ctx.fillRect(191,232,5,16);
+ T('Am-241',171,274,{s:13,w:700});T('source',171,289,{s:12,c:C.muted});
+ ctx.lineCap='round';
+ line([[520,143],[700,143],[700,172]],C.ink,2.5);line([[700,238],[700,297]],C.ink,2.5);line([[700,313],[700,337],[520,337]],C.ink,2.5);
+ line([[682,298],[718,298]],C.ink,2.5);line([[690,312],[710,312]],C.ink,6);
+ T('battery',726,305,{s:13,c:C.muted,a:'left'});
+ circ(700,205,33);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.stroke();
+ ctx.strokeStyle=C.muted;ctx.lineWidth=1.5;for(let i=0;i<=5;i++){const a=Math.PI*(1.15+.14*i);line([[700+Math.cos(a)*24,218+Math.sin(a)*24],[700+Math.cos(a)*29,218+Math.sin(a)*29]],C.muted,1.5);}
+ const na=Math.PI*(1.15+.7*clamp(S.I,0,1));line([[700,218],[700+Math.cos(na)*25,218+Math.sin(na)*25]],C.bad,2.5);
+ circ(700,218,3);ctx.fillStyle=C.ink;ctx.fill();T('A',700,229,{s:12,w:700});
+ T('ammeter',742,205,{s:13,c:C.muted,a:'left'});
+ for(const m of S.sm){ctx.globalAlpha=Math.min(1,m.life/2)*.5;ctx.fillStyle=C.smoke;circ(m.x,m.y,m.r);ctx.fill();}ctx.globalAlpha=1;
+ for(const o of S.ions){ctx.fillStyle=o.q>0?C.accent:C.amber;circ(o.x,o.y,2.4);ctx.fill();}
+ for(const q of S.p)drawRad(S.src,q.x,q.y,Math.atan2(q.vy,q.vx),S.src==='a'?(P.range-q.d)/40:1);
+ const al=this.alarm(),on=al&&Math.floor(S.fl*3)%2===0;
+ if(on){ctx.shadowColor=C.amber;ctx.shadowBlur=22;}circ(690,62,18);ctx.fillStyle=on?C.amber:C.line;ctx.fill();ctx.shadowBlur=0;
+ T(S.src==='a'?(al?'ALARM':'Quiet'):'FAULT',716,62,{a:'left',w:800,s:17,c:al?C.amber:C.muted});
+ ctx.fillStyle=C.accent;circ(112,418,4);ctx.fill();T('positive ion → − plate',122,418,{a:'left',s:13,c:C.muted});
+ ctx.fillStyle=C.amber;circ(300,418,4);ctx.fill();T('negative ion → + plate',310,418,{a:'left',s:13,c:C.muted});
+ if(S.src!=='a')tag(`${RN[S.src]} radiation is escaping the case`,620,452,{c:C.bad});
+ else tag('α range in air: only a few cm',470,452,{c:C.muted,w:600,s:13});},
+read(){const ok=S.src==='a';const pct=Math.round(S.I*100);
+ return [['Current',pct+'% of normal',ok?(S.I<.6?'bad':'ok'):'bad'],['Smoke in chamber',Math.round(S.s*100)+'%'],
+ ['Alarm',ok?(S.I<.6?'Sounding':'Quiet'):'Fault: current too small',ok?(S.I<.6?'warn':'ok'):'bad'],['Radiation outside case',ok?'None':'Yes','' + (ok?'ok':'bad')]];}
+};
+
+/* ============ 2. THICKNESS MONITORING ============ */
+const thR=(s,t)=>s==='a'?12:s==='b'?12+900*Math.exp(-6*t):12+950*Math.exp(-.15*t);
+const thick={id:'thick',grp:'Industry & home',name:'Thickness control',rad:'b',
+title:'Controlling paper thickness',
+lede:'A beta source sits below the paper and a detector above it. The count rate shows how thick the paper is, and the rollers are adjusted to keep it right.',
+hint:'Drag the <b>roller gap</b> and watch the count rate, or switch on <b>automatic control</b>. Try α and γ sources to see why β is chosen.',
+facts:{iso:'Strontium-90',rad:'b',half:'29 years',
+ why:'Paper partly absorbs beta particles, so the count rate changes noticeably when the thickness changes. Alpha would be stopped completely by the paper. Gamma would pass through almost unaffected, so the reading would hardly change.',
+ hw:'A long half-life keeps the count rate steady for years, so any change in the reading is caused by the thickness and not by the source decaying.',
+ tip:'Count rate <b>falls</b> → paper too thick → rollers press harder. For thick metal sheet, a gamma source is used instead because beta could not get through.'},
+controls:()=>seg('src','Source',RADS,'b')+slider('gap','Roller gap',.04,.3,.005,.1)+seg('auto','Automatic control',[['off','Off'],['on','On']],'off'),
+setup(){S={src:'b',gap:.1,dr:0,t:.1,auto:false,c:thR('b',.1),hist:[],acc:0,p:[],e:0,roll:0,fl:0};
+ onSeg('src',v=>{S.src=v;S.c=thR(v,S.t);S.hist.length=0;});
+ S.sl=onSlider('gap',v=>{S.gap=v;},v=>v.toFixed(3)+' mm');
+ onSeg('auto',v=>{S.auto=v==='on';S.sl.disabled=S.auto;});},
+update(dt){S.dr+=-S.dr*.5*dt+gauss()*.02*Math.sqrt(dt);S.t=clamp(S.gap+S.dr,.03,.35);S.roll+=dt;
+ S.acc+=dt;if(S.acc>=.25){S.acc-=.25;const r=thR(S.src,S.t);const m=Math.max(0,r+gauss()*Math.sqrt(r/.25));S.c=S.c*.7+m*.3;S.hist.push(S.c);if(S.hist.length>96)S.hist.shift();
+  if(S.auto){const tg=thR(S.src,.1);S.gap=clamp(S.gap+.05*(S.c-tg)/tg,.04,.3);S.sl.value=S.gap;S.sl._lab();}}
+ const yb=200+6+S.t*70;
+ S.e+=dt*45;while(S.e>=1){S.e--;S.p.push({x:400+rnd(-6,6),y:298,vx:rnd(-28,28),vy:-470});}
+ for(const q of S.p){if(q.stop){q.life-=dt;continue;}q.x+=q.vx*dt;q.y+=q.vy*dt;
+  if(!q.chk&&q.y<=yb){q.chk=1;const pass=S.src==='a'?0:S.src==='b'?Math.exp(-6*S.t):.97;if(Math.random()>pass){q.stop=1;q.life=.3;q.y=yb-rnd(0,yb-200);}}
+  if(q.y<160){q.gone=1;S.fl=.07;}}
+ S.p=S.p.filter(q=>!q.gone&&(!q.stop||q.life>0));S.fl=Math.max(0,S.fl-dt);},
+draw(){const h=6+S.t*70,yb=200+h,off=(S.roll*70)%40;
+ ctx.fillStyle=C.paper;ctx.fillRect(0,186,165,40);ctx.fillRect(160,200,640,h);
+ ctx.strokeStyle=C.muted;ctx.lineWidth=1;ctx.globalAlpha=.35;for(let x=-40+off;x<800;x+=40){line([[x,x<160?188:201],[x,x<160?224:yb-1]],C.muted,1);}ctx.globalAlpha=1;
+ ctx.strokeStyle=C.muted;ctx.lineWidth=1.2;ctx.strokeRect(160,200,640,h);
+ T('wet paper',60,172,{s:13,c:C.muted});T('paper  →',720,186,{s:14,c:C.muted});
+ for(const [cy,dir] of [[200-38,1],[yb+38,-1]]){circ(160,cy,38);ctx.fillStyle=C.metal;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=1.5;ctx.stroke();
+  for(let k=0;k<3;k++){const a=S.roll*3*dir+k*2.094;line([[160,cy],[160+Math.cos(a)*30,cy+Math.sin(a)*30]],C.ink,1.5);}}
+ T('rollers',160,yb+92,{s:13,c:C.muted});
+ if(S.auto){T('auto',215,128,{s:12,w:700,c:C.accent});}
+ rr(370,300,60,40,6);ctx.fillStyle=C.metal;ctx.fill();ctx.fillStyle=({a:C.al,b:C.be,g:C.ga})[S.src];ctx.fillRect(390,298,20,5);
+ T(`${({a:'α',b:'β',g:'γ'})[S.src]} source`,400,356,{s:14,w:700});
+ rr(380,92,40,70,8);ctx.fillStyle=S.fl>0?C.soft:C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.stroke();
+ T('detector',448,128,{a:'left',s:13,c:C.muted});
+ line([[400,92],[400,62],[460,62]],C.ink,2);
+ rr(460,40,150,44,8);ctx.fillStyle=C.ink;ctx.fill();T(fmt(S.c)+' /s',535,63,{m:1,w:700,s:19,c:C.panel});
+ for(const q of S.p)drawRad(S.src,q.x,q.y,-Math.PI/2,q.stop?q.life/.3:1);
+ const gx=530,gy=300,gw=250,gh=150;rr(gx,gy,gw,gh,8);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.line;ctx.lineWidth=1.5;ctx.stroke();
+ T('Count rate over time',gx+10,gy+14,{a:'left',s:12.5,c:C.muted,w:700});
+ const Y=v=>gy+gh-12-v/1000*(gh-34);
+ const tg=thR(S.src,.1);line([[gx+8,Y(tg)],[gx+gw-8,Y(tg)]],C.good,1.5,[5,4]);T('target',gx+gw-10,Y(tg)-9,{a:'right',s:11.5,c:C.good,w:700});
+ ctx.strokeStyle=C.accent;ctx.lineWidth=2.2;ctx.beginPath();S.hist.forEach((v,i)=>{const x=gx+8+i*(gw-16)/95;i?ctx.lineTo(x,Y(v)):ctx.moveTo(x,Y(v));});ctx.stroke();
+ T('1000',gx+gw-8,Y(1000),{a:'right',s:11,c:C.muted,m:1,w:500});T('0',gx+gw-8,Y(0)-6,{a:'right',s:11,c:C.muted,m:1,w:500});
+ tag(S.t.toFixed(2)+' mm thick',650,yb+24,{s:13});},
+read(){const tg=thR(S.src,.1);let st,cl;
+ if(S.src==='a'){st='No reading: α stopped by paper';cl='bad';}
+ else if(S.src==='g'){st='Count hardly changes with thickness';cl='bad';}
+ else{const e=(S.c-tg)/tg;if(Math.abs(e)<.06){st='On target';cl='ok';}else if(e<0){st='Too thick';cl='warn';}else{st='Too thin';cl='warn';}}
+ return [['Paper thickness',S.t.toFixed(3)+' mm'],['Count rate',fmt(S.c)+' /s'],['Target',fmt(tg)+' /s'],['Status',st,cl]];}
+};
+
+/* ============ 3. LEAK DETECTION ============ */
+const SY=150,PY=340;
+const leak={id:'leak',grp:'Industry & home',name:'Leak detection',rad:'g',
+title:'Finding a leak in an underground pipe',
+lede:'A gamma-emitting tracer is added to the water. Where the pipe leaks, tracer collects in the soil, so the count rate at the surface is higher above the leak.',
+hint:'Press <b>Inject tracer</b>, wait for it to pass along the pipe, then <b>drag the detector</b> along the ground. Mark where you would dig.',
+facts:{iso:'Sodium-24',rad:'g',half:'15 hours',
+ why:'Gamma rays pass through the pipe wall and the soil to reach a detector on the surface. Alpha and beta would be absorbed underground, so the detector would only measure background.',
+ hw:'Fifteen hours is long enough to inject the tracer and survey the pipe, but short enough that the water supply does not stay radioactive for long.',
+ tip:'The leak is where the count rate is <b>highest</b>, well above background. Engineers dig in one place instead of along the whole pipe.'},
+controls:()=>seg('src','Tracer emits',RADS,'g')+btn('inj','Inject tracer','pri')+slider('pos','Detector position',0,200,1,22)+btn('mark','Dig here')+btn('newp','New pipe')+seg('xr','Underground',[['off','Hidden'],['on','X-ray view']],'off'),
+newPipe(keep){const src=keep?S.src:'g',xr=keep?S.xr:false;S={src,xr,xL:rnd(240,720),xD:S.xD||90,pulse:null,A:0,rd:new Array(80).fill(-1),t:-1,rev:false,shown:4,acc:0,res:null,fl:0,dig:null,drag:false,sl:S.sl,f:0,
+ dots:Array.from({length:140},()=>[rnd(0,800),rnd(SY+12,LH),rnd(1,2.6)])};},
+setup(){S={};this.newPipe(false);S.xD=90;
+ onSeg('src',v=>{S.src=v;S.rd.fill(-1);});
+ onSeg('xr',v=>{S.xr=v==='on';});
+ onBtn('inj',()=>{S.pulse={x:-30,c:1};S.t=0;S.A=0;S.rd.fill(-1);S.res=null;S.rev=false;S.dig=null;});
+ S.sl=onSlider('pos',v=>{S.xD=clamp(v*4,8,792);},v=>v+' m');
+ onBtn('mark',()=>{S.dig=S.xD;S.res=Math.abs(S.dig-S.xL)*.25;S.rev=true;});
+ onBtn('newp',()=>{this.newPipe(true);});
+ S.pulse={x:-30,c:1};S.t=0;},
+rate(x){if(S.src!=='g'||S.t<0)return 4;let g=0;
+ if(S.pulse)for(let i=-3;i<=3;i++){const px=S.pulse.x+i*12;g+=S.pulse.c*Math.exp(-i*i/4)/((px-x)**2+190*190);}
+ g+=S.A*3/((S.xL-x)**2+150*150);return 4+g*S.f*5e6;},
+update(dt){if(S.pulse){S.pulse.x+=110*dt;if(Math.abs(S.pulse.x-S.xL)<35){const d=.5*S.pulse.c*dt;S.A+=d;S.pulse.c-=d*.6;}if(S.pulse.x>880)S.pulse=null;}
+ if(S.t>=0)S.t+=dt;S.f=S.t<0?0:Math.pow(.5,(S.t/6)/15);
+ const r=this.rate(S.xD);S.rd[Math.floor(S.xD/10)]=Math.max(0,r*(1+gauss()*.06));
+ S.acc+=dt;if(S.acc>.3){S.acc=0;S.shown=Math.max(0,r+gauss()*Math.sqrt(r/.3));}
+ if(Math.random()<S.shown*dt*.04)S.fl=.06;S.fl=Math.max(0,S.fl-dt);},
+pointer(type,x){if(type==='down')S.drag=true;if(type==='up'){S.drag=false;return;}if(S.drag){S.xD=clamp(x,8,792);S.sl.value=Math.round(S.xD/4);S.sl._lab();}},
+draw(){const mx=Math.max(40,...S.rd);
+ T('Count rate measured along the ground',784,20,{a:'right',s:13,c:C.muted,w:700});
+ ctx.fillStyle=C.ga;ctx.globalAlpha=.55;S.rd.forEach((v,i)=>{if(v<0)return;const h=v/mx*100;ctx.fillRect(i*10+1,SY-6-h,8,h);});ctx.globalAlpha=1;
+ ctx.fillStyle=C.soil;ctx.fillRect(0,SY,800,LH-SY);ctx.fillStyle=C.grass;ctx.fillRect(0,SY,800,8);
+ ctx.fillStyle=C.ink;ctx.globalAlpha=.12;for(const d of S.dots){circ(d[0],d[1],d[2]);ctx.fill();}ctx.globalAlpha=1;
+ const show=S.xr||S.rev;
+ if(show){
+  ctx.fillStyle='rgba(20,30,40,.18)';ctx.beginPath();ctx.ellipse(S.xL,PY-18,46,34,0,0,6.2832);ctx.fill();
+  if(S.A>0){const g=ctx.createRadialGradient(S.xL,PY-20,4,S.xL,PY-20,60);g.addColorStop(0,C.ga);g.addColorStop(1,'rgba(0,0,0,0)');ctx.globalAlpha=clamp(S.A*2*S.f,0,.8);ctx.fillStyle=g;circ(S.xL,PY-20,60);ctx.fill();ctx.globalAlpha=1;}
+  ctx.fillStyle=C.metal;ctx.fillRect(0,PY-12,800,24);ctx.fillStyle=C.be;ctx.globalAlpha=.3;ctx.fillRect(0,PY-8,800,16);ctx.globalAlpha=1;
+  if(S.pulse){const g=ctx.createLinearGradient(S.pulse.x-50,0,S.pulse.x+50,0);g.addColorStop(0,'rgba(0,0,0,0)');g.addColorStop(.5,C.ga);g.addColorStop(1,'rgba(0,0,0,0)');ctx.globalAlpha=clamp(S.pulse.c*S.f,0,1);ctx.fillStyle=g;ctx.fillRect(S.pulse.x-50,PY-8,100,16);ctx.globalAlpha=1;}
+  line([[S.xL-5,PY-12],[S.xL+2,PY-6],[S.xL-3,PY+1]],C.ink,2);
+  T('water flow →',70,PY+30,{s:13,c:C.ink});
+ }else{line([[0,PY-12],[800,PY-12]],C.ink,1.5,[8,6]);line([[0,PY+12],[800,PY+12]],C.ink,1.5,[8,6]);
+  T('pipe route from the plans, about 2 m underground',400,PY+34,{s:13.5,c:C.ink,w:700});}
+ if(S.rev&&S.dig!=null){ctx.fillStyle=C.bad;ctx.beginPath();ctx.moveTo(S.xL,SY+2);ctx.lineTo(S.xL-8,SY+18);ctx.lineTo(S.xL+8,SY+18);ctx.fill();tag('leak',S.xL,SY+34,{c:C.bad,s:13});
+  line([[S.dig,SY],[S.dig,SY+60]],C.accent,3);}
+ const x=S.xD;line([[x,SY-58],[x,SY-90],[x+30,SY-100]],C.muted,2);
+ rr(x-9,SY-58,18,52,7);ctx.fillStyle=S.fl>0?C.amber:C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.stroke();
+ tag(fmt(S.shown)+' counts/s',x,SY-118,{m:1,s:14});
+ line([[20,462],[220,462]],C.ink,2);line([[20,456],[20,468]],C.ink,2);line([[220,456],[220,468]],C.ink,2);T('50 m',120,450,{s:12.5,w:700,c:C.ink});},
+read(){const out=[['Count rate',fmt(S.shown)+' /s'],['Background','about 4 /s']];
+ if(S.t>=0){const hr=S.t/6;out.push(['Time since injection',Math.floor(hr)+' h '+String(Math.floor((hr%1)*60)).padStart(2,'0')+' min'],['Tracer activity left',Math.round(S.f*100)+'%']);}
+ if(S.src!=='g')out.push(['Problem','Soil absorbs '+RN[S.src],'bad']);
+ else if(S.res!=null)out.push(['Your dig',S.res<4?S.res.toFixed(1)+' m from leak':S.res.toFixed(0)+' m away: try again',S.res<4?'ok':'bad']);
+ return out;}
+};
+
+/* ============ 4. MEDICAL TRACER ============ */
+const PATS={A:[{u:1,d:.35},{u:1,d:.35}],B:[{u:1,d:.35},{u:1,d:.004}],C:[{u:.25,d:.35},{u:1,d:.35}]};
+const DX={A:'both',B:'right',C:'left'};
+const DXT={A:'Both curves rise to a peak within a few minutes, then fall as the kidneys pass the tracer to the bladder. Both kidneys are working.',
+ B:'The right kidney curve keeps rising: the tracer goes in but cannot drain out. This suggests a blockage.',
+ C:'The left kidney curve stays low: that kidney takes up very little tracer, so it is not working properly.'};
+const tracer={id:'tracer',grp:'Medicine',name:'Medical tracer',rad:'g',
+title:'Medical tracer: kidney scan',
+lede:'A small amount of technetium-99m is injected. Gamma rays from the tracer pass out of the body to a gamma camera, which shows how each kidney takes up and passes on the tracer.',
+hint:'Watch the image and the graph build up for each patient, then make a <b>diagnosis</b>. Try an α or β tracer and see what the camera detects.',
+facts:{iso:'Technetium-99m',rad:'g',half:'6 hours',
+ why:'Gamma rays pass out of the body to the camera, and they are weakly ionising so they do little damage on the way. Alpha or beta would be absorbed inside the body, giving the patient a dose and producing no image.',
+ hw:'Six hours is long enough to prepare the tracer and carry out the scan, but the activity falls quickly afterwards, so the patient does not stay radioactive.',
+ tip:'A <b>tracer</b> is a radioisotope put into the body and followed from outside using the radiation it emits. Iodine-123 is used the same way to check the thyroid gland.'},
+controls:()=>seg('pat','Patient',[['A','A'],['B','B'],['C','C']],'A')+seg('src','Tracer emits',RADS,'g')+btn('inj','Inject again','pri')+seg('dx','Diagnosis',[['both','Both working'],['left','Left kidney problem'],['right','Right kidney problem']],''),
+reset(){S.t=0;S.K=[0,0];S.Bl=0;S.h=[[0,0,0]];S.ans=null;S.run=true;S.acc=0;setSeg('dx','');},
+setup(){S={src:'g',pat:'A'};this.reset();
+ onSeg('pat',v=>{S.pat=v;this.reset();});onSeg('src',v=>{S.src=v;});onBtn('inj',()=>this.reset());onSeg('dx',v=>{S.ans=v;});},
+update(dt){if(!S.run)return;for(let i=0;i<4;i++){const dm=dt*.5/4,B=Math.exp(-S.t/4);
+  PATS[S.pat].forEach((k,j)=>{S.K[j]+=(k.u*B*.6-k.d*S.K[j])*dm;S.Bl+=k.d*S.K[j]*dm;});S.t+=dm;}
+ S.acc+=dt*.5;if(S.acc>=.2){S.acc=0;S.h.push([S.t,S.K[0],S.K[1]]);}if(S.t>=20)S.run=false;},
+draw(){const g=S.src==='g';
+ rr(24,24,392,432,14);ctx.fillStyle='#0A1118';ctx.fill();
+ T('Gamma camera image · view from behind',220,44,{s:13,c:'#9FB3C6',w:700});
+ rr(112,64,216,372,96);ctx.strokeStyle='rgba(170,200,230,.25)';ctx.lineWidth=2;ctx.stroke();
+ if(g){const B=Math.exp(-S.t/4);ctx.fillStyle=`rgba(255,170,60,${(B*.16).toFixed(3)})`;rr(112,64,216,372,96);ctx.fill();}
+ line([[220,80],[220,420]],'rgba(170,200,230,.12)',6);
+ const glow=(x,y,r,v)=>{if(!g||v<=0)return;const a=clamp(v,0,1);const gr=ctx.createRadialGradient(x,y,2,x,y,r);gr.addColorStop(0,`rgba(255,250,225,${a})`);gr.addColorStop(.35,`rgba(255,190,70,${a*.9})`);gr.addColorStop(1,'rgba(255,120,30,0)');ctx.fillStyle=gr;circ(x,y,r);ctx.fill();};
+ const kx=[172,268];kx.forEach((x,j)=>{ctx.strokeStyle='rgba(170,200,230,.3)';ctx.lineWidth=1.5;ctx.beginPath();ctx.ellipse(x,212,24,38,j?-.18:.18,0,6.2832);ctx.stroke();glow(x,212,52,S.K[j]/.8);});
+ glow(220,378,46,S.Bl/2.2);ctx.strokeStyle='rgba(170,200,230,.3)';ctx.beginPath();ctx.ellipse(220,378,32,20,0,0,6.2832);ctx.stroke();
+ T('Left kidney',172,270,{s:13,c:'#C9D6E3'});T('Right kidney',268,270,{s:13,c:'#C9D6E3'});T('Bladder',220,410,{s:13,c:'#C9D6E3'});
+ if(!g){tag('No image',220,160,{bg:'#0A1118',bd:'#3A4A5A',c:'#FFFFFF'});T(RN[S.src]+' is absorbed inside the body',220,300,{s:14,c:'#FFB4A6',w:700});}
+ const x0=480,x1=770,y0=70,y1=390,ym=Math.max(1,...S.h.map(p=>Math.max(p[1],p[2])))*1.12;
+ const X=t=>x0+t/20*(x1-x0),Y=v=>y1-v/ym*(y1-y0);
+ line([[x0,y0-10],[x0,y1],[x1+6,y1]],C.ink,2);
+ for(let t=0;t<=20;t+=5){line([[X(t),y1],[X(t),y1+6]],C.ink,1.5);T(String(t),X(t),y1+18,{s:12.5,m:1,w:500});}
+ T('time after injection / min',(x0+x1)/2,y1+40,{s:13,c:C.muted});
+ ctx.save();ctx.translate(x0-22,(y0+y1)/2);ctx.rotate(-Math.PI/2);T('count rate from each kidney',0,0,{s:13,c:C.muted});ctx.restore();
+ if(g)[[1,C.accent],[2,C.amber]].forEach(([j,col])=>{ctx.strokeStyle=col;ctx.lineWidth=3;ctx.beginPath();S.h.forEach((p,i)=>{i?ctx.lineTo(X(p[0]),Y(p[j])):ctx.moveTo(X(p[0]),Y(p[j]));});ctx.stroke();});
+ ctx.fillStyle=C.accent;ctx.fillRect(x1-150,y0-8,16,4);T('left kidney',x1-128,y0-6,{a:'left',s:13});
+ ctx.fillStyle=C.amber;ctx.fillRect(x1-150,y0+12,16,4);T('right kidney',x1-128,y0+14,{a:'left',s:13});},
+read(){const o=[['Time',S.t.toFixed(1)+' min'],['Left kidney',S.src==='g'?fmt(S.K[0]*1000):'0'],['Right kidney',S.src==='g'?fmt(S.K[1]*1000):'0']];
+ if(S.ans){const ok=S.ans===DX[S.pat];o.push([ok?'Correct':'Not quite',ok?'Well spotted':'Look at the curves again',ok?'ok':'bad']);}
+ return o;},
+extra(){return S.ans?`<p class="note ${S.ans===DX[S.pat]?'ok':'bad'}">${S.ans===DX[S.pat]?DXT[S.pat]:'Compare the two curves: a healthy kidney gives a peak after a few minutes and then a fall.'}</p>`:'';}
+};
+
+/* ============ 5. RADIOTHERAPY ============ */
+const RT={cx:330,cy:250,a:232,b:166,tx:395,ty:218,tr:34,ox:330,oy:384,or:13,w:76,mu:.0028,R:300};
+function entryT(sx,sy,ux,uy){const A=(ux/RT.a)**2+(uy/RT.b)**2,dx=sx-RT.cx,dy=sy-RT.cy;const Bq=2*(dx*ux/RT.a**2+dy*uy/RT.b**2),Cq=(dx/RT.a)**2+(dy/RT.b)**2-1;const d=Bq*Bq-4*A*Cq;return d<0?0:(-Bq-Math.sqrt(d))/(2*A);}
+function rtDoseFn(n){const bs=[];for(let k=0;k<n;k++){const th=-Math.PI/2+k*2*Math.PI/n;const sx=RT.tx+Math.cos(th)*RT.R,sy=RT.ty+Math.sin(th)*RT.R,ux=-Math.cos(th),uy=-Math.sin(th);bs.push([sx,sy,ux,uy,entryT(sx,sy,ux,uy)]);}
+ return (x,y)=>{let s=0;for(const [sx,sy,ux,uy,te] of bs){const rx=x-sx,ry=y-sy,al=rx*ux+ry*uy,pe=Math.abs(-rx*uy+ry*ux);const pr=clamp((RT.w/2+6-pe)/12,0,1);if(!pr)continue;s+=pr*Math.exp(-RT.mu*Math.max(0,al-te));}return s/n;};}
+const inBody=(x,y)=>((x-RT.cx)/RT.a)**2+((y-RT.cy)/RT.b)**2<1;
+function ramp(d){const st=[[0,40,90,200],[.3,30,160,170],[.55,120,200,60],[.8,250,200,40],[1,232,60,40],[1.6,170,20,90]];if(d>=1.6)return st[5].slice(1);for(let i=1;i<st.length;i++)if(d<=st[i][0]){const a=st[i-1],b=st[i],f=(d-a[0])/(b[0]-a[0]);return [0,1,2].map(k=>a[k+1]+(b[k+1]-a[k+1])*f);}return [0,0,0];}
+const oc=document.createElement('canvas');oc.width=80;oc.height=48;const octx=oc.getContext('2d');
+const radio={id:'radio',grp:'Medicine',name:'Radiotherapy',rad:'g',
+title:'Radiotherapy: treating a tumour',
+lede:'High-energy gamma rays kill cancer cells. The beam is aimed at the tumour from many directions, so the beams overlap there and the healthy tissue around it receives much less.',
+hint:'Increase the <b>number of beam directions</b> and watch the dose map. Compare the dose to the tumour with the dose to healthy tissue and the spinal cord.',
+facts:{iso:'Cobalt-60',rad:'g',half:'5.3 years',
+ why:'Only gamma rays are penetrating enough to reach a tumour deep inside the body from outside. A large dose of ionising radiation kills the cancer cells. (Many hospitals now use high-energy X-rays from a machine instead.)',
+ hw:'A half-life of several years gives a steady output, so treatment times stay predictable and the source only needs replacing every few years.',
+ tip:'Beams from many directions overlap at the tumour: high dose there, a small dose to each part of the healthy tissue. Healthy cells are still damaged, which causes side effects.'},
+controls:()=>slider('n','Beam directions',1,12,1,1)+btn('arc','Rotate continuously')+seg('map','Dose map',[['on','Show'],['off','Hide']],'on'),
+calc(){const n=S.arc?36:S.n,f=rtDoseFn(n),d0=f(RT.tx,RT.ty);const img=octx.createImageData(80,48);let hm=0,tm=9;
+ for(let j=0;j<48;j++)for(let i=0;i<80;i++){const x=i*10+5,y=j*10+5,p=(j*80+i)*4;if(!inBody(x,y)){img.data[p+3]=0;continue;}const d=f(x,y)/d0;
+  const dt=Math.hypot(x-RT.tx,y-RT.ty);if(dt<RT.tr-6)tm=Math.min(tm,d);else if(dt>RT.tr+14)hm=Math.max(hm,d);
+  if(d<.02){img.data[p+3]=0;continue;}const c=ramp(d);img.data[p]=c[0];img.data[p+1]=c[1];img.data[p+2]=c[2];img.data[p+3]=Math.round(150+60*Math.min(1,d));}
+ octx.putImageData(img,0,0);S.hm=hm;S.tm=tm;S.cd=f(RT.ox,RT.oy)/d0;},
+setup(){S={n:1,arc:false,map:true,time:0};
+ S.sl=onSlider('n',v=>{S.n=v;S.arc=false;$('#rau-arc').setAttribute('aria-pressed','false');this.calc();},v=>v+(v===1?' direction':' directions'));
+ onBtn('arc',()=>{S.arc=!S.arc;$('#rau-arc').setAttribute('aria-pressed',String(S.arc));$('#rau-arc').classList.toggle('pri',S.arc);this.calc();});
+ onSeg('map',v=>{S.map=v==='on';});this.calc();},
+update(dt){S.time+=dt;},
+draw(){const n=S.arc?36:S.n;
+ ctx.fillStyle=C.tissue;ctx.beginPath();ctx.ellipse(RT.cx,RT.cy,RT.a,RT.b,0,0,6.2832);ctx.fill();
+ if(S.map){ctx.save();ctx.beginPath();ctx.ellipse(RT.cx,RT.cy,RT.a,RT.b,0,0,6.2832);ctx.clip();ctx.imageSmoothingEnabled=true;ctx.globalAlpha=.85;ctx.drawImage(oc,0,0,800,480);ctx.globalAlpha=1;ctx.restore();}
+ ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(RT.cx,RT.cy,RT.a,RT.b,0,0,6.2832);ctx.stroke();
+ if(!S.arc&&n>1)for(let k=0;k<n;k++){const th=-Math.PI/2+k*2*Math.PI/n;line([[RT.tx+Math.cos(th)*RT.R,RT.ty+Math.sin(th)*RT.R],[RT.tx-Math.cos(th)*120,RT.ty-Math.sin(th)*120]],C.ga,1,[4,6]);}
+ const th=S.arc?-Math.PI/2+S.time*.8:-Math.PI/2+(Math.floor(S.time*1.2)%n)*2*Math.PI/n;
+ const sx=RT.tx+Math.cos(th)*RT.R,sy=RT.ty+Math.sin(th)*RT.R,ux=-Math.cos(th),uy=-Math.sin(th),px=-uy,py=ux,w=RT.w/2;
+ ctx.fillStyle=C.ga;ctx.globalAlpha=.16;ctx.beginPath();ctx.moveTo(sx+px*w,sy+py*w);ctx.lineTo(sx+px*w+ux*700,sy+py*w+uy*700);ctx.lineTo(sx-px*w+ux*700,sy-py*w+uy*700);ctx.lineTo(sx-px*w,sy-py*w);ctx.fill();ctx.globalAlpha=1;
+ for(let j=0;j<8;j++){const al=(S.time*320+j*88)%700,o=((j*37)%5-2)*12;drawRad('g',sx+ux*al+px*o,sy+uy*al+py*o,th+Math.PI,.9);}
+ ctx.save();ctx.translate(sx,sy);ctx.rotate(th+Math.PI/2);rr(-26,-16,52,32,6);ctx.fillStyle=C.ink;ctx.fill();ctx.restore();
+ if(sx>40&&sx<760&&sy>20&&sy<460)tag('γ source',sx,sy+(sy<RT.ty?30:-30),{s:13});
+ ctx.beginPath();for(let a=0;a<=6.3;a+=.1){const r=RT.tr*(1+.12*Math.sin(3*a)+.07*Math.cos(5*a));const x=RT.tx+Math.cos(a)*r,y=RT.ty+Math.sin(a)*r;a?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.closePath();
+ if(!S.map){ctx.fillStyle=C.bad;ctx.globalAlpha=.35;ctx.fill();ctx.globalAlpha=1;}ctx.strokeStyle=C.ink;ctx.lineWidth=2.5;ctx.setLineDash([5,3]);ctx.stroke();ctx.setLineDash([]);
+ tag('tumour',RT.tx+62,RT.ty-44,{s:13});
+ circ(RT.ox,RT.oy,RT.or);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.stroke();tag('spinal cord',RT.ox+78,RT.oy+8,{s:13});
+ tag('healthy tissue',190,170,{s:13,w:600});
+ if(S.map){const gx=600,gy=448;const gr=ctx.createLinearGradient(gx,0,gx+170,0);[[0,'rgb(40,90,200)'],[.3,'rgb(30,160,170)'],[.55,'rgb(120,200,60)'],[.8,'rgb(250,200,40)'],[1,'rgb(232,60,40)']].forEach(s=>gr.addColorStop(s[0],s[1]));ctx.fillStyle=gr;rr(gx,gy,170,10,4);ctx.fill();
+  T('dose: low',gx,gy-12,{a:'left',s:12.5,c:C.muted});T('high',gx+170,gy-12,{a:'right',s:12.5,c:C.muted});}},
+read(){const pc=v=>Math.round(v*100)+'%';const cl=v=>v>.9?'bad':v>.5?'warn':'ok';
+ return [['Beam directions',S.arc?'Continuous arc':String(S.n)],['Tumour dose',pc(S.tm)],['Most-exposed healthy tissue',pc(S.hm),cl(S.hm)],['Spinal cord',pc(S.cd),cl(S.cd)]];}
+};
+
+/* ============ 6. STERILISATION ============ */
+const newBox=x=>({x,b:Array.from({length:20},()=>({x:rnd(8,82),y:rnd(6,58),al:1})),done:0});
+const steril={id:'steril',grp:'Medicine',name:'Sterilising equipment',rad:'g',
+title:'Sterilising medical equipment',
+lede:'Sealed packs of syringes travel on a conveyor past a strong gamma source behind thick concrete. The gamma rays pass through the packaging and kill the bacteria inside.',
+hint:'Change the <b>conveyor speed</b> to change the exposure time. Try α and β sources. Then <b>check a pack</b> with a Geiger counter.',
+facts:{iso:'Cobalt-60',rad:'g',half:'5.3 years',
+ why:'Gamma rays pass through the sealed packaging and kill the bacteria inside, so the equipment stays sterile until it is opened. No heating is needed, so plastic items do not melt.',
+ hw:'A long half-life keeps the output steady for years, so the exposure needed hardly changes from week to week.',
+ tip:'The syringes are <b>irradiated</b>, not contaminated: they do not become radioactive. Food is treated the same way to kill microbes and make it keep for longer.'},
+controls:()=>seg('src','Source',RADS,'g')+slider('v','Conveyor speed',20,120,5,50)+btn('chk','Check a pack','pri'),
+setup(){S={src:'g',v:50,bx:[],e:0,p:[],last:null,gc:0};
+ onSeg('src',v=>{S.src=v;});S.sl=onSlider('v',v=>{S.v=v;},v=>(160/v).toFixed(1)+' s in beam');
+ onBtn('chk',()=>{S.gc=5;});
+ S.bx=[newBox(-90)];for(let i=0;i<300;i++)this.update(.05);S.p.length=0;},
+update(dt){for(const bx of S.bx){bx.x+=S.v*dt;const cx=bx.x+45;
+  if(cx>350&&cx<510)for(const b of bx.b){if(!b.al)continue;const ok=S.src==='g'||(S.src==='b'&&b.y<12);if(ok&&Math.random()<1.2*dt)b.al=0;}
+  if(!bx.done&&bx.x>560){bx.done=1;S.last=bx.b.filter(b=>b.al).length;}}
+ S.bx=S.bx.filter(b=>b.x<820);const mn=S.bx.length?Math.min(...S.bx.map(b=>b.x)):9999;if(mn>60)S.bx.push(newBox(S.bx.length?mn-150:-90));
+ S.e+=dt*36;while(S.e>=1){S.e--;const an=Math.PI/2+rnd(-.42,.42);S.p.push({x:430,y:146,vx:Math.cos(an)*360,vy:Math.sin(an)*360,stopY:0});}
+ for(const q of S.p){if(q.st){q.life-=dt;continue;}q.x+=q.vx*dt;q.y+=q.vy*dt;
+  let lim;const over=S.bx.find(b=>q.x>b.x&&q.x<b.x+90);
+  if(S.src==='a')lim=Math.min(190,over?266:336);else if(S.src==='b')lim=over?278:336;else lim=over?400:336;
+  if(q.y>=lim){if(S.src==='g'&&lim===400){q.gone=1;}else{q.st=1;q.life=.25;}}}
+ S.p=S.p.filter(q=>!q.gone&&(!q.st||q.life>0));S.gc=Math.max(0,S.gc-dt);},
+draw(){ctx.fillStyle=C.ga;ctx.globalAlpha=.06;ctx.fillRect(326,88,208,248);ctx.globalAlpha=1;
+ ctx.fillStyle=C.wall;ctx.fillRect(300,62,260,26);ctx.fillRect(300,62,26,190);ctx.fillRect(534,62,26,190);
+ T('thick concrete shielding',430,75,{s:12.5,w:700,c:C.ink});
+ rr(406,122,48,26,5);ctx.fillStyle=C.ink;ctx.fill();T('Co-60',430,135,{s:12,w:700,c:C.panel});
+ for(const q of S.p)drawRad(S.src,q.x,q.y,Math.atan2(q.vy,q.vx),q.st?q.life/.25:1);
+ for(const bx of S.bx){rr(bx.x,266,90,64,5);ctx.fillStyle=C.box;ctx.fill();ctx.strokeStyle=C.ink;ctx.globalAlpha=.4;ctx.lineWidth=1.5;ctx.stroke();ctx.globalAlpha=1;
+  ctx.fillStyle=C.panel;ctx.globalAlpha=.55;ctx.fillRect(bx.x+38,266,14,64);ctx.globalAlpha=1;
+  for(const b of bx.b){if(b.al){ctx.fillStyle=C.bac;circ(bx.x+b.x,266+b.y,3.4);ctx.fill();}else{ctx.globalAlpha=.45;line([[bx.x+b.x-2.5,266+b.y-2.5],[bx.x+b.x+2.5,266+b.y+2.5]],C.ink,1.3);ctx.globalAlpha=1;}}}
+ ctx.fillStyle=C.metal;ctx.fillRect(0,332,800,10);const off=(performance.now()/1000*S.v)%40;
+ ctx.fillStyle=C.ink;ctx.globalAlpha=.3;for(let x=-40+off;x<800;x+=40)ctx.fillRect(x,334,14,6);ctx.globalAlpha=1;
+ for(let x=25;x<800;x+=50){circ(x,354,9);ctx.fillStyle=C.metal;ctx.fill();}
+ T('sealed packs in →',90,236,{s:13.5,c:C.muted,w:700});T('sterile packs out →',690,236,{s:13.5,c:C.muted,w:700});
+ ctx.fillStyle=C.bac;circ(40,400,5);ctx.fill();T('live bacteria',52,400,{a:'left',s:13,c:C.muted});
+ line([[180,396],[186,404]],C.ink,1.5);line([[180,404],[186,396]],C.ink,1.5);T('killed',194,400,{a:'left',s:13,c:C.muted});
+ if(S.src==='a')tag('α is absorbed by a few cm of air: it never reaches the packs',430,440,{c:C.bad,s:13});
+ if(S.src==='b')tag('β only reaches just under the packaging surface',430,440,{c:C.bad,s:13});
+ if(S.gc>0){const gx=700;line([[gx,150],[gx,120],[gx+50,108]],C.muted,2);rr(gx-9,198,18,56,7);ctx.fillStyle=C.panel;ctx.fill();ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.stroke();line([[gx,198],[gx,150]],C.ink,2);
+  tag('0.4 counts/s: background only',640,168,{s:13,c:C.good});}},
+read(){const s=S.last;return [['Time in the beam',(160/S.v).toFixed(1)+' s'],['Bacteria left in last pack',s==null?'–':s+' of 20',s===0?'ok':'bad'],['Pack status',s===0?'Sterile':'Not sterile',s===0?'ok':'bad'],['Pack radioactive?','No: irradiated only','ok']];}
+};
+
+/* ============ 7. CARBON DATING ============ */
+const OBJ=['a wooden bowl','charcoal from an ancient hearth','a scrap of linen cloth','an antler tool','a leather shoe','a dugout canoe','a bone needle'];
+const LIV=[12,16,20,24,32,40,48,64,80];
+const X7=t=>80+t/30000*680,Y7=p=>400-p/100*340;
+const carbon={id:'carbon',grp:'Archaeology',name:'Carbon dating',rad:'b',
+title:'Carbon dating',
+lede:'Living things take in carbon-14 while they are alive. After death the carbon-14 decays, so comparing a sample’s activity with that of living material tells us its age.',
+hint:'<b>Drag along the graph</b> or use the slider to read off ages. Then solve a <b>sample</b> using half-lives.',
+facts:{iso:'Carbon-14',rad:'b',half:'5730 years',
+ why:'Plants take in carbon dioxide containing a small, steady proportion of carbon-14, and animals eat the plants. After death no new carbon is taken in, so the carbon-14 decays and the activity falls.',
+ hw:'With a half-life of 5730 years, the activity changes by a measurable amount over hundreds to tens of thousands of years, which suits archaeological objects.',
+ tip:'Count the half-lives: each one halves the activity. Carbon dating only works for things that were once alive. Rocks are dated with isotopes that have much longer half-lives.'},
+controls:()=>slider('p','Activity, % of living',1,100,.5,50)+btn('newq','New sample','pri')+'<div class="puz" id="rau-puz"></div>',
+setup(){S={p:50,t:5730,pz:null,drag:false};
+ S.sl=onSlider('p',v=>{S.p=v;S.t=5730*Math.log2(100/v);},v=>v.toFixed(1)+'%');
+ onBtn('newq',()=>this.newQ());this.newQ();},
+newQ(){const n=1+Math.floor(Math.random()*4);let lv;do{lv=LIV[Math.floor(Math.random()*LIV.length)];}while(lv/2**n<1.5);
+ S.pz={o:OBJ[Math.floor(Math.random()*OBJ.length)],lv,ms:lv/2**n,n,fb:''};this.renderQ();},
+renderQ(){const z=S.pz,el=$('#rau-puz');if(!el)return;
+ el.innerHTML=`<span class="lab">Sample to date</span><p>A sample of carbon from ${z.o} gives <b>${z.ms} counts per minute</b>. The same mass of carbon from a living plant gives <b>${z.lv} counts per minute</b>. The half-life of carbon-14 is 5730 years. How old is the sample?</p>
+ <div class="row"><label for="rau-ans" class="lab">Age in years</label><input type="number" id="rau-ans" inputmode="numeric"><button type="button" class="btn pri" id="rau-chk">Check</button><button type="button" class="btn" id="rau-show">Show working</button></div><div id="rau-fb">${z.fb}</div>`;
+ const work=()=>{let s=[z.lv];for(let i=0;i<z.n;i++)s.push(s[i]/2);return `${s.join(' → ')} counts per minute is ${z.n} half-${z.n>1?'lives':'life'}. Age = ${z.n} × 5730 = <b>${fmt(z.n*5730)} years</b>.`;};
+ $('#rau-chk').addEventListener('click',()=>{const v=parseFloat($('#rau-ans').value),a=z.n*5730;
+  z.fb=isNaN(v)?'<p class="note bad">Type an age in years first.</p>':Math.abs(v-a)/a<.03?`<p class="note ok">Correct. ${work()}</p>`:`<p class="note bad">Not quite. Work out how many times the count rate halves from ${z.lv} to ${z.ms}.</p>`;$('#rau-fb').innerHTML=z.fb;});
+ $('#rau-show').addEventListener('click',()=>{z.fb=`<p class="note">${work()}</p>`;$('#rau-fb').innerHTML=z.fb;});},
+pointer(type,x){if(type==='down')S.drag=true;if(type==='up'){S.drag=false;return;}if(!S.drag)return;S.t=clamp((x-80)/680*30000,0,30000);S.p=Math.max(1,100*Math.pow(.5,S.t/5730));S.t=5730*Math.log2(100/S.p);S.sl.value=S.p;S.sl._lab();},
+update(){},
+draw(){line([[80,40],[80,400],[770,400]],C.ink,2);
+ for(let k=1;k<=5;k++){const t=k*5730,x=X7(t);line([[x,400],[x,Y7(100/2**k)]],C.line,1.5,[5,5]);line([[80,Y7(100/2**k)],[x,Y7(100/2**k)]],C.line,1.5,[5,5]);
+  T(k+' half-li'+(k>1?'ves':'fe'),x,420,{s:12,c:C.muted});T(fmt(t),x,438,{s:12,m:1,w:500,c:C.ink});}
+ [100,50,25,12.5].forEach(p=>T(p+'%',72,Y7(p),{a:'right',s:12,m:1,w:500}));
+ T('age / years',770,460,{a:'right',s:13,c:C.muted});
+ ctx.save();ctx.translate(26,220);ctx.rotate(-Math.PI/2);T('activity as % of living material',0,0,{s:13,c:C.muted});ctx.restore();
+ ctx.strokeStyle=C.accent;ctx.lineWidth=3;ctx.beginPath();for(let t=0;t<=30000;t+=150){const x=X7(t),y=Y7(100*Math.pow(.5,t/5730));t?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();
+ if(S.pz){const p=S.pz.ms/S.pz.lv*100;line([[80,Y7(p)],[770,Y7(p)]],C.amber,2,[3,4]);tag('sample: '+S.pz.ms+' of '+S.pz.lv+' counts/min',640,Y7(p)-18,{s:12.5,c:C.amber});}
+ const x=X7(Math.min(S.t,30000)),y=Y7(S.p);line([[x,y],[x,400]],C.ga,1.5);line([[80,y],[x,y]],C.ga,1.5);circ(x,y,8);ctx.fillStyle=C.ga;ctx.fill();ctx.strokeStyle=C.panel;ctx.lineWidth=3;ctx.stroke();
+ tag(fmt(S.t)+' years',x+(x>600?-70:70),y-26,{m:1,s:13.5});},
+read(){return [['Activity',S.p.toFixed(1)+'% of living'],['Age',fmt(S.t)+' years'],['Half-lives',(S.t/5730).toFixed(2)]];}
+};
+
+const APPS=[smoke,thick,leak,tracer,radio,steril,carbon];
+let cur=null,view='apps';
+const rail=$('#rau-rail');
+const grps=[...new Set(APPS.map(a=>a.grp))];
+rail.innerHTML=grps.map(g=>`<div class="grp"><h3>${g}</h3>${APPS.filter(a=>a.grp===g).map(a=>`<button type="button" class="nav" data-app="${a.id}"><span class="chip r-${a.rad}">${({a:'α',b:'β',g:'γ'})[a.rad]}</span>${a.name}</button>`).join('')}</div>`).join('');
+rail.addEventListener('click',e=>{const b=e.target.closest('[data-app]');if(b)select(b.dataset.app);});
+const extraBox=document.createElement('div');$('#rau-ro').after(extraBox);
+function select(id){cur=APPS.find(a=>a.id===id);
+ $$('.nav').forEach(b=>b.setAttribute('aria-current',String(b.dataset.app===id)));
+ $('#rau-title').textContent=cur.title;$('#rau-lede').textContent=cur.lede;$('#rau-hint').innerHTML=cur.hint;
+ ctlBox.innerHTML=cur.controls();const f=cur.facts;
+ $('#rau-facts').innerHTML=`<h3>The source used</h3><dl class="spec"><dt>Isotope</dt><dd>${f.iso}</dd><dt>Radiation</dt><dd><span class="chip r-${f.rad}" style="width:22px;height:22px;font-size:13px;vertical-align:-5px;margin-right:6px">${({a:'α',b:'β',g:'γ'})[f.rad]}</span>${RN[f.rad][0].toUpperCase()+RN[f.rad].slice(1)}</dd><dt>Half-life</dt><dd>${f.half}</dd></dl>
+ <div><h4>Why ${RN[f.rad]}?</h4><p>${f.why}</p></div><div><h4>Why this half-life?</h4><p>${f.hw}</p></div><div class="tip"><h4>Exam tip</h4><p>${f.tip}</p></div>`;
+ cv.style.touchAction=cur.pointer?'none':'pan-y';
+ cur.setup();lastRO='';lastEx='';roT=1;}
+let lastRO='',lastEx='',roT=0;
+function renderRO(){const h=cur.read().map(r=>`<div class="ri ${r[2]||''}"><div class="k">${r[0]}</div><div class="v">${r[1]}</div></div>`).join('');if(h!==lastRO){$('#rau-ro').innerHTML=h;lastRO=h;}
+ const ex=cur.extra?cur.extra():'';if(ex!==lastEx){extraBox.innerHTML=ex;lastEx=ex;}}
+const lp=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width*LW,(e.clientY-r.top)/r.height*LH];};
+cv.addEventListener('pointerdown',e=>{if(!cur.pointer)return;try{cv.setPointerCapture(e.pointerId);}catch(_){}cur.pointer('down',...lp(e));});
+cv.addEventListener('pointermove',e=>{if(cur.pointer)cur.pointer('move',...lp(e));});
+['pointerup','pointercancel'].forEach(t=>cv.addEventListener(t,()=>{if(cur.pointer)cur.pointer('up');}));
+let last=performance.now();
+function frame(t){const dt=Math.min(.05,(t-last)/1000);last=t;
+ if(cur&&view==='apps'&&cv.width){cur.update(dt);ctx.setTransform(dpr*sc,0,0,dpr*sc,0,0);ctx.fillStyle=C.scene;ctx.fillRect(0,0,LW,LH);ctx.lineCap='butt';cur.draw();
+  roT+=dt;if(roT>.15){roT=0;renderRO();}}
+ requestAnimationFrame(frame);}
+select('smoke');requestAnimationFrame(frame);
+
+/* tabs */
+$$('.tabs button').forEach(b=>b.addEventListener('click',()=>{view=b.dataset.view;$$('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));$$('.view').forEach(v=>v.hidden=v.dataset.v!==view);if(view==='apps')resize();}));
+
+/* ============ CHOOSE THE ISOTOPE ============ */
+const ISO=[
+ {id:'am',n:'Americium-241',r:'a',h:'432 years'},{id:'po',n:'Polonium-210',r:'a',h:'138 days'},
+ {id:'sr',n:'Strontium-90',r:'b',h:'29 years'},{id:'c14',n:'Carbon-14',r:'b',h:'5730 years'},
+ {id:'tc',n:'Technetium-99m',r:'g',h:'6 hours'},{id:'na',n:'Sodium-24',r:'g',h:'15 hours',x:'also emits β'},
+ {id:'co',n:'Cobalt-60',r:'g',h:'5.3 years',x:'also emits β'}];
+const SCN=[
+ {q:'A smoke detector for a home',need:'a',ok:['am'],why:'Americium-241: alpha particles ionise the air strongly but cannot escape the case, and a half-life of 432 years keeps the current steady for the whole life of the detector.',
+  type:{b:'Beta is too weakly ionising to produce a useful current in a small gap of air, and it would escape from the detector into the room.',g:'Gamma is very weakly ionising, so the current would be tiny, and the rays would pass straight out of the detector into the room.'},
+  half:'Polonium-210 is an alpha emitter, but with a half-life of only 138 days the current would halve within months and the alarm would go off for no reason.'},
+ {q:'Monitoring the thickness of paper in a paper mill',need:'b',ok:['sr','c14'],why:'A beta emitter with a long half-life is right: paper partly absorbs beta, so the count rate depends on thickness, and the reading does not drift as the source decays. Strontium-90 is the usual choice.',
+  type:{a:'Alpha is absorbed completely by paper, so the count rate would be zero whatever the thickness.',g:'Gamma passes through paper almost unaffected, so the count rate would hardly change when the thickness changes.'},half:''},
+ {q:'Finding a leak in a water pipe buried 2 m underground',need:'g',ok:['na','tc'],why:'A gamma emitter with a short half-life: gamma rays pass through the soil to a detector on the surface, and the tracer decays within days so the water does not stay radioactive. Sodium-24 is commonly used.',
+  type:{a:'Alpha would be absorbed by the pipe and the soil. Nothing would reach a detector on the surface.',b:'Beta would be absorbed by the soil, so nothing would reach a detector on the surface.'},
+  half:'Cobalt-60 does emit gamma, but its half-life of 5.3 years means the water supply would stay radioactive for years.'},
+ {q:'Imaging a patient’s kidneys with a gamma camera',need:'g',ok:['tc'],why:'Technetium-99m emits only gamma rays, which leave the body and reach the camera, and its 6-hour half-life is long enough for the scan but short enough that the patient is soon no longer radioactive.',
+  type:{a:'Alpha would be absorbed inside the body: no image, and a large dose to nearby cells.',b:'Beta would be absorbed inside the body, giving the patient a dose without producing an image.'},
+  half:'Cobalt-60’s half-life of 5.3 years is far too long: the patient would stay radioactive for years.',over:{na:'Sodium-24 also emits beta particles, which would be absorbed in the body and add to the patient’s dose. Technetium-99m emits gamma only, with an ideal 6-hour half-life.'}},
+ {q:'Sterilising syringes that are already sealed in plastic packs',need:'g',ok:['co'],why:'Cobalt-60: gamma rays pass through the packaging and kill the bacteria, and a half-life of 5.3 years gives a steady output for years.',
+  type:{a:'Alpha cannot get through the packaging, so bacteria inside would survive.',b:'Beta cannot get through the whole pack, so bacteria deeper inside would survive.'},
+  half:'A half-life of hours means the source would almost disappear within days and would constantly need replacing. A long-lived gamma source is needed.'},
+ {q:'Treating a tumour deep inside the body with beams from outside',need:'g',ok:['co'],why:'Cobalt-60: gamma rays penetrate deep into the body, and a long half-life gives a steady, predictable dose rate.',
+  type:{a:'Alpha would be absorbed by the outer layer of skin. It would never reach the tumour.',b:'Beta would be absorbed by the first few millimetres of tissue. It would not reach a deep tumour.'},
+  half:'A half-life of hours means the beam would weaken noticeably during a day of treatments and the source would soon be useless.'},
+ {q:'Finding the age of a wooden spear found in a peat bog',need:'b',ok:['c14'],why:'Carbon-14: living trees take in carbon-14 from the air and it decays after the tree dies. Its 5730-year half-life suits objects thousands of years old.',
+  type:{a:'Only carbon-14 can date wood: it is the radioactive isotope that living things take in while they are alive.',g:'Only carbon-14 can date wood: it is the radioactive isotope that living things take in while they are alive.'},
+  half:'Strontium-90 is not taken in from the air by trees, so it tells us nothing about when the tree died. Carbon-14 is needed.'}];
+const scState=SCN.map(()=>({st:'',pick:null}));let scI=0;
+function renderChoose(){
+ $('#rau-sclist').innerHTML=`<span class="lab" style="margin:0 0 4px 4px">Jobs to do · ${scState.filter(s=>s.st==='ok').length} of ${SCN.length} solved</span>`+SCN.map((s,i)=>`<button type="button" class="sc" data-i="${i}" aria-current="${i===scI}"><span>${s.q}</span><span class="st ${scState[i].st}">${scState[i].st==='ok'?'Solved':scState[i].st==='bad'?'Try again':'To do'}</span></button>`).join('');
+ const s=SCN[scI],z=scState[scI];
+ let fb='';if(z.pick){const iso=ISO.find(i=>i.id===z.pick);let ok=s.ok.includes(iso.id),m;
+  if(ok)m=s.why;else if(s.over&&s.over[iso.id])m=s.over[iso.id];else if(iso.r!==s.need)m=s.type[iso.r];else m=s.half;
+  fb=`<p class="note ${ok?'ok':'bad'}"><b>${ok?'Good choice.':iso.n+' is not suitable.'}</b> ${m}</p>`;}
+ $('#rau-scard').innerHTML=`<span class="lab">Job ${scI+1} of ${SCN.length}</span><h2>${s.q}</h2><p class="small" style="margin-top:-6px">Pick the most suitable source. Think about the radiation it emits and its half-life.</p>
+ <div class="isos">${ISO.map(i=>`<button type="button" class="iso ${z.pick===i.id?(s.ok.includes(i.id)?'pick-ok':'pick-bad'):''}" data-iso="${i.id}"><span class="n">${i.n}</span><span class="m"><span class="chip r-${i.r}">${({a:'α',b:'β',g:'γ'})[i.r]}</span>${i.h}</span>${i.x?`<span class="m">${i.x}</span>`:''}</button>`).join('')}</div>${fb}
+ ${z.st==='ok'&&scI<SCN.length-1?`<div class="row"><button type="button" class="btn pri" id="rau-nextsc">Next job</button></div>`:''}`;
+ const nx=$('#rau-nextsc');if(nx)nx.addEventListener('click',()=>{scI++;renderChoose();});}
+$('#rau-sclist').addEventListener('click',e=>{const b=e.target.closest('[data-i]');if(b){scI=+b.dataset.i;renderChoose();}});
+$('#rau-scard').addEventListener('click',e=>{const b=e.target.closest('[data-iso]');if(!b)return;const z=scState[scI];z.pick=b.dataset.iso;const ok=SCN[scI].ok.includes(z.pick);if(z.st!=='ok')z.st=ok?'ok':'bad';renderChoose();});
+renderChoose();
+
+/* ============ QUIZ ============ */
+const QZ=[
+ {q:'Why is an alpha source used in a smoke detector?',o:['Alpha particles are strongly ionising and are absorbed by a short distance of air','Alpha particles pass through smoke easily','Alpha particles have a very short half-life','Alpha particles are not affected by the charged plates'],a:0,e:'Strong ionisation gives a measurable current in a small gap; the short range means no radiation leaves the case.'},
+ {q:'A beta source monitors paper thickness. The count rate at the detector falls. What should happen?',o:['The paper is too thin, so the rollers should move apart','The paper is too thick, so the rollers should press harder','The source is running out, so it should be replaced','The detector should be moved closer'],a:1,e:'Thicker paper absorbs more beta, so the count rate falls. The rollers press harder to make the paper thinner.'},
+ {q:'Which radiation is most suitable for checking the thickness of steel sheet about 1 cm thick?',o:['Alpha','Beta','Gamma','Any of the three'],a:2,e:'A centimetre of steel would absorb all the beta. Gamma passes through and is partly absorbed, so the count rate depends on the thickness.'},
+ {q:'Which half-life is best for a tracer injected into a patient?',o:['A few seconds','A few hours','A few years','Several thousand years'],a:1,e:'Long enough to spread through the body and do the scan; short enough that the patient does not stay radioactive.'},
+ {q:'Syringes are sterilised with gamma rays after being sealed in packs. Which statement is correct?',o:['The syringes become radioactive and must be stored for a few weeks','The syringes have been contaminated','The syringes have been irradiated but are not radioactive','An alpha source would work just as well'],a:2,e:'The radiation passes through and kills bacteria, but no radioactive material gets onto the syringes, so they do not become radioactive.'},
+ {q:'What is meant by radioactive contamination?',o:['Exposure to radiation from a source some distance away','Radioactive material getting onto or into an object or person','Radiation passing through an object without being absorbed','Using a lead screen to absorb radiation'],a:1,e:'With contamination the radioactive atoms themselves are on or in something, so exposure continues until they are removed or decay.'},
+ {q:'In radiotherapy, gamma beams are aimed at a tumour from several directions. Why?',o:['So that more of the body becomes radioactive','So the tumour gets a large dose but each part of the healthy tissue gets a small dose','Because gamma rays are absorbed by the skin','So the source lasts longer'],a:1,e:'The beams overlap only at the tumour, so the dose adds up there while each path through healthy tissue gets a fraction.'},
+ {q:'A wooden tool has one quarter of the carbon-14 activity of living wood. The half-life of carbon-14 is 5730 years. How old is the tool?',o:['1430 years','2865 years','11 460 years','22 920 years'],a:2,e:'1 → ½ → ¼ is two half-lives: 2 × 5730 = 11 460 years.'},
+ {q:'A tracer has an activity of 800 Bq and a half-life of 15 hours. What is its activity after 45 hours?',o:['400 Bq','267 Bq','200 Bq','100 Bq'],a:3,e:'45 hours is three half-lives: 800 → 400 → 200 → 100 Bq.'},
+ {q:'Which of these does NOT reduce the risk to a technician handling a radioactive source?',o:['Using long-handled tongs','Storing the source in a lead-lined box','Holding the source close to read its label','Spending as little time near it as possible'],a:2,e:'Distance, short exposure time and shielding all reduce the dose. Sources should never be held close to the body.'},
+ {q:'Why is an alpha emitter most dangerous when it is inside the body?',o:['Alpha is the most penetrating radiation','Alpha is strongly ionising and all its energy is absorbed by nearby cells','Alpha emitters have the longest half-lives','Alpha particles turn into gamma rays inside the body'],a:1,e:'Outside, alpha is stopped by the dead outer layer of skin. Inside, it strongly ionises living cells nearby, damaging tissue and DNA.'},
+ {q:'Gamma rays are used to find a leak in an underground pipe. Why is a short half-life chosen?',o:['So the tracer gives out more radiation','So the water does not stay radioactive for long','So the gamma rays can pass through the soil','So the tracer moves faster along the pipe'],a:1,e:'Penetration depends on the type of radiation; the half-life is chosen so the activity has fallen to a low level within a few days.'}];
+let qi=0,qs=0,qa=null;
+function renderQuiz(){const el=$('#rau-quiz');
+ if(qi>=QZ.length){el.innerHTML=`<span class="lab">Check yourself</span><h2>You scored ${qs} out of ${QZ.length}</h2><p>${qs>=10?'Excellent. You can explain the choice of source for each use.':qs>=7?'Good. Revisit the applications for any questions you missed.':'Work through the applications again, especially the “Why this half-life?” notes.'}</p><div class="row"><button type="button" class="btn pri" id="rau-again">Try again</button></div>`;
+  $('#rau-again').addEventListener('click',()=>{qi=0;qs=0;qa=null;renderQuiz();});return;}
+ const q=QZ[qi];
+ el.innerHTML=`<div class="qhead"><span class="lab">Question ${qi+1} of ${QZ.length}</span><span class="lab">Score <b>${qs}</b></span></div><div class="bar"><i style="width:${qi/QZ.length*100}%"></i></div>
+ <h2>${q.q}</h2><div class="opts">${q.o.map((o,i)=>`<button type="button" class="opt ${qa==null?'':i===q.a?'ok':i===qa?'bad':''}" data-o="${i}" ${qa!=null?'disabled':''}><span class="l">${'ABCD'[i]}</span><span>${o}</span></button>`).join('')}</div>
+ ${qa!=null?`<p class="note ${qa===q.a?'ok':'bad'}"><b>${qa===q.a?'Correct.':'Not quite.'}</b> ${q.e}</p><div class="row"><button type="button" class="btn pri" id="rau-nextq">${qi===QZ.length-1?'See score':'Next question'}</button></div>`:''}`;
+ el.querySelectorAll('[data-o]').forEach(b=>b.addEventListener('click',()=>{if(qa!=null)return;qa=+b.dataset.o;if(qa===q.a)qs++;renderQuiz();}));
+ const n=$('#rau-nextq');if(n)n.addEventListener('click',()=>{qi++;qa=null;renderQuiz();});}
+renderQuiz();
+})();
+</script>
+
+</body>
+</html>
