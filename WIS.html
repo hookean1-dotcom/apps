@@ -1,0 +1,1438 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Women of GCSE Science</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: periodic-table "element tiles" on lab graph paper; subject colour drives each view */
+:root{
+  --paper:#eef2f1; --grid:#dbe3e1; --ink:#18211f; --muted:#56635f; --card:#ffffff; --line:#c9d3d0;
+  --bio:#1d7a55; --chem:#b07408; --phys:#3949b0;
+  --bio-soft:#d8efe4; --chem-soft:#f6e7c6; --phys-soft:#dde1f7;
+  --wide:#8a3d74; --wide-soft:#f1dceb;
+  --accent:var(--phys); --accent-soft:var(--phys-soft);
+  --good:#1d7a55; --bad:#b3372f;
+  --display:"Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#111716; --grid:#1b2422; --ink:#e7eeec; --muted:#9aaaa5; --card:#18201e; --line:#2c3835;
+  --bio:#4cc492; --chem:#e8b04a; --phys:#8d9cf5;
+  --bio-soft:#173328; --chem-soft:#3a2d12; --phys-soft:#222a4f;
+  --wide:#e58fc9; --wide-soft:#3b2034;
+  --good:#4cc492; --bad:#f08a80; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --paper:#111716; --grid:#1b2422; --ink:#e7eeec; --muted:#9aaaa5; --card:#18201e; --line:#2c3835;
+  --bio:#4cc492; --chem:#e8b04a; --phys:#8d9cf5;
+  --bio-soft:#173328; --chem-soft:#3a2d12; --phys-soft:#222a4f;
+  --wide:#e58fc9; --wide-soft:#3b2034;
+  --good:#4cc492; --bad:#f08a80; color-scheme:dark }
+body[data-subject="biology"]{--accent:var(--bio);--accent-soft:var(--bio-soft)}
+body[data-subject="chemistry"]{--accent:var(--chem);--accent-soft:var(--chem-soft)}
+body[data-subject="physics"]{--accent:var(--phys);--accent-soft:var(--phys-soft)}
+body[data-subject="beyond"]{--accent:var(--wide);--accent-soft:var(--wide-soft)}
+body[data-subject="explore"]{--accent:var(--ink);--accent-soft:var(--grid)}
+
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.55;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.label{font-family:var(--mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* Masthead */
+.mast{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:end}
+.mast .tile{width:92px;aspect-ratio:1;border:2.5px solid var(--ink);background:var(--card);display:grid;grid-template-rows:auto 1fr auto;padding:6px 8px;font-family:var(--mono)}
+.mast .tile b{font-family:var(--display);font-size:2.6rem;line-height:1;align-self:center;justify-self:center;color:var(--accent);transition:color .3s}
+.mast .tile span{font-size:.62rem}
+.mast h1{font-size:clamp(2rem,5.4vw,3.6rem);font-weight:800;letter-spacing:-.02em}
+.mast p{margin:6px 0 0;color:var(--muted);max-width:62ch}
+
+/* Controls */
+.controls{display:flex;flex-direction:column;gap:12px;background:var(--card);border:1.5px solid var(--line);padding:14px}
+.subjects{display:flex;gap:8px;flex-wrap:wrap}
+.subj{flex:1 1 140px;border:2px solid var(--line);background:transparent;padding:10px 12px;text-align:left;display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:1.1rem}
+.subj i{width:14px;height:14px;display:inline-block;border-radius:50%}
+.subj[data-s="biology"] i{background:var(--bio)} .subj[data-s="chemistry"] i{background:var(--chem)} .subj[data-s="physics"] i{background:var(--phys)} .subj[data-s="beyond"] i{background:var(--wide)}
+.finder{display:flex;flex-wrap:wrap;gap:8px;align-items:center;border-top:1.5px dashed var(--line);padding-top:12px}
+.finder input,.finder select{font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);padding:8px 10px;min-width:0}
+.finder input{flex:1 1 220px}
+.finder select{flex:0 1 auto;max-width:100%}
+.where{font-family:var(--mono);font-size:.7rem;color:var(--muted);padding:6px 10px 0;text-transform:uppercase;letter-spacing:.05em}
+.card[data-s="biology"]{--accent:var(--bio);--accent-soft:var(--bio-soft)} .card[data-s="chemistry"]{--accent:var(--chem);--accent-soft:var(--chem-soft)}
+.card[data-s="physics"]{--accent:var(--phys);--accent-soft:var(--phys-soft)} .card[data-s="beyond"]{--accent:var(--wide);--accent-soft:var(--wide-soft)}
+.sheet[data-s="biology"]{--accent:var(--bio);--accent-soft:var(--bio-soft)} .sheet[data-s="chemistry"]{--accent:var(--chem);--accent-soft:var(--chem-soft)}
+.sheet[data-s="physics"]{--accent:var(--phys);--accent-soft:var(--phys-soft)} .sheet[data-s="beyond"]{--accent:var(--wide);--accent-soft:var(--wide-soft)}
+.badge{display:inline-block;font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid currentColor;padding:0 5px;color:var(--chem)}
+.card .badges{display:flex;gap:6px;padding:6px 10px 0;flex-wrap:wrap}
+.empty{grid-column:1/-1;border:2px dashed var(--line);padding:24px;text-align:center;color:var(--muted)}
+.books{display:flex;flex-direction:column;gap:12px}
+.books h2{font-size:1.6rem;font-weight:800}
+.booklist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.book{background:var(--card);border:1.5px solid var(--line);border-left:6px solid var(--ink);padding:12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.book b{font-family:var(--display);font-size:1.05rem;line-height:1.2}
+.book span{font-size:.85rem;color:var(--muted)}
+.book p{margin:0;font-size:.9rem}
+.book .btn{align-self:flex-start;margin-top:auto;font-size:.85rem;padding:5px 10px}
+.subj[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.subj small{font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-left:auto;font-weight:500}
+.topics{display:flex;flex-wrap:wrap;gap:6px}
+.topic{border:1.5px solid var(--line);background:transparent;padding:6px 10px;font-size:.9rem;display:flex;gap:6px;align-items:baseline}
+.topic code{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.topic[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.topic[aria-pressed="true"] code{color:inherit;opacity:.8}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:2px solid var(--ink);background:var(--card);padding:8px 14px;font-weight:700;display:inline-flex;gap:8px;align-items:center}
+.btn.primary{background:var(--ink);color:var(--paper)}
+.btn:hover{transform:translateY(-1px)}
+.meter{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.meter .bar{width:120px;height:8px;background:var(--grid);border:1px solid var(--line)}
+.meter .bar span{display:block;height:100%;background:var(--accent);transition:width .4s}
+
+/* Topic head + timeline */
+.topichead{display:flex;flex-direction:column;gap:6px}
+.topichead h2{font-size:clamp(1.6rem,3.6vw,2.4rem);font-weight:800}
+.topichead p{margin:0;color:var(--muted);max-width:70ch}
+.timeline{overflow-x:auto;padding:4px 0 2px}
+.tl{position:relative;min-width:520px;height:64px;margin:0 30px}
+.tl::before{content:"";position:absolute;left:0;right:0;top:30px;border-top:2px dashed var(--line)}
+.tl .yr{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:0;padding:0;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.tl .yr .dot{width:14px;height:14px;border-radius:50%;background:var(--accent);border:3px solid var(--paper);margin-top:16px;box-shadow:0 0 0 1.5px var(--accent)}
+.tl .yr .nm{white-space:nowrap;color:var(--ink);font-family:var(--body);font-size:.75rem}
+.tl .yr:hover .dot{transform:scale(1.25)}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.card{position:relative;background:var(--card);border:2.5px solid var(--ink);display:flex;flex-direction:column;text-align:left;padding:0;min-width:0;transition:transform .2s, box-shadow .2s}
+.card:hover{transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--accent)}
+.card .top{display:flex;justify-content:space-between;padding:8px 10px 0;font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.card .sym{font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1;padding:4px 10px 0;color:var(--accent)}
+.card .sym small{font-size:1rem;color:var(--muted);font-weight:500;margin-left:4px}
+.card h3{font-size:1.2rem;padding:2px 10px 0}
+.card .from{font-size:.82rem;color:var(--muted);padding:0 10px}
+.card .what{margin:10px 10px 0;padding:8px 10px;background:var(--accent-soft);font-weight:700;font-size:.95rem}
+.card .open{margin-top:auto;padding:10px;display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.card .stamp{position:absolute;top:34px;right:10px;transform:rotate(-10deg);border:2px solid var(--good);color:var(--good);font-family:var(--mono);font-size:.68rem;font-weight:600;padding:1px 6px;letter-spacing:.08em}
+.card .stamp[hidden]{display:none!important}
+
+/* Modal */
+.overlay{position:fixed;inset:0;background:color-mix(in srgb,var(--ink) 55%,transparent);display:grid;place-items:center;z-index:50;padding:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sheet{background:var(--card);border:2.5px solid var(--ink);max-width:820px;width:100%;max-height:calc(100% - 32px);overflow:auto;display:grid;grid-template-columns:260px 1fr;box-shadow:10px 10px 0 var(--accent)}
+.sheet .side{background:var(--accent-soft);padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.sheet .side svg{width:100%;height:auto;max-width:224px;border:2px solid var(--ink)}
+.sheet .main{padding:22px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sheet h2{font-size:1.9rem;font-weight:800}
+.sheet .meta{font-family:var(--mono);font-size:.8rem;color:var(--muted)}
+.sheet p{margin:0}
+.box{border-left:4px solid var(--accent);padding:8px 12px;background:var(--paper)}
+.box .label{display:block;margin-bottom:2px;color:var(--accent);font-weight:600}
+.close{position:sticky;top:0;justify-self:end;border:2px solid var(--ink);background:var(--card);width:38px;height:38px;font-size:1.2rem;font-weight:700}
+.link{color:var(--accent);font-weight:700}
+.navrow{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Quiz */
+.quiz{max-width:640px;grid-template-columns:1fr}
+.clues{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none}
+.clues li{border:1.5px dashed var(--line);padding:8px 12px;display:flex;gap:10px}
+.clues li b{font-family:var(--mono);color:var(--accent)}
+.clues li.locked{color:var(--muted);font-style:italic}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt{border:2px solid var(--ink);background:var(--card);padding:10px;text-align:left;font-weight:700}
+.opt.right{background:var(--good);color:var(--card);border-color:var(--good)}
+.opt.wrong{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.score{font-family:var(--mono);font-size:.85rem}
+.note{font-size:.85rem;color:var(--muted)}
+footer{font-size:.85rem;color:var(--muted);border-top:1.5px solid var(--line);padding-top:14px}
+
+@media (max-width:640px){
+  .sheet{grid-template-columns:1fr}
+  .sheet .side{flex-direction:row;align-items:center}
+  .sheet .side svg{max-width:110px}
+  .mast{grid-template-columns:1fr}
+  .mast .tile{width:76px}
+  .opts{grid-template-columns:1fr}
+  .meter{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="tile" aria-hidden="true"><span id="tileNum">52</span><b id="tileSym">Ws</b><span>Women in Science</span></div>
+    <div>
+      <div class="label">GCSE Biology · Chemistry · Physics</div>
+      <h1>Women of GCSE Science</h1>
+      <p>Pick a subject and a topic from your specification. Every scientist here made a discovery you will meet in that topic. Open a tile to read her story, then test yourself with <strong>Who am I?</strong></p>
+    </div>
+  </header>
+
+  <section class="controls" aria-label="Choose a topic">
+    <div class="subjects" id="subjects" role="group" aria-label="Subject"></div>
+    <div class="topics" id="topics" role="group" aria-label="Topic"></div>
+    <div class="toolbar">
+      <button class="btn primary" id="quizBtn" type="button">Who am I? quiz</button>
+      <button class="btn" id="randBtn" type="button">Surprise me</button>
+      <div class="meter"><span id="metText">Met 0 of 0</span><div class="bar"><span id="metBar" style="width:0"></span></div></div>
+    </div>
+    <div class="finder" role="search">
+      <label class="label" for="q">Find</label>
+      <input id="q" type="search" placeholder="Search names, discoveries, countries… e.g. 'DNA', 'Wales', 'laser'" autocomplete="off">
+      <select id="era" aria-label="Era">
+        <option value="all">Any era</option><option value="0-1799">Before 1800</option><option value="1800-1899">1800s</option><option value="1900-1949">1900–1949</option><option value="1950-1999">1950–1999</option><option value="2000-3000">2000 onwards</option>
+      </select>
+      <select id="book" aria-label="Featured in book"><option value="all">Any book</option></select>
+      <label class="label" style="display:flex;gap:6px;align-items:center"><input id="nob" type="checkbox"> Nobel laureates</label>
+      <button class="btn" id="azBtn" type="button">All scientists A–Z</button>
+    </div>
+  </section>
+
+  <section class="topichead" id="head"></section>
+  <div class="timeline" id="tlwrap"><div class="tl" id="tl"></div></div>
+  <main class="grid" id="grid"></main>
+
+  <section class="books" id="books" aria-labelledby="booksH">
+    <div><span class="label">Further reading</span><h2 id="booksH">Books about women in science</h2></div>
+    <div class="booklist" id="booklist"></div>
+  </section>
+
+  <footer>
+    Topic numbers follow the AQA GCSE specifications (8461, 8462, 8463); WJEC, Eduqas and Edexcel cover the same ideas. "Beyond GCSE" collects women from the reading list whose work sits outside the science specifications. Portraits are illustrated tiles, not photographs: use the Wikipedia link on each profile to see real photos. Biographies are written for this resource and checked against Wikipedia, October 2026. Book tags show which scientists are profiled in Women in Science (Ignotofsky), Headstrong (Swaby), The Glass Universe (Sobel) and Hidden Figures (Shetterly).
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" hidden></div>
+
+<script>
+const SUBJECTS={
+ biology:{name:"Biology",topics:[
+  ["cell","4.1","Cell biology"],["org","4.2","Organisation"],["infection","4.3","Infection and response"],["energy","4.4","Bioenergetics"],["homeo","4.5","Homeostasis and response"],["inherit","4.6","Inheritance, variation and evolution"],["ecology","4.7","Ecology"]]},
+ chemistry:{name:"Chemistry",topics:[
+  ["atomic","4.1","Atomic structure and the periodic table"],["bonding","4.2","Bonding, structure and properties"],["quant","4.3","Quantitative chemistry"],["changes","4.4","Chemical changes"],["energy","4.5","Energy changes"],["rate","4.6","Rate and extent of chemical change"],["organic","4.7","Organic chemistry"],["analysis","4.8","Chemical analysis"],["atmos","4.9","Chemistry of the atmosphere"],["resources","4.10","Using resources"]]},
+ physics:{name:"Physics",topics:[
+  ["energy","4.1","Energy"],["elec","4.2","Electricity"],["particle","4.3","Particle model of matter"],["atomic","4.4","Atomic structure"],["forces","4.5","Forces"],["waves","4.6","Waves"],["magnet","4.7","Magnetism and electromagnetism"],["space","4.8","Space physics"]]},
+ beyond:{name:"Beyond GCSE",topics:[
+  ["maths","+","Maths and computing"],["medicine","+","Medicine"],["earth","+","Earth science"],["people","+","Psychology and engineering"]]}
+};
+const INTRO={
+ "biology-cell":"Cells, organelles, chromosomes and cell division.",
+ "biology-org":"Enzymes, the heart and blood, and the diseases that affect them.",
+ "biology-infection":"Pathogens, the immune system, vaccines and drugs.",
+ "biology-energy":"Photosynthesis and respiration, including what happens in muscles during exercise.",
+ "biology-homeo":"Hormones, nerves and receptors that keep the body in balance.",
+ "biology-inherit":"DNA, chromosomes, genes and the evidence for evolution.",
+ "biology-ecology":"Food chains, biodiversity, behaviour and human impact on ecosystems.",
+ "chemistry-atomic":"Elements, atoms and the gaps in Mendeleev's periodic table.",
+ "chemistry-bonding":"How atoms join up, and how we found out the shapes of molecules and crystals.",
+ "chemistry-quant":"Conservation of mass and measuring what happens in a reaction.",
+ "chemistry-changes":"Reactivity, acids and electrolysis.",
+ "chemistry-energy":"Exothermic and endothermic changes, and storing energy.",
+ "chemistry-rate":"How fast reactions go, and the catalysts that speed them up.",
+ "chemistry-organic":"Carbon compounds, polymers, esters and reactions of functional groups.",
+ "chemistry-analysis":"Pure substances, chromatography and identifying what's in a mixture.",
+ "chemistry-atmos":"Greenhouse gases, climate change and atmospheric pollutants.",
+ "chemistry-resources":"Potable water, treating waste water and sustainable resources.",
+ "physics-energy":"Energy stores, kinetic energy and how energy is conserved.",
+ "physics-elec":"Current, potential difference and resistance.",
+ "physics-particle":"States of matter, temperature and the behaviour of particles.",
+ "physics-atomic":"Radioactive decay, nuclear radiation, fission and background radiation.",
+ "physics-forces":"Resultant forces, drag and motion.",
+ "physics-waves":"Seismic waves, light and the electromagnetic spectrum.",
+ "physics-magnet":"Electromagnetic induction, transformers and the National Grid.",
+ "physics-space":"Stars, orbits, red-shift and the expanding universe.",
+ "beyond-maths":"The mathematics and computing that science depends on.",
+ "beyond-medicine":"The women who opened medicine to women, and changed how patients are cared for.",
+ "beyond-earth":"Rocks, volcanoes and the structure of our planet.",
+ "beyond-people":"How people think, learn and work, and the science of designing for them."
+};
+const NOBEL={blackburn:"Physiology or Medicine 2009",greider:"Physiology or Medicine 2009",elion:"Physiology or Medicine 1988",tu:"Physiology or Medicine 2015",barre:"Physiology or Medicine 2008",kariko:"Physiology or Medicine 2023",cori:"Physiology or Medicine 1947",yalow:"Physiology or Medicine 1977",levi:"Physiology or Medicine 1986",buck:"Physiology or Medicine 2004",mcclintock:"Physiology or Medicine 1983",nusslein:"Physiology or Medicine 1995",moser:"Physiology or Medicine 2014",maathai:"Peace 2004",hodgkin:"Chemistry 1964","curie-chem":"Physics 1903 and Chemistry 1911",curie:"Physics 1903 and Chemistry 1911","curie-mag":"Physics 1903 and Chemistry 1911",arnold:"Chemistry 2018",bertozzi:"Chemistry 2022",joliot:"Chemistry 1935",doudna:"Chemistry 2020",charpentier:"Chemistry 2020",yonath:"Chemistry 2009",goeppert:"Physics 1963",strickland:"Physics 2018",lhuillier:"Physics 2023",ghez:"Physics 2020"};
+const BOOKS=[
+ {id:"ign",title:"Women in Science: 50 Fearless Pioneers Who Changed the World",author:"Rachel Ignotofsky",year:2016,note:"Illustrated one-page profiles from the ancient world to today. Ideal for Years 7–11.",
+  ids:["merian","wang","anning","lovelace","blackwell","ayrton","stevens","bascom","curie","chase","meitner","gilbreth","noether","clarke","ball","cori","payne","mcclintock","goeppert","hopper","carson","levi","hodgkin","wu","lamarr","mamie-clark","elion","johnson","jane-wright","franklin","yalow","lederberg","rubin","easley","goodall","earle","tereshkova","bath","nusslein","bell","sau-lan-wu","blackburn","krafft","jemison","moser","mirzakhani"]},
+ {id:"swaby",title:"Headstrong: 52 Women Who Changed Science – and the World",author:"Rachel Swaby",year:2015,note:"Short, lively essays grouped by field, from medicine to invention.",
+  ids:["jane-wright","ball","cori","taussig","widdowson","hodgkin","elion","merian","anning","richards","evans","carson","patrick","stevens","mangold","auerbach","mcclintock","levi","franklin","mclaren","margulis","chatelet","meitner","joliot","goeppert","perey","wu","yalow","mitchell","cannon","lehmann","tharp","brill","ride","lovelace","nightingale","kovalevskaya","noether","cartwright","hopper","ayrton","lamarr","benerito","kwolek","williams","apgar"]},
+ {id:"glass",title:"The Glass Universe",author:"Dava Sobel",year:2016,note:"The women 'computers' of Harvard Observatory who measured and sorted the stars.",ids:["fleming","maury","cannon","leavitt","payne"]},
+ {id:"hidden",title:"Hidden Figures",author:"Margot Lee Shetterly",year:2016,note:"The Black women mathematicians and engineers of NASA's Langley centre.",ids:["johnson","jackson","darden"]},
+ {id:"mcgrayne",title:"Nobel Prize Women in Science",author:"Sharon Bertsch McGrayne",year:1993,note:"In-depth lives of women who won, or helped win, Nobel Prizes. Tick 'Nobel laureates' above to see them here."},
+ {id:"fara",title:"A Lab of One's Own",author:"Patricia Fara",year:2018,note:"British women in science during the First World War and the fight for the vote."},
+ {id:"heald",title:"Magnificent Women and their Revolutionary Machines",author:"Henrietta Heald",year:2019,note:"The founders of the Women's Engineering Society, including Caroline Haslett."},
+ {id:"holt",title:"Rise of the Rocket Girls",author:"Nathalia Holt",year:2016,note:"The women who calculated rocket paths at NASA's Jet Propulsion Laboratory."},
+ {id:"maddox",title:"Rosalind Franklin: The Dark Lady of DNA",author:"Brenda Maddox",year:2002,note:"The leading biography of Rosalind Franklin."},
+ {id:"sime",title:"Lise Meitner: A Life in Physics",author:"Ruth Lewin Sime",year:1996,note:"A detailed biography of the physicist who explained nuclear fission."},
+ {id:"saini",title:"Inferior",author:"Angela Saini",year:2017,note:"How science has got women wrong, and the research putting it right."}
+];
+const booksOf=id=>BOOKS.filter(b=>b.ids&&b.ids.includes(id));
+
+/* key = year of the headline contribution. icon picks the illustration motif. */
+const W=[
+/* BIOLOGY */
+{id:"margulis",s:"biology",t:"cell",name:"Lynn Margulis",life:"1938–2011",from:"USA",key:1967,icon:"cell",wiki:"Lynn_Margulis",
+ what:"Endosymbiotic theory",
+ bio:"Margulis argued that mitochondria and chloroplasts were once free-living bacteria that were swallowed by larger cells and ended up living inside them as partners. Her 1967 paper was turned down by many journals before it was published. Later evidence backed her up: both organelles have their own DNA and divide on their own, much like bacteria.",
+ gcse:"Explains why mitochondria (site of aerobic respiration) and chloroplasts (site of photosynthesis) contain their own DNA, and how complex eukaryotic cells evolved.",
+ fun:"Her first husband was the astronomer Carl Sagan.",
+ clues:["My most famous paper was rejected many times before it appeared in 1967.","I said some organelles started life as free-living bacteria.","My theory explains why mitochondria have their own DNA."]},
+{id:"blackburn",s:"biology",t:"cell",name:"Elizabeth Blackburn",life:"born 1948",from:"Australia / USA",key:1984,icon:"chromosome",wiki:"Elizabeth_Blackburn",
+ what:"Telomeres and telomerase",
+ bio:"Blackburn studies telomeres, the protective caps on the ends of chromosomes. Each time a cell divides, its telomeres get a little shorter. With her student Carol Greider she discovered telomerase, the enzyme that rebuilds them. They shared the 2009 Nobel Prize in Physiology or Medicine with Jack Szostak.",
+ gcse:"Links to chromosomes, the cell cycle and mitosis, and to why cancer cells and stem cells can keep dividing.",
+ fun:"She grew up in Tasmania and studied tiny pond organisms called Tetrahymena, which have thousands of chromosome ends.",
+ clues:["I was born in Tasmania.","I study the protective caps on the ends of chromosomes.","I shared a 2009 Nobel Prize with my former student."]},
+{id:"greider",s:"biology",t:"cell",name:"Carol Greider",life:"born 1961",from:"USA",key:1984,icon:"chromosome",wiki:"Carol_W._Greider",
+ what:"Discovered telomerase",
+ bio:"As a PhD student in Elizabeth Blackburn's lab, Greider found the first evidence for telomerase, the enzyme that adds DNA back onto the ends of chromosomes. She spotted the key result on Christmas Day 1984. Her later work showed how short telomeres are linked to ageing and disease.",
+ gcse:"Chromosomes are copied before mitosis; telomerase helps protect their ends so genetic information isn't lost.",
+ fun:"She was only 23 when she made the discovery that later won her a Nobel Prize.",
+ clues:["I made my key discovery as a PhD student.","My big result came on Christmas Day 1984.","I found the enzyme that rebuilds chromosome ends."]},
+{id:"menten",s:"biology",t:"org",name:"Maud Menten",life:"1879–1960",from:"Canada",key:1913,icon:"enzyme",wiki:"Maud_Menten",
+ what:"How fast enzymes work",
+ bio:"Working in Berlin with Leonor Michaelis, Menten measured how the rate of an enzyme-controlled reaction changes as you add more substrate. The Michaelis–Menten equation they published in 1913 is still used by biochemists over a century later. She was one of the first women in Canada to qualify as a doctor.",
+ gcse:"Enzymes, the active site and how substrate concentration affects the rate of reaction, including why the rate levels off.",
+ fun:"She was also an accomplished painter.",
+ clues:["I published a famous equation in 1913.","I worked in Berlin with Leonor Michaelis.","My work shows how substrate concentration affects enzyme reactions."]},
+{id:"taussig",s:"biology",t:"org",name:"Helen Taussig",life:"1898–1986",from:"USA",key:1944,icon:"heart",wiki:"Helen_B._Taussig",
+ what:"Surgery for 'blue babies'",
+ bio:"Taussig was a children's heart specialist. Some babies were born blue because too little of their blood reached the lungs to pick up oxygen. She proposed an operation to reroute blood to the lungs, and in 1944 surgeon Alfred Blalock and technician Vivien Thomas made it work. The Blalock–Taussig shunt has saved thousands of lives. She later helped raise the alarm about the drug thalidomide.",
+ gcse:"The structure of the heart, double circulation, and why oxygenated and deoxygenated blood must reach the right places.",
+ fun:"Losing much of her hearing, she learned to feel heart rhythms through her fingertips.",
+ clues:["I was a children's heart doctor.","I designed an operation for 'blue babies'.","An operation from 1944 carries my name and Blalock's."]},
+{id:"daly",s:"biology",t:"org",name:"Marie Maynard Daly",life:"1921–2003",from:"USA",key:1947,icon:"heart",wiki:"Marie_Maynard_Daly",
+ what:"Cholesterol and blocked arteries",
+ bio:"In 1947 Daly became the first Black American woman to earn a PhD in chemistry. Her research showed links between high cholesterol, high blood pressure and clogged arteries, helping explain the causes of heart attacks. She also studied how proteins are made in cells.",
+ gcse:"Coronary heart disease: fatty deposits in coronary arteries, and risk factors such as diet and blood pressure.",
+ fun:"She set up a scholarship at Queens College, New York, in memory of her father, to help Black students study science.",
+ clues:["I earned a chemistry PhD in 1947.","I studied cholesterol and blood pressure.","My work helped explain the causes of heart attacks."]},
+{id:"almeida",s:"biology",t:"infection",name:"June Almeida",life:"1930–2007",from:"Scotland",key:1964,icon:"virus",wiki:"June_Almeida",
+ what:"First picture of a human coronavirus",
+ bio:"Almeida left school in Glasgow at 16 and started as a laboratory technician. She became an expert electron microscopist and, in 1964, took the first images of a human coronavirus. She and her colleagues named the group after the crown-like halo around each virus particle.",
+ gcse:"Viruses as pathogens, and how electron microscopes reveal structures far too small for light microscopes.",
+ fun:"She had no university degree when she made her famous discovery. She was later awarded a doctorate for her work.",
+ clues:["I left school at 16 in Glasgow.","I was an expert with the electron microscope.","I took the first images of a human coronavirus in 1964."]},
+{id:"elion",s:"biology",t:"infection",name:"Gertrude Elion",life:"1918–1999",from:"USA",key:1988,icon:"pill",wiki:"Gertrude_B._Elion",
+ what:"Designed life-saving drugs",
+ bio:"Elion designed drugs by studying how cells and pathogens use DNA building blocks. Her work produced early treatments for leukaemia, a drug that stops the body rejecting organ transplants, and aciclovir, the first effective antiviral for herpes. She shared the 1988 Nobel Prize in Physiology or Medicine.",
+ gcse:"Drug discovery and testing. Antibiotics don't work on viruses, but antiviral drugs like aciclovir can.",
+ fun:"She never finished a PhD, but was later given many honorary doctorates.",
+ clues:["I shared the 1988 Nobel Prize for medicine.","I made one of the first effective antiviral drugs.","My drugs treat leukaemia and help transplant patients."]},
+{id:"tu",s:"biology",t:"infection",name:"Tu Youyou",life:"born 1930",from:"China",key:1972,icon:"leaf",wiki:"Tu_Youyou",
+ what:"Artemisinin, a malaria cure",
+ bio:"Tu searched ancient Chinese medical texts for malaria remedies. A clue in a text about 1,600 years old led her to extract artemisinin from sweet wormwood using a low-temperature method. Artemisinin-based drugs have saved millions of lives. In 2015 she became the first Chinese woman to win a Nobel Prize in a science.",
+ gcse:"Malaria is caused by a protist spread by mosquitoes; many drugs, like aspirin and digitalis, began as plant extracts.",
+ fun:"She volunteered to be one of the first people to test the extract on herself.",
+ clues:["I searched ancient medical texts for ideas.","I extracted a drug from sweet wormwood.","My drug treats malaria, and I won a Nobel Prize in 2015."]},
+{id:"barre",s:"biology",t:"infection",name:"Françoise Barré-Sinoussi",life:"born 1947",from:"France",key:1983,icon:"virus",wiki:"Françoise_Barré-Sinoussi",
+ what:"Discovered HIV",
+ bio:"Working at the Pasteur Institute in Paris, Barré-Sinoussi and her colleagues identified the human immunodeficiency virus (HIV) in 1983. This made blood tests and treatments possible. She shared the 2008 Nobel Prize in Physiology or Medicine with Luc Montagnier.",
+ gcse:"HIV is a virus that attacks immune cells and can lead to AIDS. Antiretroviral drugs control it.",
+ fun:"She spent decades working with doctors and patients in Africa and Asia to improve HIV care.",
+ clues:["I worked at the Pasteur Institute in Paris.","My team identified a virus in 1983.","The virus I helped discover attacks the immune system."]},
+{id:"kariko",s:"biology",t:"infection",name:"Katalin Karikó",life:"born 1955",from:"Hungary / USA",key:2005,icon:"vaccine",wiki:"Katalin_Karikó",
+ what:"mRNA vaccines",
+ bio:"Karikó spent decades trying to use mRNA as a medicine, often without funding. With Drew Weissman she found a way to change mRNA so the immune system didn't attack it. This made the COVID-19 mRNA vaccines possible, and they shared the 2023 Nobel Prize in Physiology or Medicine.",
+ gcse:"Vaccination: mRNA vaccines give cells instructions to make a harmless antigen, so white blood cells make antibodies and memory cells.",
+ fun:"Her daughter, Susan Francia, won two Olympic gold medals in rowing.",
+ clues:["I worked for years on an idea many people doubted.","I worked with Drew Weissman.","My research led to COVID-19 mRNA vaccines."]},
+{id:"cori",s:"biology",t:"energy",name:"Gerty Cori",life:"1896–1957",from:"Czech-born, USA",key:1947,icon:"muscle",wiki:"Gerty_Cori",
+ what:"The Cori cycle",
+ bio:"With her husband Carl, Cori worked out how the body stores glucose as glycogen and breaks it down again. They showed that lactic acid made in muscles is carried to the liver and turned back into glucose. In 1947 she became the first American woman to win a Nobel Prize in science.",
+ gcse:"Anaerobic respiration in muscles makes lactic acid; after exercise the oxygen debt is repaid as the liver converts lactic acid back to glucose.",
+ fun:"She was the third woman ever to win a Nobel Prize in science.",
+ clues:["I worked with my husband, Carl.","We showed what happens to lactic acid after exercise.","I was the first American woman to win a science Nobel Prize."]},
+{id:"yalow",s:"biology",t:"homeo",name:"Rosalyn Yalow",life:"1921–2011",from:"USA",key:1977,icon:"drop",wiki:"Rosalyn_Sussman_Yalow",
+ what:"Measuring hormones in blood",
+ bio:"Yalow was trained as a physicist. With Solomon Berson she developed radioimmunoassay, which uses radioactive tracers to measure tiny amounts of hormones such as insulin in blood. It changed how diabetes and many hormone disorders are studied. She won the 1977 Nobel Prize in Physiology or Medicine.",
+ gcse:"Insulin controls blood glucose. Her method showed people with type 2 diabetes often still make insulin but don't respond to it properly.",
+ fun:"She refused to patent her method so that anyone could use it.",
+ clues:["I trained as a physicist.","I used radioactive tracers to measure hormones.","I could measure tiny amounts of insulin in blood."]},
+{id:"levi",s:"biology",t:"homeo",name:"Rita Levi-Montalcini",life:"1909–2012",from:"Italy",key:1952,icon:"neuron",wiki:"Rita_Levi-Montalcini",
+ what:"Nerve growth factor",
+ bio:"Barred from her university job by anti-Jewish laws in Mussolini's Italy, Levi-Montalcini set up a lab in her bedroom and studied chick embryos. In the 1950s she discovered nerve growth factor, a protein that controls how neurones grow. She shared the 1986 Nobel Prize with Stanley Cohen.",
+ gcse:"The nervous system: neurones carry electrical impulses between receptors, the brain and effectors.",
+ fun:"She lived to 103 and was still working in her lab in her 100s.",
+ clues:["I once ran experiments in my bedroom.","I studied chick embryos.","I discovered a protein that makes neurones grow."]},
+{id:"buck",s:"biology",t:"homeo",name:"Linda Buck",life:"born 1947",from:"USA",key:1991,icon:"neuron",wiki:"Linda_B._Buck",
+ what:"How we smell",
+ bio:"In 1991 Buck and Richard Axel discovered a large family of genes for smell receptors in the nose. Each receptor detects a few kinds of odour molecule, and the brain combines their signals so we can tell thousands of smells apart. They shared the 2004 Nobel Prize in Physiology or Medicine.",
+ gcse:"Receptors detect stimuli and send impulses along sensory neurones to the brain.",
+ fun:"About 1,000 genes in mice, a few per cent of all their genes, are for smell receptors.",
+ clues:["I discovered a huge family of genes in 1991.","My work is about receptors in the nose.","I shared the 2004 Nobel Prize for explaining how we smell."]},
+{id:"franklin",s:"biology",t:"inherit",name:"Rosalind Franklin",life:"1920–1958",from:"England",key:1952,icon:"helix",wiki:"Rosalind_Franklin",
+ what:"Photo 51 and the shape of DNA",
+ bio:"Franklin used X-ray crystallography to study DNA at King's College London. In 1952 she and her student Raymond Gosling took Photo 51, which showed that DNA is a helix. Watson and Crick saw her data without her knowledge and used it to build their 1953 double-helix model. She died aged 37, before the Nobel Prize for DNA was awarded.",
+ gcse:"DNA is a polymer made of two strands forming a double helix.",
+ fun:"The European Space Agency named its Mars rover after her.",
+ clues:["I used X-rays to study molecules.","My student and I took 'Photo 51' in 1952.","My data showed DNA is a helix."]},
+{id:"stevens",s:"biology",t:"inherit",name:"Nettie Stevens",life:"1861–1912",from:"USA",key:1905,icon:"chromosome",wiki:"Nettie_Stevens",
+ what:"X and Y chromosomes",
+ bio:"In 1905, studying mealworms, Stevens found that females had two large matching sex chromosomes while males had one large and one small. She showed that the sperm decides whether offspring are male or female. This was the first clear evidence that chromosomes determine sex.",
+ gcse:"Sex determination: females are XX, males are XY. Use a Punnett square to show the 50:50 chance.",
+ fun:"She worked as a teacher and saved for years before she could go to university.",
+ clues:["I studied mealworms.","In 1905 I compared male and female chromosomes.","I discovered how sex is determined by chromosomes."]},
+{id:"mcclintock",s:"biology",t:"inherit",name:"Barbara McClintock",life:"1902–1992",from:"USA",key:1983,icon:"maize",wiki:"Barbara_McClintock",
+ what:"'Jumping genes'",
+ bio:"McClintock studied the coloured patterns on maize (corn) kernels. In the 1940s she found that some pieces of DNA can move to new places on chromosomes, switching genes on and off. Many scientists ignored the idea for years. In 1983 she won the Nobel Prize in Physiology or Medicine on her own.",
+ gcse:"Genes, mutation and variation: changes in DNA can change phenotype, like the colour of a kernel.",
+ fun:"She was the first woman to win an unshared Nobel Prize in Physiology or Medicine.",
+ clues:["I studied coloured maize kernels.","I found genes that can move around.","I won an unshared Nobel Prize in 1983."]},
+{id:"anning",s:"biology",t:"inherit",name:"Mary Anning",life:"1799–1847",from:"England",key:1823,icon:"fossil",wiki:"Mary_Anning",
+ what:"Fossil hunter of Lyme Regis",
+ bio:"Anning collected fossils on the cliffs of Lyme Regis in Dorset. With her brother Joseph she found the first ichthyosaur skeleton to be correctly identified, when she was about 12. She later found the first complete plesiosaur. As a woman she could not join the Geological Society, but leading geologists relied on her finds.",
+ gcse:"Fossils are evidence for evolution and extinction: they show that species have changed over millions of years.",
+ fun:"The tongue-twister 'She sells seashells by the seashore' is often said to be about her.",
+ clues:["I hunted fossils on the Dorset coast.","I found an ichthyosaur when I was about 12.","I found the first complete plesiosaur."]},
+{id:"carson",s:"biology",t:"ecology",name:"Rachel Carson",life:"1907–1964",from:"USA",key:1962,icon:"bird",wiki:"Rachel_Carson",
+ what:"Silent Spring and pesticides",
+ bio:"Carson was a marine biologist and writer. Her 1962 book Silent Spring showed how pesticides such as DDT build up along food chains and harm birds and other wildlife. It sparked the modern environmental movement and led to DDT being banned for farm use in the USA in 1972.",
+ gcse:"Pollution and food chains: toxic chemicals build up in organisms at higher trophic levels.",
+ fun:"The book's title imagines a spring with no birdsong because the birds have been poisoned.",
+ clues:["I was a marine biologist and writer.","My 1962 book warned about pesticides.","My work led to DDT being banned in the USA."]},
+{id:"maathai",s:"biology",t:"ecology",name:"Wangari Maathai",life:"1940–2011",from:"Kenya",key:1977,icon:"tree",wiki:"Wangari_Maathai",
+ what:"The Green Belt Movement",
+ bio:"Maathai was the first woman in East and Central Africa to earn a doctorate. In 1977 she founded the Green Belt Movement, which supports women to plant trees. It has planted tens of millions of trees across Kenya. In 2004 she became the first African woman to win a Nobel Prize (the Peace Prize).",
+ gcse:"Deforestation reduces biodiversity and increases carbon dioxide; planting trees helps reverse this.",
+ fun:"She trained as a biologist and studied veterinary anatomy.",
+ clues:["I founded a movement in 1977.","My movement plants trees in Kenya.","I was the first African woman to win a Nobel Prize."]},
+{id:"goodall",s:"biology",t:"ecology",name:"Jane Goodall",life:"1934–2025",from:"England",key:1960,icon:"leaf",wiki:"Jane_Goodall",
+ what:"Chimpanzees use tools",
+ bio:"In 1960 Goodall began studying wild chimpanzees at Gombe in Tanzania. She saw them stripping leaves off twigs to fish termites out of mounds, showing that animals other than humans make and use tools. Her field study lasted over 60 years, and she spent her later life campaigning for conservation.",
+ gcse:"Field studies of organisms in their habitats, animal behaviour, and conservation of biodiversity.",
+ fun:"She began her research with no degree; Cambridge later let her study straight for a PhD.",
+ clues:["I began my famous research in 1960 in Tanzania.","I studied wild chimpanzees.","I saw chimps make tools to catch termites."]},
+
+/* CHEMISTRY */
+{id:"perey",s:"chemistry",t:"atomic",name:"Marguerite Perey",life:"1909–1975",from:"France",key:1939,icon:"element",wiki:"Marguerite_Perey",
+ what:"Discovered francium",
+ bio:"Perey joined Marie Curie's lab at 19 as an assistant. While purifying actinium in 1939 she found radiation that came from a new element, number 87, which she named francium after France. It filled one of the last gaps in group 1 of the periodic table.",
+ gcse:"Group 1 alkali metals get more reactive down the group. Francium sits at the bottom, and Mendeleev had left a gap for it.",
+ fun:"In 1962 she became the first woman elected to the French Academy of Sciences (as a corresponding member).",
+ clues:["I started as Marie Curie's assistant.","I discovered element 87 in 1939.","I named my element after my country."]},
+{id:"noddack",s:"chemistry",t:"atomic",name:"Ida Noddack",life:"1896–1978",from:"Germany",key:1925,icon:"element",wiki:"Ida_Noddack",
+ what:"Discovered rhenium",
+ bio:"In 1925 Noddack, with Walter Noddack and Otto Berg, discovered element 75, rhenium, filling a gap that Mendeleev's table had predicted. In 1934 she suggested that a uranium nucleus might split into large pieces. Most scientists ignored her until nuclear fission was confirmed in 1938–39.",
+ gcse:"Mendeleev left gaps in his periodic table for undiscovered elements; finding them showed his table worked.",
+ fun:"She was nominated for the Nobel Prize in Chemistry several times.",
+ clues:["I helped discover element 75 in 1925.","I filled a gap in Mendeleev's table.","I predicted nuclei could split years before anyone believed it."]},
+{id:"lonsdale",s:"chemistry",t:"bonding",name:"Kathleen Lonsdale",life:"1903–1971",from:"Ireland / England",key:1929,icon:"hexagon",wiki:"Kathleen_Lonsdale",
+ what:"Proved benzene is a flat hexagon",
+ bio:"Lonsdale used X-ray crystallography to show in 1929 that the benzene ring is flat and hexagonal, settling a long argument. In 1945 she and Marjory Stephenson became the first women elected Fellows of the Royal Society. A rare hexagonal form of diamond, lonsdaleite, is named after her.",
+ gcse:"Covalent bonding and giant covalent structures like diamond, where each carbon forms four strong bonds.",
+ fun:"Lonsdaleite has been found in meteorite craters.",
+ clues:["I used X-rays to find the shapes of molecules.","In 1929 I showed benzene is flat.","A form of diamond is named after me."]},
+{id:"hodgkin",s:"chemistry",t:"bonding",name:"Dorothy Hodgkin",life:"1910–1994",from:"England",key:1964,icon:"crystal",wiki:"Dorothy_Hodgkin",
+ what:"Structures of penicillin, B12 and insulin",
+ bio:"Hodgkin used X-ray crystallography to work out the 3D structures of penicillin (1945) and vitamin B12 (1956). She won the 1964 Nobel Prize in Chemistry. In 1969, 35 years after she first studied it, she solved the structure of insulin.",
+ gcse:"The arrangement of atoms and bonds in a molecule decides its properties and how it behaves.",
+ fun:"She is still the only British woman to win a Nobel Prize in science.",
+ clues:["I won the 1964 Nobel Prize in Chemistry.","I found the structure of penicillin.","It took me 35 years to solve insulin."]},
+{id:"lavoisier",s:"chemistry",t:"quant",name:"Marie-Anne Lavoisier",life:"1758–1836",from:"France",key:1789,icon:"balance",wiki:"Marie-Anne_Paulze_Lavoisier",
+ what:"Partner in proving conservation of mass",
+ bio:"Marie-Anne Paulze worked alongside her husband Antoine Lavoisier on the careful weighing experiments that showed mass is conserved in reactions and that burning needs oxygen. She recorded results, translated scientific papers from English, and drew detailed engravings of their apparatus for his 1789 textbook.",
+ gcse:"Conservation of mass: no atoms are lost or made, so the total mass of reactants equals the mass of products.",
+ fun:"She had studied art with the painter Jacques-Louis David, who painted the couple's famous portrait.",
+ clues:["I worked in an 18th-century Paris laboratory.","I drew the apparatus for a famous 1789 chemistry book.","Our experiments showed mass is conserved."]},
+{id:"curie-chem",s:"chemistry",t:"changes",name:"Marie Curie",life:"1867–1934",from:"Poland / France",key:1910,icon:"electrode",wiki:"Marie_Curie",
+ what:"Isolated radium metal by electrolysis",
+ bio:"After discovering radium in 1898, Curie wanted to prove it was a true element. In 1910, with André-Louis Debierne, she isolated pure radium metal by electrolysis of radium chloride using a mercury electrode, then heated it to remove the mercury. She won the 1911 Nobel Prize in Chemistry.",
+ gcse:"Electrolysis: positive metal ions move to the cathode and gain electrons. Reactive metals are extracted by electrolysis.",
+ fun:"She is the only person to have won Nobel Prizes in two different sciences: physics and chemistry.",
+ clues:["I won Nobel Prizes in two sciences.","In 1910 I used electrolysis to isolate a metal.","The metal I isolated was radium."]},
+{id:"telkes",s:"chemistry",t:"energy",name:"Mária Telkes",life:"1900–1995",from:"Hungary / USA",key:1948,icon:"sun",wiki:"Mária_Telkes",
+ what:"Storing solar heat in salts",
+ bio:"Telkes stored the Sun's heat using Glauber's salt (sodium sulfate decahydrate). It absorbs energy as it melts on sunny days and releases it as it solidifies at night. She used it in the Dover Sun House of 1948, one of the first homes heated by solar energy. In the Second World War she also designed solar stills to make drinking water on life rafts.",
+ gcse:"Endothermic changes take in energy from the surroundings; exothermic changes release it.",
+ fun:"Newspapers nicknamed her 'the Sun Queen'.",
+ clues:["Newspapers called me 'the Sun Queen'.","I stored heat in a melting salt.","I helped design a solar-heated house in 1948."]},
+{id:"arnold",s:"chemistry",t:"rate",name:"Frances Arnold",life:"born 1956",from:"USA",key:2018,icon:"enzyme",wiki:"Frances_Arnold",
+ what:"Evolving better catalysts",
+ bio:"Arnold invented directed evolution of enzymes. She makes random mutations in an enzyme's gene, picks the versions that work best, and repeats, breeding better catalysts in the lab. Her enzymes help make medicines and renewable fuels with less waste. She won the 2018 Nobel Prize in Chemistry.",
+ gcse:"Catalysts speed up reactions by providing a pathway with a lower activation energy. Enzymes are biological catalysts.",
+ fun:"She was the fifth woman to win the Nobel Prize in Chemistry.",
+ clues:["I 'breed' enzymes in the lab.","I use mutation and selection to make better catalysts.","I won the 2018 Nobel Prize in Chemistry."]},
+{id:"kwolek",s:"chemistry",t:"organic",name:"Stephanie Kwolek",life:"1923–2014",from:"USA",key:1965,icon:"chain",wiki:"Stephanie_Kwolek",
+ what:"Invented Kevlar",
+ bio:"Working at DuPont in 1965, Kwolek made a cloudy polymer solution that colleagues wanted to throw away. She insisted it be spun into fibres, which turned out to be extraordinarily strong and stiff. This became Kevlar, which is about five times stronger than steel for the same weight.",
+ gcse:"Polymers are very long chain molecules; their structure decides properties such as strength.",
+ fun:"Kevlar is used in body armour, bike tyres, ropes and phone cases.",
+ clues:["I worked for DuPont.","In 1965 I made a strange, cloudy polymer solution.","My fibre is used in body armour."]},
+{id:"ball",s:"chemistry",t:"organic",name:"Alice Ball",life:"1892–1916",from:"USA",key:1915,icon:"flask",wiki:"Alice_Ball",
+ what:"First effective leprosy treatment",
+ bio:"Aged 23, Ball found a way to turn oil from the chaulmoogra tree into ethyl esters that could be injected. This was the most effective treatment for leprosy until the 1940s. She was the first woman and the first Black person to earn a master's degree from the College of Hawaii. She died aged 24, and others took credit before her 'Ball Method' was recognised.",
+ gcse:"Esters form when a carboxylic acid reacts with an alcohol such as ethanol.",
+ fun:"Hawaii now celebrates an Alice Ball Day every year.",
+ clues:["I was a chemist in Hawaii.","I turned a plant oil into injectable esters.","My method treated leprosy."]},
+{id:"bertozzi",s:"chemistry",t:"organic",name:"Carolyn Bertozzi",life:"born 1966",from:"USA",key:2022,icon:"click",wiki:"Carolyn_R._Bertozzi",
+ what:"Chemistry inside living cells",
+ bio:"Bertozzi invented bioorthogonal reactions: chemical reactions that can happen inside living cells without disturbing the cell's own chemistry. Scientists use them to tag molecules and track them, and to target cancer treatments. She shared the 2022 Nobel Prize in Chemistry.",
+ gcse:"Organic reactions depend on functional groups; she designed groups that react only with each other.",
+ fun:"In college she played keyboards in a band.",
+ clues:["My reactions work inside living cells.","I tag molecules so they can be tracked.","I shared the 2022 Nobel Prize in Chemistry."]},
+{id:"cremer",s:"chemistry",t:"analysis",name:"Erika Cremer",life:"1900–1996",from:"Germany / Austria",key:1944,icon:"chroma",wiki:"Erika_Cremer",
+ what:"A pioneer of gas chromatography",
+ bio:"In 1944, at the University of Innsbruck, Cremer worked out how to separate mixtures of gases as they travel through a column, an idea Archer Martin and Richard Synge had suggested a few years earlier. She and her student built one of the first gas chromatographs. Wartime disruption meant her work was published late and overlooked, but the method became one of the most widely used tools in chemical analysis.",
+ gcse:"Chromatography separates substances using a mobile phase and a stationary phase. In gas chromatography the mobile phase is a gas.",
+ fun:"Gas chromatography is used to test athletes for drugs and to detect pollutants.",
+ clues:["I worked in Innsbruck in the 1940s.","War delayed my work being published.","I pioneered a chromatography method that uses a gas."]},
+{id:"foote",s:"chemistry",t:"atmos",name:"Eunice Newton Foote",life:"1819–1888",from:"USA",key:1856,icon:"thermo",wiki:"Eunice_Newton_Foote",
+ what:"Carbon dioxide traps heat",
+ bio:"In 1856 Foote put thermometers in glass cylinders of different gases and left them in the Sun. The cylinder of carbon dioxide heated up most and stayed hot longest. She suggested that more carbon dioxide in the air would make the Earth warmer. Her paper came three years before John Tyndall's better-known work.",
+ gcse:"Carbon dioxide is a greenhouse gas; increasing it causes global warming and climate change.",
+ fun:"She also campaigned for women's rights and signed the 1848 Seneca Falls Declaration.",
+ clues:["I did a simple experiment with glass cylinders in 1856.","I was also a women's rights campaigner.","I showed carbon dioxide traps heat."]},
+{id:"solomon",s:"chemistry",t:"atmos",name:"Susan Solomon",life:"born 1956",from:"USA",key:1986,icon:"ozone",wiki:"Susan_Solomon",
+ what:"Explained the ozone hole",
+ bio:"In 1986 Solomon led a team to Antarctica to find out why a hole was appearing in the ozone layer. She showed that chlorine from CFCs reacts on the surface of icy clouds high over the pole, destroying ozone. Her work helped support the Montreal Protocol, which phased out CFCs.",
+ gcse:"Human activity adds pollutants to the atmosphere; international agreements can reduce them.",
+ fun:"A glacier in Antarctica is named after her.",
+ clues:["I led an expedition to Antarctica in 1986.","I studied chlorine from CFCs.","I explained the hole in the ozone layer."]},
+{id:"richards",s:"chemistry",t:"resources",name:"Ellen Swallow Richards",life:"1842–1911",from:"USA",key:1887,icon:"water",wiki:"Ellen_Swallow_Richards",
+ what:"Testing drinking water",
+ bio:"Richards was the first woman admitted to the Massachusetts Institute of Technology (MIT). From 1887 she led a huge survey of Massachusetts water, analysing tens of thousands of samples. Her results led to the first water-quality standards in the USA and to better sewage treatment.",
+ gcse:"Potable water must be safe to drink; it is tested and treated, and waste water is treated before it is released.",
+ fun:"She helped found the subject of home economics, applying science to everyday life.",
+ clues:["I was the first woman admitted to MIT.","I analysed tens of thousands of water samples.","My work led to water-quality standards in the USA."]},
+
+/* PHYSICS */
+{id:"chatelet",s:"physics",t:"energy",name:"Émilie du Châtelet",life:"1706–1749",from:"France",key:1740,icon:"ball",wiki:"Émilie_du_Châtelet",
+ what:"Energy depends on speed squared",
+ bio:"Du Châtelet studied experiments in which balls were dropped into soft clay: a ball moving twice as fast made a dent four times as deep. She argued that the 'force' of a moving object depends on its speed squared, an idea behind our kinetic energy equation. She also translated Newton's Principia into French, which is still used today.",
+ gcse:"Kinetic energy: Ek = ½mv². Doubling the speed quadruples the kinetic energy.",
+ fun:"She was a close partner of the writer Voltaire, and they set up a laboratory in her château.",
+ clues:["I translated Newton's great book into French.","I studied balls dropped into clay.","I argued energy depends on speed squared."]},
+{id:"ayrton",s:"physics",t:"elec",name:"Hertha Ayrton",life:"1854–1923",from:"England",key:1899,icon:"bolt",wiki:"Hertha_Ayrton",
+ what:"Explained the electric arc",
+ bio:"Ayrton studied electric arcs, which were used for street lighting. She explained why they hissed and flickered: oxygen was reaching the hot carbon electrodes. In 1899 she was the first woman to read her own paper at the Institution of Electrical Engineers, and its first woman member. In 1906 she became the first woman to receive the Royal Society's Hughes Medal.",
+ gcse:"Current, potential difference and resistance. An arc doesn't obey Ohm's law, so its I–V graph is not a straight line.",
+ fun:"In the First World War she invented a fan to push poison gas out of trenches.",
+ clues:["I studied the electric arcs used in street lamps.","I was the first woman member of the IEE.","I invented a fan to clear gas from trenches."]},
+{id:"pockels",s:"physics",t:"particle",name:"Agnes Pockels",life:"1862–1935",from:"Germany",key:1891,icon:"trough",wiki:"Agnes_Pockels",
+ what:"Surface science from a kitchen sink",
+ bio:"Women could not go to university in Germany when Pockels was young, so she taught herself physics. Washing up at home, she noticed how oil and soap changed the surface of water, and built a trough to measure surface tension. In 1891 Lord Rayleigh helped her publish her results in the journal Nature.",
+ gcse:"In liquids, particles are close together and attract each other; forces between particles at the surface create surface tension.",
+ fun:"The 'Pockels trough' she invented is still the basis of equipment used today.",
+ clues:["I taught myself physics at home.","I did experiments while washing up.","I invented a trough to measure surface tension."]},
+{id:"jin",s:"physics",t:"particle",name:"Deborah Jin",life:"1968–2016",from:"USA",key:2003,icon:"snow",wiki:"Deborah_S._Jin",
+ what:"A new state of matter",
+ bio:"Jin cooled clouds of potassium atoms to less than a millionth of a degree above absolute zero. In 1999 her team made the first 'degenerate Fermi gas', and in 2003 the first fermionic condensate, a new form of matter. She was a pioneer of ultracold quantum physics.",
+ gcse:"Temperature is linked to the motion of particles. At absolute zero (0 K, about −273 °C) particles have the least possible energy.",
+ fun:"Her atoms were colder than anything found naturally in the Universe.",
+ clues:["I cooled atoms to almost absolute zero.","I worked with potassium atoms.","In 2003 my team made a new form of matter."]},
+{id:"curie",s:"physics",t:"atomic",name:"Marie Curie",life:"1867–1934",from:"Poland / France",key:1898,icon:"atom",wiki:"Marie_Curie",
+ what:"Radioactivity",
+ bio:"Curie came up with the word 'radioactivity'. With her husband Pierre she discovered two new radioactive elements in 1898, polonium and radium. She shared the 1903 Nobel Prize in Physics with Pierre and Henri Becquerel, the first Nobel Prize won by a woman. In the First World War she set up mobile X-ray units for wounded soldiers.",
+ gcse:"Unstable nuclei give out radiation (alpha, beta, gamma). Radiation can be dangerous, so it must be handled safely.",
+ fun:"Her notebooks are still radioactive and are kept in lead-lined boxes.",
+ clues:["I invented the word 'radioactivity'.","I discovered polonium and radium.","I was the first woman to win a Nobel Prize."]},
+{id:"meitner",s:"physics",t:"atomic",name:"Lise Meitner",life:"1878–1968",from:"Austria / Sweden",key:1939,icon:"split",wiki:"Lise_Meitner",
+ what:"Explained nuclear fission",
+ bio:"Meitner fled Nazi Germany in 1938. That winter, with her nephew Otto Frisch, she explained that uranium nuclei were splitting in two, and used E = mc² to calculate the energy released. They called the process fission. Her colleague Otto Hahn alone received the Nobel Prize, but element 109, meitnerium, is named after her.",
+ gcse:"Nuclear fission: a large nucleus absorbs a neutron, splits into two smaller nuclei and releases neutrons and energy, causing a chain reaction.",
+ fun:"She worked out the physics while on a winter walk in the snow.",
+ clues:["I escaped from Nazi Germany in 1938.","I worked with my nephew Otto Frisch.","Element 109 is named after me."]},
+{id:"joliot",s:"physics",t:"atomic",name:"Irène Joliot-Curie",life:"1897–1956",from:"France",key:1934,icon:"atom",wiki:"Irène_Joliot-Curie",
+ what:"Artificial radioactivity",
+ bio:"In 1934 Irène and her husband Frédéric bombarded aluminium with alpha particles and made a radioactive isotope of phosphorus. This was the first radioactive substance made artificially. They shared the 1935 Nobel Prize in Chemistry. She was Marie Curie's daughter, and as a teenager helped her run X-ray units in the First World War.",
+ gcse:"Alpha particles, isotopes and balancing nuclear equations.",
+ fun:"With her mother, the Curies have won more Nobel Prizes than any other family.",
+ clues:["My mother was also a Nobel Prize winner.","I bombarded aluminium with alpha particles.","I made the first artificial radioactive substance in 1934."]},
+{id:"brooks",s:"physics",t:"atomic",name:"Harriet Brooks",life:"1876–1933",from:"Canada",key:1901,icon:"gas",wiki:"Harriet_Brooks",
+ what:"Radioactive gas and recoil",
+ bio:"Brooks was Canada's first woman nuclear physicist. Working with Ernest Rutherford at McGill University, she was one of the first to discover radon, the radioactive gas given off by radioactive elements, and tried to measure its atomic mass. She also discovered atomic recoil, when a decaying nucleus kicks back.",
+ gcse:"Radon gas from rocks is the largest source of background radiation in the UK.",
+ fun:"She was born in Exeter, Ontario, and later also worked in Marie Curie's laboratory in Paris.",
+ clues:["I was Canada's first woman nuclear physicist.","I worked with Ernest Rutherford.","I was one of the first to discover radon."]},
+{id:"wu",s:"physics",t:"atomic",name:"Chien-Shiung Wu",life:"1912–1997",from:"China / USA",key:1956,icon:"beta",wiki:"Chien-Shiung_Wu",
+ what:"Beta decay breaks a symmetry",
+ bio:"Wu was a world expert on beta decay. In 1956–57 her experiment with cobalt-60 showed that beta particles come out more in one direction than the other, proving nature does not always treat left and right the same. Two male colleagues who proposed the idea won the 1957 Nobel Prize; she did not.",
+ gcse:"Beta decay: a neutron in the nucleus turns into a proton and emits a fast electron.",
+ fun:"She was nicknamed 'the First Lady of Physics'.",
+ clues:["I was nicknamed 'the First Lady of Physics'.","I did a famous experiment with cobalt-60.","I was an expert on beta decay."]},
+{id:"jackson",s:"physics",t:"forces",name:"Mary Jackson",life:"1921–2005",from:"USA",key:1958,icon:"plane",wiki:"Mary_Jackson_(engineer)",
+ what:"Airflow and drag in wind tunnels",
+ bio:"Jackson began as a 'human computer' at the research centre that became NASA Langley. She had to get special permission to attend evening classes at an all-white school to qualify as an engineer. In 1958 she became NASA's first Black woman engineer, studying air flowing over aircraft in wind tunnels. NASA's headquarters was named after her in 2020.",
+ gcse:"Drag (air resistance) opposes motion; the resultant force decides how an object accelerates.",
+ fun:"Her story is told in the book and film Hidden Figures.",
+ clues:["I started as a 'human computer'.","I studied airflow in wind tunnels.","NASA's headquarters is named after me."]},
+{id:"lehmann",s:"physics",t:"waves",name:"Inge Lehmann",life:"1888–1993",from:"Denmark",key:1936,icon:"seismo",wiki:"Inge_Lehmann",
+ what:"Discovered Earth's inner core",
+ bio:"Lehmann studied the seismic waves from earthquakes recorded around the world. She noticed weak P-waves arriving where scientists expected none, and in 1936 explained them: the Earth has a solid inner core inside its liquid outer core, which reflects and refracts the waves.",
+ gcse:"P-waves and S-waves travel through the Earth; how they refract and where S-waves can't reach tell us about its structure.",
+ fun:"She lived to 104.",
+ clues:["I studied earthquake recordings.","In 1936 I explained strange P-wave readings.","I discovered the Earth's solid inner core."]},
+{id:"blodgett",s:"physics",t:"waves",name:"Katharine Burr Blodgett",life:"1898–1979",from:"USA",key:1938,icon:"lens",wiki:"Katharine_Burr_Blodgett",
+ what:"Invisible, non-reflective glass",
+ bio:"Blodgett was the first woman to earn a PhD in physics from Cambridge (1926) and the first woman scientist at General Electric. In 1938 she coated glass with very thin films, built up one molecule at a time, so that light reflected from the top and bottom of the coating cancelled out. This made glass almost invisible, and is used in lenses and screens.",
+ gcse:"When light hits a surface it can be reflected, transmitted or absorbed. Her coatings cut down reflection.",
+ fun:"She could measure film thickness by its colour, using a 'colour gauge' she invented.",
+ clues:["I was the first woman to earn a physics PhD at Cambridge.","I made films just one molecule thick.","I invented glass that hardly reflects light."]},
+{id:"lamarr",s:"physics",t:"waves",name:"Hedy Lamarr",life:"1914–2000",from:"Austria / USA",key:1942,icon:"radio",wiki:"Hedy_Lamarr",
+ what:"Frequency hopping",
+ bio:"Lamarr was a Hollywood film star and an inventor. In 1942 she and composer George Antheil patented a 'frequency hopping' system to stop enemies jamming the radio signals that guided torpedoes. The signal jumped between frequencies in a pattern only the sender and receiver knew. Similar ideas are used in Bluetooth and some Wi-Fi.",
+ gcse:"Radio waves are part of the electromagnetic spectrum and are used for communication. Each signal has a frequency.",
+ fun:"Their system used a mechanism inspired by piano rolls, with 88 frequencies, like the 88 keys on a piano.",
+ clues:["I was a Hollywood film star.","I co-invented a system with a composer in 1942.","My idea makes radio signals hop between frequencies."]},
+{id:"clarke",s:"physics",t:"magnet",name:"Edith Clarke",life:"1883–1959",from:"USA",key:1925,icon:"pylon",wiki:"Edith_Clarke",
+ what:"Maths for the power grid",
+ bio:"Clarke was the first woman to work professionally as an electrical engineer in the USA. She invented the Clarke calculator (patented 1925), which made calculations for long-distance power lines far faster. She was the first woman to present a paper to the American Institute of Electrical Engineers, and in 1947 became the first woman professor of electrical engineering in the USA.",
+ gcse:"Transformers step up the voltage for transmission so the current is lower, which reduces energy lost as heat in the cables of the National Grid.",
+ fun:"She once used her inheritance to pay for university rather than settle down.",
+ clues:["I was the first woman electrical engineer in the USA.","I invented a calculator for power lines.","I became an engineering professor in 1947."]},
+{id:"payne",s:"physics",t:"space",name:"Cecilia Payne-Gaposchkin",life:"1900–1979",from:"England / USA",key:1925,icon:"star",wiki:"Cecilia_Payne-Gaposchkin",
+ what:"Stars are mostly hydrogen",
+ bio:"Payne studied at Cambridge but could not be given a degree because she was a woman. She moved to Harvard and, in her 1925 PhD thesis, showed that stars are made mostly of hydrogen and helium. A senior astronomer persuaded her to call the result unlikely, but he reached the same conclusion himself four years later.",
+ gcse:"Stars release energy by nuclear fusion of hydrogen into helium.",
+ fun:"She became the first woman to head a department at Harvard.",
+ clues:["I studied at Cambridge but was refused a degree.","My 1925 thesis was about what stars are made of.","I showed stars are mostly hydrogen."]},
+{id:"bell",s:"physics",t:"space",name:"Jocelyn Bell Burnell",life:"born 1943",from:"Northern Ireland",key:1967,icon:"pulsar",wiki:"Jocelyn_Bell_Burnell",
+ what:"Discovered pulsars",
+ bio:"As a PhD student at Cambridge in 1967, Bell spotted a strange regular signal on the radio telescope's paper charts. It turned out to be a pulsar: a rapidly spinning neutron star. Her supervisor shared the 1974 Nobel Prize, but she did not. In 2018 she gave her £2.3 million Breakthrough Prize to help under-represented students study physics.",
+ gcse:"Life cycle of stars: a massive star can explode as a supernova and leave behind a neutron star.",
+ fun:"The first pulsar was jokingly nicknamed 'LGM-1', for 'Little Green Men'.",
+ clues:["I spotted a strange signal on paper charts in 1967.","I was a PhD student in Cambridge.","I discovered pulsars."]},
+{id:"leavitt",s:"physics",t:"space",name:"Henrietta Swan Leavitt",life:"1868–1921",from:"USA",key:1912,icon:"cepheid",wiki:"Henrietta_Swan_Leavitt",
+ what:"A ruler for the Universe",
+ bio:"Leavitt worked at Harvard Observatory as a 'computer', measuring stars on photographic plates. In 1912 she found that brighter Cepheid variable stars take longer to pulse. This let astronomers work out how far away they are. Edwin Hubble later used her method to show there are galaxies beyond the Milky Way and that the Universe is expanding.",
+ gcse:"Red-shift and the Big Bang: distant galaxies are moving away faster, which is evidence that the Universe is expanding.",
+ fun:"She was paid by the hour, like the other women 'computers' at Harvard.",
+ clues:["I measured stars on photographic plates.","I studied Cepheid variable stars.","My discovery let astronomers measure distances to galaxies."]},
+{id:"cannon",s:"physics",t:"space",name:"Annie Jump Cannon",life:"1863–1941",from:"USA",key:1901,icon:"spectrum",wiki:"Annie_Jump_Cannon",
+ what:"Sorted the stars",
+ bio:"Cannon devised the system that sorts stars into classes O, B, A, F, G, K and M, from hottest to coolest. She classified around 350,000 stars by eye, at up to three stars a minute. Astronomers still use her system today.",
+ gcse:"Stars differ in colour and temperature; the hottest stars are blue-white and the coolest are red.",
+ fun:"Students remember her classes with phrases like 'Oh Be A Fine Girl, Kiss Me'.",
+ clues:["I classified hundreds of thousands of stars.","I could sort three stars a minute.","I created the O B A F G K M system."]},
+{id:"rubin",s:"physics",t:"space",name:"Vera Rubin",life:"1928–2016",from:"USA",key:1970,icon:"galaxy",wiki:"Vera_Rubin",
+ what:"Evidence for dark matter",
+ bio:"In the 1970s Rubin and Kent Ford measured how fast stars orbit in spiral galaxies. Stars far from the centre were moving as fast as those near it, which should have flung them away. The best explanation was that galaxies contain huge amounts of unseen dark matter. A major observatory in Chile is now named after her.",
+ gcse:"Space physics: there is evidence for dark mass in the Universe that we can't see directly.",
+ fun:"She was the first woman allowed to observe at the Palomar Observatory under her own name.",
+ clues:["I measured how stars move in spiral galaxies.","I worked with Kent Ford.","My results were evidence for dark matter."]},
+{id:"johnson",s:"physics",t:"space",name:"Katherine Johnson",life:"1918–2020",from:"USA",key:1962,icon:"orbit",wiki:"Katherine_Johnson",
+ what:"Calculated spaceflight orbits",
+ bio:"Johnson was a NASA mathematician. In 1962 astronaut John Glenn asked for her to check the computer's calculations for his orbit of the Earth before he would fly. She also worked on the paths for the Apollo 11 Moon landing. In 2015 she was awarded the Presidential Medal of Freedom.",
+ gcse:"Gravity provides the force that keeps satellites in orbit; changing speed changes the orbit.",
+ fun:"She lived to 101.",
+ clues:["I was a NASA mathematician.","John Glenn asked for me to check his orbit.","I worked on the Apollo 11 Moon mission."]},
+
+/* ---- added in version 2 ---- */
+{id:"dresselhaus",s:"chemistry",t:"bonding",name:"Mildred Dresselhaus",life:"1930–2017",from:"USA",key:2014,icon:"hexagon",wiki:"Mildred_Dresselhaus",
+ what:"The 'Queen of Carbon Science'",
+ bio:"Dresselhaus spent decades at MIT studying how electrons move through carbon materials such as graphite. Her work laid the foundations for research on carbon nanotubes and graphene, single layers of carbon atoms one atom thick. She was known as the 'Queen of Carbon Science' and championed women in physics and engineering.",
+ gcse:"Graphite, graphene and nanotubes: each carbon bonds to three others, leaving delocalised electrons that let them conduct electricity.",
+ fun:"She received the US Presidential Medal of Freedom in 2014.",
+ clues:["I worked at MIT for decades.","I studied graphite, nanotubes and graphene.","I was called the 'Queen of Carbon Science'."]},
+{id:"noether",s:"physics",t:"energy",name:"Emmy Noether",life:"1882–1935",from:"Germany",key:1918,icon:"balance",wiki:"Emmy_Noether",
+ what:"Why energy is conserved",
+ bio:"Noether was one of the greatest mathematicians of the 20th century. In 1918 she proved Noether's theorem, which shows that every conservation law comes from a symmetry in nature. Energy is conserved because the laws of physics don't change over time. For years she lectured at Göttingen without pay, because women were not allowed to hold posts.",
+ gcse:"Conservation of energy: energy can be transferred between stores but never created or destroyed.",
+ fun:"Albert Einstein described her as a creative mathematical genius.",
+ clues:["I was a mathematician at Göttingen.","For years I lectured without being paid.","My 1918 theorem explains why energy is conserved."]},
+{id:"takeuchi",s:"physics",t:"elec",name:"Esther Takeuchi",life:"born 1953",from:"USA",key:2008,icon:"battery",wiki:"Esther_Takeuchi",
+ what:"Batteries that keep hearts beating",
+ bio:"Takeuchi invented the lithium/silver vanadium oxide battery that powers implantable cardiac defibrillators, small devices that shock a dangerously beating heart back into rhythm. The battery had to be tiny, reliable for years and able to deliver a big pulse of current. She holds more than 150 US patents and received the US National Medal of Technology and Innovation in 2008.",
+ gcse:"A cell or battery provides the potential difference that drives current around a circuit.",
+ fun:"Her batteries have been fitted in millions of patients.",
+ clues:["I hold more than 150 patents.","I designed a battery for medical devices.","My battery powers implantable defibrillators."]},
+{id:"telkes-phys",s:"physics",t:"particle",name:"Mária Telkes",life:"1900–1995",from:"Hungary / USA",key:1948,icon:"sun",wiki:"Mária_Telkes",
+ what:"Latent heat for solar homes",
+ bio:"Telkes heated homes with stored sunshine. Her system used Glauber's salt, which melts at about 32 °C. As it melts on a sunny day it absorbs a lot of energy without getting hotter; at night it solidifies and releases that energy. She used it in the Dover Sun House of 1948, one of the first solar-heated homes.",
+ gcse:"Specific latent heat: energy is needed to change state without a change in temperature (E = mL).",
+ fun:"She also appears in Chemistry, under Energy changes.",
+ clues:["I was nicknamed 'the Sun Queen'.","My salt melts at about 32 °C.","I used latent heat to warm a house in 1948."]},
+{id:"goeppert",s:"physics",t:"atomic",name:"Maria Goeppert Mayer",life:"1906–1972",from:"Germany / USA",key:1949,icon:"atom",wiki:"Maria_Goeppert_Mayer",
+ what:"The nuclear shell model",
+ bio:"Goeppert Mayer explained why some nuclei are especially stable. Her nuclear shell model, published in 1949, shows that protons and neutrons are arranged in shells, a bit like electrons in an atom. She shared the 1963 Nobel Prize in Physics, the first woman to win it since Marie Curie 60 years earlier. For much of her career she worked unpaid or as a 'volunteer' professor.",
+ gcse:"The nucleus contains protons and neutrons; isotopes with the wrong balance are unstable and decay.",
+ fun:"She came up with her key idea after Enrico Fermi asked her a question about spin.",
+ clues:["I was the second woman to win the Nobel Prize in Physics.","I worked for years without pay.","I showed that protons and neutrons sit in shells."]},
+{id:"woods",s:"physics",t:"atomic",name:"Leona Woods",life:"1919–1986",from:"USA",key:1942,icon:"split",wiki:"Leona_Woods",
+ what:"Built the first nuclear reactor",
+ bio:"Aged 23, Woods was part of Enrico Fermi's team that built Chicago Pile-1, the world's first nuclear reactor, under the stands of a sports ground in Chicago. She built the boron trifluoride detectors that measured the neutrons in the pile. On 2 December 1942 the reactor achieved the first self-sustaining nuclear chain reaction.",
+ gcse:"Nuclear fission and chain reactions: neutrons released by fission go on to split more nuclei, and in a reactor this is controlled.",
+ fun:"She was the only woman in the team that built the reactor.",
+ clues:["I was 23 when I joined a famous team.","I built neutron detectors.","I helped build the first nuclear reactor in 1942."]},
+{id:"somerville",s:"physics",t:"forces",name:"Mary Somerville",life:"1780–1872",from:"Scotland",key:1834,icon:"orbit",wiki:"Mary_Somerville",
+ what:"Explained the physics of gravity",
+ bio:"Somerville taught herself mathematics and became one of the best-known scientists in Britain. She translated and explained Laplace's huge work on how gravity moves the planets. The very first use of the word 'scientist' in English was in a review of her 1834 book, On the Connexion of the Physical Sciences.",
+ gcse:"Gravity is a non-contact force. Weight = mass × gravitational field strength (W = mg).",
+ fun:"She appears on the Royal Bank of Scotland £10 note, and Somerville College, Oxford, is named after her.",
+ clues:["I taught myself mathematics in Scotland.","I explained how gravity moves the planets.","The word 'scientist' was first used in a review of my book."]},
+{id:"morgan",s:"physics",t:"forces",name:"Mary Sherman Morgan",life:"1921–2004",from:"USA",key:1957,icon:"rocket",wiki:"Mary_Sherman_Morgan",
+ what:"Rocket fuel for the first US satellite",
+ bio:"Morgan was a rocket fuel scientist. In 1957 she invented a liquid fuel called Hydyne. It powered the Jupiter-C rocket that launched Explorer 1, the United States' first satellite, in 1958. For decades her work was kept quiet and little known.",
+ gcse:"Newton's third law: the rocket pushes exhaust gases backwards, and the gases push the rocket forwards.",
+ fun:"Her son wrote a play about her called Rocket Girl.",
+ clues:["I was a rocket fuel scientist.","I invented a fuel called Hydyne.","My fuel launched the first US satellite."]},
+{id:"hau",s:"physics",t:"waves",name:"Lene Hau",life:"born 1959",from:"Denmark",key:1999,icon:"snow",wiki:"Lene_Hau",
+ what:"Slowed light to cycling speed",
+ bio:"In 1999 Hau's team at Harvard sent a beam of light through an ultracold cloud of sodium atoms called a Bose–Einstein condensate. The light slowed down to about 17 metres per second, slower than a racing cyclist. In 2001 her team stopped light completely and then released it again.",
+ gcse:"Light changes speed when it passes into a different material; this is why it refracts.",
+ fun:"Light normally travels at about 300,000,000 metres per second.",
+ clues:["I work at Harvard.","I used an ultracold cloud of sodium atoms.","I slowed light to about 17 metres per second."]},
+{id:"strickland",s:"physics",t:"waves",name:"Donna Strickland",life:"born 1959",from:"Canada",key:1985,icon:"laser",wiki:"Donna_Strickland",
+ what:"Ultra-powerful laser pulses",
+ bio:"As a PhD student working with Gérard Mourou in 1985, Strickland invented chirped pulse amplification. The method stretches a short laser pulse, amplifies it, then squeezes it back together, making extremely short and powerful pulses. It is used in laser eye surgery. She shared the 2018 Nobel Prize in Physics, the third woman to win it.",
+ gcse:"Lasers produce light, part of the electromagnetic spectrum; light can be used to treat the eye.",
+ fun:"The invention was the subject of her first ever research paper.",
+ clues:["I made my discovery as a PhD student in 1985.","I worked with Gérard Mourou.","My laser method is used in eye surgery."]},
+{id:"lhuillier",s:"physics",t:"waves",name:"Anne L'Huillier",life:"born 1958",from:"France / Sweden",key:2023,icon:"laser",wiki:"Anne_L'Huillier",
+ what:"Attosecond flashes of light",
+ bio:"L'Huillier discovered how to use lasers shone through gases to make extremely short flashes of light lasting attoseconds. An attosecond is a billionth of a billionth of a second. These flashes let scientists watch electrons move inside atoms. She shared the 2023 Nobel Prize in Physics, the fifth woman to win it.",
+ gcse:"Electromagnetic waves have a wide range of frequencies; electrons in atoms can absorb and emit electromagnetic radiation.",
+ fun:"She was teaching a class when the Nobel committee called, and went back to finish the lecture.",
+ clues:["I work in Sweden.","I make flashes of light that last attoseconds.","I was the fifth woman to win the Nobel Prize in Physics."]},
+{id:"curie-mag",s:"physics",t:"magnet",name:"Marie Curie",life:"1867–1934",from:"Poland / France",key:1894,icon:"magnet",wiki:"Marie_Curie",
+ what:"Magnetic properties of steel",
+ bio:"Before radioactivity, Curie's first research job, in 1894, was to measure the magnetic properties of different steels for a French industry society. Some steels make much better permanent magnets than others. She needed lab space for the project, and that led her to meet the physicist Pierre Curie.",
+ gcse:"Permanent magnets keep their magnetism; induced magnets (like iron) lose it when taken out of a magnetic field. Steel makes good permanent magnets.",
+ fun:"She also appears in Chemistry and in Atomic structure.",
+ clues:["My first research job began in 1894.","I tested different kinds of steel.","That project led me to meet Pierre."]},
+{id:"herschel",s:"physics",t:"space",name:"Caroline Herschel",life:"1750–1848",from:"Germany / England",key:1786,icon:"comet",wiki:"Caroline_Herschel",
+ what:"Comet hunter",
+ bio:"Herschel worked with her brother William, the astronomer who discovered Uranus, and made her own discoveries with a telescope he built for her. She found several comets, including one that bears her name. In 1787 King George III gave her a salary, making her the first woman known to be paid for scientific work.",
+ gcse:"Our Solar System contains the Sun, planets, dwarf planets, moons and other objects such as comets.",
+ fun:"In 1828 she was awarded the Gold Medal of the Royal Astronomical Society.",
+ clues:["My brother discovered Uranus.","I discovered several comets.","I was the first woman paid for scientific work."]},
+{id:"burbidge",s:"physics",t:"space",name:"Margaret Burbidge",life:"1919–2020",from:"England / USA",key:1957,icon:"star",wiki:"Margaret_Burbidge",
+ what:"Elements are made in stars",
+ bio:"Burbidge was the first author of a famous 1957 paper, known as B²FH from the initials of its four authors. It showed how almost all the chemical elements are made by nuclear fusion inside stars and in exploding stars. In 1972 she became the first woman director of the Royal Greenwich Observatory.",
+ gcse:"Fusion in stars makes elements up to iron; heavier elements are made in supernovae, which spread them through the Universe.",
+ fun:"She lived to 100.",
+ clues:["I wrote a famous 1957 paper with three colleagues.","The paper is known by its authors' initials.","I showed how elements are made inside stars."]},
+{id:"roman",s:"physics",t:"space",name:"Nancy Grace Roman",life:"1925–2018",from:"USA",key:1959,icon:"telescope",wiki:"Nancy_Grace_Roman",
+ what:"'Mother of Hubble'",
+ bio:"Roman was NASA's first chief of astronomy and its first woman executive. Through the 1960s and 1970s she planned the space telescopes that would see the Universe from above Earth's atmosphere, and fought to get the Hubble Space Telescope started. A new NASA space telescope is named after her.",
+ gcse:"Telescopes in space avoid the atmosphere; observations of distant galaxies give evidence for red-shift and the Big Bang.",
+ fun:"She is often called the 'Mother of Hubble'.",
+ clues:["I was NASA's first chief of astronomy.","I planned telescopes to work in space.","I'm called the 'Mother of Hubble'."]},
+{id:"ghez",s:"physics",t:"space",name:"Andrea Ghez",life:"born 1965",from:"USA",key:2020,icon:"galaxy",wiki:"Andrea_M._Ghez",
+ what:"A black hole at the heart of our galaxy",
+ bio:"For over 20 years Ghez tracked stars racing around the centre of the Milky Way. Their orbits showed they circle an invisible object about four million times the mass of the Sun: a supermassive black hole. She shared the 2020 Nobel Prize in Physics, the fourth woman to win it.",
+ gcse:"Very massive stars can end as black holes; objects in orbit are held by gravity.",
+ fun:"Earth's atmosphere blurs stars, so she used telescopes that bend their mirrors hundreds of times a second to correct it.",
+ clues:["I tracked stars for over 20 years.","I studied the centre of the Milky Way.","I found evidence for a supermassive black hole."]},
+
+/* ---- added in version 3: widened from the reading list ---- */
+/* Biology */
+{id:"sager",s:"biology",t:"cell",name:"Ruth Sager",life:"1918–1997",from:"USA",key:1955,kl:"1950s",icon:"cell",wiki:"Ruth_Sager",
+ what:"Genes outside the nucleus",
+ bio:"Sager studied a single-celled green alga called Chlamydomonas. In the 1950s and 1960s she showed that some characteristics are passed on through DNA inside the chloroplast, not the nucleus. It was the first known example of inheritance that doesn't involve the nucleus, and many scientists were slow to accept it.",
+ gcse:"Plant cells contain chloroplasts. Most DNA is in the nucleus, but chloroplasts and mitochondria carry a little DNA of their own.",
+ fun:"She later led cancer genetics research at Harvard Medical School.",
+ clues:["I studied a single-celled green alga.","I worked in the 1950s and 1960s.","I showed chloroplasts pass on their own genes."]},
+{id:"nusslein",s:"biology",t:"cell",name:"Christiane Nüsslein-Volhard",life:"born 1942",from:"Germany",key:1980,icon:"chromosome",wiki:"Christiane_Nüsslein-Volhard",
+ what:"Genes that build an embryo",
+ bio:"Working with Eric Wieschaus in Heidelberg, Nüsslein-Volhard searched thousands of fruit flies for mutations that disrupted how the embryo develops. They identified the genes that tell cells in an early embryo what to become. She shared the 1995 Nobel Prize in Physiology or Medicine.",
+ gcse:"As an embryo develops, cells differentiate into specialised cells. Genes switched on in each cell control what it becomes.",
+ fun:"She is the only woman from Germany to have won a Nobel Prize in science.",
+ clues:["I worked with Eric Wieschaus.","I studied mutant fruit fly embryos.","I won the 1995 Nobel Prize for medicine."]},
+{id:"mangold",s:"biology",t:"cell",name:"Hilde Mangold",life:"1898–1924",from:"Germany",key:1923,icon:"cell",wiki:"Hilde_Mangold",
+ what:"The embryo's 'organiser'",
+ bio:"For her PhD, Mangold transplanted a tiny piece of tissue from one newt embryo into another. The host grew a second, partial embryo, organised by the transplanted cells. Her 1923 thesis was the basis of her supervisor Hans Spemann's 1935 Nobel Prize. She died in an accident in 1924, aged 25.",
+ gcse:"Cells in an early embryo are not yet specialised. Signals from other cells help decide what they differentiate into.",
+ fun:"Her thesis is one of very few PhD projects in biology to lead directly to a Nobel Prize.",
+ clues:["I worked with newt embryos.","My PhD led to my supervisor's Nobel Prize.","I discovered the embryonic 'organiser'."]},
+{id:"yonath",s:"biology",t:"cell",name:"Ada Yonath",life:"1939–2026",from:"Israel",key:2009,icon:"crystal",wiki:"Ada_Yonath",
+ what:"The structure of the ribosome",
+ bio:"Yonath spent decades working out the 3D structure of the ribosome, the cell's protein-making machine, using X-ray crystallography. Many experts thought it couldn't be done. She shared the 2009 Nobel Prize in Chemistry, the first woman to win it since Dorothy Hodgkin 45 years earlier.",
+ gcse:"Ribosomes are found in the cytoplasm of all cells and are where proteins are made.",
+ fun:"Her ribosome research helps explain how many antibiotics work, by jamming bacterial ribosomes.",
+ clues:["I used X-ray crystallography.","I studied the cell's protein-making machine.","I won the 2009 Nobel Prize in Chemistry."]},
+{id:"widdowson",s:"biology",t:"org",name:"Elsie Widdowson",life:"1906–2000",from:"England",key:1940,icon:"pill",wiki:"Elsie_Widdowson",
+ what:"What's in our food",
+ bio:"With Robert McCance, Widdowson wrote The Chemical Composition of Foods (1940), the standard guide to the nutrients in food. In the Second World War they tested whether Britain's ration diet was healthy by living on it themselves for months. They argued for adding vitamins and minerals such as calcium to bread.",
+ gcse:"A balanced diet provides carbohydrates, proteins, lipids, vitamins and minerals. The digestive system breaks food down so it can be absorbed.",
+ fun:"Updated editions of their food tables are still used by dietitians today.",
+ clues:["I co-wrote a famous book of food tables in 1940.","I tested the wartime ration diet on myself.","I argued for adding calcium to bread."]},
+{id:"esau",s:"biology",t:"org",name:"Katherine Esau",life:"1898–1997",from:"Russian Empire / USA",key:1953,icon:"leaf",wiki:"Katherine_Esau",
+ what:"The phloem expert",
+ bio:"Esau began by studying sugar beet plants damaged by a virus, and found that the virus spread through the plant's phloem. She spent her career studying plant tissues, especially phloem. Her textbook Plant Anatomy (1953) became the standard work, and she received the US National Medal of Science in 1989.",
+ gcse:"Plant tissues: phloem carries dissolved sugars around the plant (translocation) and xylem carries water and minerals.",
+ fun:"Botanists still describe her textbooks as key texts in plant anatomy.",
+ clues:["I started out studying sugar beet.","I found a virus spreading through phloem.","My textbook Plant Anatomy came out in 1953."]},
+{id:"vaughan",s:"biology",t:"org",name:"Janet Vaughan",life:"1899–1993",from:"England",key:1940,kl:"1930s–40s",icon:"drop",wiki:"Janet_Vaughan",
+ what:"Blood and blood transfusion",
+ bio:"Vaughan was a doctor and researcher who specialised in blood. She studied blood diseases such as anaemia, blood transfusion and the treatment of starvation. Later she researched how radioactive substances affect bone and bone marrow. She was Principal of Somerville College, Oxford, from 1945 to 1967.",
+ gcse:"Blood is made of red blood cells, white blood cells, platelets and plasma. Red blood cells carry oxygen.",
+ fun:"She was made a Dame for her contributions to medicine and education.",
+ clues:["I was an expert on blood.","I studied anaemia and blood transfusion.","I led Somerville College, Oxford."]},
+{id:"jane-wright",s:"biology",t:"org",name:"Jane Cooke Wright",life:"1919–2013",from:"USA",key:1955,kl:"1950s",icon:"cell",wiki:"Jane_Cooke_Wright",
+ what:"Pioneer of chemotherapy",
+ bio:"Wright was a cancer surgeon and researcher. She tested anti-cancer drugs on cells grown from a patient's own tumour, rather than on mice, to find which treatment would work best. In 1964 she was the only woman among the seven doctors who founded the American Society of Clinical Oncology.",
+ gcse:"Cancer is the result of changes in cells that lead to uncontrolled growth and division. Malignant tumours can spread around the body.",
+ fun:"Her father, Louis T. Wright, was also a pioneering cancer researcher.",
+ clues:["I was a cancer surgeon.","I tested drugs on cells from patients' own tumours.","I helped found a major cancer society in 1964."]},
+{id:"evans",s:"biology",t:"infection",name:"Alice Evans",life:"1881–1975",from:"USA",key:1917,icon:"drop",wiki:"Alice_Catherine_Evans",
+ what:"Why milk is pasteurised",
+ bio:"Evans studied bacteria in milk and cheese. She showed that the bacterium that causes a disease in cattle also causes the disease brucellosis in humans, and that it could spread through raw milk. Her work led to the pasteurisation of milk in the USA from 1930.",
+ gcse:"Pathogens can be spread by food and drink. Heating (pasteurisation) kills bacteria in milk.",
+ fun:"In 1928 she became the first woman president of the Society of American Bacteriologists.",
+ clues:["I studied bacteria in milk and cheese.","I linked a cattle disease to humans.","My work led to milk being pasteurised."]},
+{id:"williams",s:"biology",t:"infection",name:"Anna Wessels Williams",life:"1863–1954",from:"USA",key:1894,icon:"virus",wiki:"Anna_Wessels_Williams",
+ what:"A weapon against diphtheria",
+ bio:"Williams worked at the first city public-health laboratory in the USA, in New York. In 1894 she isolated a strain of diphtheria bacteria that produced large amounts of toxin, which was ideal for making antitoxin to treat patients. The strain was used around the world, but was named after both her and her boss, William Park.",
+ gcse:"Bacteria can make us ill by producing toxins. Diphtheria is now prevented by vaccination.",
+ fun:"She also developed a faster way to diagnose rabies.",
+ clues:["I worked in a New York public-health lab.","In 1894 I isolated a useful bacterial strain.","My strain helped make diphtheria antitoxin."]},
+{id:"lederberg",s:"biology",t:"infection",name:"Esther Lederberg",life:"1922–2006",from:"USA",key:1952,icon:"virus",wiki:"Esther_Lederberg",
+ what:"Bacterial genetics pioneer",
+ bio:"Lederberg discovered lambda phage, a virus that infects bacteria. With Joshua Lederberg she invented replica plating in 1952, a way of copying colonies from one agar plate to another. They used it to show that mutations giving bacteria antibiotic resistance happen at random, before the bacteria ever meet the antibiotic.",
+ gcse:"Antibiotic resistance: random mutations produce resistant bacteria, which survive and reproduce when antibiotics are used.",
+ fun:"Her husband Joshua won a 1958 Nobel Prize for bacterial genetics, a field she helped build; she was not included.",
+ clues:["I discovered a virus that infects bacteria.","I invented replica plating.","I showed resistance mutations happen at random."]},
+{id:"hazen",s:"biology",t:"infection",name:"Elizabeth Lee Hazen",life:"1885–1975",from:"USA",key:1950,icon:"pill",wiki:"Elizabeth_Lee_Hazen",
+ what:"Co-discovered nystatin",
+ bio:"Hazen searched soil samples for microbes that could kill fungi. Working with chemist Rachel Fuller Brown, she found one in 1950 that produced nystatin, the first useful antifungal antibiotic. They named it after the New York State Health Department where they worked.",
+ gcse:"Fungal diseases such as athlete's foot affect humans and plants. Antifungal drugs can treat them.",
+ fun:"She and Brown donated their royalties, over $13 million, to fund science.",
+ clues:["I searched soil samples for useful microbes.","I worked with Rachel Fuller Brown.","We discovered the first useful antifungal drug."]},
+{id:"brown",s:"biology",t:"infection",name:"Rachel Fuller Brown",life:"1898–1980",from:"USA",key:1950,icon:"flask",wiki:"Rachel_Fuller_Brown",
+ what:"Co-discovered nystatin",
+ bio:"Brown was the chemist in a long-distance partnership with Elizabeth Lee Hazen. Hazen grew microbes from soil in New York City and posted samples to Brown in Albany, who extracted and tested the active chemicals. In 1950 they discovered nystatin, the first useful antifungal antibiotic.",
+ gcse:"Many medicines come from microorganisms; penicillin comes from a mould, and nystatin from a soil bacterium.",
+ fun:"Nystatin was named after the New York State Health Department.",
+ clues:["I was the chemist in a long-distance partnership.","Samples were posted to me in Albany.","We discovered nystatin in 1950."]},
+{id:"kendrick",s:"biology",t:"infection",name:"Pearl Kendrick",life:"1890–1980",from:"USA",key:1939,kl:"1930s",icon:"vaccine",wiki:"Pearl_Kendrick",
+ what:"Whooping cough vaccine",
+ bio:"In the 1930s Kendrick, Grace Eldering and Loney Gordon developed the first successful vaccine against whooping cough, a dangerous disease in babies. Their testing included the first large-scale controlled clinical trial of a whooping cough vaccine.",
+ gcse:"Vaccines contain dead or inactive pathogens that make white blood cells produce antibodies. New medicines are tested in clinical trials.",
+ fun:"Babies in the UK are still vaccinated against whooping cough, the disease their vaccine first prevented.",
+ clues:["I worked with Grace Eldering and Loney Gordon.","We worked in Michigan in the 1930s.","We made the first successful whooping cough vaccine."]},
+{id:"montagu",s:"biology",t:"infection",name:"Lady Mary Wortley Montagu",life:"1689–1762",from:"England",key:1721,icon:"vaccine",wiki:"Lady_Mary_Wortley_Montagu",
+ what:"Brought smallpox inoculation to Britain",
+ bio:"While living in the Ottoman Empire, Montagu saw people protected from smallpox by inoculation: putting material from a mild smallpox case into a small cut. During a London epidemic in 1721 she had her daughter inoculated and publicised it. This helped make inoculation accepted in Britain, decades before Edward Jenner's vaccine.",
+ gcse:"Vaccination exposes the body to a pathogen in a safe form so that the immune system can respond quickly to future infection.",
+ fun:"She was also a celebrated letter writer and poet.",
+ clues:["I lived in the Ottoman Empire.","I had my daughter inoculated in 1721.","I helped bring smallpox inoculation to Britain."]},
+{id:"nightingale",s:"biology",t:"infection",name:"Florence Nightingale",life:"1820–1910",from:"England",key:1858,kl:"1850s",icon:"cepheid",wiki:"Florence_Nightingale",
+ what:"Proved disease killed more soldiers than wounds",
+ bio:"Nightingale is known as the founder of modern nursing. She was also a statistician. Her 'rose diagrams' showed that in the Crimean War far more soldiers died from preventable infectious diseases than from battle wounds. She used the data to campaign for clean water, drains and hygiene in hospitals.",
+ gcse:"The spread of disease can be reduced by hygiene, clean water and isolating infected people.",
+ fun:"Her rose diagram is still used as an example in data visualisation.",
+ clues:["I was a nurse and a statistician.","I drew 'rose diagrams'.","I showed most soldiers died from preventable disease."]},
+{id:"maclean",s:"biology",t:"energy",name:"Ida Smedley Maclean",life:"1877–1944",from:"England",key:1920,icon:"muscle",wiki:"Ida_Smedley",
+ what:"How the body makes and uses fat",
+ bio:"Maclean was a biochemist who studied how animals use fatty acids and how they make fat from carbohydrates. She published around thirty research papers on the topic and wrote The Metabolism of Fat (1943). In 1920 she became the first woman formally admitted to the Chemical Society in London.",
+ gcse:"Metabolism is the sum of all reactions in the body, including using glucose in respiration and turning it into lipids for storage.",
+ fun:"She was made a Fellow of the Royal Institute of Chemistry in 1918.",
+ clues:["I was the first woman admitted to the Chemical Society.","I studied fatty acids.","I showed how animals make fat from carbohydrates."]},
+{id:"cohn",s:"biology",t:"energy",name:"Mildred Cohn",life:"1913–2009",from:"USA",key:1958,kl:"1950s",icon:"enzyme",wiki:"Mildred_Cohn",
+ what:"How cells capture energy as ATP",
+ bio:"Cohn used a stable isotope of oxygen as a tracer, and later nuclear magnetic resonance (NMR), to follow atoms through reactions inside cells. She revealed how ATP is made in oxidative phosphorylation, the final stage of aerobic respiration, and how enzymes handle ATP.",
+ gcse:"Aerobic respiration in mitochondria transfers energy from glucose; cells need this energy for muscle contraction and building molecules.",
+ fun:"She was a pioneer in using NMR, the same physics behind hospital MRI scanners, to study living chemistry.",
+ clues:["I used oxygen isotopes as tracers.","I was a pioneer of NMR in biology.","I studied how ATP is made in respiration."]},
+{id:"pitt-rivers",s:"biology",t:"homeo",name:"Rosalind Pitt-Rivers",life:"1907–1990",from:"England",key:1952,icon:"drop",wiki:"Rosalind_Pitt-Rivers",
+ what:"Co-discovered a thyroid hormone",
+ bio:"Working in London with Jack Gross, Pitt-Rivers discovered triiodothyronine (T3) in 1952. It is a thyroid hormone that is more active than thyroxine. Their discovery improved the understanding and treatment of thyroid disorders.",
+ gcse:"Thyroxine from the thyroid gland controls the body's metabolic rate, and its level is kept steady by negative feedback.",
+ fun:"She later became president of the European Thyroid Association.",
+ clues:["I worked with Jack Gross.","In 1952 we found a new hormone.","My hormone comes from the thyroid gland."]},
+{id:"purdy",s:"biology",t:"homeo",name:"Jean Purdy",life:"1945–1985",from:"England",key:1978,icon:"cell",wiki:"Jean_Purdy",
+ what:"Co-pioneer of IVF",
+ bio:"Purdy was a nurse and embryologist who developed in vitro fertilisation (IVF) with Robert Edwards and Patrick Steptoe. She was the first to see the dividing embryo cells that became Louise Brown, the first IVF baby, born in 1978. She co-founded the Bourn Hall Clinic, but her role was ignored for about 30 years.",
+ gcse:"IVF: FSH and LH are given to stimulate eggs to mature; eggs are fertilised in a lab and embryos are placed in the uterus.",
+ fun:"She was 33 when Louise Brown was born.",
+ clues:["I was a nurse and embryologist.","I worked with Edwards and Steptoe.","I helped bring about the first IVF baby in 1978."]},
+{id:"mclaren",s:"biology",t:"homeo",name:"Anne McLaren",life:"1927–2007",from:"England",key:1958,icon:"cell",wiki:"Anne_McLaren",
+ what:"Embryos grown outside the body",
+ bio:"In 1958 McLaren and John Biggers grew mouse embryos outside the body and transferred them into a mother mouse, where they developed into healthy young. This helped pave the way for human IVF. She later advised the UK government on the ethics and law of embryo research.",
+ gcse:"Fertility treatments such as IVF raise ethical questions as well as scientific ones.",
+ fun:"She was the first woman to hold an office in the Royal Society in its 330-year history.",
+ clues:["I worked with mouse embryos in 1958.","My work paved the way for IVF.","I was the Royal Society's first woman officer."]},
+{id:"moser",s:"biology",t:"homeo",name:"May-Britt Moser",life:"born 1963",from:"Norway",key:2005,icon:"neuron",wiki:"May-Britt_Moser",
+ what:"The brain's built-in GPS",
+ bio:"With Edvard Moser, May-Britt Moser discovered grid cells in the brain. These neurones fire in a regular grid pattern as an animal moves, letting the brain map where it is. They shared the 2014 Nobel Prize in Physiology or Medicine with John O'Keefe.",
+ gcse:"The brain is made of billions of interconnected neurones; different regions carry out different functions.",
+ fun:"She is a psychologist as well as a neuroscientist.",
+ clues:["I discovered grid cells.","I worked with Edvard Moser in Norway.","I shared the 2014 Nobel Prize for the brain's 'GPS'."]},
+{id:"andersen",s:"biology",t:"inherit",name:"Dorothy Hansine Andersen",life:"1901–1963",from:"USA",key:1938,icon:"chromosome",wiki:"Dorothy_Hansine_Andersen",
+ what:"Identified cystic fibrosis",
+ bio:"Andersen was a doctor and researcher at a children's hospital in New York. In 1938 she described and named cystic fibrosis (CF) as a separate disease, and showed that it is inherited through a recessive gene. She also helped develop ways to diagnose it.",
+ gcse:"Cystic fibrosis is caused by a recessive allele: a child must inherit two copies, one from each parent. Use a Punnett square to predict the chance.",
+ fun:"Her 1938 paper made CF recognised as a disease in its own right.",
+ clues:["I worked at a children's hospital in New York.","I named a disease in 1938.","I showed cystic fibrosis is recessive."]},
+{id:"gautier",s:"biology",t:"inherit",name:"Marthe Gautier",life:"1925–2022",from:"France",key:1958,icon:"chromosome",wiki:"Marthe_Gautier",
+ what:"Found the extra chromosome 21",
+ bio:"In 1958 Gautier discovered that people with Down syndrome have a third copy of chromosome 21. She gave her slides to a colleague, Jérôme Lejeune, to photograph, and he took full credit for the discovery. Her role has only been widely recognised in recent decades.",
+ gcse:"Human body cells normally have 23 pairs of chromosomes; changes in chromosome number can affect development.",
+ fun:"The condition is also called trisomy 21 because of her discovery.",
+ clues:["I discovered something in 1958.","A colleague took credit for my work.","I found the extra chromosome in Down syndrome."]},
+{id:"lyon",s:"biology",t:"inherit",name:"Mary Lyon",life:"1925–2014",from:"England",key:1961,icon:"chromosome",wiki:"Mary_F._Lyon",
+ what:"X-chromosome inactivation",
+ bio:"In 1961 Lyon proposed that in female mammals, one of the two X chromosomes in each cell is switched off at random early in development. This explains why females can have patches of cells using different X chromosomes. The process is called 'Lyonisation' after her.",
+ gcse:"Sex chromosomes: females are XX and males are XY. Genes on the X chromosome are inherited differently in males and females.",
+ fun:"X-inactivation explains the patchy orange and black coats of tortoiseshell cats, which are almost always female.",
+ clues:["I worked with mice in England.","I explained something about X chromosomes in 1961.","A process called 'Lyonisation' is named after me."]},
+{id:"king",s:"biology",t:"inherit",name:"Mary-Claire King",life:"born 1946",from:"USA",key:1990,icon:"helix",wiki:"Mary-Claire_King",
+ what:"Found the BRCA1 breast cancer gene",
+ bio:"For 16 years King searched for a genetic marker shared by families with high rates of breast cancer. In 1990 her team showed that a single gene on chromosome 17, later named BRCA1, could be linked to many inherited breast and ovarian cancers. Her work led to genetic testing for cancer risk.",
+ gcse:"Some diseases are linked to inherited alleles. Genetic testing raises scientific, ethical and economic questions.",
+ fun:"For her PhD she showed that humans and chimpanzees are about 99% genetically identical.",
+ clues:["I searched for 16 years.","I found a gene on chromosome 17.","My gene, BRCA1, is linked to breast cancer."]},
+{id:"doudna",s:"biology",t:"inherit",name:"Jennifer Doudna",life:"born 1964",from:"USA",key:2012,icon:"click",wiki:"Jennifer_Doudna",
+ what:"CRISPR gene editing",
+ bio:"Doudna and Emmanuelle Charpentier showed in 2012 that a bacterial defence system called CRISPR-Cas9 could be programmed to cut DNA at any chosen place. This 'genetic scissors' tool made editing genes far quicker and cheaper. They shared the 2020 Nobel Prize in Chemistry.",
+ gcse:"Genetic engineering modifies an organism's genome by adding, removing or changing genes, for example to treat inherited disorders.",
+ fun:"She was inspired to become a scientist after reading The Double Helix as a schoolgirl.",
+ clues:["I read The Double Helix as a child.","I worked with Emmanuelle Charpentier.","I helped invent CRISPR gene editing."]},
+{id:"charpentier",s:"biology",t:"inherit",name:"Emmanuelle Charpentier",life:"born 1968",from:"France",key:2012,icon:"click",wiki:"Emmanuelle_Charpentier",
+ what:"CRISPR gene editing",
+ bio:"Charpentier studied the bacteria that cause strep throat and discovered an RNA molecule that is part of their CRISPR defence system. Working with Jennifer Doudna, she turned it into a tool that can cut and edit DNA precisely. They shared the 2020 Nobel Prize in Chemistry.",
+ gcse:"Genetic engineering can be used in medicine and agriculture, and raises ethical questions about how it should be used.",
+ fun:"She founded her own research unit within the Max Planck Society in Berlin.",
+ clues:["I studied the bacteria behind strep throat.","I worked with Jennifer Doudna.","I shared the 2020 Nobel Prize for gene editing."]},
+{id:"auerbach",s:"biology",t:"inherit",name:"Charlotte Auerbach",life:"1899–1994",from:"Germany / Scotland",key:1942,icon:"chromosome",wiki:"Charlotte_Auerbach",
+ what:"Chemicals can cause mutations",
+ bio:"Auerbach fled Nazi Germany and worked in Edinburgh. In 1942, with A. J. Clark and J. M. Robson, she discovered that mustard gas causes mutations in fruit flies. This was the first evidence that chemicals, not just radiation, can change genes. It founded the science of mutagenesis.",
+ gcse:"Mutations are changes in DNA. Some chemicals and radiation increase the chance of mutation, which can lead to cancer.",
+ fun:"She was elected a Fellow of the Royal Society.",
+ clues:["I fled Nazi Germany to Edinburgh.","I experimented on fruit flies.","I showed mustard gas causes mutations."]},
+{id:"chase",s:"biology",t:"inherit",name:"Mary Agnes Chase",life:"1869–1963",from:"USA",key:1922,icon:"leaf",wiki:"Mary_Agnes_Chase",
+ what:"World expert on grasses",
+ bio:"Chase had no formal education beyond primary school. She began as a botanical illustrator and became a leading expert on grasses at the US Department of Agriculture. She collected and classified grasses across the Americas, and in 1922 published First Book of Grasses for beginners.",
+ gcse:"Classification: living things are grouped into kingdom, phylum, class, order, family, genus and species, and named with the binomial system.",
+ fun:"She was also an active campaigner for women's right to vote.",
+ clues:["I began as a botanical illustrator.","I left school after primary school.","I became the expert on grasses."]},
+{id:"merian",s:"biology",t:"ecology",name:"Maria Sibylla Merian",life:"1647–1717",from:"Germany / Netherlands",key:1705,icon:"butterfly",wiki:"Maria_Sibylla_Merian",
+ what:"Insect life cycles and their plants",
+ bio:"Merian was a naturalist and artist who raised caterpillars to watch them change into butterflies and moths. Her work showed that insects have life cycles and do not appear from nowhere. In her fifties she sailed to Suriname with her daughter, and in 1705 published detailed paintings of insects with the plants they feed on.",
+ gcse:"Interdependence: animals depend on plants for food and shelter. Food chains start with plants.",
+ fun:"She was one of the first naturalists to show each insect alongside its food plant.",
+ clues:["I was a naturalist and artist.","I sailed to Suriname with my daughter.","I showed insects have life cycles."]},
+{id:"earle",s:"biology",t:"ecology",name:"Sylvia Earle",life:"born 1935",from:"USA",key:1979,icon:"water",wiki:"Sylvia_Earle",
+ what:"Champion of the oceans",
+ bio:"Earle is a marine biologist and explorer. In 1979 she walked untethered on the sea floor off Hawaii in a pressurised JIM suit. She was the first chief scientist of the US National Oceanic and Atmospheric Administration and campaigns to protect ocean ecosystems.",
+ gcse:"Human activity threatens biodiversity; protected areas help conserve species and habitats.",
+ fun:"She is sometimes called 'Her Deepness'.",
+ clues:["I'm called 'Her Deepness'.","I walked on the sea floor in a JIM suit in 1979.","I campaign to protect the oceans."]},
+
+/* Chemistry */
+{id:"lermontova",s:"chemistry",t:"atomic",name:"Julia Lermontova",life:"1846–1919",from:"Russia",key:1874,icon:"element",wiki:"Julia_Lermontova",
+ what:"Helped sort the platinum metals",
+ bio:"Lermontova was the first Russian woman to earn a doctorate in chemistry, from Göttingen in 1874. Dmitri Mendeleev suggested she work on separating the platinum group metals, which were hard to tell apart. This helped clarify their place in his periodic table.",
+ gcse:"Mendeleev arranged elements by atomic weight and properties, leaving gaps and sometimes swapping the order to fit similar elements together.",
+ fun:"She joined the Russian Chemical Society in 1875.",
+ clues:["I earned a doctorate in Göttingen in 1874.","Mendeleev suggested my research.","I separated the platinum metals."]},
+{id:"humphrey",s:"chemistry",t:"atomic",name:"Edith Humphrey",life:"1875–1978",from:"England",key:1901,icon:"crystal",wiki:"Edith_Humphrey",
+ what:"First British woman with a chemistry PhD",
+ bio:"Humphrey studied in Zurich with Alfred Werner, a founder of coordination chemistry. She is thought to be the first British woman to earn a doctorate in chemistry, and the first chemist to make a chiral inorganic complex, a metal compound with left- and right-handed forms.",
+ gcse:"Transition metals form coloured compounds and ions with different charges, and are useful as catalysts.",
+ fun:"She lived to 102.",
+ clues:["I studied in Zurich with Alfred Werner.","I worked on metal complexes.","I'm thought to be the first British woman with a chemistry PhD."]},
+{id:"hoffman",s:"chemistry",t:"atomic",name:"Darleane Hoffman",life:"1926–2025",from:"USA",key:1993,kl:"1990s",icon:"element",wiki:"Darleane_C._Hoffman",
+ what:"Confirmed element 106",
+ bio:"Hoffman was a nuclear chemist who studied the heaviest elements, which last only moments before decaying. Her team was among the researchers who confirmed the existence of seaborgium, element 106. She worked at Lawrence Berkeley National Laboratory and taught at the University of California, Berkeley.",
+ gcse:"New elements beyond uranium are made in laboratories; they are added to the periodic table in order of atomic number.",
+ fun:"Element 106 is named after her colleague Glenn Seaborg.",
+ clues:["I studied the heaviest elements.","I worked at Berkeley.","I helped confirm element 106."]},
+{id:"shaughnessy",s:"chemistry",t:"atomic",name:"Dawn Shaughnessy",life:"living",from:"USA",key:2006,kl:"2000s",icon:"element",wiki:"Dawn_Shaughnessy",
+ what:"Helped discover five new elements",
+ bio:"Shaughnessy leads the heavy element group at Lawrence Livermore National Laboratory. She was involved in discovering the five superheavy elements with atomic numbers 114 to 118, which completed the seventh row of the periodic table.",
+ gcse:"The periodic table is still growing: elements 114–118 complete period 7.",
+ fun:"Element 116, livermorium, is named after the laboratory where she works.",
+ clues:["I work at a US national laboratory.","I study superheavy elements.","I helped discover elements 114 to 118."]},
+{id:"horovitz",s:"chemistry",t:"quant",name:"Stefanie Horovitz",life:"1887–1942",from:"Poland / Austria",key:1914,icon:"balance",wiki:"Stefanie_Horovitz",
+ what:"Weighed atoms to prove isotopes exist",
+ bio:"Working with Otto Hönigschmid in Vienna from about 1914, Horovitz made extremely precise measurements of the atomic weight of lead. Lead from uranium ores had a different atomic weight from ordinary lead. This gave some of the first convincing evidence that isotopes exist. She was murdered in the Holocaust in 1942.",
+ gcse:"Relative atomic mass is an average that depends on the masses and abundances of an element's isotopes.",
+ fun:"Her measurements had to be accurate to a tiny fraction of a percent.",
+ clues:["I worked in Vienna with Otto Hönigschmid.","I measured the atomic weight of lead.","My results proved isotopes exist."]},
+{id:"fulhame",s:"chemistry",t:"changes",name:"Elizabeth Fulhame",life:"active 1790s",from:"Britain",key:1794,icon:"electrode",wiki:"Elizabeth_Fulhame",
+ what:"Early ideas on reduction and catalysis",
+ bio:"In 1794 Fulhame published An Essay on Combustion. She turned metal salts back into metals, sometimes using only light, and argued that water took part in the reactions and was then re-formed. This was an early description of catalysis, and of what we now call reduction.",
+ gcse:"Oxidation is gain of oxygen (or loss of electrons); reduction is loss of oxygen (or gain of electrons). Metals can be extracted from compounds by reduction.",
+ fun:"She has been described as the first solo woman researcher of modern chemistry.",
+ clues:["I published An Essay on Combustion in 1794.","I turned metal salts back into metals.","I described catalysis before the word existed."]},
+{id:"brill",s:"chemistry",t:"energy",name:"Yvonne Brill",life:"1924–2013",from:"Canada / USA",key:1972,kl:"1970s",icon:"rocket",wiki:"Yvonne_Brill",
+ what:"Thrusters that keep satellites in orbit",
+ bio:"Brill was a rocket and jet propulsion engineer. She invented the electrothermal hydrazine thruster, a fuel-efficient rocket engine that keeps satellites in the right orbit. It works by breaking down hydrazine fuel, a reaction that releases a lot of energy, and adding extra heat electrically.",
+ gcse:"Exothermic reactions transfer energy to the surroundings. Rocket fuels release a lot of energy very quickly.",
+ fun:"Her 2013 newspaper obituary first opened by praising her beef stroganoff; complaints led to it being rewritten.",
+ clues:["I was a rocket engineer.","I invented a hydrazine thruster.","My thrusters keep satellites in orbit."]},
+{id:"flanigen",s:"chemistry",t:"rate",name:"Edith Flanigen",life:"1929–2026",from:"USA",key:1964,kl:"1960s",icon:"hexagon",wiki:"Edith_Flanigen",
+ what:"Zeolite catalysts for oil refining",
+ bio:"Flanigen worked at Union Carbide on zeolites and molecular sieves, crystals full of tiny pores that let only certain molecules through. She invented zeolite Y, which is used as a catalyst to refine petroleum into fuels. She also developed a way to make synthetic emeralds.",
+ gcse:"Catalysts speed up reactions such as cracking, where large hydrocarbons are broken into smaller, more useful ones.",
+ fun:"In 1992 she became the first woman to receive the Perkin Medal, a top US chemistry award.",
+ clues:["I worked at Union Carbide.","I invented zeolite Y.","I also learned to make synthetic emeralds."]},
+{id:"benerito",s:"chemistry",t:"organic",name:"Ruth Benerito",life:"1916–2013",from:"USA",key:1955,kl:"1950s",icon:"chain",wiki:"Ruth_R._Benerito",
+ what:"Wrinkle-free cotton",
+ bio:"Benerito was a chemist at the US Department of Agriculture in New Orleans. She helped develop wash-and-wear cotton by cross-linking the long cellulose molecules in cotton fibres, so the fabric springs back instead of creasing. It helped save the cotton industry from competition with synthetic fibres.",
+ gcse:"Polymers are long-chain molecules. Cross-links between chains change a polymer's properties.",
+ fun:"She held over 50 patents.",
+ clues:["I worked for the US Department of Agriculture.","I used cross-linking on cellulose.","I made cotton that doesn't wrinkle."]},
+{id:"sherman",s:"chemistry",t:"organic",name:"Patsy Sherman",life:"1930–2008",from:"USA",key:1952,icon:"chain",wiki:"Patsy_Sherman",
+ what:"Co-invented Scotchgard",
+ bio:"Sherman was a chemist at 3M. When a sample of a new fluorochemical polymer was spilled on an assistant's shoe, it wouldn't wash off, and the spot stayed clean. She and Sam Smith developed it into Scotchgard, a coating that repels stains and water.",
+ gcse:"The properties of a polymer depend on its monomers and structure; some polymers are designed to repel water and oil.",
+ fun:"The idea started from an accident with a tennis shoe.",
+ clues:["I worked for 3M.","An accident with a shoe gave me an idea.","I co-invented a stain repellent."]},
+{id:"karle",s:"chemistry",t:"analysis",name:"Isabella Karle",life:"1921–2017",from:"USA",key:1955,kl:"1950s–60s",icon:"crystal",wiki:"Isabella_Karle",
+ what:"Made X-ray crystallography practical",
+ bio:"Karle worked at the US Naval Research Laboratory. She turned mathematical methods into practical ways of working out the 3D structure of molecules from X-ray patterns. Her methods became standard for identifying the structures of new molecules, including medicines.",
+ gcse:"Instrumental methods of analysis are accurate, sensitive and rapid, and help identify unknown substances.",
+ fun:"Her husband Jerome shared the 1985 Nobel Prize for the theory; many felt her practical work deserved recognition too.",
+ clues:["I worked at the US Naval Research Laboratory.","I used X-ray patterns.","I found practical ways to work out molecular structures."]},
+{id:"whiteley",s:"chemistry",t:"analysis",name:"Martha Whiteley",life:"1866–1956",from:"England",key:1915,kl:"1914–18",icon:"flask",wiki:"Martha_Annie_Whiteley",
+ what:"Tested chemicals in an experimental trench",
+ bio:"Whiteley was a chemist at Imperial College London. During the First World War she led a team of women chemists in an experimental trench, testing mustard gas and explosives. She was injured testing mustard gas on her own arm. She campaigned for women to be admitted to the Chemical Society.",
+ gcse:"Chemical analysis identifies substances and their effects; tests must be carried out safely with hazards controlled.",
+ fun:"She was made an OBE for her war work.",
+ clues:["I worked at Imperial College.","I tested chemicals in a trench during the First World War.","I injured my own arm testing mustard gas."]},
+{id:"amdur",s:"chemistry",t:"atmos",name:"Mary Amdur",life:"1921–1998",from:"USA",key:1948,icon:"ozone",wiki:"Mary_Amdur",
+ what:"Showed how sulfur pollution harms lungs",
+ bio:"Amdur was a toxicologist who studied the deadly 1948 smog in Donora, Pennsylvania. Her experiments showed how breathing sulfur dioxide and sulfuric acid damages the lungs. Her findings helped shape air-quality standards, despite pressure from industry.",
+ gcse:"Burning fuels containing sulfur releases sulfur dioxide, which causes respiratory problems and acid rain.",
+ fun:"She measured the effects by studying how guinea pigs breathed polluted air.",
+ clues:["I studied a deadly smog in 1948.","I was a toxicologist.","I showed sulfur pollution damages lungs."]},
+{id:"patrick",s:"chemistry",t:"resources",name:"Ruth Patrick",life:"1907–2013",from:"USA",key:1948,kl:"1940s",icon:"water",wiki:"Ruth_Patrick",
+ what:"Measuring the health of rivers",
+ bio:"Patrick was an expert on diatoms, tiny algae with glass-like cell walls. She developed ways to judge the health of rivers and streams by looking at the variety of living things in them. Her methods became standard in pollution control and helped shape clean water laws.",
+ gcse:"Water quality: waste water must be treated before release. Living indicators can show how polluted water is.",
+ fun:"She lived to 105.",
+ clues:["I was an expert on diatoms.","I judged rivers by what lived in them.","I lived to 105."]},
+
+/* Physics */
+{id:"easley",s:"physics",t:"energy",name:"Annie Easley",life:"1933–2011",from:"USA",key:1975,kl:"1970s",icon:"battery",wiki:"Annie_Easley",
+ what:"Code for energy systems and rockets",
+ bio:"Easley started at NASA as a 'human computer' and became a computer programmer. Her code analysed energy-conversion and power systems, including for early hybrid vehicles, and she worked on software for the Centaur rocket stage.",
+ gcse:"Energy is transferred between stores; efficiency measures how much input energy ends up in a useful form.",
+ fun:"She worked at NASA for 34 years.",
+ clues:["I began as a 'human computer' at NASA.","I wrote code for the Centaur rocket.","I analysed energy systems for early hybrid vehicles."]},
+{id:"haslett",s:"physics",t:"elec",name:"Caroline Haslett",life:"1895–1957",from:"England",key:1925,icon:"bolt",wiki:"Caroline_Haslett",
+ what:"Brought electricity safely into homes",
+ bio:"Haslett was an electrical engineer and the first secretary of the Women's Engineering Society. In 1925 she became the first director of the Electrical Association for Women, which taught people how to use electricity safely at home. It built an 'all-electric house' in Bristol to show what electricity could do.",
+ gcse:"Mains electricity: plugs have live, neutral and earth wires; the earth wire is a safety wire.",
+ fun:"She was made a Dame for her work.",
+ clues:["I was the first secretary of the Women's Engineering Society.","I led the Electrical Association for Women.","I helped bring electricity safely into homes."]},
+{id:"gleditsch",s:"physics",t:"atomic",name:"Ellen Gleditsch",life:"1879–1968",from:"Norway",key:1915,kl:"1910s",icon:"atom",wiki:"Ellen_Gleditsch",
+ what:"Measured radium's half-life",
+ bio:"Gleditsch began her career as an assistant to Marie Curie in Paris. She became a pioneer of radiochemistry, purifying radium and measuring its half-life. She also helped show that isotopes exist. She was Norway's second woman professor.",
+ gcse:"Half-life is the time it takes for the number of radioactive nuclei in a sample to halve.",
+ fun:"She campaigned for women's rights in Norway.",
+ clues:["I was Marie Curie's assistant.","I came from Norway.","I measured the half-life of radium."]},
+{id:"blau",s:"physics",t:"atomic",name:"Marietta Blau",life:"1894–1970",from:"Austria",key:1937,icon:"split",wiki:"Marietta_Blau",
+ what:"Photographed nuclear particles",
+ bio:"Blau developed special photographic emulsions that recorded the tracks of high-energy particles. In 1937 she and her student Hertha Wambacher saw 'stars' of tracks where cosmic rays had shattered nuclei. They won the Lieben Prize, but she had to flee Austria in 1938 because she was Jewish.",
+ gcse:"Ionising radiation can be detected with photographic film and Geiger–Müller tubes.",
+ fun:"Her methods later helped other physicists discover the pion, a new particle.",
+ clues:["I used photographic emulsions.","I saw 'stars' of tracks in 1937.","I fled Austria in 1938."]},
+{id:"sau-lan-wu",s:"physics",t:"atomic",name:"Sau Lan Wu",life:"born 1940",from:"Hong Kong / USA",key:1979,icon:"atom",wiki:"Sau_Lan_Wu",
+ what:"Quarks, gluons and the Higgs",
+ bio:"Wu is a particle physicist. She contributed to the discovery of the J/psi particle, evidence for the charm quark, and of the gluon, which holds quarks together. Her team at CERN was part of the 2012 discovery of the Higgs boson.",
+ gcse:"The nucleus contains protons and neutrons; physicists have found these are made of even smaller particles called quarks.",
+ fun:"Her Wisconsin team was the first American group to join the ATLAS experiment at CERN, in 1993.",
+ clues:["I work at CERN.","I helped discover the gluon.","My team helped find the Higgs boson."]},
+{id:"fleischman",s:"physics",t:"atomic",name:"Elizabeth Fleischman",life:"1867–1905",from:"USA",key:1896,icon:"gas",wiki:"Elizabeth_Fleischman",
+ what:"X-ray pioneer",
+ bio:"Fleischman set up one of the first X-ray laboratories in San Francisco soon after X-rays were discovered in 1895. She took X-ray images for doctors and the army. Like many early users, she did not know the dangers, and she became the first woman to die from X-ray exposure.",
+ gcse:"Ionising radiation such as X-rays and gamma rays can damage cells; workers are protected by shielding and limited exposure.",
+ fun:"Her story is one reason radiographers today stand behind shielding.",
+ clues:["I took X-ray images in San Francisco.","I started soon after X-rays were discovered.","I was the first woman to die from X-ray exposure."]},
+{id:"shilling",s:"physics",t:"forces",name:"Beatrice Shilling",life:"1909–1990",from:"England",key:1941,icon:"plane",wiki:"Beatrice_Shilling",
+ what:"Kept Spitfire engines running",
+ bio:"Shilling was an engineer at the Royal Aircraft Establishment. In the Second World War, Spitfire and Hurricane engines cut out during sudden dives, because negative g pushed fuel the wrong way. She designed a simple restrictor that fixed the problem, nicknamed 'Miss Shilling's orifice'.",
+ gcse:"When a plane accelerates downwards quickly, the forces inside change. A resultant force causes acceleration (F = ma).",
+ fun:"She raced motorbikes and lapped the Brooklands circuit at over 100 miles per hour.",
+ clues:["I raced motorbikes at Brooklands.","I worked at the Royal Aircraft Establishment.","I fixed Spitfire engines that cut out in dives."]},
+{id:"darden",s:"physics",t:"forces",name:"Christine Darden",life:"born 1942",from:"USA",key:1989,icon:"plane",wiki:"Christine_Darden",
+ what:"Taming the sonic boom",
+ bio:"Darden spent around 40 years at NASA researching supersonic flight. She studied how changing the shape of an aircraft could reduce its sonic boom, and in 1989 was made leader of NASA's sonic boom team. She was the first African-American woman at Langley promoted to the US government's top civil service rank.",
+ gcse:"Air resistance (drag) increases with speed; aircraft shape affects the forces acting on them.",
+ fun:"She is one of the women in the book Hidden Figures.",
+ clues:["I worked at NASA Langley.","I studied supersonic flight.","I led NASA's sonic boom team from 1989."]},
+{id:"tharp",s:"physics",t:"waves",name:"Marie Tharp",life:"1920–2006",from:"USA",key:1953,kl:"1950s",icon:"seismo",wiki:"Marie_Tharp",
+ what:"Mapped the ocean floor",
+ bio:"Tharp and Bruce Heezen made the first scientific map of the Atlantic Ocean floor. Heezen collected echo-sounding depth data at sea, while Tharp, barred from research ships as a woman, drew the maps. She discovered a rift valley along the Mid-Atlantic Ridge, key evidence for plate tectonics.",
+ gcse:"Echo sounding uses pulses of sound reflected from the sea bed; the time taken for the echo gives the depth.",
+ fun:"Women were not allowed on the research ship for the first 18 years of the project.",
+ clues:["I was barred from research ships.","I drew maps from echo-sounding data.","I found a rift valley in the Atlantic floor."]},
+{id:"bath",s:"physics",t:"waves",name:"Patricia Bath",life:"1942–2019",from:"USA",key:1988,icon:"laser",wiki:"Patricia_Bath",
+ what:"Laser surgery for cataracts",
+ bio:"Bath was an eye surgeon. She invented the Laserphaco Probe, which uses a laser to break up and remove cataracts, cloudy lenses in the eye. She completed it in 1986 and patented it in 1988, becoming the first African-American woman to receive a patent for a medical invention.",
+ gcse:"Lasers produce intense light; electromagnetic radiation can be used in medicine.",
+ fun:"She also founded an institute to prevent blindness worldwide.",
+ clues:["I was an eye surgeon.","I patented a laser device in 1988.","My probe removes cataracts."]},
+{id:"fleming",s:"physics",t:"space",name:"Williamina Fleming",life:"1857–1911",from:"Scotland / USA",key:1888,icon:"star",wiki:"Williamina_Fleming",
+ what:"Discovered the Horsehead Nebula",
+ bio:"Fleming moved from Dundee to the USA and worked as a maid for the director of Harvard College Observatory. He hired her to analyse photographs of the stars. She classified more than ten thousand stars, found hundreds of variable stars and discovered the Horsehead Nebula in 1888.",
+ gcse:"Stars form from clouds of dust and gas called nebulae.",
+ fun:"She went on to run the team of women 'computers' at Harvard.",
+ clues:["I was born in Dundee.","I started at Harvard as a maid.","I discovered the Horsehead Nebula."]},
+{id:"maury",s:"physics",t:"space",name:"Antonia Maury",life:"1866–1952",from:"USA",key:1897,icon:"spectrum",wiki:"Antonia_Maury",
+ what:"Told giant stars from dwarfs",
+ bio:"Maury worked at Harvard Observatory classifying stars from their spectra. Her own classification system picked out details that separated bright giant stars from faint dwarf stars. The astronomer Ejnar Hertzsprung praised it highly, and it was later adopted internationally.",
+ gcse:"Stars of different masses follow different life cycles; massive stars become red supergiants.",
+ fun:"She was the first to detect and calculate the orbit of a spectroscopic binary, a pair of stars too close to see separately.",
+ clues:["I classified stars at Harvard.","I separated giant stars from dwarfs.","My work was praised by Hertzsprung."]},
+{id:"mitchell",s:"physics",t:"space",name:"Maria Mitchell",life:"1818–1889",from:"USA",key:1847,icon:"comet",wiki:"Maria_Mitchell",
+ what:"Miss Mitchell's Comet",
+ bio:"In 1847 Mitchell discovered a comet with a telescope on her family's roof, and won a gold medal from the King of Denmark. In 1865 she became professor of astronomy at Vassar College, one of the first women to work as both a professional astronomer and a professor.",
+ gcse:"Comets orbit the Sun in long, stretched (elliptical) orbits.",
+ fun:"The comet became known as 'Miss Mitchell's Comet'.",
+ clues:["I spotted a comet from my rooftop in 1847.","The King of Denmark gave me a medal.","I became an astronomy professor at Vassar."]},
+{id:"wang",s:"physics",t:"space",name:"Wang Zhenyi",life:"1768–1797",from:"China",key:1790,kl:"1790s",icon:"orbit",wiki:"Wang_Zhenyi_(astronomer)",
+ what:"Explained lunar eclipses",
+ bio:"Wang Zhenyi was a scientist, mathematician and poet in Qing dynasty China. She wrote an explanation of lunar eclipses that matches modern understanding: the Earth's shadow falls on the Moon. She also wrote books making mathematics easier to understand. She died aged 29.",
+ gcse:"The Moon orbits the Earth; a lunar eclipse happens when the Earth is directly between the Sun and the Moon.",
+ fun:"A crater on Venus is named after her.",
+ clues:["I lived in 18th-century China.","I was also a poet.","I explained lunar eclipses."]},
+{id:"sharman",s:"physics",t:"space",name:"Helen Sharman",life:"born 1963",from:"England",key:1991,icon:"rocket",wiki:"Helen_Sharman",
+ what:"First British person in space",
+ bio:"Sharman was working as a chemist for the Mars confectionery company when she answered a radio advert for astronauts. In May 1991 she flew to the Mir space station, becoming the first British person in space and the first woman to visit Mir. She carried out experiments in orbit.",
+ gcse:"Satellites and space stations stay in orbit because gravity provides the force towards the Earth.",
+ fun:"The newspapers called her 'The Girl from Mars' because of her job.",
+ clues:["I worked as a chemist for a chocolate company.","I flew to Mir in 1991.","I was the first British person in space."]},
+{id:"ride",s:"physics",t:"space",name:"Sally Ride",life:"1951–2012",from:"USA",key:1983,icon:"rocket",wiki:"Sally_Ride",
+ what:"First American woman in space",
+ bio:"Ride was a physicist who joined NASA in 1978. In 1983 she flew on the Space Shuttle Challenger, becoming the first American woman in space. Later she co-founded Sally Ride Science, which created science programmes for children, especially girls.",
+ gcse:"To stay in orbit, a spacecraft must travel at the right speed; the force of gravity changes its direction, not its speed.",
+ fun:"At 32 she was the youngest American astronaut to have flown in space at the time.",
+ clues:["I was a physicist before joining NASA.","I flew on the Space Shuttle in 1983.","I was the first American woman in space."]},
+{id:"jemison",s:"physics",t:"space",name:"Mae Jemison",life:"born 1956",from:"USA",key:1992,icon:"rocket",wiki:"Mae_Jemison",
+ what:"First African-American woman in space",
+ bio:"Jemison is an engineer and doctor. She joined NASA in 1987, and in 1992 she flew on the Space Shuttle Endeavour as a mission specialist, becoming the first African-American woman in space. She has since written books for children and promotes science education.",
+ gcse:"In orbit, astronauts are in continuous free fall around the Earth.",
+ fun:"In 1993 she appeared in an episode of Star Trek: The Next Generation.",
+ clues:["I'm an engineer and a doctor.","I flew on Endeavour in 1992.","I appeared in Star Trek."]},
+{id:"tereshkova",s:"physics",t:"space",name:"Valentina Tereshkova",life:"born 1937",from:"Russia (USSR)",key:1963,icon:"orbit",wiki:"Valentina_Tereshkova",
+ what:"First woman in space",
+ bio:"Tereshkova was a textile worker and keen amateur parachutist when she was chosen for the Soviet space programme. On 16 June 1963 she flew solo in Vostok 6, orbiting the Earth 48 times in almost three days. She is still the only woman to have flown a solo space mission.",
+ gcse:"Gravity provides the force that keeps a spacecraft in a circular orbit around the Earth.",
+ fun:"She kept her parachute training secret from her family.",
+ clues:["I was a textile worker and parachutist.","I flew solo in 1963.","I was the first woman in space."]},
+
+/* Beyond GCSE */
+{id:"lovelace",s:"beyond",t:"maths",name:"Ada Lovelace",life:"1815–1852",from:"England",key:1843,icon:"code",wiki:"Ada_Lovelace",
+ what:"The first published computer program",
+ bio:"Lovelace was a mathematician who worked with Charles Babbage on his Analytical Engine, a mechanical computer that was never finished. In 1843 she published notes on the machine. One, Note G, set out a method for calculating Bernoulli numbers, often called the first published computer program.",
+ gcse:"Computers now model everything from climate to the spread of disease; Lovelace saw that machines could do more than arithmetic.",
+ fun:"She was the daughter of the poet Lord Byron.",
+ clues:["I worked with Charles Babbage.","I wrote Note G in 1843.","I'm often called the first computer programmer."]},
+{id:"hopper",s:"beyond",t:"maths",name:"Grace Hopper",life:"1906–1992",from:"USA",key:1955,kl:"1950s",icon:"code",wiki:"Grace_Hopper",
+ what:"Programming in words, not numbers",
+ bio:"Hopper was a US Navy officer and computer scientist. She developed the idea of programming languages that use English-like words and work on different machines. Her language FLOW-MATIC strongly influenced COBOL, which is still in use, and she managed one of the first COBOL compilers.",
+ gcse:"Programming languages let scientists build models and process data.",
+ fun:"She liked to tell the story of a real moth found stuck in an early computer, logged as a 'bug'.",
+ clues:["I was a US Navy officer.","I built FLOW-MATIC.","My ideas shaped the COBOL language."]},
+{id:"kovalevskaya",s:"beyond",t:"maths",name:"Sofia Kovalevskaya",life:"1850–1891",from:"Russia / Sweden",key:1889,icon:"code",wiki:"Sofya_Kovalevskaya",
+ what:"First woman professor of maths in Europe",
+ bio:"Kovalevskaya was the first woman to earn a modern doctorate in mathematics. In 1889 she became a full professor at Stockholm University, the first woman in modern Europe to hold such a post. She solved important problems about how spinning objects move.",
+ gcse:"Mathematics describes motion and forces in physics.",
+ fun:"She had to audit classes at Heidelberg because women couldn't enrol.",
+ clues:["I studied in Heidelberg and Berlin.","I became a professor in Stockholm in 1889.","I was the first woman maths professor in modern Europe."]},
+{id:"cartwright",s:"beyond",t:"maths",name:"Mary Cartwright",life:"1900–1998",from:"England",key:1945,kl:"1940s",icon:"seismo",wiki:"Mary_Cartwright",
+ what:"A pioneer of chaos theory",
+ bio:"Cartwright was a Cambridge mathematician. Working with J. E. Littlewood on a problem from radio engineering, she found equations with many unpredictable solutions, an early example of what later became known as chaos theory and the 'butterfly effect'.",
+ gcse:"Some systems, such as the weather, are very sensitive to small changes, which limits how far ahead they can be predicted.",
+ fun:"She was the first woman mathematician elected a Fellow of the Royal Society.",
+ clues:["I worked at Cambridge with Littlewood.","My problem came from radio engineering.","I'm a pioneer of chaos theory."]},
+{id:"mirzakhani",s:"beyond",t:"maths",name:"Maryam Mirzakhani",life:"1977–2017",from:"Iran / USA",key:2014,icon:"code",wiki:"Maryam_Mirzakhani",
+ what:"First woman to win the Fields Medal",
+ bio:"Mirzakhani studied the geometry of curved surfaces. In 2014 she won the Fields Medal, the highest award in mathematics, becoming the first woman and the first Iranian to receive it. She died aged 40.",
+ gcse:"Geometry and maths underpin every branch of science.",
+ fun:"She liked to work by doodling on large sheets of paper.",
+ clues:["I studied curved surfaces.","I won the Fields Medal in 2014.","I was the first woman to win it."]},
+{id:"blackwell",s:"beyond",t:"medicine",name:"Elizabeth Blackwell",life:"1821–1910",from:"England / USA",key:1849,icon:"cross",wiki:"Elizabeth_Blackwell",
+ what:"First woman with a US medical degree",
+ bio:"Blackwell was born in Bristol and moved to the USA as a child. On 23 January 1849 she became the first woman to earn a medical degree in the USA. She later helped open medicine to women in both America and Britain.",
+ gcse:"Doctors use science to diagnose and treat disease.",
+ fun:"Her thesis on typhoid fever was the first medical article published by a woman student in the USA.",
+ clues:["I was born in Bristol.","I qualified in 1849.","I was the first woman with a US medical degree."]},
+{id:"garrett",s:"beyond",t:"medicine",name:"Elizabeth Garrett Anderson",life:"1836–1917",from:"England",key:1865,icon:"cross",wiki:"Elizabeth_Garrett_Anderson",
+ what:"First woman to qualify as a doctor in Britain",
+ bio:"Garrett Anderson was the first woman to qualify in Britain as a physician and surgeon. She co-founded the London School of Medicine for Women, the first British medical school to train women, and was its dean.",
+ gcse:"Medicine relies on scientific training and evidence.",
+ fun:"She was also Britain's first woman mayor, in Aldeburgh.",
+ clues:["I qualified in Britain in the 1860s.","I co-founded a medical school for women.","I was Britain's first woman mayor."]},
+{id:"hoggan",s:"beyond",t:"medicine",name:"Frances Hoggan",life:"1843–1927",from:"Wales",key:1870,icon:"cross",wiki:"Frances_Hoggan",
+ what:"First British woman with a European MD",
+ bio:"Hoggan was born in Brecon. Shut out of British medical exams, she studied at the University of Zurich, finishing the six-year course in three years. In 1870 she became the first British woman to earn a medical doctorate from a European university.",
+ gcse:"Medical research and training are how new treatments reach patients.",
+ fun:"In 2023 she was honoured with a purple plaque in Brecon.",
+ clues:["I was born in Brecon, Wales.","I studied medicine in Zurich.","I finished a six-year course in three years."]},
+{id:"apgar",s:"beyond",t:"medicine",name:"Virginia Apgar",life:"1909–1974",from:"USA",key:1952,icon:"cross",wiki:"Virginia_Apgar",
+ what:"The Apgar score for newborns",
+ bio:"Apgar was an anaesthetist. In 1952 she created the Apgar score, a quick 10-point check of a newborn baby's heart rate, breathing, muscle tone, reflexes and colour. It is used in hospitals around the world, minutes after birth.",
+ gcse:"Doctors monitor vital signs such as heart rate and breathing to check health.",
+ fun:"Every baby born in a hospital today is likely to be given an Apgar score.",
+ clues:["I was an anaesthetist.","I created a score in 1952.","My score checks newborn babies."]},
+{id:"bascom",s:"beyond",t:"earth",name:"Florence Bascom",life:"1862–1945",from:"USA",key:1896,icon:"volcano",wiki:"Florence_Bascom",
+ what:"Pioneering geologist",
+ bio:"Bascom studied rocks and how mountains form. In 1893 she became the first woman to earn a PhD from Johns Hopkins University, and in 1896 the first woman to work for the US Geological Survey. She trained many of the next generation of women geologists.",
+ gcse:"Earth science links to the rock cycle and the structure of the Earth in GCSE geography and chemistry.",
+ fun:"She founded the geology department at Bryn Mawr College.",
+ clues:["I studied rocks and mountains.","I was the first woman PhD at Johns Hopkins.","I joined the US Geological Survey in 1896."]},
+{id:"krafft",s:"beyond",t:"earth",name:"Katia Krafft",life:"1942–1991",from:"France",key:1985,kl:"1970s–80s",icon:"volcano",wiki:"Katia_and_Maurice_Krafft",
+ what:"Filming volcanoes up close",
+ bio:"Katia Krafft and her husband Maurice were volcanologists who filmed and photographed eruptions around the world. In 1991 their footage of a deadly mudflow in Colombia was shown to officials in the Philippines, helping persuade them to evacuate before Mount Pinatubo erupted. The couple died that year in an eruption at Mount Unzen, Japan.",
+ gcse:"Volcanoes form at plate boundaries; studying them helps people prepare for eruptions.",
+ fun:"They collected thousands of photos and hours of film of eruptions.",
+ clues:["I worked with my husband Maurice.","I filmed volcanoes up close.","Our film helped save lives at Pinatubo."]},
+{id:"gilbreth",s:"beyond",t:"people",name:"Lillian Gilbreth",life:"1878–1972",from:"USA",key:1915,kl:"1910s",icon:"balance",wiki:"Lillian_Moller_Gilbreth",
+ what:"Designing work around people",
+ bio:"Gilbreth was a psychologist and industrial engineer. With her husband Frank, she studied people's movements at work to find easier, more efficient ways to do tasks, an early form of ergonomics. She applied the same ideas to kitchens and homes.",
+ gcse:"Efficiency means getting more useful output for the same input, in machines and in people's work.",
+ fun:"Two of her twelve children wrote Cheaper by the Dozen about growing up in the family.",
+ clues:["I was a psychologist and engineer.","I studied movements to make work efficient.","My family inspired Cheaper by the Dozen."]},
+{id:"mamie-clark",s:"beyond",t:"people",name:"Mamie Phipps Clark",life:"1917–1983",from:"USA",key:1940,kl:"1940s",icon:"neuron",wiki:"Mamie_Phipps_Clark",
+ what:"The doll studies",
+ bio:"Clark was a psychologist. With her husband Kenneth, she ran the 'doll tests', which showed how segregation affected how Black children saw themselves. Their research was influential in the 1954 US Supreme Court case Brown v. Board of Education, which ended school segregation.",
+ gcse:"Science can provide evidence that changes laws and society.",
+ fun:"She founded a centre in Harlem to support children and families.",
+ clues:["I was a psychologist.","I ran studies with dolls.","My research influenced a famous 1954 court case."]}
+];
+
+/* ---------- illustrations ---------- */
+const ICON={
+ cell:'<ellipse cx="60" cy="60" rx="38" ry="28" fill="none" stroke="currentColor" stroke-width="4"/><ellipse cx="50" cy="58" rx="12" ry="7" fill="currentColor"/><circle cx="74" cy="64" r="6" fill="none" stroke="currentColor" stroke-width="3"/>',
+ chromosome:'<path d="M42 30 Q60 60 42 90 M78 30 Q60 60 78 90" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"/><rect x="50" y="56" width="20" height="8" fill="currentColor"/>',
+ enzyme:'<path d="M28 40 h44 v14 h-14 v12 h14 v14 h-44 z" fill="currentColor"/><rect x="62" y="56" width="22" height="8" fill="currentColor" opacity=".55"/>',
+ heart:'<path d="M60 90 C20 64 26 30 46 30 C54 30 60 38 60 42 C60 38 66 30 74 30 C94 30 100 64 60 90Z" fill="currentColor"/>',
+ virus:'<circle cx="60" cy="60" r="20" fill="currentColor"/>'+[0,45,90,135,180,225,270,315].map(a=>`<g transform="rotate(${a} 60 60)"><line x1="60" y1="36" x2="60" y2="24" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="22" r="5" fill="currentColor"/></g>`).join(''),
+ pill:'<g transform="rotate(-35 60 60)"><rect x="30" y="46" width="60" height="28" rx="14" fill="none" stroke="currentColor" stroke-width="5"/><path d="M60 46 h16 a14 14 0 0 1 0 28 h-16z" fill="currentColor"/></g>',
+ leaf:'<path d="M30 90 C30 40 70 28 92 28 C92 60 74 92 30 90Z" fill="currentColor"/><path d="M34 86 L80 40" stroke="var(--card)" stroke-width="3"/>',
+ vaccine:'<g transform="rotate(-40 60 60)"><rect x="50" y="24" width="20" height="54" fill="currentColor"/><rect x="44" y="20" width="32" height="6" fill="currentColor"/><line x1="60" y1="78" x2="60" y2="100" stroke="currentColor" stroke-width="3"/></g>',
+ muscle:'<path d="M26 70 Q40 34 60 50 Q80 34 94 70" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/><circle cx="60" cy="74" r="7" fill="currentColor"/>',
+ drop:'<path d="M60 24 C60 24 34 58 34 72 a26 26 0 0 0 52 0 C86 58 60 24 60 24Z" fill="currentColor"/>',
+ neuron:'<circle cx="46" cy="56" r="13" fill="currentColor"/><path d="M58 60 L96 82 M36 46 L24 30 M40 66 L26 82 M50 42 L54 24" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+ helix:'<path d="M42 20 C78 40 42 60 78 80 C42 100 78 100 78 100 M78 20 C42 40 78 60 42 80" fill="none" stroke="currentColor" stroke-width="5"/>'+[30,50,70].map(y=>`<line x1="50" y1="${y}" x2="70" y2="${y}" stroke="currentColor" stroke-width="3"/>`).join(''),
+ maize:'<ellipse cx="60" cy="60" rx="18" ry="36" fill="none" stroke="currentColor" stroke-width="4"/>'+[38,50,62,74].map((y,i)=>`<circle cx="53" cy="${y}" r="4" fill="currentColor" opacity="${i%2?.4:1}"/><circle cx="67" cy="${y+6}" r="4" fill="currentColor" opacity="${i%2?1:.4}"/>`).join(''),
+ fossil:'<path d="M60 60 m0 0 a4 4 0 0 1 8 0 a12 12 0 0 1 -20 4 a20 20 0 0 1 30 -12 a28 28 0 0 1 -36 30 a36 36 0 0 1 2 -56" fill="none" stroke="currentColor" stroke-width="5"/>',
+ bird:'<path d="M24 62 Q46 40 60 60 Q74 40 96 62 Q74 52 60 70 Q46 52 24 62Z" fill="currentColor"/>',
+ tree:'<circle cx="60" cy="48" r="24" fill="currentColor"/><rect x="56" y="64" width="8" height="30" fill="currentColor"/>',
+ element:'<rect x="30" y="30" width="60" height="60" fill="none" stroke="currentColor" stroke-width="5"/><text x="60" y="72" font-size="30" text-anchor="middle" fill="currentColor" font-family="monospace" font-weight="700">?</text>',
+ hexagon:'<polygon points="60,26 90,43 90,77 60,94 30,77 30,43" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="60" cy="60" r="16" fill="none" stroke="currentColor" stroke-width="3"/>',
+ crystal:'<polygon points="60,20 88,46 76,96 44,96 32,46" fill="none" stroke="currentColor" stroke-width="5"/><path d="M60 20 L60 96 M32 46 L88 46" stroke="currentColor" stroke-width="3"/>',
+ balance:'<line x1="60" y1="26" x2="60" y2="92" stroke="currentColor" stroke-width="5"/><line x1="28" y1="40" x2="92" y2="40" stroke="currentColor" stroke-width="5"/><path d="M20 66 h24 l-12 -24z M76 66 h24 l-12 -24z" fill="currentColor"/><rect x="44" y="90" width="32" height="6" fill="currentColor"/>',
+ electrode:'<rect x="28" y="50" width="64" height="42" fill="none" stroke="currentColor" stroke-width="4"/><rect x="40" y="26" width="8" height="52" fill="currentColor"/><rect x="72" y="26" width="8" height="52" fill="currentColor"/><text x="44" y="22" font-size="14" text-anchor="middle" fill="currentColor">−</text><text x="76" y="22" font-size="14" text-anchor="middle" fill="currentColor">+</text>',
+ sun:'<circle cx="60" cy="60" r="18" fill="currentColor"/>'+[0,45,90,135,180,225,270,315].map(a=>`<line x1="60" y1="30" x2="60" y2="20" stroke="currentColor" stroke-width="5" transform="rotate(${a} 60 60)"/>`).join(''),
+ chain:[0,1,2,3].map(i=>`<circle cx="${30+i*20}" cy="${i%2?70:50}" r="9" fill="currentColor"/>`).join('')+'<path d="M30 50 L50 70 L70 50 L90 70" stroke="currentColor" stroke-width="4" fill="none"/>',
+ flask:'<path d="M50 24 h20 v24 l20 38 a6 6 0 0 1 -5 8 h-50 a6 6 0 0 1 -5 -8 l20 -38z" fill="none" stroke="currentColor" stroke-width="5"/><path d="M36 76 h48 l6 10 a4 4 0 0 1 -4 6 h-52 a4 4 0 0 1 -4 -6z" fill="currentColor"/>',
+ click:'<path d="M26 60 h26 l8 -10 l8 10 h26" fill="none" stroke="currentColor" stroke-width="6"/><circle cx="26" cy="60" r="8" fill="currentColor"/><circle cx="94" cy="60" r="8" fill="currentColor"/>',
+ chroma:'<rect x="40" y="20" width="40" height="80" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="38" r="6" fill="currentColor"/><circle cx="60" cy="58" r="6" fill="currentColor" opacity=".6"/><circle cx="60" cy="80" r="6" fill="currentColor" opacity=".35"/>',
+ thermo:'<rect x="54" y="20" width="12" height="60" rx="6" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="86" r="12" fill="currentColor"/><rect x="57" y="44" width="6" height="40" fill="currentColor"/>',
+ ozone:'<circle cx="60" cy="60" r="34" fill="none" stroke="currentColor" stroke-width="5" stroke-dasharray="14 8"/><circle cx="60" cy="60" r="18" fill="currentColor"/>',
+ water:'<path d="M26 54 q8 -8 16 0 t16 0 t16 0 t16 0 M26 72 q8 -8 16 0 t16 0 t16 0 t16 0" stroke="currentColor" stroke-width="5" fill="none"/><path d="M60 22 c0 0 -10 12 -10 18 a10 10 0 0 0 20 0 c0 -6 -10 -18 -10 -18z" fill="currentColor"/>',
+ ball:'<path d="M24 92 h72" stroke="currentColor" stroke-width="5"/><circle cx="60" cy="40" r="12" fill="currentColor"/><path d="M60 58 v20" stroke="currentColor" stroke-width="3" stroke-dasharray="4 4"/><path d="M44 92 q16 -14 32 0" fill="currentColor"/>',
+ bolt:'<path d="M66 18 L36 66 H58 L50 102 L84 50 H62 Z" fill="currentColor"/>',
+ trough:'<path d="M22 50 v30 h76 v-30" fill="none" stroke="currentColor" stroke-width="5"/><path d="M24 62 h72" stroke="currentColor" stroke-width="3"/><rect x="56" y="34" width="8" height="34" fill="currentColor"/>',
+ snow:[0,60,120].map(a=>`<line x1="60" y1="24" x2="60" y2="96" stroke="currentColor" stroke-width="5" transform="rotate(${a} 60 60)"/>`).join('')+'<circle cx="60" cy="60" r="8" fill="currentColor"/>',
+ atom:'<circle cx="60" cy="60" r="8" fill="currentColor"/>'+[0,60,120].map(a=>`<ellipse cx="60" cy="60" rx="36" ry="13" fill="none" stroke="currentColor" stroke-width="3.5" transform="rotate(${a} 60 60)"/>`).join(''),
+ split:'<circle cx="42" cy="58" r="16" fill="currentColor"/><circle cx="80" cy="64" r="14" fill="currentColor"/><path d="M58 30 l6 10 M62 88 l-4 10 M96 40 l8 -6" stroke="currentColor" stroke-width="4"/>',
+ gas:'<circle cx="44" cy="74" r="10" fill="currentColor"/><circle cx="66" cy="54" r="8" fill="currentColor" opacity=".7"/><circle cx="80" cy="34" r="6" fill="currentColor" opacity=".45"/>',
+ beta:'<circle cx="44" cy="60" r="18" fill="currentColor"/><path d="M62 60 h26" stroke="currentColor" stroke-width="4"/><path d="M84 52 l10 8 l-10 8" fill="none" stroke="currentColor" stroke-width="4"/><text x="96" y="46" font-size="16" fill="currentColor" font-family="monospace">e⁻</text>',
+ plane:'<path d="M20 64 L96 56 L100 60 L96 64 Z M54 60 L40 36 H48 L70 59 M54 62 L44 84 H52 L70 63" fill="currentColor"/><path d="M14 44 h18 M10 54 h20 M16 76 h16" stroke="currentColor" stroke-width="3"/>',
+ seismo:'<path d="M14 60 h18 l6 -22 l8 44 l8 -56 l8 62 l8 -40 l6 22 h30" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/>',
+ lens:'<ellipse cx="60" cy="60" rx="14" ry="36" fill="none" stroke="currentColor" stroke-width="5"/><path d="M16 46 h30 M16 74 h30 M74 46 h30 M74 74 h30" stroke="currentColor" stroke-width="3"/>',
+ radio:'<path d="M40 40 a28 28 0 0 0 0 40 M80 40 a28 28 0 0 1 0 40 M30 30 a42 42 0 0 0 0 60 M90 30 a42 42 0 0 1 0 60" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="60" cy="60" r="8" fill="currentColor"/>',
+ pylon:'<path d="M60 18 L40 100 M60 18 L80 100 M44 82 H76 M48 62 H72 M34 38 H86 M52 46 L72 82 M68 46 L48 82" stroke="currentColor" stroke-width="4" fill="none"/>',
+ star:'<polygon points="60,20 70,48 100,48 76,66 84,96 60,78 36,96 44,66 20,48 50,48" fill="currentColor"/>',
+ pulsar:'<circle cx="60" cy="60" r="10" fill="currentColor"/><path d="M60 50 L44 16 L76 16Z M60 70 L44 104 L76 104Z" fill="currentColor" opacity=".55"/>',
+ cepheid:'<path d="M14 70 q12 -40 22 0 q12 -40 22 0 q12 -40 22 0 q12 -40 22 0" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="60" cy="30" r="8" fill="currentColor"/>',
+ spectrum:['O','B','A','F','G','K','M'].map((l,i)=>`<circle cx="${20+i*13.3}" cy="60" r="${9-i*.7}" fill="currentColor" opacity="${1-i*.11}"/><text x="${20+i*13.3}" y="86" font-size="11" text-anchor="middle" fill="currentColor" font-family="monospace">${l}</text>`).join(''),
+ galaxy:'<path d="M60 60 m-4 0 a4 4 0 1 1 8 0 a10 10 0 0 1 -18 4 a18 18 0 0 1 28 -14 a26 26 0 0 1 -34 34 a34 34 0 0 1 44 -40" fill="none" stroke="currentColor" stroke-width="5"/>',
+ volcano:'<path d="M20 96 L50 46 H70 L100 96Z" fill="currentColor"/><path d="M56 40 q-6 -10 2 -18 M64 40 q8 -10 0 -20" fill="none" stroke="currentColor" stroke-width="4"/>',
+ code:'<path d="M44 38 L22 60 L44 82 M76 38 L98 60 L76 82 M66 30 L54 90" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>',
+ cross:'<rect x="50" y="24" width="20" height="72" fill="currentColor"/><rect x="24" y="50" width="72" height="20" fill="currentColor"/>',
+ butterfly:'<path d="M60 40 C40 10 14 30 30 56 C14 76 40 96 60 70 C80 96 106 76 90 56 C106 30 80 10 60 40Z" fill="currentColor"/><line x1="60" y1="36" x2="60" y2="90" stroke="var(--card)" stroke-width="3"/>',
+ battery:'<rect x="26" y="40" width="62" height="40" fill="none" stroke="currentColor" stroke-width="5"/><rect x="88" y="52" width="8" height="16" fill="currentColor"/><rect x="32" y="46" width="34" height="28" fill="currentColor"/>',
+ rocket:'<path d="M60 16 C76 32 76 62 70 82 H50 C44 62 44 32 60 16Z" fill="currentColor"/><path d="M50 70 L38 88 H50 M70 70 L82 88 H70" fill="currentColor"/><path d="M54 90 L60 106 L66 90" fill="currentColor" opacity=".5"/>',
+ laser:'<rect x="16" y="50" width="34" height="20" fill="currentColor"/><path d="M50 60 H104" stroke="currentColor" stroke-width="4"/><path d="M60 50 l4 -6 M72 50 l4 -6 M84 50 l4 -6" stroke="currentColor" stroke-width="3"/>',
+ magnet:'<path d="M34 30 V64 a26 26 0 0 0 52 0 V30 H70 V64 a10 10 0 0 1 -20 0 V30Z" fill="currentColor"/><rect x="34" y="24" width="16" height="12" fill="var(--card)" stroke="currentColor" stroke-width="3"/><rect x="70" y="24" width="16" height="12" fill="var(--card)" stroke="currentColor" stroke-width="3"/>',
+ comet:'<circle cx="82" cy="40" r="11" fill="currentColor"/><path d="M74 48 L22 96 M78 52 L36 100 M70 44 L18 82" stroke="currentColor" stroke-width="4" opacity=".6"/>',
+ telescope:'<g transform="rotate(-30 60 60)"><rect x="24" y="48" width="64" height="20" fill="currentColor"/><rect x="88" y="44" width="10" height="28" fill="currentColor"/></g><path d="M56 70 L42 104 M60 70 L74 104" stroke="currentColor" stroke-width="4"/>',
+ orbit:'<circle cx="60" cy="60" r="14" fill="currentColor"/><ellipse cx="60" cy="60" rx="42" ry="26" fill="none" stroke="currentColor" stroke-width="3" stroke-dasharray="6 5"/><circle cx="100" cy="52" r="6" fill="currentColor"/>'
+};
+function initials(n){const p=n.replace(/[^A-Za-zÀ-ÿ\- ]/g,'').split(/[\s-]+/).filter(x=>x&&x[0]===x[0].toUpperCase()&&!['du','de','Lady','Dame'].includes(x));return (p[0][0]+(p.length>1?p[p.length-1][0].toLowerCase():p[0][1])).replace(/^(.)(.)$/,(m,a,b)=>a.toUpperCase()+b.toLowerCase())}
+function portrait(w){
+  return `<svg viewBox="0 0 120 150" role="img" aria-label="Illustrated tile for ${w.name}" style="color:var(--accent);background:var(--card)">
+  <rect x="0" y="0" width="120" height="150" fill="var(--card)"/>
+  <g transform="translate(0,4)">${ICON[w.icon]||ICON.atom}</g>
+  <line x1="10" y1="118" x2="110" y2="118" stroke="var(--line)" stroke-width="1.5"/>
+  <text x="60" y="140" font-family="Bricolage Grotesque, sans-serif" font-size="20" font-weight="800" text-anchor="middle" fill="var(--ink)">${initials(w.name)} · ${w.key}</text></svg>`;
+}
+
+/* ---------- state ---------- */
+const $=s=>document.querySelector(s);
+let met=new Set();
+try{met=new Set(JSON.parse(localStorage.getItem('wgs-met')||'[]'))}catch(e){}
+function saveMet(){try{localStorage.setItem('wgs-met',JSON.stringify([...met]))}catch(e){}}
+let cur={s:'physics',t:'space'};
+let quizScore=0, quizCount=0;
+
+let view='topic';
+function parseHash(){
+  const h=(location.hash||'').slice(1);
+  if(h==='explore'){view='explore';return}
+  const [s,t]=h.split('-');
+  if(SUBJECTS[s]&&SUBJECTS[s].topics.some(x=>x[0]===t)){cur={s,t};view='topic'}
+}
+function setHash(h){if(location.hash.slice(1)!==h) history.replaceState(null,'','#'+h)}
+const yr=w=>w.kl||w.key;
+const surname=n=>n.replace(/\s*\(.*\)/,'').split(' ').slice(-1)[0];
+const topicName=w=>SUBJECTS[w.s].topics.find(x=>x[0]===w.t)[2];
+
+function renderControls(){
+  $('#subjects').innerHTML=Object.entries(SUBJECTS).map(([k,v])=>{
+    const n=W.filter(w=>w.s===k).length;
+    return `<button class="subj" type="button" data-s="${k}" aria-pressed="${view==='topic'&&k===cur.s}"><i></i>${v.name}<small>${n} scientists</small></button>`}).join('');
+  $('#topics').innerHTML=SUBJECTS[cur.s].topics.map(([k,code,name])=>
+    `<button class="topic" type="button" data-t="${k}" aria-pressed="${view==='topic'&&k===cur.t}"><code>${code}</code>${name}</button>`).join('');
+  document.body.dataset.subject=view==='topic'?cur.s:'explore';
+  $('#tileSym').textContent=view==='topic'?{biology:'Bi',chemistry:'Ch',physics:'Ph',beyond:'Bg'}[cur.s]:'Ws';
+  $('#tileNum').textContent=new Set(W.map(w=>w.name)).size;
+  $('#quizBtn').hidden=view!=='topic';
+}
+function cardHTML(w,where){
+  const nb=NOBEL[w.id], bk=booksOf(w.id).length;
+  return `<button class="card" type="button" data-id="${w.id}" data-s="${w.s}">
+     <div class="top"><span>${yr(w)}</span><span>${w.from}</span></div>
+     ${where?`<div class="where">${SUBJECTS[w.s].name} · ${topicName(w)}</div>`:''}
+     <div class="sym">${initials(w.name)}</div>
+     <span class="stamp" ${met.has(w.id)?'':'hidden'}>MET</span>
+     <h3>${w.name}</h3><div class="from">${w.life}</div>
+     ${nb||bk?`<div class="badges">${nb?`<span class="badge">Nobel</span>`:''}${bk?`<span class="badge" style="color:var(--muted)">In ${bk} book${bk>1?'s':''}</span>`:''}</div>`:''}
+     <div class="what">${w.what}</div>
+     <div class="open"><span>Open her file</span><span aria-hidden="true">→</span></div>
+   </button>`;
+}
+function renderExplore(){
+  view='explore'; renderControls();
+  const q=$('#q').value.trim().toLowerCase(), era=$('#era').value, book=$('#book').value, nob=$('#nob').checked;
+  const [a,b]=era==='all'?[-1e9,1e9]:era.split('-').map(Number);
+  const bset=book==='all'?null:new Set(BOOKS.find(x=>x.id===book).ids);
+  const seenNames=new Set();
+  let list=W.filter(w=>{
+    if(w.key<a||w.key>b) return false;
+    if(bset&&!bset.has(w.id)) return false;
+    if(nob&&!NOBEL[w.id]) return false;
+    if(q){const hay=[w.name,w.what,w.bio,w.from,w.gcse,w.fun,SUBJECTS[w.s].name,topicName(w)].join(' ').toLowerCase(); if(!q.split(/\s+/).every(t=>hay.includes(t))) return false}
+    return true;
+  }).sort((x,y)=>surname(x.name).localeCompare(surname(y.name),'en')||x.s.localeCompare(y.s));
+  const people=new Set(list.map(w=>w.name)).size;
+  const bits=[q?`matching “${$('#q').value.trim()}”`:'',era!=='all'?$('#era').selectedOptions[0].text.toLowerCase():'',bset?`in ${BOOKS.find(x=>x.id===book).title.split(':')[0]}`:'',nob?'Nobel laureates':''].filter(Boolean);
+  $('#head').innerHTML=`<span class="label">Explore all subjects · A–Z by surname</span><h2>${people} scientist${people===1?'':'s'}${bits.length?' '+bits.join(', '):''}</h2><p>Every card shows which GCSE topic she belongs to. ${list.length>people?'Some scientists appear under more than one topic. ':''}<button class="btn" type="button" id="backBtn">← Back to topics</button></p>`;
+  $('#tlwrap').hidden=true;
+  $('#grid').innerHTML=list.length?list.map(w=>cardHTML(w,true)).join(''):`<div class="empty">No scientists match. Try a different word, or clear the filters.</div>`;
+  updateMeter(); setHash('explore');
+}
+function renderTopic(){
+  view='topic'; renderControls(); $('#tlwrap').hidden=false;
+  const tp=SUBJECTS[cur.s].topics.find(x=>x[0]===cur.t);
+  const list=W.filter(w=>w.s===cur.s&&w.t===cur.t).sort((a,b)=>a.key-b.key);
+  $('#head').innerHTML=`<span class="label">${SUBJECTS[cur.s].name} · ${tp[1]==='+'?'Wider science':'Topic '+tp[1]}</span><h2>${tp[2]}</h2><p>${INTRO[cur.s+'-'+cur.t]} ${list.length} scientist${list.length>1?'s':''} to meet.</p>`;
+  // timeline
+  const yrs=list.map(w=>w.key); let lo=Math.min(...yrs), hi=Math.max(...yrs);
+  if(hi-lo<20){lo-=10;hi+=10}
+  const pos={};
+  $('#tl').innerHTML=list.map((w,i)=>{
+    let p=((w.key-lo)/(hi-lo))*100;
+    const k=Math.round(p/6); pos[k]=(pos[k]||0)+1; p=Math.min(100,p+(pos[k]-1)*7);
+    return `<button class="yr" type="button" data-id="${w.id}" style="left:${p}%" aria-label="${w.name}, ${yr(w)}"><span>${yr(w)}</span><span class="dot"></span><span class="nm">${surname(w.name)}</span></button>`}).join('');
+  $('#grid').innerHTML=list.map(w=>cardHTML(w,false)).join('');
+  updateMeter(); setHash(cur.s+'-'+cur.t);
+}
+function updateMeter(){
+  const inSub=view==='topic'?W.filter(w=>w.s===cur.s):W; const m=inSub.filter(w=>met.has(w.id)).length;
+  $('#metText').textContent=`Met ${m} of ${inSub.length}${view==='topic'?' in '+SUBJECTS[cur.s].name:' overall'}`;
+  $('#metBar').style.width=(m/inSub.length*100)+'%';
+}
+function renderBooks(){
+  $('#book').innerHTML='<option value="all">Any book</option>'+BOOKS.filter(b=>b.ids).map(b=>`<option value="${b.id}">${b.title.split(':')[0]} (${b.author.split(' ').slice(-1)[0]})</option>`).join('');
+  $('#booklist').innerHTML=BOOKS.map(b=>`<div class="book"><b>${b.title}</b><span>${b.author} · ${b.year}</span><p>${b.note}</p>${b.ids?`<button class="btn" type="button" data-book="${b.id}">Show her ${b.ids.length} scientists</button>`:''}</div>`).join('');
+}
+
+/* ---------- profile ---------- */
+let lastFocus=null;
+function openOverlay(html){lastFocus=document.activeElement;const o=$('#overlay');o.innerHTML=html;o.hidden=false;const c=o.querySelector('.close');c&&c.focus()}
+function closeOverlay(){$('#overlay').hidden=true;$('#overlay').innerHTML='';lastFocus&&lastFocus.focus&&lastFocus.focus()}
+function profile(id){
+  const w=W.find(x=>x.id===id); if(!w) return;
+  met.add(id); saveMet();
+  const sib=W.filter(x=>x.s===w.s&&x.t===w.t).sort((a,b)=>a.key-b.key); const i=sib.indexOf(w);
+  const prev=sib[i-1], next=sib[i+1];
+  const bks=booksOf(w.id), also=W.filter(x=>x.name===w.name&&x.id!==w.id);
+  openOverlay(`<div class="sheet" data-s="${w.s}" role="dialog" aria-modal="true" aria-labelledby="pname">
+    <div class="side">${portrait(w)}<div><div class="label">Key year</div><div style="font-family:var(--display);font-size:2rem;font-weight:800">${yr(w)}</div><div class="note">${w.from}</div></div></div>
+    <div class="main">
+      <button class="close" type="button" aria-label="Close">×</button>
+      <div><span class="label">${SUBJECTS[w.s].name} · ${topicName(w)}</span><h2 id="pname">${w.name}</h2><div class="meta">${w.life}${NOBEL[w.id]?` · Nobel Prize: ${NOBEL[w.id]}`:''}</div></div>
+      <p>${w.bio}</p>
+      <div class="box"><span class="label">${w.s==='beyond'?'Why it matters':'Link to your GCSE'}</span>${w.gcse}</div>
+      <div class="box"><span class="label">Fun fact</span>${w.fun}</div>
+      ${bks.length?`<div class="note"><strong>Read about her in:</strong> ${bks.map(b=>`<em>${b.title.split(':')[0]}</em> (${b.author})`).join('; ')}</div>`:''}
+      ${also.length?`<div class="note"><strong>Also appears in:</strong> ${also.map(x=>`<button class="link" style="background:none;border:0;padding:0;cursor:pointer" type="button" data-go="${x.id}">${SUBJECTS[x.s].name} · ${topicName(x)}</button>`).join(', ')}</div>`:''}
+      <a class="link" href="https://en.wikipedia.org/wiki/${encodeURI(w.wiki)}" target="_blank" rel="noopener">See photos and read more on Wikipedia →</a>
+      <div class="navrow">${prev?`<button class="btn" type="button" data-go="${prev.id}">← ${prev.name}</button>`:''}${next?`<button class="btn" type="button" data-go="${next.id}">${next.name} →</button>`:''}</div>
+    </div></div>`);
+  const st=document.querySelector(`.card[data-id="${id}"] .stamp`); if(st) st.hidden=false;
+  updateMeter();
+}
+
+/* ---------- quiz ---------- */
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function quiz(){
+  const pool=W.filter(w=>w.s===cur.s&&w.t===cur.t);
+  const ans=pool[Math.floor(Math.random()*pool.length)];
+  const seen=new Set([ans.name]);
+  const others=shuffle(W.filter(w=>w.s===cur.s)).filter(w=>!seen.has(w.name)&&seen.add(w.name));
+  const same=others.filter(w=>w.t===cur.t), rest=others.filter(w=>w.t!==cur.t);
+  const opts=shuffle([ans,...same.concat(rest).slice(0,3)]);
+  let shown=1, done=false;
+  const draw=()=>{
+    $('#overlay').querySelector('.clues').innerHTML=ans.clues.map((c,i)=>i<shown?`<li><b>${i+1}</b>${c}</li>`:`<li class="locked"><b>${i+1}</b>Clue locked</li>`).join('');
+    const more=$('#overlay').querySelector('#moreClue'); if(more) more.hidden=shown>=3||done;
+    $('#overlay').querySelector('.score').textContent=`Score ${quizScore} from ${quizCount} rounds`+(done?'':` · worth ${4-shown} point${4-shown>1?'s':''}`);
+  };
+  openOverlay(`<div class="sheet quiz" role="dialog" aria-modal="true" aria-labelledby="qtitle"><div class="main">
+    <button class="close" type="button" aria-label="Close">×</button>
+    <div><span class="label">${SUBJECTS[cur.s].name} · Who am I?</span><h2 id="qtitle">Who am I?</h2><div class="score"></div></div>
+    <ul class="clues"></ul>
+    <div><button class="btn" type="button" id="moreClue">Reveal another clue (−1 point)</button></div>
+    <div class="opts">${opts.map(o=>`<button class="opt" type="button" data-ans="${o.id}">${o.name}</button>`).join('')}</div>
+    <div id="qres" class="note" aria-live="polite"></div>
+    <div class="navrow" id="qnext" hidden><button class="btn primary" type="button" id="againBtn">Next round</button><button class="btn" type="button" data-go="${ans.id}">Read her file</button></div>
+  </div></div>`);
+  draw();
+  $('#overlay').querySelector('#moreClue').onclick=()=>{shown++;draw()};
+  $('#overlay').querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(done) return;
+    if(b.dataset.ans===ans.id){
+      done=true; b.classList.add('right'); const pts=4-shown; quizScore+=pts; quizCount++;
+      $('#qres').textContent=`Correct! +${pts} point${pts>1?'s':''}. ${ans.name}: ${ans.what.toLowerCase()} (${ans.key}).`;
+      shown=3; draw(); $('#qnext').hidden=false;
+    } else {
+      b.classList.add('wrong'); b.disabled=true;
+      if(shown<3){shown++; draw(); $('#qres').textContent='Not her. Here is another clue.'}
+      else {done=true; quizCount++; const r=$('#overlay').querySelector(`.opt[data-ans="${ans.id}"]`); r.classList.add('right'); $('#qres').textContent=`It was ${ans.name}. No points this time.`; $('#qnext').hidden=false; draw();}
+    }
+  });
+  $('#overlay').querySelector('#againBtn').onclick=quiz;
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{
+  const s=e.target.closest('.subj'); if(s){cur.s=s.dataset.s;cur.t=SUBJECTS[cur.s].topics[0][0];renderControls();renderTopic();return}
+  const t=e.target.closest('.topic'); if(t){cur.t=t.dataset.t;renderControls();renderTopic();return}
+  const c=e.target.closest('.card,.yr'); if(c){profile(c.dataset.id);return}
+  const g=e.target.closest('[data-go]'); if(g){const w=W.find(x=>x.id===g.dataset.go); if(w&&view==='topic'&&(w.t!==cur.t||w.s!==cur.s)){cur={s:w.s,t:w.t};renderTopic()} profile(g.dataset.go);return}
+  const bk=e.target.closest('[data-book]'); if(bk){$('#q').value='';$('#era').value='all';$('#nob').checked=false;$('#book').value=bk.dataset.book;renderExplore();$('#head').scrollIntoView({behavior:'smooth'});return}
+  if(e.target.id==='backBtn'){renderTopic();return}
+  if(e.target.closest('.close')||e.target.id==='overlay'){closeOverlay();return}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#overlay').hidden) closeOverlay()});
+$('#quizBtn').onclick=quiz;
+$('#randBtn').onclick=()=>{const w=W[Math.floor(Math.random()*W.length)];cur={s:w.s,t:w.t};renderTopic();profile(w.id)};
+$('#azBtn').onclick=()=>{$('#q').value='';$('#era').value='all';$('#book').value='all';$('#nob').checked=false;renderExplore()};
+$('#q').addEventListener('input',renderExplore);
+['#era','#book','#nob'].forEach(s=>$(s).addEventListener('change',renderExplore));
+window.addEventListener('hashchange',()=>{parseHash();view==='explore'?renderExplore():renderTopic()});
+renderBooks(); parseHash(); view==='explore'?renderExplore():renderTopic();
+</script>
+
+</body></html>
