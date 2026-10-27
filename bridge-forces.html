@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bridge &amp; Beam Forces</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;}
+body{background:#eef2f7;}
+#bf{
+  --bg:#eef2f7; --panel:#ffffff; --panel2:#f5f7fb; --ink:#152132; --muted:#5a687c; --line:#d6dde8;
+  --accent:#2f5bea; --accent-ink:#ffffff; --canvas:#fbfcfe; --grid:#e7ecf3; --ruler:#7a879a;
+  --beam:#4b5a70; --beam2:#7d8ca3; --support:#26344a; --ground:#9aa6b8;
+  --ra:#1f7ae0; --rb:#0e9f6e; --w:#d6336c; --com:#b7791f;
+  --l1:#f0a202; --l2:#7c4dff; --l3:#00a3b5; --l4:#e8590c; --load-ink:#1a1a1a;
+  --danger:#d92d4b; --danger-bg:#fde8ec; --ok:#0e9f6e; --ok-bg:#e3f7ef;
+  --input:#ffffff;
+  width:100%; min-height:600px; background:var(--bg); color:var(--ink);
+  font-family:'Outfit',system-ui,sans-serif; box-sizing:border-box; padding:16px;
+}
+#bf[data-theme="mint"]{
+  --bg:#e8f4ef; --panel:#fbfefc; --panel2:#f0f8f4; --ink:#10302a; --muted:#4c6a62; --line:#c9e0d7;
+  --accent:#0b7a63; --canvas:#f7fcfa; --grid:#dcede6; --ruler:#6d8a82;
+  --beam:#2f5249; --beam2:#5f8378; --support:#173a33; --ground:#8fb0a6;
+  --ra:#2563eb; --rb:#c2410c; --w:#be185d; --com:#a16207;
+  --l1:#eab308; --l2:#8b5cf6; --l3:#0891b2; --l4:#f97316;
+  --input:#ffffff;
+}
+#bf[data-theme="slate"]{
+  --bg:#111722; --panel:#1a2230; --panel2:#151c28; --ink:#e8edf5; --muted:#9aa7ba; --line:#2c384b;
+  --accent:#6c8cff; --accent-ink:#0b1020; --canvas:#0d131d; --grid:#1b2433; --ruler:#7f8ca0;
+  --beam:#8796ad; --beam2:#b4c0d2; --support:#c9d3e2; --ground:#4a576b;
+  --ra:#5aa9ff; --rb:#34d399; --w:#ff6b9a; --com:#fbbf24;
+  --l1:#fbbf24; --l2:#a78bfa; --l3:#22d3ee; --l4:#fb923c; --load-ink:#111;
+  --danger:#ff5c77; --danger-bg:#3a1a24; --ok:#34d399; --ok-bg:#12302a;
+  --input:#0f1621;
+}
+#bf[data-theme="blueprint"]{
+  --bg:#0a2342; --panel:#0f2d52; --panel2:#0c274a; --ink:#e6f1ff; --muted:#9fbbe0; --line:#24497a;
+  --accent:#59d2fe; --accent-ink:#06213d; --canvas:#0b2a4f; --grid:#173c69; --ruler:#9fbbe0;
+  --beam:#bcd6f5; --beam2:#ffffff; --support:#e6f1ff; --ground:#5c80ad;
+  --ra:#59d2fe; --rb:#7cf3b0; --w:#ffb4c8; --com:#ffe066;
+  --l1:#ffe066; --l2:#c3a6ff; --l3:#7cf3b0; --l4:#ffa94d; --load-ink:#06213d;
+  --danger:#ff6b81; --danger-bg:#3b1630; --ok:#7cf3b0; --ok-bg:#0f3a3a;
+  --input:#0a2342;
+}
+#bf[data-theme="contrast"]{
+  --bg:#000000; --panel:#0a0a0a; --panel2:#000000; --ink:#ffffff; --muted:#e0e0e0; --line:#ffffff;
+  --accent:#ffe600; --accent-ink:#000000; --canvas:#000000; --grid:#262626; --ruler:#ffffff;
+  --beam:#ffffff; --beam2:#ffffff; --support:#ffffff; --ground:#ffffff;
+  --ra:#00e5ff; --rb:#00ff7f; --w:#ff4fd8; --com:#ffe600;
+  --l1:#ffe600; --l2:#ff9de6; --l3:#00e5ff; --l4:#ffa040; --load-ink:#000;
+  --danger:#ff3b3b; --danger-bg:#2a0000; --ok:#00ff7f; --ok-bg:#002a14;
+  --input:#000000;
+}
+#bf *{box-sizing:border-box;}
+#bf .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px;}
+#bf h1{font-size:1.35rem;font-weight:700;margin:0;letter-spacing:-0.01em;}
+#bf h1 span{color:var(--muted);font-weight:500;font-size:0.95rem;margin-left:8px;}
+#bf .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+#bf select,#bf input[type="number"]{
+  font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--ink);background:var(--input);
+  border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0;
+}
+#bf select{font-family:'Outfit',sans-serif;cursor:pointer;}
+#bf input[type="number"]:focus,#bf select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+#bf input:disabled{opacity:0.5;}
+#bf .tool{display:flex;flex-direction:column;gap:3px;}
+#bf .tool > span{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;font-weight:600;}
+#bf .btn{font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;cursor:pointer;}
+#bf .btn:hover{border-color:var(--accent);}
+#bf .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+#bf .btn.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+
+#bf .stage{position:relative;width:100%;height:400px;min-height:320px;background:var(--canvas);border:1px solid var(--line);border-radius:14px;overflow:hidden;touch-action:none;}
+#bf canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+#bf .hint{position:absolute;z-index:1;left:12px;top:10px;font-size:0.78rem;color:var(--muted);pointer-events:none;}
+#bf .banner{display:none;margin-top:12px;padding:10px 14px;border-radius:10px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger);font-weight:500;font-size:0.92rem;line-height:1.4;}
+#bf .banner.show{display:block;}
+
+#bf .grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:16px;margin-top:16px;}
+#bf .col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+#bf .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;}
+#bf .card h2{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin:0 0 12px;font-weight:600;}
+#bf .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+#bf .field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+#bf .field label{font-size:0.8rem;color:var(--muted);}
+#bf .check{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--ink);cursor:pointer;margin-bottom:10px;}
+#bf .check input{accent-color:var(--accent);width:16px;height:16px;}
+
+#bf .load{display:grid;grid-template-columns:14px 1fr 1fr 30px;gap:8px;align-items:end;margin-bottom:10px;}
+#bf .chip{width:14px;height:34px;border-radius:4px;}
+#bf .del{height:34px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:8px;cursor:pointer;font-size:1rem;}
+#bf .del:hover{color:var(--danger);border-color:var(--danger);}
+
+#bf .readouts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
+#bf .ro{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px;border-top:4px solid var(--accent);min-width:0;}
+#bf .ro .k{font-size:0.75rem;color:var(--muted);font-weight:600;}
+#bf .ro .v{font-family:'IBM Plex Mono',monospace;font-size:1.35rem;font-weight:600;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#bf .ro .s{font-size:0.72rem;color:var(--muted);margin-top:3px;min-height:1em;}
+#bf .ro.bad .v{color:var(--danger);}
+
+#bf .work{font-size:0.92rem;line-height:1.6;}
+#bf .work .step{padding:10px 0;border-top:1px dashed var(--line);}
+#bf .work .step:first-child{border-top:none;padding-top:0;}
+#bf .work .sh{font-weight:600;margin-bottom:4px;}
+#bf .work .eq{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;background:var(--panel2);border-radius:6px;padding:6px 10px;margin:4px 0;overflow-x:auto;white-space:nowrap;}
+#bf .work .note{color:var(--muted);font-size:0.85rem;}
+#bf .tag{display:inline-block;font-size:0.7rem;font-weight:600;padding:1px 6px;border-radius:4px;margin-left:6px;border:1px solid currentColor;}
+
+#bf .predict{display:none;}
+#bf.predicting .predict{display:block;}
+#bf .fb{margin-top:10px;font-size:0.9rem;padding:8px 10px;border-radius:8px;display:none;}
+#bf .fb.good{display:block;background:var(--ok-bg);color:var(--ok);}
+#bf .fb.badfb{display:block;background:var(--danger-bg);color:var(--danger);}
+
+@media (max-width:860px){
+  #bf .grid{grid-template-columns:1fr;}
+  #bf .readouts{grid-template-columns:1fr 1fr;}
+  #bf .stage{height:340px;}
+}
+@media (max-width:480px){
+  #bf{padding:12px;}
+  #bf .readouts{grid-template-columns:1fr;}
+  #bf .hint{display:none;}
+}
+</style>
+</head>
+<body>
+<div id="bf" data-theme="light">
+  <div class="top">
+    <h1>Bridge &amp; Beam Forces<span>principle of moments</span></h1>
+    <div class="tools">
+      <label class="tool"><span>Scenario</span><select id="preset"></select></label>
+      <label class="tool"><span>g</span><select id="g">
+        <option value="9.81">9.81 N/kg</option><option value="9.8">9.8 N/kg</option><option value="10">10 N/kg</option>
+      </select></label>
+      <label class="tool"><span>Units</span><select id="unit"><option value="N">N</option><option value="kN">kN</option></select></label>
+      <label class="tool"><span>Snap</span><select id="snap">
+        <option value="0.05">0.05 m</option><option value="0.1" selected>0.1 m</option><option value="0.25">0.25 m</option><option value="0.5">0.5 m</option><option value="1">1 m</option>
+      </select></label>
+      <label class="tool"><span>Colours</span><select id="theme"></select></label>
+      <label class="tool"><span>&nbsp;</span><button class="btn" id="predictBtn" type="button">Predict mode</button></label>
+    </div>
+  </div>
+
+  <div class="stage" id="stage">
+    <canvas id="cv"></canvas>
+    <div class="hint">Drag the loads, the supports or the centre of mass</div>
+  </div>
+  <div class="banner" id="banner"></div>
+
+  <div class="grid">
+    <div class="col">
+      <div class="card">
+        <h2>Beam</h2>
+        <div class="row">
+          <div class="field"><label for="L">Length (m)</label><input type="number" id="L" min="1" max="50" step="0.5"></div>
+          <div class="field"><label for="mB">Mass of beam (kg)</label><input type="number" id="mB" min="0" step="10"></div>
+        </div>
+        <label class="check"><input type="checkbox" id="uniform"> Uniform beam (centre of mass at the midpoint)</label>
+        <div class="field"><label for="com">Centre of mass position (m from left end)</label><input type="number" id="com" step="0.1"></div>
+      </div>
+      <div class="card">
+        <h2>Supports</h2>
+        <div class="row">
+          <div class="field"><label for="xA">Support A position (m)</label><input type="number" id="xA" step="0.1"></div>
+          <div class="field"><label for="xB">Support B position (m)</label><input type="number" id="xB" step="0.1"></div>
+        </div>
+        <div class="row">
+          <label class="check"><input type="checkbox" id="boltA"> A bolted down</label>
+          <label class="check"><input type="checkbox" id="boltB"> B bolted down</label>
+        </div>
+        <div class="note" style="font-size:0.8rem;color:var(--muted);line-height:1.4">A simple support can only push up. A bolted support can also pull down, so the beam cannot tip about it.</div>
+      </div>
+      <div class="card">
+        <h2>Loads</h2>
+        <div id="loads"></div>
+        <button class="btn" id="addLoad" type="button">+ Add load</button>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h2>Results</h2>
+        <div class="readouts">
+          <div class="ro" id="roA" style="border-top-color:var(--ra)"><div class="k">Reaction at A, R<sub>A</sub></div><div class="v" id="ra">–</div><div class="s" id="raS"></div></div>
+          <div class="ro" id="roB" style="border-top-color:var(--rb)"><div class="k">Reaction at B, R<sub>B</sub></div><div class="v" id="rb">–</div><div class="s" id="rbS"></div></div>
+          <div class="ro" style="border-top-color:var(--w)"><div class="k">Total weight</div><div class="v" id="tw">–</div><div class="s">all downward forces</div></div>
+        </div>
+        <div class="predict" style="margin-top:14px">
+          <div class="row">
+            <div class="field"><label for="pA">Your R<sub>A</sub> (<span class="uLbl">N</span>)</label><input type="number" id="pA" step="any"></div>
+            <div class="field"><label for="pB">Your R<sub>B</sub> (<span class="uLbl">N</span>)</label><input type="number" id="pB" step="any"></div>
+          </div>
+          <button class="btn primary" id="checkBtn" type="button">Check</button>
+          <button class="btn" id="revealBtn" type="button">Reveal</button>
+          <div class="fb" id="fb"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Working</h2>
+        <div class="work" id="work"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  var root = document.getElementById('bf');
+  function $(id){ return root.querySelector('#' + id); }
+
+  var THEMES = [['light','Light'],['mint','Mint'],['slate','Slate (dark)'],['blueprint','Blueprint (dark)'],['contrast','High contrast']];
+  var PRESETS = [
+    {name:'Two loads on a bridge', L:10, mB:2000, uniform:true, com:5, xA:0, xB:10, boltA:false, boltB:false, loads:[{m:500,x:3},{m:1000,x:8}]},
+    {name:'Plank on two trestles', L:4, mB:20, uniform:true, com:2, xA:0.5, xB:3.5, boltA:false, boltB:false, loads:[{m:60,x:1.2}]},
+    {name:'Lorry crossing a bridge', L:20, mB:15000, uniform:true, com:10, xA:0, xB:20, boltA:false, boltB:false, loads:[{m:6000,x:6},{m:9000,x:10}]},
+    {name:'Diving board (bolted end)', L:5, mB:40, uniform:true, com:2.5, xA:0, xB:1.5, boltA:true, boltB:false, loads:[{m:70,x:4.8}]},
+    {name:'Overhanging plank: will it tip?', L:6, mB:50, uniform:true, com:3, xA:1, xB:3, boltA:false, boltB:false, loads:[{m:40,x:5.8}]},
+    {name:'Non-uniform beam', L:8, mB:300, uniform:false, com:2.5, xA:1, xB:7, boltA:false, boltB:false, loads:[]}
+  ];
+  var MAXLOADS = 4;
+
+  var S = clone(PRESETS[0]);
+  S.g = 9.81; S.unit = 'N'; S.snap = 0.1; S.predict = false; S.revealed = false;
+
+  var R = {}; // results
+  var tilt = 0, tiltTarget = 0, animId = null;
+  var drag = null;
+  var geom = null;
+
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function num(v, d){ var n = parseFloat(v); return isFinite(n) ? n : d; }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function snap(v){ var s = S.snap; return Math.round(v / s) * s; }
+  function cssVar(n){ return getComputedStyle(root).getPropertyValue(n).trim(); }
+  function sf3(v){ if (v === 0) return 0; return Number(v.toPrecision(3)); }
+  function fmtF(v){
+    if (!isFinite(v)) return '–';
+    var x = S.unit === 'kN' ? v / 1000 : v;
+    return sf3(x).toLocaleString('en-GB', {maximumFractionDigits:6}) + ' ' + S.unit;
+  }
+  function fmtM(v){ // moment
+    if (!isFinite(v)) return '–';
+    var x = S.unit === 'kN' ? v / 1000 : v;
+    return sf3(x).toLocaleString('en-GB', {maximumFractionDigits:6}) + ' ' + S.unit + ' m';
+  }
+  function fmtD(v){ return (Math.round(v * 100) / 100).toLocaleString('en-GB', {maximumFractionDigits:2}) + ' m'; }
+  function fmtNum(v){ var x = S.unit === 'kN' ? v / 1000 : v; return sf3(x).toLocaleString('en-GB', {maximumFractionDigits:6}); }
+
+  /* ---------- UI build ---------- */
+  PRESETS.forEach(function(p, i){
+    var o = document.createElement('option'); o.value = i; o.textContent = p.name; $('preset').appendChild(o);
+  });
+  THEMES.forEach(function(t){
+    var o = document.createElement('option'); o.value = t[0]; o.textContent = t[1]; $('theme').appendChild(o);
+  });
+  try { var saved = localStorage.getItem('bf-theme'); if (saved && THEMES.some(function(t){ return t[0] === saved; })) root.setAttribute('data-theme', saved); } catch(e) {}
+  $('theme').value = root.getAttribute('data-theme');
+
+  function loadColour(i){ return cssVar('--l' + (i + 1)); }
+
+  function buildLoadsUI(){
+    var box = $('loads'); box.innerHTML = '';
+    S.loads.forEach(function(ld, i){
+      var row = document.createElement('div'); row.className = 'load';
+      row.innerHTML =
+        '<div class="chip" style="background:var(--l' + (i + 1) + ')"></div>' +
+        '<div class="field" style="margin:0"><label>Load ' + (i + 1) + ' mass (kg)</label><input type="number" min="0" step="10" data-i="' + i + '" data-k="m" value="' + ld.m + '"></div>' +
+        '<div class="field" style="margin:0"><label>Position (m)</label><input type="number" step="0.1" data-i="' + i + '" data-k="x" value="' + ld.x + '"></div>' +
+        '<button class="del" type="button" title="Remove load" data-del="' + i + '">×</button>';
+      box.appendChild(row);
+    });
+    box.querySelectorAll('input').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        var i = +inp.getAttribute('data-i'), k = inp.getAttribute('data-k');
+        if (k === 'm') S.loads[i].m = Math.max(0, num(inp.value, 0));
+        else S.loads[i].x = clamp(num(inp.value, 0), 0, S.L);
+        changed();
+      });
+    });
+    box.querySelectorAll('.del').forEach(function(b){
+      b.addEventListener('click', function(){ S.loads.splice(+b.getAttribute('data-del'), 1); buildLoadsUI(); changed(); });
+    });
+    $('addLoad').disabled = S.loads.length >= MAXLOADS;
+    $('addLoad').style.opacity = S.loads.length >= MAXLOADS ? 0.5 : 1;
+  }
+
+  function syncInputs(){
+    $('L').value = S.L; $('mB').value = S.mB; $('uniform').checked = S.uniform;
+    $('com').value = round2(S.com); $('com').disabled = S.uniform;
+    $('xA').value = round2(S.xA); $('xB').value = round2(S.xB);
+    $('boltA').checked = S.boltA; $('boltB').checked = S.boltB;
+    var li = $('loads').querySelectorAll('input[data-k="x"]');
+    li.forEach(function(inp){ var i = +inp.getAttribute('data-i'); if (document.activeElement !== inp) inp.value = round2(S.loads[i].x); });
+  }
+  function round2(v){ return Math.round(v * 100) / 100; }
+
+  function bindNum(id, fn){ $(id).addEventListener('input', function(){ fn(num($(id).value, NaN)); changed(); }); }
+  bindNum('L', function(v){
+    if (!isFinite(v) || v < 0.5) return;
+    S.L = clamp(v, 0.5, 100);
+    S.xA = clamp(S.xA, 0, S.L); S.xB = clamp(S.xB, 0, S.L); S.com = clamp(S.com, 0, S.L);
+    S.loads.forEach(function(l){ l.x = clamp(l.x, 0, S.L); });
+    if (S.uniform) S.com = S.L / 2;
+    syncInputs();
+  });
+  bindNum('mB', function(v){ if (isFinite(v)) S.mB = Math.max(0, v); });
+  bindNum('com', function(v){ if (isFinite(v)) S.com = clamp(v, 0, S.L); });
+  bindNum('xA', function(v){ if (isFinite(v)) S.xA = clamp(v, 0, S.L); });
+  bindNum('xB', function(v){ if (isFinite(v)) S.xB = clamp(v, 0, S.L); });
+  $('uniform').addEventListener('change', function(){ S.uniform = this.checked; if (S.uniform) S.com = S.L / 2; syncInputs(); changed(); });
+  $('boltA').addEventListener('change', function(){ S.boltA = this.checked; changed(); });
+  $('boltB').addEventListener('change', function(){ S.boltB = this.checked; changed(); });
+  $('addLoad').addEventListener('click', function(){
+    if (S.loads.length >= MAXLOADS) return;
+    var x = snap(S.L * (0.2 + 0.2 * S.loads.length) % S.L);
+    S.loads.push({m: S.mB > 1000 ? 500 : 20, x: clamp(x, 0, S.L)});
+    buildLoadsUI(); changed();
+  });
+  $('preset').addEventListener('change', function(){
+    var p = clone(PRESETS[+this.value]);
+    ['L','mB','uniform','com','xA','xB','boltA','boltB','loads'].forEach(function(k){ S[k] = p[k]; });
+    tilt = 0; buildLoadsUI(); syncInputs(); changed();
+  });
+  $('g').addEventListener('change', function(){ S.g = num(this.value, 9.81); changed(); });
+  $('unit').addEventListener('change', function(){
+    S.unit = this.value;
+    root.querySelectorAll('.uLbl').forEach(function(s){ s.textContent = S.unit; });
+    $('pA').value = ''; $('pB').value = ''; $('fb').className = 'fb';
+    changed(true);
+  });
+  $('snap').addEventListener('change', function(){ S.snap = num(this.value, 0.1); });
+  $('theme').addEventListener('change', function(){
+    root.setAttribute('data-theme', this.value);
+    try { localStorage.setItem('bf-theme', this.value); } catch(e) {}
+    draw();
+  });
+  $('predictBtn').addEventListener('click', function(){
+    S.predict = !S.predict; S.revealed = false;
+    this.classList.toggle('on', S.predict);
+    root.classList.toggle('predicting', S.predict);
+    $('fb').className = 'fb';
+    changed(true);
+  });
+  $('checkBtn').addEventListener('click', checkPrediction);
+  $('revealBtn').addEventListener('click', function(){ S.revealed = true; updateText(); });
+
+  /* ---------- Physics ---------- */
+  function compute(){
+    var forces = [{name:'Beam', sym:'W<sub>beam</sub>', m:S.mB, W:S.mB * S.g, x:S.com, beam:true}];
+    S.loads.forEach(function(l, i){ forces.push({name:'Load ' + (i + 1), sym:'W<sub>' + (i + 1) + '</sub>', m:l.m, W:l.m * S.g, x:l.x, idx:i}); });
+    var total = forces.reduce(function(s, f){ return s + f.W; }, 0);
+    var span = S.xB - S.xA;
+    var r = {forces:forces, total:total, span:span, single:false, tip:null};
+    if (Math.abs(span) < 1e-6){
+      r.single = true; r.ra = NaN; r.rb = NaN;
+      var tq = forces.reduce(function(s, f){ return s + f.W * (f.x - S.xA); }, 0);
+      if (Math.abs(tq) > 1e-6 * Math.max(1, total)) r.tip = {about:'A', dir: Math.sign(tq)};
+      return r;
+    }
+    var mA = forces.reduce(function(s, f){ return s + f.W * (f.x - S.xA); }, 0);
+    r.mA = mA;
+    r.rb = mA / span;
+    r.ra = total - r.rb;
+    var eps = 1e-9 * Math.max(1, total);
+    if (r.ra < -eps && !S.boltA){
+      var t1 = forces.reduce(function(s, f){ return s + f.W * (f.x - S.xB); }, 0);
+      r.tip = {about:'B', dir: Math.sign(t1), lifted:'A'};
+    } else if (r.rb < -eps && !S.boltB){
+      var t2 = forces.reduce(function(s, f){ return s + f.W * (f.x - S.xA); }, 0);
+      r.tip = {about:'A', dir: Math.sign(t2), lifted:'B'};
+    }
+    return r;
+  }
+
+  function changed(keepPredict){
+    R = compute();
+    if (!keepPredict && S.predict){ S.revealed = false; $('fb').className = 'fb'; }
+    tiltTarget = R.tip ? R.tip.dir * 5 * Math.PI / 180 : 0;
+    updateText();
+    animate();
+  }
+
+  /* ---------- Text output ---------- */
+  function updateText(){
+    var hide = S.predict && !S.revealed;
+    $('tw').textContent = fmtF(R.total);
+    var ban = $('banner');
+    $('roA').classList.remove('bad'); $('roB').classList.remove('bad');
+    $('raS').textContent = ''; $('rbS').textContent = '';
+
+    if (R.single){
+      $('ra').textContent = '–'; $('rb').textContent = '–';
+      ban.innerHTML = 'Both supports are at the same point, so the beam balances on a single pivot.' + (R.tip ? ' The moments about it do not balance, so the beam tips.' : ' The moments balance exactly, so it is (just) in equilibrium.') + ' Move the supports apart to share the load.';
+      ban.classList.add('show');
+      $('work').innerHTML = '<div class="note">Move the supports apart to see the working.</div>';
+      return;
+    }
+
+    $('ra').textContent = hide ? '?' : fmtF(R.ra);
+    $('rb').textContent = hide ? '?' : fmtF(R.rb);
+    if (!hide){
+      if (R.ra < 0){ $('roA').classList.toggle('bad', !S.boltA); $('raS').textContent = S.boltA ? 'downward pull from bolt' : 'would need to pull – tips'; }
+      if (R.rb < 0){ $('roB').classList.toggle('bad', !S.boltB); $('rbS').textContent = S.boltB ? 'downward pull from bolt' : 'would need to pull – tips'; }
+    }
+
+    if (R.tip && !hide){
+      var need = R.tip.lifted === 'A' ? R.ra : R.rb;
+      ban.innerHTML = '<strong>Not in equilibrium.</strong> For balance, support ' + R.tip.lifted + ' would have to pull the beam down with ' + fmtF(Math.abs(need)) + '. A simple support can only push, so the beam tips about support ' + R.tip.about + ' and lifts off ' + R.tip.lifted + '. Try bolting ' + R.tip.lifted + ' down, moving a load, or moving a support.';
+      ban.classList.add('show');
+    } else if (R.tip && hide){
+      ban.innerHTML = 'Look carefully – something is not quite right with this set-up. Make your prediction, then check.';
+      ban.classList.add('show');
+    } else ban.classList.remove('show');
+
+    if (hide){ $('work').innerHTML = '<div class="note">Working is hidden in predict mode. Calculate R<sub>A</sub> and R<sub>B</sub>, enter them under Results and press Check.</div>'; return; }
+    $('work').innerHTML = buildWorking();
+  }
+
+  function buildWorking(){
+    var f = R.forces, xA = S.xA, xB = S.xB, h = '';
+    // Step 1 – weights
+    h += '<div class="step"><div class="sh">1. Weights (W = mg, g = ' + S.g + ' N/kg)</div>';
+    f.forEach(function(F){
+      if (F.m === 0 && !F.beam) return;
+      h += '<div class="eq">' + F.sym + ' = ' + F.m.toLocaleString('en-GB') + ' × ' + S.g + ' = ' + fmtF(F.W) + '  at ' + fmtD(F.x) + '</div>';
+    });
+    h += '</div>';
+
+    // Step 2 – moments about A
+    var cw = [], acw = [], cwSum = 0, acwSum = 0;
+    f.forEach(function(F){
+      var d = F.x - xA; if (Math.abs(d) < 1e-9 || F.W === 0) return;
+      var M = F.W * Math.abs(d);
+      var term = fmtNum(F.W) + ' × ' + fmtNum1(Math.abs(d));
+      if (d > 0){ cw.push(term); cwSum += M; } else { acw.push(term); acwSum += M; }
+    });
+    var dB = Math.abs(xB - xA);
+    var rbACW = xB > xA; // R_B upward to the right of A gives an anticlockwise moment
+    h += '<div class="step"><div class="sh">2. Take moments about A <span class="note">(this removes R<sub>A</sub>, which has no moment about A)</span></div>';
+    h += '<div class="note">In equilibrium, sum of clockwise moments = sum of anticlockwise moments. Distances are measured from A (at ' + fmtD(xA) + ').</div>';
+    var lhs, rhs;
+    if (rbACW){
+      lhs = (cw.length ? cw.join(' + ') : '0');
+      rhs = 'R<sub>B</sub> × ' + fmtNum1(dB) + (acw.length ? ' + ' + acw.join(' + ') : '');
+    } else {
+      lhs = 'R<sub>B</sub> × ' + fmtNum1(dB) + (cw.length ? ' + ' + cw.join(' + ') : '');
+      rhs = (acw.length ? acw.join(' + ') : '0');
+    }
+    h += '<div class="eq">clockwise: ' + lhs + '</div>';
+    h += '<div class="eq">anticlockwise: ' + rhs + '</div>';
+    h += '<div class="eq">' + lhs + ' = ' + rhs + '</div>';
+    var net = rbACW ? cwSum - acwSum : acwSum - cwSum;
+    h += '<div class="eq">R<sub>B</sub> × ' + fmtNum1(dB) + ' = ' + fmtM(net) + '</div>';
+    h += '<div class="eq">R<sub>B</sub> = ' + fmtNum(net) + ' ÷ ' + fmtNum1(dB) + ' = <strong>' + fmtF(R.rb) + '</strong></div>';
+    if (R.rb < 0) h += '<div class="note">The negative sign means B would have to pull the beam <em>down</em>.</div>';
+    h += '</div>';
+
+    // Step 3 – vertical equilibrium
+    h += '<div class="step"><div class="sh">3. Balance the vertical forces</div>';
+    h += '<div class="note">Total upward force = total downward force</div>';
+    h += '<div class="eq">R<sub>A</sub> + R<sub>B</sub> = ' + fmtF(R.total) + '</div>';
+    h += '<div class="eq">R<sub>A</sub> = ' + fmtNum(R.total) + ' − ' + bracket(fmtNum(R.rb), R.rb) + ' = <strong>' + fmtF(R.ra) + '</strong></div>';
+    if (R.ra < 0) h += '<div class="note">The negative sign means A would have to pull the beam <em>down</em>.</div>';
+    h += '</div>';
+
+    // Step 4 – check about B
+    var mB_ = 0;
+    f.forEach(function(F){ mB_ += F.W * (F.x - xB); });
+    // clockwise-positive: R_A (upward) at xA gives moment -R_A*(xA - xB) about B
+    var resid = mB_ - R.ra * (xA - xB);
+    h += '<div class="step"><div class="sh">4. Check: moments about B</div>';
+    h += '<div class="eq">moment of R<sub>A</sub> about B = ' + bracket(fmtNum(R.ra), R.ra) + ' × ' + fmtNum1(dB) + ' = ' + fmtM(R.ra * dB) + '</div>';
+    h += '<div class="eq">net moment of the weights about B = ' + fmtM(Math.abs(mB_)) + ' ' + (mB_ >= 0 ? 'clockwise' : 'anticlockwise') + '</div>';
+    var balanced = Math.abs(resid) < 1e-6 * Math.max(1, Math.abs(mB_));
+    h += '<div class="note">' + (balanced ? 'These are equal and opposite, so the answers are consistent ✓' : 'Check the signs.') + '</div>';
+    h += '</div>';
+    return h;
+  }
+  function fmtNum1(d){ return (Math.round(d * 100) / 100).toLocaleString('en-GB', {maximumFractionDigits:2}); }
+  function bracket(s, v){ return v < 0 ? '(' + s + ')' : s; }
+
+  function checkPrediction(){
+    if (R.single) return;
+    var pa = num($('pA').value, NaN), pb = num($('pB').value, NaN);
+    var fb = $('fb');
+    if (!isFinite(pa) || !isFinite(pb)){ fb.className = 'fb badfb'; fb.textContent = 'Enter a value for both reactions first.'; return; }
+    var k = S.unit === 'kN' ? 1000 : 1;
+    function close(p, t){ return Math.abs(p * k - t) <= Math.max(0.02 * Math.abs(t), 0.5 * k / 1000, 0.5); }
+    var a = close(pa, R.ra), b = close(pb, R.rb);
+    if (a && b){
+      fb.className = 'fb good';
+      fb.innerHTML = 'Both correct (within 2%). ' + (R.tip ? 'But notice one reaction is negative – a simple support cannot pull, so this beam actually tips!' : 'Well done.');
+    } else {
+      fb.className = 'fb badfb';
+      var msg = (a ? 'R<sub>A</sub> is correct. ' : 'R<sub>A</sub> is not right. ') + (b ? 'R<sub>B</sub> is correct. ' : 'R<sub>B</sub> is not right. ');
+      if (Math.abs((pa + pb) * k - R.total) > 0.02 * R.total) msg += 'Hint: R<sub>A</sub> + R<sub>B</sub> must equal the total weight. ';
+      else msg += 'Hint: your total is right – check your moments about one support. ';
+      fb.innerHTML = msg;
+    }
+  }
+
+  /* ---------- Drawing ---------- */
+  var cv = $('cv'), ctx = cv.getContext('2d'), stage = $('stage');
+  var W = 0, H = 0, dpr = 1;
+  function resize(){
+    var r = stage.getBoundingClientRect();
+    dpr = window.devicePixelRatio || 1;
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    draw();
+  }
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+  else window.addEventListener('resize', resize);
+
+  function animate(){
+    if (animId) return;
+    (function step(){
+      var d = tiltTarget - tilt;
+      if (Math.abs(d) < 0.0005){ tilt = tiltTarget; animId = null; draw(); return; }
+      tilt += d * 0.18;
+      draw();
+      animId = requestAnimationFrame(step);
+    })();
+  }
+
+  function layout(){
+    var pad = W < 600 ? 34 : Math.max(54, Math.min(90, W * 0.07));
+    var maxLen = clamp((H - 190) / 2, 26, 110);
+    var boxH = 34, boxW = clamp(W / 18, 34, 52), beamH = 14, triH = 26;
+    var beamTop = 12 + 18 + maxLen + boxH + 4;
+    return {pad:pad, maxLen:maxLen, boxH:boxH, boxW:boxW, beamH:beamH, triH:triH,
+      beamTop:beamTop, beamBot:beamTop + beamH, groundY:beamTop + beamH + triH,
+      pxM:(W - 2 * pad) / S.L, X:function(m){ return pad + m * (W - 2 * pad) / S.L; }};
+  }
+
+  function arrow(x1, y1, x2, y2, col, lw){
+    var a = Math.atan2(y2 - y1, x2 - x1), hs = 6 + lw * 1.6;
+    ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = lw;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - Math.cos(a) * hs * 0.8, y2 - Math.sin(a) * hs * 0.8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - hs * Math.cos(a - 0.42), y2 - hs * Math.sin(a - 0.42));
+    ctx.lineTo(x2 - hs * Math.cos(a + 0.42), y2 - hs * Math.sin(a + 0.42));
+    ctx.closePath(); ctx.fill();
+  }
+  function label(t, x, y, col, align, base){
+    ctx.font = '600 12px "IBM Plex Mono", monospace';
+    ctx.textAlign = align || 'center'; ctx.textBaseline = base || 'alphabetic';
+    var w = ctx.measureText(t).width;
+    var lx = align === 'left' ? x : align === 'right' ? x - w : x - w / 2;
+    lx = clamp(lx, 2, W - w - 2);
+    var dir = base === 'top' ? 1 : -1, guard = 0;
+    while (guard++ < 6 && placed.some(function(r){ return lx < r.x + r.w + 4 && lx + w + 4 > r.x && Math.abs(r.y - y) < 15; })) y += dir * 15;
+    placed.push({x:lx, y:y, w:w});
+    ctx.fillStyle = cssVar('--canvas'); ctx.globalAlpha = 0.85;
+    var top = base === 'top' ? y - 1 : y - 12;
+    ctx.fillRect(lx - 3, top, w + 6, 15);
+    ctx.globalAlpha = 1; ctx.fillStyle = col; ctx.textAlign = 'left';
+    ctx.fillText(t, lx, y + (base === 'top' ? 0 : 0));
+  }
+  var placed = [];
+  function shortF(v){ return fmtF(v).replace(' ', ' '); }
+
+  function draw(){
+    if (!W) return;
+    var G = geom = layout(), X = G.X;
+    var C = {canvas:cssVar('--canvas'), grid:cssVar('--grid'), ruler:cssVar('--ruler'), beam:cssVar('--beam'), beam2:cssVar('--beam2'),
+      support:cssVar('--support'), ground:cssVar('--ground'), ra:cssVar('--ra'), rb:cssVar('--rb'), w:cssVar('--w'), com:cssVar('--com'),
+      ink:cssVar('--ink'), muted:cssVar('--muted'), loadInk:cssVar('--load-ink'), danger:cssVar('--danger')};
+    placed = [];
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.fillStyle = C.canvas; ctx.fillRect(0, 0, W, H);
+
+    // ruler + grid
+    var step = S.L <= 12 ? 1 : S.L <= 30 ? 2 : 5;
+    while (step * G.pxM < 38) step = step === 1 ? 2 : step === 2 ? 5 : step * 2;
+    var rulerY = H - 22;
+    ctx.lineWidth = 1;
+    for (var m = 0; m <= S.L + 1e-9; m += step){
+      ctx.strokeStyle = C.grid; ctx.beginPath(); ctx.moveTo(X(m), 0); ctx.lineTo(X(m), rulerY); ctx.stroke();
+    }
+    ctx.strokeStyle = C.ruler; ctx.beginPath(); ctx.moveTo(X(0), rulerY); ctx.lineTo(X(S.L), rulerY); ctx.stroke();
+    ctx.font = '11px "IBM Plex Mono", monospace'; ctx.fillStyle = C.ruler; ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    var minor = step / (step === 1 ? (G.pxM < 40 ? 2 : 10) : step === 2 ? 4 : 5);
+    for (var k = 0; k <= S.L / minor + 1e-6; k++){
+      var mm = k * minor, major = Math.abs(mm / step - Math.round(mm / step)) < 1e-6;
+      ctx.beginPath(); ctx.moveTo(X(mm), rulerY); ctx.lineTo(X(mm), rulerY + (major ? 7 : 3)); ctx.stroke();
+      if (major) ctx.fillText(Math.round(mm) + ' m', X(mm), rulerY + 8);
+    }
+
+    // ground under supports
+    ctx.strokeStyle = C.ground; ctx.lineWidth = 2;
+    [S.xA, S.xB].forEach(function(xs){
+      var gx = X(xs);
+      ctx.beginPath(); ctx.moveTo(gx - 24, G.groundY); ctx.lineTo(gx + 24, G.groundY); ctx.stroke();
+      ctx.lineWidth = 1;
+      for (var i = -24; i < 24; i += 6){ ctx.beginPath(); ctx.moveTo(gx + i, G.groundY + 1); ctx.lineTo(gx + i - 5, G.groundY + 7); ctx.stroke(); }
+      ctx.lineWidth = 2;
+    });
+
+    // supports
+    drawSupport(S.xA, 'A', C.ra, S.boltA, G, C);
+    drawSupport(S.xB, 'B', C.rb, S.boltB, G, C);
+
+    // rotation about pivot if tipping
+    var pivotX = X(R.tip ? (R.tip.about === 'A' ? S.xA : S.xB) : 0), pivotY = G.beamBot;
+    function toWorld(px, py){
+      if (!tilt) return [px, py];
+      var dx = px - pivotX, dy = py - pivotY, c = Math.cos(tilt), s = Math.sin(tilt);
+      return [pivotX + dx * c - dy * s, pivotY + dx * s + dy * c];
+    }
+
+    ctx.save();
+    if (tilt){ ctx.translate(pivotX, pivotY); ctx.rotate(tilt); ctx.translate(-pivotX, -pivotY); }
+    // beam
+    ctx.fillStyle = C.beam; roundRect(X(0), G.beamTop, S.L * G.pxM, G.beamH, 3); ctx.fill();
+    ctx.fillStyle = C.beam2; ctx.globalAlpha = 0.5; ctx.fillRect(X(0) + 2, G.beamTop + 3, S.L * G.pxM - 4, 2); ctx.globalAlpha = 1;
+    // centre of mass marker
+    var cx = X(S.com), cy = G.beamTop + G.beamH / 2;
+    ctx.fillStyle = C.canvas; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = C.com; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, 6, -Math.PI / 2, 0); ctx.lineTo(cx, cy); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, 6, Math.PI / 2, Math.PI); ctx.lineTo(cx, cy); ctx.fill();
+    ctx.strokeStyle = C.com; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy, 6, 0, Math.PI * 2); ctx.stroke();
+    // loads
+    S.loads.forEach(function(l, i){
+      var lx = X(l.x), col = loadColour(i);
+      var sc = 0.75 + 0.25 * Math.min(1, l.m / Math.max(1, maxLoadMass()));
+      var bw = G.boxW * sc, bh = G.boxH * sc;
+      ctx.fillStyle = col; roundRect(lx - bw / 2, G.beamTop - bh, bw, bh, 4); ctx.fill();
+      ctx.strokeStyle = C.ink; ctx.globalAlpha = 0.35; ctx.lineWidth = 1; roundRect(lx - bw / 2, G.beamTop - bh, bw, bh, 4); ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.fillStyle = C.loadInk; ctx.font = '600 11px "IBM Plex Mono", monospace'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(i + 1), lx, G.beamTop - bh / 2);
+      l._bw = bw; l._bh = bh;
+    });
+    ctx.restore();
+
+    // force arrows (always vertical, attached at rotated points)
+    var fmax = 1;
+    R.forces.forEach(function(F){ fmax = Math.max(fmax, F.W); });
+    if (isFinite(R.ra)) fmax = Math.max(fmax, Math.abs(R.ra), Math.abs(R.rb));
+    function len(v){ return 18 + (G.maxLen - 18) * Math.min(1, Math.abs(v) / fmax); }
+
+    // weight arrows
+    R.forces.forEach(function(F){
+      if (F.W <= 0) return;
+      var top = F.beam ? G.beamTop : G.beamTop - S.loads[F.idx]._bh;
+      var p = toWorld(X(F.x), top);
+      var Lw = len(F.W);
+      arrow(p[0], p[1] - Lw - 2, p[0], p[1] - 2, F.beam ? C.com : C.w, 2.5);
+      var nm = F.beam ? 'W' : 'W' + (F.idx + 1);
+      label(nm + ' ' + shortF(F.W), p[0], p[1] - Lw - 6, F.beam ? C.com : C.w);
+    });
+
+    // reaction arrows
+    var hide = S.predict && !S.revealed;
+    if (!R.single && !R.tip){
+      [['A', S.xA, R.ra, C.ra], ['B', S.xB, R.rb, C.rb]].forEach(function(r){
+        var x = X(r[1]), v = r[2], Lr = len(v);
+        var txt = 'R' + r[0] + (hide ? ' = ?' : ' ' + shortF(v));
+        if (v >= 0){
+          var y0 = G.groundY + 4 + Lr;
+          arrow(x + 0, y0, x + 0, G.groundY + 4, r[3], 3);
+          label(txt, x, y0 + 4, r[3], 'center', 'top');
+        } else {
+          // bolted support pulling down
+          var y1 = G.groundY + 4, y2 = y1 + Lr;
+          arrow(x, y1, x, y2, r[3], 3);
+          label(txt + ' (pull)', x, y2 + 4, r[3], 'center', 'top');
+        }
+      });
+    } else if (R.tip){
+      var lifted = R.tip.lifted || 'B';
+      var lx2 = X(lifted === 'A' ? S.xA : S.xB);
+      label('lifts off', lx2, G.groundY + 10, C.danger, 'center', 'top');
+      label('pivot', X(R.tip.about === 'A' ? S.xA : S.xB), G.groundY + 10, C.muted, 'center', 'top');
+    }
+  }
+
+  function maxLoadMass(){ var m = 0; S.loads.forEach(function(l){ m = Math.max(m, l.m); }); return m; }
+
+  function drawSupport(x, name, col, bolted, G, C){
+    var X = G.X(x), y = G.beamBot;
+    if (bolted){
+      ctx.fillStyle = C.support; ctx.fillRect(X - 13, y, 26, G.triH);
+      ctx.fillStyle = C.canvas;
+      ctx.beginPath(); ctx.arc(X - 6, y + G.triH / 2, 2.6, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(X + 6, y + G.triH / 2, 2.6, 0, Math.PI * 2); ctx.fill();
+    } else {
+      ctx.fillStyle = C.support;
+      ctx.beginPath(); ctx.moveTo(X, y); ctx.lineTo(X - 15, G.groundY); ctx.lineTo(X + 15, G.groundY); ctx.closePath(); ctx.fill();
+    }
+    ctx.fillStyle = col; ctx.font = '700 13px "Outfit", sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    ctx.fillText(name, X - 18, y + G.triH / 2);
+  }
+
+  function roundRect(x, y, w, h, r){
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h); ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r); ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y); ctx.closePath();
+  }
+
+  /* ---------- Dragging ---------- */
+  function pos(e){ var r = cv.getBoundingClientRect(); return {x:e.clientX - r.left, y:e.clientY - r.top}; }
+  function hitTest(p){
+    var G = geom; if (!G) return null;
+    for (var i = S.loads.length - 1; i >= 0; i--){
+      var l = S.loads[i], lx = G.X(l.x), bw = (l._bw || G.boxW) / 2 + 6;
+      if (Math.abs(p.x - lx) < bw && p.y > G.beamTop - (l._bh || G.boxH) - 12 && p.y < G.beamTop + 4) return {t:'load', i:i};
+    }
+    if (!S.uniform && Math.abs(p.x - G.X(S.com)) < 12 && Math.abs(p.y - (G.beamTop + G.beamH / 2)) < 14) return {t:'com'};
+    var inSup = function(x){ return Math.abs(p.x - G.X(x)) < 20 && p.y > G.beamBot - 4 && p.y < G.groundY + 10; };
+    if (inSup(S.xB)) return {t:'xB'};
+    if (inSup(S.xA)) return {t:'xA'};
+    return null;
+  }
+  cv.addEventListener('pointerdown', function(e){
+    var h = hitTest(pos(e)); if (!h) return;
+    drag = h; cv.setPointerCapture(e.pointerId); stage.style.cursor = 'grabbing'; e.preventDefault();
+  });
+  cv.addEventListener('pointermove', function(e){
+    var p = pos(e);
+    if (!drag){ stage.style.cursor = hitTest(p) ? 'grab' : 'default'; return; }
+    var m = clamp(snap((p.x - geom.pad) / geom.pxM), 0, S.L);
+    if (drag.t === 'load') S.loads[drag.i].x = m;
+    else if (drag.t === 'com') S.com = m;
+    else S[drag.t] = m;
+    syncInputs(); changed();
+  });
+  function endDrag(){ drag = null; stage.style.cursor = 'default'; }
+  cv.addEventListener('pointerup', endDrag);
+  cv.addEventListener('pointercancel', endDrag);
+
+  /* ---------- Start ---------- */
+  buildLoadsUI(); syncInputs(); changed();
+  resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+})();
+</script>
+</body>
+</html>
