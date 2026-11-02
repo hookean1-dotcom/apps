@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Boiling vs Evaporation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+#bve-app{--bg:#e8f0f4;--card:#fff;--ink:#10273a;--mut:#4a6274;--line:#d3e0e8;--ev:#087a76;--evs:#d8f1ee;--bo:#c2381c;--bos:#fde5de;--bt:#5a3fc0;--bts:#ebe6fc;
+container-type:inline-size;font-family:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:600px;box-sizing:border-box;padding:18px;line-height:1.45;font-size:15px}
+#bve-app *{box-sizing:border-box}
+#bve-app .bve-top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:14px}
+#bve-app .bve-title{margin:0;font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+#bve-app .bve-title .e{color:var(--ev)}
+#bve-app .bve-title .b{color:var(--bo)}
+#bve-app .bve-sub{margin:4px 0 0;color:var(--mut);font-size:14px}
+#bve-app .bve-tabs{display:flex;flex-wrap:wrap;gap:6px;background:#d7e3ea;padding:4px;border-radius:12px}
+#bve-app .bve-tab{font:inherit;font-weight:600;font-size:14px;border:0;background:transparent;color:var(--ink);padding:8px 14px;border-radius:9px;cursor:pointer}
+#bve-app .bve-tab:hover{background:#c6d6df}
+#bve-app .bve-tab.on{background:var(--ink);color:#fff}
+#bve-app .bve-panel[hidden]{display:none}
+#bve-app .bve-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;align-items:start}
+#bve-app .bve-col{display:flex;flex-direction:column;gap:14px;min-width:0}
+#bve-app .bve-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+#bve-app .bve-ch{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+#bve-app h2{margin:0;font-size:18px;font-weight:700}
+#bve-app h3{margin:0 0 6px;font-size:14px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+#bve-app p{margin:0 0 8px}
+#bve-app .bve-pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px}
+#bve-app .bve-pill.ev{background:var(--evs);color:var(--ev)}
+#bve-app .bve-pill.bo{background:var(--bos);color:var(--bo)}
+#bve-app canvas{display:block;width:100%}
+#bve-app .bve-c43{aspect-ratio:4/3;border-radius:10px}
+#bve-app .bve-cw{aspect-ratio:2.6/1}
+#bve-app .bve-cg{aspect-ratio:16/10}
+#bve-app .bve-key{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12.5px;color:var(--mut);flex-wrap:wrap}
+#bve-app .bve-grad{flex:0 0 120px;height:10px;border-radius:5px;background:linear-gradient(90deg,hsl(215,75%,50%),hsl(160,75%,42%),hsl(100,75%,42%),hsl(50,85%,48%),hsl(0,75%,50%))}
+#bve-app .bve-ring{display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid var(--bo);vertical-align:middle}
+#bve-app .bve-reads{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#bve-app .bve-read{background:#f2f7fa;border-radius:10px;padding:8px 10px}
+#bve-app .bve-read span{display:block;font-size:12px;color:var(--mut);font-weight:600}
+#bve-app .bve-read b{font-family:"JetBrains Mono",monospace;font-size:19px;font-weight:700}
+#bve-app .bve-ctl{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+#bve-app .bve-row label{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:3px}
+#bve-app .bve-row label em{font-style:normal;font-family:"JetBrains Mono",monospace;font-weight:500;color:var(--mut)}
+#bve-app input[type=range]{width:100%;accent-color:var(--ink);margin:0}
+#bve-app .bve-tg{display:flex;align-items:center;gap:10px;font-size:13.5px;font-weight:600;cursor:pointer;user-select:none}
+#bve-app .bve-tg input{position:absolute;opacity:0;width:1px;height:1px}
+#bve-app .bve-sw{flex:0 0 40px;height:22px;border-radius:11px;background:#b8c7d1;position:relative;transition:background .2s}
+#bve-app .bve-sw::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .2s}
+#bve-app .bve-tg input:checked+.bve-sw{background:var(--ev)}
+#bve-app .bve-tg input:checked+.bve-sw::after{left:21px}
+#bve-app .bve-tg input:focus-visible+.bve-sw{outline:2px solid var(--ink);outline-offset:2px}
+#bve-app .bve-btns{display:flex;flex-wrap:wrap;gap:6px}
+#bve-app .bve-btn{font:inherit;font-size:13.5px;font-weight:700;border:1.5px solid var(--ink);background:#fff;color:var(--ink);padding:7px 12px;border-radius:9px;cursor:pointer}
+#bve-app .bve-btn:hover{background:#eef3f6}
+#bve-app .bve-btn.pri{background:var(--ink);color:#fff}
+#bve-app .bve-btn.hot{background:var(--bo);border-color:var(--bo);color:#fff}
+#bve-app .bve-btn.sm{font-size:12.5px;padding:5px 9px;border-width:1px}
+#bve-app .bve-btn.sel{background:var(--ink);color:#fff}
+#bve-app select{font:inherit;font-size:13.5px;padding:6px 8px;border-radius:8px;border:1.5px solid var(--ink);background:#fff;color:var(--ink)}
+#bve-app .bve-state{border-radius:10px;padding:10px 12px;font-weight:600;font-size:14px;background:#f2f7fa;border-left:5px solid var(--mut)}
+#bve-app .bve-state.boil{background:var(--bos);border-color:var(--bo)}
+#bve-app .bve-state.heat{background:#fff4e0;border-color:#c77800}
+#bve-app .bve-steps{margin:0;padding-left:20px}
+#bve-app .bve-steps li{margin-bottom:5px}
+#bve-app .bve-try{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:6px}
+#bve-app .bve-tryi{background:#f2f7fa;border-radius:10px;padding:9px 11px;font-size:13.5px}
+#bve-app .bve-tryi b{display:block;color:var(--ev);font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+#bve-app .bve-tryi.bo b{color:var(--bo)}
+#bve-app .bve-note{font-size:12.5px;color:var(--mut);margin-top:8px}
+#bve-app table{width:100%;border-collapse:separate;border-spacing:0;font-size:14.5px}
+#bve-app th,#bve-app td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+#bve-app thead th{font-size:14px;color:#fff}
+#bve-app thead th:nth-child(1){background:var(--ink);border-radius:10px 0 0 0}
+#bve-app thead th:nth-child(2){background:var(--ev)}
+#bve-app thead th:nth-child(3){background:var(--bo);border-radius:0 10px 0 0}
+#bve-app tbody th{font-weight:700;width:22%;background:#f4f8fa}
+#bve-app td.hid{cursor:pointer;color:transparent;background:repeating-linear-gradient(135deg,#eef3f6 0 8px,#e3ebf0 8px 16px);position:relative}
+#bve-app td.hid::after{content:"tap to reveal";position:absolute;left:12px;top:10px;color:var(--mut);font-size:12.5px;font-weight:600}
+#bve-app .bve-both{background:var(--bts);border-color:#d2c8f7}
+#bve-app .bve-both h2{color:var(--bt)}
+#bve-app ul{margin:0;padding-left:20px}
+#bve-app li{margin-bottom:4px}
+#bve-app .bve-g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:14px}
+#bve-app .bve-g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+#bve-app .bve-myth{border-left:4px solid var(--bt);padding:6px 0 6px 10px;margin-bottom:8px;font-size:14px}
+#bve-app .bve-myth s{color:var(--mut)}
+#bve-app .bve-sort{display:flex;flex-direction:column;gap:6px}
+#bve-app .bve-si{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:#f4f8fa;border:1.5px solid transparent}
+#bve-app .bve-si.ok{border-color:#2e8b4a;background:#e5f5ea}
+#bve-app .bve-si.bad{border-color:var(--bo);background:var(--bos)}
+#bve-app .bve-si small{display:block;font-weight:700;color:var(--bo);margin-top:2px}
+#bve-app .bve-opt{display:flex;gap:4px}
+#bve-app .bve-opt button{font:inherit;font-size:12.5px;font-weight:700;padding:5px 9px;border-radius:7px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+#bve-app .bve-opt button.on[data-v=E]{background:var(--ev);border-color:var(--ev);color:#fff}
+#bve-app .bve-opt button.on[data-v=B]{background:var(--bo);border-color:var(--bo);color:#fff}
+#bve-app .bve-opt button.on[data-v=X]{background:var(--bt);border-color:var(--bt);color:#fff}
+#bve-app .bve-res{font-weight:700;margin-left:6px}
+#bve-app .bve-qn{font-size:12.5px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+#bve-app .bve-qq{font-size:16.5px;font-weight:700;margin:6px 0 10px}
+#bve-app .bve-qo{display:flex;flex-direction:column;gap:6px}
+#bve-app .bve-qo button{font:inherit;font-size:14.5px;text-align:left;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+#bve-app .bve-qo button:hover:not(:disabled){border-color:var(--ink)}
+#bve-app .bve-qo button.ok{background:#e5f5ea;border-color:#2e8b4a}
+#bve-app .bve-qo button.bad{background:var(--bos);border-color:var(--bo)}
+#bve-app .bve-qx{margin-top:10px;padding:10px 12px;border-radius:10px;background:#f2f7fa;font-size:14px}
+#bve-app .bve-bar{height:6px;background:#e1eaef;border-radius:3px;margin:8px 0 12px;overflow:hidden}
+#bve-app .bve-bar i{display:block;height:100%;background:var(--bt);transition:width .3s}
+@container (max-width:880px){
+#bve-app .bve-grid,#bve-app .bve-g3,#bve-app .bve-g2{grid-template-columns:minmax(0,1fr)}
+}
+@container (max-width:520px){
+#bve-app{padding:10px}
+#bve-app .bve-title{font-size:21px}
+#bve-app .bve-try,#bve-app .bve-reads{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#bve-app .bve-si{grid-template-columns:minmax(0,1fr)}
+#bve-app th,#bve-app td{padding:8px;font-size:13.5px}
+}
+</style>
+</head>
+<body>
+<div id="bve-app">
+<div class="bve-top">
+ <div>
+  <h1 class="bve-title"><span class="b">Boiling</span> vs <span class="e">Evaporation</span></h1>
+  <p class="bve-sub">Two ways a liquid turns into a gas — and why they are not the same thing.</p>
+ </div>
+ <div class="bve-tabs" role="tablist">
+  <button class="bve-tab on" data-tab="evap">1 · Evaporation</button>
+  <button class="bve-tab" data-tab="boil">2 · Boiling</button>
+  <button class="bve-tab" data-tab="diff">3 · Key differences</button>
+  <button class="bve-tab" data-tab="test">4 · Test yourself</button>
+ </div>
+</div>
+
+<!-- ============ EVAPORATION ============ -->
+<section class="bve-panel" data-panel="evap">
+ <div class="bve-grid">
+  <div class="bve-col">
+   <div class="bve-card">
+    <div class="bve-ch"><h2>Evaporation — particle model</h2><span class="bve-pill ev">surface only · any temperature</span></div>
+    <canvas id="bve-ec" class="bve-c43"></canvas>
+    <div class="bve-key"><span>slow</span><span class="bve-grad"></span><span>fast</span><span style="margin-left:10px"><span class="bve-ring"></span> enough energy to escape</span><span style="margin-left:10px">● grey = water vapour in the air</span></div>
+   </div>
+   <div class="bve-card">
+    <h2 style="margin-bottom:8px">Why does evaporation cool a liquid?</h2>
+    <ol class="bve-steps">
+     <li>Particles in a liquid move at a <b>range of speeds</b> — they have a range of kinetic energies.</li>
+     <li>Only particles <b>at the surface</b> that have <b>enough energy</b> to overcome the attractive forces from the other particles can escape.</li>
+     <li>So the particles that escape are the <b>most energetic</b> ones.</li>
+     <li>The <b>average kinetic energy</b> of the particles left behind decreases, so the <b>temperature of the liquid decreases</b>.</li>
+    </ol>
+    <p class="bve-note">This is why sweating cools you down, and why a wet swimmer feels cold in a breeze.</p>
+   </div>
+  </div>
+  <div class="bve-col">
+   <div class="bve-card">
+    <div class="bve-reads">
+     <div class="bve-read"><span>Liquid temperature</span><b id="bve-eT">20.0 °C</b></div>
+     <div class="bve-read"><span>Surroundings</span><b id="bve-eTs">20 °C</b></div>
+     <div class="bve-read"><span>Net evaporation</span><b id="bve-eR">0</b><span>particles / min</span></div>
+    </div>
+   </div>
+   <div class="bve-card bve-ctl">
+    <div class="bve-row"><label for="bve-eTsR">Temperature of surroundings <em id="bve-eTsV">20 °C</em></label><input id="bve-eTsR" type="range" min="0" max="80" step="1" value="20"></div>
+    <div class="bve-row"><label for="bve-eA">Surface area (same volume of liquid) <em id="bve-eAV">medium</em></label><input id="bve-eA" type="range" min="1" max="3" step="1" value="2"></div>
+    <div class="bve-row"><label for="bve-eH">Humidity of the air <em id="bve-eHV">30 %</em></label><input id="bve-eH" type="range" min="0" max="100" step="5" value="30"></div>
+    <label class="bve-tg"><input type="checkbox" id="bve-eW"><span class="bve-sw"></span>Draught (air moving over the surface)</label>
+    <label class="bve-tg"><input type="checkbox" id="bve-eI"><span class="bve-sw"></span>Insulate the liquid (no energy in from the surroundings)</label>
+    <div class="bve-btns"><button class="bve-btn" id="bve-eRst">Reset</button></div>
+   </div>
+   <div class="bve-card">
+    <h3>Energies of particles in the liquid</h3>
+    <canvas id="bve-eh" class="bve-cw"></canvas>
+    <h3 style="margin-top:10px">Liquid temperature over time</h3>
+    <canvas id="bve-et" class="bve-cw"></canvas>
+   </div>
+  </div>
+ </div>
+ <div class="bve-card" style="margin-top:14px">
+  <h2 style="margin-bottom:6px">Try this</h2>
+  <div class="bve-try">
+   <div class="bve-tryi"><b>Cooling</b>Switch on <i>Insulate</i>. The liquid keeps losing its most energetic particles, so its temperature falls below the surroundings.</div>
+   <div class="bve-tryi"><b>Temperature</b>Raise the surroundings to 70 °C. More particles have enough energy to escape, so evaporation is faster.</div>
+   <div class="bve-tryi"><b>Surface area</b>Compare the narrow beaker with the wide dish. More surface means more particles can reach the surface and escape.</div>
+   <div class="bve-tryi"><b>Draught &amp; humidity</b>A draught carries vapour away before it can return to the liquid. Humid air sends more vapour particles back, so the net rate falls.</div>
+  </div>
+  <p class="bve-note">Model note: each dot stands for a huge number of real molecules, and energies are scaled so that escapes are visible. The trends match real behaviour.</p>
+ </div>
+</section>
+
+<!-- ============ BOILING ============ -->
+<section class="bve-panel" data-panel="boil" hidden>
+ <div class="bve-grid">
+  <div class="bve-col">
+   <div class="bve-card">
+    <div class="bve-ch"><h2>Heating water to boiling</h2><span class="bve-pill bo">throughout the liquid · fixed temperature</span></div>
+    <canvas id="bve-bc" class="bve-c43"></canvas>
+    <p class="bve-note">Water vapour is invisible. The white cloud above the beaker is tiny droplets of water that have condensed in the cooler air — notice the clear gap just above the surface.</p>
+   </div>
+   <div class="bve-card bve-ctl">
+    <div class="bve-btns">
+     <button class="bve-btn pri" id="bve-bRun">Pause</button>
+     <button class="bve-btn hot" id="bve-bHeat">Heater: ON</button>
+     <button class="bve-btn" id="bve-bRst">Reset</button>
+     <select id="bve-bSpd" aria-label="Simulation speed"><option value="1">Real time</option><option value="5">× 5</option><option value="20" selected>× 20</option><option value="60">× 60</option></select>
+    </div>
+    <div class="bve-row"><label for="bve-bP">Heater power <em id="bve-bPV">1000 W</em></label><input id="bve-bP" type="range" min="200" max="2000" step="50" value="1000"></div>
+    <div class="bve-row"><label for="bve-bK">Air pressure above the water <em id="bve-bKV">101 kPa</em></label><input id="bve-bK" type="range" min="30" max="220" step="0.1" value="101.3"></div>
+    <div class="bve-btns">
+     <button class="bve-btn sm" data-k="34">Top of Everest</button>
+     <button class="bve-btn sm sel" data-k="101.3">Sea level</button>
+     <button class="bve-btn sm" data-k="200">Pressure cooker</button>
+    </div>
+   </div>
+  </div>
+  <div class="bve-col">
+   <div class="bve-card">
+    <div class="bve-reads">
+     <div class="bve-read"><span>Water temperature</span><b id="bve-bT">20.0 °C</b></div>
+     <div class="bve-read"><span>Boiling point here</span><b id="bve-bTb">100.0 °C</b></div>
+     <div class="bve-read"><span>Mass of water</span><b id="bve-bM">500 g</b></div>
+    </div>
+    <div class="bve-state" id="bve-bS" style="margin-top:10px">Heating…</div>
+   </div>
+   <div class="bve-card">
+    <h3>Temperature–time graph</h3>
+    <canvas id="bve-bg" class="bve-cg"></canvas>
+   </div>
+   <div class="bve-card">
+    <h2 style="margin-bottom:6px">Why doesn't the temperature rise while it boils?</h2>
+    <p>While water boils, the heater is still supplying energy, but the temperature stays at the boiling point. The energy is used to <b>overcome the attractive forces between the particles</b> so they can separate and become a gas. This increases the internal energy of the water (the potential energy of the particles), not the average kinetic energy — so the temperature does not change.</p>
+    <p style="margin:0">The energy needed per kilogram is the <b>specific latent heat of vaporisation</b> (about 2.26 MJ/kg for water).</p>
+   </div>
+  </div>
+ </div>
+ <div class="bve-card" style="margin-top:14px">
+  <h2 style="margin-bottom:6px">Try this</h2>
+  <div class="bve-try">
+   <div class="bve-tryi bo"><b>Turn up the power</b>While it is boiling, increase the heater power. The water boils faster (mass falls faster) but the temperature does not rise.</div>
+   <div class="bve-tryi bo"><b>Switch the heater off</b>Boiling stops straight away — boiling needs a continuous supply of energy. Evaporation at the surface carries on.</div>
+   <div class="bve-tryi bo"><b>Climb Everest</b>Lower pressure means a lower boiling point (around 70 °C). Drop the pressure while the water is at 100 °C and it boils instantly.</div>
+   <div class="bve-tryi bo"><b>Pressure cooker</b>Higher pressure raises the boiling point to about 120 °C, so food in the water cooks faster.</div>
+  </div>
+  <p class="bve-note">Model: 500 g of water, c = 4200 J/kg °C, L = 2.26 MJ/kg, with some energy lost to the surroundings. Boiling points are calculated from the vapour pressure of water.</p>
+ </div>
+</section>
+
+<!-- ============ DIFFERENCES ============ -->
+<section class="bve-panel" data-panel="diff" hidden>
+ <div class="bve-card">
+  <div class="bve-ch"><h2>Key differences</h2>
+   <label class="bve-tg"><input type="checkbox" id="bve-dHide"><span class="bve-sw"></span>Hide answers to test myself</label></div>
+  <table>
+   <thead><tr><th>Feature</th><th>Evaporation</th><th>Boiling</th></tr></thead>
+   <tbody>
+    <tr><th>Where it happens</th><td>Only at the <b>surface</b> of the liquid</td><td><b>Throughout</b> the liquid</td></tr>
+    <tr><th>Temperature</th><td>At <b>any temperature</b> (even well below the boiling point)</td><td>Only at the <b>boiling point</b>, a fixed temperature for a given pressure</td></tr>
+    <tr><th>Bubbles</th><td><b>No bubbles</b></td><td><b>Bubbles of vapour</b> form inside the liquid and rise to the surface</td></tr>
+    <tr><th>Speed</th><td><b>Slow</b></td><td><b>Fast</b></td></tr>
+    <tr><th>Energy supply</th><td>Energy comes from the liquid itself and its surroundings</td><td>Needs a <b>continuous supply of energy</b> from a heater</td></tr>
+    <tr><th>Effect on the liquid's temperature</th><td>The liquid <b>cools down</b> — the most energetic particles leave, so the average kinetic energy of those left falls</td><td>Temperature <b>stays constant</b> — energy is used to overcome the forces between particles</td></tr>
+    <tr><th>Which particles change state</th><td>Only the <b>most energetic</b> particles <b>at the surface</b></td><td>Particles <b>all through</b> the liquid</td></tr>
+    <tr><th>Rate increased by</th><td>Higher temperature, larger surface area, a draught, drier (less humid) air</td><td>A more powerful heater (faster boiling, but no rise in temperature)</td></tr>
+    <tr><th>Effect of lower air pressure</th><td>Evaporation is faster</td><td>The boiling point is <b>lower</b> (e.g. around 70 °C on Everest)</td></tr>
+   </tbody>
+  </table>
+ </div>
+ <div class="bve-g3">
+  <div class="bve-card bve-both">
+   <h2 style="margin-bottom:8px">In common</h2>
+   <ul>
+    <li>Both change a <b>liquid into a gas</b> (vapour).</li>
+    <li>In both, particles need <b>enough energy to overcome the attractive forces</b> between them.</li>
+    <li>Both are <b>physical changes</b> — reversible, and <b>mass is conserved</b>.</li>
+    <li>Both need energy: the specific latent heat of vaporisation.</li>
+   </ul>
+  </div>
+  <div class="bve-card">
+   <h2 style="margin-bottom:8px;color:var(--ev)">Everyday evaporation</h2>
+   <ul>
+    <li>Puddles drying after rain</li>
+    <li>Washing drying on a line — faster on a windy day</li>
+    <li>Sweat cooling your skin</li>
+    <li>Feeling cold getting out of a swimming pool</li>
+    <li>Salt left behind when sea water evaporates</li>
+   </ul>
+  </div>
+  <div class="bve-card">
+   <h2 style="margin-bottom:8px;color:var(--bo)">Everyday boiling</h2>
+   <ul>
+    <li>A kettle boiling water</li>
+    <li>Cooking pasta in a pan of boiling water</li>
+    <li>Pasta taking longer to cook up a mountain (lower boiling point)</li>
+    <li>A pressure cooker cooking food faster (higher boiling point)</li>
+   </ul>
+  </div>
+ </div>
+ <div class="bve-g2">
+  <div class="bve-card">
+   <h2 style="margin-bottom:8px">Common misconceptions</h2>
+   <div class="bve-myth"><s>“Any bubbles mean the water is boiling.”</s><br>Small bubbles that appear early are dissolved air coming out of the water as it warms. Boiling bubbles are bubbles of water vapour.</div>
+   <div class="bve-myth"><s>“The white cloud from a kettle is steam.”</s><br>Water vapour is invisible. The cloud is tiny liquid droplets formed when the vapour condenses in cooler air.</div>
+   <div class="bve-myth"><s>“Turning up the heat makes boiling water hotter.”</s><br>At a fixed pressure it stays at the boiling point — it just boils away faster.</div>
+   <div class="bve-myth"><s>“Evaporation only happens when it's hot.”</s><br>It happens at any temperature — washing dries on a cold day.</div>
+   <div class="bve-myth" style="margin:0"><s>“Water always boils at 100 °C.”</s><br>Only at standard atmospheric pressure (about 101 kPa).</div>
+  </div>
+  <div class="bve-card">
+   <h2 style="margin-bottom:8px">Exam-style answer</h2>
+   <p><b>Q: Explain why a liquid cools when it evaporates. [3 marks]</b></p>
+   <ul>
+    <li>The particles with the most (kinetic) energy escape from the surface ✔</li>
+    <li>so the average kinetic energy of the remaining particles decreases ✔</li>
+    <li>so the temperature of the liquid decreases ✔</li>
+   </ul>
+   <p style="margin-top:10px"><b>Q: Water is boiling in a pan. Explain why its temperature stays the same even though it is still being heated. [2 marks]</b></p>
+   <ul>
+    <li>Energy is used to overcome/break the attractive forces between the particles (to change state) ✔</li>
+    <li>so the kinetic energy of the particles (and the temperature) does not increase ✔</li>
+   </ul>
+  </div>
+ </div>
+</section>
+
+<!-- ============ TEST ============ -->
+<section class="bve-panel" data-panel="test" hidden>
+ <div class="bve-grid">
+  <div class="bve-card">
+   <div class="bve-ch"><h2>Sort the statements</h2><span class="bve-note" style="margin:0">Evaporation, boiling or both?</span></div>
+   <div class="bve-sort" id="bve-sort"></div>
+   <div class="bve-btns" style="margin-top:10px;align-items:center"><button class="bve-btn pri" id="bve-sChk">Check answers</button><button class="bve-btn" id="bve-sRst">Clear</button><span class="bve-res" id="bve-sRes"></span></div>
+  </div>
+  <div class="bve-card" id="bve-quiz"></div>
+ </div>
+</section>
+</div>
+
+<script>
+(function(){
+"use strict";
+var root=document.getElementById('bve-app');
+function $(s){return root.querySelector(s);}
+function $$(s){return Array.prototype.slice.call(root.querySelectorAll(s));}
+var active='evap';
+function fit(o){var r=o.el.getBoundingClientRect();if(!r.width)return;var d=window.devicePixelRatio||1;o.w=r.width;o.h=r.height;o.el.width=Math.round(r.width*d);o.el.height=Math.round(r.height*d);o.ctx.setTransform(d,0,0,d,0,0);}
+function mk(id){var o={el:$(id),w:0,h:0};o.ctx=o.el.getContext('2d');new ResizeObserver(function(){fit(o);}).observe(o.el);fit(o);return o;}
+$$('.bve-tab').forEach(function(b){b.addEventListener('click',function(){
+ active=b.dataset.tab;
+ $$('.bve-tab').forEach(function(x){x.classList.toggle('on',x===b);});
+ $$('.bve-panel').forEach(function(p){p.hidden=p.dataset.panel!==active;});
+});});
+function rnd(){return Math.random();}
+function expS(m){return -m*Math.log(1-rnd());}
+function fmt(x,d){return x.toFixed(d);}
+
+/* ================= EVAPORATION ================= */
+var ec=mk('#bve-ec'),eh=mk('#bve-eh'),et=mk('#bve-et');
+var EV={N:170,Ee:4,p:[],vap:[],fl:[],Ts:20,T:20,area:2,wind:false,hum:30,ins:false,esc:[],ret:[],t:0,log:[],acc:0,ph:0,hs:[],lt:0};
+function meanE(T){return Math.max(0.15,1+(T-20)/60);}
+function evReset(){EV.T=EV.Ts;EV.p=[];var m=meanE(EV.T);for(var i=0;i<EV.N;i++)EV.p.push({u:rnd(),v:rnd(),a:rnd()*6.2832,e:expS(m)});EV.vap=[];EV.fl=[];EV.esc=[];EV.ret=[];EV.log=[];EV.t=0;EV.lt=0;EV.hs=[];}
+function dish(){var W=ec.w,H=ec.h,f=[0.3,0.52,0.78][EV.area-1],w=W*f,d=H*0.135/f,yb=H*0.9;return{W:W,H:H,x0:(W-w)/2,x1:(W+w)/2,w:w,d:d,yb:yb,ys:yb-d};}
+function ecol(e){var f=Math.min(1,e/EV.Ee);return 'hsl('+Math.round(215-215*f)+','+(f>0.55?82:75)+'%,'+(f>0.55&&f<0.85?46:48)+'%)';}
+function evStep(dt){
+ var g=dish();if(!g.W)return;
+ EV.t+=dt;EV.ph+=dt;
+ var m=meanE(EV.T),P=EV.p,v0=g.W/600*60,i,q;
+ var k=Math.max(1,Math.round(P.length*2.5*dt)+1);
+ while(k--){var a=P[(rnd()*P.length)|0],b=P[(rnd()*P.length)|0];if(a===b)continue;var s=a.e+b.e,r=rnd();a.e=r*s;b.e=s-a.e;a.a=rnd()*6.2832;b.a=rnd()*6.2832;}
+ var sum=0;for(i=0;i<P.length;i++)sum+=P[i].e;var f=1+(m/(sum/P.length)-1)*Math.min(1,dt*1.5);for(i=0;i<P.length;i++)P[i].e*=f;
+ for(i=0;i<P.length;i++){q=P[i];var sp=v0*Math.sqrt(q.e);
+  q.u+=sp*Math.cos(q.a)*dt/g.w;q.v+=sp*Math.sin(q.a)*dt/g.d;
+  if(q.u<0){q.u=-q.u;q.a=Math.PI-q.a;}else if(q.u>1){q.u=2-q.u;q.a=Math.PI-q.a;}
+  if(q.v>1){q.v=2-q.v;q.a=-q.a;}
+  else if(q.v<0){
+   if(q.e>EV.Ee){
+    var x=g.x0+q.u*g.w,ve=v0*Math.sqrt(q.e-EV.Ee+0.5);
+    EV.vap.push({x:x,y:g.ys-3,vx:Math.cos(q.a)*ve*0.5,vy:-Math.abs(Math.sin(q.a))*ve-g.W*0.05,own:1,age:0});
+    EV.fl.push({x:x,y:g.ys,r:0,c:1});EV.esc.push(EV.t);EV.T-=0.11;
+    q.u=rnd();q.v=0.97;q.a=-Math.PI/2+(rnd()-0.5)*2;q.e=expS(m);
+   }else{q.v=-q.v;q.a=-q.a;}
+  }
+ }
+ if(!EV.ins)EV.T+=0.06*(EV.Ts-EV.T)*dt;
+ if(EV.T<0)EV.T=0;
+ // vapour
+ var wind=EV.wind?g.W*0.32:0,gam=EV.wind?1.6:1.0,n=g.W*0.9*dt;
+ EV.acc+=EV.hum/100*5*dt;
+ while(EV.acc>=1){EV.acc-=1;if(EV.vap.length<260){if(EV.wind)EV.vap.push({x:-4,y:g.H*0.04+rnd()*(g.ys-g.H*0.06),vx:wind,vy:0,own:0,age:9});else EV.vap.push({x:rnd()*g.W,y:g.H*0.03+rnd()*(g.ys-g.H*0.08),vx:0,vy:0,own:0,age:9});}}
+ for(i=EV.vap.length-1;i>=0;i--){var p=EV.vap[i];p.age+=dt;
+  p.vx+=(wind-p.vx)*gam*dt+(rnd()-0.5)*n;p.vy+=(-p.vy)*gam*dt+(rnd()-0.5)*n;
+  p.x+=p.vx*dt;p.y+=p.vy*dt;
+  if(p.y>=g.ys&&p.x>g.x0&&p.x<g.x1){EV.vap.splice(i,1);EV.ret.push(EV.t);EV.T+=0.11;EV.fl.push({x:p.x,y:g.ys,r:0,c:0});continue;}
+  if(p.y>g.yb){p.y=2*g.yb-p.y;p.vy=-Math.abs(p.vy);}
+  if(p.y<-6||p.x<-8||p.x>g.W+8||(!p.own&&p.age>45))EV.vap.splice(i,1);
+ }
+ for(i=EV.fl.length-1;i>=0;i--){EV.fl[i].r+=40*dt;if(EV.fl[i].r>16)EV.fl.splice(i,1);}
+ while(EV.esc.length&&EV.esc[0]<EV.t-20)EV.esc.shift();
+ while(EV.ret.length&&EV.ret[0]<EV.t-20)EV.ret.shift();
+ if(EV.t-EV.lt>=0.25){EV.lt=EV.t;EV.log.push([EV.T,EV.Ts]);if(EV.log.length>360)EV.log.shift();}
+}
+function evDraw(){
+ var c=ec.ctx,g=dish();if(!g.W)return;var W=g.W,H=g.H,i;
+ var hm=EV.hum/100;c.fillStyle='rgb('+Math.round(244-hm*16)+','+Math.round(249-hm*8)+',253)';c.fillRect(0,0,W,H);
+ if(EV.wind){c.strokeStyle='rgba(8,122,118,.28)';c.lineWidth=2;for(i=0;i<8;i++){var y=H*(0.07+i*0.045),x=((EV.ph*W*0.45+i*173)%(W+140))-70;c.beginPath();c.moveTo(x,y);c.lineTo(x+56,y);c.lineTo(x+48,y-4);c.stroke();}}
+ c.fillStyle='#cdd9e1';c.fillRect(0,g.yb+3,W,H-g.yb);
+ c.fillStyle='#d4e9f8';c.fillRect(g.x0,g.ys,g.w,g.d);
+ var r=Math.max(2.6,W/125);
+ for(i=0;i<EV.p.length;i++){var q=EV.p[i],x=g.x0+r+q.u*(g.w-2*r),y=g.ys+r+q.v*(g.d-2*r);c.fillStyle=ecol(q.e);c.beginPath();c.arc(x,y,r,0,6.2832);c.fill();
+  if(q.e>EV.Ee){c.strokeStyle='#c2381c';c.lineWidth=1.6;c.beginPath();c.arc(x,y,r+2.6,0,6.2832);c.stroke();}}
+ c.strokeStyle='#3d82b8';c.lineWidth=2;c.beginPath();c.moveTo(g.x0,g.ys);c.lineTo(g.x1,g.ys);c.stroke();
+ c.strokeStyle='#5b7486';c.lineWidth=3;c.lineJoin='round';c.beginPath();c.moveTo(g.x0-2,g.ys-H*0.06);c.lineTo(g.x0-2,g.yb+1.5);c.lineTo(g.x1+2,g.yb+1.5);c.lineTo(g.x1+2,g.ys-H*0.06);c.stroke();
+ for(i=0;i<EV.vap.length;i++){var p=EV.vap[i];c.fillStyle='rgba(84,104,122,.6)';c.beginPath();c.arc(p.x,p.y,r*0.85,0,6.2832);c.fill();
+  if(p.own&&p.age<1.6){c.strokeStyle='rgba(194,56,28,'+(1-p.age/1.6)+')';c.lineWidth=1.6;c.beginPath();c.arc(p.x,p.y,r+2.4,0,6.2832);c.stroke();}}
+ for(i=0;i<EV.fl.length;i++){var fl=EV.fl[i];c.strokeStyle=fl.c?'rgba(194,56,28,'+(1-fl.r/16)+')':'rgba(61,130,184,'+(1-fl.r/16)+')';c.lineWidth=2;c.beginPath();c.arc(fl.x,fl.y,fl.r,Math.PI,2*Math.PI);c.stroke();}
+ var fs=Math.max(11,W/50);c.font='600 '+fs+'px Figtree,system-ui,sans-serif';c.fillStyle='#10273a';c.textBaseline='top';
+ c.fillText('Air'+(EV.wind?'  — draught →':''),10,8);
+ c.textAlign='right';c.fillStyle='#2f6f9e';c.fillText('surface',g.x0-8,g.ys-fs*0.6);c.textAlign='left';
+ c.fillStyle='#10273a';c.fillText('Liquid',g.x0+6,g.yb-fs-4);
+}
+function evHist(){
+ var c=eh.ctx,W=eh.w,H=eh.h;if(!W)return;c.clearRect(0,0,W,H);
+ var nb=18,emax=9,bw=emax/nb,cnt=[],i;for(i=0;i<nb;i++)cnt.push(0);
+ for(i=0;i<EV.p.length;i++){var b=Math.floor(EV.p[i].e/bw);if(b<nb)cnt[b]++;}
+ if(EV.hs.length!==nb)EV.hs=cnt.slice();for(i=0;i<nb;i++)EV.hs[i]+=(cnt[i]-EV.hs[i])*0.12;
+ var L=30,B=H-20,T=8,R=W-8,pw=(R-L)/nb,mx=0;for(i=0;i<nb;i++)mx=Math.max(mx,EV.hs[i]);mx=Math.max(mx,20);
+ c.strokeStyle='#9fb3c0';c.lineWidth=1;c.beginPath();c.moveTo(L,T);c.lineTo(L,B);c.lineTo(R,B);c.stroke();
+ for(i=0;i<nb;i++){var e=(i+0.5)*bw,h=(B-T)*EV.hs[i]/mx;c.fillStyle=e>EV.Ee?'#c2381c':ecol(e);c.fillRect(L+i*pw+1,B-h,pw-2,h);}
+ var xe=L+(EV.Ee/emax)*(R-L);c.setLineDash([4,3]);c.strokeStyle='#10273a';c.beginPath();c.moveTo(xe,T);c.lineTo(xe,B);c.stroke();c.setLineDash([]);
+ c.font='600 11px Figtree,system-ui,sans-serif';c.fillStyle='#10273a';c.textBaseline='top';c.fillText('energy needed to escape →',xe+4,T);
+ c.fillStyle='#4a6274';c.fillText('kinetic energy of particle →',L+4,B+4);
+ c.save();c.translate(12,(T+B)/2);c.rotate(-Math.PI/2);c.textAlign='center';c.fillText('number',0,-6);c.restore();
+}
+function evTrace(){
+ var c=et.ctx,W=et.w,H=et.h;if(!W)return;c.clearRect(0,0,W,H);
+ var L=34,B=H-16,T=8,R=W-8,lg=EV.log,i;
+ var lo=1e9,hi=-1e9;for(i=0;i<lg.length;i++){lo=Math.min(lo,lg[i][0],lg[i][1]);hi=Math.max(hi,lg[i][0],lg[i][1]);}
+ if(!lg.length){lo=EV.Ts;hi=EV.Ts;}
+ var mid=(lo+hi)/2,sp=Math.max(8,hi-lo+4);lo=mid-sp/2;hi=mid+sp/2;
+ function Y(v){return B-(v-lo)/(hi-lo)*(B-T);}
+ function X(j){return L+j/359*(R-L);}
+ c.strokeStyle='#9fb3c0';c.lineWidth=1;c.beginPath();c.moveTo(L,T);c.lineTo(L,B);c.lineTo(R,B);c.stroke();
+ c.font='500 10.5px JetBrains Mono,monospace';c.fillStyle='#4a6274';c.textBaseline='middle';c.textAlign='right';
+ c.fillText(Math.round(hi)+'°',L-4,T+4);c.fillText(Math.round(lo)+'°',L-4,B-4);c.textAlign='left';
+ if(lg.length<2)return;
+ c.setLineDash([5,4]);c.strokeStyle='#8a9aa6';c.lineWidth=1.5;c.beginPath();for(i=0;i<lg.length;i++){var x=X(i),y=Y(lg[i][1]);i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();c.setLineDash([]);
+ c.strokeStyle='#087a76';c.lineWidth=2.2;c.beginPath();for(i=0;i<lg.length;i++){x=X(i);y=Y(lg[i][0]);i?c.lineTo(x,y):c.moveTo(x,y);}c.stroke();
+ c.font='600 11px Figtree,system-ui,sans-serif';c.textBaseline='top';c.fillStyle='#087a76';c.fillText('liquid',L+6,T);c.fillStyle='#6b7c88';c.fillText('- - surroundings',L+50,T);
+ c.textAlign='right';c.fillStyle='#4a6274';c.fillText('last 90 s',R,B+3);c.textAlign='left';
+}
+function evUI(){
+ $('#bve-eT').textContent=fmt(EV.T,1)+' °C';$('#bve-eTs').textContent=EV.Ts+' °C';
+ var w=Math.min(20,EV.t);var net=w>2?(EV.esc.length-EV.ret.length)*60/w:0;$('#bve-eR').textContent=Math.round(net);
+}
+$('#bve-eTsR').addEventListener('input',function(e){EV.Ts=+e.target.value;$('#bve-eTsV').textContent=EV.Ts+' °C';});
+$('#bve-eA').addEventListener('input',function(e){EV.area=+e.target.value;$('#bve-eAV').textContent=['narrow beaker','medium','wide dish'][EV.area-1];EV.vap=[];});
+$('#bve-eH').addEventListener('input',function(e){EV.hum=+e.target.value;$('#bve-eHV').textContent=EV.hum+' %';});
+$('#bve-eW').addEventListener('change',function(e){EV.wind=e.target.checked;});
+$('#bve-eI').addEventListener('change',function(e){EV.ins=e.target.checked;});
+$('#bve-eRst').addEventListener('click',evReset);
+evReset();
+new ResizeObserver(function(){EV.vap=[];}).observe(ec.el);
+
+/* ================= BOILING ================= */
+var bc=mk('#bve-bc'),bg=mk('#bve-bg');
+var C=4200,LV=2.26e6,KL=1.6,M0=0.5;
+var BO={};
+function bp(kPa){var mm=kPa*7.50062,l=Math.log10(mm);return mm<=760?1730.63/(8.07131-l)-233.426:1810.94/(8.14019-l)-244.485;}
+function boReset(){BO={T:20,m:M0,t:0,P:+$('#bve-bP').value,k:+$('#bve-bK').value,on:true,run:true,spd:+$('#bve-bSpd').value,data:[[0,20,0]],rate:0,boil:false,ever:false,bub:[],mol:[],st:[],acc:[0,0,0,0],dTdt:0,dry:false,air:[]};
+ for(var i=0;i<16;i++)BO.air.push(i<9?{fx:0.06+rnd()*0.88,side:0}:{fx:0.15+rnd()*0.75,side:i%2?1:-1});
+ $('#bve-bHeat').textContent='Heater: ON';$('#bve-bHeat').classList.add('hot');$('#bve-bRun').textContent='Pause';}
+function boStep(sdt){
+ var Tb=bp(BO.k),Pin=BO.on?BO.P:0,loss=KL*(BO.T-20),net=Pin-loss,T0=BO.T;
+ BO.t+=sdt;BO.rate=0;
+ if(BO.T>Tb+1e-6){var ex=(BO.T-Tb)*BO.m*C;BO.m-=ex/LV;BO.T=Tb;BO.rate=ex/LV/Math.max(sdt,1e-3);BO.flash=1;}
+ if(BO.T>=Tb-1e-6&&net>0){BO.T=Tb;var dm=net*sdt/LV;BO.m-=dm;BO.rate+=net/LV;}
+ else{BO.T+=net*sdt/(BO.m*C);if(BO.T>Tb)BO.T=Tb;}
+ BO.boil=BO.rate>0;if(BO.boil)BO.ever=true;
+ BO.dTdt=(BO.T-T0)/sdt;
+ if(BO.m<0.08){BO.m=0.08;BO.on=false;BO.dry=true;$('#bve-bHeat').textContent='Heater: OFF';$('#bve-bHeat').classList.remove('hot');}
+ var d=BO.data,last=d[d.length-1],res=Math.max(1,BO.t/500);
+ if(BO.t-last[0]>=res)d.push([BO.t,BO.T,BO.boil?1:0]);
+}
+function geo(){var W=bc.w,H=bc.h;var g={W:W,H:H,x0:W*0.24,x1:W*0.66,top:H*0.2,bot:H*0.8};g.lvl=g.bot-(g.bot-g.top)*0.8*(BO.m/M0);return g;}
+function boVis(dt){
+ var g=geo();if(!g.W)return;var Tb=bp(BO.k),i,b;
+ var sp=Math.min(BO.spd,20)/20;
+ // boiling bubbles
+ var br=BO.boil?Math.min(40,6+BO.rate*LV/1000*22):0;
+ if(BO.flash){br+=60;BO.flash=0;for(i=0;i<25;i++)BO.bub.push({x:g.x0+12+rnd()*(g.x1-g.x0-24),y:g.lvl+rnd()*(g.bot-g.lvl),r:2+rnd()*3,k:1});}
+ BO.acc[0]+=br*dt;
+ while(BO.acc[0]>=1){BO.acc[0]--;var deep=rnd()<0.55;BO.bub.push({x:g.x0+12+rnd()*(g.x1-g.x0-24),y:deep?g.bot-4:g.lvl+(0.25+rnd()*0.7)*(g.bot-g.lvl),r:1.5+rnd()*1.5,k:1});}
+ // simmer (collapsing) bubbles
+ var sim=(!BO.boil&&BO.T>Tb-22&&BO.on)?(BO.T-(Tb-22))/22*8:0;
+ BO.acc[1]+=sim*dt;
+ while(BO.acc[1]>=1){BO.acc[1]--;BO.bub.push({x:g.x0+12+rnd()*(g.x1-g.x0-24),y:g.bot-4,r:2,k:0,life:0.3+rnd()*0.5,t:0});}
+ for(i=BO.bub.length-1;i>=0;i--){b=BO.bub[i];
+  if(b.k){b.y-=(30+b.r*9)*dt*(g.H/400);b.r+=dt*(3.5+b.r*0.5);b.x+=(rnd()-0.5)*1.2;
+   if(b.y-b.r<=g.lvl){BO.bub.splice(i,1);for(var j=0;j<2;j++)BO.st.push({x:b.x+(rnd()-0.5)*14,y:g.lvl-g.H*0.06-rnd()*8,r:5+rnd()*7,a:0.55,vx:(rnd()-0.5)*14,vy:-(25+rnd()*20)});}}
+  else{b.t+=dt;b.y-=40*dt*(g.H/400);b.r=2+3*Math.sin(Math.min(1,b.t/b.life)*Math.PI);if(b.t>=b.life)BO.bub.splice(i,1);}
+ }
+ // molecules leaving surface (evaporation)
+ var mr=Math.min(12,9*Math.exp((BO.T-Tb)/16));
+ BO.acc[2]+=mr*dt;
+ while(BO.acc[2]>=1){BO.acc[2]--;BO.mol.push({x:g.x0+8+rnd()*(g.x1-g.x0-16),y:g.lvl-2,vy:-(30+rnd()*30),vx:(rnd()-0.5)*20,a:1});}
+ for(i=BO.mol.length-1;i>=0;i--){var m=BO.mol[i];m.x+=m.vx*dt;m.y+=m.vy*dt;m.a-=dt*0.7;if(m.a<=0)BO.mol.splice(i,1);}
+ // steam cloud when hot
+ if(!BO.boil&&BO.T>75){BO.acc[3]+=(BO.T-75)/25*3*dt;while(BO.acc[3]>=1){BO.acc[3]--;BO.st.push({x:g.x0+20+rnd()*(g.x1-g.x0-40),y:g.lvl-g.H*0.07,r:4+rnd()*5,a:0.3,vx:(rnd()-0.5)*10,vy:-(18+rnd()*12)});}}
+ for(i=BO.st.length-1;i>=0;i--){var s=BO.st[i];s.x+=s.vx*dt;s.y+=s.vy*dt;s.r+=dt*9;s.a-=dt*0.28;if(s.a<=0||s.y<-30)BO.st.splice(i,1);}
+ if(BO.st.length>220)BO.st.splice(0,BO.st.length-220);
+ if(BO.bub.length>300)BO.bub.splice(0,BO.bub.length-300);
+ void sp;
+}
+function boDraw(){
+ var c=bc.ctx,g=geo();if(!g.W)return;var W=g.W,H=g.H,i,Tb=bp(BO.k);
+ var gr=c.createLinearGradient(0,0,0,H);gr.addColorStop(0,'#cfdde8');gr.addColorStop(1,'#e5edf3');c.fillStyle=gr;c.fillRect(0,0,W,H);
+ c.fillStyle='#b5c5d0';c.fillRect(0,H*0.92,W,H*0.08);
+ // hot plate
+ var hp=BO.on?BO.P/2000:0;c.fillStyle='#3a4a56';c.fillRect(g.x0-W*0.05,g.bot+2,(g.x1-g.x0)+W*0.1,H*0.04);
+ c.fillStyle='rgb('+Math.round(70+185*hp)+','+Math.round(80+20*hp)+','+Math.round(90-60*hp)+')';c.fillRect(g.x0-W*0.03,g.bot+2,(g.x1-g.x0)+W*0.06,H*0.012);
+ c.fillStyle='#2b3740';c.fillRect(g.x0-W*0.04,g.bot+H*0.04,(g.x1-g.x0)+W*0.08,H*0.08);
+ // water
+ var wg=c.createLinearGradient(0,g.lvl,0,g.bot);var tf=Math.min(1,(BO.T-20)/100);
+ wg.addColorStop(0,'rgba(160,206,242,.88)');wg.addColorStop(1,'rgba('+Math.round(112+10*tf)+',176,232,.92)');
+ c.fillStyle=wg;c.fillRect(g.x0,g.lvl,g.x1-g.x0,g.bot-g.lvl);
+ // air bubbles (dissolved air)
+ if(BO.T>35&&!BO.ever){var na=Math.round(Math.min(1,(BO.T-35)/40)*BO.air.length);c.fillStyle='rgba(255,255,255,.85)';c.strokeStyle='rgba(60,110,150,.6)';c.lineWidth=1;
+  for(i=0;i<na;i++){var a=BO.air[i],ax,ay;if(a.side===0){ax=g.x0+a.fx*(g.x1-g.x0);ay=g.bot-3;}else{ax=a.side<0?g.x0+3:g.x1-3;ay=g.bot-a.fx*(g.bot-g.lvl)*0.9;}c.beginPath();c.arc(ax,ay,1.8,0,6.2832);c.fill();c.stroke();}}
+ // bubbles
+ for(i=0;i<BO.bub.length;i++){var b=BO.bub[i];c.fillStyle='rgba(255,255,255,.45)';c.strokeStyle='rgba(255,255,255,.95)';c.lineWidth=1.3;c.beginPath();c.arc(b.x,b.y,Math.max(0.5,b.r),0,6.2832);c.fill();c.stroke();}
+ c.strokeStyle='#2f6f9e';c.lineWidth=1.5;c.beginPath();c.moveTo(g.x0,g.lvl);c.lineTo(g.x1,g.lvl);c.stroke();
+ // molecules
+ for(i=0;i<BO.mol.length;i++){var m=BO.mol[i];c.fillStyle='rgba(30,70,110,'+Math.max(0,m.a*0.75)+')';c.beginPath();c.arc(m.x,m.y,1.8,0,6.2832);c.fill();}
+ // steam
+ for(i=0;i<BO.st.length;i++){var s=BO.st[i];c.fillStyle='rgba(255,255,255,'+Math.max(0,s.a)+')';c.beginPath();c.arc(s.x,s.y,s.r,0,6.2832);c.fill();}
+ // beaker
+ c.strokeStyle='#4f6575';c.lineWidth=3;c.lineJoin='round';c.beginPath();c.moveTo(g.x0-6,g.top-4);c.lineTo(g.x0,g.top);c.lineTo(g.x0,g.bot);c.lineTo(g.x1,g.bot);c.lineTo(g.x1,g.top);c.stroke();
+ c.lineWidth=1.2;c.strokeStyle='rgba(79,101,117,.6)';for(i=1;i<=4;i++){var gy=g.bot-(g.bot-g.top)*0.8*i/4;c.beginPath();c.moveTo(g.x0,gy);c.lineTo(g.x0+12,gy);c.stroke();}
+ // thermometer
+ var tx=g.x1-(g.x1-g.x0)*0.14,tt=g.top-H*0.14,tb=g.bot-H*0.05,tw=Math.max(7,W/70);
+ c.fillStyle='rgba(255,255,255,.92)';c.strokeStyle='#4f6575';c.lineWidth=1.5;
+ c.beginPath();c.moveTo(tx-tw/2,tb);c.lineTo(tx-tw/2,tt+tw/2);c.arc(tx,tt+tw/2,tw/2,Math.PI,0);c.lineTo(tx+tw/2,tb);c.stroke();c.fill();
+ c.beginPath();c.arc(tx,tb+tw*0.5,tw*0.95,0,6.2832);c.fillStyle='#d63a26';c.fill();c.stroke();
+ var sc=function(T){return tb-(tb-tt-tw)*T/140;};
+ c.fillStyle='#d63a26';c.fillRect(tx-tw*0.22,sc(BO.T),tw*0.44,tb-sc(BO.T)+2);
+ c.font='500 '+Math.max(9,W/62)+'px JetBrains Mono,monospace';c.fillStyle='#10273a';c.textBaseline='middle';
+ for(i=0;i<=140;i+=20){var yy=sc(i);c.strokeStyle='#4f6575';c.lineWidth=1;c.beginPath();c.moveTo(tx+tw/2,yy);c.lineTo(tx+tw/2+5,yy);c.stroke();if(i%40===0)c.fillText(i,tx+tw/2+7,yy);}
+ // labels
+ var fs=Math.max(12,W/44);c.font='700 '+fs+'px Figtree,system-ui,sans-serif';c.textBaseline='top';c.textAlign='left';
+ c.fillStyle=BO.boil?'#c2381c':'#10273a';c.fillText(fmt(BO.T,1)+' °C',12,10);
+ c.font='600 '+(fs*0.8)+'px Figtree,system-ui,sans-serif';c.fillStyle='#33495a';
+ c.fillText(BO.boil?'BOILING':(BO.T>=Tb-0.05&&!BO.on?'heater off — not boiling':(BO.on?'heating':'cooling')),12,12+fs*1.15);
+ c.textAlign='right';c.fillText(BO.on?'heater '+BO.P+' W':'heater off',W-10,H*0.935);c.textAlign='left';
+}
+function boGraph(){
+ var c=bg.ctx,W=bg.w,H=bg.h;if(!W)return;c.clearRect(0,0,W,H);
+ var L=40,R=W-10,T=10,B=H-30,d=BO.data,i,Tb=bp(BO.k);
+ var tmax=Math.max(300,Math.ceil(BO.t*1.15/100)*100),ymax=140;
+ function X(t){return L+t/tmax*(R-L);}function Y(v){return B-v/ymax*(B-T);}
+ c.strokeStyle='#e3ebf0';c.lineWidth=1;c.font='500 10.5px JetBrains Mono,monospace';c.fillStyle='#4a6274';c.textBaseline='middle';c.textAlign='right';
+ for(i=0;i<=ymax;i+=20){c.beginPath();c.moveTo(L,Y(i));c.lineTo(R,Y(i));c.stroke();c.fillText(i,L-5,Y(i));}
+ c.textAlign='center';c.textBaseline='top';var stp=tmax<=600?100:tmax<=1500?250:500;
+ for(i=0;i<=tmax;i+=stp){c.beginPath();c.moveTo(X(i),T);c.lineTo(X(i),B);c.stroke();c.fillText(i,X(i),B+4);}
+ c.strokeStyle='#9fb3c0';c.beginPath();c.moveTo(L,T);c.lineTo(L,B);c.lineTo(R,B);c.stroke();
+ c.font='600 11px Figtree,system-ui,sans-serif';c.fillText('time / s',(L+R)/2,B+16);
+ c.save();c.translate(11,(T+B)/2);c.rotate(-Math.PI/2);c.fillText('temperature / °C',0,-6);c.restore();
+ c.setLineDash([6,4]);c.strokeStyle='#c2381c';c.lineWidth=1.3;c.beginPath();c.moveTo(L,Y(Tb));c.lineTo(R,Y(Tb));c.stroke();c.setLineDash([]);
+ c.textAlign='left';c.textBaseline='bottom';c.fillStyle='#c2381c';c.fillText('boiling point '+fmt(Tb,1)+' °C',L+6,Y(Tb)-2);
+ c.lineWidth=2.6;c.lineJoin='round';
+ for(i=1;i<d.length;i++){c.strokeStyle=d[i][2]?'#c2381c':'#1d5f99';c.beginPath();c.moveTo(X(d[i-1][0]),Y(d[i-1][1]));c.lineTo(X(d[i][0]),Y(d[i][1]));c.stroke();}
+ var lx=X(BO.t),ly=Y(BO.T);c.fillStyle=BO.boil?'#c2381c':'#1d5f99';c.beginPath();c.arc(lx,ly,4,0,6.2832);c.fill();
+ var fb=-1;for(i=0;i<d.length;i++)if(d[i][2]){fb=i;break;}
+ if(fb>=0&&BO.t-d[fb][0]>tmax*0.08){var mx=(X(d[fb][0])+X(Math.min(BO.t,d[fb][0]+tmax*0.4)))/2;c.fillStyle='#10273a';c.textAlign='center';c.textBaseline='top';c.font='600 11.5px Figtree,system-ui,sans-serif';c.fillText('flat: boiling — temperature constant',Math.min(mx,R-110),Y(Tb)+6);}
+}
+function boUI(){
+ var Tb=bp(BO.k);$('#bve-bT').textContent=fmt(BO.T,1)+' °C';$('#bve-bTb').textContent=fmt(Tb,1)+' °C';$('#bve-bM').textContent=Math.round(BO.m*1000)+' g';
+ var s=$('#bve-bS'),t,cl='';
+ if(BO.dry)t='The beaker is nearly dry, so the heater has been switched off. Reset to start again.';
+ else if(BO.boil){t='Boiling at '+fmt(Tb,1)+' °C — bubbles of water vapour form throughout the liquid. The temperature stays constant while '+fmt(BO.rate*1000,2)+' g of water turns to vapour each second.';cl='boil';}
+ else if(!BO.on&&BO.T>Tb-3)t='Heater off — boiling stopped immediately. Boiling needs a continuous energy supply. Evaporation from the surface continues.';
+ else if(BO.on&&BO.dTdt<0.004&&BO.T<Tb-0.5&&BO.t>60)t='Energy is being lost to the surroundings as fast as the heater supplies it, so the water cannot reach its boiling point. Increase the power.';
+ else if(BO.on){t='Heating — the temperature is rising. No boiling yet, but evaporation is happening at the surface.'+(BO.T>Tb-22?' Small bubbles form at the bottom then collapse as they rise into cooler water.':(BO.T>35&&!BO.ever?' Tiny bubbles on the glass are dissolved air, not boiling.':''));cl='heat';}
+ else t='Heater off — the water is cooling. Evaporation still happens at the surface.';
+ if(s.textContent!==t)s.textContent=t;s.className='bve-state '+cl;
+}
+$('#bve-bP').addEventListener('input',function(e){BO.P=+e.target.value;$('#bve-bPV').textContent=BO.P+' W';});
+function setK(k){BO.k=k;$('#bve-bK').value=k;$('#bve-bKV').textContent=Math.round(k)+' kPa';$$('[data-k]').forEach(function(b){b.classList.toggle('sel',+b.dataset.k===k);});}
+$('#bve-bK').addEventListener('input',function(e){setK(+e.target.value);});
+$$('[data-k]').forEach(function(b){b.addEventListener('click',function(){setK(+b.dataset.k);});});
+$('#bve-bHeat').addEventListener('click',function(){if(BO.dry)return;BO.on=!BO.on;this.textContent='Heater: '+(BO.on?'ON':'OFF');this.classList.toggle('hot',BO.on);});
+$('#bve-bRun').addEventListener('click',function(){BO.run=!BO.run;this.textContent=BO.run?'Pause':'Resume';});
+$('#bve-bSpd').addEventListener('change',function(e){BO.spd=+e.target.value;});
+$('#bve-bRst').addEventListener('click',boReset);
+boReset();
+
+/* ================= DIFFERENCES ================= */
+$('#bve-dHide').addEventListener('change',function(e){$$('[data-panel=diff] tbody td').forEach(function(td){td.classList.toggle('hid',e.target.checked);});});
+$$('[data-panel=diff] tbody td').forEach(function(td){td.addEventListener('click',function(){td.classList.remove('hid');});});
+
+/* ================= SORT ================= */
+var SORT=[
+['Happens only at the surface of the liquid','E'],
+['Bubbles of vapour form inside the liquid','B'],
+['Can happen at any temperature','E'],
+['A liquid changes into a gas','X'],
+['Happens at a fixed temperature for a given pressure','B'],
+['The liquid cools down as it happens','E'],
+['Particles need enough energy to overcome the attractive forces between them','X'],
+['Temperature stays constant even though the liquid is still being heated','B'],
+['Faster on a windy day','E'],
+['Needs a continuous supply of energy from a heater','B'],
+['Mass is conserved — it is a physical, reversible change','X'],
+['Only the most energetic particles near the surface escape','E'],
+['The temperature at which it happens is lower at the top of a mountain','B']];
+var NAMES={E:'Evaporation',B:'Boiling',X:'Both'},sAns=[];
+function sBuild(){var h='';SORT.forEach(function(s,i){h+='<div class="bve-si" data-i="'+i+'"><div>'+s[0]+'<small></small></div><div class="bve-opt"><button data-v="E">Evaporation</button><button data-v="B">Boiling</button><button data-v="X">Both</button></div></div>';});$('#bve-sort').innerHTML=h;sAns=[];$('#bve-sRes').textContent='';
+ $$('.bve-si').forEach(function(r){var i=+r.dataset.i;r.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){sAns[i]=b.dataset.v;r.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b);});r.classList.remove('ok','bad');r.querySelector('small').textContent='';});});});}
+$('#bve-sChk').addEventListener('click',function(){var sc=0,done=0;$$('.bve-si').forEach(function(r){var i=+r.dataset.i,a=sAns[i],sm=r.querySelector('small');r.classList.remove('ok','bad');sm.textContent='';if(!a)return;done++;if(a===SORT[i][1]){sc++;r.classList.add('ok');}else{r.classList.add('bad');sm.textContent='Answer: '+NAMES[SORT[i][1]];}});
+ $('#bve-sRes').textContent=done<SORT.length?sc+' / '+done+' correct ('+(SORT.length-done)+' not answered)':sc+' / '+SORT.length+' correct';});
+$('#bve-sRst').addEventListener('click',sBuild);
+sBuild();
+
+/* ================= QUIZ ================= */
+var Q=[
+{q:'A puddle disappears on a cool day when the air temperature is 12 °C. What process has happened?',o:['Boiling, because the water has turned into a gas','Evaporation, because water particles escaped from the surface','Condensation, because the water has gone into the air','Boiling, because the Sun heated the puddle to 100 °C'],a:1,x:'Evaporation happens at any temperature. Particles at the surface with enough energy escape — the water never reaches its boiling point.'},
+{q:'Water is boiling in a pan at sea level. The cook turns the heat up. What happens to the temperature of the water?',o:['It rises above 100 °C','It stays at 100 °C, but the water boils away faster','It falls, because more water evaporates','It rises, then falls back to 100 °C'],a:1,x:'While boiling, the extra energy is used to overcome the attractive forces between particles (changing state), so the temperature stays at the boiling point.'},
+{q:'Why does sweating help to cool you down?',o:['Sweat is colder than your skin','The most energetic particles escape, so the average kinetic energy of the remaining sweat falls','Sweat boils on your skin, taking heat away','Sweat reflects heat away from your body'],a:1,x:'The fastest particles evaporate, lowering the average kinetic energy (and so temperature) of what is left. The cooler sweat then takes energy from your skin.'},
+{q:'Air pressure at the top of a high mountain is lower than at sea level. How does this affect the boiling point of water?',o:['It is higher than 100 °C','It is still exactly 100 °C','It is lower than 100 °C','Water cannot boil at low pressure'],a:2,x:'Lower pressure means a lower boiling point — around 70 °C on top of Everest — so food cooked in boiling water takes longer.'},
+{q:'Which of these would NOT increase the rate of evaporation from a wet towel?',o:['Hanging it in a breeze','Spreading it out flat','Moving it to a warmer room','Moving it to a room with more humid air'],a:3,x:'Humid air already contains a lot of water vapour, so more vapour particles return to the towel. The net rate of evaporation falls.'},
+{q:'When water is being heated, small bubbles appear on the sides of the beaker at about 50 °C. What are they?',o:['Water vapour — the water is starting to boil','Dissolved air coming out of the water','Steam condensing on the glass','Bubbles caused by the glass melting'],a:1,x:'Gases are less soluble in warmer water, so dissolved air comes out of solution. Boiling only starts at the boiling point, when vapour bubbles form throughout.'},
+{q:'A temperature–time graph for heating water has a flat (horizontal) section at 100 °C. What does this show?',o:['The thermometer has stopped working','The water is boiling — energy is changing its state, not its temperature','The heater has been switched off','The water is evaporating from its surface only'],a:1,x:'During a change of state the temperature stays constant. The energy supplied increases the internal energy by separating the particles.'},
+{q:'Why does a pressure cooker cook food faster than an ordinary pan?',o:['The higher pressure raises the boiling point, so the water is hotter','The higher pressure lowers the boiling point','It stops any evaporation from happening','The steam inside is invisible'],a:0,x:'At about 200 kPa water boils at about 120 °C instead of 100 °C, so the food is surrounded by hotter water and steam.'},
+{q:'Which statement about boiling is correct?',o:['It only happens at the surface','It can happen at any temperature','Vapour bubbles form throughout the liquid','It makes the liquid cool down'],a:2,x:'In boiling, particles throughout the liquid have enough energy to form bubbles of vapour, which rise and escape at the surface.'}];
+var qi=0,qs=0;
+function qRender(){var box=$('#bve-quiz');
+ if(qi>=Q.length){box.innerHTML='<div class="bve-qn">Quiz complete</div><div class="bve-qq">You scored '+qs+' out of '+Q.length+'</div><p>'+(qs===Q.length?'Perfect — you clearly know the difference.':qs>=6?'Good work. Look back at the explanations for any you missed.':'Revisit tabs 1–3, then have another go.')+'</p><button class="bve-btn pri" id="bve-qAgain">Try again</button>';
+  $('#bve-qAgain').addEventListener('click',function(){qi=0;qs=0;qRender();});return;}
+ var q=Q[qi],h='<div class="bve-ch" style="margin-bottom:0"><h2>Quick quiz</h2><span class="bve-qn">Question '+(qi+1)+' of '+Q.length+' · score '+qs+'</span></div><div class="bve-bar"><i style="width:'+(qi/Q.length*100)+'%"></i></div><div class="bve-qq">'+q.q+'</div><div class="bve-qo">';
+ q.o.forEach(function(o,i){h+='<button data-i="'+i+'">'+String.fromCharCode(65+i)+'.  '+o+'</button>';});
+ h+='</div><div id="bve-qx"></div>';box.innerHTML=h;
+ box.querySelectorAll('.bve-qo button').forEach(function(b){b.addEventListener('click',function(){var i=+b.dataset.i,ok=i===q.a;if(ok)qs++;
+  box.querySelectorAll('.bve-qo button').forEach(function(x){x.disabled=true;if(+x.dataset.i===q.a)x.classList.add('ok');});if(!ok)b.classList.add('bad');
+  $('#bve-qx').innerHTML='<div class="bve-qx"><b>'+(ok?'Correct. ':'Not quite. ')+'</b>'+q.x+'</div><div class="bve-btns" style="margin-top:10px"><button class="bve-btn pri" id="bve-qNext">'+(qi+1<Q.length?'Next question':'See score')+'</button></div>';
+  $('#bve-qNext').addEventListener('click',function(){qi++;qRender();});});});}
+qRender();
+
+/* ================= LOOP ================= */
+var last=performance.now();
+function loop(now){var dt=Math.max(0,Math.min(0.05,(now-last)/1000));last=now;
+ if(active==='evap'){var n=2;for(var i=0;i<n;i++)evStep(dt/n);evDraw();evHist();evTrace();evUI();}
+ else if(active==='boil'){if(BO.run){var sdt=dt*BO.spd,ns=Math.ceil(sdt/0.5);for(var j=0;j<ns;j++)boStep(sdt/ns);boVis(dt);}boDraw();boGraph();boUI();}
+ requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
