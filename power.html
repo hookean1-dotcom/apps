@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Generation Assets – Live Grid Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+    html, body {
+        margin: 0;
+        padding: 16px;
+        background: #060912;
+    }
+    .leaflet-control-attribution {
+        background: rgba(15, 23, 42, 0.8) !important;
+        color: #64748b !important;
+        font-size: 10px !important;
+    }
+    .leaflet-control-attribution a { color: #94a3b8 !important; }
+
+    /* STRICT WIDGET SCOPING - Isolates the widget to prevent global styling issues */
+    #uk-grid-widget {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        background-color: #0b0f19;
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        border: 1px solid #1e293b;
+    }
+
+    #uk-grid-widget * {
+        box-sizing: border-box;
+    }
+
+    @media (max-width: 850px) {
+        #uk-grid-widget {
+            flex-direction: column;
+        }
+        #grid-map {
+            height: 450px !important;
+        }
+        #grid-info {
+            height: auto !important;
+        }
+    }
+
+    /* Map Interface Display Window */
+    #grid-map {
+        flex: 1.5;
+        height: 700px; 
+        background-color: #0b0f19;
+        z-index: 1;
+    }
+
+    /* Sidebar Content Panel */
+    #grid-info {
+        flex: 1;
+        height: 700px;
+        padding: 20px;
+        background: #0f172a;
+        border-left: 1px solid #1e293b;
+        overflow-y: auto;
+        z-index: 2;
+    }
+
+    #grid-info h2 {
+        font-size: 1.3rem;
+        margin: 0 0 15px 0;
+        padding-bottom: 12px;
+        color: #f8fafc;
+        border-bottom: 1px solid #334155;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+
+    #grid-info h3 {
+        font-size: 0.95rem;
+        color: #94a3b8;
+        margin: 0 0 10px 0;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-box {
+        background: #1e293b;
+        padding: 14px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+        border: 1px solid #334155;
+    }
+
+    .telemetry-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        font-size: 14px;
+    }
+    .telemetry-label { color: #94a3b8; }
+    .telemetry-value { font-weight: 600; color: #f1f5f9; }
+
+    /* Custom CSS Glowing Asset Map Nodes */
+    .asset-marker {
+        border-radius: 50%;
+        border: 1.5px solid #ffffff;
+        box-shadow: 0 0 12px currentColor;
+        transition: transform 0.15s ease-out;
+    }
+    
+    .custom-asset-wrapper {
+        background: transparent !important;
+        border: none !important;
+    }
+
+    /* Leaflet Engine Overrides */
+    .leaflet-container { background: #0b0f19 !important; }
+    .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+        background: #1e293b;
+        color: #f8fafc;
+        border: 1px solid #475569;
+        border-radius: 4px;
+    }
+    .leaflet-popup-content { margin: 10px 14px; font-size: 13px; }
+    
+    #legend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+    .legend-color {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        margin-right: 8px;
+    }
+</style>
+</head>
+<body>
+<div id="uk-grid-widget">
+    <!-- Map Canvas Window -->
+    <div id="grid-map"></div>
+    
+    <!-- Sidebar Telemetry Stream -->
+    <div id="grid-info">
+        <h2>UK Generation Assets</h2>
+        
+        <div class="stat-box">
+            <h3>Live Asset Telemetry</h3>
+            <div id="asset-focus-prompt" style="font-size: 13px; color: #64748b;">Hover or click any operational facility on the map to query live generation output.</div>
+            <div id="asset-telemetry" style="display: none;">
+                <div class="telemetry-row"><span class="telemetry-label">Facility Name:</span><span class="telemetry-value" id="tel-name">-</span></div>
+                <div class="telemetry-row"><span class="telemetry-label">Resource Type:</span><span class="telemetry-value" id="tel-type">-</span></div>
+                <div class="telemetry-row"><span class="telemetry-label">Max Capacity:</span><span class="telemetry-value" id="tel-cap">-</span></div>
+                <div class="telemetry-row"><span class="telemetry-label">Est. Current Output:</span><span class="telemetry-value" id="tel-output" style="color: #00e5ff;">-</span></div>
+            </div>
+        </div>
+
+        <div class="stat-box">
+            <h3>National Fuel Weighting</h3>
+            <div id="national-mix-stack" style="font-size: 13px; color: #64748b;">Syncing grid metrics...</div>
+        </div>
+
+        <div class="stat-box">
+            <h3>Asset Key</h3>
+            <div id="legend-grid"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        if (window.__ukGridWidgetLoaded) return;
+        window.__ukGridWidgetLoaded = true;
+
+        const energyColours = {
+            nuclear: '#d500f9',
+            biomass: '#76ff03',
+            gas: '#ff9100',
+            wind: '#00e5ff',
+            solar: '#ffea00',
+            hydro: '#2979ff'
+        };
+
+        // Fully comprehensive dataset mapping all major UK generation infrastructure
+        const ukPowerAssets = [
+            // Operational Nuclear Fleet
+            { name: "Sizewell B", type: "nuclear", cap: 1198, coords: [52.213, 1.618] },
+            { name: "Torness", type: "nuclear", cap: 1205, coords: [55.968, -2.409] },
+            { name: "Heysham 1", type: "nuclear", cap: 1150, coords: [54.029, -2.912] },
+            { name: "Heysham 2", type: "nuclear", cap: 1230, coords: [54.027, -2.915] },
+            { name: "Hartlepool", type: "nuclear", cap: 1180, coords: [54.641, -1.180] },
+            
+            // Biomass Generation
+            { name: "Drax Biomass Facility", type: "biomass", cap: 2600, coords: [53.738, -1.004] },
+            { name: "Lynemouth Station", type: "biomass", cap: 420, coords: [55.203, -1.531] },
+            
+            // Major CCGT Gas Fleets (>700MW Heavy Lifters)
+            { name: "Pembroke B", type: "gas", cap: 2200, coords: [51.684, -4.975] },
+            { name: "Staythorpe C", type: "gas", cap: 1740, coords: [53.064, -0.861] },
+            { name: "Keadby Complex", type: "gas", cap: 1575, coords: [53.591, -0.741] },
+            { name: "Didcot B", type: "gas", cap: 1440, coords: [51.624, -1.268] },
+            { name: "Connah's Quay", type: "gas", cap: 1380, coords: [53.228, -3.071] },
+            { name: "South Humber Bank", type: "gas", cap: 1365, coords: [53.616, -0.198] },
+            { name: "West Burton B", type: "gas", cap: 1332, coords: [53.376, -0.812] },
+            { name: "VPI Immingham", type: "gas", cap: 1240, coords: [53.623, -0.218] },
+            { name: "Peterhead", type: "gas", cap: 1180, coords: [57.477, -1.789] },
+            { name: "Seabank", type: "gas", cap: 1140, coords: [51.527, -2.668] },
+            { name: "Grain CSP", type: "gas", cap: 1300, coords: [51.439, 0.712] },
+            { name: "Langage", type: "gas", cap: 885, coords: [50.399, -3.992] },
+            { name: "Carrington", type: "gas", cap: 880, coords: [53.438, -2.385] },
+            { name: "Marchwood", type: "gas", cap: 840, coords: [50.894, -1.442] },
+            { name: "Rye House", type: "gas", cap: 715, coords: [51.768, -0.012] },
+            { name: "Medway", type: "gas", cap: 700, coords: [51.417, 0.704] },
+            
+            // Major Offshore & Onshore Wind Hubs
+            { name: "Dogger Bank (Offshore Cluster)", type: "wind", cap: 3600, coords: [54.750, 1.910] },
+            { name: "Hornsea Two (Offshore)", type: "wind", cap: 1386, coords: [53.950, 1.650] },
+            { name: "Hornsea One (Offshore)", type: "wind", cap: 1218, coords: [53.880, 1.280] },
+            { name: "Seagreen (Offshore)", type: "wind", cap: 1075, coords: [56.355, -1.741] },
+            { name: "Moray East (Offshore)", type: "wind", cap: 950, coords: [58.167, -2.700] },
+            { name: "Triton Knoll (Offshore)", type: "wind", cap: 857, coords: [53.480, 0.830] },
+            { name: "East Anglia ONE (Offshore)", type: "wind", cap: 714, coords: [52.230, 2.480] },
+            { name: "Walney Extension (Offshore)", type: "wind", cap: 659, coords: [54.040, -3.520] },
+            { name: "London Array (Offshore)", type: "wind", cap: 630, coords: [51.640, 1.480] },
+            { name: "Gwynt y Môr (Offshore)", type: "wind", cap: 576, coords: [53.450, -3.620] },
+            { name: "Race Bank (Offshore)", type: "wind", cap: 573, coords: [53.270, 0.830] },
+            { name: "Greater Gabbard (Offshore)", type: "wind", cap: 504, coords: [51.880, 2.050] },
+            { name: "Whitelee (Onshore)", type: "wind", cap: 539, coords: [55.680, -4.260] },
+            { name: "Clyde (Onshore)", type: "wind", cap: 522, coords: [55.402, -3.605] },
+            { name: "Kilgallioch (Onshore)", type: "wind", cap: 239, coords: [55.033, -4.841] },
+            { name: "Pen y Cymoedd (Onshore)", type: "wind", cap: 228, coords: [51.688, -3.674] },
+            
+            // Major Hydro & Pumped Storage Projects
+            { name: "Dinorwig (Pumped Storage)", type: "hydro", cap: 1728, coords: [53.121, -4.114] },
+            { name: "Cruachan (Pumped Storage)", type: "hydro", cap: 440, coords: [56.426, -5.131] },
+            { name: "Ffestiniog (Pumped Storage)", type: "hydro", cap: 360, coords: [52.978, -3.977] },
+            { name: "Foyers (Pumped Storage)", type: "hydro", cap: 300, coords: [57.251, -4.453] },
+            
+            // Flagship Utility Solar Farms
+            { name: "Cleve Hill Solar (Project Fortress)", type: "solar", cap: 350, coords: [51.341, 0.892] },
+            { name: "Llanwern Solar", type: "solar", cap: 75, coords: [51.580, -2.910] },
+            { name: "Shotwick Solar Park", type: "solar", cap: 72, coords: [53.245, -2.990] },
+            { name: "Bradenstoke Solar", type: "solar", cap: 70, coords: [51.515, -1.975] },
+            { name: "Wroughton Solar Hub", type: "solar", cap: 50, coords: [51.511, -1.791] },
+            { name: "Chapel Lane Solar", type: "solar", cap: 52, coords: [50.770, -1.860] }
+        ];
+
+        // Run instantiation loop check
+        var initialisationInterval = setInterval(function() {
+            if (window.L && document.getElementById('grid-map')) {
+                clearInterval(initialisationInterval);
+                buildApp();
+            }
+        }, 100);
+
+        function buildApp() {
+            // Re-centred view coordinates cleanly capture remote North Sea wind sectors
+            const map = L.map('grid-map', {
+                zoomControl: true,
+                minZoom: 5,
+                maxZoom: 11,
+                attributionControl: true
+            }).setView([54.6, -1.2], 6);
+
+            // Esri Dark Grey Canvas - free, no API key required
+            // (CARTO's basemaps now return "API KEY REQUIRED" tiles)
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 16,
+                attribution: 'Tiles &copy; Esri &mdash; Esri, HERE, Garmin, &copy; OpenStreetMap contributors | Grid data: <a href="https://carbonintensity.org.uk/">NESO Carbon Intensity API</a>'
+            }).addTo(map);
+
+            const legendGrid = document.getElementById('legend-grid');
+            legendGrid.innerHTML = '';
+            Object.keys(energyColours).forEach(type => {
+                legendGrid.innerHTML += `
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: ${energyColours[type]}"></div>
+                        <div>${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                    </div>`;
+            });
+
+            fetch('https://api.carbonintensity.org.uk/generation')
+                .then(res => res.json())
+                .then(json => {
+                    const mix = json.data.generationmix || json.data[0].generationmix;
+                    const gridCurrentMix = {};
+                    const mixStackHTML = [];
+                    
+                    mix.forEach(item => {
+                        gridCurrentMix[item.fuel] = item.perc;
+                        if(item.perc > 0) {
+                            const col = energyColours[item.fuel] || '#64748b';
+                            mixStackHTML.push(`
+                                <div style="margin-bottom: 6px;">
+                                    <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 2px;">
+                                        <span>${item.fuel.toUpperCase()}</span><span>${item.perc}%</span>
+                                    </div>
+                                    <div style="width: 100%; height: 4px; background: #334155; border-radius: 2px; overflow: hidden;">
+                                        <div style="width: ${item.perc}%; height: 100%; background: ${col};"></div>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                    });
+                    document.getElementById('national-mix-stack').innerHTML = mixStackHTML.join('');
+
+                    ukPowerAssets.forEach(asset => {
+                        const fuelPercentage = gridCurrentMix[asset.type] || 0;
+                        const currentFactor = fuelPercentage / 100;
+                        
+                        // Calculated live estimation framework
+                        let calculatedOutput = asset.cap * (currentFactor * 2.5); 
+                        if (calculatedOutput > asset.cap) calculatedOutput = asset.cap * 0.94;
+                        if (fuelPercentage === 0) calculatedOutput = 0;
+                        if (asset.type === 'nuclear' && fuelPercentage > 0) calculatedOutput = asset.cap * 0.88; 
+
+                        const hexColour = energyColours[asset.type] || '#ffffff';
+
+                        const icon = L.divIcon({
+                            className: 'custom-asset-wrapper',
+                            html: `<div class="asset-marker" style="background-color: ${hexColour}; color: ${hexColour}; width: 13px; height: 13px;"></div>`,
+                            iconSize: [13, 13],
+                            iconAnchor: [6, 6]
+                        });
+
+                        const marker = L.marker(asset.coords, { icon: icon }).addTo(map);
+
+                        const updateTelemetry = () => {
+                            document.getElementById('asset-focus-prompt').style.display = 'none';
+                            document.getElementById('asset-telemetry').style.display = 'block';
+                            document.getElementById('tel-name').textContent = asset.name;
+                            document.getElementById('tel-type').textContent = asset.type.toUpperCase();
+                            document.getElementById('tel-cap').textContent = asset.cap + " MW";
+                            document.getElementById('tel-output').textContent = calculatedOutput.toFixed(1) + " MW";
+                            document.getElementById('tel-output').style.color = hexColour;
+                        };
+
+                        marker.on('mouseover', updateTelemetry);
+                        marker.on('click', updateTelemetry);
+                        marker.bindPopup(`<b>${asset.name}</b><br>Est. Generation: ${calculatedOutput.toFixed(1)} MW`);
+                    });
+                })
+                .catch(err => {
+                    console.error("Telemetry pipeline sync error:", err);
+                    document.getElementById('national-mix-stack').innerHTML = '<span style="color: #ef4444">Data feed sync error.</span>';
+                });
+
+            // Cascading dynamic layout recalibration fixes mapping dimensions inside builder frames
+            setTimeout(function() { map.invalidateSize(); }, 200);
+            setTimeout(function() { map.invalidateSize(); }, 1000);
+            setTimeout(function() { map.invalidateSize(); }, 3000);
+        }
+    })();
+</script>
+</body>
+</html>
