@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Circular Motion Lab — A-level Physics</title>
+<style>
+#cml{--bg:#eef3fa;--card:#ffffff;--ink:#14213d;--dim:#55627d;--line:#d5deeb;--acc:#2f5bea;--acc2:#0fa3a3;
+  --vel:#0f9d6b;--force:#e0457b;--wt:#7a52d1;--amber:#e8930c;--soft:#f5f8fd;
+  font-family:"Segoe UI Variable","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(--ink);
+  background:linear-gradient(160deg,#eaf1fb 0%,#f3f7fc 55%,#e9f6f4 100%);width:100%;height:100%;min-height:760px;
+  box-sizing:border-box;padding:14px;font-size:14.5px;line-height:1.45}
+#cml *{box-sizing:border-box}
+#cml .hd{display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+#cml .hd h1{margin:0;font-size:22px;letter-spacing:-.2px}
+#cml .hd h1 span{color:var(--acc)}
+#cml .hd p{margin:2px 0 0;color:var(--dim);font-size:13px}
+#cml .tabs{display:flex;gap:6px;flex-wrap:wrap}
+#cml .tab{border:1px solid var(--line);background:var(--card);color:var(--dim);padding:8px 13px;border-radius:999px;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600}
+#cml .tab.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#cml .grid{display:grid;grid-template-columns:270px minmax(0,1fr) 330px;gap:12px;align-items:start}
+@media(max-width:1150px){#cml .grid{grid-template-columns:1fr 1fr}#cml .stagecol{grid-column:1/-1;order:-1}}
+@media(max-width:700px){#cml .grid{grid-template-columns:1fr}}
+#cml .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:12px;box-shadow:0 2px 10px rgba(20,33,61,.05)}
+#cml .card h2{margin:0 0 9px;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--acc2)}
+#cml label{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin:10px 0 3px}
+#cml label b{color:var(--ink);font-variant-numeric:tabular-nums}
+#cml input[type=range]{width:100%;accent-color:var(--acc)}
+#cml select{width:100%;padding:6px;border-radius:8px;border:1px solid var(--line);font:inherit;background:var(--soft);color:var(--ink)}
+#cml .btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+#cml button.b{border:1px solid var(--line);background:var(--soft);color:var(--ink);padding:8px 12px;border-radius:9px;cursor:pointer;font:inherit;font-size:13.5px;font-weight:600}
+#cml button.b:hover{border-color:var(--acc)}
+#cml button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+#cml .chk{display:flex;justify-content:flex-start;align-items:center;gap:7px;font-size:13px;color:var(--dim);margin-top:8px;cursor:pointer}
+#cml .stage{position:relative;width:100%;height:520px;border-radius:14px;overflow:hidden;background:#fbfdff;border:1px solid var(--line)}
+#cml .stage canvas{display:block;width:100%;height:100%}
+#cml .gwrap{position:relative;width:100%;height:210px}
+#cml .gwrap canvas{display:block;width:100%;height:100%}
+#cml table.ro{width:100%;border-collapse:collapse;font-size:13.5px}
+#cml table.ro td{padding:4px 2px;border-bottom:1px dashed var(--line)}
+#cml table.ro td:last-child{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+#cml .key{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--dim);margin-top:8px}
+#cml .key i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
+#cml .note{font-size:13px;color:var(--dim)}
+#cml .note b{color:var(--ink)}
+#cml .eq{font-family:"Cambria Math","Times New Roman",serif;font-size:15px;color:var(--ink);background:var(--soft);border-radius:8px;padding:6px 9px;margin:6px 0;display:block}
+#cml .alert{margin-top:8px;padding:8px 10px;border-radius:9px;font-size:13px;font-weight:600;display:none}
+#cml .alert.bad{display:block;background:#fde8ee;color:#a3194a}
+#cml .alert.good{display:block;background:#e3f6ef;color:#0b6d4a}
+#cml .q{font-size:13.5px}
+#cml .q input{width:110px;padding:6px 8px;border:1px solid var(--line);border-radius:8px;font:inherit}
+#cml .fb{margin-top:8px;font-size:13px}
+#cml .fb.ok{color:#0b7a52}#cml .fb.no{color:#b3204f}
+#cml .sol{margin-top:6px;font-size:13px;color:var(--dim);background:var(--soft);border-radius:8px;padding:7px 9px;display:none}
+#cml .score{float:right;color:var(--acc);font-weight:700}
+#cml .pane{display:none}#cml .pane.on{display:block}
+</style>
+</head>
+<body style="margin:0">
+<div id="cml">
+  <div class="hd">
+    <div><h1>Circular Motion <span>Lab</span></h1><p>Centripetal force, angular speed and what really happens when the string breaks</p></div>
+    <div class="tabs" id="cmlTabs">
+      <button class="tab on" data-t="h">Horizontal circle</button>
+      <button class="tab" data-t="v">Vertical loop</button>
+      <button class="tab" data-t="c">Conical pendulum</button>
+      <button class="tab" data-t="r">Cars on bends</button>
+    </div>
+  </div>
+  <div class="grid">
+    <div>
+      <!-- controls: horizontal -->
+      <div class="card pane on" data-p="h">
+        <h2>Controls</h2>
+        <label><span>Mass m</span><b id="hMv">0.50 kg</b></label><input type="range" id="hM" min="0.1" max="2" step="0.05" value="0.5">
+        <label><span>Radius r</span><b id="hRv">0.80 m</b></label><input type="range" id="hR" min="0.2" max="1.5" step="0.05" value="0.8">
+        <label><span>Speed v</span><b id="hVv">3.0 m/s</b></label><input type="range" id="hV" min="0.5" max="8" step="0.1" value="3">
+        <div class="btns"><button class="b p" id="hCut">✂ Cut the string</button><button class="b" id="hReset">Reset</button></div>
+        <label class="chk"><input type="checkbox" id="hVec" checked> Show vectors</label>
+        <label class="chk"><input type="checkbox" id="hTrail" checked> Show trail</label>
+        <label class="chk"><input type="checkbox" id="hAng"> Show angle swept (radians)</label>
+      </div>
+      <!-- controls: vertical -->
+      <div class="card pane" data-p="v">
+        <h2>Controls</h2>
+        <label><span>Mass m</span><b id="vMv">0.50 kg</b></label><input type="range" id="vM" min="0.1" max="2" step="0.05" value="0.5">
+        <label><span>Radius r</span><b id="vRv">0.80 m</b></label><input type="range" id="vR" min="0.3" max="1.5" step="0.05" value="0.8">
+        <label><span>Speed at bottom v<sub>b</sub></span><b id="vVv">7.0 m/s</b></label><input type="range" id="vV" min="0" max="10" step="0.1" value="7">
+        <div class="btns"><button class="b p" id="vGo">▶ Launch</button><button class="b" id="vReset">Reset</button><button class="b" id="vMin">Set v<sub>b</sub> = √(5gr)</button></div>
+        <label class="chk"><input type="checkbox" id="vSlow"> Slow motion (×0.25)</label>
+        <div class="alert" id="vAlert"></div>
+      </div>
+      <!-- controls: conical -->
+      <div class="card pane" data-p="c">
+        <h2>Controls</h2>
+        <label><span>Mass m</span><b id="cMv">0.50 kg</b></label><input type="range" id="cM" min="0.1" max="2" step="0.05" value="0.5">
+        <label><span>String length L</span><b id="cLv">1.00 m</b></label><input type="range" id="cL" min="0.3" max="2" step="0.05" value="1">
+        <label><span>Rotation rate f</span><b id="cFv">0.80 rev/s</b></label><input type="range" id="cF" min="0.1" max="2.5" step="0.01" value="0.8">
+        <label class="chk"><input type="checkbox" id="cVec" checked> Show forces</label>
+        <div class="alert" id="cAlert"></div>
+      </div>
+      <!-- controls: cars -->
+      <div class="card pane" data-p="r">
+        <h2>Controls</h2>
+        <label><span>Radius of bend r</span><b id="rRv">50 m</b></label><input type="range" id="rR" min="10" max="150" step="1" value="50">
+        <label><span>Speed v</span><b id="rVv">15.0 m/s</b></label><input type="range" id="rV" min="2" max="45" step="0.5" value="15">
+        <label><span>Banking angle θ</span><b id="rTv">0°</b></label><input type="range" id="rT" min="0" max="40" step="1" value="0">
+        <label>Road surface</label>
+        <select id="rMu"><option value="0.8">Dry tarmac (μ = 0.80)</option><option value="0.5">Wet tarmac (μ = 0.50)</option><option value="0.15">Packed snow (μ = 0.15)</option><option value="0.05">Black ice (μ = 0.05)</option><option value="0">Frictionless (μ = 0)</option></select>
+        <div class="btns"><button class="b" id="rReset">Back on the road</button><button class="b" id="rIdeal">Set design speed</button></div>
+        <div class="alert" id="rAlert"></div>
+      </div>
+
+      <div class="card">
+        <h2>Key</h2>
+        <div class="key"><span><i style="background:var(--vel)"></i>velocity</span><span><i style="background:var(--force)"></i>resultant (centripetal) force</span><span><i style="background:var(--wt)"></i>weight</span><span><i style="background:var(--acc)"></i>tension / normal</span><span><i style="background:var(--amber)"></i>friction</span></div>
+      </div>
+    </div>
+
+    <div class="stagecol">
+      <div class="stage" id="cmlStageWrap"><canvas id="cmlStage"></canvas></div>
+      <div class="card" style="margin-top:12px">
+        <h2 id="cmlExplT">What is going on?</h2>
+        <div class="note" id="cmlExpl"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card"><h2>Live values</h2><table class="ro" id="cmlRO"></table></div>
+      <div class="card">
+        <h2 id="gTitle">Graph</h2>
+        <div class="pane on" data-p="h"><select id="hG"><option value="v">F against v (m, r fixed)</option><option value="r">F against r (m, v fixed)</option><option value="rw">F against r (m, ω fixed)</option><option value="w">F against ω (m, r fixed)</option></select></div>
+        <div class="gwrap" style="margin-top:8px"><canvas id="cmlGraph"></canvas></div>
+        <div class="note" id="gNote" style="margin-top:6px"></div>
+      </div>
+      <div class="card q">
+        <h2>Quick-fire questions <span class="score" id="qScore">0 / 0</span></h2>
+        <div id="qText"></div>
+        <div style="margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input id="qIn" type="text" inputmode="decimal" placeholder="answer"> <span id="qUnit"></span></div>
+        <div class="btns"><button class="b p" id="qChk">Check</button><button class="b" id="qNew">New question</button><button class="b" id="qShow">Show working</button></div>
+        <div class="fb" id="qFb"></div>
+        <div class="sol" id="qSol"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+const root=document.getElementById('cml');
+const $=id=>root.querySelector('#'+id);
+const g=9.81, TAU=Math.PI*2;
+let tab='h';
+const C={vel:'#0f9d6b',force:'#e0457b',wt:'#7a52d1',ten:'#2f5bea',fr:'#e8930c',ink:'#14213d',dim:'#55627d',line:'#d5deeb',grid:'#e7edf6',acc2:'#0fa3a3'};
+function fmt(x,d){if(!isFinite(x))return '—';return x.toFixed(d===undefined?2:d);}
+function sf(x,n){if(!isFinite(x))return '—';if(x===0)return '0';const p=Math.floor(Math.log10(Math.abs(x)));const d=Math.max(0,n-1-p);return x.toFixed(Math.min(d,6));}
+
+/* ---------- canvas helpers ---------- */
+function hiDPI(cv){const r=cv.getBoundingClientRect();const dpr=window.devicePixelRatio||1;const w=Math.max(10,r.width),h=Math.max(10,r.height);
+  if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr);}
+  const ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return {ctx,w,h};}
+const stage=$('cmlStage'), graph=$('cmlGraph');
+let S=hiDPI(stage), G=hiDPI(graph);
+new ResizeObserver(()=>{S=hiDPI(stage);G=hiDPI(graph);drawGraph();}).observe(stage);
+new ResizeObserver(()=>{G=hiDPI(graph);drawGraph();}).observe(graph);
+
+function arrow(ctx,x1,y1,x2,y2,col,w,label,dash){
+  const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);if(L<2)return;
+  ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w||3;ctx.lineCap='round';
+  if(dash)ctx.setLineDash(dash);
+  const ux=dx/L,uy=dy/L,hl=Math.min(13,L*0.45);
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-ux*hl*0.8,y2-uy*hl*0.8);ctx.stroke();ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-ux*hl-uy*hl*0.5,y2-uy*hl+ux*hl*0.5);ctx.lineTo(x2-ux*hl+uy*hl*0.5,y2-uy*hl-ux*hl*0.5);ctx.closePath();ctx.fill();
+  if(label){ctx.font='600 13px Segoe UI,system-ui,sans-serif';ctx.fillStyle=col;ctx.fillText(label,x2+6*Math.sign(dx||1)+(dx<0?-ctx.measureText(label).width:0),y2+(dy>0?14:-6));}
+  ctx.restore();}
+function ball(ctx,x,y,r,col){const gr=ctx.createRadialGradient(x-r*.35,y-r*.35,r*.1,x,y,r);gr.addColorStop(0,'#ffffff');gr.addColorStop(.35,col);gr.addColorStop(1,shade(col,-40));
+  ctx.fillStyle=gr;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();ctx.strokeStyle='rgba(20,33,61,.35)';ctx.lineWidth=1;ctx.stroke();}
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);let r=(n>>16)+amt,gg=((n>>8)&255)+amt,b=(n&255)+amt;r=Math.max(0,Math.min(255,r));gg=Math.max(0,Math.min(255,gg));b=Math.max(0,Math.min(255,b));return '#'+((1<<24)+(r<<16)+(gg<<8)+b).toString(16).slice(1);}
+function bgGrid(ctx,w,h){ctx.fillStyle='#fbfdff';ctx.fillRect(0,0,w,h);ctx.strokeStyle=C.grid;ctx.lineWidth=1;for(let x=0;x<w;x+=30){ctx.beginPath();ctx.moveTo(x+.5,0);ctx.lineTo(x+.5,h);ctx.stroke();}for(let y=0;y<h;y+=30){ctx.beginPath();ctx.moveTo(0,y+.5);ctx.lineTo(w,y+.5);ctx.stroke();}}
+function label(ctx,t,x,y,col,size,align){ctx.font=(size?('600 '+size+'px'):'600 13px')+' Segoe UI,system-ui,sans-serif';ctx.fillStyle=col||C.ink;ctx.textAlign=align||'left';ctx.fillText(t,x,y);ctx.textAlign='left';}
+
+/* ---------- readouts ---------- */
+function setRO(rows){$('cmlRO').innerHTML=rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('');}
+function setExpl(t,h){$('cmlExplT').textContent=t;$('cmlExpl').innerHTML=h;}
+
+/* ================= HORIZONTAL ================= */
+const H={th:0,cut:false,x:0,y:0,vx:0,vy:0,trail:[],swept:0};
+function hVals(){return {m:+$('hM').value,r:+$('hR').value,v:+$('hV').value};}
+function hReset(){H.cut=false;H.trail=[];H.th=0;H.swept=0;}
+function hStep(dt){const {r,v}=hVals();
+  if(!H.cut){const w=v/r;H.th=(H.th+w*dt)%TAU;H.swept+=w*dt;if(H.swept>TAU)H.swept-=TAU;H.x=r*Math.cos(H.th);H.y=r*Math.sin(H.th);H.vx=-v*Math.sin(H.th);H.vy=v*Math.cos(H.th);}
+  else{H.x+=H.vx*dt;H.y+=H.vy*dt;if(Math.hypot(H.x,H.y)>4.5)hReset();}
+  if($('hTrail').checked){H.trail.push([H.x,H.y]);if(H.trail.length>(H.cut?400:Math.round(TAU/(v/r)/dt*0.9)))H.trail.shift();}}
+function hDraw(){const {ctx,w,h}=S;bgGrid(ctx,w,h);const {m,r,v}=hVals();
+  const sc=Math.min(w,h)*0.42/1.5,cx=w/2,cy=h/2;
+  // table disc
+  ctx.fillStyle='rgba(47,91,234,.05)';ctx.beginPath();ctx.arc(cx,cy,1.55*sc,0,TAU);ctx.fill();
+  ctx.setLineDash([5,6]);ctx.strokeStyle='#b8c6de';ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(cx,cy,r*sc,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  // trail
+  if($('hTrail').checked&&H.trail.length>1){ctx.strokeStyle='rgba(15,163,163,.55)';ctx.lineWidth=2.5;ctx.beginPath();H.trail.forEach((p,i)=>{const X=cx+p[0]*sc,Y=cy-p[1]*sc;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});ctx.stroke();}
+  const X=cx+H.x*sc,Y=cy-H.y*sc;
+  if($('hAng').checked&&!H.cut){ctx.fillStyle='rgba(232,147,12,.16)';ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r*sc*0.45,0,-H.swept,true);ctx.closePath();ctx.fill();
+    label(ctx,'θ = '+H.swept.toFixed(2)+' rad',cx+12,cy+22,'#b36d00');label(ctx,'arc s = rθ = '+(r*H.swept).toFixed(2)+' m',cx+12,cy+40,'#b36d00');}
+  // pivot
+  ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(cx,cy,5,0,TAU);ctx.fill();
+  if(!H.cut){ctx.strokeStyle='#6a7898';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(X,Y);ctx.stroke();}
+  else{ // dangling string piece
+    ctx.strokeStyle='#6a7898';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+18,cy+10);ctx.stroke();}
+  const br=8+m*5;ball(ctx,X,Y,br,'#2f5bea');
+  if($('hVec').checked){const vs=14;arrow(ctx,X,Y,X+H.vx*vs,Y-H.vy*vs,C.vel,3,'v');
+    if(!H.cut){const F=m*v*v/r;const L=Math.min(140,F*4.5+12);const ux=-H.x/r,uy=-H.y/r;arrow(ctx,X,Y,X+ux*L,Y-uy*L,C.force,3,'F');}}
+  if(H.cut)label(ctx,'No resultant force → constant velocity (Newton’s first law)',16,h-16,C.force);
+  label(ctx,'View from above',16,24,C.dim,12);
+  // scale bar
+  ctx.strokeStyle=C.ink;ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(w-16-0.5*sc,h-20);ctx.lineTo(w-16,h-20);ctx.stroke();label(ctx,'0.5 m',w-16-0.25*sc,h-27,C.ink,12,'center');
+}
+function hRO(){const {m,r,v}=hVals();const w=v/r,T=TAU/w;setRO([['Speed v',fmt(v,2)+' m s⁻¹'],['Angular speed ω = v/r',fmt(w,2)+' rad s⁻¹'],['Period T = 2π/ω',fmt(T,3)+' s'],['Frequency f = 1/T',fmt(1/T,3)+' Hz'],['Centripetal acceleration a = v²/r = ω²r',sf(v*v/r,3)+' m s⁻²'],['Centripetal force F = mv²/r',sf(m*v*v/r,3)+' N'],['a in units of g',fmt(v*v/r/g,2)+' g']]);
+  $('hMv').textContent=fmt(m,2)+' kg';$('hRv').textContent=fmt(r,2)+' m';$('hVv').textContent=fmt(v,1)+' m/s';}
+function hExpl(){setExpl('What is going on?','The ball moves at <b>constant speed</b> but its <b>velocity is always changing</b> because its direction changes. A changing velocity means it is accelerating, so by Newton’s second law there must be a resultant force. That force — the <b>centripetal force</b>, here provided by the tension in the string — always points towards the centre, at 90° to the velocity, so it changes the direction of motion but does no work and the speed stays the same.<span class="eq">F = mv²/r = mω²r &nbsp;&nbsp; ω = v/r = 2π/T = 2πf</span><b>Cut the string</b> and the force disappears: the ball carries on in a straight line along the tangent. It does <b>not</b> fly outwards — there is no “centrifugal force” acting on it.');}
+
+/* ================= VERTICAL ================= */
+const V={mode:'idle',phi:0,om:0,free:false,x:0,y:0,vx:0,vy:0,trail:[],minT:Infinity,slackAt:null,t:0};
+function vVals(){return {m:+$('vM').value,r:+$('vR').value,vb:+$('vV').value};}
+function vReset(){V.mode='idle';V.phi=0;V.om=0;V.free=false;V.trail=[];V.slackAt=null;V.t=0;const {r}=vVals();V.x=0;V.y=-r;$('vAlert').className='alert';}
+function vLaunch(){vReset();const {r,vb}=vVals();V.mode='run';V.om=vb/r;V.vx=vb;V.vy=0;}
+function vTension(){const {m,r}=vVals();return m*r*V.om*V.om+m*g*Math.cos(V.phi);}
+function vStep(dt){if(V.mode!=='run')return;const {r}=vVals();const sub=20,h=dt/sub;
+  for(let i=0;i<sub;i++){
+    if(!V.free){ // RK4 for phi''=-(g/r) sin phi  (phi measured from the bottom, anticlockwise)
+      const f=(p,o)=>[o,-(g/r)*Math.sin(p)];
+      const k1=f(V.phi,V.om),k2=f(V.phi+h/2*k1[0],V.om+h/2*k1[1]),k3=f(V.phi+h/2*k2[0],V.om+h/2*k2[1]),k4=f(V.phi+h*k3[0],V.om+h*k3[1]);
+      V.phi+=h/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]);V.om+=h/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]);
+      V.x=r*Math.sin(V.phi);V.y=-r*Math.cos(V.phi);
+      if(vTension()<0){V.free=true;V.vx=r*V.om*Math.cos(V.phi);V.vy=r*V.om*Math.sin(V.phi);if(V.slackAt===null)V.slackAt=V.phi;}
+    }else{
+      V.vy-=g*h;V.x+=V.vx*h;V.y+=V.vy*h;
+      const d=Math.hypot(V.x,V.y);
+      if(d>=r){ // string becomes taut again: radial component of velocity is removed (inelastic jerk)
+        const ux=V.x/d,uy=V.y/d;const vr=V.vx*ux+V.vy*uy;if(vr>0){V.vx-=vr*ux;V.vy-=vr*uy;}
+        V.x=ux*r;V.y=uy*r;V.phi=Math.atan2(V.x,-V.y);const vt=V.vx*Math.cos(V.phi)+V.vy*Math.sin(V.phi);V.om=vt/r;
+        if(vTension()>=0)V.free=false;}
+    }}
+  V.t+=dt;V.trail.push([V.x,V.y]);if(V.trail.length>260)V.trail.shift();
+  if(V.slackAt!==null){const a=$('vAlert');a.className='alert bad';a.innerHTML='The string went slack at '+fmt(((V.slackAt%TAU)+TAU)%TAU*180/Math.PI,0)+'° from the bottom — tension can’t be negative, so the ball fell inside the circle.';}
+  else if(Math.abs(V.phi)>TAU){const a=$('vAlert');a.className='alert good';a.textContent='Loop completed — the string stayed taut all the way round.';}
+}
+function vDraw(){const {ctx,w,h}=S;bgGrid(ctx,w,h);const {m,r,vb}=vVals();
+  const sc=Math.min(w,h)*0.38/1.5,cx=w/2,cy=h/2+10;
+  ctx.setLineDash([5,6]);ctx.strokeStyle='#b8c6de';ctx.lineWidth=1.3;ctx.beginPath();ctx.arc(cx,cy,r*sc,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  // ground reference
+  ctx.strokeStyle='#c9d4e6';ctx.beginPath();ctx.moveTo(cx-r*sc-40,cy+r*sc+18);ctx.lineTo(cx+r*sc+40,cy+r*sc+18);ctx.stroke();
+  label(ctx,'Side view',16,24,C.dim,12);
+  if(V.trail.length>1){ctx.strokeStyle='rgba(15,163,163,.5)';ctx.lineWidth=2.5;ctx.beginPath();V.trail.forEach((p,i)=>{const X=cx+p[0]*sc,Y=cy-p[1]*sc;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y);});ctx.stroke();}
+  const X=cx+V.x*sc,Y=cy-V.y*sc;
+  ctx.fillStyle=C.ink;ctx.beginPath();ctx.arc(cx,cy,5,0,TAU);ctx.fill();
+  if(!V.free){ctx.strokeStyle='#6a7898';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(X,Y);ctx.stroke();}
+  else{ // slack string drawn as a sagging curve
+    ctx.strokeStyle='#9aa6bf';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(cx,cy);ctx.quadraticCurveTo((cx+X)/2+10,(cy+Y)/2+25,X,Y);ctx.stroke();ctx.setLineDash([]);}
+  ball(ctx,X,Y,8+m*5,'#e0457b');
+  // forces
+  const fs=5.5;const W=m*g;arrow(ctx,X,Y,X,Y+W*fs+8,C.wt,3,'W = mg');
+  if(!V.free){const T=Math.max(0,vTension());const L=T*fs;const ux=(cx-X),uy=(cy-Y),d=Math.hypot(ux,uy)||1;if(L>2)arrow(ctx,X,Y,X+ux/d*L,Y+uy/d*L,C.ten,3,'T');}
+  if(V.mode==='run'){const vx=V.free?V.vx:r*V.om*Math.cos(V.phi),vy=V.free?V.vy:r*V.om*Math.sin(V.phi);arrow(ctx,X,Y,X+vx*9,Y-vy*9,C.vel,2.5,'v');}
+  // marker for top/bottom
+  label(ctx,'top',cx,cy-r*sc-12,C.dim,12,'center');label(ctx,'bottom',cx,cy+r*sc+34,C.dim,12,'center');
+}
+function vRO(){const {m,r,vb}=vVals();const vmin=Math.sqrt(5*g*r);
+  let v,hgt,T;if(V.mode==='idle'){v=vb;hgt=0;T=m*vb*vb/r+m*g;}else{v=V.free?Math.hypot(V.vx,V.vy):Math.abs(r*V.om);hgt=V.y+r;T=V.free?0:vTension();}
+  const vtop2=vb*vb-4*g*r;
+  setRO([['Speed now',fmt(v,2)+' m s⁻¹'],['Height above bottom',fmt(hgt,2)+' m'],['Tension now',fmt(Math.max(0,T),2)+' N'],['KE now',fmt(0.5*m*v*v,2)+' J'],['GPE now (bottom = 0)',fmt(m*g*hgt,2)+' J'],['KE + GPE',fmt(0.5*m*v*v+m*g*hgt,2)+' J'],['Tension at bottom = mv²/r + mg',fmt(m*vb*vb/r+m*g,2)+' N'],['Speed at top (energy)',vtop2>=0?fmt(Math.sqrt(vtop2),2)+' m s⁻¹':'never reaches top'],['Minimum v at top = √(gr)',fmt(Math.sqrt(g*r),2)+' m s⁻¹'],['Minimum v at bottom = √(5gr)',fmt(vmin,2)+' m s⁻¹']]);
+  $('vMv').textContent=fmt(m,2)+' kg';$('vRv').textContent=fmt(r,2)+' m';$('vVv').textContent=fmt(vb,1)+' m/s';}
+function vExpl(){setExpl('Why can the string go slack?','In a vertical circle the speed changes, because energy is transferred between kinetic and gravitational stores: <span class="eq">½mv² = ½mv<sub>b</sub>² − mgh</span>At every point the resultant force towards the centre must equal mv²/r. At the <b>bottom</b> the weight acts away from the centre, so <span class="eq">T − mg = mv²/r &nbsp;⇒&nbsp; T = mv²/r + mg</span>(the string is most likely to snap here). At the <b>top</b> the weight acts towards the centre, so <span class="eq">T + mg = mv²/r &nbsp;⇒&nbsp; T = mv²/r − mg</span>A string can only pull, so T ≥ 0. The smallest speed at the top is when T = 0, giving <b>v = √(gr)</b>; using energy conservation this needs <b>v<sub>b</sub> = √(5gr)</b> at the bottom. Try launching just below this — the string goes slack and the ball follows a projectile path inside the circle.');}
+
+/* ================= CONICAL ================= */
+const CP={phi:0};
+function cVals(){return {m:+$('cM').value,L:+$('cL').value,f:+$('cF').value};}
+function cCalc(){const {m,L,f}=cVals();const w=TAU*f;let cos=g/(w*w*L);let hang=false;if(cos>=1){cos=1;hang=true;}const th=Math.acos(cos);return {m,L,f,w,th,r:L*Math.sin(th),T:hang?m*g:m*g/cos,hang,fmin:Math.sqrt(g/L)/TAU,h:L*cos};}
+function cStep(dt){const {w}=cCalc();CP.phi=(CP.phi+w*dt)%TAU;}
+function cDraw(){const {ctx,w,h}=S;bgGrid(ctx,w,h);const c=cCalc();
+  const sc=Math.min(w*0.36,h*0.62)/c.L,px=w*0.42,py=50;const tilt=0.32;
+  // ceiling
+  ctx.fillStyle='#d9e2f0';ctx.fillRect(px-90,py-16,180,10);ctx.strokeStyle='#9aa8c4';for(let i=-90;i<90;i+=12){ctx.beginPath();ctx.moveTo(px+i,py-16);ctx.lineTo(px+i+8,py-26);ctx.stroke();}
+  const hh=c.h*sc, rr=c.r*sc, oy=py+hh;
+  // orbit ellipse
+  ctx.setLineDash([5,6]);ctx.strokeStyle='#b8c6de';ctx.lineWidth=1.3;ctx.beginPath();ctx.ellipse(px,oy,Math.max(rr,0.1),Math.max(rr*tilt,0.1),0,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  // vertical axis
+  ctx.strokeStyle='#c4cfe2';ctx.setLineDash([3,4]);ctx.beginPath();ctx.moveTo(px,py-6);ctx.lineTo(px,oy+40);ctx.stroke();ctx.setLineDash([]);
+  const bx=px+rr*Math.cos(CP.phi),by=oy+rr*tilt*Math.sin(CP.phi);
+  const behind=Math.sin(CP.phi)<0;
+  // cone shading
+  ctx.fillStyle='rgba(47,91,234,.05)';ctx.beginPath();ctx.moveTo(px,py-6);ctx.lineTo(px-rr,oy);ctx.ellipse(px,oy,Math.max(rr,0.1),Math.max(rr*tilt,0.1),0,Math.PI,0,false);ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#6a7898';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(px,py-6);ctx.lineTo(bx,by);ctx.stroke();
+  const br=(8+c.m*5)*(behind?0.9:1.05);ball(ctx,bx,by,br,'#0fa3a3');
+  // angle annotation
+  if(!c.hang){const a2=Math.atan2(by-(py-6),bx-px),a1=Math.PI/2;ctx.strokeStyle='#e8930c';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py-6,38,Math.min(a1,a2),Math.max(a1,a2));ctx.stroke();label(ctx,'θ',px+(bx>=px?8:-16),py+48,'#b36d00');}
+  if($('cVec').checked){ // free-body diagram inset, drawn in the vertical plane containing the string
+    const iw=Math.min(230,w*0.36),ih=200,ix=w-iw-12,iy=h-ih-12;ctx.fillStyle='rgba(255,255,255,.95)';ctx.strokeStyle=C.line;ctx.lineWidth=1;ctx.beginPath();ctx.roundRect?ctx.roundRect(ix,iy,iw,ih,10):ctx.rect(ix,iy,iw,ih);ctx.fill();ctx.stroke();
+    label(ctx,'Free-body diagram (side-on)',ix+10,iy+18,C.dim,12);
+    const ox=ix+iw*0.58,oy2=iy+ih*0.52;const W=c.m*g;const k=Math.min(62/W,85/c.T);
+    ball(ctx,ox,oy2,9,'#0fa3a3');
+    arrow(ctx,ox,oy2,ox,oy2+W*k,C.wt,3,'W = mg');
+    const tx=-Math.sin(c.th)*c.T*k,ty=-Math.cos(c.th)*c.T*k;arrow(ctx,ox,oy2,ox+tx,oy2+ty,C.ten,3,'T');
+    if(!c.hang){ctx.save();ctx.setLineDash([4,4]);ctx.strokeStyle='#8fa0c0';ctx.lineWidth=1.2;ctx.beginPath();ctx.moveTo(ox+tx,oy2+ty);ctx.lineTo(ox,oy2+ty);ctx.moveTo(ox+tx,oy2+ty);ctx.lineTo(ox+tx,oy2);ctx.stroke();ctx.restore();
+      arrow(ctx,ox,oy2,ox+tx,oy2,C.force,3,'T sin θ');arrow(ctx,ox,oy2,ox,oy2+ty,C.ten,2,'',[5,4]);label(ctx,'T cos θ',ox+8,oy2+ty+12,C.ten,12);}
+    label(ctx,'← towards centre of circle',ix+10,iy+ih-10,C.force,11);}
+  label(ctx,'r = '+fmt(c.r,2)+' m',px+rr/2,oy+rr*tilt+26,C.dim,12,'center');
+  label(ctx,'h = '+fmt(c.h,2)+' m',px+8,(py+oy)/2,C.dim,12);
+}
+function cRO(){const c=cCalc();setRO([['Angular speed ω = 2πf',fmt(c.w,2)+' rad s⁻¹'],['Period T = 1/f',fmt(1/c.f,3)+' s'],['Angle to vertical θ',fmt(c.th*180/Math.PI,1)+'°'],['Radius of circle r = L sin θ',fmt(c.r,3)+' m'],['Height of cone h = L cos θ',fmt(c.h,3)+' m'],['Tension T = mg / cos θ',sf(c.T,3)+' N'],['Vertical: T cos θ',sf(c.T*Math.cos(c.th),3)+' N (= mg = '+sf(c.m*g,3)+' N)'],['Horizontal: T sin θ = mω²r',sf(c.T*Math.sin(c.th),3)+' N'],['Minimum rate to lift f<sub>min</sub>',fmt(c.fmin,3)+' rev s⁻¹']]);
+  $('cMv').textContent=fmt(c.m,2)+' kg';$('cLv').textContent=fmt(c.L,2)+' m';$('cFv').textContent=fmt(c.f,2)+' rev/s';
+  const a=$('cAlert');if(c.hang){a.className='alert bad';a.innerHTML='Too slow: ω²L &lt; g, so the bob just hangs vertically and spins. Increase f above '+fmt(c.fmin,2)+' rev/s.';}else a.className='alert';}
+function cExpl(){setExpl('Resolving the tension','Only two forces act on the bob: its <b>weight</b> and the <b>tension</b>. There is no vertical acceleration, so the vertical component of tension balances the weight; the horizontal component is the resultant force, and it provides the centripetal force.<span class="eq">T cos θ = mg &nbsp;&nbsp;&nbsp; T sin θ = mω²r = mω²L sin θ</span>Dividing gives <span class="eq">T = mω²L &nbsp;&nbsp; and &nbsp;&nbsp; cos θ = g / (ω²L)</span>so the angle does <b>not depend on the mass</b> — try changing m. The period is T<sub>p</sub> = 2π√(h/g), where h = L cos θ is the height of the cone. Like a simple pendulum, it depends only on a length and g.');}
+
+/* ================= CARS ================= */
+const R={rad:0,phi:0,skid:false,sx:0,sy:0,svx:0,svy:0,skidDir:0};
+function rVals(){return {r:+$('rR').value,v:+$('rV').value,th:+$('rT').value*Math.PI/180,mu:+$('rMu').value};}
+function rCalc(){const {r,v,th,mu}=rVals();const m=1200;const a=v*v/r;const f=m*(a*Math.cos(th)-g*Math.sin(th));const N=m*(g*Math.cos(th)+a*Math.sin(th));
+  const vdes=Math.sqrt(g*r*Math.tan(th));const den=Math.cos(th)-mu*Math.sin(th);const vmax=den>0?Math.sqrt(g*r*(Math.sin(th)+mu*Math.cos(th))/den):Infinity;
+  const nmin=Math.sin(th)-mu*Math.cos(th);const vmin=nmin>0?Math.sqrt(g*r*nmin/(Math.cos(th)+mu*Math.sin(th))):0;
+  return {r,v,th,mu,m,a,f,N,vdes,vmax,vmin,ok:Math.abs(f)<=mu*N+1e-9};}
+function rStep(dt){const c=rCalc();
+  if(!R.skid){R.phi=(R.phi+c.v/c.r*dt)%TAU;if(!c.ok){R.skid=true;R.skidDir=c.f>0?1:-1;R.rad=c.r;R.sx=c.r*Math.cos(R.phi);R.sy=c.r*Math.sin(R.phi);R.svx=-c.v*Math.sin(R.phi);R.svy=c.v*Math.cos(R.phi);}}
+  else if(R.skidDir<0){ // too slow on steep banking: car slides down towards the inside of the bend
+    R.rad-=0.22*c.r*dt;R.phi=(R.phi+c.v/c.r*dt)%TAU;R.sx=R.rad*Math.cos(R.phi);R.sy=R.rad*Math.sin(R.phi);R.svx=-Math.sin(R.phi);R.svy=Math.cos(R.phi);if(R.rad<c.r*0.45)R.skid=false;}
+  else{ // sliding outwards: friction acts at its limit but cannot supply mv²/r; drawn qualitatively
+    const d=Math.hypot(R.sx,R.sy)||1;const ax=-(R.sx/d)*c.mu*g*Math.cos(c.th)*0.6*R.skidDir,ay=-(R.sy/d)*c.mu*g*Math.cos(c.th)*0.6*R.skidDir;
+    R.svx+=ax*dt;R.svy+=ay*dt;R.sx+=R.svx*dt;R.sy+=R.svy*dt;
+
+    if(Math.hypot(R.sx,R.sy)>c.r*2.4||Math.hypot(R.sx,R.sy)<c.r*0.3){R.skid=false;}}}
+function carShape(ctx,x,y,ang,col){ctx.save();ctx.translate(x,y);ctx.rotate(ang);ctx.fillStyle=col;ctx.strokeStyle='#14213d';ctx.lineWidth=1.2;
+  ctx.beginPath();ctx.roundRect?ctx.roundRect(-13,-7,26,14,4):ctx.rect(-13,-7,26,14);ctx.fill();ctx.stroke();ctx.fillStyle='#cfe3ff';ctx.fillRect(2,-5,6,10);ctx.fillStyle='#14213d';ctx.fillRect(-10,-9,6,3);ctx.fillRect(4,-9,6,3);ctx.fillRect(-10,6,6,3);ctx.fillRect(4,6,6,3);ctx.restore();}
+function rDraw(){const {ctx,w,h}=S;const c=rCalc();ctx.fillStyle='#f4f8f1';ctx.fillRect(0,0,w,h);
+  // left: top view; right: cross-section
+  const split=w>620;const tw=split?w*0.56:w,th=split?h:h*0.58;
+  const cx=tw/2,cy=th/2;const sc=Math.min(tw,th)*0.36/c.r;
+  // grass and road
+  ctx.fillStyle='#e3efd9';ctx.fillRect(0,0,tw,th);
+  ctx.strokeStyle='#5d6a80';ctx.lineWidth=Math.max(18,c.r*sc*0.22);ctx.beginPath();ctx.arc(cx,cy,c.r*sc,0,TAU);ctx.stroke();
+  ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.setLineDash([10,10]);ctx.beginPath();ctx.arc(cx,cy,c.r*sc,0,TAU);ctx.stroke();ctx.setLineDash([]);
+  label(ctx,'Top view',12,22,C.dim,12);
+  let X,Y,ang;
+  if(!R.skid){X=cx+c.r*sc*Math.cos(R.phi);Y=cy-c.r*sc*Math.sin(R.phi);ang=-(R.phi+Math.PI/2);}
+  else{X=cx+R.sx*sc;Y=cy-R.sy*sc;ang=-Math.atan2(R.svy,R.svx);}
+  carShape(ctx,X,Y,ang,R.skid?'#e0457b':'#2f5bea');
+  if(!R.skid){const ux=(cx-X),uy=(cy-Y),d=Math.hypot(ux,uy);arrow(ctx,X,Y,X+ux/d*Math.min(90,c.a*6+10),Y+uy/d*Math.min(90,c.a*6+10),C.force,3,'F');}
+  else label(ctx,c.f>0?'Skidding outwards — not enough friction':'Sliding down the banking — too slow',12,th-14,'#b3204f');
+  // cross-section
+  let ox,oy,cw,ch;if(split){ox=tw+10;oy=0;cw=w-tw-10;ch=h;}else{ox=0;oy=th;cw=w;ch=h-th;}
+  ctx.fillStyle='#fbfdff';ctx.fillRect(ox,oy,cw,ch);label(ctx,'Cross-section (centre of bend to the left)',ox+10,oy+22,C.dim,12);
+  const mx=ox+cw/2,my=oy+ch*0.62;const rl=cw*0.38;
+  ctx.save();ctx.translate(mx,my);ctx.rotate(-c.th);ctx.fillStyle='#5d6a80';ctx.fillRect(-rl,0,2*rl,12);ctx.fillStyle='#2f5bea';ctx.fillRect(-30,-26,60,26);ctx.fillStyle='#cfe3ff';ctx.fillRect(-18,-36,36,12);ctx.fillStyle='#14213d';ctx.beginPath();ctx.arc(-18,0,6,0,TAU);ctx.arc(18,0,6,0,TAU);ctx.fill();ctx.restore();
+  // banking ground wedge
+  ctx.fillStyle='#d9e2f0';ctx.beginPath();ctx.moveTo(mx-rl*Math.cos(c.th),my+rl*Math.sin(c.th)+12);ctx.lineTo(mx+rl*Math.cos(c.th),my-rl*Math.sin(c.th)+12);ctx.lineTo(mx+rl*Math.cos(c.th),my+rl*Math.sin(c.th)+30);ctx.lineTo(mx-rl*Math.cos(c.th),my+rl*Math.sin(c.th)+30);ctx.closePath();ctx.fill();
+  if(c.th>0.01){const lx=mx-rl*Math.cos(c.th),ly=my+rl*Math.sin(c.th)+12;ctx.strokeStyle='#e8930c';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+90,ly);ctx.stroke();ctx.setLineDash([]);ctx.beginPath();ctx.arc(lx,ly,55,-c.th,0);ctx.stroke();label(ctx,'θ = '+Math.round(c.th*180/Math.PI)+'°',lx+60,ly-6,'#b36d00',12);}
+  // forces from car centre (one common scale so lengths stay in proportion)
+  const gx=mx-13*Math.sin(c.th),gy=my-13*Math.cos(c.th);const fr=Math.max(-c.mu*c.N,Math.min(c.mu*c.N,c.f));
+  const big=Math.max(c.m*g,c.N,c.m*c.a,Math.abs(fr));const k=Math.min(Math.min(cw,ch)*0.17/(c.m*g),Math.min(cw,ch)*0.36/big);
+  arrow(ctx,gx,gy,gx,gy+c.m*g*k,C.wt,3,'W');
+  const NL=c.N*k;arrow(ctx,gx,gy,gx-Math.sin(c.th)*NL,gy-Math.cos(c.th)*NL,C.ten,3,'N');
+  if(Math.abs(fr)>1){const FL=fr*k;arrow(ctx,gx,gy+14,gx-Math.cos(c.th)*FL,gy+14+Math.sin(c.th)*FL,C.fr,3,'friction');}
+  arrow(ctx,gx+60,gy-115,gx+60-c.m*c.a*k,gy-115,C.force,3,'mv²/r needed',[6,4]);
+}
+function rRO(){const c=rCalc();setRO([['Required centripetal acceleration v²/r',fmt(c.a,2)+' m s⁻²'],['Required force on 1200 kg car',sf(c.m*c.a,3)+' N'],['Normal contact force N',sf(c.N,3)+' N'],['Friction needed (+ towards centre)',sf(c.f,3)+' N'],['Maximum friction available μN',sf(c.mu*c.N,3)+' N'],['Design speed (no friction needed) √(gr tan θ)',fmt(c.vdes,2)+' m s⁻¹'],['Maximum safe speed',isFinite(c.vmax)?fmt(c.vmax,2)+' m s⁻¹ ('+fmt(c.vmax*2.237,0)+' mph)':'no limit'],['Minimum speed (to avoid sliding down)',fmt(c.vmin,2)+' m s⁻¹']]);
+  $('rRv').textContent=fmt(c.r,0)+' m';$('rVv').textContent=fmt(c.v,1)+' m/s ('+fmt(c.v*2.237,0)+' mph)';$('rTv').textContent=Math.round(c.th*180/Math.PI)+'°';
+  const a=$('rAlert');if(!c.ok){a.className='alert bad';a.textContent=c.f>0?'Friction needed exceeds μN — the car skids outwards along (roughly) the tangent.':'Too slow for this banking on this surface — the car slides down the slope.';}else{a.className='alert good';a.textContent='Grip is sufficient: friction needed ≤ μN.';}}
+function rExpl(){setExpl('What provides the centripetal force?','On a <b>flat</b> road the only horizontal force on the car is <b>friction</b> between the tyres and the road, so the maximum speed is <span class="eq">μmg = mv²/r &nbsp;⇒&nbsp; v<sub>max</sub> = √(μgr)</span>On a <b>banked</b> road the normal contact force is tilted towards the centre, so its horizontal component N sin θ helps. At the <b>design speed</b> no friction is needed at all:<span class="eq">N cos θ = mg, &nbsp; N sin θ = mv²/r &nbsp;⇒&nbsp; tan θ = v²/(gr)</span>Choose <b>Black ice</b> on a flat road and the car cannot turn; add banking and set the design speed and it goes round safely even on ice. Aircraft bank to turn for the same reason, using the lift force instead of N.');}
+
+/* ================= GRAPH ================= */
+function axes(ctx,w,h,xmax,ymax,xl,yl){const L=46,B=30,T=10,Rr=12;ctx.clearRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);
+  const pw=w-L-Rr,ph=h-T-B;ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.font='11px Segoe UI,system-ui,sans-serif';ctx.fillStyle=C.dim;
+  const nx=5,ny=4;for(let i=0;i<=nx;i++){const x=L+pw*i/nx;ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.textAlign='center';ctx.fillText(sf(xmax*i/nx,2),x,T+ph+13);}
+  for(let j=0;j<=ny;j++){const y=T+ph-ph*j/ny;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(sf(ymax*j/ny,2),L-4,y+4);}
+  ctx.strokeStyle=C.ink;ctx.beginPath();ctx.moveTo(L,T);ctx.lineTo(L,T+ph);ctx.lineTo(L+pw,T+ph);ctx.stroke();
+  ctx.fillStyle=C.ink;ctx.textAlign='center';ctx.fillText(xl,L+pw/2,h-3);ctx.save();ctx.translate(11,T+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText(yl,0,0);ctx.restore();ctx.textAlign='left';
+  return {X:x=>L+pw*x/xmax,Y:y=>T+ph-ph*y/ymax,L,T,pw,ph};}
+function curve(ctx,ax,f,x0,x1,col,dash){ctx.strokeStyle=col;ctx.lineWidth=2.4;if(dash)ctx.setLineDash(dash);ctx.beginPath();let first=true;for(let i=0;i<=200;i++){const x=x0+(x1-x0)*i/200;const y=f(x);if(!isFinite(y))continue;const X=ax.X(x),Y=ax.Y(y);if(Y<ax.T-2){first=true;continue;}first?ctx.moveTo(X,Y):ctx.lineTo(X,Y);first=false;}ctx.stroke();ctx.setLineDash([]);}
+function dot(ctx,x,y,col){ctx.fillStyle=col;ctx.beginPath();ctx.arc(x,y,5.5,0,TAU);ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();}
+function drawGraph(){const {ctx,w,h}=G;
+  if(tab==='h'){const {m,r,v}=hVals();const mode=$('hG').value;let ax;$('gTitle').textContent='Graph';
+    if(mode==='v'){const ym=m*64/r;ax=axes(ctx,w,h,8,niceMax(m*64/r),'v / m s⁻¹','F / N');curve(ctx,ax,x=>m*x*x/r,0,8,C.force);dot(ctx,ax.X(v),ax.Y(m*v*v/r),C.force);$('gNote').innerHTML='F ∝ v²: double the speed and the force needed is <b>four</b> times as large. A graph of F against v² would be a straight line through the origin with gradient m/r.';}
+    else if(mode==='r'){const ym=niceMax(m*v*v/0.2);ax=axes(ctx,w,h,1.5,ym,'r / m','F / N');curve(ctx,ax,x=>m*v*v/x,0.05,1.5,C.force);dot(ctx,ax.X(r),ax.Y(m*v*v/r),C.force);$('gNote').innerHTML='At constant <b>speed</b>, F ∝ 1/r: a tighter circle needs a larger force.';}
+    else if(mode==='rw'){const wv=v/r;const ym=niceMax(m*wv*wv*1.5);ax=axes(ctx,w,h,1.5,ym,'r / m','F / N');curve(ctx,ax,x=>m*wv*wv*x,0,1.5,C.force);dot(ctx,ax.X(r),ax.Y(m*wv*wv*r),C.force);$('gNote').innerHTML='At constant <b>angular speed</b> (ω = '+fmt(wv,2)+' rad s⁻¹), F = mω²r so F ∝ r — the opposite trend! Always say what is kept constant.';}
+    else{const wm=8/0.2;const wv=v/r;const xm=niceMax(Math.max(wv*1.6,5));ax=axes(ctx,w,h,xm,niceMax(m*xm*xm*r),'ω / rad s⁻¹','F / N');curve(ctx,ax,x=>m*x*x*r,0,xm,C.force);dot(ctx,ax.X(wv),ax.Y(m*wv*wv*r),C.force);$('gNote').innerHTML='F = mω²r, so F ∝ ω² at fixed radius.';}
+  }else if(tab==='v'){const {m,r,vb}=vVals();$('gTitle').textContent='Tension around the loop';
+    const Tf=p=>{const v2=vb*vb-2*g*r*(1-Math.cos(p));return m*v2/r+m*g*Math.cos(p);};
+    let tmax=Tf(0),tmin=Tf(Math.PI);const ym=niceMax(Math.max(tmax,1));const yn=Math.min(0,tmin);
+    // custom axes with negative region
+    ctx.clearRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);const L=46,B=30,T=10,pw=w-L-12,ph=h-T-B;const lo=yn<0?niceMax(-yn)*-1:0,hi=ym;
+    const X=x=>L+pw*x/360,Y=y=>T+ph-(y-lo)/(hi-lo)*ph;
+    ctx.font='11px Segoe UI,system-ui,sans-serif';ctx.strokeStyle=C.grid;ctx.fillStyle=C.dim;
+    for(let i=0;i<=4;i++){const x=X(i*90);ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.textAlign='center';ctx.fillText(i*90+'°',x,T+ph+13);}
+    for(let j=0;j<=4;j++){const yv=lo+(hi-lo)*j/4;const y=Y(yv);ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(sf(yv,2),L-4,y+4);}
+    if(lo<0){ctx.fillStyle='rgba(224,69,123,.08)';ctx.fillRect(L,Y(0),pw,Y(lo)-Y(0));ctx.fillStyle='#b3204f';ctx.textAlign='left';ctx.fillText('T < 0 impossible: string slack',L+6,Y(lo)-6);}
+    ctx.strokeStyle=C.ink;ctx.beginPath();ctx.moveTo(L,Y(0));ctx.lineTo(L+pw,Y(0));ctx.moveTo(L,T);ctx.lineTo(L,T+ph);ctx.stroke();
+    ctx.fillStyle=C.ink;ctx.textAlign='center';ctx.fillText('angle from bottom',L+pw/2,h-3);ctx.save();ctx.translate(11,T+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('T / N',0,0);ctx.restore();ctx.textAlign='left';
+    ctx.strokeStyle=C.ten;ctx.lineWidth=2.4;ctx.beginPath();let started=false;for(let i=0;i<=360;i++){const p=i*Math.PI/180;const v2=vb*vb-2*g*r*(1-Math.cos(p));if(v2<0){started=false;continue;}const y=Tf(p);started?ctx.lineTo(X(i),Y(y)):ctx.moveTo(X(i),Y(y));started=true;}ctx.stroke();
+    if(V.mode==='run'&&!V.free){const deg=((V.phi*180/Math.PI)%360+360)%360;dot(ctx,X(deg),Y(vTension()),C.ten);}
+    $('gNote').innerHTML='Theory (from energy conservation, assuming the string stays taut). Tension is greatest at the bottom (0°) and least at the top (180°). The difference between them is always <b>6mg = '+fmt(6*m*g,2)+' N</b>, whatever the launch speed.';
+  }else if(tab==='c'){const c=cCalc();$('gTitle').textContent='Angle θ against rotation rate';const ax=axes(ctx,w,h,2.5,90,'f / rev s⁻¹','θ / °');
+    curve(ctx,ax,f=>{const ww=TAU*f;const cs=g/(ww*ww*c.L);return cs>=1?0:Math.acos(cs)*180/Math.PI;},0,2.5,C.acc2);dot(ctx,ax.X(c.f),ax.Y(c.th*180/Math.PI),C.acc2);
+    $('gNote').innerHTML='Below f<sub>min</sub> = '+fmt(c.fmin,2)+' rev/s the bob hangs vertically. θ approaches 90° as f increases but can never reach it — some vertical tension is always needed to support the weight.';
+  }else{const c=rCalc();$('gTitle').textContent='Friction needed against speed';const vm=45;const k=1/1000;
+    const fN=v=>c.m*(v*v/c.r*Math.cos(c.th)-g*Math.sin(c.th))*k,lim=v=>c.mu*c.m*(g*Math.cos(c.th)+v*v/c.r*Math.sin(c.th))*k;
+    const ymax=niceMax(Math.max(fN(vm),lim(vm),1));const ymin=Math.min(0,fN(0),-lim(0));const lo=ymin<0?-niceMax(-ymin):0;
+    ctx.clearRect(0,0,w,h);ctx.fillStyle='#fff';ctx.fillRect(0,0,w,h);const L=46,B=30,T=10,pw=w-L-12,ph=h-T-B;const X=x=>L+pw*x/vm,Y=y=>T+ph-(y-lo)/(ymax-lo)*ph;
+    ctx.font='11px Segoe UI,system-ui,sans-serif';ctx.strokeStyle=C.grid;ctx.fillStyle=C.dim;
+    for(let i=0;i<=5;i++){const x=X(i*9);ctx.beginPath();ctx.moveTo(x,T);ctx.lineTo(x,T+ph);ctx.stroke();ctx.textAlign='center';ctx.fillText(i*9,x,T+ph+13);}
+    for(let j=0;j<=4;j++){const yv=lo+(ymax-lo)*j/4;const y=Y(yv);ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+pw,y);ctx.stroke();ctx.textAlign='right';ctx.fillText(sf(yv,2),L-4,y+4);}
+    ctx.strokeStyle=C.ink;ctx.beginPath();ctx.moveTo(L,Y(0));ctx.lineTo(L+pw,Y(0));ctx.moveTo(L,T);ctx.lineTo(L,T+ph);ctx.stroke();
+    ctx.fillStyle=C.ink;ctx.textAlign='center';ctx.fillText('v / m s⁻¹',L+pw/2,h-3);ctx.save();ctx.translate(11,T+ph/2);ctx.rotate(-Math.PI/2);ctx.fillText('friction / kN',0,0);ctx.restore();ctx.textAlign='left';
+    // grip envelope
+    ctx.fillStyle='rgba(15,157,107,.10)';ctx.beginPath();for(let i=0;i<=100;i++){const v=vm*i/100;const y=Y(Math.min(ymax,lim(v)));i?ctx.lineTo(X(v),y):ctx.moveTo(X(v),y);}for(let i=100;i>=0;i--){const v=vm*i/100;ctx.lineTo(X(v),Y(Math.max(lo,-lim(v))));}ctx.closePath();ctx.fill();
+    ctx.strokeStyle=C.fr;ctx.lineWidth=2.4;ctx.beginPath();let st=false;for(let i=0;i<=200;i++){const v=vm*i/200;const y=fN(v);if(y>ymax){st=false;continue;}st?ctx.lineTo(X(v),Y(y)):ctx.moveTo(X(v),Y(y));st=true;}ctx.stroke();
+    dot(ctx,X(c.v),Y(Math.min(ymax,fN(c.v))),c.ok?C.vel:C.force);
+    $('gNote').innerHTML='Orange: friction needed. Green band: friction the tyres can supply (±μN). The car holds the road only while the orange curve stays inside the band. Where the curve crosses zero is the design speed.';}
+}
+function niceMax(v){if(v<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(v)));const n=v/p;const k=n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10;return k*p;}
+
+/* ================= QUESTIONS ================= */
+let Q=null,qs=0,qt=0;
+function r2(a,b,s){return +(a+Math.random()*(b-a)).toFixed(s===undefined?1:s);}
+const bank={
+ h:[()=>{const m=r2(0.2,1.5,2),r=r2(0.3,1.2,2),v=r2(1.5,6,1);const a=m*v*v/r;return {t:`A ${m} kg ball moves in a horizontal circle of radius ${r} m at ${v} m s⁻¹. Calculate the centripetal force.`,a,u:'N',s:`F = mv²/r = ${m} × ${v}² ÷ ${r} = ${sf(a,3)} N`};},
+    ()=>{const r=r2(0.4,1.5,2),T=r2(0.4,2.5,2);const w=TAU/T;return {t:`An object completes one revolution of a circle of radius ${r} m every ${T} s. Calculate its angular speed.`,a:w,u:'rad s⁻¹',s:`ω = 2π/T = 2π ÷ ${T} = ${sf(w,3)} rad s⁻¹`};},
+    ()=>{const rpm=Math.round(r2(300,1400,0)/10)*10,r=r2(0.15,0.35,2);const w=rpm*TAU/60,a=w*w*r;return {t:`A washing-machine drum of radius ${r} m spins at ${rpm} revolutions per minute. Calculate the centripetal acceleration of clothes at the drum wall.`,a,u:'m s⁻²',s:`ω = ${rpm} × 2π ÷ 60 = ${sf(w,4)} rad s⁻¹; a = ω²r = ${sf(w,4)}² × ${r} = ${sf(a,3)} m s⁻²`};},
+    ()=>{const F=r2(4,40,1),m=r2(0.2,1.5,2),r=r2(0.4,1.2,2);const v=Math.sqrt(F*r/m);return {t:`A string breaks when the tension exceeds ${F} N. A ${m} kg mass is whirled on it in a horizontal circle of radius ${r} m. Calculate the maximum speed.`,a:v,u:'m s⁻¹',s:`v = √(Fr/m) = √(${F} × ${r} ÷ ${m}) = ${sf(v,3)} m s⁻¹`};}],
+ v:[()=>{const m=r2(0.2,1.5,2),r=r2(0.4,1.4,2),v=r2(4,9,1);const T=m*v*v/r+m*g;return {t:`A ${m} kg mass on a string of length ${r} m moves in a vertical circle. At the bottom its speed is ${v} m s⁻¹. Calculate the tension at the bottom. (g = 9.81 N kg⁻¹)`,a:T,u:'N',s:`T − mg = mv²/r ⇒ T = ${m}×${v}²/${r} + ${m}×9.81 = ${sf(T,3)} N`};},
+    ()=>{const r=r2(0.4,1.6,2);const v=Math.sqrt(g*r);return {t:`Calculate the minimum speed at the top of a vertical loop of radius ${r} m for a ball on a string to stay in a circle.`,a:v,u:'m s⁻¹',s:`At minimum speed T = 0 so mg = mv²/r ⇒ v = √(gr) = √(9.81 × ${r}) = ${sf(v,3)} m s⁻¹`};},
+    ()=>{const r=r2(5,12,1);const v=Math.sqrt(5*g*r);return {t:`A roller-coaster car enters a circular loop of radius ${r} m. Ignoring friction, what is the minimum speed at the bottom for it to just stay on the track at the top?`,a:v,u:'m s⁻¹',s:`At the top: v<sub>t</sub>² = gr. Energy: v<sub>b</sub>² = v<sub>t</sub>² + 2g(2r) = 5gr ⇒ v<sub>b</sub> = √(5 × 9.81 × ${r}) = ${sf(v,3)} m s⁻¹`};}],
+ c:[()=>{const L=r2(0.5,1.8,2),th=r2(20,60,0);const w=Math.sqrt(g/(L*Math.cos(th*Math.PI/180)));return {t:`A conical pendulum has a string of length ${L} m making ${th}° with the vertical. Calculate its angular speed.`,a:w,u:'rad s⁻¹',s:`cos θ = g/(ω²L) ⇒ ω = √(g/(L cos θ)) = √(9.81 ÷ (${L} × cos ${th}°)) = ${sf(w,3)} rad s⁻¹`};},
+    ()=>{const m=r2(0.1,1,2),th=r2(15,65,0);const T=m*g/Math.cos(th*Math.PI/180);return {t:`The string of a conical pendulum makes ${th}° with the vertical. The bob has mass ${m} kg. Calculate the tension.`,a:T,u:'N',s:`T cos θ = mg ⇒ T = ${m} × 9.81 ÷ cos ${th}° = ${sf(T,3)} N`};}],
+ r:[()=>{const mu=r2(0.3,0.9,2),r=r2(20,120,0);const v=Math.sqrt(mu*g*r);return {t:`A car rounds a flat bend of radius ${r} m. The coefficient of friction is ${mu}. Calculate the maximum speed.`,a:v,u:'m s⁻¹',s:`μmg = mv²/r ⇒ v = √(μgr) = √(${mu} × 9.81 × ${r}) = ${sf(v,3)} m s⁻¹`};},
+    ()=>{const r=r2(40,200,0),v=r2(12,35,0);const th=Math.atan(v*v/(g*r))*180/Math.PI;return {t:`A track is banked so that cars travelling at ${v} m s⁻¹ round a bend of radius ${r} m need no friction. Calculate the banking angle.`,a:th,u:'°',s:`tan θ = v²/(gr) = ${v}² ÷ (9.81 × ${r}) ⇒ θ = ${sf(th,3)}°`};},
+    ()=>{const v=r2(60,140,0),th=r2(15,40,0);const r=v*v/(g*Math.tan(th*Math.PI/180));return {t:`An aircraft flying at ${v} m s⁻¹ banks at ${th}° to turn in a horizontal circle. The lift acts perpendicular to the wings. Calculate the radius of the turn.`,a:r,u:'m',s:`L cos θ = mg, L sin θ = mv²/r ⇒ r = v²/(g tan θ) = ${v}² ÷ (9.81 × tan ${th}°) = ${sf(r,3)} m`};}]};
+function newQ(){const b=bank[tab];Q=b[Math.floor(Math.random()*b.length)]();$('qText').innerHTML=Q.t;$('qUnit').textContent=Q.u;$('qIn').value='';$('qFb').textContent='';$('qSol').style.display='none';$('qSol').innerHTML=Q.s;}
+$('qNew').onclick=newQ;$('qShow').onclick=()=>{$('qSol').style.display='block';};
+$('qChk').onclick=()=>{if(!Q)return;const x=parseFloat($('qIn').value.replace(',','.'));if(isNaN(x)){$('qFb').className='fb no';$('qFb').textContent='Enter a number.';return;}
+  qt++;const ok=Math.abs(x-Q.a)<=Math.abs(Q.a)*0.02+1e-9;if(ok)qs++;$('qScore').textContent=qs+' / '+qt;
+  $('qFb').className='fb '+(ok?'ok':'no');$('qFb').textContent=ok?'✓ Correct — '+sf(Q.a,3)+' '+Q.u:'✗ Not quite. Try again or show the working.';};
+$('qIn').addEventListener('keydown',e=>{if(e.key==='Enter')$('qChk').click();});
+
+/* ================= wiring ================= */
+root.querySelectorAll('#cmlTabs .tab').forEach(b=>b.onclick=()=>{tab=b.dataset.t;root.querySelectorAll('#cmlTabs .tab').forEach(x=>x.classList.toggle('on',x===b));root.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.p===tab));
+  ({h:hExpl,v:vExpl,c:cExpl,r:rExpl})[tab]();newQ();drawGraph();});
+['hM','hR','hV'].forEach(id=>$(id).addEventListener('input',()=>{if(id==='hR'||id==='hV'){H.trail=[];}drawGraph();}));
+$('hG').onchange=drawGraph;$('hCut').onclick=()=>{if(!H.cut){H.cut=true;H.trail=[];}};$('hReset').onclick=hReset;
+['vM','vR','vV'].forEach(id=>$(id).addEventListener('input',()=>{vReset();drawGraph();}));
+$('vGo').onclick=()=>{vLaunch();};$('vReset').onclick=()=>{vReset();drawGraph();};$('vMin').onclick=()=>{const r=+$('vR').value;$('vV').value=Math.ceil(Math.sqrt(5*g*r)*10)/10;vReset();drawGraph();};
+['cM','cL','cF'].forEach(id=>$(id).addEventListener('input',drawGraph));
+['rR','rV','rT','rMu'].forEach(id=>$(id).addEventListener('input',()=>{R.skid=false;drawGraph();}));
+$('rReset').onclick=()=>{R.skid=false;};$('rIdeal').onclick=()=>{const c=rCalc();if(c.th<0.01){$('rAlert').className='alert bad';$('rAlert').textContent='A flat road has no design speed — any turn needs friction. Add some banking first.';return;}$('rV').value=Math.min(45,Math.round(c.vdes*2)/2);R.skid=false;drawGraph();};
+
+let last=performance.now(),gtimer=0;
+function loop(t){let dt=Math.min(0.05,(t-last)/1000);last=t;
+  if(tab==='h'){hStep(dt);hDraw();hRO();}
+  else if(tab==='v'){vStep($('vSlow').checked?dt*0.25:dt);vDraw();vRO();gtimer+=dt;if(gtimer>0.1){gtimer=0;drawGraph();}}
+  else if(tab==='c'){cStep(dt);cDraw();cRO();}
+  else {rStep(dt);rDraw();rRO();gtimer+=dt;if(gtimer>0.15){gtimer=0;drawGraph();}}
+  requestAnimationFrame(loop);}
+vReset();hExpl();newQ();drawGraph();requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
