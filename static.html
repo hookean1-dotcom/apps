@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Static Electricity Lab — GCSE Physics</title>
+<style>
+#sel{--bg:#f4f2fc;--card:#ffffff;--ink:#1d1640;--dim:#5d5785;--line:#ddd8f2;--acc:#6b4eff;--acc2:#00a3c4;--pos:#e5484d;--neg:#0b84f3;--zap:#ffb800;--soft:#f7f5ff;
+  font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;color:var(--ink);
+  background:radial-gradient(900px 500px at 85% -10%,#e2f4fb 0%,rgba(226,244,251,0) 60%),linear-gradient(180deg,#f6f4fd,#efecfa);
+  width:100%;height:100%;min-height:760px;box-sizing:border-box;padding:14px;font-size:14.5px;line-height:1.45}
+#sel *{box-sizing:border-box}
+#sel .hd{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#sel h1{margin:0;font-size:22px;letter-spacing:-.3px}
+#sel h1 em{font-style:normal;background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+#sel .hd p{margin:2px 0 0;color:var(--dim);font-size:13px}
+#sel .tabs{display:flex;gap:6px;flex-wrap:wrap}
+#sel .tab{font:inherit;font-size:13.5px;font-weight:600;padding:8px 13px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--dim);cursor:pointer}
+#sel .tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+#sel .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:12px;align-items:start}
+@media(max-width:980px){#sel .grid{grid-template-columns:1fr}}
+#sel .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:12px;box-shadow:0 2px 12px rgba(29,22,64,.05)}
+#sel .card h2{margin:0 0 9px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--acc)}
+#sel .stage{position:relative;width:100%;height:540px;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:#fcfbff;touch-action:none}
+#sel .stage canvas{display:block;width:100%;height:100%;cursor:grab}
+#sel .ctrl{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:10px}
+#sel select{font:inherit;padding:7px 9px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink)}
+#sel button.b{font:inherit;font-size:13.5px;font-weight:600;padding:8px 12px;border-radius:9px;border:1px solid var(--line);background:var(--soft);color:var(--ink);cursor:pointer}
+#sel button.b:hover{border-color:var(--acc)}
+#sel button.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+#sel button.on{background:var(--zap);border-color:#e0a200;color:#3a2a00}
+#sel label.sl{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin:8px 0 2px}
+#sel label.sl b{color:var(--ink)}
+#sel input[type=range]{width:100%;accent-color:var(--acc)}
+#sel .pane{display:none}#sel .pane.on{display:block}
+#sel .note{font-size:13.5px;color:var(--dim)}#sel .note b{color:var(--ink)}
+#sel .note ul{margin:6px 0 0 0;padding-left:18px}#sel .note li{margin:3px 0}
+#sel .stat{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#sel .stat div{background:var(--soft);border-radius:10px;padding:8px 10px;font-size:12.5px;color:var(--dim)}
+#sel .stat div b{display:block;font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums}
+#sel .pos{color:var(--pos)!important}#sel .neg{color:var(--neg)!important}
+#sel .mcq button{display:block;width:100%;text-align:left;margin:6px 0;font:inherit;font-size:13.5px;padding:8px 10px;border-radius:9px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+#sel .mcq button.b{display:inline-block;width:auto;background:var(--soft);font-weight:600}
+#sel .mcq button.right{background:#e3f7ec;border-color:#2fb36b}
+#sel .mcq button.wrong{background:#fde9ea;border-color:var(--pos)}
+#sel .fb{font-size:13px;color:var(--dim);margin-top:6px}
+#sel .score{float:right;color:var(--acc)}
+#sel .hint{font-size:12.5px;color:var(--dim);margin-top:6px}
+</style>
+</head>
+<body style="margin:0">
+<div id="sel">
+  <div class="hd">
+    <div><h1>Static Electricity <em>Lab</em></h1><p>Only electrons move. Rub, repel, attract, spark — and see why.</p></div>
+    <div class="tabs" id="selTabs">
+      <button class="tab on" data-t="rub">1 · Charging by friction</button>
+      <button class="tab" data-t="force">2 · Forces between charges</button>
+      <button class="tab" data-t="field">3 · Electric fields</button>
+      <button class="tab" data-t="gle">4 · Gold-leaf electroscope</button>
+      <button class="tab" data-t="spark">5 · Sparks &amp; safety</button>
+    </div>
+  </div>
+  <div class="grid">
+    <div>
+      <div class="stage"><canvas id="selCv"></canvas></div>
+      <div class="card" style="margin-top:12px">
+        <div class="pane on" data-p="rub">
+          <div class="ctrl"><select id="rubPair"><option value="poly">Polythene rod + wool cloth</option><option value="acet">Acetate rod + cotton cloth</option><option value="ball">Balloon + hair (jumper)</option></select>
+          <button class="b" id="rubAuto">Rub automatically</button><button class="b" id="rubReset">Make both neutral</button></div>
+          <div class="hint">Drag the rod (or balloon) back and forth across the cloth to rub it.</div>
+        </div>
+        <div class="pane" data-p="force">
+          <div class="ctrl"><span class="note">Hanging rod:</span><select id="fSus"><option value="-1">Polythene (negative)</option><option value="1">Acetate (positive)</option></select>
+          <span class="note">Rod in your hand:</span><select id="fHand"><option value="-1">Polythene (negative)</option><option value="1">Acetate (positive)</option><option value="0">Uncharged rod</option></select></div>
+          <div class="hint">Drag the rod in your hand towards either end of the hanging rod. The hanging rod is free to turn on its thread.</div>
+        </div>
+        <div class="pane" data-p="field">
+          <label class="sl"><span>Charge on sphere A</span><b id="qAv">+4</b></label><input type="range" id="qA" min="-6" max="6" step="1" value="4">
+          <label class="sl"><span>Charge on sphere B (0 = removed)</span><b id="qBv">0</b></label><input type="range" id="qB" min="-6" max="6" step="1" value="0">
+          <div class="hint">Drag the small positive test charge, or drag either sphere. The arrow shows the force on the test charge.</div>
+        </div>
+        <div class="pane" data-p="gle">
+          <div class="ctrl"><select id="gRod"><option value="-1">Polythene rod (negative)</option><option value="1">Acetate rod (positive)</option></select>
+          <button class="b" id="gFinger">☝ Touch cap with finger (earth)</button><button class="b" id="gRecharge">Re-rub the rod</button><button class="b" id="gReset">Discharge everything</button></div>
+          <div class="hint">Drag the rod near the cap, or touch the cap with it. Try charging by <b>induction</b>: rod near → finger on → finger off → rod away.</div>
+        </div>
+        <div class="pane" data-p="spark">
+          <div class="ctrl"><span class="note">Lower roller rubbing the rubber belt:</span><select id="sRoll"><option value="1">Polythene roller</option><option value="-1">Nylon roller</option></select></div>
+          <label class="sl"><span>Dome potential</span><b id="sVv">150 kV</b></label><input type="range" id="sV" min="0" max="300" step="5" value="150">
+          <label class="sl"><span>Gap to earthed sphere</span><b id="sDv">8.0 cm</b></label><input type="range" id="sD" min="1" max="20" step="0.5" value="8">
+          <div class="hint">Air becomes a conductor (it is ionised) when the electric field is above roughly 3 million volts per metre. Field in the gap is estimated as V ÷ gap.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card"><h2 id="infoT">Live readings</h2><div id="info"></div></div>
+      <div class="card"><h2 id="explT">The physics</h2><div class="note" id="expl"></div></div>
+      <div class="card mcq"><h2>Check your understanding <span class="score" id="mScore">0 / 0</span></h2><div id="mQ" class="note" style="color:var(--ink)"></div><div id="mOpts"></div><div class="fb" id="mFb"></div><button class="b" id="mNext" style="margin-top:6px">Next question</button></div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+const root=document.getElementById('sel');const $=id=>root.querySelector('#'+id);
+const TAU=Math.PI*2;const COL={pos:'#e5484d',neg:'#0b84f3',ink:'#1d1640',dim:'#5d5785',line:'#ddd8f2',acc:'#6b4eff',zap:'#ffb800',acc2:'#00a3c4'};
+const cv=$('selCv');let W=10,H=10,ctx=cv.getContext('2d');
+function fit(){const r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;W=Math.max(10,r.width);H=Math.max(10,r.height);cv.width=Math.round(W*d);cv.height=Math.round(H*d);ctx.setTransform(d,0,0,d,0,0);}
+new ResizeObserver(()=>{fit();layout();}).observe(cv);fit();
+let tab='rub';
+function txt(t,x,y,c,s,al,wt){ctx.font=(wt||600)+' '+(s||13)+'px Avenir Next,Segoe UI,system-ui,sans-serif';ctx.fillStyle=c||COL.ink;ctx.textAlign=al||'left';ctx.fillText(t,x,y);ctx.textAlign='left';}
+function sym(x,y,s,r){r=r||6;ctx.save();ctx.lineWidth=2.2;ctx.lineCap='round';ctx.strokeStyle=s>0?COL.pos:COL.neg;ctx.beginPath();ctx.moveTo(x-r,y);ctx.lineTo(x+r,y);if(s>0){ctx.moveTo(x,y-r);ctx.lineTo(x,y+r);}ctx.stroke();ctx.restore();}
+function arrow(x1,y1,x2,y2,col,w,lab){const dx=x2-x1,dy=y2-y1,L=Math.hypot(dx,dy);if(L<3)return;const ux=dx/L,uy=dy/L,h=Math.min(12,L*.5);ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w||3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2-ux*h*.8,y2-uy*h*.8);ctx.stroke();ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-ux*h-uy*h*.5,y2-uy*h+ux*h*.5);ctx.lineTo(x2-ux*h+uy*h*.5,y2-uy*h-ux*h*.5);ctx.closePath();ctx.fill();if(lab)txt(lab,x2+8,y2-6,col,12);ctx.restore();}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function bg(){ctx.fillStyle='#fcfbff';ctx.fillRect(0,0,W,H);ctx.fillStyle='rgba(107,78,255,.045)';for(let x=12;x<W;x+=24)for(let y=12;y<H;y+=24){ctx.beginPath();ctx.arc(x,y,1.1,0,TAU);ctx.fill();}}
+function setInfo(t,h){$('infoT').textContent=t;$('info').innerHTML=h;}
+function setExpl(h){$('expl').innerHTML=h;}
+let drag=null,pointer={x:0,y:0,down:false};
+function pos(e){const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};}
+
+/* =============== 1 RUBBING =============== */
+// pair data: which object gains electrons
+const PAIRS={poly:{rod:'Polythene rod',cloth:'Wool cloth',rodGains:true,rodCol:'#d8dee9',clothCol:'#c9a7e8'},
+ acet:{rod:'Acetate rod',cloth:'Cotton cloth',rodGains:false,rodCol:'#e9f4f2',clothCol:'#f2e3b3'},
+ ball:{rod:'Balloon',cloth:'Hair / jumper',rodGains:true,rodCol:'#ff9aa8',clothCol:'#b98a5a'}};
+const RB={rodQ:0,clothQ:0,rx:0,ry:0,lastX:0,acc:0,flying:[],auto:false,autoT:0,N:14};
+function rubLayout(){RB.rx=W*0.3;RB.ry=Math.max(H*0.4,objSize().h/2+70);}
+function rubTransfer(){const P=PAIRS[$('rubPair').value];const max=RB.N-2;if(Math.abs(RB.rodQ)+RB.flying.length>=max)return;
+  // electron moves from donor to acceptor
+  const from=P.rodGains?'cloth':'rod';RB.flying.push({t:0,from});}
+function rubStep(dt){const P=PAIRS[$('rubPair').value];
+  if(RB.auto){RB.autoT+=dt;RB.rx=W*0.62+Math.sin(RB.autoT*7)*W*0.1;RB.ry=H*0.62-(objSize().shape==='balloon'?objSize().h*0.38:0);if(RB.autoT>4){RB.auto=false;RB.rx=W*0.3;RB.ry=Math.max(H*0.32,objSize().h/2+70);RB.lastX=RB.rx;}}
+  const cl=clothRect();const os=objSize();const cy=RB.ry+(os.shape==='balloon'?os.h*0.38:0);const onCloth=RB.rx>cl.x-60&&RB.rx<cl.x+cl.w+60&&Math.abs(cy-(cl.y+20))<60;
+  if(onCloth){RB.acc+=Math.abs(RB.rx-RB.lastX);while(RB.acc>70){RB.acc-=70;rubTransfer();}}
+  RB.lastX=RB.rx;
+  RB.flying.forEach(f=>f.t+=dt*1.8);RB.flying=RB.flying.filter(f=>{if(f.t>=1){if(f.from==='cloth'){RB.clothQ+=1;RB.rodQ-=1;}else{RB.rodQ+=1;RB.clothQ-=1;}return false;}return true;});}
+function clothRect(){return {x:W*0.48,y:H*0.62,w:W*0.34,h:H*0.22};}
+function balloonPath(x,y,w,h){const cx=x+w/2;ctx.beginPath();ctx.moveTo(cx,y+h*0.9);ctx.bezierCurveTo(x+w*0.2,y+h*0.84,x,y+h*0.64,x,y+h*0.42);ctx.bezierCurveTo(x,y+h*0.17,x+w*0.22,y,cx,y);ctx.bezierCurveTo(x+w*0.78,y,x+w,y+h*0.17,x+w,y+h*0.42);ctx.bezierCurveTo(x+w,y+h*0.64,x+w*0.8,y+h*0.84,cx,y+h*0.9);ctx.closePath();}
+function drawObj(x,y,w,h,col,q,label,shape,N){ // draws object with N fixed + and N-q electrons (q>0 means missing electrons); every charge stays inside the object
+  ctx.save();
+  if(shape==='rod'){ctx.fillStyle=col;rr(x,y,w,h,h/2);ctx.fill();ctx.strokeStyle='rgba(29,22,64,.35)';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='rgba(255,255,255,.45)';rr(x+h/2,y+3,w-h,h*0.16,h*0.08);ctx.fill();}
+  else if(shape==='balloon'){const cx=x+w/2;ctx.strokeStyle='#8b84b3';ctx.lineWidth=1.3;ctx.beginPath();ctx.moveTo(cx,y+h*0.95);ctx.bezierCurveTo(cx-10,y+h*1.05,cx+10,y+h*1.12,cx-4,y+h*1.25);ctx.stroke();
+    ctx.fillStyle='#e8788a';ctx.beginPath();ctx.moveTo(cx,y+h*0.89);ctx.lineTo(cx-7,y+h*0.97);ctx.lineTo(cx+7,y+h*0.97);ctx.closePath();ctx.fill();
+    const g=ctx.createRadialGradient(x+w*0.35,y+h*0.28,4,x+w*0.5,y+h*0.45,w*0.62);g.addColorStop(0,'#ffd0d8');g.addColorStop(1,col);ctx.fillStyle=g;balloonPath(x,y,w,h);ctx.fill();ctx.strokeStyle='rgba(160,40,70,.35)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.55)';ctx.beginPath();ctx.ellipse(x+w*0.24,y+h*0.13,w*0.04,h*0.06,-0.6,0,TAU);ctx.fill();}
+  else{ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(x,y+8);for(let i=0;i<=10;i++){ctx.lineTo(x+w*i/10,y+(i%2?0:10));}ctx.lineTo(x+w,y+h);ctx.lineTo(x,y+h);ctx.closePath();ctx.fill();ctx.strokeStyle='rgba(29,22,64,.25)';ctx.stroke();
+    ctx.strokeStyle='rgba(255,255,255,.35)';for(let k=1;k<6;k++){ctx.beginPath();ctx.moveTo(x+8,y+h*k/6);ctx.lineTo(x+w-8,y+h*k/6);ctx.stroke();}}
+  ctx.restore();
+  // charge layout area (inside the shape)
+  let ax=x,aw=w,rowsY,extraY;
+  if(shape==='rod'){ax=x+h*0.35;aw=w-h*0.7;rowsY=[y+h*0.3,y+h*0.7];extraY=rowsY;}
+  else if(shape==='balloon'){ax=x+w*0.09;aw=w*0.82;rowsY=[y+h*0.27,y+h*0.4];extraY=[y+h*0.53,y+h*0.65];}
+  else{rowsY=[y+h*0.3,y+h*0.72];extraY=rowsY;}
+  const cols=7;const nE=N-q;let k=0;
+  for(let r=0;r<2;r++)for(let c=0;c<cols;c++){const px=ax+aw*(c+0.5)/cols;sym(px-7,rowsY[r],1,4.5);if(k<nE)sym(px+7,rowsY[r],-1,4.5);k++;}
+  // extra electrons (q<0): placed between the columns, still inside the object
+  for(let j=N;j<nE;j++){const n=j-N;const r=n%2,b=1+Math.floor(n/2);const px=ax+aw*b/cols;sym(px,extraY[r],-1,4.5);}
+  const ly=shape==='balloon'?y-12:shape==='rod'?y+h+20:y+h+24;txt(label,x+w/2,ly,COL.ink,13,'center');
+}
+function objSize(){const b=$('rubPair').value==='ball';return b?{w:Math.min(250,W*0.32),h:Math.min(250,H*0.5),shape:'balloon'}:{w:Math.min(320,W*0.42),h:46,shape:'rod'};}
+function rubDraw(){bg();const P=PAIRS[$('rubPair').value];const cl=clothRect();
+  drawObj(cl.x,cl.y,cl.w,cl.h,P.clothCol,RB.clothQ,P.cloth+'  ('+fmtQ(RB.clothQ)+')','cloth',RB.N);
+  const os=objSize();drawObj(RB.rx-os.w/2,RB.ry-os.h/2,os.w,os.h,P.rodCol,RB.rodQ,P.rod+'  ('+fmtQ(RB.rodQ)+')',os.shape,RB.N);
+  RB.flying.forEach(f=>{const a={x:cl.x+cl.w*0.5,y:cl.y+20},b={x:RB.rx,y:RB.ry};const s=f.from==='cloth'?a:b,e=f.from==='cloth'?b:a;const t=f.t;const x=s.x+(e.x-s.x)*t,y=s.y+(e.y-s.y)*t-Math.sin(t*Math.PI)*40;ctx.fillStyle='rgba(11,132,243,.18)';ctx.beginPath();ctx.arc(x,y,11,0,TAU);ctx.fill();sym(x,y,-1,6);});
+  txt('Each + is a fixed positive charge (protons in nuclei); each − is an electron. Only the electrons can move.',14,24,COL.dim,12.5);
+  txt('Each symbol represents about 10⁹ charges',14,42,COL.dim,12);}
+function fmtQ(q){return q===0?'neutral':(q>0?'+':'−')+Math.abs(q);}
+function rubInfo(){const P=PAIRS[$('rubPair').value];const e=1.6e-19,per=1e9;
+  setInfo('Live readings','<div class="stat"><div>'+P.rod+'<b class="'+(RB.rodQ>0?'pos':RB.rodQ<0?'neg':'')+'">'+fmtQ(RB.rodQ)+'</b>'+(RB.rodQ?(Math.abs(RB.rodQ)*per*e*1e9).toFixed(2)+' nC':'')+'</div><div>'+P.cloth+'<b class="'+(RB.clothQ>0?'pos':RB.clothQ<0?'neg':'')+'">'+fmtQ(RB.clothQ)+'</b>'+(RB.clothQ?(Math.abs(RB.clothQ)*per*e*1e9).toFixed(2)+' nC':'')+'</div><div>Total charge<b>'+(RB.rodQ+RB.clothQ)+'</b>always zero</div><div>Electrons moved<b>'+Math.abs(RB.rodQ)+' ×10⁹</b>'+(P.rodGains?'cloth → rod':'rod → cloth')+'</div></div>');}
+function rubExpl(){const P=PAIRS[$('rubPair').value];setExpl('When two insulators are rubbed together, <b>electrons</b> are transferred from one to the other by friction. Positive charges (protons) are in the nuclei and <b>never move</b>.<ul><li>The material that <b>gains</b> electrons becomes <b class="neg">negatively</b> charged.</li><li>The material that <b>loses</b> electrons is left <b class="pos">positively</b> charged.</li><li>The two charges are always <b>equal and opposite</b> — charge is not created, only moved.</li></ul>Here: '+(P.rodGains?'the '+P.cloth.toLowerCase()+' loses electrons to the '+P.rod.toLowerCase():'the '+P.rod.toLowerCase()+' loses electrons to the '+P.cloth.toLowerCase())+'. Insulators keep the charge where it is put; a metal rod held in your hand would conduct it away through you to earth.');}
+
+/* =============== 2 FORCES =============== */
+const FS={ang:0.2,om:0,hx:0,hy:0,cx:0,cy:0,L:0};
+function fLayout(){FS.cx=W*0.5;FS.cy=H*0.5;FS.L=Math.min(W,H)*0.32;FS.hx=W*0.82;FS.hy=H*0.82;}
+function chargesSus(){const q=+$('fSus').value;const pts=[];for(let i=0;i<7;i++){const s=(i/6-0.5)*2*FS.L;pts.push({x:FS.cx+Math.cos(FS.ang)*s,y:FS.cy+Math.sin(FS.ang)*s,q:q/7,s});}return pts;}
+function chargesHand(){const q=+$('fHand').value;const pts=[];const L=FS.L*0.7;for(let i=0;i<5;i++){const s=(i/4)*L;pts.push({x:FS.hx+s*0.8,y:FS.hy+s*0.6,q:q/5});}return pts;}// rod points away towards bottom-right
+function fStep(dt){const S=chargesSus(),Hd=chargesHand();let tq=0;const k=9000;
+  S.forEach(a=>Hd.forEach(b=>{const dx=a.x-b.x,dy=a.y-b.y,r2=dx*dx+dy*dy+400;const r=Math.sqrt(r2);const F=k*a.q*b.q/r2;const fx=F*dx/r,fy=F*dy/r;tq+=a.s*(-Math.sin(FS.ang)*fx+Math.cos(FS.ang)*fy);}));
+  const I=FS.L*FS.L*0.6;FS.om+=(tq/I*3500-0.9*FS.om)*dt;FS.ang+=FS.om*dt;}
+function fDraw(){bg();const S=chargesSus(),Hd=chargesHand();const qs=+$('fSus').value,qh=+$('fHand').value;
+  // thread from top
+  ctx.strokeStyle='#8b84b3';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(FS.cx,0);ctx.lineTo(FS.cx,FS.cy);ctx.stroke();ctx.setLineDash([]);
+  txt('View from above — the rod hangs from a thread in a paper stirrup',14,24,COL.dim,12.5);
+  // suspended rod
+  ctx.save();ctx.translate(FS.cx,FS.cy);ctx.rotate(FS.ang);ctx.fillStyle=qs<0?'#d8dee9':'#e9f4f2';rr(-FS.L,-13,2*FS.L,26,13);ctx.fill();ctx.strokeStyle='rgba(29,22,64,.4)';ctx.lineWidth=1.5;ctx.stroke();ctx.fillStyle='#f6e7c8';ctx.fillRect(-12,-17,24,34);ctx.strokeStyle='#c9b48a';ctx.strokeRect(-12,-17,24,34);
+  for(let i=0;i<9;i++){const s=(i/8-0.5)*2*FS.L*0.9;if(Math.abs(s)<18)continue;sym(s,0,qs,5);}ctx.restore();
+  ctx.fillStyle=COL.ink;ctx.beginPath();ctx.arc(FS.cx,FS.cy,3,0,TAU);ctx.fill();
+  // hand rod
+  const L=FS.L*0.7;ctx.save();ctx.translate(FS.hx,FS.hy);ctx.rotate(Math.atan2(0.6,0.8));ctx.fillStyle=qh<0?'#d8dee9':qh>0?'#e9f4f2':'#eee9df';rr(-8,-12,L+60,24,12);ctx.fill();ctx.strokeStyle='rgba(29,22,64,.4)';ctx.stroke();
+  if(qh)for(let i=0;i<5;i++)sym(i*L/4,0,qh,5);ctx.fillStyle='#f0c6a8';rr(L+20,-16,60,32,14);ctx.fill();ctx.restore();
+  // force arrow on nearest end
+  if(qh){let near=S[0];let best=1e9;S.forEach(p=>{const d=Math.hypot(p.x-Hd[0].x,p.y-Hd[0].y);if(d<best){best=d;near=p;}});
+    let fx=0,fy=0;Hd.forEach(b=>{const dx=near.x-b.x,dy=near.y-b.y,r2=dx*dx+dy*dy+400,r=Math.sqrt(r2);const F=qs*qh/r2;fx+=F*dx/r;fy+=F*dy/r;});
+    const m=Math.hypot(fx,fy);const Lr=Math.min(120,m*1e6);if(Lr>4)arrow(near.x,near.y,near.x+fx/m*Lr,near.y+fy/m*Lr,qs*qh>0?COL.pos:COL.acc2,3,qs*qh>0?'repel':'attract');}
+}
+function fInfo(){const qs=+$('fSus').value,qh=+$('fHand').value;const S=chargesSus(),Hd=chargesHand();let dmin=1e9;S.forEach(a=>Hd.forEach(b=>{dmin=Math.min(dmin,Math.hypot(a.x-b.x,a.y-b.y));}));
+  const rel=qh===0?'No force':qs*qh>0?'Repulsion':'Attraction';
+  setInfo('Live readings','<div class="stat"><div>Hanging rod<b class="'+(qs>0?'pos':'neg')+'">'+(qs>0?'positive':'negative')+'</b></div><div>Rod in hand<b class="'+(qh>0?'pos':qh<0?'neg':'')+'">'+(qh>0?'positive':qh<0?'negative':'uncharged')+'</b></div><div>Interaction<b>'+rel+'</b></div><div>Closest gap<b>'+(dmin/FS.L*20).toFixed(1)+' cm</b>force ∝ 1/distance²</div></div>');}
+function fExpl(){setExpl('Charged objects exert a <b>non-contact force</b> on each other — they do not need to touch.<ul><li><b>Like</b> charges (+ and +, or − and −) <b>repel</b>.</li><li><b>Unlike</b> charges (+ and −) <b>attract</b>.</li><li>The force gets <b>stronger</b> as the charges get <b>closer</b> (it falls off with the square of the distance).</li></ul>Repulsion is the only <b>proof</b> that an object is charged: an uncharged object can sometimes be attracted to a charged one, but never repelled. By Newton’s third law the rod in your hand feels an equal and opposite force.');}
+
+/* =============== 3 FIELD =============== */
+const FD={A:{x:0,y:0},B:{x:0,y:0},T:{x:0,y:0}};
+function fdLayout(){FD.A={x:W*0.38,y:H*0.5};FD.B={x:W*0.7,y:H*0.5};FD.T={x:W*0.38+150,y:H*0.5-110};}
+function Efield(x,y){const qa=+$('qA').value,qb=+$('qB').value;let ex=0,ey=0;[[FD.A,qa],[FD.B,qb]].forEach(([p,q])=>{if(!q)return;const dx=x-p.x,dy=y-p.y,r2=dx*dx+dy*dy,r=Math.sqrt(r2);if(r<1)return;ex+=q*dx/(r2*r);ey+=q*dy/(r2*r);});return [ex,ey];}
+function trace(x,y,dir){const pts=[[x,y]];const qa=+$('qA').value,qb=+$('qB').value,R=26;for(let i=0;i<900;i++){const [ex,ey]=Efield(x,y);const m=Math.hypot(ex,ey);if(m===0)break;x+=dir*ex/m*4;y+=dir*ey/m*4;pts.push([x,y]);if(x<-20||y<-20||x>W+20||y>H+20)break;
+  if(qb&&Math.hypot(x-FD.B.x,y-FD.B.y)<R-2)break;if(qa&&Math.hypot(x-FD.A.x,y-FD.A.y)<R-2)break;}return pts;}
+function sphere(p,q,lab){const R=26;const g=ctx.createRadialGradient(p.x-8,p.y-8,4,p.x,p.y,R);const c=q>0?COL.pos:q<0?COL.neg:'#999';g.addColorStop(0,'#ffffff');g.addColorStop(1,q>0?'#f7b2b4':q<0?'#9ccdfb':'#ddd');ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,R,0,TAU);ctx.fill();ctx.strokeStyle=c;ctx.lineWidth=2;ctx.stroke();
+  const n=Math.abs(q);for(let i=0;i<n;i++){const a=i/n*TAU;sym(p.x+Math.cos(a)*15,p.y+Math.sin(a)*15,q,4);}if(n===0)txt('0',p.x,p.y+4,COL.dim,12,'center');txt(lab,p.x,p.y+R+18,COL.ink,13,'center');}
+function fdDraw(){bg();const qa=+$('qA').value,qb=+$('qB').value;
+  // field lines: start from the positive spheres (or from negative ones traced backwards)
+  const srcs=[];if(qa)srcs.push([FD.A,qa]);if(qb)srcs.push([FD.B,qb]);
+  ctx.lineWidth=1.6;
+  const posSum=(qa>0?qa:0)+(qb>0?qb:0);
+  srcs.forEach(([p,q])=>{const n=Math.abs(q)*3;const dir=q>0?1:-1;if(q<0&&posSum>0&&-q<=posSum)return; // lines from + charges already end on this one
+    for(let i=0;i<n;i++){const a=(i+0.5)/n*TAU;const pts=trace(p.x+Math.cos(a)*28,p.y+Math.sin(a)*28,dir);ctx.strokeStyle='rgba(107,78,255,.55)';ctx.beginPath();pts.forEach((pt,j)=>j?ctx.lineTo(pt[0],pt[1]):ctx.moveTo(pt[0],pt[1]));ctx.stroke();
+      // arrowhead at mid line, pointing in field direction
+      const mi=Math.min(pts.length-2,Math.floor(pts.length*0.35)+8);if(mi>2){const a1=pts[mi],a0=pts[mi-1];let dx=a1[0]-a0[0],dy=a1[1]-a0[1];if(dir<0){dx=-dx;dy=-dy;}const m=Math.hypot(dx,dy)||1;const ux=dx/m,uy=dy/m;ctx.fillStyle='rgba(107,78,255,.85)';ctx.beginPath();ctx.moveTo(a1[0]+ux*6,a1[1]+uy*6);ctx.lineTo(a1[0]-ux*5-uy*4,a1[1]-uy*5+ux*4);ctx.lineTo(a1[0]-ux*5+uy*4,a1[1]-uy*5-ux*4);ctx.closePath();ctx.fill();}}});
+  sphere(FD.A,qa,'A');if(qb)sphere(FD.B,qb,'B');
+  // test charge
+  const [ex,ey]=Efield(FD.T.x,FD.T.y);const m=Math.hypot(ex,ey);if(m>0){const L=Math.min(150,60*m/(4/22500));arrow(FD.T.x,FD.T.y,FD.T.x+ex/m*L,FD.T.y+ey/m*L,'#c2185b',3,'force');}
+  ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(FD.T.x,FD.T.y,10,0,TAU);ctx.fill();ctx.strokeStyle=COL.pos;ctx.lineWidth=2;ctx.stroke();sym(FD.T.x,FD.T.y,1,5);
+  txt('Arrows on field lines show the direction of the force on a small positive charge',14,24,COL.dim,12.5);}
+function fdInfo(){const [ex,ey]=Efield(FD.T.x,FD.T.y);const m=Math.hypot(ex,ey);const ref=4/Math.pow(150,2);const qa=+$('qA').value,qb=+$('qB').value;$('qAv').textContent=(qa>0?'+':'')+qa;$('qBv').textContent=(qb>0?'+':'')+qb;
+  const dA=Math.hypot(FD.T.x-FD.A.x,FD.T.y-FD.A.y)/30;
+  setInfo('Test charge','<div class="stat"><div>Field strength<b>'+(m/ref).toFixed(2)+'</b>relative units</div><div>Distance from A<b>'+dA.toFixed(1)+' cm</b></div></div><div class="hint">Move the test charge twice as far from an isolated sphere and the force drops to a quarter.</div>');}
+function fdExpl(){setExpl('A charged object creates an <b>electric field</b> around itself. Any other charged object placed in the field feels a <b>force</b>.<ul><li>Field lines show the direction of the force on a small <b>positive</b> charge: <b>away from</b> positive charges, <b>towards</b> negative charges.</li><li>Around an isolated charged sphere the lines are <b>radial</b> — like spokes.</li><li>The field is <b>strongest close to the object</b> (lines closest together) and gets weaker with distance.</li><li>Lines never cross, and they meet a conductor’s surface at 90°.</li></ul>Add sphere B to see the patterns for like and unlike charges.');}
+
+/* =============== 4 ELECTROSCOPE =============== */
+// Integer model: each symbol ≈ 10⁹ charges. Q = net charge on the electroscope (cap + stem + plate + leaf).
+// A nearby rod separates n units: like charges pushed down to the plate and leaf, unlike charges pulled up to the cap.
+const GL={Q:0,rodQ:-6,rx:0,ry:0,finger:false,leafAng:0,touching:false,toMove:0,stepT:0,parts:[],msg:''};
+function gLayout(){GL.rx=W*0.78;GL.ry=H*0.25;}
+function gGeo(){const cx=W*0.42,capY=H*0.22;return {cx,capY,capW:110,stemTop:capY+8,plateTop:H*0.5,plateBot:H*0.74,earthX:cx-55-60};}
+function capShare(Q){return Math.round(0.3*Q);}               // with no rod nearby, most of the charge spreads to the plate and leaf
+function gInd(){const g=gGeo();const d=Math.hypot(GL.rx-g.cx,GL.ry-(g.capY-6));const prox=Math.max(0,Math.min(1,(230-d)/190));return {d,n:Math.round(0.6*Math.abs(GL.rodQ)*prox),s:Math.sign(GL.rodQ)};}
+function gState(){const g=gGeo(),ind=gInd();let cap=capShare(GL.Q)-ind.s*ind.n,leaf=GL.Q-capShare(GL.Q)+ind.s*ind.n;
+  if(GL.touching&&ind.s*cap<0){leaf+=cap;cap=0;}            // where the rod touches, the cap cannot hold the opposite sign to the rod
+  return {g,cap,leaf,n:ind.n,s:ind.s,d:ind.d};}
+function earthTarget(){// earthed: electrons flow until the plate and leaf are neutral
+  const ind=gInd();let best=GL.Q,bv=1e9;for(let q=-15;q<=15;q++){const v=Math.abs(q-capShare(q)+ind.s*ind.n);if(v<bv||(v===bv&&Math.abs(q)<Math.abs(best))){bv=v;best=q;}}return best;}
+function launch(from,to){GL.parts.push({x0:from[0],y0:from[1],x1:to[0],y1:to[1],t:0});}
+function gStep(dt){const g=gGeo(),ind=gInd();GL.stepT+=dt;
+  // contact: insulating rod only gives up the charge at the point of contact (about half here)
+  const touchNow=ind.d<34&&GL.rodQ!==0;
+  if(touchNow&&!GL.touching){GL.touching=true;GL.toMove=Math.ceil(Math.abs(GL.rodQ)/2);}
+  if(ind.d>60){GL.touching=false;GL.toMove=0;}
+  if(GL.toMove>0&&GL.stepT>0.14){GL.stepT=0;GL.toMove--;const s=Math.sign(GL.rodQ);GL.Q+=s;GL.rodQ-=s;
+    const rodTip=[GL.rx,GL.ry],capPt=[g.cx,g.capY];if(s<0){launch(rodTip,capPt);GL.msg='Electrons move from the rod onto the cap';}else{launch(capPt,rodTip);GL.msg='Electrons move from the cap onto the rod';}}
+  // earthing through the finger
+  if(GL.finger&&GL.toMove===0){const tq=earthTarget();if(tq!==GL.Q&&GL.stepT>0.14){GL.stepT=0;const top=[g.earthX,g.capY+10],bot=[g.earthX,H*0.95];
+    if(tq>GL.Q){GL.Q++;launch(top,bot);GL.msg='Electrons flow from the electroscope to earth';}else{GL.Q--;launch(bot,top);GL.msg='Electrons flow from earth into the electroscope';}}
+    else if(tq===GL.Q&&GL.stepT>0.6)GL.msg=GL.Q===0?'Earthed: no excess charge':'Earthed: plate and leaf neutral';}
+  if(!GL.finger&&GL.toMove===0&&GL.stepT>1.2)GL.msg='';
+  GL.parts.forEach(p=>p.t+=dt*1.6);GL.parts=GL.parts.filter(p=>p.t<1);
+  const s=gState();const target=Math.min(60,Math.pow(Math.abs(s.leaf),0.8)*12);GL.leafAng+=(target-GL.leafAng)*Math.min(1,dt*5);}
+function gDraw(){bg();const s=gState(),g=s.g;
+  ctx.fillStyle='rgba(0,163,196,.06)';ctx.strokeStyle='rgba(0,120,150,.35)';ctx.lineWidth=2;rr(g.cx-120,H*0.36,240,H*0.48,16);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#6d6a85';ctx.fillRect(g.cx-135,H*0.84,270,12);
+  ctx.fillStyle='#c9a227';ctx.fillRect(g.cx-4,g.stemTop,8,g.plateTop-g.stemTop);ctx.fillStyle='#d9b740';ctx.fillRect(g.cx-12,g.plateTop,24,g.plateBot-g.plateTop);
+  ctx.fillStyle='#f3efe6';ctx.fillRect(g.cx-16,H*0.36-6,32,14);txt('insulator',g.cx+22,H*0.36+5,COL.dim,11);
+  ctx.fillStyle='#d4af37';rr(g.cx-g.capW/2,g.capY-11,g.capW,22,8);ctx.fill();ctx.strokeStyle='#a5851c';ctx.lineWidth=1.5;ctx.stroke();
+  const a=GL.leafAng*Math.PI/180;const lx=g.cx+12,ly=g.plateTop+6,LL=(g.plateBot-g.plateTop)*0.85;ctx.save();ctx.translate(lx,ly);ctx.rotate(-a);ctx.fillStyle='#f2c94c';ctx.strokeStyle='#c9a227';ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(16,0);ctx.lineTo(14,LL);ctx.lineTo(0,LL);ctx.closePath();ctx.fill();ctx.stroke();ctx.restore();
+  // net charges: cap; then plate and leaf share the lower charge (about half each)
+  const nc=Math.abs(s.cap);for(let i=0;i<Math.min(nc,8);i++)sym(g.cx-g.capW/2+12+i*(g.capW-24)/7,g.capY,Math.sign(s.cap),4.5);
+  const nl=Math.abs(s.leaf);const onPlate=Math.ceil(nl/2),onLeaf=nl-onPlate;
+  for(let i=0;i<Math.min(onPlate,7);i++)sym(g.cx,g.plateTop+14+i*((g.plateBot-g.plateTop-24)/6),Math.sign(s.leaf),4.5);
+  for(let i=0;i<Math.min(onLeaf,6);i++){const yy=LL*(0.14+0.15*i);sym(lx+7.5*Math.cos(a)+yy*Math.sin(a),ly-7.5*Math.sin(a)+yy*Math.cos(a),Math.sign(s.leaf),4.5);}
+  if(GL.finger){ctx.fillStyle='#f0c6a8';ctx.strokeStyle='#c7987a';rr(g.cx-g.capW/2-90,g.capY-16,92,26,13);ctx.fill();ctx.stroke();txt('your body → earth',g.earthX+8,g.capY+40,COL.dim,12);
+    ctx.strokeStyle=COL.dim;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(g.earthX,g.capY+10);ctx.lineTo(g.earthX,H*0.95);ctx.stroke();ctx.setLineDash([]);
+    for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(g.earthX-12+k*4,H*0.95+k*4);ctx.lineTo(g.earthX+12-k*4,H*0.95+k*4);ctx.stroke();}}
+  // moving electrons
+  GL.parts.forEach(p=>{const x=p.x0+(p.x1-p.x0)*p.t,y=p.y0+(p.y1-p.y0)*p.t;ctx.fillStyle='rgba(11,132,243,.18)';ctx.beginPath();ctx.arc(x,y,10,0,TAU);ctx.fill();sym(x,y,-1,5.5);});
+  // rod (tip at GL.rx, GL.ry)
+  ctx.save();ctx.translate(GL.rx,GL.ry);ctx.rotate(-0.55);ctx.fillStyle=+$('gRod').value<0?'#d8dee9':'#e9f4f2';rr(-12,-13,200,26,13);ctx.fill();ctx.strokeStyle='rgba(29,22,64,.4)';ctx.lineWidth=1.5;ctx.stroke();
+  const nr=Math.abs(GL.rodQ);for(let i=0;i<Math.min(nr,8);i++)sym(6+i*17,0,Math.sign(GL.rodQ),5);ctx.fillStyle='#f0c6a8';rr(150,-17,60,34,14);ctx.fill();ctx.restore();
+  txt('Rod: '+(GL.rodQ===0?'uncharged':(GL.rodQ>0?'+':'−')+Math.abs(GL.rodQ)),GL.rx+55,GL.ry+34,COL.dim,12);
+  txt('Gold-leaf electroscope — only the net (excess) charge on each part is shown',14,24,COL.dim,12.5);
+  if(GL.msg)txt(GL.msg,14,44,COL.acc,13,'left',700);}
+function gInfo(){const s=gState();const f=x=>x===0?'0':(x>0?'+':'−')+Math.abs(x);const cl=x=>x>0?'pos':x<0?'neg':'';
+  let what='';if(s.n>0&&!GL.touching)what=s.s<0?'The negative rod <b>repels</b> free electrons down the stem: the leaf and plate become negative, the cap positive.':'The positive rod <b>attracts</b> free electrons up to the cap: the cap becomes negative, the leaf and plate positive.';
+  setInfo('Live readings','<div class="stat"><div>Cap<b class="'+cl(s.cap)+'">'+f(s.cap)+'</b></div><div>Plate + leaf<b class="'+cl(s.leaf)+'">'+f(s.leaf)+'</b></div><div>Net charge on electroscope<b class="'+cl(GL.Q)+'">'+f(GL.Q)+'</b>'+(GL.finger?'earthed':'insulated')+'</div><div>Leaf angle<b>'+GL.leafAng.toFixed(0)+'°</b></div></div>'+(what?'<div class="hint">'+what+'</div>':''));}
+function gExpl(){setExpl('The cap, stem, plate and gold leaf are all <b>metal</b>, so free electrons move easily through them. The stopper is an <b>insulator</b>, so charge cannot leak away to the case. The leaf rises when the leaf and plate carry the <b>same sign</b> of charge and repel. Only electrons ever move.<ul><li><b>Charging by contact:</b> a negative rod gives electrons to the cap; a positive rod takes electrons from it. Either way the electroscope ends up with the <b>same sign</b> as the rod, and the leaf stays up when the rod is taken away.</li><li><b>Induction (rod near, not touching):</b> electrons are pushed or pulled along the metal. The leaf rises, but the net charge is still zero, so the leaf falls again when the rod is removed.</li><li><b>Charging by induction:</b> rod near → touch the cap with a finger (electrons flow to or from earth through you, and the leaf falls) → remove the finger → remove the rod. The electroscope is left with the <b>opposite sign</b> to the rod, and the leaf rises again.</li><li><b>Testing a charge:</b> bring a rod near a charged electroscope. If the leaf rises further, the rod has the <b>same</b> sign. If the leaf falls, the rod could be oppositely charged or uncharged.</li></ul>');}
+
+/* =============== 5 SPARKS =============== */
+const SP={bolts:[],t:0};
+function spCalc(){const sg=+$('sRoll').value;const V=+$('sV').value*1e3,d=+$('sD').value/100;const E=V/d;return {V,d,E,spark:E>3e6,sg};}
+function spStep(dt){SP.t+=dt;const c=spCalc();if(c.spark&&Math.random()<dt*6){SP.bolts.push({life:0.18,seed:Math.random()});}SP.bolts.forEach(b=>b.life-=dt);SP.bolts=SP.bolts.filter(b=>b.life>0);}
+function spDraw(){bg();const c=spCalc();const dx=W*0.32,dy=H*0.42,R=Math.min(W,H)*0.16;const pxPerCm=Math.min(W*0.022,18);const gap=c.d*100*pxPerCm;const sx=dx+R+gap+30,sy=dy+R*0.15,sr=30;
+  // VdG column
+  ctx.fillStyle='#ece9f8';ctx.fillRect(dx-30,dy,60,H*0.92-dy);ctx.strokeStyle='#b9b2da';ctx.strokeRect(dx-30,dy,60,H*0.92-dy);ctx.fillStyle='#4b4566';ctx.fillRect(dx-70,H*0.92,140,14);const rb=H*0.92-22,rt=dy-R*0.55;ctx.strokeStyle='#3b3355';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(dx-14,rt);ctx.lineTo(dx-14,rb);ctx.moveTo(dx+14,rt);ctx.lineTo(dx+14,rb);ctx.stroke();ctx.lineWidth=1.5;ctx.fillStyle=c.sg>0?'#dfe6ee':'#f4ead2';ctx.beginPath();ctx.arc(dx,rb,14,0,TAU);ctx.fill();ctx.stroke();ctx.fillStyle='#cfd4de';ctx.beginPath();ctx.arc(dx,rt,14,0,TAU);ctx.fill();ctx.stroke();if(c.V>0){sym(dx-5,rb,-c.sg,3.5);sym(dx+5,rb,-c.sg,3.5);for(let k=0;k<6;k++){const f=((SP.t*0.5+k/6)%1);const y=rb-(rb-rt)*f;sym(dx-14,y,c.sg,4);}}txt('rubber belt',dx+36,H*0.8,COL.dim,11);txt((c.sg>0?'polythene':'nylon')+' roller',dx+22,rb+5,COL.dim,11);
+  const g=ctx.createRadialGradient(dx-R*.4,dy-R*.4,R*.1,dx,dy,R);g.addColorStop(0,'#ffffff');g.addColorStop(1,'#a9aec4');ctx.fillStyle=g;ctx.beginPath();ctx.arc(dx,dy,R,0,TAU);ctx.fill();ctx.strokeStyle='#7d839c';ctx.stroke();
+  const n=Math.round(c.V/25e3);for(let i=0;i<n;i++){const a=i/n*TAU;sym(dx+Math.cos(a)*(R-10),dy+Math.sin(a)*(R-10),c.sg,4.5);}
+  txt((c.V/1e3).toFixed(0)+' kV',dx,dy+5,COL.ink,15,'center',700);
+  // earthed sphere on stand
+  const g2=ctx.createRadialGradient(sx-8,sy-8,3,sx,sy,sr);g2.addColorStop(0,'#fff');g2.addColorStop(1,'#a9aec4');ctx.fillStyle=g2;ctx.beginPath();ctx.arc(sx,sy,sr,0,TAU);ctx.fill();ctx.strokeStyle='#7d839c';ctx.stroke();
+  ctx.strokeStyle='#4b4566';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(sx+sr,sy);ctx.lineTo(sx+sr+40,sy);ctx.lineTo(sx+sr+40,H*0.92);ctx.stroke();ctx.lineWidth=2;for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(sx+sr+28+k*4,H*0.92+k*5);ctx.lineTo(sx+sr+52-k*4,H*0.92+k*5);ctx.stroke();}
+  // gap marker
+  ctx.strokeStyle=COL.dim;ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(dx+R,sy+sr+20);ctx.lineTo(sx-sr,sy+sr+20);ctx.stroke();ctx.setLineDash([]);txt((c.d*100).toFixed(1)+' cm',(dx+R+sx-sr)/2,sy+sr+36,COL.dim,12,'center');
+  // field glow
+  const frac=Math.min(1,c.E/3e6);ctx.fillStyle='rgba(255,184,0,'+(0.05+0.25*frac*frac)+')';ctx.beginPath();ctx.ellipse((dx+R+sx-sr)/2,sy,Math.max(4,(sx-sr-dx-R)/2),26,0,0,TAU);ctx.fill();
+  if(c.spark)txt(c.sg>0?'electrons jump from the earthed sphere to the dome':'electrons jump from the dome to the earthed sphere',dx+R+6,sy-sr-14,COL.acc,12);SP.bolts.forEach(b=>{let x=dx+R*Math.cos(0.15),y=dy+R*Math.sin(0.15);ctx.strokeStyle='rgba(124,92,255,'+(b.life/0.18)+')';ctx.lineWidth=3;ctx.shadowColor='#b9a8ff';ctx.shadowBlur=12;ctx.beginPath();ctx.moveTo(x,y);const steps=9;let rs=b.seed;for(let i=1;i<=steps;i++){rs=(rs*9301+49297)%233280/233280;const tx=x+(sx-sr-x)*i/steps,ty=y+(sy-y)*i/steps+(i<steps?(rs-0.5)*26:0);ctx.lineTo(tx,ty);}ctx.stroke();ctx.shadowBlur=0;});
+  txt('Van de Graaff generator dome',14,24,COL.dim,12.5);}
+function spInfo(){const c=spCalc();setInfo('Live readings','<div class="stat"><div>Dome charge<b class="'+(c.sg>0?'pos':'neg')+'">'+(c.sg>0?'positive':'negative')+'</b>belt '+(c.sg>0?'loses':'gains')+' electrons</div><div>Potential difference<b>'+(c.V/1e3).toFixed(0)+' kV</b></div><div>Gap<b>'+(c.d*100).toFixed(1)+' cm</b></div><div>Field ≈ V ÷ gap<b>'+(c.E/1e6).toFixed(2)+' MV/m</b></div><div>Air breaks down at<b>≈ 3 MV/m</b>'+(c.spark?'<span class="neg" style="color:#6b4eff!important;font-weight:700">SPARKING</span>':'no spark')+'</div></div>');}
+function spExpl(){setExpl('<b>How the dome charges:</b> a motor drives a rubber belt over two rollers. Friction between the belt and the lower roller transfers electrons. With a <b>polythene</b> roller (below rubber in the triboelectric series) the roller gains electrons and the belt loses them, so the belt carries <b>positive</b> charge up and a metal comb at the top removes electrons from the dome: the dome becomes <b class="pos">positive</b>. Most school generators charge the dome positively. With a <b>nylon</b> roller (above rubber in the series) the belt gains electrons and the dome becomes <b class="neg">negative</b>. The charge spreads over the outside of the metal dome.<br><br>When the electric field in the air is strong enough (roughly <b>3 million volts per metre</b> in dry air), electrons are pulled off air molecules. The air is <b>ionised</b> and becomes a conductor, and charge flows across the gap as a <b>spark</b>. A larger p.d. or a smaller gap gives a stronger field.<br><br><b>Dangers</b><ul><li>Fuel flowing through a pipe can become charged; a spark could ignite the vapour. Tankers and aircraft are <b>earthed</b> (bonded) before refuelling.</li><li>Static on your body can damage microchips — technicians wear earthed wrist straps.</li><li>Lightning is a huge spark between cloud and ground.</li></ul><b>Uses</b><ul><li>Electrostatic paint spraying, photocopiers and laser printers, and smoke precipitators in chimneys.</li></ul>');}
+
+/* =============== QUIZ =============== */
+const QB=[
+ ['A polythene rod becomes negatively charged when rubbed with a wool cloth. Why?',['Electrons moved from the cloth to the rod','Protons moved from the rod to the cloth','Electrons moved from the rod to the cloth','Negative charge was created by friction'],0,'Only electrons move. The rod gains electrons, so it has more electrons than protons.'],
+ ['An acetate rod becomes positively charged when rubbed with a cloth. What happened?',['It gained protons','It lost electrons','It gained electrons','It lost protons'],1,'Losing electrons leaves more protons than electrons, so the overall charge is positive.'],
+ ['After rubbing, the rod has a charge of −4 nC. What is the charge on the cloth?',['0','−4 nC','+4 nC','+8 nC'],2,'Charge is conserved: the cloth lost exactly the electrons the rod gained.'],
+ ['Two charged balloons hang near each other and move apart. What can you conclude?',['They have opposite charges','They have the same type of charge','Only one is charged','They are both uncharged'],1,'Repulsion only happens between like charges.'],
+ ['Which statement about the electric field around an isolated positive sphere is correct?',['Field lines point inwards','The field is uniform','The field is strongest near the sphere','The field lines are circles around the sphere'],2,'The lines are radial and point outwards; they are closest together (strongest field) near the surface.'],
+ ['Why can a metal rod held in your hand not be charged by rubbing?',['Metals have no electrons','Charge flows through the metal and your body to earth','Metals only gain protons','Friction does not act on metals'],1,'Metals are conductors, and so is your body, so any charge flows away to earth.'],
+ ['A charged rod is brought near the cap of an uncharged electroscope without touching. What happens to the leaf?',['Nothing','It rises, because charges are separated by induction','It rises, because charge jumps across the gap','It falls'],1,'Electrons in the metal are attracted or repelled, so the leaf and plate end up with the same type of charge and repel.'],
+ ['What causes a spark?',['Protons jump across the gap','The air is ionised by a strong electric field and conducts','Air molecules gain mass','Magnetism between the objects'],1,'A strong enough field pulls electrons off air molecules; the ionised air conducts.'],
+ ['Why is an aircraft earthed before refuelling?',['To make the fuel flow faster','To stop the build-up of charge that could cause a spark','To charge the fuel','To cool the fuel'],1,'Friction between fuel and pipe can separate charge; earthing lets it flow away safely.'],
+ ['The distance between two charges is doubled. What happens to the force between them?',['It doubles','It halves','It becomes a quarter','It stays the same'],2,'Electrostatic force falls with the square of distance (inverse square law).'],
+ ['Which particle has a negative charge and can move between objects?',['Proton','Neutron','Electron','Nucleus'],2,'Electrons are on the outside of atoms and can be transferred.'],
+ ['A charged balloon sticks to an uncharged wall. Which statement explains this?',['The wall becomes charged with the same sign','Charges in the wall’s surface are rearranged, so the nearer side has opposite charge','The wall loses all its electrons','Gravity holds the balloon'],1,'Induced charge of opposite sign is nearer the balloon, so attraction beats repulsion.']];
+let mq=null,ms=0,mt=0,answered=false;
+function nextQ(){mq=QB[Math.floor(Math.random()*QB.length)];answered=false;$('mQ').textContent=mq[0];$('mFb').textContent='';const o=$('mOpts');o.innerHTML='';const order=[0,1,2,3].sort(()=>Math.random()-0.5);order.forEach(i=>{const b=document.createElement('button');b.textContent=mq[1][i];b.onclick=()=>{if(answered)return;answered=true;mt++;if(i===mq[2]){ms++;b.className='right';$('mFb').innerHTML='✓ '+mq[3];}else{b.className='wrong';o.querySelectorAll('button').forEach(x=>{if(x.textContent===mq[1][mq[2]])x.className='right';});$('mFb').innerHTML='✗ '+mq[3];}$('mScore').textContent=ms+' / '+mt;};o.appendChild(b);});}
+$('mNext').onclick=nextQ;
+
+/* =============== interaction =============== */
+function layout(){rubLayout();fLayout();fdLayout();gLayout();}
+cv.addEventListener('pointerdown',e=>{const p=pos(e);pointer.down=true;cv.setPointerCapture(e.pointerId);
+  if(tab==='rub'){if(Math.abs(p.x-RB.rx)<objSize().w/2+20&&Math.abs(p.y-RB.ry)<objSize().h/2+14){drag={k:'rod',ox:RB.rx-p.x,oy:RB.ry-p.y};RB.auto=false;}}
+  else if(tab==='force'){if(Math.hypot(p.x-FS.hx,p.y-FS.hy)<200)drag={k:'hand',ox:FS.hx-p.x,oy:FS.hy-p.y};}
+  else if(tab==='field'){const opts=[['T',FD.T,14],['A',FD.A,30],['B',FD.B,30]];for(const [k,pt,r] of opts){if(k==='B'&&!+$('qB').value)continue;if(Math.hypot(p.x-pt.x,p.y-pt.y)<r){drag={k:'fd',pt,ox:pt.x-p.x,oy:pt.y-p.y};break;}}}
+  else if(tab==='gle'){if(Math.hypot(p.x-GL.rx,p.y-GL.ry)<220)drag={k:'grod',ox:GL.rx-p.x,oy:GL.ry-p.y};}
+  if(drag)cv.style.cursor='grabbing';});
+cv.addEventListener('pointermove',e=>{const p=pos(e);if(!drag)return;const x=Math.max(10,Math.min(W-10,p.x+drag.ox)),y=Math.max(10,Math.min(H-10,p.y+drag.oy));
+  if(drag.k==='rod'){RB.rx=x;RB.ry=y;}else if(drag.k==='hand'){FS.hx=x;FS.hy=y;}else if(drag.k==='fd'){drag.pt.x=x;drag.pt.y=y;}else if(drag.k==='grod'){GL.rx=x;GL.ry=y;}});
+cv.addEventListener('pointerup',()=>{drag=null;cv.style.cursor='grab';});
+$('rubPair').onchange=()=>{rubLayout();RB.rodQ=0;RB.clothQ=0;RB.flying=[];rubExpl();};$('rubReset').onclick=()=>{RB.rodQ=0;RB.clothQ=0;RB.flying=[];};$('rubAuto').onclick=()=>{RB.auto=true;RB.autoT=0;};
+$('gFinger').onclick=()=>{GL.finger=!GL.finger;$('gFinger').classList.toggle('on',GL.finger);$('gFinger').textContent=GL.finger?'☝ Remove finger':'☝ Touch cap with finger (earth)';};
+$('gRecharge').onclick=()=>{GL.rodQ=6*+$('gRod').value;};$('gRod').onchange=()=>{GL.rodQ=6*+$('gRod').value;};$('gReset').onclick=()=>{GL.Q=0;GL.parts=[];GL.msg='';GL.touching=false;GL.toMove=0;GL.rodQ=6*+$('gRod').value;GL.finger=false;$('gFinger').classList.remove('on');$('gFinger').textContent='☝ Touch cap with finger (earth)';gLayout();};
+['sV','sD'].forEach(id=>$(id).addEventListener('input',()=>{$('sVv').textContent=$('sV').value+' kV';$('sDv').textContent=(+$('sD').value).toFixed(1)+' cm';}));$('sRoll').onchange=()=>spExpl();
+root.querySelectorAll('#selTabs .tab').forEach(b=>b.onclick=()=>{tab=b.dataset.t;root.querySelectorAll('#selTabs .tab').forEach(x=>x.classList.toggle('on',x===b));root.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.p===tab));({rub:rubExpl,force:fExpl,field:fdExpl,gle:gExpl,spark:spExpl})[tab]();});
+layout();rubExpl();nextQ();
+let last=performance.now();
+function loop(t){const dt=Math.min(0.05,(t-last)/1000);last=t;
+  if(tab==='rub'){rubStep(dt);rubDraw();rubInfo();}else if(tab==='force'){fStep(dt);fDraw();fInfo();}else if(tab==='field'){fdDraw();fdInfo();}else if(tab==='gle'){gStep(dt);gDraw();gInfo();}else{spStep(dt);spDraw();spInfo();}
+  requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
