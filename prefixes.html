@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prefixes &amp; Conversions | GCSE Physics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+#pcx-app{--ink:#17203b;--mut:#5b6685;--line:#d9e2ee;--bg:#edf2f8;--card:#fff;--pri:#3253e3;--pri2:#e8edff;--teal:#0c9a8b;--teal2:#e0f6f2;--amb:#c77a00;--amb2:#fff3dc;--red:#cf304a;--red2:#fde8ec;
+font-family:'Lexend',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:680px;box-sizing:border-box;padding:18px;overflow:auto;font-size:15px;line-height:1.5}
+#pcx-app *{box-sizing:border-box}
+#pcx-app .top{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between;margin-bottom:14px}
+#pcx-app .brand{display:flex;gap:12px;align-items:center}
+#pcx-app .logo{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,#3253e3,#0c9a8b);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;letter-spacing:-.5px;box-shadow:0 4px 12px rgba(50,83,227,.25)}
+#pcx-app h1{font-size:22px;margin:0;font-weight:600;letter-spacing:-.3px}
+#pcx-app .brand p{margin:0;color:var(--mut);font-size:13px}
+#pcx-app .ctl{display:flex;gap:10px;flex-wrap:wrap}
+#pcx-app .ctl label{display:flex;flex-direction:column;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);gap:3px}
+#pcx-app select,#pcx-app input[type=text],#pcx-app input[type=number]{font:inherit;font-size:14px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:7px 10px;outline:none}
+#pcx-app select:focus,#pcx-app input:focus{border-color:var(--pri);box-shadow:0 0 0 3px var(--pri2)}
+#pcx-app .tabs{display:flex;gap:6px;flex-wrap:wrap;background:#dfe7f2;padding:5px;border-radius:13px;margin-bottom:14px}
+#pcx-app .tabs button{flex:1 1 auto;font:inherit;font-size:14px;font-weight:500;border:0;background:transparent;color:var(--mut);padding:9px 14px;border-radius:9px;cursor:pointer}
+#pcx-app .tabs button.on{background:#fff;color:var(--pri);box-shadow:0 1px 4px rgba(23,32,59,.12)}
+#pcx-app .panel{display:none}
+#pcx-app .panel.on{display:block}
+#pcx-app .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:14px;box-shadow:0 1px 3px rgba(23,32,59,.05)}
+#pcx-app h2{font-size:17px;margin:0 0 10px;font-weight:600}
+#pcx-app h3{font-size:15px;margin:0 0 6px;font-weight:600}
+#pcx-app p{margin:0 0 10px}
+#pcx-app .mut{color:var(--mut)}
+#pcx-app .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+#pcx-app table{border-collapse:collapse;width:100%;font-size:14px}
+#pcx-app th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);padding:6px 8px;border-bottom:2px solid var(--line)}
+#pcx-app td{padding:8px;border-bottom:1px solid var(--line)}
+#pcx-app td.sym{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:17px;color:var(--pri)}
+#pcx-app td.num{font-family:'JetBrains Mono',monospace;font-size:13px;white-space:nowrap}
+#pcx-app tr.big td.sym{color:var(--teal)}
+#pcx-app .tablewrap{overflow-x:auto}
+#pcx-app .btn{font:inherit;font-size:14px;font-weight:500;border:0;border-radius:10px;padding:9px 16px;cursor:pointer;background:var(--pri);color:#fff}
+#pcx-app .btn:hover{filter:brightness(1.08)}
+#pcx-app .btn.ghost{background:var(--pri2);color:var(--pri)}
+#pcx-app .btn.alt{background:var(--teal)}
+#pcx-app .btn:disabled{opacity:.45;cursor:default}
+#pcx-app .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#pcx-app .qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+#pcx-app .tag{display:inline-block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;background:var(--pri2);color:var(--pri);padding:3px 9px;border-radius:20px}
+#pcx-app .tag.t{background:var(--teal2);color:var(--teal)}
+#pcx-app .q{font-size:20px;font-weight:500;margin:4px 0 14px}
+#pcx-app .q b{color:var(--pri);font-weight:600}
+#pcx-app .step{border:1.5px solid var(--line);border-radius:13px;padding:12px 14px;margin-bottom:10px;background:#fbfcfe}
+#pcx-app .step.cur{border-color:var(--pri);background:#fff;box-shadow:0 0 0 3px var(--pri2)}
+#pcx-app .step.done{border-color:#bfe7e1;background:#f5fcfb}
+#pcx-app .sh{display:flex;gap:10px;align-items:flex-start;font-weight:500}
+#pcx-app .num{flex:none}
+#pcx-app .badge{flex:none;width:26px;height:26px;border-radius:50%;background:var(--pri);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center}
+#pcx-app .done .badge{background:var(--teal)}
+#pcx-app .opts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 2px 36px}
+#pcx-app .opt{font:inherit;font-size:14px;border:1.5px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:10px;cursor:pointer}
+#pcx-app .opt:hover{border-color:var(--pri)}
+#pcx-app .opt.no{border-color:var(--red);background:var(--red2);color:var(--red);cursor:default}
+#pcx-app .why{margin:6px 0 0 36px;font-size:14px;color:#0b6f64}
+#pcx-app .chosen{margin:4px 0 0 36px;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--teal);font-weight:600}
+#pcx-app .msg{margin:8px 0 0 36px;font-size:14px;color:var(--red)}
+#pcx-app .ladder{font-family:'JetBrains Mono',monospace;font-size:15px;background:#fffef7 repeating-linear-gradient(#fffef7 0 33px,#dbe6f5 33px 34px);border:1px solid #e6e1c8;border-left:4px solid #f08a9b;border-radius:10px;padding:0 16px 0 18px;margin:10px 0;display:inline-grid;grid-template-columns:auto auto auto;column-gap:12px;line-height:34px;max-width:100%;overflow-x:auto}
+#pcx-app .ladder .l{text-align:right}
+#pcx-app .ladder .e{text-align:center;color:var(--mut)}
+#pcx-app .ladder .r{text-align:left}
+#pcx-app .ladder .fin{grid-column:1/4;color:var(--pri);font-weight:600;white-space:nowrap}
+#pcx-app .ladder .dots{grid-column:1/4;text-align:center;color:var(--mut)}
+#pcx-app .ladder .rw{display:contents}
+#pcx-app .ladder.anim .rw>span,#pcx-app .ladder.anim .fin,#pcx-app .ladder.anim .dots{animation:pcxIn .35s both}
+@keyframes pcxIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+#pcx-app .ladder input{width:130px;font-family:'JetBrains Mono',monospace;font-size:15px;padding:3px 8px;line-height:24px}
+#pcx-app .ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+#pcx-app .ans input{width:170px;font-family:'JetBrains Mono',monospace;font-size:16px}
+#pcx-app .unit{font-family:'JetBrains Mono',monospace;font-weight:600}
+#pcx-app .fb{margin-top:10px;padding:10px 14px;border-radius:10px;font-size:14px;display:none}
+#pcx-app .fb.ok{display:block;background:var(--teal2);color:#075e55}
+#pcx-app .fb.bad{display:block;background:var(--red2);color:#9c1f34}
+#pcx-app .fb.info{display:block;background:var(--amb2);color:#7a4a00}
+#pcx-app .score{display:flex;gap:10px;flex-wrap:wrap}
+#pcx-app .sc{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 14px;min-width:96px}
+#pcx-app .sc span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--mut);font-weight:600}
+#pcx-app .sc b{font-size:20px;font-weight:600}
+#pcx-app .hint{font-size:13px;color:var(--mut);margin-top:8px}
+#pcx-app .eqchip{display:inline-block;font-family:'JetBrains Mono',monospace;background:var(--amb2);color:#6d4300;border:1px solid #f1d9a6;padding:4px 12px;border-radius:9px;font-size:15px;font-weight:600}
+#pcx-app .ctext{font-size:17px;margin:12px 0}
+#pcx-app .crow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed var(--line)}
+#pcx-app .crow:last-child{border-bottom:0}
+#pcx-app .crow .lbl{min-width:220px}
+#pcx-app .crow input{width:150px;font-family:'JetBrains Mono',monospace}
+#pcx-app .crow .mk{font-weight:700;width:20px}
+#pcx-app .mk.y{color:var(--teal)}
+#pcx-app .mk.n{color:var(--red)}
+#pcx-app .si{color:var(--teal);font-size:13px;font-weight:500}
+#pcx-app .seg{display:inline-flex;background:#dfe7f2;border-radius:10px;padding:3px}
+#pcx-app .seg button{font:inherit;font-size:13px;border:0;background:transparent;padding:6px 12px;border-radius:8px;cursor:pointer;color:var(--mut)}
+#pcx-app .seg button.on{background:#fff;color:var(--pri);font-weight:600}
+#pcx-app .sol{font-family:'JetBrains Mono',monospace;font-size:14px;background:#f6f8ff;border-left:4px solid var(--pri);border-radius:8px;padding:10px 14px;margin-top:10px;display:none;line-height:1.8}
+#pcx-app .sol.on{display:block}
+#pcx-app .rules{counter-reset:r;list-style:none;padding:0;margin:0}
+#pcx-app .rules li{counter-increment:r;position:relative;padding:6px 0 6px 40px}
+#pcx-app .rules li::before{content:counter(r);position:absolute;left:0;top:6px;width:28px;height:28px;border-radius:8px;background:var(--teal2);color:var(--teal);font-weight:700;display:flex;align-items:center;justify-content:center}
+#pcx-app .sheet{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px 30px}
+#pcx-app .sheet h2{font-size:20px}
+#pcx-app .sheet .meta{display:flex;gap:24px;flex-wrap:wrap;margin:6px 0 16px;font-size:14px}
+#pcx-app .sheet .meta span{flex:1 1 160px;border-bottom:1px solid #9aa6bf;padding-bottom:2px}
+#pcx-app .sheet ol{padding-left:24px;margin:0}
+#pcx-app .sheet li{margin-bottom:12px;padding-left:4px}
+#pcx-app .sheet .wl{display:block;border-bottom:1px dotted #9aa6bf;height:26px}
+#pcx-app .sheet .wl.s{width:60%}
+#pcx-app .anssec{margin-top:24px;border-top:2px solid var(--line);padding-top:14px}
+#pcx-app .anssec li{margin-bottom:4px;font-size:14px}
+#pcx-app .anssec code{font-family:'JetBrains Mono',monospace}
+@media print{
+ #pcx-app{background:#fff;padding:0;min-height:0;height:auto;overflow:visible;font-size:13px}
+ #pcx-app .noprint{display:none!important}
+ #pcx-app .sheet{border:0;padding:0}
+ #pcx-app .anssec.pb{page-break-before:always}
+}
+</style>
+</head>
+<body style="margin:0">
+<div id="pcx-app">
+ <div class="top noprint">
+  <div class="brand"><div class="logo">10ⁿ</div><div><h1>Prefixes &amp; Conversions</h1><p>GCSE Physics · learn it, train it, then use it in calculations</p></div></div>
+  <div class="ctl">
+   <label>Topic<select id="pcx-topic">
+    <option value="all">All topics</option><option value="elec">Electricity</option><option value="energy">Energy &amp; power</option><option value="forces">Forces &amp; motion</option><option value="waves">Waves</option><option value="dens">Density &amp; pressure</option><option value="radio">Radioactivity</option>
+   </select></label>
+   <label>Tier<select id="pcx-tier"><option value="F">Foundation</option><option value="H" selected>Higher</option></select></label>
+  </div>
+ </div>
+ <div class="tabs noprint">
+  <button data-tab="learn" class="on">Learn</button><button data-tab="train">Training</button><button data-tab="prac">Practice</button><button data-tab="calc">Calculations</button><button data-tab="sheet">Worksheet</button>
+ </div>
+
+ <!-- LEARN -->
+ <div class="panel on" data-panel="learn">
+  <div class="card">
+   <h2>The prefixes you need</h2>
+   <p class="mut">A prefix in front of a unit is just a shorthand for a power of ten.</p>
+   <div class="tablewrap"><table>
+    <thead><tr><th>Prefix</th><th>Symbol</th><th>Means</th><th>Standard form</th><th>Example</th></tr></thead>
+    <tbody id="pcx-ptable"></tbody>
+   </table></div>
+  </div>
+  <div class="grid2">
+   <div class="card">
+    <h2>Don't memorise – build a ladder</h2>
+    <p>Write one fact you are sure of at the side of your working, then divide both sides by 10 until you reach the number you need.</p>
+    <p class="mut" style="margin-bottom:4px">Example: convert 50 mA into A</p>
+    <div id="pcx-demo"></div>
+    <p class="mut">Each line is the line above divided by 10. 50 mA is 5 lots of 10 mA, so it is 5 × 0.01 A.</p>
+   </div>
+   <div class="card">
+    <h2>Ladder builder</h2>
+    <p class="mut">Try any conversion and see the working.</p>
+    <div class="row" style="margin-bottom:6px">
+     <input type="text" id="pcx-lval" value="250" style="width:110px" aria-label="Value">
+     <select id="pcx-lpair" aria-label="Conversion"></select>
+     <button class="btn ghost" id="pcx-lswap" title="Swap direction">⇄ Swap</button>
+    </div>
+    <div id="pcx-lout"></div>
+   </div>
+  </div>
+  <div class="card">
+   <h2>Golden rules</h2>
+   <ol class="rules">
+    <li><b>Bigger unit → smaller number.</b> An amp is much bigger than a milliamp, so you need fewer of them: 50 mA becomes 0.05 A. Going to a smaller unit makes the number bigger.</li>
+    <li><b>Convert to SI units before you substitute.</b> Change every quantity into its SI unit (A, V, Ω, m, s, kg, J, W, Hz…) first, then put the numbers into the equation.</li>
+    <li><b>The SI unit of mass is the kilogram</b>, not the gram. Grams almost always need converting: 250 g = 0.25 kg.</li>
+    <li><b>Squared and cubed units square and cube the conversion.</b> 1 m = 100 cm, so 1 m² = 100 × 100 = 10 000 cm² and 1 m³ = 1 000 000 cm³.</li>
+    <li><b>Time is not powers of ten.</b> 1 minute = 60 s and 1 hour = 3600 s.</li>
+   </ol>
+  </div>
+ </div>
+
+ <!-- TRAINING -->
+ <div class="panel" data-panel="train">
+  <div class="card">
+   <div class="qhead"><div><span class="tag">Training mode</span> <span class="tag t" id="pcx-tcount">Completed: 0</span></div><button class="btn ghost" id="pcx-tnew">New question</button></div>
+   <div id="pcx-train"></div>
+  </div>
+ </div>
+
+ <!-- PRACTICE -->
+ <div class="panel" data-panel="prac">
+  <div class="score" style="margin-bottom:14px">
+   <div class="sc"><span>Correct</span><b id="pcx-sc">0 / 0</b></div>
+   <div class="sc"><span>Streak</span><b id="pcx-st">0</b></div>
+   <div class="sc"><span>Best streak</span><b id="pcx-sb">0</b></div>
+  </div>
+  <div class="card">
+   <div class="qhead"><span class="tag">Practice</span><button class="btn ghost" id="pcx-pnext">Skip / next</button></div>
+   <div class="q" id="pcx-pq"></div>
+   <div class="ans"><input type="text" id="pcx-pin" autocomplete="off" aria-label="Your answer"><span class="unit" id="pcx-pu"></span><button class="btn" id="pcx-pchk">Check</button><button class="btn ghost" id="pcx-pwork">Show working</button></div>
+   <div class="hint">You can type decimals (0.05) or standard form (5 x 10^-2 or 5e-2).</div>
+   <div class="fb" id="pcx-pfb"></div>
+   <div id="pcx-pw"></div>
+  </div>
+ </div>
+
+ <!-- CALCULATIONS -->
+ <div class="panel" data-panel="calc">
+  <div class="card">
+   <div class="qhead">
+    <div class="seg" id="pcx-cmode"><button data-m="guided" class="on">Guided</button><button data-m="exam">Exam style</button></div>
+    <button class="btn ghost" id="pcx-cnext">New question</button>
+   </div>
+   <div id="pcx-calc"></div>
+   <div class="row" style="margin-top:12px"><button class="btn" id="pcx-cchk">Check</button><button class="btn ghost" id="pcx-csol">Show solution</button></div>
+   <div class="fb" id="pcx-cfb"></div>
+   <div class="sol" id="pcx-csolbox"></div>
+  </div>
+ </div>
+
+ <!-- WORKSHEET -->
+ <div class="panel" data-panel="sheet">
+  <div class="card noprint">
+   <div class="row">
+    <label class="mut" style="font-size:13px">Questions <select id="pcx-wn"><option>10</option><option selected>15</option><option>20</option></select></label>
+    <label class="mut" style="font-size:13px">Type <select id="pcx-wt"><option value="mix">Mixed</option><option value="conv">Conversions only</option><option value="calc">Calculations only</option></select></label>
+    <label class="mut" style="font-size:13px"><input type="checkbox" id="pcx-wa" checked> Answers on a separate page</label>
+    <button class="btn" id="pcx-wgen">Generate new sheet</button>
+    <button class="btn alt" id="pcx-wprint">Print</button>
+   </div>
+  </div>
+  <div class="sheet" id="pcx-sheet"></div>
+ </div>
+</div>
+
+<script>
+(function(){
+const root=document.getElementById('pcx-app');
+const $=s=>root.querySelector(s);
+const $$=s=>[...root.querySelectorAll(s)];
+
+/* ---------- number helpers ---------- */
+const r=x=>Number(Number(x).toPrecision(12));
+const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻'};
+const sup=n=>String(n).split('').map(c=>SUP[c]||c).join('');
+function group(s){const neg=s[0]==='-';if(neg)s=s.slice(1);let [i,d]=s.split('.');if(i.length>4)i=i.replace(/\B(?=(\d{3})+(?!\d))/g,' ');return (neg?'-':'')+i+(d?'.'+d:'');}
+function sf(x){if(x===0)return '0';let e=Math.floor(Math.log10(Math.abs(x)));let m=Number((x/Math.pow(10,e)).toPrecision(6));if(Math.abs(m)>=10){m=Number((m/10).toPrecision(6));e++;}return (m===1?'1':m)+' × 10'+sup(e);}
+function fmt(x){if(!isFinite(x))return '?';x=Number(Number(x).toPrecision(10));if(x===0)return '0';const a=Math.abs(x);if(a>=1e-4&&a<1e10){let s=String(x);if(s.includes('e'))s=x.toFixed(12).replace(/0+$/,'').replace(/\.$/,'');return group(s);}return sf(x);}
+function fmtBoth(x){const a=fmt(x),b=sf(Number(Number(x).toPrecision(10))),m=Math.abs(x);return a===b||(m>=1e-3&&m<1e6)?a:a+'  ('+b+')';}
+function fmtAns(x){return fmt(Number(Number(x).toPrecision(4)));}
+const SUPIN={'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁻':'-','⁺':'+'};
+function parseNum(s){
+ if(s==null)return NaN;s=String(s).trim().toLowerCase();if(!s)return NaN;
+ s=s.replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹⁻⁺]/g,c=>SUPIN[c]).replace(/[\s,  ]/g,'').replace(/[−–]/g,'-');
+ s=s.replace(/^([+-]?(?:\d+\.?\d*|\.\d+))?[×x*]10\^?([+-]?\d+)$/,(m,a,b)=>(a||'1')+'e'+b);
+ s=s.replace(/^10\^([+-]?\d+)$/,'1e$1');
+ if(!/^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/.test(s))return NaN;
+ return parseFloat(s);
+}
+const close=(a,b,t)=>Math.abs(a-b)<=t*Math.abs(b)+1e-300;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const isPow10=F=>Math.abs(Math.log10(F)-Math.round(Math.log10(F)))<1e-9;
+
+/* ---------- data ---------- */
+const PFX={T:['tera',12],G:['giga',9],M:['mega',6],k:['kilo',3],c:['centi',-2],m:['milli',-3],'µ':['micro',-6],n:['nano',-9]};
+const CONF={m:['µ','M','c'],M:['m','k','G'],k:['M','m','c'],c:['m','k','µ'],'µ':['m','n','M'],n:['µ','m','G'],G:['M','k','T'],T:['G','M','k']};
+const PTAB=[['tera','T','× 1 000 000 000 000',12,'World electrical power demand is a few TW'],['giga','G','× 1 000 000 000',9,'Wi-Fi uses radio waves at 2.4 GHz'],['mega','M','× 1 000 000',6,'A large wind turbine is about 3 MW'],['kilo','k','× 1000',3,'A 2 kW kettle; a 4.7 kΩ resistor'],['centi','c','÷ 100   (× 0.01)',-2,'A 30 cm ruler'],['milli','m','÷ 1000   (× 0.001)',-3,'An LED takes about 20 mA'],['micro','µ','÷ 1 000 000',-6,'A human hair is about 80 µm wide'],['nano','n','÷ 1 000 000 000',-9,'Green light has a wavelength of about 530 nm']];
+const NICE=[0.2,0.5,1.2,1.5,2,2.5,3,4,4.5,4.7,5,6,7.5,8,12,15,20,25,30,40,45,50,60,75,80,120,150,200,250,300,450,500,600,750,800,1200,1500,2500];
+const TIME=[0.5,1.5,2,2.5,3,4,5,10,12,15,20,30,45];
+function P(f,t,F,top,tier,x){return Object.assign({f,t,F,top:top.split(' '),tier},x||{});}
+const PAIRS=[
+P('mA','A',1e-3,'elec','F',{pre:'m'}),P('µA','A',1e-6,'elec','H',{pre:'µ'}),P('mV','V',1e-3,'elec','F',{pre:'m'}),P('kV','V',1e3,'elec','F',{pre:'k'}),
+P('kΩ','Ω',1e3,'elec','F',{pre:'k'}),P('MΩ','Ω',1e6,'elec','H',{pre:'M'}),P('mC','C',1e-3,'elec','H',{pre:'m'}),P('µC','C',1e-6,'elec','H',{pre:'µ'}),
+P('kW','W',1e3,'elec energy','F',{pre:'k'}),P('kJ','J',1e3,'energy','F',{pre:'k'}),P('MJ','J',1e6,'energy','F',{pre:'M'}),P('MW','W',1e6,'energy','F',{pre:'M'}),P('GW','W',1e9,'energy','H',{pre:'G'}),
+P('MJ','kJ',1e3,'energy','H',{s1:{q:'How many kJ are in 1 MJ?',o:['100 kJ','1000 kJ','1 000 000 kJ','10 kJ'],a:1,w:'Mega is × 1 000 000 and kilo is × 1000, so 1 MJ = 1 000 000 J = 1000 kJ.'}}),
+P('kWh','J',3.6e6,'energy','H',{s1:{q:'1 kWh is a power of 1000 W for 3600 s. How many joules is that?',o:['3600 J','360 000 J','3 600 000 J','1000 J'],a:2,w:'E = P × t = 1000 W × 3600 s = 3 600 000 J.'},nice:[0.5,1.5,2,2.5,3,4,5,10,12]}),
+P('min','s',60,'energy forces radio elec','F',{s1:{q:'How many seconds are in 1 minute?',o:['10 s','60 s','100 s','3600 s'],a:1,w:'1 minute = 60 s. Time does not go in powers of ten!'},nice:TIME}),
+P('h','s',3600,'energy forces radio','F',{s1:{q:'How many seconds are in 1 hour?',o:['60 s','360 s','3600 s','6000 s'],a:2,w:'60 minutes × 60 seconds = 3600 s.'},nice:TIME}),
+P('km','m',1e3,'forces waves','F',{pre:'k'}),P('cm','m',1e-2,'forces waves dens','F',{pre:'c'}),P('mm','m',1e-3,'forces waves','F',{pre:'m'}),
+P('g','kg',1e-3,'forces dens energy','F',{s1:{q:'The k in kg means kilo. How many grams are in 1 kg?',o:['10 g','100 g','1000 g','1 000 000 g'],a:2,w:'Kilo means × 1000, so 1 kg = 1000 g. The SI unit of mass is the kilogram, not the gram.'}}),
+P('kN','N',1e3,'forces dens','F',{pre:'k'}),P('ms','s',1e-3,'forces waves','H',{pre:'m'}),
+P('mm','cm',0.1,'forces','F',{s1:{q:'How many millimetres are in 1 cm?',o:['10 mm','100 mm','1000 mm','0.1 mm'],a:0,w:'Look at a ruler: each centimetre is split into 10 mm.'}}),
+P('kHz','Hz',1e3,'waves','F',{pre:'k'}),P('MHz','Hz',1e6,'waves','F',{pre:'M'}),P('GHz','Hz',1e9,'waves','H',{pre:'G'}),
+P('nm','m',1e-9,'waves','H',{pre:'n'}),P('µm','m',1e-6,'waves','H',{pre:'µ'}),P('µs','s',1e-6,'waves','H',{pre:'µ'}),
+P('cm²','m²',1e-4,'dens','H',{s1:{q:'1 m = 100 cm, so a 1 m × 1 m square is 100 cm × 100 cm. How many cm² is 1 m²?',o:['100 cm²','1000 cm²','10 000 cm²','1 000 000 cm²'],a:2,w:'100 × 100 = 10 000, so 1 m² = 10 000 cm². Squared units square the conversion.'}}),
+P('mm²','m²',1e-6,'dens elec','H',{s1:{q:'1 m = 1000 mm. How many mm² is 1 m²?',o:['1000 mm²','10 000 mm²','1 000 000 mm²','100 mm²'],a:2,w:'1000 × 1000 = 1 000 000, so 1 m² = 1 000 000 mm².'}}),
+P('cm³','m³',1e-6,'dens','H',{s1:{q:'1 m = 100 cm, so a 1 m cube is 100 cm × 100 cm × 100 cm. How many cm³ is 1 m³?',o:['1000 cm³','100 000 cm³','1 000 000 cm³','100 cm³'],a:2,w:'100 × 100 × 100 = 1 000 000, so 1 m³ = 1 000 000 cm³. Cubed units cube the conversion.'}}),
+P('g/cm³','kg/m³',1e3,'dens','H',{s1:{q:'1 g = 0.001 kg and 1 cm³ = 0.000 001 m³. So 1 g/cm³ = 0.001 ÷ 0.000 001 kg/m³. What is that?',o:['0.001 kg/m³','1 kg/m³','1000 kg/m³','1 000 000 kg/m³'],a:2,w:'0.001 ÷ 0.000 001 = 1000. Water is 1 g/cm³, which is 1000 kg/m³.'},nice:[0.8,1,1.2,2.7,7.9,8.9,11.3,13.6,19.3]}),
+P('kPa','Pa',1e3,'dens','F',{pre:'k'}),P('kBq','Bq',1e3,'radio','F',{pre:'k'}),P('MBq','Bq',1e6,'radio','H',{pre:'M'}),
+P('mSv','Sv',1e-3,'radio','F',{pre:'m'}),P('µSv','Sv',1e-6,'radio','H',{pre:'µ'})
+];
+
+/* ---------- state & filters ---------- */
+let topic='all',tier='H';
+const okT=o=>(topic==='all'||o.top.includes(topic))&&(tier==='H'||o.tier==='F');
+
+/* ---------- conversion questions ---------- */
+function makeConv(avoid){
+ let list=PAIRS.filter(okT);if(!list.length)list=PAIRS;if(avoid){const f=list.filter(p=>!avoid.has(p));if(f.length)list=f;else avoid.clear();}const pair=pick(list);if(avoid)avoid.add(pair);
+ const rev=Math.random()<0.35,nice=pair.nice||NICE;
+ let from,to,F,value;
+ if(!rev){from=pair.f;to=pair.t;F=pair.F;value=pick(nice);}
+ else{from=pair.t;to=pair.f;F=r(1/pair.F);value=r(pick(nice)*pair.F);}
+ return {pair,from,to,F,value,ans:r(value*F)};
+}
+function ladder(value,F){
+ let L,R;if(F<1){L=r(1/F);R=1;}else{L=1;R=F;}
+ const lines=[[L,R]];
+ if(isPow10(F)){while(L>value*1.0000001&&lines.length<16){L=r(L/10);R=r(R/10);lines.push([L,R]);}}
+ const k=r(value/L);return {lines,k,R,ans:r(k*R)};
+}
+function ladderHTML(q,inputId,anim){
+ const ld=ladder(q.value,q.F);let rows=ld.lines,h='';
+ const row=(l,i)=>`<div class="rw"><span class="l" style="animation-delay:${i*.18}s">${fmt(l[0])} ${q.from}</span><span class="e" style="animation-delay:${i*.18}s">=</span><span class="r" style="animation-delay:${i*.18}s">${fmt(l[1])} ${q.to}</span></div>`;
+ if(rows.length>6){h=rows.slice(0,2).map(row).join('')+`<div class="dots">⋮  (keep dividing both sides by 10)</div>`+rows.slice(-2).map((l,i)=>row(l,i+3)).join('');}
+ else h=rows.map(row).join('');
+ const d=Math.min(rows.length,5)*.18;
+ const mid=ld.k===1?'':` = ${fmt(ld.k)} × ${fmt(ld.R)} ${q.to}`;
+ const end=inputId?` = <input type="text" id="${inputId}" autocomplete="off" aria-label="Answer"> ${q.to}`:` = <b>${fmt(ld.ans)} ${q.to}</b>`;
+ h+=`<div class="fin" style="animation-delay:${d}s">so ${fmt(q.value)} ${q.from}${mid}${end}</div>`;
+ return `<div class="ladder${anim?' anim':''}">${h}</div>`;
+}
+function prefixStep(sym,unit){
+ const [name,p]=PFX[sym];
+ const lab=s=>`${PFX[s][0]} (× 10${sup(PFX[s][1])})`;
+ const opts=shuffle([sym,...CONF[sym]]);
+ const plain=p>0?'× '+fmt(Math.pow(10,p)):'÷ '+fmt(Math.pow(10,-p));
+ return {q:`What does the prefix <b>${sym}</b> in <b>${unit}</b> stand for?`,o:opts.map(lab),a:opts.indexOf(sym),w:`${name[0].toUpperCase()+name.slice(1)} means ${plain} (× 10${sup(p)}).`};
+}
+function buildSteps(q){
+ const pr=q.pair,s=[];
+ s.push(pr.s1?{q:pr.s1.q,o:pr.s1.o.slice(),a:pr.s1.a,w:pr.s1.w}:prefixStep(pr.pre,pr.f));
+ let L,R;if(q.F<1){L=r(1/q.F);R=1;}else{L=1;R=q.F;}
+ const big=Math.max(L,R),str=(b)=>L>=R?`${fmt(b)} ${q.from} = 1 ${q.to}`:`1 ${q.from} = ${fmt(b)} ${q.to}`;
+ const right=str(big),swap=L>=R?`1 ${q.from} = ${fmt(big)} ${q.to}`:`${fmt(big)} ${q.from} = 1 ${q.to}`;
+ let c=[right,swap];[big*10,big/10,big*100,big*1000].forEach(b=>{b=r(b);if(b>1&&c.length<4){const t=str(b);if(!c.includes(t))c.push(t);}});
+ c=shuffle(c);s.push({q:`Which fact links <b>${q.from}</b> and <b>${q.to}</b>?`,o:c,a:c.indexOf(right),w:`${right}. Write this at the side of your working.`});
+ const bigger=q.F>1;
+ s.push({q:`Changing from ${q.from} to ${q.to}: will the number get bigger or smaller?`,o:['The number gets bigger','The number gets smaller'],a:bigger?0:1,
+  w:bigger?`${q.to} is a smaller unit than ${q.from}, so you need more of them – the number gets bigger.`:`${q.to} is a bigger unit than ${q.from}, so you need fewer of them – the number gets smaller.`});
+ const op=bigger?'× '+fmt(big):'÷ '+fmt(big),opp=bigger?'÷ '+fmt(big):'× '+fmt(big);
+ let ops=[op,opp];[big*10,big/10,big*100].forEach(b=>{b=r(b);if(b>1&&ops.length<4){const t=(bigger?'× ':'÷ ')+fmt(b);if(!ops.includes(t))ops.push(t);}});
+ if(ops.length<4){const t=(bigger?'÷ ':'× ')+fmt(r(big*10));if(!ops.includes(t))ops.push(t);}
+ ops=shuffle(ops);s.push({q:'So what do you do to the number?',o:ops,a:ops.indexOf(op),w:`You need to ${bigger?'multiply':'divide'} by ${fmt(big)}. Rather than doing it in your head, build a ladder so you can't slip up.`});
+ return s;
+}
+
+/* ---------- TRAINING ---------- */
+const T={q:null,steps:[],cur:0,wrong:[],fails:0,count:0,done:false};
+function newTrain(){T.q=makeConv();T.steps=buildSteps(T.q);T.cur=0;T.wrong=[];T.fails=0;T.done=false;renderTrain();}
+function renderTrain(){
+ const q=T.q;let h=`<div class="q">Convert <b>${fmt(q.value)} ${q.from}</b> into <b>${q.to}</b>.</div>`;
+ T.steps.forEach((s,i)=>{
+  if(i>T.cur)return;
+  const done=i<T.cur;
+  h+=`<div class="step ${done?'done':'cur'}"><div class="sh"><span class="badge">${done?'✓':i+1}</span><span>${s.q}</span></div>`;
+  if(done)h+=`<div class="chosen">${s.o[s.a]}</div><div class="why">${s.w}</div>`;
+  else{h+=`<div class="opts">${s.o.map((o,j)=>`<button class="opt${T.wrong.includes(j)?' no':''}" data-o="${j}" ${T.wrong.includes(j)?'disabled':''}>${o}</button>`).join('')}</div>`;
+   if(T.wrong.length)h+=`<div class="msg">Not quite – have another go.</div>`;}
+  h+='</div>';
+ });
+ if(T.cur>=T.steps.length){
+  h+=`<div class="step ${T.done?'done':'cur'}"><div class="sh"><span class="badge">${T.done?'✓':5}</span><span>Write the ladder at the side, then finish the last line.</span></div><div style="margin-left:36px">${ladderHTML(q,'pcx-tin',true)}`;
+  h+=`<div class="row"><button class="btn" id="pcx-tchk" ${T.done?'disabled':''}>Check</button>${T.done?'<button class="btn alt" id="pcx-tnext2">Next question →</button>':''}</div><div class="fb" id="pcx-tfb"></div></div></div>`;
+ }
+ $('#pcx-train').innerHTML=h;
+ const inp=$('#pcx-tin');if(inp&&!T.done){if(inp.offsetParent)inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkTrain();});}
+ if(T.done){const i=$('#pcx-tin');i.value=fmt(q.ans);i.disabled=true;const fb=$('#pcx-tfb');fb.className='fb ok';fb.innerHTML=`Spot on! ${fmt(q.value)} ${q.from} = <b>${fmtBoth(q.ans)} ${q.to}</b>`;}
+}
+function checkTrain(){
+ const v=parseNum($('#pcx-tin').value),fb=$('#pcx-tfb'),q=T.q;
+ if(isNaN(v)){fb.className='fb info';fb.textContent='Type a number, e.g. 0.05 or 5 x 10^-2.';return;}
+ if(close(v,q.ans,1e-6)){T.done=true;T.count++;$('#pcx-tcount').textContent='Completed: '+T.count;renderTrain();return;}
+ T.fails++;fb.className='fb bad';
+ const ld=ladder(q.value,q.F);
+ fb.innerHTML=T.fails<2?`Not quite. Use the last line of the ladder: ${fmt(q.value)} ${q.from} is ${fmt(ld.k)} lots of ${fmt(ld.lines[ld.lines.length-1][0])} ${q.from}.`:`The answer is <b>${fmtBoth(q.ans)} ${q.to}</b>. Type it in to finish, then try another.`;
+}
+$('#pcx-train').addEventListener('click',e=>{
+ const b=e.target.closest('[data-o]');
+ if(b){const j=+b.dataset.o,s=T.steps[T.cur];if(j===s.a){T.cur++;T.wrong=[];}else T.wrong.push(j);renderTrain();return;}
+ if(e.target.id==='pcx-tchk')checkTrain();
+ if(e.target.id==='pcx-tnext2')newTrain();
+});
+$('#pcx-tnew').addEventListener('click',newTrain);
+
+/* ---------- PRACTICE ---------- */
+const PR={q:null,tries:0,answered:false,ok:0,n:0,streak:0,best:0};
+function newPrac(){PR.q=makeConv();PR.tries=0;PR.answered=false;$('#pcx-pq').innerHTML=`Convert <b>${fmt(PR.q.value)} ${PR.q.from}</b> into <b>${PR.q.to}</b>.`;$('#pcx-pu').textContent=PR.q.to;const i=$('#pcx-pin');i.value='';i.disabled=false;$('#pcx-pfb').className='fb';$('#pcx-pw').innerHTML='';$('#pcx-pchk').textContent='Check';if(i.offsetParent)i.focus();}
+function scorePrac(){$('#pcx-sc').textContent=PR.ok+' / '+PR.n;$('#pcx-st').textContent=PR.streak;$('#pcx-sb').textContent=PR.best;}
+function checkPrac(){
+ if(PR.answered){newPrac();return;}
+ const v=parseNum($('#pcx-pin').value),fb=$('#pcx-pfb'),q=PR.q;
+ if(isNaN(v)){fb.className='fb info';fb.textContent='Type a number, e.g. 0.05 or 5 x 10^-2.';return;}
+ PR.tries++;
+ if(close(v,q.ans,1e-6)){
+  if(PR.tries===1){PR.ok++;PR.streak++;PR.best=Math.max(PR.best,PR.streak);}PR.n++;
+  fb.className='fb ok';fb.innerHTML=`Correct! ${fmt(q.value)} ${q.from} = <b>${fmtBoth(q.ans)} ${q.to}</b>`+(PR.tries>1?' (second attempt)':'');
+  PR.answered=true;$('#pcx-pin').disabled=true;$('#pcx-pchk').textContent='Next →';$('#pcx-pchk').focus();
+ }else{
+  PR.streak=0;
+  if(PR.tries===1){fb.className='fb bad';fb.innerHTML=`Not quite. Ask yourself: is ${q.to} a bigger or smaller unit than ${q.from}? Then try again, or press <i>Show working</i>.`;}
+  else{PR.n++;fb.className='fb bad';fb.innerHTML=`The answer is <b>${fmtBoth(q.ans)} ${q.to}</b>. Here's the working:`;$('#pcx-pw').innerHTML=ladderHTML(q,null,true);PR.answered=true;$('#pcx-pin').disabled=true;$('#pcx-pchk').textContent='Next →';}
+ }
+ scorePrac();
+}
+$('#pcx-pchk').addEventListener('click',checkPrac);
+$('#pcx-pin').addEventListener('keydown',e=>{if(e.key==='Enter')checkPrac();});
+$('#pcx-pwork').addEventListener('click',()=>{$('#pcx-pw').innerHTML=ladderHTML(PR.q,null,true);});
+$('#pcx-pnext').addEventListener('click',()=>{if(!PR.answered&&PR.tries>0){PR.n++;PR.streak=0;scorePrac();}newPrac();});
+
+/* ---------- CALCULATION TEMPLATES ---------- */
+const gv=(k,label,value,unit,F,si)=>({k,label,value,unit,F,si});
+const C1=(top,tier,eq,mk)=>({top:top.split(' '),tier,eq,mk});
+const CALCS=[
+C1('elec','F','V = I × R',()=>{const I=pick([2,4,5,10,20,25,40,50]),R=pick([1,1.5,2,2.5,4,5,10,12]);return{txt:`A current of ${I} mA flows through a ${R} kΩ resistor. Calculate the potential difference across the resistor.`,g:[gv('I','Current, I',I,'mA',1e-3,'A'),gv('R','Resistance, R',R,'kΩ',1e3,'Ω')],sub:'V = {I} × {R}',f:v=>v.I*v.R,u:'V'};}),
+C1('elec','F','P = I × V',()=>{const I=pick([100,150,200,250,400,500]),V=pick([1.5,3,4.5,6,9,12]);return{txt:`A lamp has a current of ${I} mA when the potential difference across it is ${V} V. Calculate the power of the lamp.`,g:[gv('I','Current, I',I,'mA',1e-3,'A'),gv('V','Potential difference, V',V,'V',1,'V')],sub:'P = {I} × {V}',f:v=>v.I*v.V,u:'W'};}),
+C1('elec','F','Q = I × t',()=>{const I=pick([20,40,50,100,200,250,500]),t=pick([1,2,3,5,10]);return{txt:`A current of ${I} mA flows for ${t} minute${t>1?'s':''}. Calculate the charge that flows.`,g:[gv('I','Current, I',I,'mA',1e-3,'A'),gv('t','Time, t',t,'min',60,'s')],sub:'Q = {I} × {t}',f:v=>v.I*v.t,u:'C'};}),
+C1('elec','H','V = I × R',()=>{const I=pick([2,5,10,20,25,50]),R=pick([1,2,2.5,4,5,10]);return{txt:`A current of ${I} µA flows through a ${R} MΩ resistor. Calculate the potential difference across it.`,g:[gv('I','Current, I',I,'µA',1e-6,'A'),gv('R','Resistance, R',R,'MΩ',1e6,'Ω')],sub:'V = {I} × {R}',f:v=>v.I*v.R,u:'V'};}),
+C1('elec','H','E = Q × V',()=>{const Q=pick([2,4,5,10,20,25]),V=pick([1.5,2,5,11,25]);return{txt:`A charge of ${Q} mC passes through a potential difference of ${V} kV. Calculate the energy transferred.`,g:[gv('Q','Charge, Q',Q,'mC',1e-3,'C'),gv('V','Potential difference, V',V,'kV',1e3,'V')],sub:'E = {Q} × {V}',f:v=>v.Q*v.V,u:'J'};}),
+C1('elec','H','P = I² × R',()=>{const I=pick([20,50,100,200,300,400]),R=pick([10,20,47,50,100,220]);return{txt:`A current of ${I} mA flows through a ${R} Ω resistor. Calculate the power transferred in the resistor.`,g:[gv('I','Current, I',I,'mA',1e-3,'A'),gv('R','Resistance, R',R,'Ω',1,'Ω')],sub:'P = {I}² × {R}',f:v=>v.I*v.I*v.R,u:'W'};}),
+C1('energy','F','E = P × t',()=>{const P=pick([0.5,1,1.5,2,2.5,3]),t=pick([2,5,10,15,20,30]);return{txt:`A ${P} kW heater is switched on for ${t} minutes. Calculate the energy transferred.`,g:[gv('P','Power, P',P,'kW',1e3,'W'),gv('t','Time, t',t,'min',60,'s')],sub:'E = {P} × {t}',f:v=>v.P*v.t,u:'J'};}),
+C1('energy','H','E = P × t',()=>{const P=pick([2,3,5,7.5,9]),t=pick([0.5,1.5,2]);return{txt:`An electric shower of power ${P} kW is used for ${t} hour${t>1?'s':''} in total over a week. Calculate the energy transferred. Give your answer in MJ.`,g:[gv('P','Power, P',P,'kW',1e3,'W'),gv('t','Time, t',t,'h',3600,'s')],sub:'E = {P} × {t}',f:v=>v.P*v.t,u:'J',au:'MJ',aF:1e-6};}),
+C1('energy','F','P = E ÷ t',()=>{const E=pick([12,24,30,36,60,90,120,180]),t=pick([1,2,3,5]);return{txt:`A motor transfers ${E} kJ of energy in ${t} minute${t>1?'s':''}. Calculate its power.`,g:[gv('E','Energy, E',E,'kJ',1e3,'J'),gv('t','Time, t',t,'min',60,'s')],sub:'P = {E} ÷ {t}',f:v=>v.E/v.t,u:'W'};}),
+C1('energy','H','ΔE = m × c × Δθ',()=>{const m=pick([200,250,400,500,800]),th=pick([5,10,15,20,25]);return{txt:`${m} g of water is heated so that its temperature rises by ${th} °C. The specific heat capacity of water is 4200 J/kg °C. Calculate the energy transferred. Give your answer in kJ.`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('c','Specific heat capacity, c',4200,'J/kg °C',1,'J/kg °C'),gv('th','Temperature change, Δθ',th,'°C',1,'°C')],sub:'ΔE = {m} × {c} × {th}',f:v=>v.m*v.c*v.th,u:'J',au:'kJ',aF:1e-3};}),
+C1('forces','F','W = F × d',()=>{const F=pick([1.2,1.5,2,2.5,4,5]),d=pick([20,25,40,50,75,80,150]);return{txt:`A force of ${F} kN moves a crate ${d} cm in the direction of the force. Calculate the work done.`,g:[gv('F','Force, F',F,'kN',1e3,'N'),gv('d','Distance, d',d,'cm',1e-2,'m')],sub:'W = {F} × {d}',f:v=>v.F*v.d,u:'J'};}),
+C1('forces','F','F = m × a',()=>{const m=pick([200,250,400,500,600,800]),a=pick([0.5,1.5,2,2.5,3,4]);return{txt:`A trolley of mass ${m} g accelerates at ${a} m/s². Calculate the resultant force on it.`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('a','Acceleration, a',a,'m/s²',1,'m/s²')],sub:'F = {m} × {a}',f:v=>v.m*v.a,u:'N'};}),
+C1('forces','F','v = d ÷ t',()=>{const d=pick([1.2,1.5,2.4,3,3.6,6]),t=pick([2,4,5,10]);return{txt:`A cyclist travels ${d} km in ${t} minutes. Calculate her average speed in m/s.`,g:[gv('d','Distance, d',d,'km',1e3,'m'),gv('t','Time, t',t,'min',60,'s')],sub:'v = {d} ÷ {t}',f:v=>v.d/v.t,u:'m/s'};}),
+C1('forces','F','W = m × g',()=>{const m=pick([200,250,500,800,1500]);return{txt:`Calculate the weight of a ${m} g mass. (g = 9.8 N/kg)`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('g','Gravitational field strength, g',9.8,'N/kg',1,'N/kg')],sub:'W = {m} × {g}',f:v=>v.m*v.g,u:'N'};}),
+C1('forces','H','Eₖ = ½ × m × v²',()=>{const m=pick([50,100,200,250,400,500]),s=pick([2,3,4,5,6,8,10]);return{txt:`A ball of mass ${m} g is moving at ${s} m/s. Calculate its kinetic energy.`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('v','Speed, v',s,'m/s',1,'m/s')],sub:'Eₖ = ½ × {m} × {v}²',f:v=>0.5*v.m*v.v*v.v,u:'J'};}),
+C1('forces','H','Eₚ = m × g × h',()=>{const m=pick([200,250,400,500]),h=pick([20,40,50,80,120,150]);return{txt:`A ${m} g book is lifted ${h} cm onto a shelf. Calculate the gain in gravitational potential energy. (g = 9.8 N/kg)`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('g','Gravitational field strength, g',9.8,'N/kg',1,'N/kg'),gv('h','Height, h',h,'cm',1e-2,'m')],sub:'Eₚ = {m} × {g} × {h}',f:v=>v.m*v.g*v.h,u:'J'};}),
+C1('forces','H','p = m × v',()=>{const m=pick([20,50,150,200,250,400]),s=pick([5,8,10,15,20,40]);return{txt:`A ${m} g ball is moving at ${s} m/s. Calculate its momentum.`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('v','Velocity, v',s,'m/s',1,'m/s')],sub:'p = {m} × {v}',f:v=>v.m*v.v,u:'kg m/s'};}),
+C1('waves','F','v = f × λ',()=>{const [f,l]=pick([[1,34],[2,17],[4,8.5],[5,6.8],[10,3.4]]);return{txt:`A sound wave has a frequency of ${f} kHz and a wavelength of ${l} cm. Calculate the speed of the wave.`,g:[gv('f','Frequency, f',f,'kHz',1e3,'Hz'),gv('l','Wavelength, λ',l,'cm',1e-2,'m')],sub:'v = {f} × {l}',f:v=>v.f*v.l,u:'m/s'};}),
+C1('waves','H','v = f × λ',()=>{const f=pick([90,100,150,200,300]);return{txt:`A radio station broadcasts at ${f} MHz. Radio waves travel at 3.0 × 10⁸ m/s. Calculate the wavelength of the waves.`,g:[gv('f','Frequency, f',f,'MHz',1e6,'Hz'),gv('v','Wave speed, v',3e8,'m/s',1,'m/s')],sub:'λ = {v} ÷ {f}',f:v=>v.v/v.f,u:'m'};}),
+C1('waves','H','v = f × λ',()=>{const l=pick([400,500,600,750]);return{txt:`Light of wavelength ${l} nm travels at 3.0 × 10⁸ m/s. Calculate its frequency.`,g:[gv('l','Wavelength, λ',l,'nm',1e-9,'m'),gv('v','Wave speed, v',3e8,'m/s',1,'m/s')],sub:'f = {v} ÷ {l}',f:v=>v.v/v.l,u:'Hz'};}),
+C1('waves','H','T = 1 ÷ f',()=>{const f=pick([2,4,5,8,10,20,25,50]);return{txt:`A sound has a frequency of ${f} kHz. Calculate its time period. Give your answer in ms.`,g:[gv('f','Frequency, f',f,'kHz',1e3,'Hz')],sub:'T = 1 ÷ {f}',f:v=>1/v.f,u:'s',au:'ms',aF:1e3};}),
+C1('dens','H','ρ = m ÷ V',()=>{const rho=pick([2.7,7.9,8.9,11.3]),V=pick([10,20,50,100]),m=r(rho*V);return{txt:`A metal block has a mass of ${fmt(m)} g and a volume of ${V} cm³. Calculate its density in kg/m³.`,g:[gv('m','Mass, m',m,'g',1e-3,'kg'),gv('V','Volume, V',V,'cm³',1e-6,'m³')],sub:'ρ = {m} ÷ {V}',f:v=>v.m/v.V,u:'kg/m³'};}),
+C1('dens','F','p = F ÷ A',()=>{const F=pick([2,4,5,6,10,12]),A=pick([0.5,2,4,5]);return{txt:`A force of ${F} kN acts on an area of ${A} m². Calculate the pressure.`,g:[gv('F','Force, F',F,'kN',1e3,'N'),gv('A','Area, A',A,'m²',1,'m²')],sub:'p = {F} ÷ {A}',f:v=>v.F/v.A,u:'Pa'};}),
+C1('dens','H','p = F ÷ A',()=>{const F=pick([20,30,50,100,120]),A=pick([2,4,5,10,25]);return{txt:`A force of ${F} N acts on an area of ${A} cm². Calculate the pressure.`,g:[gv('F','Force, F',F,'N',1,'N'),gv('A','Area, A',A,'cm²',1e-4,'m²')],sub:'p = {F} ÷ {A}',f:v=>v.F/v.A,u:'Pa'};}),
+C1('radio','F','number of half-lives = time ÷ half-life',()=>{const A=pick([1.6,3.2,4.8,6.4,8]),[h,t]=pick([[15,1],[20,1],[30,1],[30,2],[40,2]]);return{txt:`A radioactive source has an activity of ${A} kBq. Its half-life is ${h} s. Calculate its activity after ${t} minute${t>1?'s':''}. Give your answer in Bq.`,g:[gv('A','Starting activity',A,'kBq',1e3,'Bq'),gv('h','Half-life',h,'s',1,'s'),gv('t','Time',t,'min',60,'s')],sub:v=>{const n=Math.round(v.t/v.h);return `half-lives = ${fmt(v.t)} ÷ ${fmt(v.h)} = ${n}<br>activity = ${fmt(v.A)} ÷ 2${sup(n)}`;},f:v=>v.A/Math.pow(2,Math.round(v.t/v.h)),u:'Bq'};}),
+C1('radio','H','number of half-lives = time ÷ half-life',()=>{const A=pick([80,160,400,800]),n=pick([2,3,4]);return{txt:`A medical tracer has an activity of ${A} MBq and a half-life of 6 hours. Calculate its activity after ${6*n} hours. Give your answer in Bq.`,g:[gv('A','Starting activity',A,'MBq',1e6,'Bq'),gv('h','Half-life',6,'h',3600,'s'),gv('t','Time',6*n,'h',3600,'s')],sub:v=>{const k=Math.round(v.t/v.h);return `half-lives = ${fmt(v.t)} ÷ ${fmt(v.h)} = ${k}<br>activity = ${fmt(v.A)} ÷ 2${sup(k)}`;},f:v=>v.A/Math.pow(2,Math.round(v.t/v.h)),u:'Bq'};})
+];
+function makeCalc(avoid){
+ let list=CALCS.filter(okT);if(!list.length)list=CALCS;if(avoid){const f=list.filter(t=>!avoid.has(t));if(f.length)list=f;else avoid.clear();}const tpl=pick(list),d=tpl.mk();if(avoid)avoid.add(tpl);
+ const v={};d.g.forEach(g=>{g.siv=r(g.value*g.F);v[g.k]=g.siv;});
+ d.eq=tpl.eq;d.v=v;d.ans=r(d.f(v));d.final=d.au?r(d.ans*d.aF):d.ans;d.fu=d.au||d.u;
+ d.subTxt=typeof d.sub==='function'?d.sub(v):d.sub.replace(/\{(\w+)\}/g,(m,k)=>fmt(v[k]));
+ return d;
+}
+function miniLadder(value,from,to,F){const ld=ladder(value,F),a=ld.lines[0],z=ld.lines[ld.lines.length-1];let s=`${fmt(a[0])} ${from} = ${fmt(a[1])} ${to}`;if(ld.lines.length>1)s+=` → … → ${fmt(z[0])} ${from} = ${fmt(z[1])} ${to}`;return s+`, so <b>${fmt(value)} ${from} = ${fmt(ld.ans)} ${to}</b>`;}
+
+/* ---------- CALCULATIONS ---------- */
+const CS={d:null,mode:'guided'};
+function newCalc(){CS.d=makeCalc();renderCalc();}
+function renderCalc(){
+ const d=CS.d;let h=`<span class="eqchip">${d.eq}</span><div class="ctext">${d.txt}</div>`;
+ if(CS.mode==='guided'){
+  h+=`<h3>Step 1 – Convert every quantity into SI units</h3>`;
+  d.g.forEach((g,i)=>{
+   if(g.F===1)h+=`<div class="crow"><span class="lbl">${g.label}: ${fmt(g.value)} ${g.unit}</span><span class="si">✓ no conversion needed</span></div>`;
+   else h+=`<div class="crow"><span class="lbl">${g.label}: ${fmt(g.value)} ${g.unit} =</span><input type="text" data-g="${i}" autocomplete="off"><span class="unit">${g.si}</span><span class="mk" id="pcx-mk${i}"></span></div>`;
+  });
+  h+=`<h3 style="margin-top:14px">Step 2 – Substitute into the equation and calculate</h3>`;
+ }
+ h+=`<div class="crow"><span class="lbl"><b>Answer</b></span><input type="text" id="pcx-cans" autocomplete="off"><span class="unit">${d.fu}</span><span class="mk" id="pcx-mkA"></span></div>`;
+ $('#pcx-calc').innerHTML=h;$('#pcx-cfb').className='fb';$('#pcx-csolbox').className='sol';$('#pcx-csolbox').innerHTML='';
+ $$('#pcx-calc input').forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')checkCalc();}));
+}
+function checkCalc(){
+ const d=CS.d;let convOK=true,anyConv=false,blank=false;
+ $$('#pcx-calc input[data-g]').forEach(inp=>{
+  const g=d.g[+inp.dataset.g],mk=$('#pcx-mk'+inp.dataset.g),v=parseNum(inp.value);anyConv=true;
+  if(isNaN(v)){mk.textContent='';mk.className='mk';blank=true;convOK=false;return;}
+  const ok=close(v,g.siv,1e-6);mk.textContent=ok?'✓':'✗';mk.className='mk '+(ok?'y':'n');if(!ok)convOK=false;
+ });
+ const av=parseNum($('#pcx-cans').value),mA=$('#pcx-mkA'),fb=$('#pcx-cfb');
+ let ansOK=null;if(!isNaN(av)){ansOK=close(av,d.final,0.011);mA.textContent=ansOK?'✓':'✗';mA.className='mk '+(ansOK?'y':'n');}else{mA.textContent='';mA.className='mk';}
+ if(ansOK){fb.className='fb ok';fb.innerHTML=`Correct! The answer is <b>${fmtAns(d.final)} ${d.fu}</b>.`+(CS.mode==='guided'&&!convOK&&anyConv?' Check your conversions too, though.':'');}
+ else if(ansOK===false){
+  const wrongBy=av/d.final,p=Math.round(Math.log10(Math.abs(wrongBy)));
+  fb.className='fb bad';
+  fb.innerHTML=(Math.abs(Math.log10(Math.abs(wrongBy))-p)<0.01&&p!==0)?`Your digits look right but the answer is out by a factor of 10${sup(p)} – that's a conversion mistake. Check every unit is in SI before substituting.`:(CS.mode==='guided'&&!convOK?'Not quite – fix the conversions marked ✗ first.':'Not quite. Check your conversions and your substitution.');
+ }
+ else if(CS.mode==='guided'&&anyConv&&!blank){fb.className=convOK?'fb ok':'fb bad';fb.innerHTML=convOK?'Conversions all correct – now substitute them into the equation.':'Some conversions need another look (✗).';}
+ else{fb.className='fb info';fb.textContent='Fill in your answers, then press Check.';}
+}
+function showSol(){
+ const d=CS.d;let h='';
+ d.g.forEach(g=>{h+=g.F===1?`${g.label}: ${fmt(g.value)} ${g.unit} (no conversion)<br>`:`${g.label}: ${miniLadder(g.value,g.unit,g.si,g.F)}<br>`;});
+ h+=`<br>${d.subTxt}<br>= <b>${fmtAns(d.ans)} ${d.u}</b>`;
+ if(d.au)h+=`<br>In ${d.au}: ${miniLadder(Number(Number(d.ans).toPrecision(6)),d.u,d.au,d.aF)}`;
+ const b=$('#pcx-csolbox');b.innerHTML=h;b.className='sol on';
+}
+$('#pcx-cchk').addEventListener('click',checkCalc);
+$('#pcx-csol').addEventListener('click',showSol);
+$('#pcx-cnext').addEventListener('click',newCalc);
+$('#pcx-cmode').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(!b)return;CS.mode=b.dataset.m;$$('#pcx-cmode button').forEach(x=>x.classList.toggle('on',x===b));renderCalc();});
+
+/* ---------- WORKSHEET ---------- */
+const TOPN={all:'All topics',elec:'Electricity',energy:'Energy & power',forces:'Forces & motion',waves:'Waves',dens:'Density & pressure',radio:'Radioactivity'};
+function genSheet(){
+ const n=+$('#pcx-wn').value,type=$('#pcx-wt').value,seen=new Set(),items=[],ap=new Set(),at=new Set();
+ for(let i=0,guard=0;i<n&&guard<400;guard++){
+  const conv=type==='conv'||(type==='mix'&&(i<Math.ceil(n*0.4)));
+  let it;
+  if(conv){const q=makeConv(ap);it={q:`Convert ${fmt(q.value)} ${q.from} into ${q.to}.`,a:`${fmtBoth(q.ans)} ${q.to}`,c:1};}
+  else{const d=makeCalc(at);it={q:`${d.txt}`,eq:d.eq,a:`${fmtBoth(Number(Number(d.final).toPrecision(4)))} ${d.fu}`,c:0};}
+  if(seen.has(it.q))continue;seen.add(it.q);items.push(it);i++;
+ }
+ const tierN=tier==='H'?'Higher':'Foundation';
+ let h=`<h2>Prefixes &amp; Conversions – ${TOPN[topic]} (${tierN})</h2><div class="meta"><span>Name:</span><span>Class:</span><span>Date:</span></div>`;
+ h+=`<p class="mut" style="font-size:13px">Show your working. Convert every quantity into SI units before you substitute into an equation.</p><ol>`;
+ items.forEach(it=>{h+=`<li>${it.q}${it.eq?` <i class="mut">(${it.eq})</i>`:''}${it.c?'<span class="wl s"></span>':'<span class="wl"></span><span class="wl"></span><span class="wl s"></span>'}</li>`;});
+ h+=`</ol><div class="anssec${$('#pcx-wa').checked?' pb':''}"><h3>Answers</h3><ol>${items.map(it=>`<li><code>${it.a}</code></li>`).join('')}</ol></div>`;
+ $('#pcx-sheet').innerHTML=h;
+}
+$('#pcx-wgen').addEventListener('click',genSheet);
+$('#pcx-wa').addEventListener('change',()=>{const a=$('#pcx-sheet .anssec');if(a)a.classList.toggle('pb',$('#pcx-wa').checked);});
+$('#pcx-wprint').addEventListener('click',()=>window.print());
+
+/* ---------- LEARN ---------- */
+$('#pcx-ptable').innerHTML=PTAB.map(p=>`<tr class="${p[3]>0?'big':''}"><td>${p[0]}</td><td class="sym">${p[1]}</td><td class="num">${p[2]}</td><td class="num">× 10${sup(p[3])}</td><td>${p[4]}</td></tr>`).join('');
+$('#pcx-demo').innerHTML=ladderHTML({value:50,from:'mA',to:'A',F:1e-3},null,false);
+const LP=PAIRS.filter((p,i,a)=>a.findIndex(x=>x.f===p.f&&x.t===p.t)===i);
+let lrev=false;
+function fillLP(){const s=$('#pcx-lpair'),cur=s.value;const list=LP.filter(okT);s.innerHTML=list.map(p=>{const i=LP.indexOf(p);return `<option value="${i}">${lrev?p.t+' → '+p.f:p.f+' → '+p.t}</option>`;}).join('');if([...s.options].some(o=>o.value===cur))s.value=cur;drawLP();}
+function drawLP(){const p=LP[+$('#pcx-lpair').value];const v=parseNum($('#pcx-lval').value);if(!p||isNaN(v)||v<=0){$('#pcx-lout').innerHTML='<p class="mut">Type a positive number.</p>';return;}
+ const q=lrev?{value:v,from:p.t,to:p.f,F:r(1/p.F)}:{value:v,from:p.f,to:p.t,F:p.F};$('#pcx-lout').innerHTML=ladderHTML(q,null,true);}
+$('#pcx-lpair').addEventListener('change',drawLP);$('#pcx-lval').addEventListener('input',drawLP);
+$('#pcx-lswap').addEventListener('click',()=>{lrev=!lrev;fillLP();});
+
+/* ---------- tabs & filters ---------- */
+$$('.tabs button').forEach(b=>b.addEventListener('click',()=>{$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('.panel').forEach(p=>p.classList.toggle('on',p.dataset.panel===b.dataset.tab));}));
+function refresh(){newTrain();newPrac();newCalc();genSheet();fillLP();}
+$('#pcx-topic').addEventListener('change',e=>{topic=e.target.value;refresh();});
+$('#pcx-tier').addEventListener('change',e=>{tier=e.target.value;refresh();});
+refresh();
+})();
+</script>
+</body>
+</html>
