@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sidereal and Synodic Days</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#edf3fa}
+#sidApp{--bg:#edf3fa;--panel:#fff;--ink:#0f1d33;--muted:#475a76;--line:#d3deec;--accent:#1f4fd1;--sid:#6a46e0;--sidInk:#5133c0;--sidSoft:#efeafe;--sol:#f0a020;--solInk:#8f5200;--solSoft:#fff3dc;--earth:#0e86a6;
+container-type:inline-size;font-family:'Manrope',system-ui,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:640px;box-sizing:border-box;padding:22px 20px 28px;line-height:1.55;font-size:15.5px}
+#sidApp *,#sidApp *::before,#sidApp *::after{box-sizing:border-box}
+#sidApp .sa-wrap{max-width:1180px;margin:0 auto}
+#sidApp .sa-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+#sidApp .sa-eyebrow{font:600 12px 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 4px}
+#sidApp .sa-title{font-size:clamp(24px,4.2cqi,36px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin:0}
+#sidApp .sa-title .v{color:var(--sidInk)}#sidApp .sa-title .a{color:var(--solInk)}
+#sidApp .sa-lede{margin:8px 0 0;color:var(--muted);max-width:640px}
+#sidApp .sa-keys{display:flex;gap:8px;flex-wrap:wrap}
+#sidApp .sa-key{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:6px 11px;border-radius:999px;background:#fff;border:1px solid var(--line)}
+#sidApp .sa-dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+#sidApp .sa-tabs{display:flex;gap:4px;flex-wrap:wrap;background:#dde7f3;padding:5px;border-radius:13px}
+#sidApp .sa-tab{border:0;background:transparent;font:600 14px 'Manrope',sans-serif;padding:9px 14px;border-radius:9px;color:var(--muted);cursor:pointer}
+#sidApp .sa-tab:hover{color:var(--ink)}
+#sidApp .sa-tab[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(15,29,51,.12)}
+#sidApp .sa-tab .n{font-family:'JetBrains Mono',monospace;color:var(--accent);margin-right:6px;font-size:12px}
+#sidApp .sa-panel{display:none;margin-top:16px}
+#sidApp .sa-panel.on{display:block}
+#sidApp .sa-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+#sidApp .sa-card+.sa-card,#sidApp .sa-grid2+.sa-card,#sidApp .sa-card+.sa-grid2,#sidApp .sa-grid2+.sa-grid2{margin-top:14px}
+#sidApp .sa-grid2>.sa-card{margin-top:0}
+#sidApp .sa-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+#sidApp .sa-h2{font-size:20px;font-weight:800;margin:0 0 8px;letter-spacing:-.01em}
+#sidApp .sa-h3{font-size:16px;font-weight:700;margin:0 0 6px}
+#sidApp p{margin:0 0 10px}
+#sidApp .sa-muted{color:var(--muted)}
+#sidApp .sa-small{font-size:13.5px}
+#sidApp .sa-def{border-top:5px solid var(--sid)}
+#sidApp .sa-def.sol{border-top-color:var(--sol)}
+#sidApp .sa-big{font:600 26px 'JetBrains Mono',monospace;margin:4px 0 8px;letter-spacing:-.02em}
+#sidApp .sa-def .sa-big{color:var(--sidInk)}#sidApp .sa-def.sol .sa-big{color:var(--solInk)}
+#sidApp .sa-tag{display:inline-block;font:600 11px 'JetBrains Mono',monospace;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--sidSoft);color:var(--sidInk)}
+#sidApp .sa-def.sol .sa-tag{background:var(--solSoft);color:var(--solInk)}
+#sidApp .sa-idea{background:linear-gradient(120deg,#e7efff,#f2ecff);border:1px solid #cfdafa}
+#sidApp .sa-table{width:100%;border-collapse:collapse;font-size:14px}
+#sidApp .sa-table th,#sidApp .sa-table td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+#sidApp .sa-table th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700}
+#sidApp .sa-table td.m{font-family:'JetBrains Mono',monospace;white-space:nowrap}
+#sidApp .sa-scroll{overflow-x:auto}
+#sidApp .sa-btn{font:600 14px 'Manrope',sans-serif;border:1.5px solid var(--line);background:#fff;padding:8px 13px;border-radius:10px;cursor:pointer;color:var(--ink);white-space:nowrap}
+#sidApp .sa-btn:hover{border-color:#9fb3d1}
+#sidApp .sa-btn.pri{background:var(--accent);border-color:var(--accent);color:#fff}
+#sidApp .sa-btn.sid{border-color:var(--sid);color:var(--sidInk);background:var(--sidSoft)}
+#sidApp .sa-btn.sol{border-color:var(--sol);color:var(--solInk);background:var(--solSoft)}
+#sidApp .sa-cta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+#sidApp .sa-simgrid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,1fr);gap:14px}
+#sidApp .sa-stage{position:relative;background:#070e20;border-radius:14px;overflow:hidden;aspect-ratio:4/3;min-height:340px}
+#sidApp .sa-stage canvas,#sidApp .sa-dialbox canvas,#sidApp .sa-chartbox canvas{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+#sidApp .sa-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+#sidApp .sa-lab{font-size:13px;font-weight:700;color:var(--muted);margin-right:2px}
+#sidApp .sa-seg{display:inline-flex;background:#e3eaf4;border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+#sidApp .sa-seg button{border:0;background:transparent;font:600 13px 'Manrope',sans-serif;padding:6px 10px;border-radius:8px;cursor:pointer;color:var(--muted)}
+#sidApp .sa-seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(15,29,51,.15)}
+#sidApp .sa-range{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--muted)}
+#sidApp .sa-range input{accent-color:var(--accent);width:110px}
+#sidApp .sa-range span{font:600 12.5px 'JetBrains Mono',monospace;color:var(--ink);min-width:58px}
+#sidApp .sa-chk{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink);cursor:pointer}
+#sidApp .sa-chk input{accent-color:var(--accent)}
+#sidApp .sa-side{display:flex;flex-direction:column;gap:12px}
+#sidApp .sa-dialbox{position:relative;width:100%;max-width:280px;aspect-ratio:1;margin:0 auto}
+#sidApp .sa-clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+#sidApp .sa-clock{border-radius:10px;padding:8px 10px;background:var(--solSoft)}
+#sidApp .sa-clock.sid{background:var(--sidSoft)}
+#sidApp .sa-clock b{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--solInk)}
+#sidApp .sa-clock.sid b{color:var(--sidInk)}
+#sidApp .sa-clock span{font:600 22px 'JetBrains Mono',monospace}
+#sidApp .sa-read{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:13.5px}
+#sidApp .sa-read dt{color:var(--muted);margin:0}
+#sidApp .sa-read dd{margin:0;font:600 13px 'JetBrains Mono',monospace;text-align:right}
+#sidApp .sa-read .v{color:var(--sidInk)}#sidApp .sa-read .a{color:var(--solInk)}
+#sidApp .sa-status{border-left:4px solid var(--accent);background:#f2f6fd;padding:10px 12px;border-radius:8px;font-size:14px;min-height:70px}
+#sidApp .sa-status.sid{border-left-color:var(--sid);background:var(--sidSoft)}
+#sidApp .sa-status.sol{border-left-color:var(--sol);background:var(--solSoft)}
+#sidApp .sa-steps{margin:0;padding-left:20px}
+#sidApp .sa-steps li{margin-bottom:8px}
+#sidApp .sa-formula{font:600 17px 'JetBrains Mono',monospace;background:#f2f6fd;border:1px dashed #b8c8e4;border-radius:10px;padding:12px 14px;text-align:center;margin:8px 0 10px}
+#sidApp .sa-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+#sidApp .sa-stat{background:#f3f6fb;border-radius:10px;padding:10px 12px}
+#sidApp .sa-stat b{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+#sidApp .sa-stat span{font:600 17px 'JetBrains Mono',monospace}
+#sidApp .sa-stat.v span{color:var(--sidInk)}#sidApp .sa-stat.a span{color:var(--solInk)}
+#sidApp .sa-list{margin:0;padding-left:18px}
+#sidApp .sa-list li{margin-bottom:7px}
+#sidApp .sa-chartbox{position:relative;width:100%;aspect-ratio:16/7;min-height:230px;margin-top:6px}
+#sidApp .sa-today{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+#sidApp .sa-today input{min-width:160px;font:600 14px 'JetBrains Mono',monospace;padding:7px 9px;border:1.5px solid var(--line);border-radius:9px;color:var(--ink)}
+#sidApp .sa-eotv{font:700 28px 'JetBrains Mono',monospace;color:var(--solInk)}
+#sidApp .sa-next{background:linear-gradient(115deg,#1f4fd1,#5a3fd6 60%,#7a3fc9);color:#fff;border:0;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+#sidApp .sa-next .sa-h2{color:#fff}
+#sidApp .sa-next p{color:#e3e8ff;margin:0;max-width:640px}
+#sidApp .sa-next a{display:inline-block;background:#fff;color:#2a3cb8;font-weight:800;text-decoration:none;padding:11px 18px;border-radius:11px;white-space:nowrap}
+#sidApp .sa-next a:hover{background:#eef1ff}
+#sidApp .sa-q{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px;background:#fff}
+#sidApp .sa-q .qt{font-weight:700;margin-bottom:8px}
+#sidApp .sa-opts{display:grid;gap:6px}
+#sidApp .sa-opt{text-align:left;font:500 14.5px 'Manrope',sans-serif;border:1.5px solid var(--line);background:#fbfcfe;border-radius:9px;padding:8px 12px;cursor:pointer;color:var(--ink)}
+#sidApp .sa-opt:hover{border-color:#9fb3d1}
+#sidApp .sa-opt.ok{border-color:#1a9a5c;background:#e6f6ee}
+#sidApp .sa-opt.bad{border-color:#c93b3b;background:#fbeaea}
+#sidApp .sa-fb{margin-top:8px;font-size:14px;display:none}
+#sidApp .sa-fb.show{display:block}
+#sidApp .sa-score{font:700 15px 'JetBrains Mono',monospace;color:var(--accent)}
+@container (max-width:760px){
+#sidApp .sa-grid2,#sidApp .sa-simgrid{grid-template-columns:1fr}
+#sidApp .sa-stats{grid-template-columns:1fr}
+#sidApp .sa-stage{aspect-ratio:4/5}
+}
+</style>
+</head>
+<body>
+<div id="sidApp" data-eot-url="https://www.drjonesphysics.com/">
+<div class="sa-wrap">
+<header class="sa-head">
+ <div>
+  <p class="sa-eyebrow">Astronomy · Earth's rotation</p>
+  <h1 class="sa-title"><span class="v">Sidereal</span> and <span class="a">synodic</span> days</h1>
+  <p class="sa-lede">Why does Earth take 23 h 56 min to spin once, yet the Sun takes 24 h to come back round? Watch Earth spin and orbit at the same time to find out.</p>
+ </div>
+ <div class="sa-keys">
+  <span class="sa-key"><span class="sa-dot" style="background:#6a46e0"></span>Relative to the stars → sidereal</span>
+  <span class="sa-key"><span class="sa-dot" style="background:#f0a020"></span>Relative to the Sun → synodic (solar)</span>
+ </div>
+</header>
+
+<nav class="sa-tabs" role="tablist">
+ <button class="sa-tab" role="tab" data-tab="intro" aria-selected="true"><span class="n">01</span>Two kinds of day</button>
+ <button class="sa-tab" role="tab" data-tab="sim" aria-selected="false"><span class="n">02</span>Simulation</button>
+ <button class="sa-tab" role="tab" data-tab="why" aria-selected="false"><span class="n">03</span>The 4-minute gap</button>
+ <button class="sa-tab" role="tab" data-tab="solar" aria-selected="false"><span class="n">04</span>Apparent &amp; mean solar time</button>
+ <button class="sa-tab" role="tab" data-tab="quiz" aria-selected="false"><span class="n">05</span>Check yourself</button>
+</nav>
+
+<!-- 01 INTRO -->
+<section class="sa-panel on" data-panel="intro">
+ <div class="sa-grid2">
+  <div class="sa-card sa-def">
+   <span class="sa-tag">Measured against the stars</span>
+   <h2 class="sa-h2" style="margin-top:10px">Sidereal day</h2>
+   <div class="sa-big">23 h 56 min 4 s</div>
+   <p>The time for Earth to turn once – a full 360° – relative to the <b>distant stars</b>. A star that is due south tonight will be due south again one sidereal day later.</p>
+   <p class="sa-muted sa-small">From the Latin <i>sidus</i>, “star”.</p>
+  </div>
+  <div class="sa-card sa-def sol">
+   <span class="sa-tag">Measured against the Sun</span>
+   <h2 class="sa-h2" style="margin-top:10px">Synodic (solar) day</h2>
+   <div class="sa-big">24 h 00 min 00 s</div>
+   <p>The time from one local noon to the next – from the Sun being at its highest point in the sky until it is there again. This is the “day” our clocks are built around (on average).</p>
+   <p class="sa-muted sa-small">From the Greek <i>synodos</i>, “meeting” – the observer and the Sun line up again.</p>
+  </div>
+ </div>
+ <div class="sa-card sa-idea">
+  <h2 class="sa-h2">The key idea</h2>
+  <p>Earth does two things at once: it <b>spins</b> on its axis and it <b>travels around the Sun</b>. Both happen in the same direction (anticlockwise, seen from above the North Pole).</p>
+  <p>In one day Earth moves about <b>1°</b> along its orbit (360° ÷ 365¼ days ≈ 0.986°). So after one complete turn relative to the stars, the Sun is not quite back overhead. Earth has to turn roughly <b>1° more</b> – which takes about <b>4 minutes</b> – before the Sun returns to the same place in the sky.</p>
+  <div class="sa-cta"><button class="sa-btn pri" data-goto="sim">See it in the simulation →</button><button class="sa-btn" data-goto="why">Show me the numbers</button></div>
+ </div>
+ <div class="sa-card">
+  <h2 class="sa-h2">Days at a glance</h2>
+  <div class="sa-scroll">
+  <table class="sa-table">
+   <thead><tr><th>Day</th><th>Measured relative to</th><th>Length</th><th>Constant?</th><th>Where you meet it</th></tr></thead>
+   <tbody>
+    <tr><td><b style="color:var(--sidInk)">Sidereal day</b></td><td>The distant stars</td><td class="m">23 h 56 min 4 s</td><td>Yes</td><td>Telescope tracking, star charts, geostationary orbits</td></tr>
+    <tr><td><b style="color:var(--solInk)">Apparent solar day</b></td><td>The real Sun (a sundial)</td><td class="m">24 h ± up to ~30 s</td><td>No – varies through the year</td><td>Sundials, local noon</td></tr>
+    <tr><td><b style="color:var(--solInk)">Mean solar day</b></td><td>An imaginary, steady “mean Sun”</td><td class="m">24 h exactly</td><td>Yes (by definition)</td><td>Clocks, GMT, time zones</td></tr>
+   </tbody>
+  </table>
+  </div>
+  <p class="sa-muted sa-small" style="margin-top:10px">“Synodic day” and “solar day” mean the same thing. Section 04 explains the difference between apparent and mean solar time.</p>
+ </div>
+</section>
+
+<!-- 02 SIM -->
+<section class="sa-panel" data-panel="sim">
+ <div class="sa-simgrid">
+  <div>
+   <div class="sa-stage"><canvas id="saOrbit" aria-label="Animation of Earth spinning while orbiting the Sun, viewed from above the North Pole"></canvas></div>
+   <div class="sa-controls">
+    <button class="sa-btn pri" id="saPlay">Pause</button>
+    <button class="sa-btn sid" id="saStepSid">Run 1 sidereal day</button>
+    <button class="sa-btn sol" id="saStepSol">Run 1 solar day</button>
+    <button class="sa-btn" id="saReset">Reset</button>
+    <label class="sa-range">Speed <input type="range" id="saSpeed" min="0" max="7" step="1" value="3"><span id="saSpeedVal"></span></label>
+   </div>
+   <div class="sa-controls">
+    <span class="sa-lab">Length of year:</span>
+    <div class="sa-seg" id="saYear"><button data-y="6">6 days</button><button data-y="12" class="on">12 days</button><button data-y="24">24 days</button><button data-y="real">Real (365¼ days)</button></div>
+   </div>
+   <div class="sa-controls">
+    <label class="sa-chk"><input type="checkbox" id="saWedge" checked> Show angle between Sun and star directions</label>
+    <label class="sa-chk"><input type="checkbox" id="saTrail" checked> Show orbit trail</label>
+   </div>
+  </div>
+  <div class="sa-side">
+   <div class="sa-status" id="saStatus"></div>
+   <div class="sa-card" style="padding:14px 14px 12px">
+    <h3 class="sa-h3">The observer's sky</h3>
+    <p class="sa-muted sa-small" style="margin-bottom:4px">Where the Sun and the reference star appear to the observer (on the equator). Overhead is at the top.</p>
+    <div class="sa-dialbox"><canvas id="saDial" aria-label="Sky dial showing the Sun and reference star positions"></canvas></div>
+    <div class="sa-clocks">
+     <div class="sa-clock"><b>Sun clock</b><span id="saSunClk">12:00</span></div>
+     <div class="sa-clock sid"><b>Star clock</b><span id="saStarClk">00:00</span></div>
+    </div>
+   </div>
+   <div class="sa-card" style="padding:14px">
+    <dl class="sa-read">
+     <dt>Time elapsed</dt><dd id="rT"></dd>
+     <dt>Turns relative to the stars</dt><dd class="v" id="rSid"></dd>
+     <dt>Turns relative to the Sun</dt><dd class="a" id="rSol"></dd>
+     <dt>Distance round orbit</dt><dd id="rOrb"></dd>
+     <dt>Sidereal day (this model)</dt><dd class="v" id="rSidLen"></dd>
+     <dt>Solar day (this model)</dt><dd class="a">24 h 00 min 00 s</dd>
+     <dt>Difference per day</dt><dd id="rDiff"></dd>
+    </dl>
+   </div>
+  </div>
+ </div>
+ <div class="sa-card" style="margin-top:14px">
+  <h3 class="sa-h3">Things to try</h3>
+  <ul class="sa-list">
+   <li>Press <b>Reset</b>, then <b>Run 1 sidereal day</b>. The observer faces the reference star again, but the Sun is not yet overhead. Now press <b>Run 1 solar day</b> to see the extra turn Earth needs.</li>
+   <li>Compare the <b>6-day</b> and <b>24-day</b> years. The longer the year, the less Earth moves round its orbit each day – so the smaller the gap between the two kinds of day.</li>
+   <li>Switch to the <b>real year</b>. Now the difference is only 0.986° per day – far too small to see in one day. Speed up and watch the star clock slowly pull ahead of the Sun clock by about 4 minutes each day.</li>
+  </ul>
+ </div>
+</section>
+
+<!-- 03 WHY -->
+<section class="sa-panel" data-panel="why">
+ <div class="sa-grid2">
+  <div class="sa-card">
+   <h2 class="sa-h2">Where do the 4 minutes come from?</h2>
+   <ol class="sa-steps">
+    <li>Earth goes 360° round the Sun in 365.26 days, so each day it moves <b>360° ÷ 365.26 ≈ 0.986°</b> along its orbit.</li>
+    <li>To bring the Sun back overhead, Earth must therefore turn <b>360° + 0.986° = 360.986°</b> in one solar day of 24 h.</li>
+    <li>So Earth spins at 360.986° ÷ 24 h ≈ <b>15.04° per hour</b>. Turning 1° takes 24 × 60 min ÷ 360.986 ≈ <b>3.99 min</b>.</li>
+    <li>The extra 0.986° takes 0.986 × 3.99 min ≈ <b>3 min 56 s</b>. A sidereal day (just 360°) is therefore 24 h − 3 min 56 s = <b style="color:var(--sidInk)">23 h 56 min 4 s</b>.</li>
+   </ol>
+  </div>
+  <div class="sa-card">
+   <h2 class="sa-h2">Counting the turns in a year</h2>
+   <p>In one year (365.26 solar days), Earth spins <b>366.26 times</b> relative to the stars. Going once round the Sun “uses up” one turn, so we see one fewer sunrise than star-rises.</p>
+   <p class="sa-muted sa-small">Try it: walk once around a table while always facing its centre. You return having turned through 360° – without ever “spinning” relative to the table.</p>
+   <p>So a sidereal day = <span style="font-family:'JetBrains Mono',monospace">24 h × 365.26 ÷ 366.26 = 23.934 h</span> = 23 h 56 min 4 s.</p>
+   <p style="margin:0">For any planet that spins the same way it orbits:</p>
+   <div class="sa-formula">1/T<sub>solar</sub> = 1/T<sub>sidereal</sub> − 1/T<sub>orbit</sub></div>
+   <p class="sa-small sa-muted" style="margin:0">If the spin is the opposite way to the orbit (retrograde, like Venus) the minus becomes a plus.</p>
+  </div>
+ </div>
+ <div class="sa-card">
+  <h2 class="sa-h2">Planet explorer</h2>
+  <p class="sa-muted sa-small">Pick a planet to compare how long it takes to spin once relative to the stars with the length of its solar day.</p>
+  <div class="sa-seg" id="saPlanet"><button data-p="0">Mercury</button><button data-p="1">Venus</button><button data-p="2" class="on">Earth</button><button data-p="3">Mars</button><button data-p="4">Jupiter</button></div>
+  <div class="sa-stats">
+   <div class="sa-stat v"><b>Sidereal rotation</b><span id="pSid"></span></div>
+   <div class="sa-stat"><b>Orbital period</b><span id="pOrb"></span></div>
+   <div class="sa-stat a"><b>Solar day</b><span id="pSol"></span></div>
+  </div>
+  <p id="pNote" style="margin:12px 0 0"></p>
+ </div>
+ <div class="sa-grid2">
+  <div class="sa-card">
+   <h2 class="sa-h2">Why it matters</h2>
+   <ul class="sa-list">
+    <li><b>Stars rise about 4 minutes earlier each night.</b> That adds up to about 2 hours a month, which is why Orion is a winter constellation and is lost in the Sun's glare by summer.</li>
+    <li><b>Astronomers keep sidereal time.</b> A star returns to the same place in the sky every sidereal day, so telescopes track at the sidereal rate.</li>
+    <li><b>Geostationary satellites</b> orbit with a period of one sidereal day (23 h 56 min), not 24 h, so they stay above the same point on the spinning Earth.</li>
+    <li>The 4-minute daily gap adds up to <b>exactly one whole day per year</b>.</li>
+   </ul>
+  </div>
+  <div class="sa-card">
+   <h2 class="sa-h2">The fine print</h2>
+   <p class="sa-small">Astronomers usually define the sidereal day using the position of the <i>vernal equinox</i> rather than a particular star. Because Earth's axis slowly wobbles (precession, a 26 000-year cycle), the equinox drifts very slightly. The sidereal day is 23 h 56 min 4.091 s, while one turn relative to the truly distant stars (the <i>stellar day</i>) is about 0.008 s longer.</p>
+   <p class="sa-small" style="margin:0">The simulation exaggerates sizes and the length of the year so the effect can be seen. Real distances would make Earth a speck far too small to draw.</p>
+  </div>
+ </div>
+</section>
+
+<!-- 04 SOLAR -->
+<section class="sa-panel" data-panel="solar">
+ <div class="sa-card">
+  <p style="margin:0">So far we have said a solar day is 24 hours. That is only true <b>on average</b>. Measured with a sundial, the real Sun's day is sometimes a little longer and sometimes a little shorter. This is why astronomers distinguish two kinds of solar time.</p>
+ </div>
+ <div class="sa-grid2">
+  <div class="sa-card sa-def sol">
+   <span class="sa-tag">Follows the real Sun</span>
+   <h2 class="sa-h2" style="margin-top:10px">Apparent solar time</h2>
+   <p>Time told by the <b>actual Sun</b> – the time a sundial shows. <b>Local apparent noon</b> is the instant the Sun crosses your meridian (due south in the UK), when it is highest in the sky.</p>
+   <p style="margin:0">The interval between apparent noons – the <b>apparent solar day</b> – changes slightly through the year, by up to about half a minute.</p>
+  </div>
+  <div class="sa-card sa-def" style="border-top-color:var(--accent)">
+   <span class="sa-tag" style="background:#e6edff;color:var(--accent)">Follows an imaginary Sun</span>
+   <h2 class="sa-h2" style="margin-top:10px">Mean solar time</h2>
+   <p>Imagine a “<b>mean Sun</b>” that moves at a perfectly steady rate along the celestial equator, taking a year to go round. Its day – the <b>mean solar day</b> – is always exactly 24 h. Clocks keep mean solar time.</p>
+   <p style="margin:0"><b>Greenwich Mean Time</b> is mean solar time on the Greenwich meridian. Elsewhere, local mean noon is 4 minutes later for every degree west – the same “1° ≈ 4 min” as before. Monmouth (2.7° W) has local mean noon at about 12:11 GMT.</p>
+  </div>
+ </div>
+ <div class="sa-card">
+  <h2 class="sa-h2">How long is each apparent solar day?</h2>
+  <p class="sa-muted sa-small" style="margin-bottom:0">Length of the apparent solar day compared with 24 h, through the year. Move over the graph to read values.</p>
+  <div class="sa-chartbox"><canvas id="saChart" aria-label="Graph of apparent solar day length minus 24 hours through the year"></canvas></div>
+  <div class="sa-grid2" style="margin-top:12px">
+   <div>
+    <h3 class="sa-h3">Cause 1 · Earth's elliptical orbit</h3>
+    <p class="sa-small" style="margin:0">Earth moves fastest when closest to the Sun (perihelion, early January) – about 1.02° per day, compared with 0.95° per day in early July. A bigger step along the orbit means a bigger extra turn is needed, so January's solar days are longer.</p>
+   </div>
+   <div>
+    <h3 class="sa-h3">Cause 2 · Earth's axial tilt (23.4°)</h3>
+    <p class="sa-small" style="margin:0">The Sun's yearly path (the ecliptic) is tilted to the equator. Near the solstices the Sun's daily shift is parallel to the equator and counts fully; near the equinoxes it is at an angle, so less of it counts. Solar days are longer near the solstices and shorter near the equinoxes.</p>
+   </div>
+  </div>
+  <p class="sa-small sa-muted" style="margin:12px 0 0">Both causes make days long in late December, so that is when the longest apparent solar days occur (almost 24 h + 30 s). Values here use a standard approximation and are good to within a few seconds.</p>
+ </div>
+ <div class="sa-card">
+  <h2 class="sa-h2">Sundial versus clock</h2>
+  <p class="sa-small">Those few seconds a day add up. Over weeks, the real Sun drifts up to about a quarter of an hour ahead of or behind the mean Sun. The difference is called the <b>Equation of Time</b>.</p>
+  <div class="sa-today">
+   <label class="sa-range">Date <input type="date" id="saDate"></label>
+   <div><div class="sa-eotv" id="saEotV"></div><div class="sa-small sa-muted" id="saEotT"></div></div>
+  </div>
+ </div>
+ <div class="sa-card sa-next">
+  <div><h2 class="sa-h2">Next: the Equation of Time</h2><p>Explore how Earth's elliptical orbit and its axial tilt combine to make a sundial run up to 16 minutes fast or 14 minutes slow compared with a clock.</p></div>
+  <a class="sa-eotlink" href="#" target="_blank" rel="noopener">Open the Equation of Time app →</a>
+ </div>
+</section>
+
+<!-- 05 QUIZ -->
+<section class="sa-panel" data-panel="quiz">
+ <div class="sa-card" style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+  <div><h2 class="sa-h2" style="margin:0">Check your understanding</h2><p class="sa-muted sa-small" style="margin:0">Choose an answer to see feedback.</p></div>
+  <div style="display:flex;gap:10px;align-items:center"><span class="sa-score" id="saScore"></span><button class="sa-btn" id="saQReset">Start again</button></div>
+ </div>
+ <div id="saQuiz"></div>
+ <div class="sa-card sa-next">
+  <div><h2 class="sa-h2">Ready for the next step?</h2><p>See why sundials and clocks disagree through the year in the Equation of Time app.</p></div>
+  <a class="sa-eotlink" href="#" target="_blank" rel="noopener">Open the Equation of Time app →</a>
+ </div>
+</section>
+</div>
+</div>
+
+<script>
+(function(){
+var root=document.getElementById('sidApp');
+function $(s){return root.querySelector(s);}
+function $$(s){return Array.prototype.slice.call(root.querySelectorAll(s));}
+var TAU=Math.PI*2, DEG=180/Math.PI;
+
+/* ---------- links ---------- */
+$$('.sa-eotlink').forEach(function(a){a.href=root.getAttribute('data-eot-url')||'#';});
+
+/* ---------- tabs ---------- */
+function showTab(id){
+ $$('.sa-tab').forEach(function(b){b.setAttribute('aria-selected',b.dataset.tab===id?'true':'false');});
+ $$('.sa-panel').forEach(function(p){p.classList.toggle('on',p.dataset.panel===id);});
+ [O,D,C].forEach(fit);
+ if(id==='solar')drawChart();
+}
+$$('.sa-tab').forEach(function(b){b.addEventListener('click',function(){showTab(b.dataset.tab);});});
+$$('[data-goto]').forEach(function(b){b.addEventListener('click',function(){showTab(b.dataset.goto);});});
+
+/* ---------- canvas helpers ---------- */
+function setup(cv,onFit){var o={cv:cv,ctx:cv.getContext('2d'),w:10,h:10,onFit:onFit};new ResizeObserver(function(){fit(o);}).observe(cv.parentElement);fit(o);return o;}
+function fit(o){if(!o)return;var r=o.cv.parentElement.getBoundingClientRect();var dpr=Math.min(2,window.devicePixelRatio||1);var w=Math.max(10,r.width),h=Math.max(10,r.height);
+ if(w===o.w&&h===o.h&&o.cv.width===Math.round(w*dpr))return;o.w=w;o.h=h;o.cv.width=Math.round(w*dpr);o.cv.height=Math.round(h*dpr);o.ctx.setTransform(dpr,0,0,dpr,0,0);if(o.onFit)o.onFit();}
+function P(cx,cy,a,r){return[cx+r*Math.cos(a),cy-r*Math.sin(a)];}
+function arrow(ctx,x1,y1,x2,y2,col,w,dash){ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=w;if(dash)ctx.setLineDash(dash);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.setLineDash([]);
+ var a=Math.atan2(y2-y1,x2-x1),h=6+w*2;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-0.45),y2-h*Math.sin(a-0.45));ctx.lineTo(x2-h*Math.cos(a+0.45),y2-h*Math.sin(a+0.45));ctx.closePath();ctx.fill();ctx.restore();}
+function star4(ctx,x,y,r,col){ctx.save();ctx.fillStyle=col;ctx.shadowColor=col;ctx.shadowBlur=r*1.6;ctx.beginPath();for(var i=0;i<8;i++){var a=i*Math.PI/4,rr=i%2?r*0.32:r;ctx.lineTo(x+rr*Math.cos(a-Math.PI/2),y+rr*Math.sin(a-Math.PI/2));}ctx.closePath();ctx.fill();ctx.restore();}
+function label(ctx,t,x,y,col,font,align){ctx.save();ctx.font=font||'600 12px Manrope, sans-serif';ctx.textAlign=align||'left';ctx.textBaseline='middle';ctx.lineWidth=4;ctx.strokeStyle='rgba(7,14,32,.85)';ctx.strokeText(t,x,y);ctx.fillStyle=col;ctx.fillText(t,x,y);ctx.restore();}
+function pad2(n){return(n<10?'0':'')+n;}
+function fmtHMS(h){var s=Math.round(h*3600),hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;return hh+' h '+pad2(mm)+' min '+pad2(ss)+' s';}
+function fmtShort(h){var s=Math.round(h*3600),hh=Math.floor(s/3600),mm=Math.floor(s%3600/60),ss=s%60;return(hh?hh+' h ':'')+(hh||mm?mm+' min ':'')+ss+' s';}
+function clock(h){h=((h%24)+24)%24;var m=Math.floor(h*60+1e-6);return pad2(Math.floor(m/60)%24)+':'+pad2(m%60);}
+
+/* ---------- simulation state ---------- */
+var SPEEDS=[1,2,4,8,16,32,64,128];
+var S={T:0,playing:true,speed:8,Y:12,real:false,wedge:true,trail:true,target:null,tType:null,lastSid:0,lastSol:0,flash:null,msgType:'',msg:''};
+function Y(){return S.real?365.256:S.Y;}
+function wO(){return TAU/(Y()*24);}               // orbital angular speed, rad per hour
+function wS(){return TAU*(Y()+1)/(Y()*24);}       // spin relative to stars, rad per hour
+function sidLen(){return 24*Y()/(Y()+1);}
+var PHI0=-Math.PI/2, STARDIR=Math.PI/2;
+
+var STARS=[];for(var i=0;i<150;i++)STARS.push({x:Math.random(),y:Math.random(),r:Math.random()<0.15?1.8:1.1,f:0.5+Math.random()*1.5,p:Math.random()*TAU});
+var CONT=[{a:0.3,r:0.45,w:0.32,h:0.2,rot:0.4},{a:1.9,r:0.55,w:0.25,h:0.35,rot:1.1},{a:3.4,r:0.4,w:0.38,h:0.22,rot:-0.3},{a:4.6,r:0.62,w:0.2,h:0.18,rot:0.8},{a:5.5,r:0.2,w:0.18,h:0.14,rot:0}];
+
+function setMsg(type,html){S.msgType=type;var el=$('#saStatus');el.className='sa-status'+(type?' '+type:'');el.innerHTML=html;}
+function intro(){setMsg('','<b>Start: local noon.</b> The Sun and the distant reference star are both directly above the observer. Try <b>Run 1 sidereal day</b>.');}
+function resetSim(){S.T=0;S.target=null;S.lastSid=0;S.lastSol=0;S.flash=null;intro();}
+
+function onSid(n){
+ var Tn=S.T,remain=Math.ceil(Tn/24-1e-9)*24-Tn;if(remain<1e-6)remain=24;
+ var extra=wS()*remain*DEG;
+ S.flash={type:'sid',t:performance.now()};
+ setMsg('sid','<b>Sidereal day '+n+' complete</b> after '+fmtHMS(sidLen()*n).replace(/ 00 s$/,' 00 s')+'. The observer faces the reference star again – one full 360° turn relative to the stars.<br>But Earth has moved round its orbit, so the Sun is <b>not yet overhead</b>. Earth must turn about <b>'+extra.toFixed(extra<5?2:1)+'° more</b>, taking another '+fmtShort(remain)+'.');
+}
+function onSol(n){
+ var turn=(wS()*24*DEG);
+ S.flash={type:'sol',t:performance.now()};
+ setMsg('sol','<b>Solar (synodic) day '+n+' complete</b> after exactly '+(24*n)+' h. The Sun is overhead again.<br>Relative to the stars, Earth turned <b>'+turn.toFixed(turn<362?3:1)+'°</b> per solar day: 360° plus the '+(360/Y()).toFixed(Y()>100?3:1)+'° it moved round its orbit.');
+}
+function checkEvents(){
+ var nSid=Math.floor(wS()*S.T/TAU+1e-9),nSol=Math.floor(S.T/24+1e-9);
+ if(nSid>S.lastSid&&nSol>S.lastSol){ if(S.tType==='sid')onSid(nSid);else onSol(nSol);}
+ else if(nSid>S.lastSid)onSid(nSid);
+ else if(nSol>S.lastSol)onSol(nSol);
+ S.lastSid=nSid;S.lastSol=nSol;
+}
+function step(type){var w=type==='sid'?wS():TAU/24;var k=Math.floor(w*S.T/TAU+1e-9)+1;S.target=k*TAU/w;S.tType=type;S.playing=true;playBtn();}
+function playBtn(){$('#saPlay').textContent=S.playing?'Pause':'Play';}
+
+$('#saPlay').addEventListener('click',function(){S.playing=!S.playing;S.target=null;playBtn();});
+$('#saStepSid').addEventListener('click',function(){step('sid');});
+$('#saStepSol').addEventListener('click',function(){step('sol');});
+$('#saReset').addEventListener('click',function(){resetSim();S.playing=false;playBtn();});
+var sp=$('#saSpeed');function spd(){S.speed=SPEEDS[+sp.value];$('#saSpeedVal').textContent=S.speed+' h/s';}sp.addEventListener('input',spd);spd();
+$$('#saYear button').forEach(function(b){b.addEventListener('click',function(){$$('#saYear button').forEach(function(x){x.classList.toggle('on',x===b);});
+ if(b.dataset.y==='real'){S.real=true;}else{S.real=false;S.Y=+b.dataset.y;}resetSim();});});
+$('#saWedge').addEventListener('change',function(e){S.wedge=e.target.checked;});
+$('#saTrail').addEventListener('change',function(e){S.trail=e.target.checked;});
+
+/* ---------- draw orbit view ---------- */
+function drawOrbit(){
+ var ctx=O.ctx,W=O.w,H=O.h;if(W<40)return;
+ var g=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.max(W,H)*0.75);g.addColorStop(0,'#132650');g.addColorStop(1,'#060c1d');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+ var now=performance.now()/1000;
+ for(var i=0;i<STARS.length;i++){var s=STARS[i];ctx.globalAlpha=0.3+0.3*Math.sin(now*s.f+s.p);ctx.fillStyle='#cfdcff';ctx.fillRect(s.x*W,s.y*H,s.r,s.r);}ctx.globalAlpha=1;
+ var cx=W/2,cy=H*0.53,R=Math.min(W*0.34,H*0.29),re=Math.max(15,Math.min(R*0.22,44));
+ var phi=PHI0+wO()*S.T,alpha=PHI0+Math.PI+wS()*S.T,sd=phi+Math.PI,orbAng=wO()*S.T;
+ var big=W>520;
+
+ // reference star
+ star4(ctx,cx,24,9,'#c7b6ff');
+ if(big){label(ctx,'Distant reference star',cx+16,20,'#d8cdff','700 12.5px Manrope, sans-serif');
+ label(ctx,'so far away its direction is the same from anywhere on the orbit',cx+16,36,'#a9b6d6','500 11px Manrope, sans-serif');}
+ else{label(ctx,'Distant reference star',cx,46,'#d8cdff','700 12px Manrope, sans-serif','center');
+ label(ctx,'(same direction from everywhere on the orbit)',cx,61,'#a9b6d6','500 10.5px Manrope, sans-serif','center');}
+ // orbit
+ ctx.save();ctx.strokeStyle='rgba(160,185,230,.35)';ctx.setLineDash([3,6]);ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(cx,cy,R,0,TAU);ctx.stroke();ctx.restore();
+ var oa=Math.PI*0.78,op=P(cx,cy,oa,R);arrow(ctx,op[0],op[1],op[0]-Math.sin(oa)*10,op[1]-Math.cos(oa)*10,'rgba(160,185,230,.8)',1.5);
+ label(ctx,'orbit',op[0]-26,op[1]-10,'#a9b6d6','500 11px Manrope, sans-serif','right');
+ // trail
+ if(S.trail&&orbAng>0.002){ctx.save();ctx.strokeStyle='rgba(56,200,230,.75)';ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();
+  if(orbAng>=TAU)ctx.arc(cx,cy,R,0,TAU);else ctx.arc(cx,cy,R,-PHI0,-phi,true);ctx.stroke();ctx.restore();}
+ // ghost start
+ var g0=P(cx,cy,PHI0,R);ctx.save();ctx.strokeStyle='rgba(180,210,255,.35)';ctx.setLineDash([2,3]);ctx.beginPath();ctx.arc(g0[0],g0[1],re,0,TAU);ctx.stroke();ctx.restore();
+ if(orbAng>0.35)label(ctx,'start',g0[0],g0[1]+re+12,'#a9b6d6','500 11px Manrope, sans-serif','center');
+ // sun
+ var sr=Math.max(14,R*0.15);var sg=ctx.createRadialGradient(cx,cy,0,cx,cy,sr*2.6);sg.addColorStop(0,'rgba(255,214,110,.9)');sg.addColorStop(0.35,'rgba(255,170,40,.35)');sg.addColorStop(1,'rgba(255,150,30,0)');
+ ctx.fillStyle=sg;ctx.beginPath();ctx.arc(cx,cy,sr*2.6,0,TAU);ctx.fill();ctx.fillStyle='#ffd25e';ctx.beginPath();ctx.arc(cx,cy,sr,0,TAU);ctx.fill();
+ label(ctx,'Sun',cx-sr-8,cy-sr*0.8,'#ffd88a','700 12.5px Manrope, sans-serif','right');
+ // earth position
+ var E=P(cx,cy,phi,R),ex=E[0],ey=E[1];
+ // sun line
+ var s1=P(ex,ey,sd,re+2),s2=P(ex,ey,sd,R-sr-6);
+ ctx.save();ctx.strokeStyle='rgba(255,190,60,.9)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(s1[0],s1[1]);ctx.lineTo(s2[0],s2[1]);ctx.stroke();ctx.restore();
+ // star line
+ var t1=P(ex,ey,STARDIR,re+2),t2=P(ex,ey,STARDIR,re*3.1);
+ arrow(ctx,t1[0],t1[1],t2[0],t2[1],'#a78bff',2,[6,4]);
+ label(ctx,'to star',t2[0]+8,t2[1]+4,'#c9b8ff','600 11.5px Manrope, sans-serif');
+ // wedge
+ var wa=orbAng%TAU;
+ if(S.wedge&&wa>0.004){var wr=re*1.75;ctx.save();ctx.fillStyle='rgba(255,255,255,.12)';ctx.strokeStyle='rgba(255,255,255,.75)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ex,ey);ctx.arc(ex,ey,wr,-STARDIR,-(STARDIR+wa),true);ctx.closePath();ctx.fill();ctx.beginPath();ctx.arc(ex,ey,wr,-STARDIR,-(STARDIR+wa),true);ctx.stroke();ctx.restore();
+  var lp=P(ex,ey,STARDIR+Math.min(wa,TAU-0.3)/2,wr+16);label(ctx,(wa*DEG).toFixed(wa*DEG<10?2:1)+'°',lp[0],lp[1],'#ffffff','700 12px JetBrains Mono, monospace','center');}
+ // earth body
+ ctx.save();ctx.beginPath();ctx.arc(ex,ey,re,0,TAU);ctx.clip();ctx.fillStyle='#2a79c4';ctx.fillRect(ex-re,ey-re,2*re,2*re);
+ ctx.translate(ex,ey);ctx.rotate(-alpha);ctx.fillStyle='#5cb882';
+ for(var k=0;k<CONT.length;k++){var c=CONT[k];ctx.beginPath();ctx.ellipse(c.r*re*Math.cos(c.a),-c.r*re*Math.sin(c.a),c.w*re,c.h*re,c.rot,0,TAU);ctx.fill();}
+ ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;for(k=0;k<6;k++){var a=k*TAU/12;ctx.beginPath();ctx.moveTo(-re*Math.cos(a),re*Math.sin(a));ctx.lineTo(re*Math.cos(a),-re*Math.sin(a));ctx.stroke();}
+ ctx.rotate(alpha);ctx.rotate(-sd);
+ var ng=ctx.createLinearGradient(re*0.12,0,-re*0.12,0);ng.addColorStop(0,'rgba(3,7,22,0)');ng.addColorStop(1,'rgba(3,7,22,.7)');ctx.fillStyle=ng;ctx.fillRect(-re,-re,re*1.12,2*re);
+ ctx.restore();
+ ctx.strokeStyle='rgba(190,225,255,.7)';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(ex,ey,re,0,TAU);ctx.stroke();
+ ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(ex,ey,2.2,0,TAU);ctx.fill();
+ // spin arrow
+ var sa0=sd+Math.PI*0.7;ctx.save();ctx.strokeStyle='rgba(120,230,255,.85)';ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(ex,ey,re*1.28,-sa0,-(sa0+0.9),true);ctx.stroke();ctx.restore();
+ var ah=P(ex,ey,sa0+0.9,re*1.28),at=sa0+0.9+Math.PI/2;arrow(ctx,ah[0]-Math.cos(at)*0.1,ah[1]+Math.sin(at)*0.1,ah[0]+Math.cos(at)*1,ah[1]-Math.sin(at)*1,'rgba(120,230,255,.95)',1.6);
+ // observer
+ var m0=P(ex,ey,alpha,re*0.15),m1=P(ex,ey,alpha,re),m2=P(ex,ey,alpha,re+10);
+ ctx.save();ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(m0[0],m0[1]);ctx.lineTo(m2[0],m2[1]);ctx.stroke();ctx.fillStyle='#fff';ctx.strokeStyle='#0e86a6';ctx.lineWidth=2;ctx.beginPath();ctx.arc(m1[0],m1[1],4.5,0,TAU);ctx.fill();ctx.stroke();ctx.restore();
+ var ml=P(ex,ey,alpha,re+22);label(ctx,'observer',ml[0],ml[1],'#ffffff','600 11px Manrope, sans-serif','center');
+ // flash
+ if(S.flash){var age=(performance.now()-S.flash.t)/1000;if(age<1.5){var col=S.flash.type==='sid'?'167,139,255':'255,196,70';ctx.save();ctx.strokeStyle='rgba('+col+','+(1-age/1.5)+')';ctx.lineWidth=3;ctx.beginPath();ctx.arc(ex,ey,re*(1.2+age*0.9),0,TAU);ctx.stroke();ctx.restore();
+  var txt=S.flash.type==='sid'?'Sidereal day complete':'Solar day complete';ctx.save();ctx.font='700 13px Manrope, sans-serif';var tw=ctx.measureText(txt).width+22;ctx.globalAlpha=Math.min(1,(1.5-age)*2);ctx.fillStyle='rgba('+col+',.95)';ctx.beginPath();if(ctx.roundRect)ctx.roundRect(12,H-44,tw,28,14);else ctx.rect(12,H-44,tw,28);ctx.fill();ctx.fillStyle='#10132a';ctx.textBaseline='middle';ctx.fillText(txt,23,H-30);ctx.restore();}}
+ // captions
+ label(ctx,'View from above the North Pole · not to scale',12,H-(S.flash&&(performance.now()-S.flash.t)<1500?58:18),'#8fa0c6','500 11px Manrope, sans-serif');
+ label(ctx,S.real?'Real year: 365.26 days':'Exaggerated year: '+S.Y+' days',W-12,H-18,'#8fa0c6','600 11px Manrope, sans-serif','right');
+ if(big){var lx=12,ly=62;
+  ctx.save();ctx.setLineDash([5,3]);ctx.strokeStyle='#a78bff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(lx+22,ly);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle='#ffbe3c';ctx.beginPath();ctx.moveTo(lx,ly+18);ctx.lineTo(lx+22,ly+18);ctx.stroke();ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(lx,ly+36);ctx.lineTo(lx+22,ly+36);ctx.stroke();ctx.restore();
+  label(ctx,'direction to star',lx+30,ly,'#c9b8ff','500 11px Manrope, sans-serif');label(ctx,'direction to Sun',lx+30,ly+18,'#ffd88a','500 11px Manrope, sans-serif');label(ctx,"observer's overhead",lx+30,ly+36,'#ffffff','500 11px Manrope, sans-serif');}
+}
+
+/* ---------- draw sky dial ---------- */
+function drawDial(){
+ var ctx=D.ctx,W=D.w,H=D.h;if(W<40)return;ctx.clearRect(0,0,W,H);
+ var cx=W/2,cy=H/2,r=Math.min(W,H)*0.36;
+ var Hs=wS()*S.T,Hsun=TAU*S.T/24;
+ ctx.fillStyle='#dceafd';ctx.beginPath();ctx.moveTo(cx-r,cy);ctx.arc(cx,cy,r,Math.PI,0);ctx.closePath();ctx.fill();
+ ctx.fillStyle='#c9d1de';ctx.beginPath();ctx.moveTo(cx+r,cy);ctx.arc(cx,cy,r,0,Math.PI);ctx.closePath();ctx.fill();
+ ctx.strokeStyle='#8a9bb6';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx,cy,r,0,TAU);ctx.stroke();
+ ctx.strokeStyle='#3d4f6b';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cx-r-6,cy);ctx.lineTo(cx+r+6,cy);ctx.stroke();
+ for(var k=0;k<24;k++){var a=k*TAU/24,l=k%6?5:10;ctx.strokeStyle='#6b7c97';ctx.lineWidth=k%6?1:1.6;ctx.beginPath();ctx.moveTo(cx+r*Math.sin(a),cy-r*Math.cos(a));ctx.lineTo(cx+(r-l)*Math.sin(a),cy-(r-l)*Math.cos(a));ctx.stroke();}
+ ctx.fillStyle='#1d2c45';ctx.font='700 11px Manrope, sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+ ctx.fillText('Overhead',cx,cy-r-12);ctx.fillText('Below horizon',cx,cy+r+12);
+ ctx.textAlign='right';ctx.fillText('E',cx-r-10,cy-9);ctx.textAlign='left';ctx.fillText('W',cx+r+10,cy-9);
+ ctx.font='500 10px Manrope, sans-serif';ctx.fillStyle='#475a76';ctx.textAlign='right';ctx.fillText('rising',cx-r-10,cy+9);ctx.textAlign='left';ctx.fillText('setting',cx+r+10,cy+9);
+ // gap arc
+ var gap=(Hs-Hsun)%TAU;
+ if(gap>0.003){ctx.save();ctx.strokeStyle='rgba(106,70,224,.55)';ctx.lineWidth=5;ctx.beginPath();ctx.arc(cx,cy,r*0.5,Hsun-Math.PI/2,Hsun+gap-Math.PI/2);ctx.stroke();ctx.restore();}
+ // hands
+ function hand(h,rr,col,w){ctx.strokeStyle=col;ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+rr*Math.sin(h),cy-rr*Math.cos(h));ctx.stroke();}
+ hand(Hsun,r*0.9,'#d98a00',2.5);hand(Hs,r*0.7,'#6a46e0',2.5);
+ ctx.fillStyle='#ffc23a';ctx.strokeStyle='#b06d00';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(cx+r*0.9*Math.sin(Hsun),cy-r*0.9*Math.cos(Hsun),9,0,TAU);ctx.fill();ctx.stroke();
+ star4(ctx,cx+r*0.7*Math.sin(Hs),cy-r*0.7*Math.cos(Hs),10,'#6a46e0');
+ ctx.fillStyle='#0e86a6';ctx.beginPath();ctx.arc(cx,cy,4,0,TAU);ctx.fill();
+ ctx.fillStyle='#5133c0';ctx.font='700 11px JetBrains Mono, monospace';ctx.textAlign='center';
+ ctx.fillText('star ahead by '+((gap*DEG)%360).toFixed(gap*DEG<10?2:1)+'°',cx,cy+r*0.42);
+}
+
+/* ---------- readouts ---------- */
+var lastRead='';
+function readouts(){
+ var T=S.T,d=Math.floor(T/24+1e-9),hrem=T-d*24;
+ var t=d+' d '+pad2(Math.floor(hrem))+' h '+pad2(Math.floor((hrem%1)*60))+' min';
+ var orb=wO()*T*DEG;
+ var key=t+orb.toFixed(2);if(key===lastRead)return;lastRead=key;
+ $('#rT').textContent=t;
+ $('#rSid').textContent=(wS()*T/TAU).toFixed(3);
+ $('#rSol').textContent=(T/24).toFixed(3);
+ $('#rOrb').textContent=(orb%360).toFixed(orb<20?2:1)+'°'+(orb>=360?' (+'+Math.floor(orb/360)+' orbit'+(orb>=720?'s':'')+')':'');
+ $('#rSidLen').textContent=fmtHMS(sidLen());
+ $('#rDiff').textContent=fmtShort(24-sidLen());
+ $('#saSunClk').textContent=clock(12+T);
+ $('#saStarClk').textContent=clock(wS()*T/TAU*24);
+}
+
+/* ---------- main loop ---------- */
+var last=performance.now();
+function frame(now){
+ var dt=Math.min(0.05,(now-last)/1000);last=now;
+ if(S.playing){var dT=S.speed*dt;if(S.target!==null&&S.T+dT>=S.target-1e-9){S.T=S.target;S.target=null;S.playing=false;playBtn();}else S.T+=dT;checkEvents();}
+ if($('[data-panel="sim"]').classList.contains('on')){drawOrbit();drawDial();readouts();}
+ requestAnimationFrame(frame);
+}
+
+/* ---------- planet explorer ---------- */
+var PL=[
+ {n:'Mercury',sid:1407.6,orb:87.969,note:'Mercury spins slowly and orbits quickly, so its solar day (about 176 Earth days) is two of its years long – there are three sidereal rotations for every two orbits.'},
+ {n:'Venus',sid:-5832.5,orb:224.701,note:'Venus spins backwards (retrograde), so the spin and orbit effects add. Its solar day (about 117 Earth days) is much shorter than its 243-day sidereal rotation. On Venus the Sun rises in the west.'},
+ {n:'Earth',sid:23.9345,orb:365.256,note:'Earth spins about 366 times relative to the stars per orbit, so its solar day is just under 4 minutes longer than its sidereal day.'},
+ {n:'Mars',sid:24.6229,orb:686.98,note:'A Mars solar day – a “sol” – is about 24 h 40 min. Mars rovers are run on Mars time, so their teams shift their working hours by about 40 minutes every day.'},
+ {n:'Jupiter',sid:9.925,orb:4332.59,note:'Jupiter spins very fast and takes almost 12 Earth years to orbit, so its solar day is only about 1 second longer than its sidereal rotation.'}];
+function fmtDur(h){if(Math.abs(h)>=72)return(Math.abs(h)/24).toFixed(2)+' d';return fmtHMS(Math.abs(h));}
+function planet(i){var p=PL[i];var sidD=p.sid/24;var sol=1/(1/sidD-1/p.orb);
+ $('#pSid').textContent=fmtDur(p.sid)+(p.sid<0?' (retrograde)':'');$('#pOrb').textContent=p.orb.toFixed(p.orb<1000?1:0)+' d';$('#pSol').textContent=fmtDur(Math.abs(sol)*24);$('#pNote').textContent=p.note;
+ $$('#saPlanet button').forEach(function(b){b.classList.toggle('on',+b.dataset.p===i);});}
+$$('#saPlanet button').forEach(function(b){b.addEventListener('click',function(){planet(+b.dataset.p);});});
+
+/* ---------- equation of time & chart ---------- */
+function eot(N){var B=TAU*(N-81)/365;return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B);} // minutes, sundial − clock
+function dev(N){return -(eot(N+0.5)-eot(N-0.5))*60;} // seconds
+function doy(d){return Math.round((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,1))/864e5)+1;}
+var dateIn=$('#saDate'),today=new Date(),hoverN=null;
+dateIn.value=today.getFullYear()+'-'+pad2(today.getMonth()+1)+'-'+pad2(today.getDate());
+function selDate(){var v=dateIn.value.split('-');if(v.length<3)return new Date();return new Date(+v[0],+v[1]-1,+v[2]);}
+function nameN(N){return new Date(2026,0,N).toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
+function updEot(){var N=doy(selDate()),E=eot(N),s=Math.round(Math.abs(E)*60),m=Math.floor(s/60),ss=s%60;
+ $('#saEotV').textContent=(E>=0?'+':'−')+m+' min '+pad2(ss)+' s';
+ $('#saEotT').innerHTML='A sundial reads about '+m+' min '+pad2(ss)+' s '+(E>=0?'<b>ahead of</b>':'<b>behind</b>')+' mean solar time on this date. That day’s apparent solar day is about 24 h '+(dev(N)>=0?'+ ':'− ')+Math.abs(dev(N)).toFixed(0)+' s.';
+ drawChart();}
+dateIn.addEventListener('input',updEot);
+function drawChart(){
+ if(!C)return;var ctx=C.ctx,W=C.w,H=C.h;if(W<60)return;ctx.clearRect(0,0,W,H);
+ var l=46,r=14,t=14,b=28,pw=W-l-r,ph=H-t-b,ymin=-30,ymax=35;
+ function X(N){return l+(N-1)/364*pw;}function Yv(v){return t+(ymax-v)/(ymax-ymin)*ph;}
+ ctx.font='500 11px JetBrains Mono, monospace';ctx.textBaseline='middle';
+ for(var v=-30;v<=30;v+=10){ctx.strokeStyle=v===0?'#5d6f8c':'#e3eaf3';ctx.lineWidth=v===0?1.4:1;ctx.beginPath();ctx.moveTo(l,Yv(v));ctx.lineTo(W-r,Yv(v));ctx.stroke();ctx.fillStyle='#475a76';ctx.textAlign='right';ctx.fillText((v>0?'+':'')+v+' s',l-6,Yv(v));}
+ var ms=[1,32,60,91,121,152,182,213,244,274,305,335],mn=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+ ctx.textAlign='center';ctx.font='600 11px Manrope, sans-serif';for(var i=0;i<12;i++){var x0=X(ms[i]),x1=X(i<11?ms[i+1]:365);ctx.strokeStyle='#eef2f8';ctx.beginPath();ctx.moveTo(x0,t);ctx.lineTo(x0,t+ph);ctx.stroke();ctx.fillStyle='#475a76';ctx.fillText(mn[i],(x0+x1)/2,H-12);}
+ ctx.save();ctx.font='600 11px Manrope, sans-serif';ctx.fillStyle='#3d4f6b';ctx.textAlign='left';ctx.fillText('24 h = mean solar day',l+6,Yv(0)-9);ctx.restore();
+ // area + line
+ ctx.beginPath();ctx.moveTo(X(1),Yv(0));for(var N=1;N<=365;N++)ctx.lineTo(X(N),Yv(dev(N)));ctx.lineTo(X(365),Yv(0));ctx.closePath();ctx.fillStyle='rgba(240,160,32,.14)';ctx.fill();
+ ctx.beginPath();for(N=1;N<=365;N++){var y=Yv(dev(N));if(N===1)ctx.moveTo(X(N),y);else ctx.lineTo(X(N),y);}ctx.strokeStyle='#d98a00';ctx.lineWidth=2.5;ctx.stroke();
+ // labels max/min
+ var mx=1,mnN=1;for(N=1;N<=365;N++){if(dev(N)>dev(mx))mx=N;if(dev(N)<dev(mnN))mnN=N;}
+ ctx.font='600 11px Manrope, sans-serif';ctx.fillStyle='#8f5200';ctx.textAlign='right';ctx.fillText('longest ≈ '+nameN(mx)+' (+'+dev(mx).toFixed(0)+' s)',X(mx)-8,Yv(dev(mx))+2);
+ ctx.textAlign='center';ctx.fillText('shortest ≈ '+nameN(mnN)+' ('+dev(mnN).toFixed(0)+' s)',X(mnN),Yv(dev(mnN))+14);
+ // selected date
+ var sN=doy(selDate());ctx.fillStyle='#1f4fd1';ctx.beginPath();ctx.arc(X(sN),Yv(dev(sN)),5,0,TAU);ctx.fill();
+ // hover
+ if(hoverN){var hx=X(hoverN),hy=Yv(dev(hoverN));ctx.strokeStyle='rgba(15,29,51,.35)';ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(hx,t);ctx.lineTo(hx,t+ph);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#0f1d33';ctx.beginPath();ctx.arc(hx,hy,4,0,TAU);ctx.fill();
+  var tx=nameN(hoverN)+': 24 h '+(dev(hoverN)>=0?'+ ':'− ')+Math.abs(dev(hoverN)).toFixed(1)+' s';ctx.font='600 12px Manrope, sans-serif';var tw=ctx.measureText(tx).width+16,bx=Math.min(Math.max(hx-tw/2,l),W-r-tw),by=t+4;
+  ctx.fillStyle='rgba(15,29,51,.92)';ctx.fillRect(bx,by,tw,24);ctx.fillStyle='#fff';ctx.textAlign='left';ctx.fillText(tx,bx+8,by+12);}
+}
+function chartHover(e){var rc=C.cv.getBoundingClientRect(),x=e.clientX-rc.left,l=46,pw=C.w-l-14;var N=Math.round((x-l)/pw*364)+1;hoverN=(N>=1&&N<=365)?N:null;drawChart();}
+
+/* ---------- quiz ---------- */
+var QZ=[
+ {q:'A sidereal day is the time for Earth to turn once relative to…',o:['the Sun','the distant stars','the Moon','the Greenwich meridian'],a:1,e:'Sidereal comes from the Latin for “star”. It is one full 360° turn relative to the distant stars: 23 h 56 min 4 s.'},
+ {q:'Why is a solar day longer than a sidereal day?',o:['Earth spins more slowly during the day','The Sun is closer than the stars, so its light takes longer to arrive','Earth moves about 1° along its orbit each day, so it must turn about 1° extra to face the Sun again','Earth’s axis is tilted at 23.4°'],a:2,e:'Earth spins and orbits in the same direction. Each day it moves about 0.986° round the Sun, so it needs about 361° of rotation (about 4 extra minutes) to bring the Sun back overhead.'},
+ {q:'Roughly how many times does Earth rotate relative to the stars in one year?',o:['364¼','365¼','366¼','24 × 365¼'],a:2,e:'There are 365¼ solar days in a year, but going once round the Sun adds one extra turn relative to the stars: 366¼.'},
+ {q:'A star rises at 21:00 tonight. At about what time will it rise 30 days from now?',o:['21:00','21:02','19:00','23:00'],a:2,e:'Stars rise about 4 minutes earlier each night: 30 × 4 min = 120 min, so about 2 hours earlier.'},
+ {q:'If Earth orbited the Sun in the opposite direction to its spin, the solar day would be…',o:['longer than the sidereal day','shorter than the sidereal day','exactly equal to the sidereal day','exactly 24 hours'],a:1,e:'The orbit would now carry the Sun towards the observer’s overhead direction, so less than one full turn is needed. This is what happens on Venus.'},
+ {q:'What is the orbital period of a geostationary satellite?',o:['24 h 00 min','23 h 56 min','24 h 04 min','12 h'],a:1,e:'It must keep pace with Earth’s rotation relative to the stars – one sidereal day, about 23 h 56 min.'},
+ {q:'Mean solar time is based on…',o:['the real Sun, as shown by a sundial','an imaginary Sun moving at a steady rate along the celestial equator','the position of the reference star','the time of sunrise'],a:1,e:'The “mean Sun” is a steady imaginary Sun. Its day is always exactly 24 h, which makes it ideal for clocks. A sundial shows apparent solar time.'},
+ {q:'Why are apparent solar days longest in late December?',o:['Earth is furthest from the Sun','Earth is closest to the Sun and moving fastest, and the tilt effect also lengthens days near the solstice','The Sun is lowest in the sky','Clocks go back in the autumn'],a:1,e:'Near perihelion (early January) Earth moves furthest round its orbit each day, so it needs a bigger extra turn. Near the December solstice the tilt effect adds to this.'}];
+var answered=0,correct=0;
+function buildQuiz(){var box=$('#saQuiz');box.innerHTML='';answered=0;correct=0;score();
+ QZ.forEach(function(q,qi){var d=document.createElement('div');d.className='sa-q';d.innerHTML='<div class="qt">'+(qi+1)+'. '+q.q+'</div><div class="sa-opts"></div><div class="sa-fb"></div>';
+  var opts=d.querySelector('.sa-opts'),fb=d.querySelector('.sa-fb'),done=false;
+  q.o.forEach(function(t,oi){var b=document.createElement('button');b.className='sa-opt';b.textContent=t;b.addEventListener('click',function(){if(done)return;done=true;answered++;
+   var ok=oi===q.a;if(ok)correct++;b.classList.add(ok?'ok':'bad');opts.children[q.a].classList.add('ok');fb.innerHTML='<b style="color:'+(ok?'#14804c':'#b22f2f')+'">'+(ok?'Correct.':'Not quite.')+'</b> '+q.e;fb.classList.add('show');score();});opts.appendChild(b);});
+  box.appendChild(d);});}
+function score(){$('#saScore').textContent='Score: '+correct+' / '+answered+(answered===QZ.length?'  ✓ complete':'');}
+$('#saQReset').addEventListener('click',buildQuiz);
+
+/* ---------- init ---------- */
+var O=setup($('#saOrbit')),D=setup($('#saDial')),C=null;C=setup($('#saChart'),function(){drawChart();});
+C.cv.addEventListener('pointermove',chartHover);C.cv.addEventListener('pointerleave',function(){hoverN=null;drawChart();});
+intro();planet(2);updEot();buildQuiz();playBtn();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
