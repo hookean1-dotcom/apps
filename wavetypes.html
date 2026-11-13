@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transverse and Longitudinal Waves</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0}
+body{background:#eef2f9}
+#wv{--ink:#17233b;--mute:#56647c;--line:#d9e1ee;--card:#fff;--blue:#2f5fd0;--pink:#d81b78;--teal:#0b8577;--soft:#f3f6fb;
+  box-sizing:border-box;width:100%;max-width:1040px;min-height:600px;margin:0 auto;padding:18px 16px 26px;
+  font-family:'Onest',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);line-height:1.45}
+#wv *{box-sizing:border-box}
+#wv h1{font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 2px;line-height:1.15}
+#wv .lede{margin:0 0 14px;color:var(--mute);font-size:15px}
+#wv .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(23,35,59,.05)}
+#wv h2{font-size:18px;font-weight:800;margin:0;letter-spacing:-.01em}
+#wv .def{margin:2px 0 8px;font-size:14.5px;color:var(--mute)}
+#wv .def b{color:var(--ink)}
+#wv canvas{display:block;width:100%;border-radius:10px;background:var(--soft)}
+#wv .sliders{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 22px}
+#wv .sl label{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+#wv .sl output{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:15px;font-weight:700;color:var(--ink);text-transform:none;letter-spacing:0}
+#wv input[type=range]{width:100%;margin:0;height:24px;accent-color:var(--blue);cursor:pointer}
+#wv .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+#wv .eq{font-family:'JetBrains Mono',ui-monospace,monospace;font-weight:700;font-size:15px;background:var(--soft);border-radius:9px;padding:8px 12px;margin-right:auto}
+#wv .eq span{color:var(--mute);font-weight:500}
+#wv button{font:700 14px 'Onest',system-ui,sans-serif;border-radius:9px;padding:9px 14px;cursor:pointer;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+#wv button:hover{border-color:#a9b7cd}
+#wv button:focus-visible,#wv input:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px}
+#wv .primary{background:var(--blue);border-color:var(--blue);color:#fff;min-width:92px}
+#wv .primary:hover{background:#274fb3;border-color:#274fb3}
+#wv .tog[aria-pressed=true]{background:#e6edfc;border-color:#9db4ea;color:#1d3f96}
+#wv .key{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13.5px;color:var(--mute);margin-top:8px}
+#wv .key i{display:inline-block;vertical-align:middle;margin-right:6px}
+#wv .k-dir{width:22px;height:0;border-top:2.5px solid var(--ink)}
+#wv .k-osc{width:22px;height:0;border-top:2.5px solid var(--pink)}
+#wv .k-dot{width:10px;height:10px;border-radius:50%;background:var(--blue)}
+#wv .k-trk{width:11px;height:11px;border-radius:50%;background:var(--pink)}
+#wv .notes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#wv .notes .card{margin:0}
+#wv .notes h3{font-size:14px;margin:0 0 4px;font-weight:800}
+#wv .notes p,#wv .notes ul{margin:0;font-size:14px;color:#33415a}
+#wv .notes ul{padding-left:18px}
+@media (max-width:720px){
+  #wv .sliders{grid-template-columns:1fr}
+  #wv .notes{grid-template-columns:1fr}
+  #wv h1{font-size:22px}
+  #wv .eq{width:100%;margin-right:0}
+}
+</style>
+</head>
+<body>
+<div id="wv">
+  <h1>Transverse and longitudinal waves</h1>
+  <p class="lede">Both waves below share the same amplitude, frequency and wavelength, and both carry energy from left to right. Watch what the particles do.</p>
+
+  <div class="card">
+    <div class="sliders">
+      <div class="sl"><label for="wvA">Amplitude <output id="wvAo">0.40 m</output></label><input type="range" id="wvA" min="0.1" max="0.6" step="0.05" value="0.4"></div>
+      <div class="sl"><label for="wvF">Frequency <output id="wvFo">0.50 Hz</output></label><input type="range" id="wvF" min="0.2" max="1.5" step="0.05" value="0.5"></div>
+      <div class="sl"><label for="wvL">Wavelength <output id="wvLo">3.0 m</output></label><input type="range" id="wvL" min="1.5" max="6" step="0.1" value="3"></div>
+    </div>
+    <div class="row">
+      <div class="eq" id="wvEq" aria-live="off"></div>
+      <button class="primary" id="wvPlay">Pause</button>
+      <button id="wvStep" title="Advance a small step while paused">Step</button>
+      <button id="wvRestart" title="Bring the medium to rest and start the wave again">Restart wave</button>
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button class="tog" id="wvLock" aria-pressed="false" title="In one medium the wave speed is fixed, so a higher frequency means a shorter wavelength">Fix wave speed</button>
+      <button class="tog" id="wvSlow" aria-pressed="false">Slow motion</button>
+      <button class="tog" id="wvLabels" aria-pressed="true">Labels</button>
+      <button class="tog" id="wvTrack" aria-pressed="true">Track one particle</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Transverse wave</h2>
+    <p class="def">The oscillations are <b>perpendicular</b> to the direction of energy transfer.</p>
+    <canvas id="wvT" height="230" aria-label="Animated transverse wave: particles move up and down while the wave travels to the right."></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Longitudinal wave</h2>
+    <p class="def">The oscillations are <b>parallel</b> to the direction of energy transfer, producing compressions and rarefactions.</p>
+    <canvas id="wvLg" height="236" aria-label="Animated longitudinal wave: particles move left and right while compressions travel to the right."></canvas>
+    <p class="def" id="wvNote" style="margin:6px 0 0;font-size:13px;visibility:hidden">At this wavelength the longitudinal amplitude is drawn smaller, so that particles do not overtake one another.</p>
+    <div class="key">
+      <span><i class="k-dir"></i>direction of energy transfer</span>
+      <span><i class="k-osc"></i>direction of oscillation</span>
+      <span><i class="k-dot"></i>particle of the medium</span>
+      <span><i class="k-trk"></i>tracked particle</span>
+      <span><b>C</b> compression · <b>R</b> rarefaction</span>
+    </div>
+  </div>
+
+  <div class="notes">
+    <div class="card">
+      <h3>What to notice</h3>
+      <ul>
+        <li>Each particle oscillates about a fixed position. The wave transfers energy, not matter.</li>
+        <li>Wave speed = frequency × wavelength. With the speed fixed, doubling the frequency halves the wavelength.</li>
+        <li>Wavelength is one complete wave: crest to crest, or compression to compression.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Examples</h3>
+      <p><b>Transverse:</b> electromagnetic waves such as light, ripples on water, waves on a string, seismic S-waves.</p>
+      <p style="margin-top:6px"><b>Longitudinal:</b> sound waves, ultrasound, seismic P-waves, a pulse pushed along a slinky.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var $=function(id){return document.getElementById(id);};
+var root=$('wv'),cT=$('wvT'),cL=$('wvLg'),gT=cT.getContext('2d'),gL=cL.getContext('2d');
+var VIEW=12,X_TRACK=4.5,TWO_PI=Math.PI*2;
+var S={A:0.4,f:0.5,lam:3,lock:false,slow:false,labels:true,track:true,playing:true};
+var LIM={f:[0.2,1.5],lam:[1.5,6]};
+var phi=0,front=0,vLock=1.5,raf=0,last=0,W=0,dpr=1;
+var INK='#17233b',MUTE='#56647c',BLUE='#2f5fd0',PINK='#d81b78',TEAL='#0b8577',GRID='#d3dcea';
+var FONT='"Onest",system-ui,sans-serif',MONO='"JetBrains Mono",ui-monospace,monospace';
+
+if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)S.playing=false;
+
+/* envelope: 0 ahead of the wave front, rising smoothly to 1 behind it */
+function env(x){var e=(front-x)/(0.5*S.lam);if(e<=0)return 0;if(e>=1)return 1;return e*e*(3-2*e);}
+/* wave travelling in +x: displacement = A sin(phase - kx) */
+function disp(x,A){return A*env(x)*Math.sin(phi-TWO_PI/S.lam*x);}
+function vel(x,A){return A*env(x)*TWO_PI*S.f*Math.cos(phi-TWO_PI/S.lam*x);}
+
+function arrow(g,x1,y1,x2,y2,h,both){
+  var a=Math.atan2(y2-y1,x2-x1);
+  g.beginPath();g.moveTo(x1,y1);g.lineTo(x2,y2);g.stroke();
+  function head(x,y,ang){g.beginPath();g.moveTo(x,y);g.lineTo(x-h*Math.cos(ang-0.45),y-h*Math.sin(ang-0.45));g.lineTo(x-h*Math.cos(ang+0.45),y-h*Math.sin(ang+0.45));g.closePath();g.fill();}
+  head(x2,y2,a);if(both)head(x1,y1,a+Math.PI);
+}
+function tag(g,txt,x,y,col,align){
+  g.font='600 12.5px '+FONT;g.textAlign=align||'center';g.textBaseline='middle';
+  g.lineWidth=4;g.strokeStyle='rgba(243,246,251,.95)';g.lineJoin='round';g.strokeText(txt,x,y);
+  g.fillStyle=col;g.fillText(txt,x,y);
+}
+function frame(g,H,padL,s,title){
+  g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+  /* ruler */
+  var by=H-20,i,x,every=s>=46?1:2;
+  g.strokeStyle=GRID;g.lineWidth=1;g.beginPath();g.moveTo(padL,by);g.lineTo(padL+VIEW*s,by);g.stroke();
+  g.font='500 11px '+MONO;g.fillStyle=MUTE;g.textAlign='center';g.textBaseline='top';
+  for(i=0;i<=VIEW;i++){x=padL+i*s;g.beginPath();g.moveTo(x,by);g.lineTo(x,by+(i%every?3:5));g.stroke();if(i%every===0)g.fillText(i+(i===VIEW?' m':''),x-(i===VIEW?6:0),by+6);}
+  /* direction of energy transfer */
+  g.strokeStyle=INK;g.fillStyle=INK;g.lineWidth=2.2;
+  g.font='600 12.5px '+FONT;g.textAlign='left';g.textBaseline='middle';
+  g.fillText(title,padL,13);var tw=g.measureText(title).width;
+  arrow(g,padL+tw+10,13,Math.min(padL+tw+110,W-12),13,8,false);
+}
+/* positions (in metres) where phase - kx = target (mod 2π), fully behind the wave front */
+function marks(target,minX,maxX){
+  var k=TWO_PI/S.lam,out=[],x=(phi-target)/k;x-=Math.floor((x-minX)/S.lam)*S.lam;
+  for(;x<=maxX;x+=S.lam)if(x>=minX&&x<front-0.5*S.lam)out.push(x);
+  return out;
+}
+
+function drawT(){
+  var g=gT,H=230,padL=34,padR=14,s=(W-padL-padR)/VIEW,sy=Math.max(s,58),mid=(H-20)/2+12,A=S.A,i,x,y,px;
+  frame(g,H,padL,s,'direction of energy transfer');
+  /* equilibrium */
+  g.setLineDash([5,5]);g.strokeStyle='#b9c5d8';g.lineWidth=1;g.beginPath();g.moveTo(padL,mid);g.lineTo(padL+VIEW*s,mid);g.stroke();g.setLineDash([]);
+  /* string */
+  g.strokeStyle='#a9bdec';g.lineWidth=2;g.beginPath();
+  for(px=0;px<=VIEW*s;px+=3){y=mid-disp(px/s,A)*sy;if(px===0)g.moveTo(padL,y);else g.lineTo(padL+px,y);}
+  g.stroke();
+  /* tracked particle's path */
+  var tx=padL+X_TRACK*s;
+  if(S.track){g.strokeStyle='rgba(216,27,120,.38)';g.fillStyle='rgba(216,27,120,.38)';g.lineWidth=2;arrow(g,tx,mid-A*sy-7,tx,mid+A*sy+7,7,true);}
+  /* particles */
+  var pd=s<40?0.5:0.25,n=Math.round(VIEW/pd);g.fillStyle=BLUE;
+  for(i=0;i<=n;i++){x=i*pd;if(S.track&&Math.abs(x-X_TRACK)<1e-6)continue;g.beginPath();g.arc(padL+x*s,mid-disp(x,A)*sy,3.6,0,TWO_PI);g.fill();}
+  /* source */
+  y=mid-disp(0,A)*sy;g.fillStyle='#3a4660';g.fillRect(6,y-9,padL-12,18);g.fillStyle='#8894aa';g.fillRect(6,y-9,padL-12,4);
+  if(S.track){
+    y=mid-disp(X_TRACK,A)*sy;var v=vel(X_TRACK,A);
+    if(Math.abs(v)>0.03){g.strokeStyle=PINK;g.fillStyle=PINK;g.lineWidth=2.4;arrow(g,tx+11,y,tx+11,y-v*sy*0.35,6,false);}
+    g.fillStyle=PINK;g.beginPath();g.arc(tx,y,6,0,TWO_PI);g.fill();g.strokeStyle='#fff';g.lineWidth=1.5;g.stroke();
+  }
+  if(S.labels){
+    var crests=marks(Math.PI/2,0.3,VIEW-0.3),troughs=marks(3*Math.PI/2,0.3,VIEW-0.3),wide=S.lam*s>=95,c1=-1;
+    for(i=0;i<crests.length-1;i++)if(crests[i]>X_TRACK+0.4||crests[i+1]<X_TRACK-0.4||!S.track){c1=i;break;}
+    if(c1<0&&crests.length>1)c1=0;
+    var yTop=mid-A*sy-15;
+    if(c1>=0){
+      var xa=padL+crests[c1]*s,xb=padL+crests[c1+1]*s;
+      g.strokeStyle=INK;g.fillStyle=INK;g.lineWidth=1.6;arrow(g,xa,yTop,xb,yTop,6,true);
+      g.setLineDash([2,3]);g.lineWidth=1;g.beginPath();g.moveTo(xa,yTop);g.lineTo(xa,mid-A*sy);g.moveTo(xb,yTop);g.lineTo(xb,mid-A*sy);g.stroke();g.setLineDash([]);
+      tag(g,wide?'wavelength, λ':'λ',(xa+xb)/2,yTop-10,INK);
+      /* amplitude at the trough between them */
+      var xm=(xa+xb)/2;g.strokeStyle=TEAL;g.fillStyle=TEAL;g.lineWidth=1.8;arrow(g,xm,mid,xm,mid+A*sy,6,true);
+      tag(g,wide?'amplitude':'A',xm+8,mid+A*sy/2,TEAL,'left');
+    }
+    if(wide){
+      for(i=0;i<crests.length;i++)if(i!==c1&&i!==c1+1)tag(g,'crest',padL+crests[i]*s,mid-A*sy-13,MUTE);
+      for(i=0;i<troughs.length;i++)if(c1<0||Math.abs(troughs[i]-(crests[c1]+S.lam/2))>0.01)tag(g,'trough',padL+troughs[i]*s,mid+A*sy+13,MUTE);
+    }
+  }
+}
+
+function drawL(){
+  var g=gL,H=236,padL=34,padR=14,s=(W-padL-padR)/VIEW,k=TWO_PI/S.lam,A=Math.min(S.A,0.8/k),top=62,bot=H-48,rows=7,i,r,x,px;
+  frame(g,H,padL,s,'direction of energy transfer');
+  var midY=(top+bot)/2;
+  /* density shading: darker where particles crowd together */
+  for(px=0;px<VIEW*s;px+=4){
+    x=px/s;var c=A*k*env(x)*Math.cos(phi-k*x);
+    if(c>0.02){g.fillStyle='rgba(47,95,208,'+(0.16*c).toFixed(3)+')';g.fillRect(padL+px,top-8,4,bot-top+16);}
+  }
+  /* tracked particle's path */
+  var tx=padL+X_TRACK*s;
+  if(S.track){g.strokeStyle='rgba(216,27,120,.38)';g.fillStyle='rgba(216,27,120,.38)';g.lineWidth=2;arrow(g,tx-A*s-8,midY,tx+A*s+8,midY,7,true);}
+  /* particles */
+  var dx=s<40?0.3:0.2,n=Math.round(VIEW/dx),x0,gap=(bot-top)/(rows-1),tr=(rows-1)/2;
+  g.fillStyle=BLUE;
+  for(r=0;r<rows;r++)for(i=0;i<=n;i++){
+    x0=i*dx+((r&1)?dx/2:0);if(x0>VIEW)continue;
+    if(S.track&&r===tr&&Math.abs(x0-X_TRACK-((r&1)?dx/2:0))<1e-6)continue;
+    g.beginPath();g.arc(padL+(x0+disp(x0,A))*s,top+r*gap,s<40?2.3:2.9,0,TWO_PI);g.fill();
+  }
+  /* piston source */
+  x=disp(0,A)*s;g.fillStyle='#55627c';g.fillRect(4,top-10,Math.max(6,padL-12+x),bot-top+20);g.fillStyle='#8894aa';g.fillRect(Math.max(6,padL-12+x),top-10,4,bot-top+20);
+  if(S.track){
+    var xt=X_TRACK+((tr&1)?dx/2:0),X=padL+(xt+disp(xt,A))*s,v=vel(xt,A);
+    if(Math.abs(v)>0.03){g.strokeStyle=PINK;g.fillStyle=PINK;g.lineWidth=2.4;arrow(g,X,midY-11,X+v*s*0.35,midY-11,6,false);}
+    g.fillStyle=PINK;g.beginPath();g.arc(X,midY,6,0,TWO_PI);g.fill();g.strokeStyle='#fff';g.lineWidth=1.5;g.stroke();
+  }
+  if(S.labels){
+    var comp=marks(0,0.3,VIEW-0.3),rare=marks(Math.PI,0.3,VIEW-0.3),wide=S.lam*s>=150;
+    if(comp.length>1){
+      var xa=padL+comp[0]*s,xb=padL+comp[1]*s,yy=top-14;
+      g.strokeStyle=INK;g.fillStyle=INK;g.lineWidth=1.6;arrow(g,xa,yy,xb,yy,6,true);
+      tag(g,wide?'wavelength, λ':'λ',(xa+xb)/2,yy-9,INK);
+    }
+    for(i=0;i<comp.length;i++)tag(g,wide?'compression':'C',padL+comp[i]*s,bot+14,INK);
+    for(i=0;i<rare.length;i++)tag(g,wide?'rarefaction':'R',padL+rare[i]*s,bot+14,MUTE);
+  }
+  $('wvNote').style.visibility=A<S.A-1e-9?'visible':'hidden';
+}
+
+function draw(){if(W<10)return;drawT();drawL();}
+function advance(dt){phi+=TWO_PI*S.f*dt;if(phi>TWO_PI*1e4)phi-=TWO_PI*1e4;if(front<VIEW+2*LIM.lam[1])front+=S.f*S.lam*dt;}
+function tick(t){
+  raf=0;if(!S.playing)return;
+  var dt=Math.min(0.05,Math.max(0,(t-last)/1000));last=t;
+  advance(dt*(S.slow?0.25:1));draw();
+  raf=requestAnimationFrame(tick);
+}
+function start(){if(!raf&&S.playing){last=performance.now();raf=requestAnimationFrame(tick);}}
+
+/* ---------- controls ---------- */
+function clamp(v,r){return Math.max(r[0],Math.min(r[1],v));}
+function ui(){
+  $('wvA').value=S.A;$('wvF').value=S.f;$('wvL').value=S.lam;
+  $('wvAo').textContent=S.A.toFixed(2)+' m';$('wvFo').textContent=S.f.toFixed(2)+' Hz';$('wvLo').textContent=S.lam.toFixed(1)+' m';
+  $('wvEq').innerHTML='v = f × λ = '+S.f.toFixed(2)+' × '+S.lam.toFixed(1)+' = '+(S.f*S.lam).toFixed(2)+' m/s <span>&nbsp;·&nbsp; period T = 1/f = '+(1/S.f).toFixed(2)+' s</span>';
+  $('wvPlay').textContent=S.playing?'Pause':'Play';
+  if(!S.playing)draw();
+}
+$('wvA').addEventListener('input',function(){S.A=+this.value;ui();});
+$('wvF').addEventListener('input',function(){
+  S.f=+this.value;
+  if(S.lock){S.lam=clamp(Math.round(vLock/S.f*10)/10,LIM.lam);if(vLock/S.f<LIM.lam[0]||vLock/S.f>LIM.lam[1])S.f=clamp(vLock/S.lam,LIM.f);}
+  ui();
+});
+$('wvL').addEventListener('input',function(){
+  S.lam=+this.value;
+  if(S.lock){S.f=clamp(vLock/S.lam,LIM.f);if(vLock/S.lam<LIM.f[0]||vLock/S.lam>LIM.f[1])S.lam=clamp(vLock/S.f,LIM.lam);}
+  ui();
+});
+function tog(id,key,fn){$(id).addEventListener('click',function(){S[key]=!S[key];this.setAttribute('aria-pressed',S[key]?'true':'false');if(fn)fn();ui();});}
+tog('wvLock','lock',function(){vLock=S.f*S.lam;});
+tog('wvSlow','slow');tog('wvLabels','labels');tog('wvTrack','track');
+$('wvPlay').addEventListener('click',function(){S.playing=!S.playing;ui();start();});
+$('wvStep').addEventListener('click',function(){S.playing=false;advance(0.04);ui();});
+$('wvRestart').addEventListener('click',function(){phi=0;front=0;ui();draw();});
+
+/* ---------- sizing ---------- */
+function size(){
+  var w=cT.clientWidth;if(w<10||Math.abs(w-W)<0.5&&dpr===(Math.min(2,window.devicePixelRatio||1)))return;
+  W=w;dpr=Math.min(2,window.devicePixelRatio||1);
+  [[cT,230],[cL,236]].forEach(function(p){p[0].width=Math.round(W*dpr);p[0].height=Math.round(p[1]*dpr);p[0].style.height=p[1]+'px';});
+  draw();
+}
+if(window.ResizeObserver)new ResizeObserver(size).observe(root);else window.addEventListener('resize',size);
+size();ui();start();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
+window.__wv={S:S,state:function(){return {phi:phi,front:front,W:W};},disp:disp};
+})();
+</script>
+</body>
+</html>
