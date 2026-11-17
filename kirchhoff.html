@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en-GB" style="height:100%">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kirchhoff's Laws – Interactive A-level Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=IBM+Plex+Mono:wght@500;600;700&display=swap');
+#kh-app{--bg:#eef3f9;--card:#ffffff;--ink:#13213c;--muted:#56657f;--line:#d9e2ef;--acc:#079a78;--accs:#e3f8f1;--acc2:#5a3cf0;--acc2s:#efebff;--warn:#d92f62;--warns:#ffe9f0;--gold:#f0a20f;
+position:relative;width:100%;height:100%;min-height:760px;overflow:auto;box-sizing:border-box;padding:20px clamp(12px,3%,32px) 32px;background:var(--bg);color:var(--ink);font:15px/1.55 'Sora',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+#kh-app *,#kh-app *::before,#kh-app *::after{box-sizing:border-box}
+#kh-app .kh-head{display:flex;flex-wrap:wrap;gap:14px 24px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+#kh-app .kh-kick{font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--acc)}
+#kh-app h1{margin:2px 0 0;font-size:30px;line-height:1.1;letter-spacing:-.02em}
+#kh-app h1 span{color:var(--acc2)}
+#kh-app h2{font-size:20px;line-height:1.25;margin:0 0 6px;letter-spacing:-.01em}
+#kh-app h3{font-size:16px;margin:0 0 6px}
+#kh-app p{margin:0 0 10px}
+#kh-app ul{margin:6px 0 0;padding-left:20px}
+#kh-app li{margin-bottom:5px}
+#kh-app .kh-sub{color:var(--muted);margin:4px 0 8px}
+#kh-app .kh-tabs{display:flex;flex-wrap:wrap;gap:4px;background:var(--card);padding:5px;border-radius:14px;border:1px solid var(--line)}
+#kh-app .kh-tabs button{border:0;background:transparent;font:600 14px 'Sora',sans-serif;color:var(--muted);padding:8px 14px;border-radius:10px;cursor:pointer}
+#kh-app .kh-tabs button.on{background:var(--ink);color:#fff}
+#kh-app .kh-tabs button:hover:not(.on){background:var(--bg);color:var(--ink)}
+#kh-app .kh-pane{display:none}
+#kh-app .kh-pane.on{display:block;animation:khin .35s ease}
+@keyframes khin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#kh-app .kh-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;margin-bottom:16px;position:relative;overflow:hidden}
+#kh-app .kh-card.in{background:#fbfcff;margin:0}
+#kh-app .kh-grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:16px}
+#kh-app .kh-grid2>.kh-card{margin-bottom:0}
+#kh-app .kh-gap{height:16px}
+#kh-app .kh-split{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){#kh-app .kh-split{grid-template-columns:1fr}}
+#kh-app .kh-law{font:600 12px 'IBM Plex Mono',monospace;color:var(--acc2);text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px}
+#kh-app .kh-big{font:700 22px 'IBM Plex Mono',monospace;background:var(--acc2s);color:var(--acc2);border-radius:12px;padding:8px 16px;display:inline-block;margin:4px 0 10px}
+#kh-app .kh-pill{display:inline-block;font:600 12px 'Sora',sans-serif;padding:3px 10px;border-radius:99px;background:var(--accs);color:#067a5f;margin:2px 4px 2px 0}
+#kh-app .kh-pill.warn{background:var(--warns);color:var(--warn)}
+#kh-app .kh-btn{font:600 14px 'Sora',sans-serif;border:0;border-radius:10px;padding:9px 15px;background:var(--acc2);color:#fff;cursor:pointer;transition:transform .1s,background .2s}
+#kh-app .kh-btn:hover{transform:translateY(-1px)}
+#kh-app .kh-btn:disabled{opacity:.4;cursor:default;transform:none}
+#kh-app .kh-btn.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+#kh-app .kh-btn.ghost:hover{border-color:var(--acc2)}
+#kh-app .kh-btn.green{background:var(--acc)}
+#kh-app .kh-sm{padding:5px 10px;font-size:12.5px}
+#kh-app .kh-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+#kh-app .kh-note{background:var(--bg);border-left:4px solid var(--acc);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:14px}
+#kh-app .kh-note.warn{border-color:var(--warn);background:var(--warns)}
+#kh-app .kh-note.v{border-color:var(--acc2);background:var(--acc2s)}
+#kh-app .kh-mono{font-family:'IBM Plex Mono',monospace}
+#kh-app .kh-mini{font-size:12.5px;color:var(--muted)}
+#kh-app .kh-fig{background-color:#fff;background-image:radial-gradient(#e2e9f4 1.1px,transparent 1.2px);background-size:18px 18px;border:1px solid var(--line);border-radius:14px;padding:4px;margin:8px 0;transition:border-color .2s,box-shadow .2s}
+#kh-app .kh-svg{width:100%;height:auto;display:block}
+#kh-app .kh-eqbox{background:var(--bg);border-radius:12px;padding:12px 14px;font-family:'IBM Plex Mono',monospace;font-size:14px;margin:8px 0}
+#kh-app .kh-eqbox b{color:var(--acc2)}
+#kh-app .kh-eqs .kh-eq{display:grid;grid-template-columns:120px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+#kh-app .kh-eqs .kh-eq:last-child{border-bottom:0}
+#kh-app .kh-eqh{font-weight:700;font-size:13px;color:var(--acc2)}
+#kh-app .kh-eqb{font-family:'IBM Plex Mono',monospace;font-size:13.5px;line-height:1.7}
+@media (max-width:560px){#kh-app .kh-eqs .kh-eq{grid-template-columns:1fr;gap:2px}}
+#kh-app input[type=range]{width:100%;accent-color:var(--acc2);margin:4px 0}
+#kh-app .kh-ctl label{display:flex;justify-content:space-between;font-size:13px;font-weight:600;margin-top:8px}
+#kh-app .kh-ctl label b{font-family:'IBM Plex Mono',monospace;color:var(--acc2)}
+#kh-app .kh-jrow{display:flex;gap:8px;align-items:center}
+#kh-app .kh-jrow .kh-btn{flex:none;min-width:112px}
+#kh-app .kh-dres{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--acc2s);color:var(--acc2);font-weight:700}
+#kh-app .kh-brs{display:grid;gap:10px}
+#kh-app .kh-br{border:1px solid var(--line);border-radius:14px;padding:10px 14px;background:#fbfcff}
+#kh-app .kh-brh{display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px}
+#kh-app .kh-br .kh-ctl label{margin-top:4px}
+#kh-app .kh-ics3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+#kh-app .kh-ic{border-radius:14px;padding:10px 6px;background:var(--accs);text-align:center}
+#kh-app .kh-ic.neg{background:var(--warns)}
+#kh-app .kh-ich{font-weight:700;font-size:14px}
+#kh-app .kh-ich span{font-weight:500;color:var(--muted);font-size:11.5px}
+#kh-app .kh-icv{font:700 19px 'IBM Plex Mono',monospace;color:#067a5f}
+#kh-app .kh-ic.neg .kh-icv{color:var(--warn)}
+#kh-app .kh-ics{font-size:11.5px;color:var(--muted);line-height:1.3}
+#kh-app .kh-cells{margin-top:8px}
+#kh-app .kh-tog label{font-size:13.5px;font-weight:600;display:flex;gap:6px;align-items:center;cursor:pointer;margin-right:8px}
+#kh-app .kh-tog input{accent-color:var(--acc2);width:16px;height:16px}
+#kh-app .kh-leg{display:flex;align-items:center;gap:8px;font:600 12px 'IBM Plex Mono',monospace;color:var(--muted)}
+#kh-app .kh-legbar{flex:1;height:10px;border-radius:6px;background:linear-gradient(90deg,rgb(67,56,202),rgb(14,165,164),rgb(245,158,11))}
+#kh-app .kh-why{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:12px 0}
+#kh-app .kh-why>div{border-radius:14px;padding:14px;background:var(--bg)}
+#kh-app .kh-why .n{font:700 12px 'IBM Plex Mono',monospace;color:var(--acc2)}
+#kh-app .kh-why b{display:block;font-size:15px;margin:2px 0 4px}
+#kh-app .kh-why>div:last-child{background:var(--acc2s)}
+#kh-app .kh-wl{margin:6px 0 0;padding-left:20px;font-size:13.5px}
+#kh-app .kh-wl li{margin-bottom:8px;animation:khin .3s ease}
+#kh-app .kh-run{display:block;font:600 12px 'IBM Plex Mono',monospace;color:var(--acc2)}
+#kh-app .kh-steps{padding-left:22px;margin:4px 0 0}
+#kh-app .kh-steps li{margin-bottom:10px;animation:khin .3s ease;font-size:14.5px}
+#kh-app .kh-steps li::marker{font-weight:700;color:var(--acc2)}
+#kh-app .kh-steps .m{font-family:'IBM Plex Mono',monospace;background:var(--bg);border-radius:8px;padding:6px 10px;display:block;margin-top:4px;font-size:13.5px}
+#kh-app .kh-tbl{width:100%;border-collapse:collapse;font-size:14px}
+#kh-app .kh-tbl td{padding:8px 6px;border-bottom:1px solid var(--line)}
+#kh-app .kh-tbl td:last-child{font:700 15px 'IBM Plex Mono',monospace;color:var(--acc2);text-align:right;white-space:nowrap}
+#kh-app .kh-spbtns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+#kh-app .kh-spbtns button{font:700 18px 'IBM Plex Mono',monospace;padding:12px 4px;border-radius:12px;border:1.5px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+#kh-app .kh-spbtns button:hover:not(:disabled){background:var(--acc2s);border-color:var(--acc2)}
+#kh-app .kh-spbtns button:disabled{opacity:.45;cursor:default}
+#kh-app .kh-fig.ok{border-color:var(--acc);box-shadow:0 0 0 4px var(--accs)}
+#kh-app .kh-fig.bad{border-color:var(--warn);box-shadow:0 0 0 4px var(--warns)}
+#kh-app .kh-chl{display:grid;grid-template-columns:240px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){#kh-app .kh-chl{grid-template-columns:1fr}}
+#kh-app .kh-lv{display:flex;width:100%;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--card);border-radius:12px;padding:8px 10px;margin-bottom:6px;cursor:pointer;font:600 13px 'Sora',sans-serif;color:var(--ink)}
+#kh-app .kh-lv.on{border-color:var(--acc2);background:var(--acc2s)}
+#kh-app .kh-lv:disabled{opacity:.45;cursor:not-allowed}
+#kh-app .kh-lvn{width:26px;height:26px;border-radius:8px;background:var(--ink);color:#fff;display:grid;place-items:center;font:700 12px 'IBM Plex Mono',monospace;flex:none}
+#kh-app .kh-lv.done .kh-lvn{background:var(--acc)}
+#kh-app .kh-stars{margin-left:auto;color:var(--gold);letter-spacing:1px;font-size:13px;white-space:nowrap}
+#kh-app .kh-stars i{color:#cfd8e6;font-style:normal}
+#kh-app .kh-prog{height:8px;border-radius:9px;background:var(--bg);overflow:hidden;margin:12px 0 4px}
+#kh-app .kh-prog div{height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .5s}
+#kh-app .kh-link{border:0;background:none;color:var(--muted);font:12px 'Sora',sans-serif;text-decoration:underline;cursor:pointer;padding:8px 0 0}
+#kh-app .kh-part{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:10px 0}
+#kh-app .kh-part>span:first-child{min-width:150px;font-weight:600;font-size:14px}
+#kh-app .kh-part input{width:110px;font:600 15px 'IBM Plex Mono',monospace;padding:8px 10px;border:1.5px solid var(--line);border-radius:10px;color:var(--ink)}
+#kh-app .kh-part input:focus,#kh-app .kh-part select:focus{outline:none;border-color:var(--acc2)}
+#kh-app .kh-part select{font:13px 'Sora',sans-serif;padding:8px;border-radius:10px;border:1.5px solid var(--line);background:#fff;color:var(--ink)}
+#kh-app .kh-part .u{font:600 14px 'IBM Plex Mono',monospace;color:var(--muted)}
+#kh-app .kh-fb{margin-top:12px;padding:10px 14px;border-radius:12px;font-weight:600;font-size:14px;animation:khin .25s ease}
+#kh-app .kh-fb.ok{background:var(--accs);color:#056b53}
+#kh-app .kh-fb.bad{background:var(--warns);color:var(--warn)}
+#kh-app .kh-fb.hint{background:var(--acc2s);color:var(--acc2);font-weight:500}
+#kh-app .kh-solb{margin-top:16px;border-top:1px dashed var(--line);padding-top:14px;animation:khin .3s ease}
+#kh-app .kh-chh{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+#kh-app .kh-chh h2{margin:0}
+#kh-app .kh-conf{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;pointer-events:none;animation:khfall 1.7s ease-in forwards}
+@keyframes khfall{to{transform:translate(var(--dx),520px) rotate(600deg);opacity:0}}
+/* SVG */
+#kh-app .kh-wire{stroke:var(--ink);stroke-width:3;stroke-linecap:round;fill:none;transition:stroke .3s}
+#kh-app .kh-flow{stroke:var(--gold);stroke-width:3;stroke-linecap:round;stroke-dasharray:3 13;fill:none;opacity:0;pointer-events:none}
+#kh-app .kh-pot .kh-wire{stroke-width:7}
+#kh-app .kh-pot .kh-flow{stroke:#fff;stroke-width:2.5}
+#kh-app .kh-res{fill:#fff;stroke:var(--ink);stroke-width:2.5;transition:fill .2s,stroke .2s}
+#kh-app .kh-pl{stroke:var(--ink);stroke-width:2.5}
+#kh-app .kh-ps{stroke:var(--ink);stroke-width:6.5}
+#kh-app .kh-hit{fill:transparent;transition:fill .2s}
+#kh-app .kh-plus{font:700 14px 'IBM Plex Mono',monospace;fill:var(--warn)}
+#kh-app .kh-nm{font:700 14px 'Sora',sans-serif;fill:var(--ink)}
+#kh-app .kh-vl{font:600 13px 'IBM Plex Mono',monospace;fill:#41516d}
+#kh-app .kh-node{font:700 15px 'Sora',sans-serif;fill:var(--acc2)}
+#kh-app .kh-dot{fill:var(--ink)}
+#kh-app .kh-vtag{font:600 12px 'IBM Plex Mono',monospace;fill:var(--muted)}
+#kh-app .kh-arr{fill:var(--ink)}
+#kh-app .kh-arr-a{fill:var(--acc)}
+#kh-app .kh-arr-q,#kh-app .kh-arr-v{fill:var(--acc2)}
+#kh-app .kh-cur{font:700 13px 'IBM Plex Mono',monospace;fill:#067a5f}
+#kh-app .kh-ilbl{font:700 14px 'Sora',sans-serif;fill:var(--ink)}
+#kh-app .kh-qlbl{font:700 13px 'IBM Plex Mono',monospace;fill:var(--acc2)}
+#kh-app .kh-wire.kh-q{stroke:var(--acc2);stroke-dasharray:7 6}
+#kh-app .kh-arc{stroke:var(--acc2);stroke-width:2.5;fill:none}
+#kh-app .kh-arcl{font:700 16px 'Sora',sans-serif;fill:var(--acc2)}
+#kh-app .kh-walk{stroke:var(--acc2);stroke-width:2.5;stroke-dasharray:6 5}
+#kh-app .kh-iarrow{stroke:var(--acc);stroke-width:2.5}
+#kh-app .kh-lfill{fill:var(--acc2);opacity:.08}
+#kh-app .kh-lpath{fill:none;stroke:var(--acc2);stroke-width:2.5;stroke-dasharray:8 6;opacity:.85;animation:khmarch 1s linear infinite}
+@keyframes khmarch{to{stroke-dashoffset:-14}}
+#kh-app .kh-ltag{font:700 13px 'Sora',sans-serif;fill:var(--acc2)}
+#kh-app .kh-wire.kh-hlw{stroke:var(--acc2) !important;stroke-width:6}
+#kh-app .kh-hlc .kh-res{stroke:var(--acc2)}
+#kh-app .kh-focus .kh-res{fill:#e4dcff;stroke:var(--acc2);stroke-width:3.5}
+#kh-app .kh-focus .kh-pl,#kh-app .kh-focus .kh-ps{stroke:var(--acc2)}
+#kh-app .kh-focus .kh-hit{fill:rgba(90,60,240,.16)}
+#kh-app .kh-focus .kh-nm{fill:var(--acc2)}
+</style>
+</head>
+<body style="margin:0;height:100%">
+<div id="kh-app">
+  <header class="kh-head">
+    <div>
+      <div class="kh-kick">A-level Physics · DC circuits</div>
+      <h1>Kirchhoff's <span>Laws</span></h1>
+      <p class="kh-sub">Two rules. Any circuit you'll ever meet.</p>
+    </div>
+    <nav class="kh-tabs">
+      <button data-tab="ov" class="on">Overview</button>
+      <button data-tab="k1">First law</button>
+      <button data-tab="k2">Second law</button>
+      <button data-tab="we">Worked examples</button>
+      <button data-tab="ch">Challenges</button>
+    </nav>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section class="kh-pane on" data-pane="ov">
+    <div class="kh-grid2">
+      <div class="kh-card">
+        <div class="kh-law">Kirchhoff's first law</div>
+        <h2>What flows in must flow out</h2>
+        <p>At any junction in a circuit, the sum of the currents flowing in equals the sum of the currents flowing out.</p>
+        <div class="kh-big">ΣI<sub>in</sub> = ΣI<sub>out</sub></div>
+        <div class="kh-note v" style="margin-top:4px"><b>In other words: it is just conservation of charge.</b> Charge can't be created or destroyed, and it can't build up at a junction – so every coulomb that arrives must leave.</div>
+        <div id="ov-j" class="kh-fig"></div>
+      </div>
+      <div class="kh-card">
+        <div class="kh-law">Kirchhoff's second law</div>
+        <h2>Every loop balances its energy books</h2>
+        <p>Around any closed loop in a circuit, the sum of the e.m.f.s equals the sum of the potential differences.</p>
+        <div class="kh-big">ΣE = ΣIR</div>
+        <div class="kh-note v" style="margin-top:4px"><b>In other words: it is just conservation of energy.</b> Each coulomb gains E joules in the cells and transfers IR joules in the resistors (V = W/Q). Back at the start, the books must balance.</div>
+        <div id="ov-l" class="kh-fig"></div>
+      </div>
+    </div>
+    <div class="kh-gap"></div>
+    <div class="kh-card">
+      <h2>"But I can already do circuits…"</h2>
+      <p>True – for simple circuits. The second law only shows its power once cells sit in <i>different branches</i>.</p>
+      <div class="kh-why">
+        <div><span class="n">ONE CELL</span><b>You don't need it</b>Combine resistors in series and parallel, then use V = IR. Kirchhoff's second law gives the same answer and feels like extra work.</div>
+        <div><span class="n">TWO OR MORE CELLS</span><b>The usual rules collapse</b>Resistors are no longer in series or in parallel. The "combine and divide" toolkit has nothing to grip.</div>
+        <div><span class="n">KIRCHHOFF</span><b>Write, solve, done</b>One equation per junction, one per loop → simultaneous equations → every current, <i>including its direction</i>.</div>
+      </div>
+      <div class="kh-row">
+        <button class="kh-btn" data-go="k2">Show me the two-loop circuit →</button>
+        <button class="kh-btn ghost" data-go="ch">Jump to the challenges</button>
+      </div>
+    </div>
+    <div class="kh-card">
+      <h3>The picture to keep in your head</h3>
+      <p style="margin:0">Think of electric potential as <b>height</b> on a hill walk. A cell lifts every coulomb up by E joules; each resistor lets it back down by IR joules. Walk round any closed loop and you arrive back at your starting height – so all the ups and downs must cancel. That is all the second law says.</p>
+    </div>
+  </section>
+
+  <!-- FIRST LAW -->
+  <section class="kh-pane" data-pane="k1">
+    <div class="kh-split">
+      <div class="kh-card">
+        <div class="kh-law">Junction explorer</div>
+        <h2>Junction X never stores charge</h2>
+        <div class="kh-note v"><b>Kirchhoff's first law is conservation of charge.</b> ΣI<sub>in</sub> = ΣI<sub>out</sub> because charge is conserved and cannot accumulate at a junction.</div><p class="kh-sub">Set the currents in wires A, B and C. The first law decides what wire D must do.</p>
+        <div id="j-svg" class="kh-fig"></div>
+        <div id="j-eq" class="kh-eqbox"></div>
+      </div>
+      <div>
+        <div class="kh-card" id="j-ctl"></div>
+        <div class="kh-card">
+          <h3>Why it must be true</h3>
+          <p style="margin:0">Current is the rate of flow of charge, I = ΔQ/Δt. Charge can't be created or destroyed, and it can't pile up at a junction – so every coulomb arriving per second must leave per second.</p>
+        </div>
+      </div>
+    </div>
+    <div class="kh-grid2">
+      <div class="kh-card">
+        <h3>You've used it already</h3>
+        <ul>
+          <li><b>Series:</b> the current is the same everywhere – there are no junctions, so there is nowhere else for charge to go.</li>
+          <li><b>Parallel:</b> the branch currents add up to the supply current. That's the first law at the junction where the branches split.</li>
+        </ul>
+      </div>
+      <div class="kh-card">
+        <h3>Exam habits</h3>
+        <ul>
+          <li>Draw and label an arrow for every unknown current <i>before</i> writing anything.</li>
+          <li>Unsure of a direction? Just guess. A negative answer simply means it flows the other way.</li>
+          <li>Use the first law to cut unknowns: writing I₃ = I₁ + I₂ leaves two unknowns, not three.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECOND LAW -->
+  <section class="kh-pane" data-pane="k2">
+    <div class="kh-card">
+      <div class="kh-note v" style="margin-top:0"><b>Kirchhoff's second law is conservation of energy.</b> Potential difference is energy per coulomb (V = W/Q). Round any closed loop, the energy each coulomb gains from cells (ΣE) equals the energy it transfers in components (ΣIR).</div><div class="kh-law">Step 1</div>
+      <h2>A single loop – honestly, a bit pointless</h2>
+      <div class="kh-split">
+        <div id="s-svg" class="kh-fig"></div>
+        <div>
+          <p>Walk clockwise round the loop from the bottom-left corner, adding up every change in potential:</p>
+          <div class="kh-eqbox">+12 − 4I − 2I = 0<br>12 = 6I &nbsp;⇒&nbsp; <b>I = 2.0 A</b></div>
+          <p>You knew that already: R<sub>total</sub> = 6 Ω, so I = 12 ÷ 6 = 2 A. If this were all Kirchhoff's second law ever did, ignoring it would be fair enough.</p>
+          <div class="kh-note warn"><b>So why bother?</b> Because real networks have e.m.f.s in more than one branch. Then the series/parallel rules collapse – and Kirchhoff doesn't even blink.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kh-card">
+      <div class="kh-law">Step 2</div>
+      <h2>Two loops, three cells – where Kirchhoff earns its keep</h2>
+      <p class="kh-sub">Change any e.m.f., flip any cell, change any resistor. Every current is recalculated from just three equations.</p>
+      <div class="kh-split">
+        <div>
+          <div id="x-svg" class="kh-fig"></div>
+          <div class="kh-leg" id="x-leg" style="display:none"><span id="x-lmin"></span><div class="kh-legbar"></div><span id="x-lmax"></span></div>
+          <div class="kh-row kh-tog">
+            <label><input type="checkbox" id="x-flow" checked> Current flow</label>
+            <label><input type="checkbox" id="x-pot"> Potential map</label>
+            <label><input type="checkbox" id="x-sol" checked> Solved currents</label>
+          </div>
+          <div class="kh-row"><span class="kh-mini">Presets:</span>
+            <button class="kh-btn ghost kh-sm" data-pre="0">One cell</button>
+            <button class="kh-btn ghost kh-sm" data-pre="1">Two cells</button>
+            <button class="kh-btn ghost kh-sm" data-pre="2">Three cells, one flipped</button>
+            <button class="kh-btn ghost kh-sm" data-pre="3">Null point</button>
+          </div>
+          <div class="kh-row"><button class="kh-btn" id="x-sp">Try the series &amp; parallel rules…</button></div>
+          <div id="x-spmsg"></div>
+        </div>
+        <div>
+          <div id="x-ctl" class="kh-brs"></div>
+          <div id="x-res"></div>
+        </div>
+      </div>
+      <div class="kh-gap"></div>
+      <div class="kh-grid2">
+        <div class="kh-card in">
+          <h3>Walk a loop</h3>
+          <p class="kh-mini" style="margin:0">Pick a loop, then step round it. Watch the running total of potential changes.</p>
+          <div class="kh-row">
+            <button class="kh-btn ghost kh-sm" id="x-w1">Loop 1 (left)</button>
+            <button class="kh-btn ghost kh-sm" id="x-w2">Loop 2 (right)</button>
+            <button class="kh-btn ghost kh-sm" id="x-w3">Outer loop</button>
+            <button class="kh-btn kh-sm" id="x-next" disabled>Next step ▸</button>
+          </div>
+          <div id="x-walk"></div>
+        </div>
+        <div class="kh-card in">
+          <h3>The three equations</h3>
+          <div id="x-eq"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="kh-grid2">
+      <div class="kh-card">
+        <h3>Sign rules for walking a loop</h3>
+        <table class="kh-tbl">
+          <tr><td>Through a cell from − to + (short plate → long plate)</td><td>+E</td></tr>
+          <tr><td>Through a cell from + to −</td><td>−E</td></tr>
+          <tr><td>Through a resistor <b>in the same direction</b> as the current</td><td>−IR</td></tr>
+          <tr><td>Through a resistor <b>against</b> the current</td><td>+IR</td></tr>
+          <tr><td>Add every term round a closed loop</td><td>= 0</td></tr>
+        </table>
+        <p class="kh-mini" style="margin:10px 0 0">Equivalent form: ΣE = ΣIR, taking each E and each IR as positive when it acts in your chosen direction round the loop.</p>
+      </div>
+      <div class="kh-card">
+        <h3>Sign Sprint ⚡</h3>
+        <p class="kh-sub" style="margin-top:0">30 seconds. You walk through the component in the direction of the purple arrow. Which term goes in your equation?</p>
+        <div id="sp-svg" class="kh-fig"></div>
+        <div class="kh-spbtns"><button data-a="+E" disabled>+E</button><button data-a="−E" disabled>−E</button><button data-a="+IR" disabled>+IR</button><button data-a="−IR" disabled>−IR</button></div>
+        <div class="kh-row"><button class="kh-btn green" id="sp-go">Start</button><span id="sp-stat" class="kh-mono"></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKED EXAMPLES -->
+  <section class="kh-pane" data-pane="we"><div id="we"></div></section>
+
+  <!-- CHALLENGES -->
+  <section class="kh-pane" data-pane="ch">
+    <div class="kh-chl">
+      <div class="kh-card">
+        <h3>Levels</h3>
+        <div id="lv-list"></div>
+        <div class="kh-prog"><div id="lv-bar"></div></div>
+        <div id="lv-total" class="kh-mini"></div>
+        <button class="kh-link" id="lv-unlock">Teacher: unlock all levels</button>
+      </div>
+      <div class="kh-card" id="ch-card">
+        <div class="kh-chh"><span id="ch-tag" class="kh-pill"></span><h2 id="ch-title"></h2></div>
+        <div class="kh-split">
+          <div id="ch-svg" class="kh-fig"></div>
+          <div>
+            <p id="ch-q" style="font-weight:600"></p>
+            <p class="kh-mini">Cells have negligible internal resistance. Give answers to 2 decimal places.</p>
+            <div id="ch-parts"></div>
+            <div class="kh-row">
+              <button class="kh-btn" id="ch-check">Check</button>
+              <button class="kh-btn ghost" id="ch-hint">Hint (−1★)</button>
+              <button class="kh-btn ghost" id="ch-sol">Show solution</button>
+              <button class="kh-btn ghost" id="ch-new">New numbers ↻</button>
+            </div>
+            <div id="ch-fb"></div>
+          </div>
+        </div>
+        <div id="ch-solbox"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+'use strict';
+var root=document.getElementById('kh-app');
+var $=function(s){return root.querySelector(s);},$$=function(s){return Array.prototype.slice.call(root.querySelectorAll(s));};
+var NS='http://www.w3.org/2000/svg';
+var sub=['₁','₂','₃'];
+var fv=function(x){return String(+(+x).toFixed(2)).replace('-','−');};
+var f2=function(x){return (Math.abs(x)<0.005?0:x).toFixed(2).replace('-','−');};
+var f1=function(x){return (+x).toFixed(1);};
+var sg=function(v){return (v>-0.005?'+':'−')+f2(Math.abs(v));};
+var ri=function(a,b){return a+Math.floor(Math.random()*(b-a+1));};
+var pick=function(a){return a[Math.floor(Math.random()*a.length)];};
+var r1=function(a,b){return Math.round((a+Math.random()*(b-a))*10)/10;};
+var nice=function(x){return Math.abs(x*100-Math.round(x*100))<1e-6;};
+var RL=[1,2,3,4,5,6,8,10,12];
+var store={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}};
+
+/* ---------- SVG helpers (all elements built in JS) ---------- */
+function E(tag,attrs,parent){var e=document.createElementNS(NS,tag);if(attrs)for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function T(parent,x,y,str,cls,anchor){var t=E('text',{x:x.toFixed(1),y:y.toFixed(1),'class':cls||'kh-nm','text-anchor':anchor||'middle','dominant-baseline':'central'},parent);t.textContent=str;return t;}
+function svgIn(host,w,h){host.innerHTML='';var s=E('svg',{viewBox:'0 0 '+w+' '+h,'class':'kh-svg',role:'img'});host.appendChild(s);return s;}
+function clear(g){while(g.firstChild)g.removeChild(g.firstChild);}
+function arrowHead(g,x,y,dx,dy,cls,sz){sz=sz||8;var px=-dy,py=dx;
+  var pts=[[x+dx*sz,y+dy*sz],[x-dx*sz*.7+px*sz*.75,y-dy*sz*.7+py*sz*.75],[x-dx*sz*.7-px*sz*.75,y-dy*sz*.7-py*sz*.75]];
+  return E('polygon',{points:pts.map(function(p){return p[0].toFixed(1)+','+p[1].toFixed(1);}).join(' '),'class':cls||'kh-arr'},g);}
+
+/* A straight run of wire from (x1,y1) to (x2,y2) with components spaced along it */
+function series(g,x1,y1,x2,y2,comps,o){
+  o=o||{};var side=o.side||1;
+  var L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L,px=-uy,py=ux;
+  var P=function(t){return [x1+ux*t,y1+uy*t];};
+  var HL={cell:6,res:25},segs=[],prev=0;
+  comps.forEach(function(c,i){var t=(c.t!=null?c.t:(i+1)/(comps.length+1))*L;c._t=t;segs.push([prev,t-HL[c.type]]);prev=t+HL[c.type];});
+  segs.push([prev,L]);
+  var wires=segs.map(function(s){var A=P(s[0]),B=P(s[1]);var at={x1:A[0].toFixed(1),y1:A[1].toFixed(1),x2:B[0].toFixed(1),y2:B[1].toFixed(1)};
+    var base=E('line',Object.assign({'class':'kh-wire'},at),g);
+    var ov=E('line',Object.assign({'class':'kh-flow'},at),g);
+    return {base:base,ov:ov,a:A,b:B};});
+  var vert=Math.abs(px)>.5;
+  var cg=comps.map(function(c){var cp=P(c._t),cx=cp[0],cy=cp[1];var grp=E('g',{'class':'kh-comp'},g);
+    if(c.type==='res'){var w=Math.abs(ux)*50+Math.abs(px)*18,h=Math.abs(uy)*50+Math.abs(py)*18;
+      E('rect',{x:cx-w/2,y:cy-h/2,width:w,height:h,'class':'kh-res'},grp);}
+    else{var s=c.plusToEnd?1:-1;var l=[cx+ux*6*s,cy+uy*6*s],sh=[cx-ux*6*s,cy-uy*6*s];
+      E('rect',{x:cx-24,y:cy-24,width:48,height:48,rx:8,'class':'kh-hit'},grp);
+      E('line',{x1:l[0]+px*20,y1:l[1]+py*20,x2:l[0]-px*20,y2:l[1]-py*20,'class':'kh-pl'},grp);
+      E('line',{x1:sh[0]+px*10,y1:sh[1]+py*10,x2:sh[0]-px*10,y2:sh[1]-py*10,'class':'kh-ps'},grp);
+      T(grp,l[0]+ux*s*10-px*side*17,l[1]+uy*s*10-py*side*17,'+','kh-plus');}
+    if(c.name||c.val){var d=c.type==='res'?(vert?20:22):(vert?28:30);var bx=cx+px*side*d,by=cy+py*side*d;
+      if(vert){var an=px*side>0?'start':'end';
+        if(c.name)T(grp,bx,by-(c.val?9:0),c.name,'kh-nm',an);
+        if(c.val)T(grp,bx,by+(c.name?9:0),c.val,'kh-vl',an);}
+      else{var up=py*side<0;
+        if(c.name)T(grp,bx,up?by-(c.val?16:6):by+(c.val?2:6),c.name,'kh-nm');
+        if(c.val)T(grp,bx,up?by-1:by+(c.name?18:6),c.val,'kh-vl');}}
+    return grp;});
+  return {wires:wires,comps:cg};
+}
+function setFlow(w,I,on){var ov=w.ov;if(on&&Math.abs(I)>0.004){ov._spd=Math.max(-170,Math.min(170,I*45));ov.style.opacity=Math.min(1,.5+Math.abs(I)/4);}else{ov._spd=0;ov.style.opacity=0;}}
+var lastT=performance.now();
+function tick(now){var dt=Math.min(.05,(now-lastT)/1000);lastT=now;
+  var fl=root.getElementsByClassName('kh-flow');
+  for(var i=0;i<fl.length;i++){var f=fl[i];if(!f._spd)continue;f._off=(f._off||0)+f._spd*dt;f.setAttribute('stroke-dashoffset',(-f._off%1600).toFixed(1));}
+  requestAnimationFrame(tick);}
+requestAnimationFrame(tick);
+function arcArrow(g,cx,cy,r,cw,label){var a0=-150*Math.PI/180,a1=110*Math.PI/180;var P=function(a){return [cx+r*Math.cos(a),cy+r*Math.sin(a)];};
+  var sa=cw?a0:a1,ea=cw?a1:a0,S=P(sa),En=P(ea);
+  E('path',{d:'M'+S[0].toFixed(1)+' '+S[1].toFixed(1)+' A'+r+' '+r+' 0 1 '+(cw?1:0)+' '+En[0].toFixed(1)+' '+En[1].toFixed(1),'class':'kh-arc'},g);
+  var tx=cw?-Math.sin(ea):Math.sin(ea),ty=cw?Math.cos(ea):-Math.cos(ea);arrowHead(g,En[0],En[1],tx,ty,'kh-arr-v',9);
+  if(label)T(g,cx,cy,label,'kh-arcl');}
+
+/* Shaded loop + dashed walking path with direction arrows */
+function loopOverlay(g,x0,y0,x1,y1,cw,label,lx,ly){
+  E('rect',{x:x0-12,y:y0-12,width:x1-x0+24,height:y1-y0+24,rx:14,'class':'kh-lfill'},g);
+  var pts=cw?[[x0,y0],[x1,y0],[x1,y1],[x0,y1]]:[[x0,y0],[x0,y1],[x1,y1],[x1,y0]];
+  E('path',{d:'M'+pts.map(function(p){return p[0]+' '+p[1];}).join(' L')+' Z','class':'kh-lpath'},g);
+  for(var i=0;i<4;i++){var a=pts[i],b=pts[(i+1)%4],L=Math.hypot(b[0]-a[0],b[1]-a[1]);arrowHead(g,(a[0]+b[0])/2,(a[1]+b[1])/2,(b[0]-a[0])/L,(b[1]-a[1])/L,'kh-arr-v',8);}
+  if(label)T(g,lx,ly,label,'kh-ltag');
+}
+/* ---------- Junction drawing ---------- */
+function drawJ(host,spec){
+  var s=svgIn(host,560,330);var g=E('g',{},s);var C=[280,165];var ends=[[60,165],[280,24],[500,165],[280,306]];
+  var ws=ends.map(function(e){return series(g,e[0],e[1],C[0],C[1],[]).wires[0];});
+  E('circle',{cx:280,cy:165,r:7,'class':'kh-dot'},g);
+  T(g,300,186,'X','kh-node','start');
+  ['A','B','C','D'].forEach(function(n,i){var e=ends[i];var off=[[-18,0],[0,-12],[18,0],[0,14]][i];T(g,e[0]+off[0],Math.max(10,Math.min(322,e[1]+off[1])),n,'kh-node');});
+  var ag=E('g',{},s);
+  function upd(spec){clear(ag);spec.forEach(function(sp,i){var e=ends[i];var dx=C[0]-e[0],dy=C[1]-e[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;var mx=e[0]+dx*.48,my=e[1]+dy*.48;
+    ws[i].base.classList.toggle('kh-q',!!sp.q);
+    if(sp.dir)arrowHead(ag,mx,my,ux*sp.dir,uy*sp.dir,sp.q?'kh-arr-q':'kh-arr',10);
+    var hor=Math.abs(ux)>.5;T(ag,hor?mx:mx+16,hor?my-20:my,sp.label,sp.q?'kh-qlbl':'kh-cur',hor?'middle':'start');
+    setFlow(ws[i],sp.flow||0,sp.flow!=null);});}
+  upd(spec);return {upd:upd};
+}
+/* ---------- Two-junction network ---------- */
+function drawNet(host,v){
+  var s=svgIn(host,560,330);var g=E('g',{},s);
+  function W(x1,y1,x2,y2,lab,q){var w=series(g,x1,y1,x2,y2,[]).wires[0];if(q)w.base.classList.add('kh-q');
+    var mx=(x1+x2)/2,my=(y1+y2)/2,L=Math.hypot(x2-x1,y2-y1),ux=(x2-x1)/L,uy=(y2-y1)/L;
+    arrowHead(g,mx,my,ux,uy,q?'kh-arr-q':'kh-arr',10);var hor=Math.abs(ux)>.5;
+    T(g,hor?mx:mx+16,hor?my-20:my,lab,q?'kh-qlbl':'kh-cur',hor?'middle':'start');}
+  W(40,170,200,170,f1(v.a)+' A');W(200,30,200,170,f1(v.b)+' A');W(200,170,200,310,f1(v.c)+' A');
+  W(200,170,380,170,v.x!=null?'I₁ = '+f1(v.x)+' A':'I₁ = ?',true);
+  W(380,170,380,30,f1(v.e)+' A');W(380,170,530,170,v.y!=null?'I₂ = '+f1(v.y)+' A':'I₂ = ?',true);
+  E('circle',{cx:200,cy:170,r:6.5,'class':'kh-dot'},g);E('circle',{cx:380,cy:170,r:6.5,'class':'kh-dot'},g);
+  T(g,186,192,'P','kh-node','end');T(g,394,192,'Q','kh-node','start');
+}
+/* ---------- Single loop ---------- */
+function drawLoop(host,sides,o){o=o||{};var s=svgIn(host,560,330);var lg=E('g',{},s);var g=E('g',{},s);
+  var X0=110,X1=450,Y0=60,Y1=270;var segs={top:[X0,Y0,X1,Y0],right:[X1,Y0,X1,Y1],bottom:[X1,Y1,X0,Y1],left:[X0,Y1,X0,Y0]};
+  var wires=[];
+  Object.keys(segs).forEach(function(k){var c=(sides[k]||[]).map(function(x){var y=Object.assign({},x);if(y.type==='cell')y.plusToEnd=!!y.cw;return y;});
+    var sg4=segs[k];var r=series(g,sg4[0],sg4[1],sg4[2],sg4[3],c,{side:-1});wires=wires.concat(r.wires);});
+  if(o.arrow)arcArrow(g,280,165,44,o.arrow==='cw',o.arrowLabel||'I');
+  if(o.flow!=null)wires.forEach(function(w){setFlow(w,o.flow,true);});
+  var api={svg:s,wires:wires,hl:function(on){clear(lg);wires.forEach(function(w){w.base.classList.toggle('kh-hlw',!!on);});if(on)loopOverlay(lg,X0+30,Y0+28,X1-30,Y1-28,true,o.arrow?'':'walk ↻',280,165);}};
+  if(o.hl)api.hl(true);return api;
+}
+/* ---------- Three-branch (two-loop) network ---------- */
+var T3X=[90,470,280];
+function solveT3(p){var num=0,den=0;for(var k=0;k<3;k++){num+=p.s[k]*p.E[k]/p.R[k];den+=1/p.R[k];}var V=num/den;
+  return {V:V,I:[0,1,2].map(function(k){return (p.s[k]*p.E[k]-V)/p.R[k];})};}  /* I[k] = upward current in branch k */
+var CM=[[67,56,202],[14,165,164],[245,158,11]];
+function cmap(t){t=Math.max(0,Math.min(1,t));var seg=t<.5?0:1,u=t<.5?t*2:(t-.5)*2;var a=CM[seg],b=CM[seg+1];
+  return 'rgb('+a.map(function(v,i){return Math.round(v+(b[i]-v)*u);}).join(',')+')';}
+function drawT3(host,p,o){o=o||{};
+  var s=svgIn(host,560,345);var lg=E('g',{},s);var g=E('g',{},s);
+  var parts={b:[],r:{}};
+  parts.r.tl=series(g,90,50,280,50,[]).wires;parts.r.tr=series(g,280,50,470,50,[]).wires;
+  parts.r.bl=series(g,90,300,280,300,[]).wires;parts.r.br=series(g,280,300,470,300,[]).wires;
+  for(var k=0;k<3;k++){var hasCell=p.E[k]>0||o.unknownE===k;var comps=[];
+    if(hasCell)comps.push({type:'cell',t:.30,plusToEnd:p.s[k]<0,name:'E'+sub[k],val:o.unknownE===k?'= ?':fv(p.E[k])+' V'});
+    comps.push({type:'res',t:hasCell?.64:.5,name:'R'+sub[k],val:fv(p.R[k])+' Ω'});
+    var r=series(g,T3X[k],50,T3X[k],300,comps,{side:k===0?1:-1});
+    parts.b.push({w:r.wires,c:r.comps,hasCell:hasCell});}
+  E('circle',{cx:280,cy:50,r:6,'class':'kh-dot'},g);E('circle',{cx:280,cy:300,r:6,'class':'kh-dot'},g);
+  T(g,280,30,'A','kh-node');T(g,280,322,'B','kh-node');
+  var vt=T(g,300,30,'','kh-vtag','start');
+  var ag=E('g',{},s);
+  var LP={loop1:{b:[0,2],r:['tl','bl']},loop2:{b:[1,2],r:['tr','br']},outer:{b:[0,1],r:['tl','tr','bl','br']},both:{b:[0,1,2],r:['tl','tr','bl','br']}};
+  return {svg:s,parts:parts,
+    arrows:function(sol){clear(ag);for(var k=0;k<3;k++){var ws=parts.b[k].w,w=ws[ws.length-1];var ym=(w.a[1]+w.b[1])/2,x=T3X[k];var lx=x+(k===0?-14:14),an=k===0?'end':'start';
+      if(!sol){arrowHead(ag,x,ym,0,k<2?-1:1,'kh-arr',9);T(ag,lx,ym,'I'+sub[k],'kh-ilbl',an);}
+      else{var I=sol.I[k];if(Math.abs(I)<0.005){T(ag,lx,ym,'0 A','kh-cur',an);}else{arrowHead(ag,x,ym,0,I>0?-1:1,'kh-arr-a',9);T(ag,lx,ym,f2(Math.abs(I))+' A','kh-cur',an);}}}},
+    flow:function(sol,on){for(var k=0;k<3;k++)parts.b[k].w.forEach(function(w){setFlow(w,-sol.I[k],on);});
+      parts.r.tl.forEach(function(w){setFlow(w,sol.I[0],on);});parts.r.tr.forEach(function(w){setFlow(w,-sol.I[1],on);});
+      parts.r.bl.forEach(function(w){setFlow(w,-sol.I[0],on);});parts.r.br.forEach(function(w){setFlow(w,sol.I[1],on);});},
+    potential:function(sol,on){s.classList.toggle('kh-pot',on);var VA=sol.V,list=[];
+      for(var k=0;k<3;k++){var b=parts.b[k];if(b.hasCell){list.push([b.w[0],VA],[b.w[1],VA-p.s[k]*p.E[k]],[b.w[2],0]);}else{list.push([b.w[0],VA],[b.w[1],0]);}}
+      ['tl','tr'].forEach(function(n){parts.r[n].forEach(function(w){list.push([w,VA]);});});
+      ['bl','br'].forEach(function(n){parts.r[n].forEach(function(w){list.push([w,0]);});});
+      var mn=Math.min.apply(null,list.map(function(x){return x[1];})),mx=Math.max.apply(null,list.map(function(x){return x[1];}));
+      if(mx-mn<1e-6){mn-=1;mx+=1;}
+      list.forEach(function(x){x[0].base.style.stroke=on?cmap((x[1]-mn)/(mx-mn)):'';});
+      vt.textContent=on?'V = '+f2(VA)+' V':'';
+      return {min:mn,max:mx};},
+    hl:function(name){$$('.kh-hlw').forEach(function(e){if(s.contains(e))e.classList.remove('kh-hlw');});$$('.kh-hlc').forEach(function(e){if(s.contains(e))e.classList.remove('kh-hlc');});
+      clear(lg);if(!name||!LP[name])return;var d=LP[name];
+      if(name==='loop1'||name==='both')loopOverlay(lg,118,80,252,226,true,'Loop 1',185,155);
+      if(name==='loop2'||name==='both')loopOverlay(lg,354,80,442,226,false,'Loop 2',398,155);
+      if(name==='outer')loopOverlay(lg,118,80,442,226,true,'Outer loop',185,155);
+      d.b.forEach(function(k){parts.b[k].w.forEach(function(w){w.base.classList.add('kh-hlw');});parts.b[k].c.forEach(function(c){c.classList.add('kh-hlc');});});
+      d.r.forEach(function(r){parts.r[r].forEach(function(w){w.base.classList.add('kh-hlw');});});},
+    focus:function(k,type){parts.b.forEach(function(b){b.c.forEach(function(c){c.classList.remove('kh-focus');});});
+      if(k==null)return;var b=parts.b[k];var el=b.hasCell?(type==='cell'?b.c[0]:b.c[1]):b.c[0];if(el)el.classList.add('kh-focus');}
+  };
+}
+function t3Eq(p,sol){
+  var em=function(k,s0){return p.E[k]>0?{k:k,s:s0*p.s[k],E:p.E[k]}:null;};
+  var L1=[em(0,1),em(2,-1)].filter(Boolean),L2=[em(1,1),em(2,-1)].filter(Boolean);
+  var js=function(a,f){return a.length?a.map(function(x,i){return (x.s>0?(i?' + ':''):(i?' − ':'−'))+f(x);}).join(''):'0';};
+  var val=function(a){return a.reduce(function(s,x){return s+x.s*x.E;},0);};
+  var R1=p.R[0],R2=p.R[1],R3=p.R[2],c1=val(L1),c2=val(L2);
+  var I1=sol.I[0],I2=sol.I[1],I3=-sol.I[2];
+  var co=function(x){return x===1?'':fv(x);};var nm=function(x){return 'E'+sub[x.k];},nv=function(x){return fv(x.E);};
+  var row=function(h,b){return '<div class="kh-eq"><div class="kh-eqh">'+h+'</div><div class="kh-eqb">'+b+'</div></div>';};
+  return '<div class="kh-eqs">'+
+    row('First law at A','I₃ = I₁ + I₂ <span class="kh-mini">(assumed: I₁, I₂ up; I₃ down)</span>')+
+    row('Loop 1 (left)',js(L1,nm)+' = I₁R₁ + I₃R₃<br>'+js(L1,nv)+' = '+co(R1)+'I₁ + '+co(R3)+'(I₁ + I₂)<br><b>'+fv(c1)+' = '+co(R1+R3)+'I₁ + '+co(R3)+'I₂</b>')+
+    row('Loop 2 (right)',js(L2,nm)+' = I₂R₂ + I₃R₃<br>'+js(L2,nv)+' = '+co(R2)+'I₂ + '+co(R3)+'(I₁ + I₂)<br><b>'+fv(c2)+' = '+co(R3)+'I₁ + '+co(R2+R3)+'I₂</b>')+
+    row('Solve','<span class="kh-mini">Eliminate one unknown (or use your calculator\'s simultaneous-equation mode):</span><br>I₁ = <b>'+f2(I1)+' A</b>, I₂ = <b>'+f2(I2)+' A</b><br>I₃ = I₁ + I₂ = <b>'+f2(I3)+' A</b>')+
+    '</div>';
+}
+
+/* ---------- Tabs ---------- */
+function go(tab){$$('.kh-tabs button').forEach(function(x){x.classList.toggle('on',x.dataset.tab===tab);});$$('.kh-pane').forEach(function(p){p.classList.toggle('on',p.dataset.pane===tab);});root.scrollTop=0;}
+$$('.kh-tabs button').forEach(function(b){b.onclick=function(){go(b.dataset.tab);};});
+$$('[data-go]').forEach(function(b){b.onclick=function(){go(b.dataset.go);};});
+
+/* ---------- Overview diagrams ---------- */
+drawJ($('#ov-j'),[{label:'3.0 A',dir:1,flow:3},{label:'1.0 A',dir:1,flow:1},{label:'2.5 A',dir:-1,flow:-2.5},{label:'1.5 A',dir:-1,flow:-1.5}]);
+drawLoop($('#ov-l'),{left:[{type:'cell',cw:true,name:'E',val:'6 V'}],right:[{type:'res',name:'R₁',val:'2 Ω'}],bottom:[{type:'res',name:'R₂',val:'1 Ω'}]},{arrow:'cw',arrowLabel:'2 A',flow:2});
+
+/* ---------- First law explorer ---------- */
+var J={v:[2.0,1.5,1.0],d:[1,1,-1]},JN=['A','B','C'],jd;
+(function(){var c=$('#j-ctl');c.innerHTML='<h3>Set the currents</h3>'+JN.map(function(n,i){return '<div class="kh-ctl"><label>Wire '+n+' <b id="jv'+i+'"></b></label><div class="kh-jrow"><input type="range" min="0" max="5" step="0.1" value="'+J.v[i]+'" id="jr'+i+'"><button class="kh-btn ghost kh-sm" id="jd'+i+'"></button></div></div>';}).join('')+'<div class="kh-dres" id="j-d"></div>';
+  JN.forEach(function(n,i){$('#jr'+i).oninput=function(e){J.v[i]=+e.target.value;jUpd();};$('#jd'+i).onclick=function(){J.d[i]*=-1;jUpd();};});
+  jd=drawJ($('#j-svg'),[]);jUpd();})();
+function jUpd(){var sIn=0;J.v.forEach(function(v,i){sIn+=v*J.d[i];});var dIn=Math.round(-sIn*10)/10,dm=Math.abs(dIn);
+  JN.forEach(function(n,i){$('#jv'+i).textContent=f1(J.v[i])+' A';$('#jd'+i).textContent=J.d[i]>0?'→ into X':'← out of X';});
+  var spec=J.v.map(function(v,i){return {label:f1(v)+' A',dir:v>0?J.d[i]:0,flow:v*J.d[i]};});
+  spec.push({label:dm<0.05?'0 A':f1(dm)+' A',dir:dm<0.05?0:Math.sign(dIn),flow:dIn,q:true});jd.upd(spec);
+  var ins=[],outs=[];J.v.forEach(function(v,i){if(v>0)(J.d[i]>0?ins:outs).push(f1(v));});if(dm>=0.05)(dIn>0?ins:outs).push('<b>'+f1(dm)+'</b>');
+  var tin=0,tout=0;J.v.forEach(function(v,i){if(J.d[i]>0)tin+=v;else tout+=v;});if(dIn>0)tin+=dm;else tout+=dm;
+  $('#j-eq').innerHTML='ΣI<sub>in</sub> &nbsp;= '+(ins.join(' + ')||'0')+' = '+f1(tin)+' A<br>ΣI<sub>out</sub> = '+(outs.join(' + ')||'0')+' = '+f1(tout)+' A &nbsp;✓';
+  $('#j-d').innerHTML=dm<0.05?'Wire D carries no current – A, B and C already balance.':'Wire D must carry '+f1(dm)+' A '+(dIn>0?'<u>into</u>':'<u>out of</u>')+' the junction.';}
+
+/* ---------- Second law: simple loop ---------- */
+drawLoop($('#s-svg'),{left:[{type:'cell',cw:true,name:'E',val:'12 V'}],right:[{type:'res',name:'R₁',val:'4 Ω'}],bottom:[{type:'res',name:'R₂',val:'2 Ω'}]},{arrow:'cw',arrowLabel:'I',flow:2});
+
+/* ---------- Second law: explorer ---------- */
+var X={E:[12,2,0],s:[1,1,1],R:[2,2,6]};
+var PRE=[{E:[12,0,0],s:[1,1,1],R:[2,6,3]},{E:[12,2,0],s:[1,1,1],R:[2,2,6]},{E:[8,4,3],s:[1,1,-1],R:[2,2,1]},{E:[12,0,8],s:[1,1,1],R:[4,8,5]}];
+var xd=null,WK=null;
+(function(){var names=['Branch 1 (left)','Branch 2 (right)','Branch 3 (middle)'];
+  $('#x-ctl').innerHTML=[0,2,1].map(function(k){return '<div class="kh-br"><div class="kh-brh"><span>'+names[k]+'</span><button class="kh-btn ghost kh-sm" id="xf'+k+'"></button></div>'+
+    '<div class="kh-ctl"><label>E'+sub[k]+' <b id="xev'+k+'"></b></label><input type="range" min="0" max="12" step="0.5" id="xe'+k+'"></div>'+
+    '<div class="kh-ctl"><label>R'+sub[k]+' <b id="xrv'+k+'"></b></label><input type="range" min="1" max="20" step="1" id="xr'+k+'"></div></div>';}).join('');
+  [0,1,2].forEach(function(k){$('#xe'+k).oninput=function(e){X.E[k]=+e.target.value;xRender();};$('#xr'+k).oninput=function(e){X.R[k]=+e.target.value;xRender();};$('#xf'+k).onclick=function(){X.s[k]*=-1;xRender();};});
+  $$('[data-pre]').forEach(function(b){b.onclick=function(){var p=PRE[+b.dataset.pre];X={E:p.E.slice(),s:p.s.slice(),R:p.R.slice()};xSync();xRender();};});
+  ['#x-flow','#x-pot','#x-sol'].forEach(function(id){$(id).onchange=xRender;});
+  $('#x-w1').onclick=function(){wStart('loop1');};$('#x-w2').onclick=function(){wStart('loop2');};$('#x-w3').onclick=function(){wStart('outer');};
+  $('#x-next').onclick=function(){if(WK&&WK.i<WK.st.length-1){WK.i++;wShow();}};
+  $('#x-sp').onclick=xSP;
+  xSync();xRender();})();
+function xSync(){[0,1,2].forEach(function(k){$('#xe'+k).value=X.E[k];$('#xr'+k).value=X.R[k];});}
+function xRender(){var p=X,sol=solveT3(p);
+  [0,1,2].forEach(function(k){$('#xev'+k).textContent=p.E[k]>0?fv(p.E[k])+' V':'no cell';$('#xrv'+k).textContent=fv(p.R[k])+' Ω';var f=$('#xf'+k);f.textContent=p.s[k]>0?'+ at top ⇅':'+ at bottom ⇅';f.disabled=!(p.E[k]>0);});
+  xd=drawT3($('#x-svg'),p);xd.arrows($('#x-sol').checked?sol:null);xd.flow(sol,$('#x-flow').checked);
+  var pot=$('#x-pot').checked,r=xd.potential(sol,pot);$('#x-leg').style.display=pot?'flex':'none';$('#x-lmin').textContent=f2(r.min)+' V';$('#x-lmax').textContent=f2(r.max)+' V';
+  var I=[sol.I[0],sol.I[1],-sol.I[2]],as=['↑','↑','↓'],rev=['↓','↓','↑'];
+  var cards=[0,1,2].map(function(k){var v=I[k],z=Math.abs(v)<0.005,neg=!z&&v<0;
+    return '<div class="kh-ic'+(neg?' neg':'')+'"><div class="kh-ich">I'+sub[k]+' <span>assumed '+as[k]+'</span></div><div class="kh-icv">'+f2(v)+' A</div><div class="kh-ics">'+(z?'No current at all!':neg?'Negative ⇒ really flows '+rev[k]:'Flows as assumed')+'</div></div>';}).join('');
+  var st=[0,1,2].filter(function(k){return p.E[k]>0;}).map(function(k){var up=sol.I[k];if(Math.abs(up)<0.005)return '<span class="kh-pill">E'+sub[k]+': no current through it</span>';
+    return up*p.s[k]>0?'<span class="kh-pill">E'+sub[k]+' is supplying energy</span>':'<span class="kh-pill warn">E'+sub[k]+' is being charged</span>';}).join('');
+  $('#x-res').innerHTML='<div class="kh-ics3">'+cards+'</div><div class="kh-cells">'+st+'</div><div class="kh-mini" style="margin-top:6px">p.d. between A and B: V<sub>A</sub> − V<sub>B</sub> = '+f2(sol.V)+' V. "Being charged" means current is forced in at the + terminal: energy is transferred <i>to</i> that cell.</div>';
+  $('#x-eq').innerHTML=t3Eq(p,sol);
+  WK=null;$('#x-next').disabled=true;$('#x-walk').innerHTML='<p class="kh-mini" style="margin-top:10px">Choose a loop above to begin.</p>';$('#x-spmsg').innerHTML='';
+}
+function buildWalk(name,p,sol){var Iv=[sol.I[0],sol.I[1],-sol.I[2]],st=[];
+  function cell(k,up){if(!(p.E[k]>0))return;var plusTop=p.s[k]>0,rise=up?plusTop:!plusTop,v=(rise?1:-1)*p.E[k];
+    st.push({k:k,t:'cell',v:v,txt:(up?'Up':'Down')+' through E'+sub[k]+', from '+(rise?'− to +':'+ to −')+': potential '+(rise?'rises':'falls')+' → <b>'+(rise?'+':'−')+'E'+sub[k]+'</b> = '+sg(v)+' V'});}
+  function res(k,up){var assumedUp=k<2,withI=up===assumedUp,v=(withI?-1:1)*Iv[k]*p.R[k];
+    st.push({k:k,t:'res',v:v,txt:(up?'Up':'Down')+' through R'+sub[k]+', '+(withI?'in the same direction as':'against')+' I'+sub[k]+' → <b>'+(withI?'−':'+')+'I'+sub[k]+'R'+sub[k]+'</b> = '+(withI?'−':'+')+'('+f2(Iv[k])+')('+fv(p.R[k])+') = '+sg(v)+' V'});}
+  if(name==='loop1'){res(0,true);cell(0,true);cell(2,false);res(2,false);}
+  if(name==='loop2'){res(1,true);cell(1,true);cell(2,false);res(2,false);}
+  if(name==='outer'){res(0,true);cell(0,true);cell(1,false);res(1,false);}
+  return st;}
+function wStart(name){var sol=solveT3(X);WK={name:name,st:buildWalk(name,X,sol),i:-1};xd.hl(name);xd.focus(null);wShow();}
+function wShow(){var nm={loop1:'loop 1 (left)',loop2:'loop 2 (right)',outer:'the outer loop'}[WK.name];
+  var h='<p style="margin-top:10px">Start at <b>B</b> and walk '+nm+'. Any direction works – here we go up the outside branch first.</p><ol class="kh-wl">',tot=0;
+  for(var j=0;j<=WK.i;j++){var s=WK.st[j];tot+=s.v;h+='<li>'+s.txt+'<span class="kh-run">running total Σ = '+sg(tot)+' V</span></li>';}
+  h+='</ol>';
+  if(WK.i===WK.st.length-1)h+='<div class="kh-note v">Back at B. Total = <b>'+f2(tot)+' V</b> ✓ You finish at the potential you started from – every joule per coulomb gained in a cell is transferred in a resistor (or to another cell).</div>';
+  $('#x-walk').innerHTML=h;$('#x-next').disabled=WK.i>=WK.st.length-1;
+  if(WK.i>=0){var s2=WK.st[WK.i];xd.focus(s2.k,s2.t);}else xd.focus(null);}
+function xSP(){var nc=X.E.filter(function(e){return e>0;}).length,m;
+  if(nc===0)m='No cells – nothing flows at all. Add an e.m.f.!';
+  else if(nc===1)m='With only <b>one</b> cell you <i>can</i> still use the old rules: the two cell-free branches are in parallel, and that combination is in series with the cell\'s branch. Kirchhoff gives the same answer. Now add a second cell and press this button again…';
+  else m='<b>Stuck!</b> R₁ and R₃ are not in series (a junction sits between them) and they are not in parallel (a cell sits in branch '+(X.E[0]>0?'1':'2')+'). With cells in '+nc+' different branches, there is simply no way to combine the resistors. Kirchhoff\'s second law doesn\'t care: one equation per loop – see "The three equations" below.';
+  $('#x-spmsg').innerHTML='<div class="kh-note'+(nc>1?' warn':'')+'">'+m+'</div>';}
+
+/* ---------- Sign Sprint ---------- */
+var SP={on:false,score:0,best:store.get('kh-sprint-best',0),t:0,cur:null,timer:null};
+function spStat(){$('#sp-stat').textContent=(SP.on?'Time '+SP.t.toFixed(1)+' s · ':'')+'Score '+SP.score+' · Best '+SP.best;}
+function spNew(){var type=Math.random()<.5?'cell':'res',tr=pick([1,-1]),pr=pick([true,false]),cd=pick([1,-1]);
+  SP.cur={ans:type==='cell'?(pr===(tr===1)?'+E':'−E'):(tr===cd?'−IR':'+IR')};
+  var s=svgIn($('#sp-svg'),320,130);var g=E('g',{},s);
+  series(g,20,70,300,70,[{type:type,t:.5,plusToEnd:pr}]);
+  E('line',{x1:115,y1:28,x2:205,y2:28,'class':'kh-walk'},g);arrowHead(g,tr>0?208:112,28,tr,0,'kh-arr-v',9);T(g,160,12,'you walk','kh-qlbl');
+  if(type==='res'){E('line',{x1:128,y1:112,x2:192,y2:112,'class':'kh-iarrow'},g);arrowHead(g,cd>0?196:124,112,cd,0,'kh-arr-a',9);T(g,cd>0?112:208,112,'I','kh-cur');}
+  if(type==='cell')T(g,160,112,'cell','kh-vtag');}
+function spIdle(){var s=svgIn($('#sp-svg'),320,130);T(E('g',{},s),160,65,'Press Start','kh-arcl');}
+$$('.kh-spbtns button').forEach(function(b){b.onclick=function(){if(!SP.on)return;var ok=b.dataset.a===SP.cur.ans,f=$('#sp-svg');if(ok)SP.score++;
+  f.classList.remove('ok','bad');void f.offsetWidth;f.classList.add(ok?'ok':'bad');setTimeout(function(){f.classList.remove('ok','bad');},260);spNew();spStat();};});
+$('#sp-go').onclick=function(){if(SP.on)return;SP.on=true;SP.score=0;SP.t=30;$$('.kh-spbtns button').forEach(function(b){b.disabled=false;});$('#sp-go').disabled=true;spNew();spStat();
+  SP.timer=setInterval(function(){SP.t=Math.max(0,SP.t-0.1);if(SP.t<=0){clearInterval(SP.timer);SP.on=false;if(SP.score>SP.best){SP.best=SP.score;store.set('kh-sprint-best',SP.best);}
+    $$('.kh-spbtns button').forEach(function(b){b.disabled=true;});$('#sp-go').disabled=false;$('#sp-go').textContent='Play again';
+    var s=svgIn($('#sp-svg'),320,130);var g=E('g',{},s);T(g,160,52,'Time! Score: '+SP.score,'kh-arcl');T(g,160,84,SP.score>=SP.best&&SP.score>0?'New personal best!':'Best: '+SP.best,'kh-vtag');}spStat();},100);};
+spIdle();spStat();
+
+/* ---------- Worked examples ---------- */
+var WE=[
+ {tag:'First law',title:'Example 1 · Two junctions',draw:function(h){drawNet(h,{a:3.0,b:1.5,c:0.8,e:1.2});},steps:[
+  {h:'Junction P has only one unknown, so start there.<span class="m">In: 3.0 + 1.5 = 4.5 A&nbsp;&nbsp; Out: 0.8 A + I₁</span>'},
+  {h:'Apply the first law at P.<span class="m">4.5 = 0.8 + I₁ ⇒ I₁ = 3.7 A</span>'},
+  {h:'Carry I₁ over to junction Q.<span class="m">In: I₁ = 3.7 A&nbsp;&nbsp; Out: 1.2 A + I₂ ⇒ I₂ = 2.5 A</span>'},
+  {h:'Check the whole network: total entering = total leaving.<span class="m">3.0 + 1.5 = 4.5 A&nbsp;&nbsp;and&nbsp;&nbsp;0.8 + 1.2 + 2.5 = 4.5 A ✓</span>'}]},
+ {tag:'Second law · 1 loop',title:'Example 2 · Opposing cells',draw:function(h){return drawLoop(h,{left:[{type:'cell',cw:true,name:'E₁',val:'9 V'}],right:[{type:'cell',cw:false,name:'E₂',val:'3 V'}],top:[{type:'res',name:'R₁',val:'2 Ω'}],bottom:[{type:'res',name:'R₂',val:'4 Ω'}]},{arrow:'cw'});},steps:[
+  {h:'Choose a direction for the current: clockwise. If the choice is wrong, the answer simply comes out negative.'},
+  {hl:'loop',h:'Walk clockwise from the top-left corner and write down each change in potential.<span class="m">R₁ (with I): −2I<br>E₂ (+ to −): −3<br>R₂ (with I): −4I<br>E₁ (− to +): +9</span>'},
+  {hl:'loop',h:'Set the total to zero and solve.<span class="m">9 − 3 − 2I − 4I = 0 ⇒ 6 = 6I ⇒ I = 1.0 A</span>'},
+  {hl:'loop',h:'Interpret it. Positive, so the current is clockwise. Current is forced into the 3 V cell at its + terminal – <b>it is being charged</b>. Equivalently: ΣE = ΣIR gives 9 − 3 = 1.0 × (2 + 4) ✓'}]},
+ {tag:'Both laws · 2 loops',title:'Example 3 · Two cells, two loops',t3:{E:[12,2,0],s:[1,1,1],R:[2,2,6]},steps:[
+  {h:'Label the currents with arrows (any guess is fine): I₁ up the left branch, I₂ up the right branch, I₃ down the middle. The first law at A gives<span class="m">I₃ = I₁ + I₂</span>'},
+  {h:'Loop 1 (left): up R₁ (−2I₁), up E₁ (+12), down R₃ (−6I₃).<span class="m">12 = 2I₁ + 6I₃ = 2I₁ + 6(I₁ + I₂)<br>12 = 8I₁ + 6I₂</span>',hl:'loop1'},
+  {h:'Loop 2 (right): up R₂ (−2I₂), up E₂ (+2), down R₃ (−6I₃).<span class="m">2 = 2I₂ + 6(I₁ + I₂)<br>2 = 6I₁ + 8I₂</span>',hl:'loop2'},
+  {hl:'both',h:'Solve simultaneously: multiply the first by 4 and the second by 3, then subtract.<span class="m">48 = 32I₁ + 24I₂<br>&nbsp;6 = 18I₁ + 24I₂<br>42 = 14I₁ ⇒ I₁ = 3.0 A<br>I₂ = (12 − 24) ÷ 6 = −2.0 A&nbsp;&nbsp; I₃ = 1.0 A</span>'},
+  {h:'I₂ is <b>negative</b>: 2.0 A really flows <i>down</i> through E₂, in at its + terminal. The 12 V cell is charging the 2 V cell. Check with the outer loop:<span class="m">12 − 2 = 2I₁ − 2I₂ = 6 + 4 = 10 ✓</span>',hl:'outer'}]},
+ {tag:'Both laws · 2 loops',title:'Example 4 · Three cells, one reversed',t3:{E:[8,4,3],s:[1,1,-1],R:[2,2,1]},steps:[
+  {h:'Same labels as before: I₁ up, I₂ up, I₃ down, so<span class="m">I₃ = I₁ + I₂</span>Note E₃ has its + terminal at the <b>bottom</b>.'},
+  {h:'Loop 1 (left): up R₁ (−2I₁), up E₁ (+8), down E₃ – going down we pass from − to +, so +3 – then down R₃ (−1·I₃).<span class="m">8 + 3 = 2I₁ + I₃ ⇒ 11 = 3I₁ + I₂</span>',hl:'loop1'},
+  {h:'Loop 2 (right): up R₂ (−2I₂), up E₂ (+4), down E₃ (+3), down R₃ (−I₃).<span class="m">4 + 3 = 2I₂ + I₃ ⇒ 7 = I₁ + 3I₂</span>',hl:'loop2'},
+  {hl:'both',h:'Solve by substitution.<span class="m">I₂ = 11 − 3I₁<br>7 = I₁ + 33 − 9I₁ ⇒ 8I₁ = 26<br>I₁ = 3.25 A, I₂ = 1.25 A, I₃ = 4.50 A</span>'},
+  {h:'Three cells, two loops, a few lines of algebra – and every current found, with its direction. No amount of series/parallel combining can do this. The p.d. across R₃ is 4.50 V, and V<sub>A</sub> − V<sub>B</sub> = 8 − 3.25 × 2 = 1.50 V.',hl:'both'}]}
+];
+(function(){var box=$('#we');WE.forEach(function(ex,n){var c=document.createElement('div');c.className='kh-card';
+  c.innerHTML='<div class="kh-chh"><span class="kh-pill">'+ex.tag+'</span><h2>'+ex.title+'</h2></div><div class="kh-split"><div class="kh-fig" data-d></div><div><ol class="kh-steps"></ol><div class="kh-row"><button class="kh-btn" data-a="n">Next step ▸</button><button class="kh-btn ghost" data-a="all">Show all</button><button class="kh-btn ghost" data-a="r">Reset</button></div></div></div>';
+  box.appendChild(c);var host=c.querySelector('[data-d]'),d=null;
+  if(ex.t3){d=drawT3(host,ex.t3);d.arrows(null);}else{var dl=ex.draw(host);if(dl&&dl.hl)d={hl:function(n){dl.hl(n);},arrows:function(){}};}
+  var i=0,ol=c.querySelector('ol'),nx=c.querySelector('[data-a=n]');
+  function show(){ol.innerHTML=ex.steps.slice(0,i).map(function(s){return '<li>'+s.h+'</li>';}).join('');nx.disabled=i>=ex.steps.length;
+    if(d){var s=i?ex.steps[i-1]:null;d.hl(s&&s.hl);if(ex.t3&&i===ex.steps.length){d.arrows(solveT3(ex.t3));}else d.arrows(null);}}
+  nx.onclick=function(){if(i<ex.steps.length){i++;show();}};
+  c.querySelector('[data-a=all]').onclick=function(){i=ex.steps.length;show();};
+  c.querySelector('[data-a=r]').onclick=function(){i=0;show();};show();});})();
+
+/* ---------- Challenges ---------- */
+var DIRJ=['into the junction','out of the junction'],DIRL=['clockwise','anticlockwise'],DIRV=['upwards (towards A)','downwards (towards B)'];
+function gT3(gen,ok){var p,sol;for(var n=0;n<6000;n++){p=gen();sol=solveT3(p);if(ok(p,sol))break;}return {p:p,sol:sol};}
+var LV=[
+ {t:'Junction warm-up',tag:'First law',gen:function(){var v,d,x;do{v=[r1(.5,5),r1(.5,5),r1(.5,5)];d=[pick([1,-1]),pick([1,-1]),pick([1,-1])];x=Math.round(-(v[0]*d[0]+v[1]*d[1]+v[2]*d[2])*10)/10;}while(Math.abs(x)<.3);
+   var ins=[],outs=[];v.forEach(function(a,i){(d[i]>0?ins:outs).push(a);});var sm=function(a){return a.reduce(function(s,b){return s+b;},0);};
+   return {draw:function(h){drawJ(h,v.map(function(a,i){return {label:f1(a)+' A',dir:d[i]};}).concat([{label:'I = ?',dir:0,q:true}]));},
+    q:'Three of the currents at junction X are shown. Find the size of the current in wire D and the direction it flows.',
+    parts:[{label:'Current in D',unit:'A',ans:Math.abs(x),dir:{opts:DIRJ,ans:x>0?0:1}}],
+    hint:'Add up everything flowing in. Add up everything flowing out. The difference has to travel along D.',
+    sol:'<p>Total in = '+(ins.map(f1).join(' + ')||'0')+' = <b>'+f1(sm(ins))+' A</b><br>Total out = '+(outs.map(f1).join(' + ')||'0')+' = <b>'+f1(sm(outs))+' A</b></p><p>Charge can\'t pile up at X, so the difference, <b>'+f1(Math.abs(x))+' A</b>, must flow <b>'+(x>0?'into':'out of')+'</b> the junction along D.</p>'};}},
+ {t:'Two junctions',tag:'First law',gen:function(){var a,b,c,e,x,y;do{a=r1(1,5);b=r1(.5,4);c=r1(.3,3);x=Math.round((a+b-c)*10)/10;e=r1(.2,4);y=Math.round((x-e)*10)/10;}while(x<1||y<.3);
+   return {draw:function(h){drawNet(h,{a:a,b:b,c:c,e:e});},q:'Find the current I₁ flowing from P to Q, and the current I₂.',
+    parts:[{label:'I₁',unit:'A',ans:x},{label:'I₂',unit:'A',ans:y}],
+    hint:'Start at junction P – it has only one unknown. Then carry that answer over to Q.',
+    sol:'<p><b>At P:</b> in = '+f1(a)+' + '+f1(b)+' = '+f1(a+b)+' A; out = '+f1(c)+' A + I₁ ⇒ I₁ = <b>'+f1(x)+' A</b></p><p><b>At Q:</b> in = I₁ = '+f1(x)+' A; out = '+f1(e)+' A + I₂ ⇒ I₂ = <b>'+f1(y)+' A</b></p><p>Check: entering the network '+f1(a+b)+' A = leaving '+f1(c)+' + '+f1(e)+' + '+f1(y)+' = '+f1(c+e+y)+' A ✓</p>'};}},
+ {t:'Opposing cells',tag:'Second law · 1 loop',gen:function(){var E1,E2,R1,R2,I,n=0;do{E1=ri(2,12);E2=ri(2,12);R1=pick(RL);R2=pick(RL);I=(E1-E2)/(R1+R2);n++;}while((E1===E2||Math.abs(I)<.1||!nice(I))&&n<5000);
+   return {draw:function(h){drawLoop(h,{left:[{type:'cell',cw:true,name:'E₁',val:E1+' V'}],right:[{type:'cell',cw:false,name:'E₂',val:E2+' V'}],top:[{type:'res',name:'R₁',val:R1+' Ω'}],bottom:[{type:'res',name:'R₂',val:R2+' Ω'}]});},
+    q:'The two cells push in opposite directions round this loop. Find the size of the current and its direction.',
+    parts:[{label:'Current',unit:'A',ans:Math.abs(I),dir:{opts:DIRL,ans:I>0?0:1}}],
+    hint:'Take clockwise as positive. E₁ pushes clockwise (+E₁) and E₂ pushes anticlockwise (−E₂). Then ΣE = I × ΣR.',
+    sol:'<p>Take clockwise as positive and walk round: +E₁ − E₂ − IR₁ − IR₂ = 0</p><p>'+E1+' − '+E2+' = I('+R1+' + '+R2+') ⇒ '+fv(E1-E2)+' = '+(R1+R2)+'I ⇒ I = <b>'+f2(I)+' A</b></p><p>'+(I>0?'Positive, so the current really is clockwise.':'Negative, so the current actually flows anticlockwise: '+f2(-I)+' A.')+' The '+(I>0?'E₂':'E₁')+' cell has current forced in at its + terminal – it is being charged.</p>'};}},
+ {t:'Three cells, one loop',tag:'Second law · 1 loop',gen:function(){var Ev,c,R1,R2,net,I,V,n=0;do{Ev=[ri(1,12),ri(1,12),ri(1,12)];c=[pick([1,-1]),pick([1,-1]),pick([1,-1])];R1=pick(RL);R2=pick(RL);net=Ev[0]*c[0]+Ev[1]*c[1]+Ev[2]*c[2];I=net/(R1+R2);V=Math.abs(I)*R2;n++;}while(((c[0]===c[1]&&c[1]===c[2])||Math.abs(I)<.1||!nice(V)||!nice(I))&&n<6000);
+   var term=function(i){return (c[i]>0?'+':'−')+Ev[i];};
+   return {draw:function(h){drawLoop(h,{top:[{type:'cell',t:.3,cw:c[0]>0,name:'E₁',val:Ev[0]+' V'},{type:'res',t:.7,name:'R₁',val:R1+' Ω'}],right:[{type:'cell',cw:c[1]>0,name:'E₂',val:Ev[1]+' V'}],bottom:[{type:'res',name:'R₂',val:R2+' Ω'}],left:[{type:'cell',cw:c[2]>0,name:'E₃',val:Ev[2]+' V'}]});},
+    q:'Find the potential difference across R₂.',
+    parts:[{label:'p.d. across R₂',unit:'V',ans:V}],
+    hint:'Find the net e.m.f. round the loop first – check each cell\'s orientation carefully. Then I = ΣE ÷ ΣR, and V = IR₂.',
+    sol:'<p>Take clockwise as positive. A cell counts +E if going clockwise takes you from − to +, otherwise −E.</p><p>ΣE = '+term(0)+' '+term(1)+' '+term(2)+' = <b>'+fv(net)+' V</b><br>ΣR = '+R1+' + '+R2+' = '+(R1+R2)+' Ω</p><p>I = '+fv(net)+' ÷ '+(R1+R2)+' = '+f2(I)+' A ('+(I>0?'clockwise':'anticlockwise')+')</p><p>p.d. across R₂ = |I| × R₂ = '+f2(Math.abs(I))+' × '+R2+' = <b>'+f2(V)+' V</b></p>'};}},
+ {t:'Two loops',tag:'Both laws · 2 loops',gen:function(){var r=gT3(function(){return {E:[ri(2,12),ri(2,12),0],s:[1,pick([1,1,-1]),1],R:[pick(RL),pick(RL),pick(RL)]};},function(p,s){var i3=-s.I[2];return Math.abs(i3)>=.1&&nice(i3)&&nice(s.I[0])&&nice(s.I[1]);});
+   var p=r.p,sol=r.sol,I3=-sol.I[2];
+   return {draw:function(h){drawT3(h,p).arrows(null);},q:'Find the size of the current through R₃ and the direction it flows.',
+    parts:[{label:'Current in R₃',unit:'A',ans:Math.abs(I3),dir:{opts:DIRV,ans:I3>0?1:0}}],
+    hint:'Use the arrows: I₃ = I₁ + I₂. Write one second-law equation for the left loop and one for the right loop, then solve them simultaneously.',
+    sol:t3Eq(p,sol)+'<p>I₃ = '+f2(I3)+' A ⇒ <b>'+f2(Math.abs(I3))+' A '+(I3>0?'downwards (A → B)':'upwards (B → A)')+'</b>'+(I3<0?' – the negative sign means it flows against the assumed arrow.':'')+'</p>'};}},
+ {t:'The null point',tag:'Both laws · 2 loops',gen:function(){var E1,R1,R2,R3,E3,n=0;do{E1=ri(3,12);R1=pick(RL);R2=pick(RL);R3=pick(RL);E3=E1*R2/(R1+R2);n++;}while((!nice(E3)||R1===R2)&&n<5000);
+   var p={E:[E1,0,0],s:[1,1,1],R:[R1,R2,R3]};
+   return {draw:function(h){drawT3(h,p,{unknownE:2});},q:'E₃ is adjusted until no current flows through R₃. Find E₃.',
+    parts:[{label:'E₃',unit:'V',ans:E3}],
+    hint:'No current through R₃ means no p.d. across R₃, so V_A − V_B must equal E₃. With nothing flowing in the middle, E₁, R₁ and R₂ form one simple loop.',
+    sol:'<p>With no current in the middle branch, E₁ drives a single current round the outer loop:</p><p>I = E₁ ÷ (R₁ + R₂) = '+E1+' ÷ '+(R1+R2)+' A</p><p>No current in R₃ ⇒ no p.d. across it, so E₃ must equal V<sub>A</sub> − V<sub>B</sub>, which is the p.d. across R₂:</p><p>E₃ = IR₂ = E₁R₂ ÷ (R₁ + R₂) = '+E1+' × '+R2+' ÷ '+(R1+R2)+' = <b>'+f2(E3)+' V</b></p><p class="kh-mini">This "balance" idea is the principle of the potentiometer: at the null point no current is drawn from E₃.</p>'};}},
+ {t:'Boss: three cells, two loops',tag:'Both laws · 2 loops',gen:function(){var r=gT3(function(){return {E:[ri(2,12),ri(2,12),ri(1,9)],s:[pick([1,-1]),pick([1,-1]),pick([1,-1])],R:[pick(RL),pick(RL),pick(RL)]};},
+     function(p,s){return !(p.s[0]===p.s[1]&&p.s[1]===p.s[2])&&Math.abs(s.I[1])>=.1&&Math.abs(s.I[2])>=.1&&nice(s.I[0])&&nice(s.I[1])&&nice(s.I[2]);});
+   var p=r.p,sol=r.sol,I2=sol.I[1],I3=-sol.I[2],V3=Math.abs(I3)*p.R[2];
+   return {draw:function(h){drawT3(h,p).arrows(null);},q:'Find (a) the current through R₂ and its direction, and (b) the potential difference across R₃.',
+    parts:[{label:'(a) Current in R₂',unit:'A',ans:Math.abs(I2),dir:{opts:DIRV,ans:I2>0?0:1}},{label:'(b) p.d. across R₃',unit:'V',ans:V3}],
+    hint:'Three cells, two loops. Use I₃ = I₁ + I₂, and watch the cell orientations: going down through a cell with + at the top is −E; with + at the bottom it is +E.',
+    sol:t3Eq(p,sol)+'<p>(a) I₂ = '+f2(I2)+' A ⇒ <b>'+f2(Math.abs(I2))+' A '+(I2>0?'upwards':'downwards')+'</b> through R₂'+(I2<0?' (negative: against the assumed arrow)':'')+'.</p><p>(b) p.d. across R₃ = |I₃| × R₃ = '+f2(Math.abs(I3))+' × '+p.R[2]+' = <b>'+f2(V3)+' V</b></p>'};}}
+];
+var PROG=store.get('kh-prog',null);if(!PROG||PROG.length!==LV.length)PROG=LV.map(function(){return {s:false,st:0};});
+var UNL=store.get('kh-unlock',false),CUR=null,CI=0;
+function unlocked(i){return UNL||i===0||PROG[i-1].s;}
+function stars(n){var s='';for(var i=0;i<3;i++)s+=i<n?'★':'<i>★</i>';return s;}
+function renderList(){$('#lv-list').innerHTML=LV.map(function(L,i){var u=unlocked(i);return '<button class="kh-lv'+(i===CI?' on':'')+(PROG[i].s?' done':'')+'" data-l="'+i+'"'+(u?'':' disabled')+'><span class="kh-lvn">'+(u?i+1:'🔒')+'</span><span>'+L.t+'</span><span class="kh-stars">'+(PROG[i].s?stars(PROG[i].st):'')+'</span></button>';}).join('');
+  $$('[data-l]').forEach(function(b){b.onclick=function(){loadLevel(+b.dataset.l);};});
+  var tot=PROG.reduce(function(a,p){return a+p.st;},0);$('#lv-bar').style.width=(100*PROG.filter(function(p){return p.s;}).length/LV.length)+'%';
+  $('#lv-total').textContent=tot+' / '+LV.length*3+' stars';}
+function loadLevel(i){CI=i;var L=LV[i];CUR=L.gen();CUR.tries=0;CUR.hints=0;CUR.rev=false;CUR.done=false;
+  $('#ch-title').textContent='Level '+(i+1)+' · '+L.t;$('#ch-tag').textContent=L.tag;CUR.draw($('#ch-svg'));$('#ch-q').textContent=CUR.q;
+  $('#ch-parts').innerHTML=CUR.parts.map(function(p,j){return '<div class="kh-part"><span>'+p.label+'</span><input type="text" inputmode="decimal" autocomplete="off" id="ca'+j+'" placeholder="?"><span class="u">'+p.unit+'</span>'+(p.dir?'<select id="cd'+j+'"><option value="-1">direction…</option>'+p.dir.opts.map(function(o,k){return '<option value="'+k+'">'+o+'</option>';}).join('')+'</select>':'')+'</div>';}).join('');
+  $$('#ch-parts input').forEach(function(inp){inp.onkeydown=function(e){if(e.key==='Enter')check();};});
+  $('#ch-fb').innerHTML='';$('#ch-solbox').innerHTML='';$('#ch-hint').disabled=false;$('#ch-check').disabled=false;renderList();}
+function fb(cls,h){$('#ch-fb').innerHTML='<div class="kh-fb '+cls+'">'+h+'</div>';}
+function check(){if(CUR.done)return;var allOk=true,msgs=[],blank=false;
+  CUR.parts.forEach(function(p,j){var raw=$('#ca'+j).value.trim().replace(',','.').replace('−','-');var v=parseFloat(raw);if(isNaN(v)){blank=true;allOk=false;return;}
+    var okV=Math.abs(Math.abs(v)-p.ans)<=0.012*p.ans+0.006,okD=true;
+    if(p.dir){var dv=+$('#cd'+j).value;if(dv<0){blank=true;allOk=false;return;}okD=dv===p.dir.ans;}
+    if(!(okV&&okD)){allOk=false;msgs.push(okV&&!okD?p.label+': the size is right – check the direction.':(!okV&&okD&&p.dir?p.label+': right direction, but the size isn\'t.':p.label+': not quite.'));}});
+  if(blank&&!msgs.length){fb('bad','Fill in a number'+(CUR.parts.some(function(p){return p.dir;})?' and choose a direction':'')+' for every part.');return;}
+  if(allOk){CUR.done=true;var st=CUR.rev?0:Math.max(1,3-CUR.hints-CUR.tries);var P=PROG[CI];P.s=true;P.st=Math.max(P.st,st);store.set('kh-prog',PROG);
+    fb('ok',(CUR.rev?'Correct – now try a fresh set of numbers without the solution to earn stars.':'Correct! '+stars(st)+' earned.')+(CI<LV.length-1?' <button class="kh-btn green kh-sm" id="ch-nx" style="margin-left:8px">Next level →</button>':' 🏆 You\'ve beaten the boss level!'));
+    var nx=$('#ch-nx');if(nx)nx.onclick=function(){loadLevel(CI+1);};$('#ch-check').disabled=true;if(!CUR.rev)confetti();renderList();}
+  else{CUR.tries++;fb('bad',(msgs.join('<br>')||'Not quite.')+' <span style="font-weight:500">Try again'+(CUR.hints?'':', or take a hint')+'.</span>');}}
+function confetti(){var card=$('#ch-card'),cols=['#5a3cf0','#079a78','#f0a20f','#d92f62','#13213c'];
+  for(var i=0;i<46;i++){var sp=document.createElement('span');sp.className='kh-conf';sp.style.left=(20+Math.random()*60)+'%';sp.style.background=cols[i%cols.length];sp.style.setProperty('--dx',(Math.random()*300-150)+'px');sp.style.animationDelay=(Math.random()*.3)+'s';card.appendChild(sp);setTimeout(function(e){return function(){e.remove();};}(sp),2200);}}
+$('#ch-check').onclick=check;
+$('#ch-hint').onclick=function(){if(CUR.done)return;CUR.hints=1;$('#ch-hint').disabled=true;var h=$('#ch-fb');h.insertAdjacentHTML('afterbegin','<div class="kh-fb hint">💡 '+CUR.hint+'</div>');};
+$('#ch-sol').onclick=function(){CUR.rev=true;$('#ch-solbox').innerHTML='<div class="kh-solb"><h3>Full solution</h3>'+CUR.sol+'</div>';};
+$('#ch-new').onclick=function(){loadLevel(CI);};
+$('#lv-unlock').onclick=function(){UNL=!UNL;store.set('kh-unlock',UNL);$('#lv-unlock').textContent=UNL?'Re-lock levels':'Teacher: unlock all levels';renderList();};
+if(UNL)$('#lv-unlock').textContent='Re-lock levels';
+var first=0;for(var q=0;q<LV.length;q++){if(unlocked(q))first=q;}loadLevel(PROG[first].s&&first<LV.length-1&&unlocked(first+1)?first+1:first);
+})();
+</script>
+</body>
+</html>
