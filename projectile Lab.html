@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projectile Lab — Projectiles &amp; SUVAT</title>
+<style>
+#pl-app{--ink:#0f2b2e;--muted:#557072;--bg:#eef5f2;--panel:#fff;--soft:#f4f9f7;--line:#d3e2dd;--acc:#ff6b2c;--acc2:#16968a;--vx:#2f5bd8;--vy:#e8590c;--ok:#0f8a5f;
+  font-family:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:900px;box-sizing:border-box;padding:14px;line-height:1.45;font-size:15px;}
+#pl-app *{box-sizing:border-box;}
+#pl-app button,#pl-app select,#pl-app input{font:inherit;color:inherit;}
+#pl-app .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-bottom:12px;}
+#pl-app .brand{display:flex;align-items:center;gap:10px;}
+#pl-app .logo{width:40px;height:40px;border-radius:50%;background:#0f2b2e;position:relative;overflow:hidden;}
+#pl-app .logo::before{content:"";position:absolute;left:5px;bottom:6px;width:30px;height:30px;border:3px dashed #ff6b2c;border-radius:50%;border-bottom-color:transparent;border-left-color:transparent;transform:rotate(-45deg);}
+#pl-app .logo::after{content:"";position:absolute;right:7px;top:16px;width:8px;height:8px;border-radius:50%;background:#7fe3c8;}
+#pl-app h1{font-family:"Gill Sans","Gill Sans MT","Trebuchet MS",sans-serif;font-size:23px;margin:0;letter-spacing:.01em;font-weight:700;}
+#pl-app .sub{font-size:12.5px;color:var(--muted);margin:0;}
+#pl-app .tabs{display:flex;gap:4px;background:#dbe9e4;padding:4px;border-radius:12px;flex-wrap:wrap;}
+#pl-app .tab{border:0;background:transparent;padding:7px 13px;border-radius:9px;cursor:pointer;font-weight:650;color:#38575a;font-size:14px;}
+#pl-app .tab.on{background:#fff;color:var(--acc);box-shadow:0 1px 4px rgba(15,43,46,.12);}
+#pl-app .xpchip{margin-left:auto;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 12px;}
+#pl-app .xpchip b{font-size:13px;}
+#pl-app .xpbar{width:110px;height:7px;border-radius:9px;background:#e3eeea;overflow:hidden;}
+#pl-app .xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));width:0;}
+#pl-app .streak{font-size:12.5px;color:var(--muted);}
+#pl-app .view{display:none;}
+#pl-app .view.on{display:block;}
+#pl-app .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;}
+#pl-app .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;}
+#pl-app .card h3{margin:0 0 8px;font-size:13.5px;text-transform:uppercase;letter-spacing:.07em;color:#2f5457;font-weight:800;}
+#pl-app .stack{display:flex;flex-direction:column;gap:12px;}
+#pl-app .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+#pl-app .lbl{font-size:12.5px;color:var(--muted);font-weight:650;}
+#pl-app .ctl{display:grid;grid-template-columns:86px 1fr 74px;gap:6px;align-items:center;margin:6px 0;}
+#pl-app .ctl input[type=number]{width:100%;padding:4px 6px;border:1px solid var(--line);border-radius:8px;font-family:"Cascadia Mono",Consolas,monospace;font-size:13px;text-align:right;}
+#pl-app input[type=range]{width:100%;accent-color:var(--acc);}
+#pl-app select{width:100%;padding:6px 8px;border-radius:9px;border:1px solid var(--line);background:#fff;}
+#pl-app .btn{border:1px solid var(--line);background:#fff;padding:7px 12px;border-radius:10px;cursor:pointer;font-weight:650;font-size:13.5px;}
+#pl-app .btn:hover{border-color:#a9c2bb;}
+#pl-app .btn.pri{background:var(--acc);border-color:var(--acc);color:#fff;}
+#pl-app .btn.teal{background:var(--acc2);border-color:var(--acc2);color:#fff;}
+#pl-app .btn.dark{background:var(--ink);border-color:var(--ink);color:#fff;}
+#pl-app .btn.sm{padding:4px 9px;font-size:12.5px;}
+#pl-app .btn[disabled]{opacity:.45;cursor:not-allowed;}
+#pl-app .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;flex-wrap:wrap;}
+#pl-app .seg button{border:0;background:#fff;padding:5px 10px;cursor:pointer;font-size:12.5px;font-weight:650;border-right:1px solid var(--line);}
+#pl-app .seg button:last-child{border-right:0;}
+#pl-app .seg button.on{background:var(--ink);color:#fff;}
+#pl-app canvas{display:block;width:100%;}
+#pl-app .world-cv{height:420px;border-radius:12px;}
+#pl-app .graph-cv{height:250px;border-radius:12px;background:#fff;cursor:crosshair;touch-action:none;}
+#pl-app .stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px;}
+#pl-app .stat{background:#0f2b2e;border-radius:10px;padding:7px 9px;color:#9ec2bd;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;}
+#pl-app .stat div{font-family:"Cascadia Mono",Consolas,monospace;color:#8ff0d2;font-size:18px;letter-spacing:0;text-transform:none;font-weight:600;white-space:nowrap;}
+#pl-app .stat small{color:#7fa39e;font-size:10.5px;text-transform:none;letter-spacing:0;font-weight:500;}
+#pl-app .note{font-size:12.5px;color:var(--muted);}
+#pl-app .msg{border-radius:10px;padding:8px 10px;font-size:13.5px;background:#e9f5f2;border:1px solid #c7e5dd;color:#124a44;margin-top:8px;}
+#pl-app .msg.warn{background:#fff2ea;border-color:#ffd3bb;color:#8a3410;}
+#pl-app .msg.good{background:#e6f8ef;border-color:#b9e8d0;color:#0b5e40;}
+#pl-app .calc{font-family:"Cascadia Mono",Consolas,monospace;font-size:12.5px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:6px;white-space:pre-wrap;}
+#pl-app .pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:#fff0e8;color:#b8430f;}
+#pl-app .qtext{margin:8px 0 12px;font-size:15.5px;}
+#pl-app .opts{display:grid;gap:8px;}
+#pl-app .opt{text-align:left;border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:14.5px;}
+#pl-app .opt:hover{border-color:#a9c2bb;}
+#pl-app .opt.right{background:#e6f8ef;border-color:#4bc493;}
+#pl-app .opt.wrong{background:#fff0ec;border-color:#f19a80;}
+#pl-app .ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+#pl-app .ans input{width:170px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-family:"Cascadia Mono",Consolas,monospace;}
+#pl-app .sol{margin-top:12px;border-left:4px solid var(--acc2);background:var(--soft);padding:10px 12px;border-radius:0 10px 10px 0;font-size:15px;}
+#pl-app .sol .stp{margin:3px 0;white-space:pre-wrap;}
+#pl-app .hint{font-size:13.5px;color:#5a3d00;background:#fff7e0;border:1px solid #f4dfa0;border-radius:10px;padding:8px 10px;margin-top:10px;}
+#pl-app .mastery{display:grid;grid-template-columns:160px 1fr 40px;gap:6px 10px;align-items:center;font-size:13px;}
+#pl-app .mbar{height:9px;border-radius:9px;background:#e3eeea;overflow:hidden;}
+#pl-app .mbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));}
+#pl-app .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+#pl-app .badge{border:1px dashed #bcd3cc;border-radius:12px;padding:10px;text-align:center;font-size:12.5px;color:#88a09b;}
+#pl-app .badge .ic{font-size:24px;filter:grayscale(1);opacity:.45;}
+#pl-app .badge.got{border-style:solid;border-color:#ffc9ad;background:#fff7f2;color:var(--ink);}
+#pl-app .badge.got .ic{filter:none;opacity:1;}
+#pl-app .badge b{display:block;margin:3px 0 2px;font-size:13px;}
+#pl-app .toast{position:absolute;right:18px;top:70px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:12px;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(-8px);transition:all .3s;pointer-events:none;z-index:5;max-width:320px;}
+#pl-app .toast.show{opacity:1;transform:none;}
+#pl-app .levels{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;}
+#pl-app .lvcard{border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:#fff;cursor:pointer;text-align:left;}
+#pl-app .lvcard.on{border-color:var(--acc);box-shadow:0 0 0 2px rgba(255,107,44,.2);}
+#pl-app .lvcard.lock{opacity:.45;cursor:not-allowed;}
+#pl-app .lvcard b{display:block;font-size:13.5px;}
+#pl-app .lvcard span{font-size:12px;color:var(--muted);}
+#pl-app .stars{color:#f5a524;letter-spacing:2px;font-size:14px;}
+#pl-app .givens{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;}
+#pl-app .giv{font-family:"Cascadia Mono",Consolas,monospace;font-size:12.5px;background:#eef6f3;border:1px solid var(--line);border-radius:8px;padding:2px 8px;}
+#pl-app .suvat{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;}
+#pl-app .sv{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:10px;}
+#pl-app .sv b{font-family:"Gill Sans","Gill Sans MT","Trebuchet MS",sans-serif;font-size:24px;display:block;}
+#pl-app .sv span{font-size:12px;color:var(--muted);display:block;margin-bottom:6px;}
+#pl-app .sv input{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:9px;font-family:"Cascadia Mono",Consolas,monospace;}
+#pl-app .sv.found{background:#fff5ef;border-color:#ffc9ad;}
+#pl-app .eqs{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-top:10px;}
+#pl-app .eq{font-family:"Cascadia Mono",Consolas,monospace;font-size:13.5px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:7px 10px;}
+#pl-app .eq.use{border-color:var(--acc);background:#fff5ef;}
+#pl-app .eq small{display:block;font-family:"Segoe UI",system-ui,sans-serif;color:var(--muted);font-size:11.5px;}
+#pl-app .daily{display:flex;gap:6px;}
+#pl-app .daily i{width:26px;height:8px;border-radius:5px;background:#dfeae6;display:block;}
+#pl-app .daily i.d{background:var(--acc2);}
+#pl-app .daily i.x{background:#f3a58f;}
+#pl-app .kv{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px;}
+#pl-app .kv span:nth-child(even){font-family:"Cascadia Mono",Consolas,monospace;text-align:right;}
+#pl-app .guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;}
+#pl-app .guide p,#pl-app .guide li{font-size:14px;}
+#pl-app .guide ul{padding-left:18px;margin:6px 0;}
+#pl-app .eqbox{font-family:"Cascadia Mono",Consolas,monospace;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;margin:6px 0;}
+#pl-app .chk{display:flex;gap:4px 12px;flex-wrap:wrap;font-size:13px;}
+#pl-app .wrap-rel{position:relative;}
+@media (max-width:900px){#pl-app .grid{grid-template-columns:1fr;}#pl-app .stats{grid-template-columns:repeat(3,minmax(0,1fr));}#pl-app .xpchip{margin-left:0;}#pl-app .suvat{grid-template-columns:repeat(3,minmax(0,1fr));}#pl-app .world-cv{height:330px;}}
+</style>
+</head>
+<body style="margin:0">
+<div id="pl-app">
+  <div class="toast" id="pl-toast"></div>
+  <div class="hdr">
+    <div class="brand"><div class="logo"></div><div><h1>Projectile Lab</h1><p class="sub">Projectiles · independence of motion · SUVAT · air resistance</p></div></div>
+    <div class="tabs" id="pl-tabs">
+      <button class="tab on" data-v="lab">Launch lab</button>
+      <button class="tab" data-v="chal">Challenges</button>
+      <button class="tab" data-v="suvat">SUVAT solver</button>
+      <button class="tab" data-v="prac">Practice</button>
+      <button class="tab" data-v="prog">Progress</button>
+      <button class="tab" data-v="guide">Guide</button>
+    </div>
+    <div class="xpchip"><div><b id="pl-lvl">Level 1</b><div class="xpbar"><i id="pl-xpbar"></i></div></div><div class="streak" id="pl-xptext">0 XP</div></div>
+  </div>
+
+  <!-- LAB -->
+  <div class="view on" id="pl-v-lab">
+    <div class="grid">
+      <div class="stack">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px">
+            <h3 style="margin:0">Launch site</h3>
+            <div class="row"><span class="lbl">Playback</span><div class="seg" id="pl-play"><button data-s="0.25">¼×</button><button data-s="0.5">½×</button><button data-s="1" class="on">1×</button><button data-s="3">3×</button></div></div>
+          </div>
+          <canvas class="world-cv" id="pl-world"></canvas>
+          <div class="stats">
+            <div class="stat">Time of flight<div id="pl-s-t">—</div><small id="pl-s-t2">&nbsp;</small></div>
+            <div class="stat">Range<div id="pl-s-R">—</div><small id="pl-s-R2">&nbsp;</small></div>
+            <div class="stat">Max height<div id="pl-s-H">—</div><small id="pl-s-H2">above ground</small></div>
+            <div class="stat">Impact speed<div id="pl-s-v">—</div><small id="pl-s-v2">&nbsp;</small></div>
+            <div class="stat">Components<div id="pl-s-c" style="font-size:14px">—</div><small>u<sub>x</sub> · u<sub>y</sub> at launch</small></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px">
+            <h3 style="margin:0">Graph</h3>
+            <div class="seg" id="pl-gq"><button data-q="y" class="on">y–t</button><button data-q="x">x–t</button><button data-q="vy">v<sub>y</sub>–t</button><button data-q="vx">v<sub>x</sub>–t</button><button data-q="v">speed–t</button></div>
+          </div>
+          <canvas class="graph-cv" id="pl-graph"></canvas>
+          <p class="note" style="margin:6px 0 0">Drag across the graph. On a displacement graph the gradient is the velocity. On a velocity graph the gradient is the acceleration and the area underneath is the displacement.</p>
+          <div id="pl-ganal"></div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Launch</h3>
+          <div class="ctl"><span class="lbl">Angle θ</span><input type="range" id="pl-ang" min="0" max="90" step="0.5" value="40"><input type="number" id="pl-ang-n" min="0" max="90" step="0.5" value="40"></div>
+          <div class="ctl"><span class="lbl">Speed u / m s⁻¹</span><input type="range" id="pl-spd" min="0" max="50" step="0.1" value="15"><input type="number" id="pl-spd-n" min="0" max="50" step="0.1" value="15"></div>
+          <div class="ctl"><span class="lbl">Height h / m</span><input type="range" id="pl-hgt" min="0" max="60" step="0.5" value="0"><input type="number" id="pl-hgt-n" min="0" max="60" step="0.5" value="0"></div>
+          <span class="lbl">Where?</span>
+          <select id="pl-world-sel"><option value="9.81">Earth (g = 9.81 m s⁻²)</option><option value="10">Earth (g = 10 m s⁻², IGCSE)</option><option value="1.62">Moon (g = 1.62 m s⁻²)</option><option value="3.71">Mars (g = 3.71 m s⁻²)</option><option value="24.79">Jupiter (g = 24.79 m s⁻²)</option></select>
+          <div class="row" style="margin-top:8px"><label class="note"><input type="checkbox" id="pl-drag"> Air resistance</label>
+            <select id="pl-ball" style="width:auto;flex:1"><option value="tennis">Tennis ball</option><option value="foot">Football</option><option value="tt">Table-tennis ball</option><option value="shot">Shot put</option><option value="golf">Golf ball</option></select></div>
+          <div class="row" style="margin-top:10px"><button class="btn pri" id="pl-fire">🚀 Launch</button><button class="btn" id="pl-clear">Clear traces</button></div>
+          <div class="msg" id="pl-labmsg">Set an angle and speed, then launch. Earlier paths stay as faint traces so you can compare.</div>
+        </div>
+        <div class="card">
+          <h3>Show</h3>
+          <div class="chk">
+            <label><input type="checkbox" id="pl-o-vec" checked> velocity components</label>
+            <label><input type="checkbox" id="pl-o-strobe" checked> strobe every <select id="pl-o-si" style="width:auto;padding:1px 3px"><option value="0.1">0.1</option><option value="0.2" selected>0.2</option><option value="0.5">0.5</option></select> s</label>
+            <label><input type="checkbox" id="pl-o-shadow"> shadows on the axes</label>
+            <label><input type="checkbox" id="pl-o-pred"> no-air-resistance prediction</label>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Classic demonstrations</h3>
+          <div class="row" id="pl-demos">
+            <button class="btn sm" data-d="drop">Drop vs throw</button>
+            <button class="btn sm" data-d="comp">Complementary angles</button>
+            <button class="btn sm" data-d="sweep">Angle sweep</button>
+            <button class="btn sm" data-d="monkey">Monkey &amp; hunter</button>
+            <button class="btn sm" data-d="air">Air resistance</button>
+            <button class="btn sm" data-d="moon">Earth vs Moon</button>
+          </div>
+          <p class="note" id="pl-demonote" style="margin:8px 0 0">Each demonstration sets up the launches and runs them.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGES -->
+  <div class="view" id="pl-v-chal">
+    <div class="grid">
+      <div class="stack">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px"><h3 style="margin:0" id="pl-c-title">Challenge</h3><span class="stars" id="pl-c-stars"></span></div>
+          <canvas class="world-cv" id="pl-cworld"></canvas>
+          <div id="pl-c-brief" style="margin-top:10px"></div>
+        </div>
+        <div class="card" id="pl-c-solcard" style="display:none"></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Your shot</h3>
+          <div class="givens" id="pl-c-givens"></div>
+          <div id="pl-c-inputs"></div>
+          <div class="row" style="margin-top:8px"><button class="btn pri" id="pl-c-fire">🚀 Fire</button><button class="btn" id="pl-c-reset">Reset level</button><button class="btn" id="pl-c-sol">Show the physics</button></div>
+          <div id="pl-c-msg"></div>
+          <p class="note" style="margin:8px 0 0">★★★ hit with your first shot · ★★ within three shots · ★ any hit. Calculate first, then fire!</p>
+        </div>
+        <div class="card"><h3>Levels</h3><div class="levels" id="pl-levels"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUVAT -->
+  <div class="view" id="pl-v-suvat">
+    <div class="stack">
+      <div class="card">
+        <h3>SUVAT solver: enter any three values</h3>
+        <p class="note" style="margin:0 0 10px">Use one direction as positive. For something thrown upwards with up as positive, a = −9.81 m s⁻². Leave the unknowns blank.</p>
+        <div class="suvat" id="pl-sv">
+          <div class="sv"><b>s</b><span>displacement / m</span><input data-k="s" inputmode="decimal"></div>
+          <div class="sv"><b>u</b><span>initial velocity / m s⁻¹</span><input data-k="u" inputmode="decimal"></div>
+          <div class="sv"><b>v</b><span>final velocity / m s⁻¹</span><input data-k="v" inputmode="decimal"></div>
+          <div class="sv"><b>a</b><span>acceleration / m s⁻²</span><input data-k="a" inputmode="decimal"></div>
+          <div class="sv"><b>t</b><span>time / s</span><input data-k="t" inputmode="decimal"></div>
+        </div>
+        <div class="row" style="margin-top:10px"><button class="btn pri" id="pl-sv-go">Solve</button><button class="btn" id="pl-sv-clr">Clear</button><button class="btn" id="pl-sv-ex">Example problem</button></div>
+        <div id="pl-sv-prob"></div>
+        <div class="eqs" id="pl-eqs">
+          <div class="eq" data-e="1">v = u + at<small>no s</small></div>
+          <div class="eq" data-e="2">s = ½(u + v)t<small>no a</small></div>
+          <div class="eq" data-e="3">v² = u² + 2as<small>no t</small></div>
+          <div class="eq" data-e="4">s = ut + ½at²<small>no v</small></div>
+          <div class="eq" data-e="5">s = vt − ½at²<small>no u</small></div>
+        </div>
+        <div id="pl-sv-out"></div>
+      </div>
+      <div class="card"><h3>How to choose the equation</h3><p style="margin:4px 0;font-size:14px">List what you know and what you want. Each equation leaves out exactly one of the five quantities. Pick the equation that leaves out the quantity you <b>don't know and don't need</b>. SUVAT only works when the acceleration is <b>constant</b>.</p></div>
+    </div>
+  </div>
+
+  <!-- PRACTICE -->
+  <div class="view" id="pl-v-prac">
+    <div class="grid">
+      <div class="stack"><div class="card" id="pl-qcard"></div></div>
+      <div class="stack">
+        <div class="card">
+          <h3>Course level</h3>
+          <div class="seg" id="pl-level"><button data-l="2">GCSE Higher</button><button data-l="3" class="on">A-level</button></div>
+          <div class="row" style="margin-top:8px"><span class="lbl">Use</span><div class="seg" id="pl-gval"><button data-g="9.81" class="on">g = 9.81</button><button data-g="10">g = 10</button></div></div>
+          <h3 style="margin-top:14px">Mode</h3>
+          <div class="seg" id="pl-mode"><button data-m="smart" class="on">Smart mix</button><button data-m="topic">One skill</button><button data-m="daily">Daily 5</button></div>
+          <div id="pl-topicpick" style="display:none;margin-top:8px"><select id="pl-skill"></select></div>
+          <p class="note" id="pl-modenote" style="margin:8px 0 0">Smart mix serves more questions from the skills you find hardest.</p>
+        </div>
+        <div class="card"><h3>Daily 5</h3><div class="daily" id="pl-dailybar"></div><p class="note" id="pl-dailytxt" style="margin:6px 0 0"></p></div>
+        <div class="card"><h3>Skill mastery</h3><div class="mastery" id="pl-mast-s"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="view" id="pl-v-prog">
+    <div class="stack">
+      <div class="card"><h3>Your progress</h3><div id="pl-progsum"></div></div>
+      <div class="card"><h3>Badges</h3><div class="badges" id="pl-badges"></div></div>
+      <div class="card"><h3>Skill mastery</h3><div class="mastery" id="pl-mast-p"></div></div>
+      <div class="card"><h3>Reset</h3><p class="note">Progress is saved in this browser only.</p><button class="btn" id="pl-wipe">Reset all progress</button></div>
+    </div>
+  </div>
+
+  <!-- GUIDE -->
+  <div class="view" id="pl-v-guide">
+    <div class="guide">
+      <div class="card"><h3>The big idea</h3><p>Once launched, and ignoring air resistance, the only force on a projectile is its weight. So:</p>
+        <ul><li><b>Horizontally</b>: no force, so no acceleration. The horizontal velocity u<sub>x</sub> stays <b>constant</b>.</li><li><b>Vertically</b>: constant acceleration g downwards, so use the SUVAT equations.</li><li>The two motions are <b>independent</b>. The only thing they share is the <b>time</b>.</li></ul>
+        <p>Try <b>Drop vs throw</b> in the lab: a ball thrown sideways lands at the same moment as one dropped from the same height.</p></div>
+      <div class="card"><h3>Resolving the launch velocity</h3><div class="eqbox">u<sub>x</sub> = u cos θ<br>u<sub>y</sub> = u sin θ</div><p>Treat u<sub>x</sub> and u<sub>y</sub> separately, then recombine at the end with Pythagoras:</p><div class="eqbox">v = √(v<sub>x</sub>² + v<sub>y</sub>²) &nbsp;&nbsp; angle = tan⁻¹(v<sub>y</sub> / v<sub>x</sub>)</div></div>
+      <div class="card"><h3>Standard results (level ground)</h3>
+        <div class="eqbox">time to top:   t = u sin θ ÷ g<br>max height:    H = (u sin θ)² ÷ 2g<br>time of flight: T = 2u sin θ ÷ g<br>range:          R = u cos θ × T</div>
+        <p>Range is greatest at 45°. Angles that add up to 90° (e.g. 30° and 60°) give the same range. Derive these from SUVAT rather than memorising them.</p></div>
+      <div class="card"><h3>Launched horizontally from a height h</h3><div class="eqbox">vertical:   h = ½ g t²  →  t = √(2h ÷ g)<br>horizontal: R = u t</div><p>The fall time depends only on the height, not on how fast it is thrown.</p></div>
+      <div class="card"><h3>At the top of the flight</h3><ul><li>The vertical velocity is <b>zero</b>.</li><li>The horizontal velocity is <b>not</b> zero. It is still u cos θ, so the speed is at its minimum, not zero.</li><li>The acceleration is still g downwards, as it is everywhere along the path.</li></ul></div>
+      <div class="card"><h3>Air resistance</h3><p>Drag acts opposite to the velocity and grows with speed (roughly ∝ v² for a ball). It reduces both components, so:</p><ul><li>the range and maximum height are smaller</li><li>the path is <b>not symmetrical</b>: the way down is steeper than the way up</li><li>the best launch angle is less than 45°</li></ul><p>A shot put barely notices drag; a table-tennis ball is dominated by it. Try both in the lab.</p></div>
+      <div class="card"><h3>Teacher notes</h3><ul><li>Without air resistance, paths are calculated exactly. With drag, a small-step numerical method is used with F = ½ρC<sub>d</sub>Av².</li><li>Challenge levels reward calculating before firing. "Show the physics" gives a full worked solution.</li><li>The SUVAT solver always chooses the equation that leaves out the unwanted quantity, and shows the substitution and rearrangement.</li><li>No calculus is used anywhere: gradients and areas under graphs only.</li><li>Progress is stored only in the student's browser.</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var root=document.getElementById('pl-app');
+function $(id){return document.getElementById('pl-'+id);}
+function clamp(x,a,b){return x<a?a:x>b?b:x;}
+function lerp(a,b,t){return a+(b-a)*t;}
+function grp(s){var neg=s[0]==='-';var d=neg?s.slice(1):s;if(d.length<5) return s;return (neg?'-':'')+d.replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
+function fmt(x,sf){ if(!isFinite(x)) return '—'; sf=sf||3; if(x===0) return '0'; var a=Math.abs(x), d=Math.floor(Math.log10(a)), dec=Math.max(0,sf-1-d); var s=x.toFixed(dec); var p=s.split('.'); p[0]=grp(p[0]); return p.join('.'); }
+function nz(x,sf){var s=fmt(x,sf||4);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s==='-0'?'0':s;}
+function f3(x){return fmt(x,3);}
+var D2R=Math.PI/180;
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashStr(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dayDiff(a,b){return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);}
+function niceStep(range,n){var raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+function rr(x,X,Y,W,H,R){x.beginPath();x.moveTo(X+R,Y);x.arcTo(X+W,Y,X+W,Y+H,R);x.arcTo(X+W,Y+H,X,Y+H,R);x.arcTo(X,Y+H,X,Y,R);x.arcTo(X,Y,X+W,Y,R);x.closePath();}
+function fitCanvas(cv){ var r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1; var w=Math.max(10,Math.round(r.width)), h=Math.max(10,Math.round(r.height));
+  if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);} var x=cv.getContext('2d'); x.setTransform(d,0,0,d,0,0); return {x:x,w:w,h:h}; }
+
+/* storage */
+var KEY='projectileLab.v1', memStore=null;
+function blank(){return {xp:0,skills:{},badges:{},daily:{},dailyStreak:0,lastDaily:null,levels:{},answered:0,correct:0,launches:0,solves:0};}
+function load(){try{var s=localStorage.getItem(KEY);if(s){var o=JSON.parse(s),b=blank();for(var k in b) if(!(k in o)) o[k]=b[k];return o;}}catch(e){} return memStore||blank();}
+function save(){memStore=P;try{localStorage.setItem(KEY,JSON.stringify(P));}catch(e){}}
+var P=load();
+var toastT=null; function toast(h){var t=$('toast');t.innerHTML=h;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
+var LEVELS=[0,100,250,450,700,1000,1400,1900,2500,3200,4000,5000];
+var TITLES=['Launch pad','Lobber','Trajectory tracer','Range finder','Component resolver','SUVAT strategist','Ballistician','Parabola pro','Sharpshooter','Mission control','Orbital thinker','Newton\'s heir'];
+function levelOf(xp){var l=0;for(var i=0;i<LEVELS.length;i++) if(xp>=LEVELS[i]) l=i;return l;}
+function addXP(n,why){P.xp+=n;save();updXP();if(why) toast('+'+n+' XP · '+why);}
+function updXP(){var l=levelOf(P.xp),lo=LEVELS[l],hi=LEVELS[l+1]||lo+1000;$('lvl').textContent='Level '+(l+1)+' · '+TITLES[l];$('xpbar').style.width=clamp((P.xp-lo)/(hi-lo)*100,0,100)+'%';$('xptext').textContent=P.xp+' XP'+(P.dailyStreak?' · 🔥 '+P.dailyStreak+'-day streak':'');}
+var BADGES=[
+ ['first','🚀','Lift-off','Make your first launch'],['drop','⬇️','Independent thinker','Run Drop vs throw'],['monkey','🐒','Monkey & hunter','Hit the falling target'],['air','🎾','Drag racer','Launch with air resistance'],['moon','🌙','Lunar lobber','Launch on the Moon'],
+ ['grad','📐','Gradient getter','Measure g from a v_y–t graph'],['area','▱','Area under','Find a displacement from the area under a graph'],
+ ['c1','🎯','Bullseye','Clear your first challenge'],['c3s','⭐','Three-star','Get ★★★ on any challenge'],['c6','🏹','Marksman','Clear 6 challenges'],['c12','🏆','Grand master','Clear all 12 challenges'],['c36','🌟','Perfectionist','★★★ on every challenge'],
+ ['sv','🧮','Solver','Use the SUVAT solver'],['q10','✅','Ten right','10 practice questions correct'],['q50','🏅','Fifty right','50 practice questions correct'],['daily','📅','Daily habit','Complete a Daily 5'],['perfect','💯','Perfect day','5/5 in a Daily 5'],['streak3','🔥','On a roll','3-day streak'],['streak7','🌋','Unstoppable','7-day streak'],['master','🧠','Mastery','Full mastery in any skill']
+];
+function award(id){if(P.badges[id]) return;P.badges[id]=todayKey();save();var b=BADGES.find(function(x){return x[0]===id;});if(b){setTimeout(function(){toast(b[1]+' Badge unlocked: <b>'+b[2]+'</b>');},900);addXP(25);}}
+Array.prototype.forEach.call($('tabs').children,function(b){b.onclick=function(){Array.prototype.forEach.call($('tabs').children,function(x){x.classList.toggle('on',x===b);});
+  ['lab','chal','suvat','prac','prog','guide'].forEach(function(v){$('v-'+v).classList.toggle('on',v===b.dataset.v);});
+  if(b.dataset.v==='prog') renderProgress(); if(b.dataset.v==='prac') renderMastery(); if(b.dataset.v==='chal') renderLevels(); };});
+function segInit(id,fn){var el=$(id);Array.prototype.forEach.call(el.children,function(b){b.onclick=function(){Array.prototype.forEach.call(el.children,function(x){x.classList.toggle('on',x===b);});fn(b);};});}
+function segSet(id,attr,val){Array.prototype.forEach.call($(id).children,function(x){x.classList.toggle('on',String(x.dataset[attr])===String(val));});}
+
+/* ================= PHYSICS ================= */
+var BALLS={tennis:{n:'Tennis ball',m:0.058,d:0.067,cd:0.55},foot:{n:'Football',m:0.43,d:0.22,cd:0.25},tt:{n:'Table-tennis ball',m:0.0027,d:0.04,cd:0.5},shot:{n:'Shot put',m:4,d:0.11,cd:0.47},golf:{n:'Golf ball',m:0.046,d:0.043,cd:0.3}};
+var RHO=1.2, DT=0.005;
+function kDrag(b){var A=Math.PI*b.d*b.d/4;return 0.5*RHO*b.cd*A/b.m;}
+// scene: {h, targets:[{x1,x2,y}], walls:[{x1,x2,y1,y2}]}
+function simulate(sc,u,angDeg,g,ball,opts){
+  opts=opts||{}; var x0=opts.x0||0, y0=(opts.y0!=null?opts.y0:sc.h), th=angDeg*D2R, ux=u*Math.cos(th), uy=u*Math.sin(th);
+  var S=[{t:0,x:x0,y:y0,vx:ux,vy:uy}], k=ball?kDrag(ball):0, end=null, maxY=y0, maxT=0;
+  var x=x0,y=y0,vx=ux,vy=uy,t=0, sub=ball?5:1, h=DT/sub;
+  function acc(vx,vy){ if(!k) return [0,-g]; var v=Math.hypot(vx,vy); return [-k*v*vx,-g-k*v*vy]; }
+  for(var i=1;i<200000;i++){
+    var px=x,py=y;
+    if(!ball){ t=i*DT; x=x0+ux*t; y=y0+uy*t-0.5*g*t*t; vx=ux; vy=uy-g*t; }
+    else { for(var j=0;j<sub;j++){ var a1=acc(vx,vy), k1x=vx,k1y=vy;
+        var a2=acc(vx+a1[0]*h/2,vy+a1[1]*h/2), k2x=vx+a1[0]*h/2,k2y=vy+a1[1]*h/2;
+        var a3=acc(vx+a2[0]*h/2,vy+a2[1]*h/2), k3x=vx+a2[0]*h/2,k3y=vy+a2[1]*h/2;
+        var a4=acc(vx+a3[0]*h,vy+a3[1]*h), k4x=vx+a3[0]*h,k4y=vy+a3[1]*h;
+        x+=h/6*(k1x+2*k2x+2*k3x+k4x); y+=h/6*(k1y+2*k2y+2*k3y+k4y); vx+=h/6*(a1[0]+2*a2[0]+2*a3[0]+a4[0]); vy+=h/6*(a1[1]+2*a2[1]+2*a3[1]+a4[1]); }
+      t=i*DT; }
+    if(y>maxY){maxY=y;maxT=t;}
+    // targets (land on top)
+    var hit=null;
+    (sc.targets||[]).forEach(function(T){ if(hit) return; if(py>=T.y && y<T.y){ var f=(py-T.y)/(py-y), xc=lerp(px,x,f); if(xc>=T.x1&&xc<=T.x2) hit={type:'target',x:xc,y:T.y,f:f}; } });
+    if(!hit) (sc.targets||[]).forEach(function(T){ if(hit) return; if(T.y>0.05 && x>=T.x1&&x<=T.x2&&y<T.y&&y>0) hit={type:'wall',x:x,y:y,f:1}; });
+    if(!hit) (sc.walls||[]).forEach(function(W){ if(hit) return; if(x>=W.x1&&x<=W.x2&&y>=W.y1&&y<=W.y2){ // find entry edge
+        var f=1; if(px<W.x1){f=(W.x1-px)/(x-px);} else if(py>W.y2){f=(py-W.y2)/(py-y);} hit={type:'wall',x:lerp(px,x,f),y:lerp(py,y,f),f:f}; } });
+    if(!hit && sc.h>0 && x<-1e-9 && py>=sc.h && y<sc.h){ var f2=(py-sc.h)/(py-y); hit={type:'ground',x:lerp(px,x,f2),y:sc.h,f:f2}; }
+    if(!hit && y<0){ var f3_=py/(py-y); hit={type:'ground',x:lerp(px,x,f3_),y:0,f:f3_}; }
+    if(hit){ var te=t-DT+DT*hit.f; var last=S[S.length-1];
+      var vxe=lerp(last.vx,vx,hit.f), vye=lerp(last.vy,vy,hit.f);
+      S.push({t:te,x:hit.x,y:hit.y,vx:vxe,vy:vye}); end={type:hit.type,t:te,x:hit.x,y:hit.y,vx:vxe,vy:vye}; break; }
+    S.push({t:t,x:x,y:y,vx:vx,vy:vy});
+    if(t>200||x>20000){ end={type:'out',t:t,x:x,y:y,vx:vx,vy:vy}; break; }
+  }
+  return {S:S,end:end,maxY:maxY,maxT:maxT,u:u,ang:angDeg,g:g,drag:!!ball,h:y0,x0:x0};
+}
+// analytic landing (no drag) on level ground y=0 from height h
+function analytic(u,ang,h,g){ var th=ang*D2R, ux=u*Math.cos(th), uy=u*Math.sin(th); var T=(uy+Math.sqrt(uy*uy+2*g*h))/g; return {T:T,R:ux*T,H:h+uy*uy/(2*g),ux:ux,uy:uy}; }
+
+/* ================= SCENE DRAWING ================= */
+function computeView(W,H,sc,projs,extra){
+  var xmax=sc.xmax||10, ymax=Math.max(sc.h,4), xmin=0;
+  projs.forEach(function(p){ p.S.forEach(function(s,i){ if(i%10) return; if(s.x>xmax) xmax=s.x; if(s.y>ymax) ymax=s.y; if(s.x<xmin) xmin=s.x;}); if(p.end){xmax=Math.max(xmax,p.end.x);} });
+  (sc.walls||[]).forEach(function(w){xmax=Math.max(xmax,w.x2+2);ymax=Math.max(ymax,w.y2);});
+  (sc.targets||[]).forEach(function(t){xmax=Math.max(xmax,t.x2+2);ymax=Math.max(ymax,t.y+2);});
+  if(extra){xmax=Math.max(xmax,extra.x||0);ymax=Math.max(ymax,extra.y||0);}
+  xmax*=1.08; ymax=ymax*1.18+0.5; var span=xmax-xmin; xmin=xmin-Math.max(span*0.07,1.5);
+  var ml=10,mr=10,mt=10,mb=34; var s=Math.min((W-ml-mr)/(xmax-xmin),(H-mt-mb)/ymax);
+  var X0=ml-xmin*s, Y0=H-mb; // world (0,0) -> (X0,Y0)
+  // centre horizontally if spare
+  var used=(xmax-xmin)*s; if(used<W-ml-mr) X0+=(W-ml-mr-used)*0.25;
+  return {s:s,X0:X0,Y0:Y0,xmin:xmin,xmax:(W-X0)/s,ymax:Y0/s,W:W,H:H};
+}
+function drawScene(x,V,sc,projs,o){
+  var W=V.W,H=V.H,s=V.s,X=function(v){return V.X0+v*s;},Y=function(v){return V.Y0-v*s;};
+  var sky=x.createLinearGradient(0,0,0,H); sky.addColorStop(0,o.sky0||'#d9eefc'); sky.addColorStop(1,o.sky1||'#f6fbfd'); x.fillStyle=sky; x.fillRect(0,0,W,H);
+  // grid faint
+  var st=niceStep(Math.max(V.xmax-V.xmin,V.ymax),10);
+  x.strokeStyle='rgba(15,43,46,.06)'; x.lineWidth=1;
+  for(var gx=Math.ceil(V.xmin/st)*st;gx<=V.xmax;gx+=st){x.beginPath();x.moveTo(X(gx),0);x.lineTo(X(gx),Y(0));x.stroke();}
+  for(var gy=st;gy<=V.ymax;gy+=st){x.beginPath();x.moveTo(0,Y(gy));x.lineTo(W,Y(gy));x.stroke();}
+  // ground
+  x.fillStyle=o.ground||'#a9cfae'; x.fillRect(0,Y(0),W,H-Y(0)); x.fillStyle=o.groundTop||'#7fb487'; x.fillRect(0,Y(0),W,3);
+  x.fillStyle='#2c4e45'; x.font='11px "Cascadia Mono",Consolas,monospace'; x.textAlign='center';
+  for(gx=0;gx<=V.xmax;gx+=st){ if(X(gx)>W-30) break; x.fillRect(X(gx)-0.5,Y(0),1,6); x.fillText(nz(gx,3),X(gx),Y(0)+18); }
+  x.textAlign='left'; x.fillText('m',W-16,Y(0)+18);
+  // cliff
+  if(sc.h>0){ var cg=x.createLinearGradient(0,Y(sc.h),0,Y(0)); cg.addColorStop(0,'#b9a98f'); cg.addColorStop(1,'#8c7b62'); x.fillStyle=cg; x.fillRect(0,Y(sc.h),X(0),Y(0)-Y(sc.h)); x.fillStyle='#7fb487'; x.fillRect(0,Y(sc.h)-3,X(0),3);
+    x.fillStyle='#2c4e45'; x.textAlign='right'; x.fillText(nz(sc.h,3)+' m',X(0)-6,Y(sc.h/2)+4); x.strokeStyle='#2c4e45'; x.beginPath(); x.moveTo(X(0)-4,Y(sc.h)); x.lineTo(X(0)-4,Y(0)); x.stroke(); }
+  // walls
+  (sc.walls||[]).forEach(function(w){ x.fillStyle='#c4664a'; x.fillRect(X(w.x1),Y(w.y2),Math.max(3,(w.x2-w.x1)*s),(w.y2-w.y1)*s); x.strokeStyle='rgba(255,255,255,.35)'; x.lineWidth=1;
+    var bh=Math.max(5,0.4*s); for(var yy=Y(w.y2)+bh;yy<Y(w.y1);yy+=bh){x.beginPath();x.moveTo(X(w.x1),yy);x.lineTo(X(w.x2),yy);x.stroke();} });
+  // targets
+  (sc.targets||[]).forEach(function(t){ var cx=X((t.x1+t.x2)/2);
+    if(t.y>0.05){ x.fillStyle='#6d7f86'; x.fillRect(X(t.x1)+2,Y(t.y),Math.max(3,(t.x2-t.x1)*s-4),t.y*s); }
+    x.fillStyle=t.hit?'#16968a':'#ff6b2c'; x.fillRect(X(t.x1),Y(t.y)-5,Math.max(4,(t.x2-t.x1)*s),6);
+    x.fillStyle='#fff'; x.fillRect(cx-Math.max(2,(t.x2-t.x1)*s*0.18),Y(t.y)-5,Math.max(4,(t.x2-t.x1)*s*0.36),6);
+    x.strokeStyle='#0f2b2e'; x.lineWidth=1.5; x.beginPath(); x.moveTo(X(t.x2),Y(t.y)-5); x.lineTo(X(t.x2),Y(t.y)-34); x.stroke();
+    x.fillStyle=t.hit?'#16968a':'#ff6b2c'; x.beginPath(); x.moveTo(X(t.x2),Y(t.y)-34); x.lineTo(X(t.x2)+16,Y(t.y)-28); x.lineTo(X(t.x2),Y(t.y)-22); x.fill(); });
+  // monkey branch
+  if(o.monkey){ var m=o.monkey; x.strokeStyle='#6b4f2a'; x.lineWidth=6; x.beginPath(); x.moveTo(X(m.x)+30,Y(m.y0)-10); x.lineTo(X(m.x)-6,Y(m.y0)-10); x.stroke(); x.fillStyle='#6b4f2a'; x.fillRect(X(m.x)+26,Y(m.y0)-12,8,Y(0)-Y(m.y0)+12);
+    // sight line
+    x.setLineDash([3,5]); x.strokeStyle='rgba(15,43,46,.4)'; x.lineWidth=1.2; x.beginPath(); x.moveTo(X(0),Y(sc.h)); x.lineTo(X(m.x),Y(m.y0)); x.stroke(); x.setLineDash([]);
+    drawMonkey(x,X(m.x),Y(m.y)); }
+  // projectiles
+  projs.forEach(function(p,pi){ var pt=p.play!=null?p.play:p.end.t, n=Math.min(p.S.length-1,Math.floor(pt/DT)); var col=p.col||'#ff6b2c', faint=p.ghost;
+    if(o.pred&&p.pred){ x.setLineDash([5,5]); x.strokeStyle='rgba(15,43,46,.35)'; x.lineWidth=1.4; x.beginPath(); p.pred.S.forEach(function(q,i){if(i%4&&i<p.pred.S.length-1) return; if(i) x.lineTo(X(q.x),Y(q.y)); else x.moveTo(X(q.x),Y(q.y));}); x.stroke(); x.setLineDash([]); }
+    x.strokeStyle=faint?hexA(col,.28):col; x.lineWidth=faint?1.6:2.6; x.lineJoin='round'; x.beginPath();
+    var stp=Math.max(1,Math.floor(n/600)); for(var i=0;i<=n;i+=stp){var q=p.S[i]; if(i) x.lineTo(X(q.x),Y(q.y)); else x.moveTo(X(q.x),Y(q.y));} var qn=p.S[n]; x.lineTo(X(qn.x),Y(qn.y)); x.stroke();
+    if(!faint && o.strobe){ var si=o.si, k=Math.round(si/DT); x.fillStyle='#fff'; x.strokeStyle=col; x.lineWidth=1.5; for(var j=k;j<=n;j+=k){var r=p.S[j]; x.beginPath(); x.arc(X(r.x),Y(r.y),3.6,0,6.283); x.fill(); x.stroke();
+        if(o.shadow){ x.fillStyle=hexA('#2f5bd8',.55); x.beginPath(); x.arc(X(r.x),Y(0)-2,2.6,0,6.283); x.fill(); x.fillStyle=hexA('#e8590c',.55); x.beginPath(); x.arc(X(V.xmin)+10,Y(r.y),2.6,0,6.283); x.fill(); x.fillStyle='#fff'; } } }
+    if(faint) return;
+    // ball
+    var b=p.S[n]; x.fillStyle=p.ballCol||'#0f2b2e'; x.beginPath(); x.arc(X(b.x),Y(b.y),6,0,6.283); x.fill(); x.fillStyle='rgba(255,255,255,.5)'; x.beginPath(); x.arc(X(b.x)-2,Y(b.y)-2,2,0,6.283); x.fill();
+    if(o.vec && p.play!=null && p.play<p.end.t){ var k2=clamp(70/Math.max(8,p.u),1.2,4); arrow(x,X(b.x),Y(b.y),X(b.x)+b.vx*k2,Y(b.y),'#2f5bd8','vₓ'); arrow(x,X(b.x),Y(b.y),X(b.x),Y(b.y)-b.vy*k2,'#e8590c','v_y'); arrow(x,X(b.x),Y(b.y),X(b.x)+b.vx*k2,Y(b.y)-b.vy*k2,'#0f2b2e',''); }
+    // annotations after landing
+    if(p.play==null||p.play>=p.end.t){ if(o.annot&&!p.noAnnot){ x.setLineDash([4,4]); x.strokeStyle='rgba(15,43,46,.45)'; x.lineWidth=1; var mx=p.S[Math.round(p.maxT/DT)]||p.S[0];
+        if(p.maxY>p.h+0.05){ x.beginPath(); x.moveTo(X(mx.x),Y(p.maxY)); x.lineTo(X(mx.x),Y(0)); x.stroke(); x.fillStyle='#0f2b2e'; x.font='600 11.5px "Segoe UI",system-ui'; x.textAlign='left'; x.fillText('H = '+fmt(p.maxY,3)+' m',X(mx.x)+5,Y(p.maxY)-6);}
+        x.setLineDash([]); } }
+  });
+  // launcher
+  if(!o.noLauncher){ var ang=o.ang!=null?o.ang:40; var lx=X(0),ly=Y(sc.h); x.save(); x.translate(lx,ly); x.rotate(-ang*D2R); x.fillStyle='#0f2b2e'; rr(x,-6,-6,36,12,5); x.fill(); x.fillStyle='#ff6b2c'; x.fillRect(26,-6,4,12); x.restore();
+    x.fillStyle='#38575a'; x.beginPath(); x.arc(lx,ly,9,Math.PI,0); x.fill(); x.fillRect(lx-12,ly-2,24,4);
+    x.strokeStyle='rgba(15,43,46,.4)'; x.lineWidth=1; x.beginPath(); x.moveTo(lx,ly); x.lineTo(lx+44,ly); x.stroke(); x.beginPath(); x.arc(lx,ly,30,-ang*D2R,0); x.stroke(); x.fillStyle='#0f2b2e'; x.font='600 11px "Segoe UI",system-ui'; x.textAlign='left'; x.fillText(nz(ang,3)+'°',lx+34,ly-6-Math.min(10,ang/6)); }
+}
+function drawMonkey(x,cx,cy){ x.fillStyle='#8a5a2b'; x.beginPath(); x.arc(cx,cy+10,9,0,6.283); x.fill(); x.beginPath(); x.arc(cx,cy-3,7,0,6.283); x.fill(); x.beginPath(); x.arc(cx-7,cy-5,3,0,6.283); x.arc(cx+7,cy-5,3,0,6.283); x.fill(); x.fillStyle='#e8c9a0'; x.beginPath(); x.arc(cx,cy-1,4,0,6.283); x.fill(); x.fillStyle='#000'; x.fillRect(cx-3,cy-5,1.6,1.6); x.fillRect(cx+1.4,cy-5,1.6,1.6); x.strokeStyle='#8a5a2b'; x.lineWidth=3; x.beginPath(); x.moveTo(cx-6,cy+5); x.lineTo(cx-3,cy-14); x.moveTo(cx+6,cy+5); x.lineTo(cx+3,cy-14); x.stroke(); }
+function hexA(hex,a){var n=parseInt(hex.slice(1),16);return 'rgba('+(n>>16)+','+(n>>8&255)+','+(n&255)+','+a+')';}
+function arrow(x,x1,y1,x2,y2,c,l){ var d=Math.hypot(x2-x1,y2-y1); if(d<4) return; x.strokeStyle=c; x.fillStyle=c; x.lineWidth=2.2; x.beginPath(); x.moveTo(x1,y1); x.lineTo(x2,y2); x.stroke(); var a=Math.atan2(y2-y1,x2-x1); x.beginPath(); x.moveTo(x2,y2); x.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4)); x.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4)); x.fill();
+  if(l){x.font='italic 600 12px "Segoe UI",system-ui'; x.textAlign='left'; x.fillText(l==='v_y'?'v':l,x2+(l==='v_y'?5:4),y2+(l==='v_y'?4:-4)); if(l==='v_y'){x.font='italic 600 9px "Segoe UI",system-ui'; x.fillText('y',x2+12,y2+7);} } }
+
+/* ================= LAB ================= */
+var lab={projs:[],sc:{h:0,xmax:20},monkey:null};
+var cfg={ang:40,u:15,h:0,g:9.81,drag:false,ball:'tennis',play:1};
+var COLS=['#ff6b2c','#16968a','#2f5bd8','#c2255c','#7048e8','#e8a10c'];
+function bindPair(r,n,key){ $(r).oninput=function(){cfg[key]=+this.value;$(n).value=this.value;labIdle();}; $(n).onchange=function(){var v=clamp(+this.value,+$(r).min,+$(r).max);this.value=v;cfg[key]=v;$(r).value=v;labIdle();}; }
+bindPair('ang','ang-n','ang'); bindPair('spd','spd-n','u'); bindPair('hgt','hgt-n','h');
+$('world-sel').onchange=function(){cfg.g=+this.value; if(cfg.g===1.62) award('moon'); labIdle();};
+$('drag').onchange=function(){cfg.drag=this.checked; if(cfg.drag) award('air');};
+$('ball').onchange=function(){cfg.ball=this.value;};
+segInit('play',function(b){cfg.play=+b.dataset.s;});
+function setCtl(k,v){cfg[k]=v; var m={ang:['ang','ang-n'],u:['spd','spd-n'],h:['hgt','hgt-n']}[k]; $(m[0]).value=v; $(m[1]).value=v;}
+function labIdle(){ lab.sc.h=cfg.h; lab.monkey=null; }
+function launch(u,ang,h,opts){ opts=opts||{}; var sc={h:h,xmax:lab.sc.xmax}; var ball=opts.drag!=null?(opts.drag?BALLS[opts.ball||cfg.ball]:null):(cfg.drag?BALLS[cfg.ball]:null);
+  var p=simulate(sc,u,ang,opts.g||cfg.g,ball,opts.sim); p.play=0; p.col=opts.col||COLS[lab.projs.filter(function(q){return !q.ghost;}).length%COLS.length];
+  if(ball) p.pred=simulate(sc,u,ang,opts.g||cfg.g,null,opts.sim);
+  p.label=opts.label; p.ballCol=opts.ballCol; return p; }
+$('fire').onclick=function(){ lab.legend=null; lab.projs.forEach(function(p){p.ghost=true;}); if(lab.projs.length>8) lab.projs=lab.projs.slice(-8); lab.monkey=null;
+  lab.sc.h=cfg.h; var p=launch(cfg.u,cfg.ang,cfg.h); lab.projs.push(p); P.launches++; save(); award('first'); setMsg(''); sel=null; $('ganal').innerHTML=''; };
+$('clear').onclick=function(){lab.projs=[];lab.monkey=null;sel=null;$('ganal').innerHTML='';clearStats();};
+function setMsg(h,c){var m=$('labmsg'); if(!h){m.style.display='none';return;} m.style.display='block'; m.className='msg'+(c?' '+c:''); m.innerHTML=h;}
+function clearStats(){['t','R','H','v','c'].forEach(function(k){$('s-'+k).textContent='—';}); $('s-t2').innerHTML='&nbsp;'; $('s-R2').innerHTML='&nbsp;'; $('s-v2').innerHTML='&nbsp;';}
+function showStats(p){ var e=p.end, done=p.play==null||p.play>=e.t; if(!done){ var q=p.S[Math.min(p.S.length-1,Math.floor(p.play/DT))]; $('s-t').textContent=p.play.toFixed(2)+' s'; $('s-t2').textContent='flying…'; $('s-R').textContent=f3(q.x-p.x0)+' m'; $('s-H').textContent=f3(Math.max(p.maxY*(0),q.y))+' m'; $('s-v').textContent=f3(Math.hypot(q.vx,q.vy))+' m/s'; $('s-v2').textContent='vₓ '+f3(q.vx)+' · v_y '+f3(q.vy); }
+  else { $('s-t').textContent=e.t.toFixed(2)+' s'; $('s-R').textContent=f3(e.x-p.x0)+' m'; $('s-H').textContent=f3(p.maxY)+' m'; $('s-v').textContent=f3(Math.hypot(e.vx,e.vy))+' m/s'; $('s-v2').textContent=fmt(Math.abs(Math.atan2(e.vy,e.vx)/D2R),3)+'° below horizontal';
+    $('s-t2').textContent=e.type==='ground'?'until it lands':e.type==='monkey'?'until it hits the target':e.type; $('s-R2').textContent=p.pred?'no drag: '+f3(p.pred.end.x)+' m':'horizontal distance'; }
+  $('s-c').textContent=f3(p.u*Math.cos(p.ang*D2R))+' · '+f3(p.u*Math.sin(p.ang*D2R)); }
+
+/* demos */
+var DEMOS={
+ drop:{note:'Both balls start 20 m up at the same moment. One is dropped and one is thrown sideways at 12 m/s. They land together: the horizontal motion has no effect on the vertical motion.',run:function(){ setup(0,12,20,9.81); lab.projs=[launch(0,0,20,{col:'#2f5bd8',drag:false,sim:{x0:0.05}}),launch(12,0,20,{col:'#ff6b2c',drag:false})]; award('drop'); }},
+ comp:{note:'30° and 60° at 20 m/s land in the same place, because sin 2θ is the same for both. The steeper shot stays in the air longer.',run:function(){ setup(30,20,0,9.81); lab.projs=[launch(20,30,0,{drag:false,col:'#ff6b2c'}),launch(20,60,0,{drag:false,col:'#16968a'}),launch(20,15,0,{drag:false,col:'#2f5bd8'}),launch(20,75,0,{drag:false,col:'#7048e8'})]; }},
+ sweep:{note:'Same speed, angles from 15° to 75°. With no air resistance the longest range is at 45°.',run:function(){ setup(45,20,0,9.81); lab.projs=[15,30,45,60,75].map(function(a,i){return launch(20,a,0,{drag:false,col:COLS[i]});}); }},
+ monkey:{note:'The hunter aims straight at the monkey. The monkey lets go the instant the gun fires. Both fall ½gt² below their straight-line paths in the same time, so the dart always hits, whatever its speed (provided it is fast enough to get there before landing).',run:function(){ runMonkey(); }},
+ air:{note:'A tennis ball at 30 m/s and 45°, with and without air resistance. Drag shortens the range a lot, and the path becomes lopsided: the descent is steeper than the climb.',run:function(){ setup(45,30,0,9.81); lab.projs=[launch(30,45,0,{drag:false,col:'#9aa9ad'}),launch(30,45,0,{drag:true,ball:'tennis',col:'#ff6b2c'})]; lab.projs[0].noAnnot=true; lab.legend=[['#9aa9ad','no air resistance'],['#ff6b2c','tennis ball with drag']]; award('air'); }},
+ moon:{note:'Same launch (12 m/s at 45°) on Earth and on the Moon. With g about 6 times smaller, the time of flight, range and height are all about 6 times bigger.',run:function(){ setup(45,12,0,9.81); lab.projs=[launch(12,45,0,{g:9.81,drag:false,col:'#2f5bd8'}),launch(12,45,0,{g:1.62,drag:false,col:'#9aa9ad'})]; lab.legend=[['#2f5bd8','Earth'],['#9aa9ad','Moon']]; award('moon'); }}
+};
+function setup(a,u,h,g){ lab.legend=null; setCtl('ang',a); setCtl('u',u); setCtl('h',h); cfg.g=g; $('world-sel').value=String(g); lab.sc.h=h; lab.monkey=null; sel=null; $('ganal').innerHTML=''; setMsg(''); }
+function runMonkey(){ var h=1.5, mx=30, my=16, u=24; setup(0,u,h,9.81); var ang=Math.atan2(my-h,mx)/D2R; setCtl('ang',Math.round(ang*10)/10);
+  var p=launch(u,ang,h,{drag:false,col:'#ff6b2c'}); var g=9.81, hitI=-1;
+  for(var i=0;i<p.S.length;i++){ var s=p.S[i]; var myt=Math.max(0.5,my-0.5*g*s.t*s.t); if(Math.hypot(s.x-mx,s.y-myt)<0.7){hitI=i;break;} }
+  if(hitI>0){ p.S=p.S.slice(0,hitI+1); var e=p.S[hitI]; p.end={type:'monkey',t:e.t,x:e.x,y:e.y,vx:e.vx,vy:e.vy}; }
+  p.noAnnot=true; lab.projs=[p]; lab.monkey={x:mx,y0:my,y:my}; award('monkey'); }
+Array.prototype.forEach.call($('demos').children,function(b){b.onclick=function(){ lab.projs=[]; var d=DEMOS[b.dataset.d]; d.run(); $('demonote').textContent=d.note; };});
+
+/* ================= GRAPH ================= */
+var gq='y', sel=null, gv=null, hover=null, drag=false;
+segInit('gq',function(b){gq=b.dataset.q; sel=null; $('ganal').innerHTML='';});
+function qv(s,q){return q==='y'?s.y:q==='x'?s.x:q==='vy'?s.vy:q==='vx'?s.vx:Math.hypot(s.vx,s.vy);}
+var QL={y:'vertical displacement y / m',x:'horizontal displacement x / m',vy:'vertical velocity v_y / m s⁻¹',vx:'horizontal velocity vₓ / m s⁻¹',v:'speed / m s⁻¹'};
+function drawGraph(){ var o=fitCanvas($('graph')), x=o.x, W=o.w, H=o.h; x.clearRect(0,0,W,H);
+  var ps=lab.projs.filter(function(p){return !p.ghost;}); var tmax=1, lo=0, hi=1;
+  ps.forEach(function(p){ tmax=Math.max(tmax,p.end.t); p.S.forEach(function(s,i){ if(i%5) return; var v=qv(s,gq); lo=Math.min(lo,v); hi=Math.max(hi,v);}); var v2=qv(p.S[p.S.length-1],gq); lo=Math.min(lo,v2); hi=Math.max(hi,v2); });
+  var ys=niceStep(hi-lo||1,6); lo=Math.floor(lo/ys)*ys; hi=Math.ceil(hi/ys)*ys; if(hi===lo) hi=lo+ys;
+  var ml=56,mr=14,mt=12,mb=38,pw=W-ml-mr,ph=H-mt-mb, xs=niceStep(tmax,8); tmax=Math.ceil(tmax*1.02/xs)*xs;
+  var sx=function(t){return ml+t/tmax*pw;}, sy=function(v){return mt+ph-(v-lo)/(hi-lo)*ph;}; gv={ml:ml,pw:pw,tmax:tmax};
+  x.strokeStyle='#e6efec'; x.lineWidth=1; x.fillStyle='#557072'; x.font='11px "Cascadia Mono",Consolas,monospace'; x.textAlign='center';
+  for(var t=0;t<=tmax+1e-9;t+=xs){x.beginPath();x.moveTo(sx(t),mt);x.lineTo(sx(t),mt+ph);x.stroke();x.fillText(nz(t,3),sx(t),mt+ph+15);}
+  x.textAlign='right'; for(var v=lo;v<=hi+1e-9;v+=ys){x.beginPath();x.moveTo(ml,sy(v));x.lineTo(ml+pw,sy(v));x.stroke();x.fillText(nz(v,3),ml-6,sy(v)+4);}
+  x.strokeStyle='#0f2b2e'; x.lineWidth=1.5; x.beginPath(); x.moveTo(ml,mt); x.lineTo(ml,mt+ph); x.lineTo(ml+pw,mt+ph); x.stroke();
+  if(lo<0&&hi>0){x.strokeStyle='#0f2b2e';x.lineWidth=1;x.beginPath();x.moveTo(ml,sy(0));x.lineTo(ml+pw,sy(0));x.stroke();}
+  x.fillStyle='#0f2b2e'; x.font='700 12px "Segoe UI",system-ui'; x.textAlign='center'; x.fillText('time t / s',ml+pw/2,H-6); x.save(); x.translate(13,mt+ph/2); x.rotate(-Math.PI/2); x.font='700 11.5px "Segoe UI",system-ui'; x.fillText(QL[gq],0,0); x.restore();
+  if(sel){ var a=Math.min(sel.a,sel.b),b=Math.max(sel.a,sel.b); x.fillStyle='rgba(255,107,44,.10)'; x.fillRect(sx(a),mt,sx(b)-sx(a),ph); if(sel.area&&ps[0]){ x.fillStyle='rgba(22,150,138,.22)'; x.beginPath(); x.moveTo(sx(a),sy(0)); var P0=ps[ps.length-1]; P0.S.forEach(function(s){ if(s.t>=a&&s.t<=b) x.lineTo(sx(s.t),sy(qv(s,gq)));}); x.lineTo(sx(Math.min(b,P0.end.t)),sy(0)); x.closePath(); x.fill(); } }
+  ps.forEach(function(p){ var n=Math.min(p.S.length-1,Math.floor((p.play==null?p.end.t:p.play)/DT)); x.strokeStyle=p.col; x.lineWidth=2.4; x.beginPath(); var stp=Math.max(1,Math.floor(n/800)); for(var i=0;i<=n;i+=stp){var s=p.S[i]; if(i) x.lineTo(sx(s.t),sy(qv(s,gq))); else x.moveTo(sx(s.t),sy(qv(s,gq)));} var sn=p.S[n]; x.lineTo(sx(sn.t),sy(qv(sn,gq))); x.stroke(); });
+  if(sel&&sel.fit){ var f=sel.fit; x.setLineDash([6,4]); x.strokeStyle='#0f2b2e'; x.lineWidth=1.6; x.beginPath(); x.moveTo(sx(f.t0),sy(f.m*f.t0+f.c)); x.lineTo(sx(f.t1),sy(f.m*f.t1+f.c)); x.stroke(); x.setLineDash([]); }
+  if(hover&&ps.length){ var P1=ps[ps.length-1]; var i2=Math.min(P1.S.length-1,Math.round(hover/DT)); if(hover<=P1.end.t){ var s2=P1.S[i2]; var lab2='t = '+hover.toFixed(2)+' s · '+fmt(qv(s2,gq),3); x.font='11px "Cascadia Mono",Consolas,monospace'; var tw=x.measureText(lab2).width+12, tx=clamp(sx(hover)+8,ml,ml+pw-tw); x.fillStyle='rgba(15,43,46,.9)'; rr(x,tx,mt+4,tw,20,6); x.fill(); x.fillStyle='#fff'; x.textAlign='left'; x.fillText(lab2,tx+6,mt+18); x.fillStyle=P1.col; x.beginPath(); x.arc(sx(hover),sy(qv(s2,gq)),4,0,6.283); x.fill(); } }
+  if(!ps.length){x.fillStyle='#88a09b';x.font='13px "Segoe UI",system-ui';x.textAlign='center';x.fillText('Launch something to see its graph',ml+pw/2,mt+ph/2);}
+}
+function gT(e){var r=$('graph').getBoundingClientRect();return clamp((e.clientX-r.left-gv.ml)/gv.pw*gv.tmax,0,gv.tmax);}
+$('graph').addEventListener('pointerdown',function(e){ if(!lab.projs.some(function(p){return !p.ghost;})||!gv) return; drag=true; this.setPointerCapture(e.pointerId); var t=gT(e); sel={a:t,b:t}; });
+$('graph').addEventListener('pointermove',function(e){ if(!gv) return; hover=gT(e); if(drag) sel.b=hover; });
+$('graph').addEventListener('pointerleave',function(){hover=null;});
+$('graph').addEventListener('pointerup',function(){ if(!drag) return; drag=false; if(Math.abs(sel.b-sel.a)<gv.tmax*0.01){sel=null;$('ganal').innerHTML='';return;} analyseG(); });
+function analyseG(){ var ps=lab.projs.filter(function(p){return !p.ghost;}); var p=ps[ps.length-1]; var a=Math.min(sel.a,sel.b), b=Math.min(Math.max(sel.a,sel.b),p.end.t);
+  var T=[],V=[]; p.S.forEach(function(s){ if(s.t>=a&&s.t<=b){T.push(s.t);V.push(qv(s,gq));} }); if(T.length<3){$('ganal').innerHTML='<div class="msg warn">Select a longer section of the flight.</div>';return;}
+  var n=T.length,st=0,sv=0,stt=0,stv=0; for(var i=0;i<n;i++){st+=T[i];sv+=V[i];stt+=T[i]*T[i];stv+=T[i]*V[i];} var m=(n*stv-st*sv)/(n*stt-st*st), c=(sv-m*st)/n;
+  var resid=0; for(i=0;i<n;i++) resid=Math.max(resid,Math.abs(V[i]-(m*T[i]+c))); var straight=resid<Math.max(0.02*(Math.abs(V[0])+Math.abs(V[n-1])+1),0.05);
+  sel.fit={m:m,c:c,t0:T[0],t1:T[n-1]}; var h='<div class="calc">';
+  var dv=V[n-1]-V[0], dt=T[n-1]-T[0];
+  if(gq==='y'||gq==='x'){ h+='gradient = Δ'+(gq==='y'?'y':'x')+'/Δt = '+fmt(dv,3)+' ÷ '+fmt(dt,3)+' = <b>'+fmt(dv/dt,3)+' m/s</b>\n'; h+=(gq==='x'?'The x–t graph is a straight line: the horizontal velocity is constant'+(p.drag?' (except with air resistance, where it curves)':'')+'.':straight?'':'The y–t graph is curved, so this is the AVERAGE vertical velocity over the section.\nThe gradient of a tangent gives the velocity at an instant.'); sel.area=false; }
+  else { h+='gradient = Δv/Δt = '+fmt(dv,3)+' ÷ '+fmt(dt,3)+' = <b>'+fmt(dv/dt,3)+' m/s²</b>\n'; var A=0; for(i=1;i<n;i++) A+=(V[i]+V[i-1])/2*(T[i]-T[i-1]);
+    h+='area under graph (displacement) = <b>'+fmt(A,3)+' m</b>\n'; sel.area=true;
+    if(gq==='vy'&&!p.drag){ h+='\nThe gradient is −g: the vertical acceleration is constant and downwards.'; if(Math.abs(-dv/dt-p.g)/p.g<0.02) award('grad'); }
+    if(gq==='vx'&&!p.drag) h+='\nThe gradient is zero: no horizontal force, so no horizontal acceleration.';
+    if(gq==='vy'||gq==='vx'){ var s0=p.S[Math.round(T[0]/DT)], s1=p.S[Math.round(T[n-1]/DT)]; var real=gq==='vy'?s1.y-s0.y:s1.x-s0.x; h+='\nCheck: the ball actually moved '+fmt(real,3)+' m '+(gq==='vy'?'vertically':'horizontally')+' in this time.'; if(Math.abs(real-A)<0.05*Math.abs(real)+0.05) award('area'); } }
+  $('ganal').innerHTML=h+'</div>'; }
+
+/* ================= CHALLENGES ================= */
+var LV=[
+ {n:'First shot',d:'The launcher is fixed at 45°. Find the launch speed needed to land on the target 20 m away.',g:9.81,h:0,ang:45,free:['u'],T:[{x1:19.2,x2:20.8,y:0}],W:[],sol:function(){return solveSpeedFixedAngle(this,20,0);}},
+ {n:'Off the cliff',d:'Fire horizontally (θ = 0°) from the top of a 20 m cliff. The target is 30 m from the foot of the cliff.',g:9.81,h:20,ang:0,free:['u'],T:[{x1:29,x2:31,y:0}],W:[],sol:function(){ var g=this.g,t=Math.sqrt(2*20/g),u=30/t; return ['<b>Vertical</b> (u<sub>y</sub> = 0, fall 20 m):','s = ut + ½at²  →  20 = 0 + ½ × '+g+' × t²','t² = 40 ÷ '+g+' = '+fmt(t*t,4)+'  →  t = '+fmt(t,4)+' s','<b>Horizontal</b> (constant velocity):','u = distance ÷ time = 30 ÷ '+fmt(t,4)+' = <b>'+fmt(u,3)+' m/s</b>'];}},
+ {n:'Fixed speed',d:'The launcher fires at exactly 16 m/s. Choose the angle to hit the target 20 m away. There are two answers!',g:9.81,h:0,u:16,free:['ang'],T:[{x1:19.3,x2:20.7,y:0}],W:[],sol:function(){ var g=this.g,s2=g*20/256,a=Math.asin(s2)/D2R/2; return ['Range on level ground: R = u² sin 2θ ÷ g','(from T = 2u sin θ ÷ g and R = u cos θ × T)','20 = 16² × sin 2θ ÷ '+g,'sin 2θ = '+g+' × 20 ÷ 256 = '+fmt(s2,4),'2θ = '+fmt(2*a,4)+'° or '+fmt(180-2*a,4)+'°','θ = <b>'+fmt(a,3)+'°</b> or <b>'+fmt(90-a,3)+'°</b> (they add up to 90°)'];}},
+ {n:'The wall',d:'Get over the 6 m wall and land on the target 24 m away. Angle and speed are both up to you.',g:9.81,h:0,free:['ang','u'],T:[{x1:23,x2:25,y:0}],W:[{x1:11.6,x2:12.4,y1:0,y2:6}],sol:function(){ return twoFreeSol(this,60,24,0,11.6,6);}},
+ {n:'Moon shot',d:'On the Moon (g = 1.62 m/s²) the launcher is fixed at 30°. The target is 60 m away.',g:1.62,h:0,ang:30,free:['u'],T:[{x1:58.5,x2:61.5,y:0}],W:[],sol:function(){return solveSpeedFixedAngle(this,60,0);}},
+ {n:'Raised basket',d:'At a fixed 50°, land the ball on the top of the 4 m high platform, 14 m away.',g:9.81,h:0,ang:50,free:['u'],T:[{x1:13.2,x2:14.8,y:4}],W:[],sol:function(){return solveSpeedFixedAngle(this,14,4);}},
+ {n:'Through the window',d:'Thread the ball through the gap in the wall (between 3 m and 5 m high), 15 m away, and onto the target at 25 m.',g:9.81,h:0,free:['ang','u'],T:[{x1:23.8,x2:26.2,y:0}],W:[{x1:14.6,x2:15.4,y1:0,y2:3},{x1:14.6,x2:15.4,y1:5,y2:11}],sol:function(){ return windowSol(this);}},
+ {n:'Into the valley',d:'From a 25 m cliff, fire at a fixed 20° above the horizontal. The target is 40 m out on the valley floor.',g:9.81,h:25,ang:20,free:['u'],T:[{x1:39,x2:41,y:0}],W:[],sol:function(){return solveSpeedFixedAngle(this,40,-25);}},
+ {n:'Jupiter',d:'Gravity is 24.79 m/s² and the launcher fires at 20 m/s. Find an angle that hits the target 12 m away.',g:24.79,h:0,u:20,free:['ang'],T:[{x1:11.4,x2:12.6,y:0}],W:[],sol:function(){ var g=this.g,s2=g*12/400,a=Math.asin(s2)/D2R/2; return ['R = u² sin 2θ ÷ g','12 = 400 × sin 2θ ÷ '+g,'sin 2θ = '+fmt(s2,4)+'  →  2θ = '+fmt(2*a,4)+'° or '+fmt(180-2*a,4)+'°','θ = <b>'+fmt(a,3)+'°</b> or <b>'+fmt(90-a,3)+'°</b>'];}},
+ {n:'High lob',d:'A 14 m wall stands just 6 m away. The target is tucked behind it, 10 m away. You will need a steep lob.',g:9.81,h:0,free:['ang','u'],T:[{x1:9.3,x2:10.7,y:0}],W:[{x1:5.6,x2:6.4,y1:0,y2:14}],sol:function(){ return twoFreeSol(this,85,10,0,5.6,14);}},
+ {n:'Real air',d:'A tennis ball with air resistance. No simple equation works, so use the physics to make a smart first guess, then adjust. Target at 25 m.',g:9.81,h:0,free:['ang','u'],drag:'tennis',T:[{x1:23.5,x2:26.5,y:0}],W:[],sol:function(){ var u0=Math.sqrt(9.81*25); return ['Without air resistance, 45° needs u = √(gR) = √(9.81 × 25) = '+fmt(u0,3)+' m/s.','Drag reduces the range, so you will need more speed than that, and slightly less than 45° usually works best.','Strategy: keep the angle fixed, then change the speed by small steps. Notice how the range responds.','Something like 40° at about 19 m/s works, but there are many solutions.'];}},
+ {n:'Mars long shot',d:'On Mars (g = 3.71 m/s²) the launcher\'s top speed is 30 m/s. Hit the target 200 m away.',g:3.71,h:0,free:['ang','u'],umax:30,T:[{x1:197,x2:203,y:0}],W:[],sol:function(){ var u=Math.sqrt(3.71*200); return ['Use the angle that gives the maximum range, θ = 45° (sin 2θ = 1):','R = u² ÷ g  →  u = √(gR) = √(3.71 × 200) = <b>'+fmt(u,3)+' m/s</b> at 45°','This is under the 30 m/s limit. With more speed you could use two other angles either side of 45°.'];}}
+];
+function solveSpeedFixedAngle(L,X,Y){ var g=L.g,th=L.ang*D2R,c=Math.cos(th),tn=Math.tan(th); var u=Math.sqrt(g*X*X/(2*c*c*(X*tn-Y)));
+  var out=['Put the launch point at the origin. The ball must pass through x = '+X+' m, y = '+Y+' m.','<b>Horizontal</b>: x = (u cos θ) t  →  t = '+X+' ÷ (u cos '+L.ang+'°)','<b>Vertical</b>: y = (u sin θ) t − ½ g t²'];
+  if(L.ang===45&&Y===0) out.push('For level ground this gives R = u² sin 2θ ÷ g, and sin 90° = 1:','u = √(gR) = √('+g+' × '+X+') = <b>'+fmt(u,3)+' m/s</b>');
+  else out.push('Substitute t into the vertical equation:','y = x tan θ − g x² ÷ (2u² cos²θ)',Y+' = '+X+' × tan '+L.ang+'° − '+g+' × '+X+'² ÷ (2u² × cos²'+L.ang+'°)','u² = g x² ÷ (2 cos²θ (x tan θ − y)) = '+fmt(g*X*X,4)+' ÷ (2 × '+fmt(c*c,4)+' × ('+fmt(X*tn,4)+' − ('+Y+')))','u² = '+fmt(u*u,4)+'  →  u = <b>'+fmt(u,3)+' m/s</b>');
+  if(L.ang===0) out=['Horizontal launch: time to fall from the vertical motion, distance from the horizontal motion.'];
+  return out; }
+function twoFreeSol(L,ang,R,Y,wx,wh){ var g=L.g,th=ang*D2R,c=Math.cos(th),tn=Math.tan(th),u=Math.sqrt(g*R*R/(2*c*c*(R*tn-Y))), yw=wx*tn-g*wx*wx/(2*u*u*c*c);
+  return ['Many combinations work. One strategy: <b>choose a steep angle</b>, say θ = '+ang+'°, then find the speed for the range.','R = u² sin 2θ ÷ g  →  u = √(gR ÷ sin 2θ) = √('+g+' × '+R+' ÷ '+fmt(Math.sin(2*th),4)+') = <b>'+fmt(u,3)+' m/s</b>','<b>Check the wall</b> at x = '+wx+' m: t = x ÷ (u cos θ) = '+fmt(wx/(u*c),3)+' s','y = (u sin θ)t − ½gt² = <b>'+fmt(yw,3)+' m</b>, '+(yw>wh+0.3?'which clears the '+wh+' m wall ✓':'which is not enough to clear it. Try a steeper angle.')]; }
+function windowSol(L){ var g=L.g, best=null; for(var a=10;a<=60;a+=0.5){var th=a*D2R,c=Math.cos(th),u=Math.sqrt(g*25/Math.sin(2*th)),y=15*Math.tan(th)-g*225/(2*u*u*c*c); if(y>3.3&&y<4.7){best={a:a,u:u,y:y};break;}}
+  var th2=best.a*D2R; return ['The ball must be between 3 m and 5 m high at x = 15 m, then land at x = 25 m.','Range condition: u² = gR ÷ sin 2θ. Height at the wall: y = x tan θ − g x² ÷ (2u² cos²θ).','Try angles and check the height at the window. For example θ = '+best.a+'°:','u = √('+g+' × 25 ÷ sin '+(2*best.a)+'°) = <b>'+fmt(best.u,3)+' m/s</b>','y at the wall = 15 tan '+best.a+'° − '+g+' × 225 ÷ (2 × '+fmt(best.u*best.u,4)+' × cos²'+best.a+'°) = <b>'+fmt(best.y,3)+' m</b> ✓','A low, flat shot works here; a steep one goes over the top of the window.']; }
+var cur=0, ch={projs:[],shots:0,hit:false,showSol:false};
+function lvUnlocked(i){ return i===0 || !!P.levels[i-1]; }
+function renderLevels(){ var h=''; LV.forEach(function(L,i){ var st=P.levels[i]||0; h+='<button class="lvcard'+(i===cur?' on':'')+(lvUnlocked(i)?'':' lock')+'" data-i="'+i+'"><b>'+(i+1)+'. '+L.n+'</b><span class="stars">'+(st?'★'.repeat(st)+'☆'.repeat(3-st):lvUnlocked(i)?'☆☆☆':'🔒')+'</span></button>'; });
+  $('levels').innerHTML=h; Array.prototype.forEach.call($('levels').children,function(b){b.onclick=function(){var i=+b.dataset.i; if(!lvUnlocked(i)) return; loadLevel(i);};}); }
+function loadLevel(i){ cur=i; var L=LV[i]; ch={projs:[],shots:0,hit:false,showSol:false}; L.T.forEach(function(t){t.hit=false;});
+  $('c-title').textContent='Level '+(i+1)+' · '+L.n; var st=P.levels[i]||0; $('c-stars').textContent=st?'★'.repeat(st)+'☆'.repeat(3-st):'';
+  $('c-brief').innerHTML='<p style="margin:0">'+L.d+'</p>'+(L.drag?'<p class="note" style="margin:4px 0 0">Air resistance is on for this level.</p>':'');
+  var gv=['<span class="giv">g = '+L.g+' m s⁻²</span>']; if(L.h) gv.push('<span class="giv">h = '+L.h+' m</span>'); if(L.ang!=null) gv.push('<span class="giv">θ = '+L.ang+'° (fixed)</span>'); if(L.u!=null) gv.push('<span class="giv">u = '+L.u+' m/s (fixed)</span>'); gv.push('<span class="giv">target: '+((L.T[0].x1+L.T[0].x2)/2)+' m'+(L.T[0].y?', '+L.T[0].y+' m up':'')+'</span>');
+  $('c-givens').innerHTML=gv.join('');
+  var inp=''; if(L.free.indexOf('ang')>=0) inp+='<div class="ctl" style="grid-template-columns:120px 1fr"><span class="lbl">Angle θ / °</span><input type="number" id="pl-c-ang" min="0" max="90" step="0.1" value="45"></div>';
+  if(L.free.indexOf('u')>=0) inp+='<div class="ctl" style="grid-template-columns:120px 1fr"><span class="lbl">Speed u / m s⁻¹</span><input type="number" id="pl-c-u" min="0" max="'+(L.umax||60)+'" step="0.01" value="10"></div>';
+  $('c-inputs').innerHTML=inp; $('c-msg').innerHTML=''; $('c-solcard').style.display='none'; renderLevels(); }
+$('c-reset').onclick=function(){loadLevel(cur);};
+$('c-sol').onclick=function(){ var L=LV[cur]; var c=$('c-solcard'); c.style.display='block'; c.innerHTML='<h3>The physics</h3><div class="sol">'+L.sol.call(L).map(function(s){return '<div class="stp">'+s+'</div>';}).join('')+'</div>'+(ch.hit?'':'<p class="note">Seeing the solution before hitting the target limits this level to ★.</p>'); if(!ch.hit) ch.showSol=true; };
+$('c-fire').onclick=function(){ var L=LV[cur]; var a=L.ang!=null?L.ang:clamp(+$('c-ang').value||0,0,90), u=L.u!=null?L.u:clamp(+$('c-u').value||0,0,L.umax||60);
+  if(L.umax&&$('c-u')&&+$('c-u').value>L.umax){ $('c-msg').innerHTML='<div class="msg warn">The launcher\'s top speed is '+L.umax+' m/s.</div>'; return; }
+  ch.projs.forEach(function(p){p.ghost=true;}); var sc={h:L.h,targets:L.T,walls:L.W}; var p=simulate(sc,u,a,L.g,L.drag?BALLS[L.drag]:null); p.play=0; p.col='#ff6b2c'; ch.projs.push(p); ch.shots++; ch.ang=a; P.launches++; save();
+  ch.pending=p; $('c-msg').innerHTML=''; };
+function challengeResolve(p){ var L=LV[cur]; ch.pending=null; var e=p.end, h='';
+  if(e.type==='target'){ L.T.forEach(function(t){t.hit=true;}); ch.hit=true; var stars=ch.showSol?1:ch.shots===1?3:ch.shots<=3?2:1; var prev=P.levels[cur]||0;
+    if(stars>prev){ P.levels[cur]=stars; save(); addXP((stars-prev)*20+(prev?0:20),'Level cleared'); }
+    h='<div class="msg good"><b>Hit!</b> '+(stars===3?'First time. ★★★ Brilliant calculating.':stars===2?'★★ in '+ch.shots+' shots.':'★ cleared.')+(cur<LV.length-1?' The next level is unlocked.':'')+'</div>';
+    var n=Object.keys(P.levels).length; award('c1'); if(stars===3) award('c3s'); if(n>=6) award('c6'); if(n>=12) award('c12'); if(LV.every(function(_,i){return P.levels[i]===3;})) award('c36');
+    $('c-stars').textContent='★'.repeat(P.levels[cur])+'☆'.repeat(3-P.levels[cur]); renderLevels(); }
+  else { var tx=(L.T[0].x1+L.T[0].x2)/2; if(e.type==='wall') h='<div class="msg warn">Blocked by the wall at '+fmt(e.y,2)+' m high.</div>';
+    else h='<div class="msg warn">Missed: landed at '+fmt(e.x,3)+' m, which is '+fmt(Math.abs(e.x-tx),2)+' m '+(e.x<tx?'short':'long')+'.'+(ch.shots>=3?' Try "Show the physics".':'')+'</div>'; }
+  $('c-msg').innerHTML=h; }
+
+/* ================= SUVAT SOLVER ================= */
+var SV=['s','u','v','a','t'];
+function svInputs(){ var o={}; Array.prototype.forEach.call(document.querySelectorAll('#pl-sv input'),function(i){ var v=i.value.trim(); o[i.dataset.k]=v===''?null:parseFloat(v.replace(',','.')); }); return o; }
+function svSet(o){ Array.prototype.forEach.call(document.querySelectorAll('#pl-sv input'),function(i){ i.value=o[i.dataset.k]!=null?o[i.dataset.k]:''; i.parentNode.classList.remove('found'); }); }
+$('sv-clr').onclick=function(){svSet({});$('sv-out').innerHTML='';$('sv-prob').innerHTML='';hlEq([]);};
+var SVEX=[
+ {p:'A car accelerates uniformly from 8 m/s to 20 m/s in 6 s. How far does it travel?',v:{u:8,v:20,t:6}},
+ {p:'A stone is dropped from rest and falls 45 m. How fast is it going when it hits the ground? (Take down as positive.)',v:{u:0,s:45,a:9.81}},
+ {p:'A ball is thrown straight up at 14 m/s. How high does it go? (Up is positive, so a = −9.81 and v = 0 at the top.)',v:{u:14,v:0,a:-9.81}},
+ {p:'A train brakes from 30 m/s with a deceleration of 1.5 m/s². How long does it take to stop?',v:{u:30,v:0,a:-1.5}},
+ {p:'A ball is thrown up at 12 m/s from the edge of a cliff and lands 20 m below the top. How long is it in the air? (Up positive: s = −20, a = −9.81.)',v:{u:12,s:-20,a:-9.81}},
+ {p:'A sprinter starts from rest and covers 40 m in 6.2 s with constant acceleration. What is the acceleration?',v:{u:0,s:40,t:6.2}}
+];
+$('sv-ex').onclick=function(){ var e=SVEX[Math.floor(Math.random()*SVEX.length)]; svSet(e.v); $('sv-prob').innerHTML='<div class="msg">'+e.p+'</div>'; $('sv-out').innerHTML=''; hlEq([]); };
+function hlEq(list){ Array.prototype.forEach.call(document.querySelectorAll('#pl-eqs .eq'),function(e){e.classList.toggle('use',list.indexOf(+e.dataset.e)>=0);}); }
+var EQOMIT={1:'s',2:'a',3:'t',4:'v',5:'u'};
+function solveOne(k,X,eq){ // returns {val, steps[]} solving eq for X given k
+  var s=k.s,u=k.u,v=k.v,a=k.a,t=k.t, st=[], r;
+  function S(x){var q=nz(x,4);return x<0?'('+q.replace('-','−')+')':q;}
+  if(eq===1){ st.push('v = u + at');
+    if(X==='v'){r=u+a*t; st.push('v = '+S(u)+' + ('+S(a)+' × '+S(t)+')');}
+    if(X==='u'){r=v-a*t; st.push(S(v)+' = u + ('+S(a)+' × '+S(t)+')','u = '+S(v)+' − '+S(a*t));}
+    if(X==='a'){r=(v-u)/t; st.push(S(v)+' = '+S(u)+' + a × '+S(t),'a × '+S(t)+' = '+S(v-u),'a = '+S(v-u)+' ÷ '+S(t));}
+    if(X==='t'){ if(a===0) return null; r=(v-u)/a; st.push(S(v)+' = '+S(u)+' + '+S(a)+' × t',S(a)+' × t = '+S(v-u),'t = '+S(v-u)+' ÷ '+S(a)); } }
+  if(eq===2){ st.push('s = ½(u + v)t');
+    if(X==='s'){r=0.5*(u+v)*t; st.push('s = ½ × ('+S(u)+' + '+S(v)+') × '+S(t));}
+    if(X==='t'){ if(u+v===0) return null; r=2*s/(u+v); st.push(S(s)+' = ½ × '+S(u+v)+' × t','t = 2 × '+S(s)+' ÷ '+S(u+v));}
+    if(X==='u'){r=2*s/t-v; st.push(S(s)+' = ½(u + '+S(v)+') × '+S(t),'u + '+S(v)+' = 2 × '+S(s)+' ÷ '+S(t)+' = '+S(2*s/t),'u = '+S(2*s/t)+' − '+S(v));}
+    if(X==='v'){r=2*s/t-u; st.push(S(s)+' = ½('+S(u)+' + v) × '+S(t),S(u)+' + v = 2 × '+S(s)+' ÷ '+S(t)+' = '+S(2*s/t),'v = '+S(2*s/t)+' − '+S(u));} }
+  if(eq===3){ st.push('v² = u² + 2as');
+    if(X==='v'){ var q=u*u+2*a*s; if(q<0) return {err:'v² would be negative: these values are impossible.'}; r=Math.sqrt(q); st.push('v² = '+S(u)+'² + 2 × '+S(a)+' × '+S(s)+' = '+S(q),'v = ±√'+S(q)); }
+    if(X==='u'){ var q2=v*v-2*a*s; if(q2<0) return {err:'u² would be negative: these values are impossible.'}; r=Math.sqrt(q2); st.push(S(v)+'² = u² + 2 × '+S(a)+' × '+S(s),'u² = '+S(v*v)+' − '+S(2*a*s)+' = '+S(q2),'u = ±√'+S(q2)); }
+    if(X==='a'){ if(s===0) return null; r=(v*v-u*u)/(2*s); st.push(S(v)+'² = '+S(u)+'² + 2 × a × '+S(s),S(v*v)+' − '+S(u*u)+' = '+S(2*s)+' × a','a = '+S(v*v-u*u)+' ÷ '+S(2*s)); }
+    if(X==='s'){ if(a===0) return null; r=(v*v-u*u)/(2*a); st.push(S(v)+'² = '+S(u)+'² + 2 × '+S(a)+' × s',S(v*v)+' − '+S(u*u)+' = '+S(2*a)+' × s','s = '+S(v*v-u*u)+' ÷ '+S(2*a)); } }
+  if(eq===4){ st.push('s = ut + ½at²');
+    if(X==='s'){r=u*t+0.5*a*t*t; st.push('s = '+S(u)+' × '+S(t)+' + ½ × '+S(a)+' × '+S(t)+'²');}
+    if(X==='u'){r=(s-0.5*a*t*t)/t; st.push(S(s)+' = u × '+S(t)+' + ½ × '+S(a)+' × '+S(t)+'²',S(s)+' = '+S(t)+'u + '+S(0.5*a*t*t),'u = ('+S(s)+' − '+S(0.5*a*t*t)+') ÷ '+S(t));}
+    if(X==='a'){r=2*(s-u*t)/(t*t); st.push(S(s)+' = '+S(u)+' × '+S(t)+' + ½ × a × '+S(t)+'²',S(s)+' − '+S(u*t)+' = '+S(0.5*t*t)+' × a','a = '+S(s-u*t)+' ÷ '+S(0.5*t*t));}
+    if(X==='t'){ return quadT(0.5*a,u,-s,['s = ut + ½at²',S(s)+' = '+S(u)+'t + ½ × '+S(a)+' × t²','Rearrange: '+S(0.5*a)+'t² + '+S(u)+'t − '+S(s)+' = 0']); } }
+  if(eq===5){ st.push('s = vt − ½at²');
+    if(X==='s'){r=v*t-0.5*a*t*t; st.push('s = '+S(v)+' × '+S(t)+' − ½ × '+S(a)+' × '+S(t)+'²');}
+    if(X==='v'){r=(s+0.5*a*t*t)/t; st.push(S(s)+' = v × '+S(t)+' − '+S(0.5*a*t*t),'v = ('+S(s)+' + '+S(0.5*a*t*t)+') ÷ '+S(t));}
+    if(X==='a'){r=2*(v*t-s)/(t*t); st.push(S(s)+' = '+S(v)+' × '+S(t)+' − ½ × a × '+S(t)+'²',S(0.5*t*t)+' × a = '+S(v*t)+' − '+S(s),'a = '+S(v*t-s)+' ÷ '+S(0.5*t*t));}
+    if(X==='t'){ return quadT(-0.5*a,v,-s,['s = vt − ½at²',S(s)+' = '+S(v)+'t − ½ × '+S(a)+' × t²','Rearrange: '+S(-0.5*a)+'t² + '+S(v)+'t − '+S(s)+' = 0']); } }
+  if(r==null||!isFinite(r)) return null; if(eq===3&&(X==='v'||X==='u')) st.push('Take + or − to match the direction of motion. The magnitude is:'); st.push(X+' = <b>'+nz(r,4).replace('-','−')+'</b> '+UN[X]); return {val:r,steps:st};
+}
+function quadT(A,B,C,st){ function S(x){var q=nz(x,4);return x<0?'('+q.replace('-','−')+')':q;} if(Math.abs(A)<1e-12){ if(B===0) return null; var t=-C/B; st.push('t = '+S(-C)+' ÷ '+S(B),'t = <b>'+S(t)+'</b> s'); return {val:t,steps:st}; }
+  var d=B*B-4*A*C; if(d<0) return {err:'No real solution: the object never reaches that displacement.'}; var r1=(-B+Math.sqrt(d))/(2*A), r2=(-B-Math.sqrt(d))/(2*A); var pos=[r1,r2].filter(function(x){return x>=-1e-9;}).sort(function(a,b){return a-b;});
+  st.push('Quadratic formula: t = (−b ± √(b² − 4ac)) ÷ 2a','t = ('+S(-B)+' ± √'+S(d)+') ÷ '+S(2*A)+' → t = '+S(r1)+' s or '+S(r2)+' s');
+  if(!pos.length) return {err:'Both times are negative.'}; if(pos.length===2&&Math.abs(pos[0]-pos[1])>1e-6) st.push('Both are positive: the object passes this point twice. The first time is <b>'+S(pos[0])+' s</b>, the second <b>'+S(pos[1])+' s</b>.'); else st.push('Reject the negative root: t = <b>'+S(pos[0])+'</b> s');
+  return {val:pos[0],steps:st}; }
+var UN={s:'m',u:'m/s',v:'m/s',a:'m/s²',t:'s'};
+$('sv-go').onclick=function(){ var k=svInputs(), known=SV.filter(function(q){return k[q]!=null&&isFinite(k[q]);}), unk=SV.filter(function(q){return known.indexOf(q)<0;});
+  Array.prototype.forEach.call(document.querySelectorAll('#pl-sv .sv'),function(e){e.classList.remove('found');});
+  if(known.length!==3){ $('sv-out').innerHTML='<div class="msg warn">Enter exactly three values (you have '+known.length+').</div>'; hlEq([]); return; }
+  if(k.t!=null&&k.t<0){ $('sv-out').innerHTML='<div class="msg warn">Time cannot be negative.</div>'; return; }
+  var h='<div class="sol"><div class="stp"><b>Known:</b> '+known.map(function(q){return q+' = '+nz(k[q],4)+' '+UN[q];}).join(', ')+'   <b>Unknown:</b> '+unk.join(', ')+'</div>'; var used=[], K=Object.assign({},k), ok=true;
+  unk.forEach(function(X,ix){ var other=unk[1-ix]; var eq=+Object.keys(EQOMIT).find(function(e){return EQOMIT[e]===other;});
+    if(K[X]!=null) return;
+    var res=solveOne(K,X,eq);
+    if(!res||res.err){ // fallback: use another equation with already-found value
+      var alt=null; [1,2,3,4,5].some(function(e){ if(EQOMIT[e]===X) return false; var need=['s','u','v','a','t'].filter(function(q){return q!==EQOMIT[e]&&q!==X;}); if(need.every(function(q){return K[q]!=null;})){ alt=solveOne(K,X,e); if(alt&&!alt.err){eq=e;return true;} } return false; }); if(alt&&!alt.err) res=alt; }
+    if(!res||res.err){ ok=false; h+='<div class="stp" style="color:#c2410c">'+(res&&res.err?res.err:'Cannot find '+X+' from these values.')+'</div>'; return; }
+    used.push(eq); h+='<div class="stp" style="margin-top:8px"><b>Find '+X+'</b>: use the equation without '+EQOMIT[eq]+'</div>'+res.steps.map(function(s){return '<div class="stp">'+s+'</div>';}).join(''); K[X]=res.val; });
+  h+='</div>'; $('sv-out').innerHTML=h; hlEq(used); if(ok){ unk.forEach(function(X){ var i=document.querySelector('#pl-sv input[data-k="'+X+'"]'); i.value=nz(K[X],4); i.parentNode.classList.add('found'); }); award('sv'); P.solves++; save(); } };
+
+/* ================= PRACTICE ================= */
+var SKILLS=[{id:'v2',name:'v² = u² + 2as',lvl:2},{id:'vt',name:'v–t graphs',lvl:2},{id:'suvat',name:'SUVAT in one direction',lvl:3},{id:'comp',name:'Resolving velocity',lvl:3},{id:'horiz',name:'Horizontal launch',lvl:3},{id:'angled',name:'Angled launch',lvl:3},{id:'impact',name:'Impact velocity',lvl:3},{id:'concept',name:'Concepts',lvl:2}];
+(function(){var s=$('skill');SKILLS.forEach(function(k){var o=document.createElement('option');o.value=k.id;o.textContent=k.name;s.appendChild(o);});})();
+var level=3, mode='smart', G=9.81, Q=null, qs=null, daily=null;
+segInit('level',function(b){level=+b.dataset.l;newQ();});
+segInit('gval',function(b){G=+b.dataset.g;newQ();});
+segInit('mode',function(b){mode=b.dataset.m;$('topicpick').style.display=mode==='topic'?'block':'none';$('modenote').textContent=mode==='smart'?'Smart mix serves more questions from the skills you find hardest.':mode==='topic'?'Drill one skill until it sticks.':'Five questions, the same for everyone today. Come back tomorrow to keep your streak.';newQ();});
+$('skill').onchange=function(){newQ();};
+function mastery(id){var a=P.skills[id]||[];if(!a.length) return 0;var s=0;a.slice(-8).forEach(function(v){s+=v;});return Math.round(s/8*100);}
+function pick(r,a){return a[Math.floor(r()*a.length)];}
+function rnd(r,lo,hi,st){return Math.round((lo+r()*(hi-lo))/st)*st;}
+function pickSkill(r){var av=SKILLS.filter(function(s){return s.lvl<=level;}); if(mode==='topic'){var k=$('skill').value,sk=SKILLS.find(function(s){return s.id===k;});return sk.lvl<=level?k:av[0].id;}
+  var w=av.map(function(s){return 1.15-mastery(s.id)/100;}),tot=w.reduce(function(a,b){return a+b;},0),x=r()*tot;for(var i=0;i<av.length;i++){x-=w[i];if(x<=0) return av[i].id;}return av[0].id;}
+function N(v){return nz(v,4);}
+function gen(sk,r){ var q={skill:sk,type:'num',tol:0.02}, g=G, gs=String(G);
+  var pill='<span class="pill">'+SKILLS.find(function(s){return s.id===sk;}).name+'</span>';
+  if(sk==='v2'){ var v=Math.floor(r()*3);
+    if(v===0){ var h=pick(r,[5,10,20,45,80,1.8,3.2]); var vv=Math.sqrt(2*g*h); q.ans=vv; q.unit='m/s'; q.text='A stone is dropped from rest from a height of '+h+' m. Ignoring air resistance, calculate its speed just before it hits the ground. (g = '+gs+' m/s²)'; q.hint='The stone starts from rest, so u = 0. Use v² = u² + 2as with a = g.'; q.sol=['v² = u² + 2as','v² = 0² + 2 × '+gs+' × '+h+' = '+N(2*g*h),'v = √'+N(2*g*h)+' = <b>'+N(vv)+' m/s</b>']; }
+    else if(v===1){ var u=pick(r,[12,15,20,25,30]), a=pick(r,[2,2.5,4,5,6]); var s=u*u/(2*a); q.ans=s; q.unit='m'; q.text='A car travelling at '+u+' m/s brakes with a constant deceleration of '+a+' m/s². Calculate its stopping distance.'; q.hint='v = 0 when it stops. The acceleration is −'+a+' m/s².'; q.sol=['v² = u² + 2as','0 = '+u+'² + 2 × (−'+a+') × s',N(2*a)+' × s = '+(u*u),'s = '+(u*u)+' ÷ '+N(2*a)+' = <b>'+N(s)+' m</b>']; }
+    else { var u2=pick(r,[0,2,4,5]), v2=u2+pick(r,[6,8,10,12]), s2=pick(r,[20,25,40,50,60]); var a2=(v2*v2-u2*u2)/(2*s2); q.ans=a2; q.unit='m/s²'; q.text='A cyclist speeds up from '+u2+' m/s to '+v2+' m/s over a distance of '+s2+' m. Calculate the acceleration.'; q.hint='Substitute into v² = u² + 2as, then rearrange for a.'; q.sol=['v² = u² + 2as',v2+'² = '+u2+'² + 2 × a × '+s2,(v2*v2)+' − '+(u2*u2)+' = '+(2*s2)+' × a','a = '+(v2*v2-u2*u2)+' ÷ '+(2*s2)+' = <b>'+N(a2)+' m/s²</b>']; } }
+  else if(sk==='vt'){ var u3=pick(r,[10,12,15,20]), t1=pick(r,[2,3,4,5]), t2=pick(r,[3,4,5,6]), v3=u3+pick(r,[5,8,10]); var ac=(v3-u3)/t1; var dist=(u3+v3)/2*t1+v3*t2;
+    q.vt={pts:[[0,u3],[t1,v3],[t1+t2,v3]]};
+    if(r()<0.5){ q.ans=ac; q.unit='m/s²'; q.text='The velocity–time graph shows a car accelerating, then travelling at constant velocity. Calculate the acceleration during the first '+t1+' s.'; q.hint='Acceleration = gradient of the velocity–time graph.'; q.sol=['acceleration = gradient = Δv ÷ Δt','= ('+v3+' − '+u3+') ÷ '+t1,'= <b>'+N(ac)+' m/s²</b>']; }
+    else { q.ans=dist; q.unit='m'; q.text='The velocity–time graph shows a car accelerating, then travelling at constant velocity. Calculate the total distance travelled in '+(t1+t2)+' s.'; q.hint='Distance = area under the velocity–time graph. Split it into a trapezium and a rectangle.'; q.sol=['distance = area under the graph','trapezium: ½ × ('+u3+' + '+v3+') × '+t1+' = '+N((u3+v3)/2*t1)+' m','rectangle: '+v3+' × '+t2+' = '+N(v3*t2)+' m','total = <b>'+N(dist)+' m</b>']; } }
+  else if(sk==='suvat'){ var v4=Math.floor(r()*3);
+    if(v4===0){ var u4=pick(r,[8,10,12,14,15,18,20]); var H=u4*u4/(2*g); q.ans=H; q.unit='m'; q.text='A ball is thrown vertically upwards at '+u4+' m/s. Calculate the maximum height it reaches. (g = '+gs+' m/s²)'; q.hint='At the highest point v = 0. Take up as positive, so a = −g.'; q.sol=['Up is positive: u = '+u4+', v = 0, a = −'+gs,'v² = u² + 2as','0 = '+u4+'² + 2 × (−'+gs+') × s','s = '+(u4*u4)+' ÷ '+N(2*g)+' = <b>'+N(H)+' m</b>']; }
+    else if(v4===1){ var u5=pick(r,[8,10,12,15,20]); var T=2*u5/g; q.ans=T; q.unit='s'; q.text='A ball is thrown vertically upwards at '+u5+' m/s and caught at the same height. How long is it in the air? (g = '+gs+' m/s²)'; q.hint='It returns to the start, so s = 0. Or find the time to the top and double it.'; q.sol=['Time to top: v = u + at  →  0 = '+u5+' − '+gs+'t','t = '+u5+' ÷ '+gs+' = '+N(u5/g)+' s','The way down takes the same time, so total = <b>'+N(T)+' s</b>']; }
+    else { var h5=pick(r,[20,30,45,60,80]); var t5=Math.sqrt(2*h5/g); q.ans=t5; q.unit='s'; q.text='A coin is dropped from rest from a bridge '+h5+' m above the water. How long does it take to reach the water? (g = '+gs+' m/s²)'; q.hint='u = 0, so s = ½at².'; q.sol=['s = ut + ½at²',h5+' = 0 + ½ × '+gs+' × t²','t² = '+(2*h5)+' ÷ '+gs+' = '+N(2*h5/g),'t = <b>'+N(t5)+' s</b>']; } }
+  else if(sk==='comp'){ var u6=pick(r,[10,12,15,18,20,25,30]), a6=pick(r,[20,25,30,35,40,50,55,60,65]); var ux=u6*Math.cos(a6*D2R), uy=u6*Math.sin(a6*D2R); var which=r()<0.5;
+    q.ans=which?ux:uy; q.unit='m/s'; q.text='A ball is kicked at '+u6+' m/s at '+a6+'° above the horizontal. Calculate the '+(which?'horizontal':'vertical')+' component of its initial velocity.'; q.hint=which?'Horizontal component = u cos θ.':'Vertical component = u sin θ.'; q.sol=[which?'uₓ = u cos θ = '+u6+' × cos '+a6+'°':'u_y = u sin θ = '+u6+' × sin '+a6+'°','= <b>'+N(which?ux:uy)+' m/s</b>']; }
+  else if(sk==='horiz'){ var h7=pick(r,[1.2,1.8,2.5,5,10,20,45]), u7=pick(r,[3,4,5,8,10,12,15]); var t7=Math.sqrt(2*h7/g), R7=u7*t7; var w=r()<0.5;
+    q.ans=w?t7:R7; q.unit=w?'s':'m'; q.text='A ball rolls off a table '+h7+' m high at '+u7+' m/s horizontally. '+(w?'How long does it take to reach the floor?':'How far from the foot of the table does it land?')+' (g = '+gs+' m/s²)'; q.hint='Vertical: it starts with u_y = 0 and falls '+h7+' m. Horizontal: constant speed.';
+    q.sol=['Vertical: s = ut + ½at²  →  '+h7+' = 0 + ½ × '+gs+' × t²','t = √('+N(2*h7)+' ÷ '+gs+') = '+N(t7)+' s'].concat(w?['<b>t = '+N(t7)+' s</b>. The horizontal speed does not affect this.']:['Horizontal: distance = uₓ t = '+u7+' × '+N(t7),'= <b>'+N(R7)+' m</b>']); }
+  else if(sk==='angled'){ var u8=pick(r,[10,12,15,18,20,25]), a8=pick(r,[20,25,30,35,40,45,50,60]); var uy8=u8*Math.sin(a8*D2R), ux8=u8*Math.cos(a8*D2R), T8=2*uy8/g, H8=uy8*uy8/(2*g), R8=ux8*T8; var k=Math.floor(r()*3);
+    var base='A projectile is launched from level ground at '+u8+' m/s at '+a8+'° above the horizontal. (g = '+gs+' m/s²)<br><br>';
+    var s0=['u_y = '+u8+' sin '+a8+'° = '+N(uy8)+' m/s,  uₓ = '+u8+' cos '+a8+'° = '+N(ux8)+' m/s'];
+    if(k===0){ q.ans=H8; q.unit='m'; q.text=base+'Calculate the maximum height.'; q.hint='At the top v_y = 0. Use v² = u² + 2as vertically.'; q.sol=s0.concat(['Vertically: 0 = '+N(uy8)+'² − 2 × '+gs+' × H','H = '+N(uy8*uy8)+' ÷ '+N(2*g)+' = <b>'+N(H8)+' m</b>']); }
+    else if(k===1){ q.ans=T8; q.unit='s'; q.text=base+'Calculate the time of flight.'; q.hint='Find the time to the top (v_y = 0), then double it.'; q.sol=s0.concat(['Time to top: 0 = '+N(uy8)+' − '+gs+'t  →  t = '+N(uy8/g)+' s','Time of flight = 2 × '+N(uy8/g)+' = <b>'+N(T8)+' s</b>']); }
+    else { q.ans=R8; q.unit='m'; q.text=base+'Calculate the horizontal range.'; q.hint='Time of flight from the vertical motion, then range = uₓ × time.'; q.sol=s0.concat(['Time of flight = 2u_y ÷ g = 2 × '+N(uy8)+' ÷ '+gs+' = '+N(T8)+' s','Range = uₓ × T = '+N(ux8)+' × '+N(T8)+' = <b>'+N(R8)+' m</b>']); } }
+  else if(sk==='impact'){ var h9=pick(r,[5,10,15,20,30]), u9=pick(r,[5,8,10,12,15]); var vy9=Math.sqrt(2*g*h9), v9=Math.hypot(u9,vy9), an=Math.atan(vy9/u9)/D2R; var w2=r()<0.5;
+    q.ans=w2?v9:an; q.unit=w2?'m/s':'°'; q.text='A ball is thrown horizontally at '+u9+' m/s from the top of a '+h9+' m building. Calculate '+(w2?'its speed':'the angle its velocity makes with the horizontal')+' just before it lands. (g = '+gs+' m/s²)'; q.hint='Find the final vertical velocity with v² = u² + 2as. The horizontal velocity is unchanged. Then combine them.';
+    q.sol=['Vertical: v_y² = 0 + 2 × '+gs+' × '+h9+'  →  v_y = '+N(vy9)+' m/s','Horizontal: vₓ = '+u9+' m/s (unchanged)',w2?'v = √(vₓ² + v_y²) = √('+u9+'² + '+N(vy9)+'²) = <b>'+N(v9)+' m/s</b>':'tan α = v_y ÷ vₓ = '+N(vy9)+' ÷ '+u9+'  →  α = <b>'+N(an)+'°</b> below the horizontal']; }
+  else if(sk==='concept'){ var b=CON.filter(function(c){return c.l<=level;}); var c=pick(r,b); q.type='mcq'; q.opts=shuf(c.o.slice(),r); q.ansText=c.o[0]; q.text=c.q; q.sol=[c.e]; }
+  q.text=pill+'<div class="qtext">'+q.text+'</div>'+(q.vt?'<canvas id="pl-qg" style="height:220px;border:1px solid var(--line);border-radius:10px;background:#fff"></canvas>':''); return q; }
+function shuf(a,r){for(var i=a.length-1;i>0;i--){var j=Math.floor(r()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+var CON=[
+ {l:3,q:'At the highest point of its path, a projectile (no air resistance) has…',o:['zero vertical velocity but non-zero horizontal velocity','zero velocity and zero acceleration','zero acceleration','zero horizontal velocity'],e:'At the top v_y = 0, but vₓ is still u cos θ, and the acceleration is still g downwards.'},
+ {l:3,q:'Ignoring air resistance, what happens to the horizontal velocity of a projectile during its flight?',o:['It stays constant','It decreases steadily','It increases steadily','It is zero at the top'],e:'No horizontal force acts, so there is no horizontal acceleration (Newton\'s first law).'},
+ {l:2,q:'A ball is dropped and another is thrown horizontally from the same height at the same moment. Which lands first?',o:['They land at the same time','The dropped ball','The thrown ball','It depends on their masses'],e:'Vertical motion is independent of horizontal motion. Both start with zero vertical velocity and have the same acceleration g.'},
+ {l:3,q:'Ignoring air resistance, which launch angle gives the greatest range on level ground?',o:['45°','30°','60°','90°'],e:'R = u² sin 2θ ÷ g is largest when sin 2θ = 1, i.e. θ = 45°.'},
+ {l:3,q:'Two projectiles are launched at the same speed, at 25° and 65°. Ignoring air resistance, which goes further?',o:['They have the same range','25°','65°','It depends on g'],e:'sin(2 × 25°) = sin 50° = sin 130° = sin(2 × 65°). Complementary angles give equal ranges, but the 65° shot is in the air for longer.'},
+ {l:2,q:'What is the acceleration of a projectile (no air resistance) at the top of its path?',o:['g, downwards','zero','g, upwards','it depends on the launch speed'],e:'Gravity is the only force acting, everywhere along the path, so the acceleration is always g downwards.'},
+ {l:3,q:'Compared with no air resistance, how does air resistance change a projectile\'s path?',o:['Shorter range, lower height, and a steeper descent than ascent','Longer range','The same range but lower height','A symmetrical path with a shorter range'],e:'Drag opposes the velocity, reducing both components. The ball is slower on the way down, so the path is lopsided, with a steeper fall.'},
+ {l:3,q:'In the "monkey and hunter" demonstration, why does the dart always hit the falling monkey?',o:['Both fall the same distance below their straight-line paths in the same time','The dart travels in a straight line','The monkey falls more slowly than the dart','The dart has no vertical acceleration'],e:'Without gravity the dart would travel straight to the monkey. With gravity, both the dart and the monkey fall ½gt² in time t, so they still meet.'},
+ {l:2,q:'On a velocity–time graph, what does the area under the line represent?',o:['Displacement','Acceleration','Speed','Time'],e:'Area = velocity × time = displacement. The gradient is the acceleration.'},
+ {l:2,q:'The SUVAT equations can only be used when…',o:['the acceleration is constant','the velocity is constant','the object starts from rest','there is no gravity'],e:'All five equations assume uniform (constant) acceleration.'},
+ {l:3,q:'A ball rolls off two tables, one twice as high as the other, at the same speed. How do their fall times compare?',o:['The higher table\'s fall time is √2 times longer','It is twice as long','It is the same','It is four times as long'],e:'h = ½gt², so t ∝ √h. Doubling h multiplies t by √2.'},
+ {l:3,q:'A projectile is fired horizontally from a cliff. Doubling the launch speed…',o:['doubles the range but does not change the time of flight','doubles the time of flight','doubles both range and time of flight','quadruples the range'],e:'The fall time depends only on the height. Range = u × t, so doubling u doubles the range.'}
+];
+function newQ(){ var r; qs={tries:0,hint:false,done:false};
+  if(mode==='daily'){ var k=todayKey(); if(!P.daily[k]) P.daily[k]={i:0,score:0,res:[]}; daily=P.daily[k]; if(daily.i>=5){ $('qcard').innerHTML='<h3>Daily 5 complete</h3><p style="font-size:28px;margin:6px 0"><b>'+daily.score+' / 5</b></p><p class="note">Come back tomorrow for a new set. Switch to Smart mix to keep practising.</p>'; renderDaily(); return; }
+    r=mulberry(hashStr('pdaily'+k+'#'+daily.i+'L'+level+'g'+G)); var av=SKILLS.filter(function(s){return s.lvl<=level;}); Q=gen(av[Math.floor(r()*av.length)].id,r); }
+  else { r=Math.random; Q=gen(pickSkill(r),r); }
+  renderQ(); renderDaily(); }
+function renderQ(){ var c=$('qcard'), h=''; if(mode==='daily') h+='<div class="row" style="justify-content:space-between"><b>Daily 5 · question '+(daily.i+1)+' of 5</b><span class="note">'+todayKey()+'</span></div>';
+  h+=Q.text; if(Q.type==='mcq'){ h+='<div class="opts">'+Q.opts.map(function(o,i){return '<button class="opt" data-i="'+i+'">'+o+'</button>';}).join('')+'</div>'; }
+  else h+='<div class="ans"><input id="pl-qa" type="text" inputmode="decimal" placeholder="your answer" autocomplete="off"><b>'+Q.unit+'</b><button class="btn pri" id="pl-qsub">Check</button>'+(Q.hint?'<button class="btn" id="pl-qhint">Hint</button>':'')+'<button class="btn" id="pl-qskip">Show solution</button></div><p class="note" style="margin:6px 0 0">Answers within '+Math.round(Q.tol*100)+'% are accepted.</p>';
+  h+='<div id="pl-qfb"></div>'; c.innerHTML=h; if(Q.vt) drawVT();
+  if(Q.type==='mcq'){ Array.prototype.forEach.call(c.querySelectorAll('.opt'),function(b){b.onclick=function(){ if(qs.done) return; var ok=Q.opts[+b.dataset.i]===Q.ansText; b.classList.add(ok?'right':'wrong'); if(!ok) Array.prototype.forEach.call(c.querySelectorAll('.opt'),function(z){if(Q.opts[+z.dataset.i]===Q.ansText) z.classList.add('right');}); finish(ok); };}); }
+  else { $('qsub').onclick=check; $('qa').onkeydown=function(e){if(e.key==='Enter') check();}; if($('qhint')) $('qhint').onclick=function(){qs.hint=true;$('qfb').innerHTML='<div class="hint">💡 '+Q.hint+'</div>';}; $('qskip').onclick=function(){if(!qs.done) finish(false);}; } }
+function check(){ if(qs.done) return; var v=parseFloat(String($('qa').value).replace(/[\s ,]/g,'')); if(!isFinite(v)){ $('qfb').innerHTML='<div class="msg warn">Type a number.</div>'; return; }
+  var err=Math.abs(v-Q.ans)/Math.max(Math.abs(Q.ans),1e-9); qs.tries++; if(err<=Q.tol) finish(true); else if(Math.abs(-v-Q.ans)/Math.abs(Q.ans)<=Q.tol){ $('qfb').innerHTML='<div class="msg warn">Right size, wrong sign. Check your direction. Give the magnitude here.</div>'; } else if(qs.tries<2) $('qfb').innerHTML='<div class="msg warn">Not quite. Try again'+(Q.hint&&!qs.hint?' or take a hint':'')+'.</div>'; else finish(false); }
+function finish(ok){ qs.done=true; var id=Q.skill; if(!P.skills[id]) P.skills[id]=[]; P.skills[id].push(ok?1:0); P.skills[id]=P.skills[id].slice(-20); P.answered++; if(ok) P.correct++; save();
+  if(ok){ addXP(10+(qs.tries<=1&&!qs.hint?5:0),'Correct'); if(P.correct>=10) award('q10'); if(P.correct>=50) award('q50'); if(mastery(id)>=100) award('master'); }
+  $('qfb').innerHTML=(ok?'<div class="msg good"><b>Correct!</b></div>':'<div class="msg warn"><b>Here\'s how to do it.</b></div>')+'<div class="sol">'+Q.sol.map(function(s){return '<div class="stp">'+s+'</div>';}).join('')+'</div><div class="row" style="margin-top:12px"><button class="btn pri" id="pl-qnext">Next question →</button></div>';
+  $('qnext').onclick=function(){ if(mode==='daily'){daily.i++;save();} newQ(); };
+  if(mode==='daily'){ daily.res[daily.i]=ok?1:0; if(ok) daily.score++; save(); if(daily.i===4) completeDaily(); }
+  renderMastery(); renderDaily(); }
+function completeDaily(){ var k=todayKey(); if(P.lastDaily===k) return; var prev=P.lastDaily; P.dailyStreak=(prev&&dayDiff(prev,k)===1)?P.dailyStreak+1:1; P.lastDaily=k; save(); addXP(30,'Daily 5 complete'); award('daily'); if(daily.score===5) award('perfect'); if(P.dailyStreak>=3) award('streak3'); if(P.dailyStreak>=7) award('streak7'); updXP(); }
+function renderDaily(){ var k=todayKey(), d=P.daily[k]||{i:0,res:[],score:0}, h=''; for(var i=0;i<5;i++){ h+='<i class="'+(d.res[i]===1?'d':d.res[i]===0?'x':'')+'"></i>'; } $('dailybar').innerHTML=h; $('dailytxt').textContent=(P.lastDaily===k?'Done today: '+d.score+'/5.':'Today: '+d.res.filter(function(v){return v!=null;}).length+'/5 answered.')+' Streak: '+P.dailyStreak+' day'+(P.dailyStreak===1?'':'s')+'.'; }
+function renderMastery(){ var h=''; SKILLS.forEach(function(s){var m=mastery(s.id); h+='<span>'+s.name+'</span><div class="mbar"><i style="width:'+m+'%"></i></div><span class="note">'+m+'%</span>';}); $('mast-s').innerHTML=h; $('mast-p').innerHTML=h; }
+function drawVT(){ var cv=$('qg'); if(!cv) return; var o=fitCanvas(cv), x=o.x, W=o.w, H=o.h, pts=Q.vt.pts; var tm=pts[2][0], vm=Math.ceil((pts[1][1]+3)/5)*5; var ml=50,mr=14,mt=12,mb=36,pw=W-ml-mr,ph=H-mt-mb, sx=function(t){return ml+t/tm*pw;}, sy=function(v){return mt+ph-v/vm*ph;};
+  x.strokeStyle='#f0f5f3'; for(var t=0;t<=tm;t+=0.5){x.beginPath();x.moveTo(sx(t),mt);x.lineTo(sx(t),mt+ph);x.stroke();} for(var v=0;v<=vm;v+=1){x.beginPath();x.moveTo(ml,sy(v));x.lineTo(ml+pw,sy(v));x.stroke();}
+  x.strokeStyle='#d3e2dd'; x.fillStyle='#557072'; x.font='11px "Cascadia Mono",Consolas,monospace'; x.textAlign='center'; for(t=0;t<=tm;t+=1){x.beginPath();x.moveTo(sx(t),mt);x.lineTo(sx(t),mt+ph);x.stroke();x.fillText(t,sx(t),mt+ph+15);} x.textAlign='right'; for(v=0;v<=vm;v+=5){x.beginPath();x.moveTo(ml,sy(v));x.lineTo(ml+pw,sy(v));x.stroke();x.fillText(v,ml-6,sy(v)+4);}
+  x.strokeStyle='#0f2b2e'; x.lineWidth=1.5; x.beginPath(); x.moveTo(ml,mt); x.lineTo(ml,mt+ph); x.lineTo(ml+pw,mt+ph); x.stroke(); x.fillStyle='#0f2b2e'; x.font='700 12px "Segoe UI",system-ui'; x.textAlign='center'; x.fillText('time / s',ml+pw/2,H-6); x.save(); x.translate(13,mt+ph/2); x.rotate(-Math.PI/2); x.fillText('velocity / m s⁻¹',0,0); x.restore();
+  x.strokeStyle='#ff6b2c'; x.lineWidth=2.6; x.beginPath(); pts.forEach(function(p,i){if(i) x.lineTo(sx(p[0]),sy(p[1])); else x.moveTo(sx(p[0]),sy(p[1]));}); x.stroke(); }
+
+/* PROGRESS */
+function renderProgress(){ var l=levelOf(P.xp), cl=Object.keys(P.levels).length, stars=Object.keys(P.levels).reduce(function(a,k){return a+P.levels[k];},0);
+  $('progsum').innerHTML='<div class="kv" style="max-width:420px"><span>Level</span><span>'+(l+1)+' · '+TITLES[l]+'</span><span>Total XP</span><span>'+P.xp+'</span><span>Launches</span><span>'+P.launches+'</span><span>Challenges cleared</span><span>'+cl+' / 12 ('+stars+' ★)</span><span>Questions answered</span><span>'+P.answered+'</span><span>Correct</span><span>'+P.correct+(P.answered?' ('+Math.round(P.correct/P.answered*100)+'%)':'')+'</span><span>Daily 5 streak</span><span>'+P.dailyStreak+'</span><span>SUVAT problems solved</span><span>'+P.solves+'</span></div>';
+  $('badges').innerHTML=BADGES.map(function(b){var g=P.badges[b[0]];return '<div class="badge'+(g?' got':'')+'"><div class="ic">'+b[1]+'</div><b>'+b[2]+'</b>'+b[3]+(g?'<div class="note" style="margin-top:3px">'+g+'</div>':'')+'</div>';}).join(''); renderMastery(); }
+var wipeArm=false; $('wipe').onclick=function(){ if(!wipeArm){wipeArm=true;this.textContent='Click again to confirm';var b=this;setTimeout(function(){wipeArm=false;b.textContent='Reset all progress';},3000);return;} P=blank();save();wipeArm=false;this.textContent='Reset all progress';updXP();renderProgress();renderDaily();renderLevels();toast('Progress reset'); };
+
+/* LOOP */
+var last=null;
+function frame(ts){ var dt=last?Math.min(0.05,(ts-last)/1000):0; last=ts;
+  if($('v-lab').classList.contains('on')){
+    lab.projs.forEach(function(p){ if(p.play!=null&&p.play<p.end.t){ p.play=Math.min(p.end.t,p.play+dt*cfg.play); } });
+    if(lab.monkey){ var p0=lab.projs[0]; var t=p0?p0.play:0; lab.monkey.y=Math.max(0.5,lab.monkey.y0-0.5*9.81*t*t); }
+    var o=fitCanvas($('world')); var V=computeView(o.w,o.h,lab.sc,lab.projs,{x:lab.projs.length?0:analytic(cfg.u,cfg.ang,cfg.h,cfg.g).R,y:lab.projs.length?0:analytic(cfg.u,cfg.ang,cfg.h,cfg.g).H});
+    if(lab.monkey) V=computeView(o.w,o.h,lab.sc,lab.projs,{x:lab.monkey.x+3,y:lab.monkey.y0+3});
+    drawScene(o.x,V,lab.sc,lab.projs,{ang:cfg.ang,vec:$('o-vec').checked,strobe:$('o-strobe').checked,si:+$('o-si').value,shadow:$('o-shadow').checked,pred:$('o-pred').checked,annot:true,monkey:lab.monkey});
+    var live=lab.projs.filter(function(p){return !p.ghost;}); if(live.length) showStats(live[live.length-1]);
+    if(lab.legend){ lab.legend.forEach(function(l,i){ o.x.fillStyle=l[0]; o.x.fillRect(o.w-190,14+i*20,14,4); o.x.fillStyle='#0f2b2e'; o.x.font='600 12px "Segoe UI",system-ui'; o.x.textAlign='left'; o.x.fillText(l[1],o.w-170,19+i*20); }); }
+    if(lab.monkey&&live[0]&&live[0].play>=live[0].end.t&&live[0].end.type==='monkey'){ o.x.fillStyle='#0f8a5f'; o.x.font='700 16px "Segoe UI",system-ui'; o.x.textAlign='left'; o.x.fillText('Hit! Both fell ½gt² in the same time.',16,28); }
+    if(live.length>1&&live.every(function(p){return p.play>=p.end.t;})&&live.length===2&&Math.abs(live[0].end.t-live[1].end.t)<0.01){ o.x.fillStyle='#0f8a5f'; o.x.font='700 15px "Segoe UI",system-ui'; o.x.textAlign='left'; o.x.fillText('Landed together after '+live[0].end.t.toFixed(2)+' s',16,28); }
+    drawGraph(); }
+  if($('v-chal').classList.contains('on')){ var L=LV[cur]; var sc={h:L.h,targets:L.T,walls:L.W,xmax:L.T[0].x2+2};
+    ch.projs.forEach(function(p){ if(p.play!=null&&p.play<p.end.t){ p.play=Math.min(p.end.t,p.play+dt*Math.max(1,p.end.t/3)); if(p.play>=p.end.t&&ch.pending===p) challengeResolve(p);} });
+    var o2=fitCanvas($('cworld')); var V2=computeView(o2.w,o2.h,sc,ch.projs.filter(function(p){return p.end.x<sc.xmax*2.5;}),null);
+    var ang=L.ang!=null?L.ang:(($('c-ang')&&+$('c-ang').value)||45);
+    drawScene(o2.x,V2,sc,ch.projs,{ang:ang,vec:false,strobe:true,si:0.2,annot:false,sky0:L.g<2?'#1b2440':L.g>20?'#f3e3c8':L.g<4?'#f2d6c4':'#d9eefc',sky1:L.g<2?'#3a4566':L.g>20?'#fbf2e3':L.g<4?'#f8e9de':'#f6fbfd',ground:L.g<2?'#b8b8b8':L.g<4?'#c98b63':L.g>20?'#d8b98a':'#a9cfae',groundTop:L.g<2?'#9a9a9a':L.g<4?'#a8694a':L.g>20?'#bf9d6b':'#7fb487'}); }
+  requestAnimationFrame(frame); }
+
+/* INIT */
+if(window.ResizeObserver){ new ResizeObserver(function(){ if(Q&&Q.vt) drawVT(); }).observe(root); }
+updXP(); loadLevel(0); newQ(); renderMastery(); renderDaily(); clearStats();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

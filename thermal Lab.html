@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Thermal Lab — Heat, Temperature &amp; Change of State</title>
+<style>
+#tl-app{--ink:#13203a;--muted:#55657f;--line:#d6dfeb;--bg:#edf2f8;--panel:#ffffff;--soft:#f5f8fc;--acc:#5b3df5;--acc2:#0aa597;--cold:#2a7de1;--hot:#f2512d;--lcd:#0e1a2c;--lcdtxt:#7ff3c6;--warn:#c2410c;--ok:#0f8a5f;
+  font-family:"Avenir Next","Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);width:100%;height:100%;min-height:900px;box-sizing:border-box;padding:14px;line-height:1.45;font-size:15px;}
+#tl-app *{box-sizing:border-box;}
+#tl-app button,#tl-app select,#tl-app input{font:inherit;color:inherit;}
+#tl-app .hdr{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-bottom:12px;}
+#tl-app .brand{display:flex;align-items:center;gap:10px;}
+#tl-app .logo{width:40px;height:40px;border-radius:12px;background:conic-gradient(from 200deg,#2a7de1,#5b3df5,#f2512d,#ffb020,#2a7de1);display:grid;place-items:center;box-shadow:0 4px 14px rgba(91,61,245,.25);}
+#tl-app .logo span{width:22px;height:22px;border-radius:50%;background:#fff;display:block;box-shadow:inset 0 0 0 5px #13203a;}
+#tl-app h1{font-size:21px;margin:0;letter-spacing:-.01em;font-weight:800;}
+#tl-app .sub{font-size:12.5px;color:var(--muted);margin:0;}
+#tl-app .tabs{display:flex;gap:4px;background:#dfe7f2;padding:4px;border-radius:12px;flex-wrap:wrap;}
+#tl-app .tab{border:0;background:transparent;padding:7px 13px;border-radius:9px;cursor:pointer;font-weight:650;color:#3a4a66;font-size:14px;}
+#tl-app .tab.on{background:#fff;color:var(--acc);box-shadow:0 1px 4px rgba(19,32,58,.12);}
+#tl-app .xpchip{margin-left:auto;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 12px;}
+#tl-app .xpchip b{font-size:13px;}
+#tl-app .xpbar{width:110px;height:7px;border-radius:9px;background:#e6ecf4;overflow:hidden;}
+#tl-app .xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--hot));width:0;}
+#tl-app .streak{font-size:12.5px;color:var(--muted);}
+#tl-app .view{display:none;}
+#tl-app .view.on{display:block;}
+#tl-app .grid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;}
+#tl-app .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;}
+#tl-app .card h3{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:#3c4d6b;font-weight:800;}
+#tl-app .card h4{margin:10px 0 6px;font-size:14px;}
+#tl-app .stack{display:flex;flex-direction:column;gap:12px;}
+#tl-app .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+#tl-app .lbl{font-size:12.5px;color:var(--muted);font-weight:650;}
+#tl-app .ctl{display:grid;grid-template-columns:96px 1fr 62px;gap:6px;align-items:center;margin:6px 0;}
+#tl-app .ctl output{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;font-size:12.5px;text-align:right;}
+#tl-app input[type=range]{width:100%;accent-color:var(--acc);}
+#tl-app select{width:100%;padding:6px 8px;border-radius:9px;border:1px solid var(--line);background:#fff;}
+#tl-app .btn{border:1px solid var(--line);background:#fff;padding:7px 12px;border-radius:10px;cursor:pointer;font-weight:650;font-size:13.5px;}
+#tl-app .btn:hover{border-color:#aebbd0;}
+#tl-app .btn.pri{background:var(--acc);border-color:var(--acc);color:#fff;}
+#tl-app .btn.hot{background:var(--hot);border-color:var(--hot);color:#fff;}
+#tl-app .btn.teal{background:var(--acc2);border-color:var(--acc2);color:#fff;}
+#tl-app .btn.sm{padding:4px 9px;font-size:12.5px;}
+#tl-app .btn[disabled]{opacity:.45;cursor:not-allowed;}
+#tl-app .seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+#tl-app .seg button{border:0;background:#fff;padding:5px 10px;cursor:pointer;font-size:12.5px;font-weight:650;border-right:1px solid var(--line);}
+#tl-app .seg button:last-child{border-right:0;}
+#tl-app .seg button.on{background:var(--ink);color:#fff;}
+#tl-app .cvwrap{position:relative;width:100%;}
+#tl-app canvas{display:block;width:100%;}
+#tl-app .app-cv{height:330px;border-radius:12px;background:linear-gradient(180deg,#f8fbff,#e8eef7);}
+#tl-app .graph-cv{height:300px;border-radius:12px;background:#fff;cursor:crosshair;touch-action:none;}
+#tl-app .lcds{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px;}
+#tl-app .lcd{background:var(--lcd);border-radius:10px;padding:7px 9px;color:#9fb3cf;font-size:11px;font-weight:650;letter-spacing:.04em;text-transform:uppercase;}
+#tl-app .lcd div{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;color:var(--lcdtxt);font-size:19px;letter-spacing:0;text-transform:none;font-weight:600;white-space:nowrap;overflow:hidden;}
+#tl-app .lcd small{color:#7c90ad;font-size:10.5px;text-transform:none;letter-spacing:0;}
+#tl-app .ebar{display:flex;height:16px;border-radius:8px;overflow:hidden;background:#e9eef5;margin-top:6px;}
+#tl-app .ebar i{display:block;height:100%;}
+#tl-app .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:5px;}
+#tl-app .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c);}
+#tl-app table{border-collapse:collapse;width:100%;font-size:12.5px;}
+#tl-app th,#tl-app td{border-bottom:1px solid var(--line);padding:4px 6px;text-align:right;font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;}
+#tl-app th{font-family:inherit;color:var(--muted);font-weight:700;background:var(--soft);position:sticky;top:0;}
+#tl-app .tblwrap{max-height:190px;overflow:auto;border:1px solid var(--line);border-radius:10px;}
+#tl-app .note{font-size:12.5px;color:var(--muted);}
+#tl-app .msg{border-radius:10px;padding:8px 10px;font-size:13px;background:#eef1ff;border:1px solid #d5dcff;color:#2b2f7a;margin-top:8px;}
+#tl-app .msg.warn{background:#fff3ea;border-color:#ffd6bd;color:#8a3410;}
+#tl-app .msg.good{background:#e7f8f1;border-color:#bfe9d7;color:#0b5e40;}
+#tl-app .calc{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;font-size:12.5px;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:6px;white-space:pre-wrap;}
+#tl-app .pill{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:#eef1ff;color:var(--acc);}
+#tl-app .pill.f{background:#e5f6f3;color:#077a6f;}
+#tl-app .pill.h{background:#fff0e8;color:#b23f15;}
+#tl-app .pill.a{background:#efe9ff;color:#5b3df5;}
+#tl-app .qcard{font-size:15.5px;}
+#tl-app .qtext{margin:8px 0 12px;}
+#tl-app .opts{display:grid;gap:8px;}
+#tl-app .opt{text-align:left;border:1px solid var(--line);background:#fff;padding:9px 12px;border-radius:10px;cursor:pointer;font-size:14.5px;}
+#tl-app .opt:hover{border-color:#a9b6cc;}
+#tl-app .opt.right{background:#e7f8f1;border-color:#4bc493;}
+#tl-app .opt.wrong{background:#fff0ec;border-color:#f19a80;}
+#tl-app .ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+#tl-app .ans input{width:170px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;}
+#tl-app .sol{margin-top:12px;border-left:4px solid var(--acc2);background:var(--soft);padding:10px 12px;border-radius:0 10px 10px 0;font-size:14px;}
+#tl-app .sol .stp{margin:3px 0;}
+#tl-app .sol .eq{font-size:15px;white-space:pre-wrap;}
+#tl-app .mastery{display:grid;grid-template-columns:150px 1fr 40px;gap:6px 10px;align-items:center;font-size:13px;}
+#tl-app .mbar{height:9px;border-radius:9px;background:#e6ecf4;overflow:hidden;}
+#tl-app .mbar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc));}
+#tl-app .badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+#tl-app .badge{border:1px dashed #c4cfe0;border-radius:12px;padding:10px;text-align:center;font-size:12.5px;color:#8a97ad;}
+#tl-app .badge .ic{font-size:24px;filter:grayscale(1);opacity:.45;}
+#tl-app .badge.got{border-style:solid;border-color:#cdbfff;background:#f7f4ff;color:var(--ink);}
+#tl-app .badge.got .ic{filter:none;opacity:1;}
+#tl-app .badge b{display:block;margin:3px 0 2px;font-size:13px;}
+#tl-app .toast{position:absolute;right:18px;top:70px;background:var(--ink);color:#fff;padding:10px 14px;border-radius:12px;font-size:13.5px;box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;transform:translateY(-8px);transition:all .3s;pointer-events:none;z-index:5;max-width:320px;}
+#tl-app .toast.show{opacity:1;transform:none;}
+#tl-app .wrap-rel{position:relative;}
+#tl-app .mixgrid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:12px;}
+#tl-app .mix-cv{height:330px;border-radius:12px;background:linear-gradient(180deg,#f8fbff,#e8eef7);}
+#tl-app .mixg-cv{height:210px;border-radius:12px;background:#fff;}
+#tl-app .guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;}
+#tl-app .guide p{margin:6px 0;font-size:14px;}
+#tl-app .guide ul{margin:6px 0;padding-left:18px;font-size:14px;}
+#tl-app .eqbox{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;margin:6px 0;}
+#tl-app .kbd{font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;font-size:12px;background:#eef2f8;border:1px solid var(--line);border-radius:5px;padding:0 4px;}
+#tl-app .hint{font-size:13.5px;color:#5a3d00;background:#fff7e0;border:1px solid #f4dfa0;border-radius:10px;padding:8px 10px;margin-top:10px;}
+#tl-app .daily{display:flex;gap:6px;}
+#tl-app .daily i{width:26px;height:8px;border-radius:5px;background:#e3e9f2;display:block;}
+#tl-app .daily i.d{background:var(--acc2);}
+#tl-app .daily i.x{background:#f3a58f;}
+#tl-app .daily i.c{outline:2px solid var(--acc);}
+#tl-app .presets{display:flex;gap:6px;flex-wrap:wrap;}
+#tl-app .kv{display:grid;grid-template-columns:1fr auto;gap:2px 10px;font-size:13px;}
+#tl-app .kv span:nth-child(even){font-family:"JetBrains Mono","Cascadia Mono",Consolas,monospace;text-align:right;}
+@media (max-width:620px){#tl-app .app-cv{height:480px;}}
+@media (max-width:900px){#tl-app .grid,#tl-app .mixgrid{grid-template-columns:1fr;}#tl-app .lcds{grid-template-columns:repeat(3,minmax(0,1fr));}#tl-app .xpchip{margin-left:0;}}
+</style>
+</head>
+<body style="margin:0">
+<div id="tl-app">
+  <div class="toast" id="tl-toast"></div>
+  <div class="hdr">
+    <div class="brand"><div class="logo"><span></span></div>
+      <div><h1>Thermal Lab</h1><p class="sub">Specific heat capacity · latent heat · heating &amp; cooling curves · mixtures</p></div></div>
+    <div class="tabs" id="tl-tabs">
+      <button class="tab on" data-v="lab">Heating lab</button>
+      <button class="tab" data-v="mix">Mixtures</button>
+      <button class="tab" data-v="prac">Practice</button>
+      <button class="tab" data-v="prog">Progress</button>
+      <button class="tab" data-v="guide">Guide</button>
+    </div>
+    <div class="xpchip"><div><b id="tl-lvl">Level 1</b><div class="xpbar"><i id="tl-xpbar"></i></div></div><div class="streak" id="tl-xptext">0 XP</div></div>
+  </div>
+
+  <!-- ================= LAB ================= -->
+  <div class="view on" id="tl-v-lab">
+    <div class="grid">
+      <div class="stack">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px">
+            <h3 style="margin:0">Apparatus</h3>
+            <div class="row">
+              <span class="lbl">Speed</span>
+              <div class="seg" id="tl-speed"><button data-s="1" class="on">1×</button><button data-s="10">10×</button><button data-s="50">50×</button><button data-s="250">250×</button></div>
+            </div>
+          </div>
+          <div class="cvwrap"><canvas class="app-cv" id="tl-appcv"></canvas></div>
+          <div class="lcds">
+            <div class="lcd">Thermometer<div id="tl-r-T">20.0 °C</div><small id="tl-r-Tres">resolution 0.1 °C</small></div>
+            <div class="lcd">Stopwatch<div id="tl-r-t">0:00</div><small id="tl-r-ts">0 s</small></div>
+            <div class="lcd">Joulemeter<div id="tl-r-E">0 J</div><small>energy supplied</small></div>
+            <div class="lcd">Supply<div id="tl-r-VI">12.0 V</div><small id="tl-r-I">4.17 A</small></div>
+            <div class="lcd">Balance<div id="tl-r-m">1000.0 g</div><small>mass of sample</small></div>
+          </div>
+          <div style="margin-top:10px">
+            <span class="lbl">Where has the energy gone?</span>
+            <div class="ebar" id="tl-ebar"><i style="background:#f2512d"></i><i style="background:#ffb020"></i><i style="background:#8fa3c0"></i></div>
+            <div class="legend"><span style="--c:#f2512d" id="tl-lg1">Internal energy of sample 0 J</span><span style="--c:#ffb020" id="tl-lg2">Heater element 0 J</span><span style="--c:#8fa3c0" id="tl-lg3">Lost to surroundings 0 J</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px">
+            <h3 style="margin:0">Graph</h3>
+            <div class="row">
+              <div class="seg" id="tl-xaxis"><button data-x="t" class="on">θ against time</button><button data-x="E">θ against energy</button></div>
+              <button class="btn sm" id="tl-clrsel">Clear selection</button>
+            </div>
+          </div>
+          <div class="cvwrap"><canvas class="graph-cv" id="tl-graph"></canvas></div>
+          <p class="note" style="margin:6px 0 0">Drag across a section of the graph to analyse it. A sloping section gives a <b>specific heat capacity</b>; a flat section (a plateau) gives a <b>specific latent heat</b>.</p>
+          <div id="tl-analysis"></div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Set up</h3>
+          <span class="lbl">Sample</span>
+          <select id="tl-mat"></select>
+          <div class="ctl"><span class="lbl">Mass</span><input type="range" id="tl-mass" min="0.1" max="2" step="0.05" value="1"><output id="tl-mass-o">1.00 kg</output></div>
+          <div class="ctl"><span class="lbl">Start temp.</span><input type="range" id="tl-t0" min="-20" max="90" step="1" value="20"><output id="tl-t0-o">20 °C</output></div>
+          <div class="ctl"><span class="lbl">Heater power</span><input type="range" id="tl-pow" min="10" max="120" step="2" value="48"><output id="tl-pow-o">48 W</output></div>
+          <span class="lbl">Insulation</span>
+          <div class="seg" id="tl-ins" style="margin:4px 0 8px"><button data-k="0">Perfect</button><button data-k="0.15" class="on">Lagged</button><button data-k="0.6">None</button></div>
+          <div class="row" style="margin-bottom:4px">
+            <label class="note"><input type="checkbox" id="tl-real" checked> Realistic heater (warms up first)</label>
+          </div>
+          <div class="row" style="margin-bottom:8px">
+            <span class="lbl">Thermometer</span>
+            <div class="seg" id="tl-res"><button data-r="1">1 °C</button><button data-r="0.1" class="on">0.1 °C</button></div>
+          </div>
+          <div class="row">
+            <button class="btn pri" id="tl-run">▶ Start</button>
+            <button class="btn hot" id="tl-heat">Heater: ON</button>
+            <button class="btn" id="tl-reset">Reset</button>
+          </div>
+          <div class="msg" id="tl-labmsg">Choose a sample, then press Start. Record readings as you go, or let the data logger do it.</div>
+        </div>
+        <div class="card">
+          <h3>Quick experiments</h3>
+          <div class="presets" id="tl-presets">
+            <button class="btn sm" data-p="shc">SHC of aluminium</button>
+            <button class="btn sm" data-p="ice">Ice → steam</button>
+            <button class="btn sm" data-p="cool">Cooling curve</button>
+            <button class="btn sm" data-p="boil">Lv of water</button>
+            <button class="btn sm" data-p="losses">Effect of losses</button>
+          </div>
+          <p class="note" id="tl-presetnote" style="margin:8px 0 0"></p>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between"><h3 style="margin:0">Results table</h3>
+            <div class="row"><button class="btn sm teal" id="tl-rec">Record reading</button>
+            <label class="note"><input type="checkbox" id="tl-auto"> log every <select id="tl-autoint" style="width:auto;padding:2px 4px"><option>10</option><option selected>30</option><option>60</option><option>120</option></select> s</label></div></div>
+          <div class="tblwrap" style="margin-top:8px"><table><thead><tr><th>t / s</th><th>θ / °C</th><th>E / J</th><th>m / g</th></tr></thead><tbody id="tl-tbody"></tbody></table></div>
+          <div class="row" style="margin-top:6px"><button class="btn sm" id="tl-csv">Copy as CSV</button><button class="btn sm" id="tl-clrtab">Clear table</button></div>
+        </div>
+        <div class="card" id="tl-mystcard">
+          <h3>Mystery sample</h3>
+          <p class="note" style="margin:0 0 6px">A metal block of unknown material. Measure its specific heat capacity, then identify it. A new daily sample appears each day.</p>
+          <div class="row"><button class="btn sm" id="tl-mdaily">Load today's sample</button><button class="btn sm" id="tl-mrand">Random sample</button></div>
+          <div id="tl-mbody" style="display:none;margin-top:8px">
+            <div class="ctl" style="grid-template-columns:96px 1fr"><span class="lbl">Your c</span><input id="tl-mc" type="number" placeholder="J/kg °C" style="padding:6px 8px;border:1px solid var(--line);border-radius:9px"></div>
+            <span class="lbl">It is…</span>
+            <select id="tl-mguess"></select>
+            <div class="row" style="margin-top:8px"><button class="btn pri sm" id="tl-msub">Submit identification</button></div>
+            <div id="tl-mres"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MIX ================= -->
+  <div class="view" id="tl-v-mix">
+    <div class="mixgrid">
+      <div class="stack">
+        <div class="card">
+          <h3>Method of mixtures</h3>
+          <div class="cvwrap"><canvas class="mix-cv" id="tl-mixcv"></canvas></div>
+          <div class="cvwrap" style="margin-top:10px"><canvas class="mixg-cv" id="tl-mixg"></canvas></div>
+        </div>
+        <div class="card" id="tl-mixsol" style="display:none"></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Hot object</h3>
+          <select id="tl-xobj"></select>
+          <div class="ctl"><span class="lbl">Mass</span><input type="range" id="tl-xm" min="0.05" max="1" step="0.01" value="0.25"><output id="tl-xm-o"></output></div>
+          <div class="ctl"><span class="lbl">Temperature</span><input type="range" id="tl-xT" min="0" max="100" step="1" value="100"><output id="tl-xT-o"></output></div>
+          <h3 style="margin-top:12px">Insulated cup</h3>
+          <div class="ctl"><span class="lbl">Water</span><input type="range" id="tl-wm" min="0.05" max="0.5" step="0.01" value="0.2"><output id="tl-wm-o"></output></div>
+          <div class="ctl"><span class="lbl">Water temp.</span><input type="range" id="tl-wT" min="0" max="80" step="1" value="18"><output id="tl-wT-o"></output></div>
+          <div class="ctl"><span class="lbl">Ice at −18 °C</span><input type="range" id="tl-im" min="0" max="0.12" step="0.005" value="0"><output id="tl-im-o"></output></div>
+          <div class="row"><button class="btn sm" id="tl-xrand">Random challenge</button></div>
+        </div>
+        <div class="card">
+          <h3>Predict</h3>
+          <p class="note" style="margin:0 0 6px">Energy lost by the hot object = energy gained by the cold water (and ice). What will the final temperature be?</p>
+          <div class="ans"><input id="tl-xpred" type="number" step="0.1" placeholder="°C" style="width:110px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;font-family:monospace"><button class="btn pri" id="tl-xgo">Drop it in</button></div>
+          <div id="tl-xres"></div>
+          <p class="note" style="margin-top:8px">Within 1 °C earns 20 XP. Assume the cup absorbs no energy and nothing is lost to the room.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PRACTICE ================= -->
+  <div class="view" id="tl-v-prac">
+    <div class="grid">
+      <div class="stack">
+        <div class="card qcard" id="tl-qcard"></div>
+      </div>
+      <div class="stack">
+        <div class="card">
+          <h3>Course level</h3>
+          <div class="seg" id="tl-level"><button data-l="1">GCSE Foundation</button><button data-l="2" class="on">GCSE Higher</button><button data-l="3">A-level</button></div>
+          <h3 style="margin-top:14px">Mode</h3>
+          <div class="seg" id="tl-mode"><button data-m="smart" class="on">Smart mix</button><button data-m="topic">One skill</button><button data-m="daily">Daily 5</button></div>
+          <div id="tl-topicpick" style="display:none;margin-top:8px"><select id="tl-skill"></select></div>
+          <p class="note" id="tl-modenote" style="margin:8px 0 0">Smart mix serves more questions from the skills you find hardest.</p>
+        </div>
+        <div class="card">
+          <h3>Daily 5</h3>
+          <div class="daily" id="tl-dailybar"></div>
+          <p class="note" id="tl-dailytxt" style="margin:6px 0 0"></p>
+        </div>
+        <div class="card">
+          <h3>Skill mastery</h3>
+          <div class="mastery" id="tl-mast-s"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PROGRESS ================= -->
+  <div class="view" id="tl-v-prog">
+    <div class="stack">
+      <div class="card"><h3>Your progress</h3><div id="tl-progsum"></div></div>
+      <div class="card"><h3>Badges</h3><div class="badges" id="tl-badges"></div></div>
+      <div class="card"><h3>Skill mastery</h3><div class="mastery" id="tl-mast-p"></div></div>
+      <div class="card"><h3>Your lab measurements</h3><div id="tl-labhist"></div></div>
+      <div class="card"><h3>Reset</h3><p class="note">Progress is saved in this browser only.</p><button class="btn" id="tl-wipe">Reset all progress</button></div>
+    </div>
+  </div>
+
+  <!-- ================= GUIDE ================= -->
+  <div class="view" id="tl-v-guide">
+    <div class="guide">
+      <div class="card"><h3>Temperature vs internal energy</h3>
+        <p><b>Internal energy</b> is the total energy stored by the particles of a system: the kinetic energy of their movement plus the potential energy stored in the bonds and forces between them.</p>
+        <p><b>Temperature</b> is linked to the <i>average kinetic energy</i> of the particles. Heating a substance either raises its temperature (more kinetic energy) or changes its state (more potential energy), but not both at once.</p>
+        <p>A bath at 40 °C has far more internal energy than a cup of tea at 90 °C because it contains many more particles.</p></div>
+      <div class="card"><h3>Specific heat capacity</h3>
+        <div class="eqbox">ΔE = m c Δθ</div>
+        <p>The <b>specific heat capacity</b> <i>c</i> is the energy needed to raise the temperature of 1 kg of a substance by 1 °C. Unit: J/kg °C (equivalently J kg⁻¹ K⁻¹, because a change of 1 °C is a change of 1 K).</p>
+        <p>Water's value, about 4200 J/kg °C, is unusually high, which is why it is used in radiators and why the sea warms more slowly than the beach.</p></div>
+      <div class="card"><h3>Specific latent heat</h3>
+        <div class="eqbox">E = m L</div>
+        <p>The <b>specific latent heat</b> <i>L</i> is the energy needed to change the state of 1 kg of a substance <i>without changing its temperature</i>. Unit: J/kg.</p>
+        <ul><li><b>Fusion</b> (solid ↔ liquid): water 334 000 J/kg</li><li><b>Vaporisation</b> (liquid ↔ gas): water 2 260 000 J/kg</li></ul>
+        <p>Vaporisation needs more energy because the particles must be separated completely, not just loosened.</p></div>
+      <div class="card"><h3>Reading a heating curve</h3>
+        <p>On a graph of temperature against time for a steady heater:</p>
+        <ul><li><b>Sloping sections</b>: one state is warming. A shallower slope means a larger heat capacity (<i>mc</i>).</li><li><b>Flat sections</b>: the state is changing. The length of the plateau × power = energy for the change of state.</li><li>The gradient Δθ/Δt equals P ÷ (m c), so <b>c = P ÷ (m × gradient)</b>.</li></ul>
+        <p>On a <b>cooling curve</b> the plateau is where the substance freezes, releasing latent heat, which holds the temperature steady.</p></div>
+      <div class="card"><h3>The required practical</h3>
+        <ul><li>Measure the mass of the block on a balance.</li><li>Put the heater and thermometer in the holes; add a drop of oil or water to the thermometer hole for good thermal contact.</li><li>Wrap the block in insulation.</li><li>Record the joulemeter reading (or V, I and t) and the temperature at regular intervals.</li><li>Plot θ against E. Gradient = 1 ÷ (m c), so c = 1 ÷ (m × gradient).</li></ul>
+        <p><b>Why the result is usually too high:</b> some energy heats the heater, the thermometer and the surroundings, so less than the measured E actually goes into the block. Try the <span class="kbd">None</span> insulation setting and compare.</p>
+        <p><b>Why ignore the start of the graph:</b> the heater has to warm up before energy flows steadily into the block.</p></div>
+      <div class="card"><h3>Method of mixtures</h3>
+        <div class="eqbox">energy lost by hot object = energy gained by cold object</div>
+        <div class="eqbox">m₁c₁(θ₁ − θ) = m₂c₂(θ − θ₂)</div>
+        <p>If ice is added, it first warms to 0 °C (m c<sub>ice</sub> Δθ), then melts (m L<sub>f</sub>), and the meltwater then warms (m c<sub>water</sub> Δθ). Each stage is a separate term.</p></div>
+      <div class="card"><h3>Data used in this app</h3>
+        <div class="kv" id="tl-datatable"></div>
+        <p class="note">Values are typical; real samples vary by a few per cent.</p></div>
+      <div class="card"><h3>Teacher notes</h3>
+        <ul><li>The Heating lab models a heater element with its own heat capacity, so the warm-up lag seen in real data appears naturally.</li><li>Heat loss to the room is proportional to (θ − 20 °C), so losses grow as the sample heats and curves bend. Compare the gradient early and late.</li><li>The particle view switches between lattice, liquid and gas behaviour in proportion to how much has melted or boiled.</li><li>Practice questions use the "write equation → substitute → rearrange" method. They never use formula triangles.</li><li>Progress is stored only in the student's browser. No data leaves the device.</li></ul></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var root=document.getElementById('tl-app');
+function $(id){return document.getElementById('tl-'+id);}
+function clamp(x,a,b){return x<a?a:x>b?b:x;}
+function grp(s){var neg=s[0]==='-';var d=neg?s.slice(1):s;if(d.length<5) return s;return (neg?'-':'')+d.replace(/\B(?=(\d{3})+(?!\d))/g,'\u2009');}
+function fmt(x,sf){ if(!isFinite(x)) return '—'; sf=sf||3; if(x===0) return '0';
+  var a=Math.abs(x), d=Math.floor(Math.log10(a)), dec=Math.max(0,sf-1-d);
+  var s=x.toFixed(dec); var p=s.split('.'); p[0]=grp(p[0]); return p.join('.'); }
+function nz(x){var s=fmt(x,4);if(s.indexOf('.')>=0)s=s.replace(/0+$/,'').replace(/\.$/,'');return s;}
+function fixed(x,n){var s=x.toFixed(n),p=s.split('.');p[0]=grp(p[0]);return p.join('.');}
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashStr(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function todayKey(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dayDiff(a,b){return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/864e5);}
+function lerp(a,b,t){return a+(b-a)*t;}
+function tempColour(T){ // -20 blue .. 120 red
+  var t=clamp((T+20)/140,0,1); var stops=[[42,125,225],[90,160,240],[180,120,220],[242,81,45],[230,40,30]];
+  var x=t*(stops.length-1),i=Math.min(Math.floor(x),stops.length-2),f=x-i;
+  return 'rgb('+Math.round(lerp(stops[i][0],stops[i+1][0],f))+','+Math.round(lerp(stops[i][1],stops[i+1][1],f))+','+Math.round(lerp(stops[i][2],stops[i+1][2],f))+')';}
+
+/* ---------- storage ---------- */
+var KEY='thermalLab.v1';
+var memStore=null;
+function blank(){return {xp:0,skills:{},badges:{},daily:{},dailyStreak:0,lastDaily:null,mixGood:0,labs:[],mystery:{},answered:0,correct:0};}
+function load(){ try{var s=localStorage.getItem(KEY); if(s){var o=JSON.parse(s); var b=blank(); for(var k in b) if(!(k in o)) o[k]=b[k]; return o;}}catch(e){} return memStore||blank(); }
+function save(){ memStore=P; try{localStorage.setItem(KEY,JSON.stringify(P));}catch(e){} }
+var P=load();
+
+/* ---------- toast ---------- */
+var toastT=null;
+function toast(html){var t=$('toast');t.innerHTML=html;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
+
+/* ---------- XP & badges ---------- */
+var LEVELS=[0,100,250,450,700,1000,1400,1900,2500,3200,4000,5000];
+var TITLES=['Cold start','Warming up','Simmering','Thermometer reader','Data logger','Calorimetrist','Heat-curve analyst','Latent-heat hunter','Thermal physicist','Thermodynamicist','Heat master','Absolute legend'];
+function levelOf(xp){var l=0;for(var i=0;i<LEVELS.length;i++) if(xp>=LEVELS[i]) l=i; return l;}
+function addXP(n,why){P.xp+=n;save();updXP();if(why) toast('+'+n+' XP · '+why);}
+function updXP(){var l=levelOf(P.xp),lo=LEVELS[l],hi=LEVELS[l+1]||lo+1000;
+  $('lvl').textContent='Level '+(l+1)+' · '+TITLES[l]; $('xpbar').style.width=clamp((P.xp-lo)/(hi-lo)*100,0,100)+'%';
+  $('xptext').textContent=P.xp+' XP'+(P.dailyStreak?' · 🔥 '+P.dailyStreak+'-day streak':'');}
+var BADGES=[
+ ['first','🌡️','First reading','Record a reading in the lab'],
+ ['fit','📈','Gradient getter','Analyse a sloping section of a graph'],
+ ['shc5','🎯','Precision','Measure a value of c within 5% of the true value'],
+ ['plateau','🧊','Plateau hunter','Measure a latent heat within 5%'],
+ ['steam','♨️','Full journey','Take ice all the way to boiling'],
+ ['cool','❄️','Cooling curve','Watch stearic acid freeze on a cooling curve'],
+ ['myst','🔍','Detective','Identify a mystery sample'],
+ ['myst5','🕵️','Chief inspector','Identify 5 mystery samples'],
+ ['mix','🥤','Mixologist','Predict a mixture within 1 °C'],
+ ['mix5','🧪','Mixture master','5 mixture predictions within 1 °C'],
+ ['ice','🧊','Ice in the drink','Predict a mixture that includes ice'],
+ ['q10','✅','Ten right','Answer 10 practice questions correctly'],
+ ['q50','🏅','Fifty right','Answer 50 practice questions correctly'],
+ ['daily','📅','Daily habit','Complete a Daily 5'],
+ ['perfect','💯','Perfect day','Score 5/5 in a Daily 5'],
+ ['streak3','🔥','On a roll','3-day Daily 5 streak'],
+ ['streak7','🌋','Unstoppable','7-day Daily 5 streak'],
+ ['master','🧠','Mastery','Reach full mastery in any skill']
+];
+function award(id){ if(P.badges[id]) return; P.badges[id]=todayKey(); save(); var b=BADGES.find(function(x){return x[0]===id;}); if(b){ setTimeout(function(){toast(b[1]+' Badge unlocked: <b>'+b[2]+'</b>');},900); addXP(25);} }
+
+/* ---------- tabs ---------- */
+Array.prototype.forEach.call($('tabs').children,function(b){b.onclick=function(){
+  Array.prototype.forEach.call($('tabs').children,function(x){x.classList.toggle('on',x===b);});
+  ['lab','mix','prac','prog','guide'].forEach(function(v){$('v-'+v).classList.toggle('on',v===b.dataset.v);});
+  if(b.dataset.v==='prog') renderProgress(); if(b.dataset.v==='prac') renderMastery(); resizeAll();
+};});
+function segInit(id,fn){var el=$(id);Array.prototype.forEach.call(el.children,function(b){b.onclick=function(){Array.prototype.forEach.call(el.children,function(x){x.classList.toggle('on',x===b);});fn(b);};});}
+
+/* ================= SUBSTANCE DATA ================= */
+var SUBS={
+ water:{name:'Water',cs:2100,cl:4200,mp:0,bp:100,Lf:334000,Lv:2260000},
+ stearic:{name:'Stearic acid',cs:1600,cl:2300,mp:69,bp:null,Lf:199000,Lv:null},
+ oil:{name:'Vegetable oil',cs:1970,cl:1970,mp:null,bp:null},
+ al:{name:'Aluminium',cs:900,cl:900,mp:null,bp:null,block:true,col:'#b9c3cf'},
+ cu:{name:'Copper',cs:385,cl:385,mp:null,bp:null,block:true,col:'#d08a5a'},
+ fe:{name:'Iron',cs:450,cl:450,mp:null,bp:null,block:true,col:'#8a9099'},
+ brass:{name:'Brass',cs:380,cl:380,block:true,col:'#d6b25c'},
+ pb:{name:'Lead',cs:130,cl:130,block:true,col:'#7d8590'},
+ glass:{name:'Glass',cs:670,cl:670,block:true,col:'#bfe3e6'},
+ ti:{name:'Titanium',cs:520,cl:520,block:true,col:'#a9a6b8'},
+ sn:{name:'Tin',cs:230,cl:230,block:true,col:'#c9ccd2'},
+ nylon:{name:'Nylon',cs:1700,cl:1700,block:true,col:'#efe8d6'},
+ conc:{name:'Concrete',cs:880,cl:880,block:true,col:'#b4b0a6'}
+};
+var MYST_POOL=['pb','sn','brass','cu','fe','ti','glass','al','nylon'];
+var LAB_MATS=[
+ ['al','Aluminium block','block'],['cu','Copper block','block'],['fe','Iron block','block'],['pb','Lead block','block'],
+ ['water','Water (in beaker)','beaker'],['ice','Crushed ice (in beaker)','beaker'],['stearic','Stearic acid (in tube)','beaker'],['oil','Vegetable oil (in beaker)','beaker'],
+ ['mystery','Mystery sample','block']
+];
+(function(){var s=$('mat');LAB_MATS.forEach(function(m){var o=document.createElement('option');o.value=m[0];o.textContent=m[1];s.appendChild(o);});
+ var g=$('mguess');MYST_POOL.slice().sort(function(a,b){return SUBS[a].name<SUBS[b].name?-1:1;}).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=SUBS[k].name;g.appendChild(o);});
+ var dt=$('datatable'),h='';
+ ['water','stearic','oil','al','cu','fe','brass','pb','sn','ti','glass','nylon','conc'].forEach(function(k){var s=SUBS[k];
+   if(k==='water'){h+='<span>Water (liquid) c</span><span>4200 J/kg °C</span><span>Ice c</span><span>2100 J/kg °C</span><span>Water L<sub>f</sub></span><span>334 000 J/kg</span><span>Water L<sub>v</sub></span><span>2 260 000 J/kg</span>';}
+   else if(k==='stearic'){h+='<span>Stearic acid: m.p.</span><span>69 °C</span><span>Stearic acid L<sub>f</sub></span><span>199 000 J/kg</span>';}
+   else h+='<span>'+s.name+' c</span><span>'+s.cs+' J/kg °C</span>';});
+ dt.innerHTML=h;})();
+
+/* ================= LAB ENGINE ================= */
+var TROOM=20;
+var L={}; // lab state
+var cfg={mat:'al',m:1,T0:20,P:48,k:0.15,real:true,res:0.1};
+var mystery=null; // {key,m,daily}
+function sub(){ if(cfg.mat==='mystery'&&mystery) return SUBS[mystery.key]; if(cfg.mat==='ice') return SUBS.water; return SUBS[cfg.mat]; }
+function isBlock(){ var m=LAB_MATS.find(function(x){return x[0]===cfg.mat;}); return m[2]==='block'; }
+function labReset(){
+  var s=sub();
+  L={t:0,T:cfg.T0,Th:cfg.T0,Th0:cfg.T0,m:cfg.m,m0:cfg.m,vap:0,E:0,Eloss:0,running:false,heater:true,cut:null,
+     fl:1, trace:{t:[0],T:[cfg.T0],E:[0],m:[cfg.m]}, lastLog:0, lastAuto:0, noise:0, boilFlag:0, seenMelt:false, seenBoil:false,startedBelow:cfg.T0<0, cooledThroughMp:false};
+  if(s.mp!=null && cfg.T0<s.mp) L.fl=0;
+  if(s.mp!=null && cfg.T0===s.mp) L.fl=0;
+  if(s.bp!=null && L.T>s.bp) L.T=s.bp;
+  sel=null; $('analysis').innerHTML=''; rows=[]; renderTable();
+  $('run').textContent='▶ Start'; updHeaterBtn(); setMsg(defaultMsg()); updReadouts(); drawGraph();
+}
+function defaultMsg(){ if(cfg.mat==='mystery') return mystery?'Mystery sample loaded. Its mass is shown on the balance. Measure c, then identify it below.':'Load a mystery sample in the panel below.'; return 'Press Start. Record readings as you go, or tick the data logger.'; }
+function setMsg(t,cls){var m=$('labmsg');m.className='msg'+(cls?' '+cls:'');m.innerHTML=t;}
+function C_now(s){ // heat capacity of present phase
+  if(s.mp!=null && (L.T<s.mp || (L.T===s.mp && L.fl===0))) return L.m*s.cs; return L.m*s.cl; }
+function addHeat(Q){
+  var s=sub(), guard=0;
+  while(Math.abs(Q)>1e-9 && guard++<6){
+    if(L.m<=1e-9){Q=0;break;}
+    if(Q>0){
+      if(s.mp!=null && L.T===s.mp && L.fl<1){ var need=(1-L.fl)*L.m*s.Lf; if(Q<need){L.fl+=Q/(L.m*s.Lf);Q=0;} else {L.fl=1;Q-=need;} L.seenMelt=true; continue; }
+      if(s.bp!=null && L.T===s.bp && L.fl>=1){ var dm=Q/s.Lv; if(dm<L.m){L.m-=dm;L.vap+=dm;Q=0;} else {L.vap+=L.m;L.m=0;Q=0;} L.seenBoil=true; L.boilFlag=1; continue; }
+      var solid=(s.mp!=null && (L.T<s.mp||(L.T===s.mp&&L.fl===0)));
+      var C=L.m*(solid?s.cs:s.cl), th=solid?s.mp:(s.bp!=null?s.bp:Infinity);
+      var dT=Q/C; if(L.T+dT>=th){Q-=C*(th-L.T);L.T=th;} else {L.T+=dT;Q=0;}
+    } else {
+      if(s.mp!=null && L.T===s.mp && L.fl>0){ var need2=L.fl*L.m*s.Lf; if(-Q<need2){L.fl+=Q/(L.m*s.Lf);Q=0;} else {L.fl=0;Q+=need2;} if(cfg.mat==='stearic') L.cooledThroughMp=true; continue; }
+      var solid2=(s.mp!=null && (L.T<s.mp||(L.T===s.mp&&L.fl===0)));
+      var C2=L.m*(solid2?s.cs:s.cl), th2=(!solid2&&s.mp!=null)?s.mp:-Infinity;
+      var dT2=Q/C2; if(L.T+dT2<=th2){Q-=C2*(th2-L.T);L.T=th2;} else {L.T+=dT2;Q=0;}
+    }
+  }
+}
+var CH=12, HCOEF=1.2; // heater: J/K, W/K
+function step(dt){
+  var s=sub(), on=L.heater&&!L.cut, P=on?cfg.P:0, q;
+  if(cfg.real){ q=HCOEF*(L.Th-L.T); L.Th+=(P-q)/CH*dt; } else { q=P; L.Th=L.T+(on?cfg.P/HCOEF:0); }
+  if(L.m<=1e-9) q=0;
+  var loss=cfg.k*(L.T-TROOM);
+  L.E+=P*dt; L.Eloss+=loss*dt;
+  L.boilFlag=0;
+  addHeat((q-loss)*dt);
+  L.t+=dt;
+  if(L.m<=1e-6 && !L.cut){L.cut='dry';setMsg('The sample has completely boiled away. The heater has switched off to protect it from overheating.','warn');}
+  if(L.T>=150 && !L.cut){L.cut='hot';setMsg('Thermal cut-out at 150 °C. The heater has switched off.','warn');}
+  if(L.t-L.lastLog>=1){L.lastLog=L.t; var tr=L.trace; tr.t.push(L.t);tr.T.push(L.T);tr.E.push(L.E);tr.m.push(L.m);
+    if(tr.t.length>40000){['t','T','E','m'].forEach(function(k){tr[k]=tr[k].filter(function(_,i){return i%2===0;});});}}
+  if($('auto').checked){var iv=+$('autoint').value; if(L.t-L.lastAuto>=iv){L.lastAuto=Math.floor(L.t/iv)*iv; record(true);}}
+}
+function reading(){ var T=L.T+(cfg.real?L.noise:0); var r=cfg.res; return Math.round(T/r)*r; }
+function record(auto){ rows.push({t:L.t,T:reading(),E:L.E,m:L.m}); renderTable(); if(!auto) award('first'); else if(rows.length===1) award('first'); drawGraph(); }
+var rows=[];
+function renderTable(){ var h=''; for(var i=rows.length-1;i>=0;i--){var r=rows[i];h+='<tr><td>'+Math.round(r.t)+'</td><td>'+r.T.toFixed(cfg.res<1?1:0)+'</td><td>'+grp(String(Math.round(r.E)))+'</td><td>'+(r.m*1000).toFixed(1)+'</td></tr>';} $('tbody').innerHTML=h||'<tr><td colspan="4" style="text-align:center;color:#8a97ad;font-family:inherit">No readings yet</td></tr>'; }
+function updReadouts(){
+  var r=reading(); $('r-T').textContent=r.toFixed(cfg.res<1?1:0)+' °C'; $('r-Tres').textContent='resolution '+(cfg.res<1?'0.1':'1')+' °C';
+  var mm=Math.floor(L.t/60), ss=Math.floor(L.t%60); $('r-t').textContent=mm+':'+String(ss).padStart(2,'0'); $('r-ts').textContent=Math.floor(L.t)+' s';
+  $('r-E').textContent=L.E<1e5?grp(String(Math.round(L.E)))+' J':fmt(L.E/1000,4)+' kJ';
+  var on=L.heater&&!L.cut; $('r-VI').textContent=(on?'12.0':'0.0')+' V'; $('r-I').textContent=(on?(cfg.P/12).toFixed(2):'0.00')+' A  ·  '+(on?cfg.P:0)+' W';
+  $('r-m').textContent=(L.m*1000).toFixed(1)+' g';
+  var Eh=CH*(L.Th-L.Th0)*(cfg.real?1:0); var Es=L.E-L.Eloss-Eh; var tot=Math.max(1,Math.abs(Es)+Math.abs(Eh)+Math.abs(L.Eloss));
+  var b=$('ebar').children; b[0].style.width=(Math.max(0,Es)/tot*100)+'%'; b[1].style.width=(Math.max(0,Eh)/tot*100)+'%'; b[2].style.width=(Math.max(0,L.Eloss)/tot*100)+'%';
+  $('lg1').textContent=(Es>=0?'Gained by sample ':'Lost by sample ')+fmt(Math.abs(Es)/1000,3)+' kJ'; $('lg2').textContent='Heater element '+fmt(Eh/1000,2)+' kJ'; $('lg3').textContent=(L.Eloss>=0?'Lost to surroundings ':'Gained from room ')+fmt(Math.abs(L.Eloss)/1000,3)+' kJ';
+}
+function updHeaterBtn(){ var b=$('heat'); b.textContent='Heater: '+(L.heater?'ON':'OFF'); b.className='btn '+(L.heater?'hot':''); }
+
+/* controls */
+function syncCtlOutputs(){ $('mass-o').textContent=cfg.m.toFixed(2)+' kg'; $('t0-o').textContent=cfg.T0+' °C'; $('pow-o').textContent=cfg.P+' W'; }
+function matChanged(){ var s=sub(); var mi=$('mass'),ti=$('t0');
+  if(isBlock()){ mi.min=0.25;mi.max=2;mi.step=0.05; } else { mi.min=0.05;mi.max=0.6;mi.step=0.01; }
+  if(cfg.mat==='ice'){ti.min=-20;ti.max=0;} else if(cfg.mat==='water'){ti.min=1;ti.max=99;} else if(cfg.mat==='stearic'){ti.min=15;ti.max=95;} else {ti.min=5;ti.max=90;}
+  cfg.m=clamp(cfg.m,+mi.min,+mi.max); mi.value=cfg.m; cfg.T0=clamp(cfg.T0,+ti.min,+ti.max); ti.value=cfg.T0;
+  var lock=cfg.mat==='mystery'; mi.disabled=lock; if(lock&&mystery){cfg.m=mystery.m;}
+  syncCtlOutputs(); labReset(); }
+$('mat').onchange=function(){cfg.mat=this.value; if(cfg.mat==='mystery'&&!mystery) newMystery(true); matChanged();};
+$('mass').oninput=function(){cfg.m=+this.value; syncCtlOutputs(); if(!L.running&&L.t===0) labReset();};
+$('t0').oninput=function(){cfg.T0=+this.value; syncCtlOutputs(); if(!L.running&&L.t===0) labReset();};
+$('pow').oninput=function(){cfg.P=+this.value; syncCtlOutputs(); updReadouts();};
+segInit('ins',function(b){cfg.k=+b.dataset.k;});
+segInit('res',function(b){cfg.res=+b.dataset.r;updReadouts();renderTable();});
+$('real').onchange=function(){cfg.real=this.checked;};
+var speed=1; segInit('speed',function(b){speed=+b.dataset.s;});
+$('run').onclick=function(){ L.running=!L.running; this.textContent=L.running?'❚❚ Pause':'▶ Resume'; if(L.running&&L.t===0) setMsg(cfg.mat==='mystery'?defaultMsg():'Running. Watch the gradient: steeper means a smaller heat capacity (m × c).'); };
+$('heat').onclick=function(){ L.heater=!L.heater; if(L.heater&&L.cut==='hot'&&L.T<140) L.cut=null; updHeaterBtn(); };
+$('reset').onclick=function(){labReset();};
+$('rec').onclick=function(){record(false);};
+$('clrtab').onclick=function(){rows=[];renderTable();drawGraph();};
+$('csv').onclick=function(){ var s='t / s,theta / degC,E / J,m / g\n'+rows.map(function(r){return Math.round(r.t)+','+r.T.toFixed(1)+','+Math.round(r.E)+','+(r.m*1000).toFixed(1);}).join('\n');
+  try{navigator.clipboard.writeText(s).then(function(){toast('Table copied to the clipboard');},function(){toast('Copying was blocked by the browser');});}catch(e){toast('Copying was blocked by the browser');} };
+$('clrsel').onclick=function(){sel=null;$('analysis').innerHTML='';drawGraph();};
+
+var PRESETS={
+ shc:{mat:'al',m:1,T0:20,P:48,k:0.15,real:true,speed:10,auto:true,iv:30,note:'Classic required practical: a 1 kg aluminium block with a 48 W heater. Plot θ against energy, ignore the warm-up curve, and drag across the straight section.'},
+ ice:{mat:'ice',m:0.1,T0:-15,P:120,k:0,real:true,speed:250,auto:false,note:'100 g of ice at −15 °C heated all the way to steam. Look for two plateaus: melting at 0 °C and boiling at 100 °C. Which is longer, and why?'},
+ cool:{mat:'stearic',m:0.05,T0:90,P:20,k:0.6,real:true,speed:50,auto:true,iv:30,heaterOff:true,note:'Molten stearic acid cooling in air with the heater off. The plateau at 69 °C is freezing: latent heat released by the bonding particles balances the energy lost to the room.'},
+ boil:{mat:'water',m:0.3,T0:95,P:120,k:0.15,real:true,speed:50,auto:true,iv:60,note:'Water already near boiling. Once it boils, record the balance reading and the joulemeter reading. Lv = energy supplied ÷ mass boiled away. Then drag across the plateau.'},
+ losses:{mat:'cu',m:1,T0:20,P:48,k:0.6,real:true,speed:50,auto:true,iv:30,note:'Copper block with no insulation. As it gets hotter it loses energy faster, so the graph curves over. Measure c early on and again later. Which is closer to 385 J/kg °C?'}
+};
+Array.prototype.forEach.call($('presets').children,function(b){b.onclick=function(){var p=PRESETS[b.dataset.p];
+  cfg.mat=p.mat;$('mat').value=p.mat;cfg.m=p.m;cfg.T0=p.T0;cfg.P=p.P;cfg.k=p.k;cfg.real=p.real;$('real').checked=p.real;
+  $('pow').value=p.P; Array.prototype.forEach.call($('ins').children,function(x){x.classList.toggle('on',+x.dataset.k===p.k);});
+  $('auto').checked=!!p.auto; if(p.iv) $('autoint').value=p.iv;
+  speed=p.speed; Array.prototype.forEach.call($('speed').children,function(x){x.classList.toggle('on',+x.dataset.s===p.speed);});
+  matChanged(); $('mass').value=p.m; cfg.m=p.m; $('t0').value=p.T0; cfg.T0=p.T0; syncCtlOutputs(); labReset();
+  if(p.heaterOff){L.heater=false;updHeaterBtn();}
+  if(p.mat==='stearic'||p.mat==='water'){ xaxis='t'; Array.prototype.forEach.call($('xaxis').children,function(x){x.classList.toggle('on',x.dataset.x==='t');}); }
+  if(p.mat==='al'){ xaxis='E'; Array.prototype.forEach.call($('xaxis').children,function(x){x.classList.toggle('on',x.dataset.x==='E');}); }
+  $('presetnote').textContent=p.note; setMsg(p.heaterOff?'Running with the heater off: the sample is cooling.':(p.auto?'Running. The data logger is recording a reading every '+p.iv+' s.':'Running. Press Record reading to log values, or just watch the graph.')); L.running=true; $('run').textContent='❚❚ Pause'; drawGraph(); };});
+
+/* mystery */
+function newMystery(daily){ var rng=daily?mulberry(hashStr('myst'+todayKey())):Math.random;
+  var key=MYST_POOL[Math.floor(rng()*MYST_POOL.length)]; var m=Math.round((0.5+rng()*1.5)*20)/20;
+  mystery={key:key,m:m,daily:daily}; cfg.mat='mystery'; $('mat').value='mystery'; cfg.m=m; cfg.T0=20; $('t0').value=20;
+  $('mbody').style.display='block'; $('mres').innerHTML=''; $('mc').value=''; matChanged(); }
+$('mdaily').onclick=function(){newMystery(true);};
+$('mrand').onclick=function(){newMystery(false);};
+$('msub').onclick=function(){ if(!mystery) return; var g=$('mguess').value, c=+$('mc').value, truth=SUBS[mystery.key];
+  var ok=g===mystery.key; var cErr=c>0?Math.abs(c-truth.cs)/truth.cs*100:null;
+  var h=ok?'<div class="msg good"><b>Correct, it is '+truth.name+'.</b> Accepted value: '+truth.cs+' J/kg °C.':'<div class="msg warn"><b>Not quite.</b> It was '+truth.name+' (c = '+truth.cs+' J/kg °C).';
+  if(cErr!=null) h+=' Your measurement was '+cErr.toFixed(1)+'% '+(c>truth.cs?'high':'low')+(c>truth.cs&&cErr>3?'. Energy lost to the heater and surroundings usually makes measured values too high.':'.');
+  h+='</div>'; $('mres').innerHTML=h;
+  if(ok){ var k=(mystery.daily?'d'+todayKey():'r'+Date.now()); if(!P.mystery[k]){P.mystery[k]=1;save();addXP(mystery.daily?60:40,'Mystery solved');}
+    award('myst'); if(Object.keys(P.mystery).length>=5) award('myst5'); }
+  if(c>0) logLab(truth.name+' (mystery)', c, truth.cs, 'c');
+};
+function logLab(name,meas,truth,kind){ P.labs.unshift({n:name,v:meas,t:truth,k:kind,d:todayKey()}); P.labs=P.labs.slice(0,30); save(); }
+
+/* ================= CANVAS HELPERS ================= */
+function fitCanvas(cv){ var r=cv.getBoundingClientRect(), d=window.devicePixelRatio||1; var w=Math.max(10,Math.round(r.width)), h=Math.max(10,Math.round(r.height));
+  if(cv.width!==Math.round(w*d)||cv.height!==Math.round(h*d)){cv.width=Math.round(w*d);cv.height=Math.round(h*d);} var x=cv.getContext('2d'); x.setTransform(d,0,0,d,0,0); return {x:x,w:w,h:h}; }
+function rr(x,X,Y,W,H,R){x.beginPath();x.moveTo(X+R,Y);x.arcTo(X+W,Y,X+W,Y+H,R);x.arcTo(X+W,Y+H,X,Y+H,R);x.arcTo(X,Y+H,X,Y,R);x.arcTo(X,Y,X+W,Y,R);x.closePath();}
+function niceStep(range,n){var raw=range/n,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return (f<1.5?1:f<3?2:f<7?5:10)*p;}
+
+/* ================= APPARATUS DRAWING ================= */
+var bubbles=[], steam=[], parts=[];
+function initParts(){ parts=[]; var cols=8,rowsN=6; for(var j=0;j<rowsN;j++) for(var i=0;i<cols;i++){ parts.push({hx:i,hy:j,x:0,y:0,vx:0,vy:0,ph:Math.random()*6.28}); } }
+initParts();
+function drawApparatus(){
+  var o=fitCanvas($('appcv')), x=o.x, W=o.w, H=o.h; x.clearRect(0,0,W,H);
+  var s=sub(), block=isBlock(); var split=W>620; var aw=split?W*0.62:W, cx=aw/2, base=(split?H:H-150)-34;
+  // bench
+  x.fillStyle='#d5dde9'; x.fillRect(0,base,aw,34); x.fillStyle='#c3cddd'; x.fillRect(0,base,aw,3);
+  var heaterOn=L.heater&&!L.cut; var glow=clamp((L.Th-L.T)/12,0,1);
+  if(block){
+    var bw=Math.min(190,aw*0.45), bh=Math.min(170,H*0.5), bx=cx-bw/2, by=base-bh-14;
+    // mat
+    x.fillStyle='#4a5468'; rr(x,bx-24,base-14,bw+48,14,4); x.fill();
+    if(cfg.k<0.6){ // lagging
+      x.save(); rr(x,bx-16,by-8,bw+32,bh+8,10); x.fillStyle='#f3e9b5'; x.fill(); x.clip(); x.strokeStyle='rgba(180,150,60,.5)'; x.lineWidth=2;
+      for(var q=-bh;q<bw+40;q+=10){x.beginPath();x.moveTo(bx-16+q,by-8);x.lineTo(bx-16+q+bh,by+bh);x.stroke();} x.restore();
+      if(cfg.k===0){x.fillStyle='rgba(91,61,245,.08)';rr(x,bx-16,by-8,bw+32,bh+8,10);x.fill();}
+    }
+    var g=x.createLinearGradient(bx,0,bx+bw,0); var bc=cfg.mat==='mystery'?'#9aa6b8':(s.col||'#b9c3cf');
+    g.addColorStop(0,shade(bc,-25)); g.addColorStop(.45,shade(bc,25)); g.addColorStop(1,shade(bc,-35));
+    x.fillStyle=g; x.fillRect(bx,by,bw,bh);
+    // heat tint
+    x.fillStyle=tempColour(L.T).replace('rgb','rgba').replace(')',','+clamp((L.T-20)/220,0,.35)+')'); x.fillRect(bx,by,bw,bh);
+    x.fillStyle=shade(bc,40); x.beginPath(); x.ellipse(cx,by,bw/2,10,0,0,6.283); x.fill();
+    // holes
+    var hx1=cx-bw*0.2, hx2=cx+bw*0.22;
+    x.fillStyle='#2b3345'; x.beginPath(); x.ellipse(hx1,by,9,4,0,0,6.283); x.fill(); x.beginPath(); x.ellipse(hx2,by,6,3,0,0,6.283); x.fill();
+    // heater
+    drawHeater(x,hx1,by-70,by+bh*0.75,heaterOn,glow,true);
+    drawThermo(x,hx2,by-110,by+bh*0.6);
+    if(cfg.mat==='mystery'){x.fillStyle='#fff';x.font='800 22px "Avenir Next",system-ui';x.textAlign='center';x.fillText('?',cx,by+bh/2+8);}
+    // label
+    x.fillStyle='#13203a';x.font='700 13px "Avenir Next",system-ui';x.textAlign='center';x.fillText(cfg.mat==='mystery'?'Sample X':s.name+' block',cx,base+22);
+  } else {
+    var tube=cfg.mat==='stearic';
+    var bw2=tube?70:Math.min(170,aw*0.42), bh2=tube?Math.min(200,H*0.62):Math.min(190,H*0.58), bx2=cx-bw2/2, by2=base-bh2-(tube?40:4);
+    if(tube){ // stand clamp
+      x.strokeStyle='#5d6a80';x.lineWidth=5;x.beginPath();x.moveTo(cx-120,base);x.lineTo(cx-120,by2-40);x.stroke();
+      x.lineWidth=4;x.beginPath();x.moveTo(cx-120,by2+20);x.lineTo(bx2,by2+20);x.stroke(); x.fillStyle='#4a5468'; x.fillRect(cx-150,base-8,60,8);
+    }
+    if(cfg.k<0.6 && !tube){ x.save(); rr(x,bx2-14,by2+10,bw2+28,bh2-10,8); x.fillStyle='#f3e9b5'; x.fill(); x.clip(); x.strokeStyle='rgba(180,150,60,.5)'; x.lineWidth=2;
+      for(var q2=-bh2;q2<bw2+40;q2+=10){x.beginPath();x.moveTo(bx2-14+q2,by2+10);x.lineTo(bx2-14+q2+bh2,by2+bh2);x.stroke();} x.restore(); }
+    // contents
+    var fillFrac=clamp(L.m/L.m0,0,1), maxFill=bh2*0.7, lvl=by2+bh2-maxFill*(0.15+0.85*fillFrac);
+    if(L.m>1e-6){
+      var liqCol= s===SUBS.water?'rgba(70,150,235,.55)': tube?'rgba(240,226,170,.85)':'rgba(230,190,60,.6)';
+      x.fillStyle=liqCol; x.fillRect(bx2+3,lvl,bw2-6,by2+bh2-lvl-3);
+      if(s.mp!=null && L.fl<1){ // solid chunks
+        var nC=Math.round((1-L.fl)*(tube?10:22)); var rng=mulberry(7);
+        for(var c=0;c<nC;c++){ var px=bx2+8+rng()*(bw2-24), py=lvl+4+rng()*(by2+bh2-lvl-20), sz=tube?10:12+rng()*8;
+          x.fillStyle=s===SUBS.water?'rgba(235,246,255,.95)':'rgba(255,255,250,.97)'; x.strokeStyle=s===SUBS.water?'rgba(140,190,240,.9)':'rgba(200,190,150,.9)';
+          x.beginPath(); x.moveTo(px,py); x.lineTo(px+sz,py+2); x.lineTo(px+sz-2,py+sz); x.lineTo(px+1,py+sz-3); x.closePath(); x.fill(); x.stroke(); }
+        if(tube&&L.fl===0){ x.fillStyle='rgba(255,255,250,.97)'; x.fillRect(bx2+3,lvl,bw2-6,by2+bh2-lvl-3);}
+      }
+      // bubbles
+      if(s.bp!=null && L.T>=s.bp-0.001 && heaterOn && L.fl>=1){ if(Math.random()<0.8) bubbles.push({x:bx2+10+Math.random()*(bw2-20),y:by2+bh2-8,r:2+Math.random()*4}); if(Math.random()<0.5) steam.push({x:cx+(Math.random()-.5)*bw2*.6,y:lvl-4,a:1}); }
+      else if(s.bp!=null && L.T>80 && heaterOn && Math.random()<(L.T-80)/40) bubbles.push({x:bx2+bw2*0.25+Math.random()*12,y:by2+bh2-12,r:1.5});
+    }
+    for(var i=bubbles.length-1;i>=0;i--){var b=bubbles[i]; b.y-=1.8+b.r*.3; if(b.y<lvl||L.m<1e-6){bubbles.splice(i,1);continue;} x.strokeStyle='rgba(255,255,255,.9)'; x.lineWidth=1.3; x.beginPath(); x.arc(b.x,b.y,b.r,0,6.283); x.stroke();}
+    for(var j=steam.length-1;j>=0;j--){var st=steam[j]; st.y-=0.9; st.x+=Math.sin(st.y/9)*0.6; st.a-=0.012; if(st.a<=0){steam.splice(j,1);continue;} x.fillStyle='rgba(200,210,225,'+st.a*.5+')'; x.beginPath(); x.arc(st.x,st.y,8+(1-st.a)*14,0,6.283); x.fill();}
+    if(bubbles.length>200) bubbles.splice(0,50); if(steam.length>120) steam.splice(0,40);
+    // glass
+    x.strokeStyle='rgba(60,80,110,.85)'; x.lineWidth=2.5; x.beginPath();
+    if(tube){x.moveTo(bx2,by2);x.lineTo(bx2,by2+bh2-bw2/2);x.arc(cx,by2+bh2-bw2/2,bw2/2,Math.PI,0,true);x.lineTo(bx2+bw2,by2);}
+    else {x.moveTo(bx2-6,by2);x.lineTo(bx2,by2+4);x.lineTo(bx2,by2+bh2);x.lineTo(bx2+bw2,by2+bh2);x.lineTo(bx2+bw2,by2+4);}
+    x.stroke(); x.fillStyle='rgba(255,255,255,.18)'; x.fillRect(bx2+5,by2+8,6,bh2-20);
+    if(!tube){ x.fillStyle='rgba(60,80,110,.55)'; x.font='10px system-ui'; x.textAlign='left'; for(var gl=1;gl<5;gl++){var yy=by2+bh2-gl*bh2*0.18;x.fillRect(bx2+bw2-16,yy,10,1.2);} }
+    if(!tube){drawHeater(x,cx-bw2*0.22,by2-60,by2+bh2-14,heaterOn,glow,false);}
+    else { // water bath implied: tube heater is a coil around
+      x.strokeStyle=heaterOn?'rgba(242,81,45,'+(0.4+glow*0.6)+')':'#7a8496'; x.lineWidth=3; for(var cy=by2+bh2*0.35;cy<by2+bh2-10;cy+=12){x.beginPath();x.ellipse(cx,cy,bw2/2+6,4,0,0.2,Math.PI-0.2);x.stroke();}
+    }
+    drawThermo(x,cx+(tube?6:bw2*0.2),by2-90,by2+bh2-(tube?28:16));
+    x.fillStyle='#13203a';x.font='700 13px "Avenir Next",system-ui';x.textAlign='center';x.fillText(tube?'Stearic acid in boiling tube (heating coil)':(cfg.mat==='ice'?'Ice / water':s.name)+' in beaker',cx,base+22);
+  }
+  // state label
+  var st=stateText(); x.textAlign='left'; x.font='700 12px "Avenir Next",system-ui'; var tw=x.measureText(st.t).width+18;
+  x.fillStyle=st.c; rr(x,12,12,tw,24,12); x.fill(); x.fillStyle='#fff'; x.fillText(st.t,21,28);
+  if(L.cut){x.fillStyle='#c2410c';x.fillText('Heater cut out',12,54);}
+  // particle inset
+  var pw=split?W-aw-24:W-20, ph=split?Math.min(H-60,230):136, px0=split?aw+8:10, py0=split?24:H-142;
+  drawParticles(x,px0,py0,pw,ph);
+  // tiny bar thermometer readout on right
+}
+function shade(hex,amt){var n=parseInt(hex.slice(1),16),r=clamp((n>>16)+amt,0,255),g=clamp((n>>8&255)+amt,0,255),b=clamp((n&255)+amt,0,255);return 'rgb('+r+','+g+','+b+')';}
+function drawHeater(x,hx,top,bot,on,glow,inBlock){
+  x.strokeStyle='#2b3345';x.lineWidth=2;x.beginPath();x.moveTo(hx,top);x.bezierCurveTo(hx,top-30,hx-60,top-30,hx-70,top-50);x.stroke();
+  x.fillStyle='#3a4357'; x.fillRect(hx-9,top,18,22);
+  var g=x.createLinearGradient(hx-6,0,hx+6,0); var hot=on?glow:0;
+  g.addColorStop(0,'rgb('+Math.round(120+hot*120)+','+Math.round(126-hot*40)+','+Math.round(140-hot*90)+')'); g.addColorStop(.5,'rgb('+Math.round(200+hot*55)+','+Math.round(205-hot*60)+','+Math.round(215-hot*150)+')'); g.addColorStop(1,'rgb('+Math.round(110+hot*120)+','+Math.round(116-hot*40)+','+Math.round(130-hot*90)+')');
+  x.fillStyle=g; x.fillRect(hx-6,top+22,12,bot-top-22); x.beginPath(); x.arc(hx,bot,6,0,Math.PI); x.fill();
+  if(on&&hot>0.1){x.fillStyle='rgba(255,120,60,'+hot*0.25+')';x.beginPath();x.ellipse(hx,(top+bot)/2+15,18,(bot-top)/2,0,0,6.283);x.fill();}
+}
+function drawThermo(x,tx,top,bot){
+  x.fillStyle='rgba(255,255,255,.9)'; x.strokeStyle='#6b7a93'; x.lineWidth=1.3; rr(x,tx-5,top,10,bot-top,5); x.fill(); x.stroke();
+  x.fillStyle='#e0322b'; x.beginPath(); x.arc(tx,bot-4,6,0,6.283); x.fill();
+  var frac=clamp((L.T+20)/170,0,1); var yy=bot-8-(bot-top-14)*frac; x.fillRect(tx-1.6,yy,3.2,bot-8-yy);
+  x.fillStyle='#13203a'; x.font='700 11px "JetBrains Mono",Consolas,monospace'; x.textAlign='left'; x.fillText(reading().toFixed(cfg.res<1?1:0)+' °C',tx+9,top+12);
+}
+function stateText(){ var s=sub(); if(isBlock()) return {t:'Solid',c:'#5d6a80'};
+  if(L.m<1e-6) return {t:'All boiled away',c:'#8a97ad'};
+  if(s.mp!=null && L.T===s.mp && L.fl>0 && L.fl<1) return {t:(L.heater&&!L.cut?'Melting':'Freezing')+' · '+Math.round(L.fl*100)+'% liquid',c:'#5b3df5'};
+  if(s.bp!=null && L.T===s.bp && L.vap>0 && (L.heater&&!L.cut)) return {t:'Boiling · '+fmt(L.vap*1000,3)+' g boiled off',c:'#f2512d'};
+  if(s.mp!=null && L.fl===0) return {t:'Solid',c:'#2a7de1'};
+  return {t:'Liquid',c:'#0aa597'}; }
+function drawParticles(x,X,Y,W,H){
+  x.fillStyle='#0e1a2c'; rr(x,X,Y,W,H,12); x.fill();
+  x.fillStyle='#9fb3cf'; x.font='700 10.5px "Avenir Next",system-ui'; x.textAlign='left'; x.fillText('PARTICLE VIEW',X+10,Y+16);
+  var s=sub(), N=parts.length, block=isBlock(), Tk=L.T+273, sp=Math.sqrt(Tk/293);
+  var nGas=0,nLiq=0;
+  if(!block){ var mt=L.m0; nGas=s.bp!=null?Math.round(L.vap/mt*N):0; var remain=N-nGas; nLiq=s.mp!=null?Math.round(L.fl*remain):remain; }
+  var bx=X+8,by=Y+24,bw=W-16,bh=H-32, cols=8,rowsN=6, spc=Math.min(bw/(cols+1),bh/(rowsN+3)), r=Math.max(3,spc*0.42);
+  var liqTop=by+bh-(rowsN+0.6)*spc*1.02;
+  for(var i=0;i<N;i++){ var p=parts[i]; var homeX=bx+bw/2+(p.hx-(cols-1)/2)*spc, homeY=by+bh-(p.hy+0.6)*spc;
+    var state=i<nGas?'g':(i<nGas+nLiq?'l':'s');
+    // particles filled from top of lattice down: index order is row-major from bottom, so reverse to melt top first
+    if(!p.init){p.x=homeX;p.y=homeY;p.init=1;}
+    if(state==='s'){ p.ph+=0.25*sp; var a=(block?1.2:1.5)*sp*sp; p.x=lerp(p.x,homeX+Math.sin(p.ph*1.7+i)*a,0.35); p.y=lerp(p.y,homeY+Math.cos(p.ph*1.3+i*2)*a,0.35); p.vx=0;p.vy=0; }
+    else if(state==='l'){ p.vx+=(Math.random()-.5)*0.9*sp; p.vy+=(Math.random()-.5)*0.9*sp+0.06; p.vx*=0.9;p.vy*=0.9; p.x+=p.vx;p.y+=p.vy;
+      if(p.y<liqTop){p.y=liqTop;p.vy=Math.abs(p.vy);} }
+    else { if(Math.abs(p.vx)+Math.abs(p.vy)<1){var an=Math.random()*6.28;p.vx=Math.cos(an)*3*sp;p.vy=Math.sin(an)*3*sp;} var v=Math.hypot(p.vx,p.vy),tv=3.2*sp; p.vx*=tv/v;p.vy*=tv/v; p.x+=p.vx;p.y+=p.vy; }
+    if(p.x<bx+r){p.x=bx+r;p.vx=Math.abs(p.vx);} if(p.x>bx+bw-r){p.x=bx+bw-r;p.vx=-Math.abs(p.vx);} if(p.y<by+r){p.y=by+r;p.vy=Math.abs(p.vy);} if(p.y>by+bh-r){p.y=by+bh-r;p.vy=-Math.abs(p.vy);}
+    p.state=state; }
+  // soft repulsion for liquids/gas
+  for(var a1=0;a1<N;a1++){var A=parts[a1]; if(A.state==='s') continue; for(var b1=0;b1<N;b1++){ if(a1===b1) continue; var B=parts[b1]; var dx=A.x-B.x,dy=A.y-B.y,d=Math.hypot(dx,dy),md=2*r; if(d<md&&d>0.01){var f=(md-d)/d*0.5; A.x+=dx*f;A.y+=dy*f; if(A.state==='g'){A.vx+=dx/d*0.3;A.vy+=dy/d*0.3;}}}}
+  var col=tempColour(L.T);
+  for(var k=0;k<N;k++){var q=parts[k]; x.fillStyle=col; x.beginPath(); x.arc(q.x,q.y,r,0,6.283); x.fill(); x.fillStyle='rgba(255,255,255,.35)'; x.beginPath(); x.arc(q.x-r*.3,q.y-r*.35,r*.35,0,6.283); x.fill();}
+  x.fillStyle='#7c90ad'; x.font='10.5px "Avenir Next",system-ui'; x.textAlign='right'; x.fillText(nGas>0?'some particles have escaped as gas':(nLiq>0&&nLiq<N?'bonds breaking':(nLiq===N?'free to slide past each other':'vibrating about fixed positions')),X+W-10,Y+16);
+}
+
+/* ================= GRAPH ================= */
+var xaxis='t', sel=null, hover=null, gview=null;
+segInit('xaxis',function(b){xaxis=b.dataset.x; if(sel) analyse(); drawGraph();});
+function drawGraph(){
+  var o=fitCanvas($('graph')), x=o.x, W=o.w, H=o.h; x.clearRect(0,0,W,H);
+  var tr=L.trace, xs=xaxis==='t'?tr.t:tr.E, ys=tr.T, n=xs.length;
+  var xmaxData=xs[n-1]||0; var xmax=Math.max(xaxis==='t'?120:5000,xmaxData*1.08);
+  var ymin=Infinity,ymax=-Infinity; for(var i=0;i<n;i++){if(ys[i]<ymin)ymin=ys[i];if(ys[i]>ymax)ymax=ys[i];}
+  rows.forEach(function(r){ymin=Math.min(ymin,r.T);ymax=Math.max(ymax,r.T);});
+  ymin=Math.floor((ymin-3)/5)*5; ymax=Math.ceil((ymax+3)/5)*5; if(ymax-ymin<20){ymax=ymin+20;}
+  var ml=54,mr=14,mt=12,mb=40, pw=W-ml-mr, ph=H-mt-mb;
+  var sx=function(v){return ml+v/xmax*pw;}, sy=function(v){return mt+ph-(v-ymin)/(ymax-ymin)*ph;};
+  gview={ml:ml,mt:mt,pw:pw,ph:ph,xmax:xmax,ymin:ymin,ymax:ymax};
+  // grid
+  var xs1=niceStep(xmax,7), ys1=niceStep(ymax-ymin,6);
+  x.strokeStyle='#e6ecf4'; x.lineWidth=1; x.fillStyle='#55657f'; x.font='11px "JetBrains Mono",Consolas,monospace'; x.textAlign='center';
+  for(var gx=0;gx<=xmax;gx+=xs1){var X=sx(gx);x.beginPath();x.moveTo(X,mt);x.lineTo(X,mt+ph);x.stroke();x.fillText(xaxis==='t'?fmt(gx,3):fmt(gx/1000,3),X,mt+ph+15);}
+  x.textAlign='right';
+  for(var gy=Math.ceil(ymin/ys1)*ys1;gy<=ymax;gy+=ys1){var Y=sy(gy);x.beginPath();x.moveTo(ml,Y);x.lineTo(ml+pw,Y);x.stroke();x.fillText(fmt(gy,3),ml-6,Y+4);}
+  x.strokeStyle='#13203a'; x.lineWidth=1.5; x.beginPath(); x.moveTo(ml,mt); x.lineTo(ml,mt+ph); x.lineTo(ml+pw,mt+ph); x.stroke();
+  x.fillStyle='#13203a'; x.font='700 12px "Avenir Next",system-ui'; x.textAlign='center'; x.fillText(xaxis==='t'?'time t / s':'energy supplied E / kJ',ml+pw/2,H-6);
+  x.save(); x.translate(14,mt+ph/2); x.rotate(-Math.PI/2); x.fillText('temperature θ / °C',0,0); x.restore();
+  // mp/bp reference lines
+  var s=sub(); [[s.mp,'melting point'],[s.bp,'boiling point']].forEach(function(z){ if(z[0]!=null && !isBlock() && z[0]>ymin && z[0]<ymax){ x.setLineDash([4,4]); x.strokeStyle='#b8c4d6'; x.beginPath(); x.moveTo(ml,sy(z[0])); x.lineTo(ml+pw,sy(z[0])); x.stroke(); x.setLineDash([]); x.fillStyle='#8a97ad'; x.font='10.5px "Avenir Next",system-ui'; x.textAlign='right'; x.fillText(z[1],ml+pw-4,sy(z[0])-4);} });
+  // selection
+  if(sel){ var a=Math.min(sel.a,sel.b), b=Math.max(sel.a,sel.b); x.fillStyle='rgba(91,61,245,.10)'; x.fillRect(sx(a),mt,sx(b)-sx(a),ph); x.strokeStyle='rgba(91,61,245,.5)'; x.strokeRect(sx(a),mt,sx(b)-sx(a),ph); }
+  // trace
+  if(n>1){ x.lineWidth=2.4; x.lineJoin='round'; var step=Math.max(1,Math.floor(n/1500));
+    x.strokeStyle='#f2512d'; x.beginPath(); x.moveTo(sx(xs[0]),sy(ys[0])); for(var k=step;k<n;k+=step) x.lineTo(sx(xs[k]),sy(ys[k])); x.lineTo(sx(xs[n-1]),sy(ys[n-1])); x.stroke(); }
+  // recorded points
+  rows.forEach(function(r){var X=sx(xaxis==='t'?r.t:r.E),Y=sy(r.T); x.strokeStyle='#13203a'; x.lineWidth=1.6; x.beginPath(); x.moveTo(X-4,Y-4);x.lineTo(X+4,Y+4);x.moveTo(X+4,Y-4);x.lineTo(X-4,Y+4);x.stroke();});
+  // fit line
+  if(sel&&sel.fit){ var f=sel.fit; x.strokeStyle='#5b3df5'; x.lineWidth=2; x.setLineDash([6,4]); x.beginPath(); x.moveTo(sx(f.x0),sy(f.m*f.x0+f.c)); x.lineTo(sx(f.x1),sy(f.m*f.x1+f.c)); x.stroke(); x.setLineDash([]); }
+  // hover
+  if(hover&&n>1){ var hv=hover; x.strokeStyle='rgba(19,32,58,.25)'; x.beginPath(); x.moveTo(sx(hv.x),mt); x.lineTo(sx(hv.x),mt+ph); x.stroke();
+    var lab=(xaxis==='t'?Math.round(hv.x)+' s':fmt(hv.x/1000,3)+' kJ')+' · '+hv.y.toFixed(1)+' °C'; x.font='11px "JetBrains Mono",Consolas,monospace'; var tw=x.measureText(lab).width+12; var tx=clamp(sx(hv.x)+8,ml,ml+pw-tw);
+    x.fillStyle='rgba(19,32,58,.88)'; rr(x,tx,mt+6,tw,20,6); x.fill(); x.fillStyle='#fff'; x.textAlign='left'; x.fillText(lab,tx+6,mt+20); x.fillStyle='#5b3df5'; x.beginPath(); x.arc(sx(hv.x),sy(hv.y),4,0,6.283); x.fill(); }
+  if(n<=1){x.fillStyle='#8a97ad';x.font='13px "Avenir Next",system-ui';x.textAlign='center';x.fillText('Press Start to begin plotting',ml+pw/2,mt+ph/2);}
+}
+function gX(ev){var r=$('graph').getBoundingClientRect(); var px=ev.clientX-r.left; if(!gview) return 0; return clamp((px-gview.ml)/gview.pw*gview.xmax,0,gview.xmax);}
+function interpY(xv){var tr=L.trace,xs=xaxis==='t'?tr.t:tr.E; var lo=0,hi=xs.length-1; if(hi<1) return tr.T[0]; if(xv<=xs[0]) return tr.T[0]; if(xv>=xs[hi]) return tr.T[hi];
+  while(hi-lo>1){var md=(lo+hi)>>1; if(xs[md]<xv) lo=md; else hi=md;} var f=(xv-xs[lo])/((xs[hi]-xs[lo])||1); return lerp(tr.T[lo],tr.T[hi],f);}
+var dragging=false;
+$('graph').addEventListener('pointerdown',function(e){ if(L.trace.t.length<3) return; dragging=true; this.setPointerCapture(e.pointerId); var v=gX(e); sel={a:v,b:v}; drawGraph(); });
+$('graph').addEventListener('pointermove',function(e){ var v=gX(e); var xs=xaxis==='t'?L.trace.t:L.trace.E; if(xs.length>1&&v<=xs[xs.length-1]) hover={x:v,y:interpY(v)}; else hover=null; if(dragging){sel.b=v;} drawGraph(); });
+$('graph').addEventListener('pointerup',function(){ if(!dragging) return; dragging=false; if(sel&&Math.abs(sel.b-sel.a)<(gview.xmax*0.01)){sel=null;$('analysis').innerHTML='';drawGraph();return;} analyse(); drawGraph(); });
+$('graph').addEventListener('pointerleave',function(){hover=null;drawGraph();});
+function linfit(X,Y){var n=X.length,sx=0,sy=0,sxx=0,sxy=0;for(var i=0;i<n;i++){sx+=X[i];sy+=Y[i];sxx+=X[i]*X[i];sxy+=X[i]*Y[i];}var d=n*sxx-sx*sx; var m=d?(n*sxy-sx*sy)/d:0; return {m:m,c:(sy-m*sx)/n};}
+function analyse(){
+  var a=Math.min(sel.a,sel.b), b=Math.max(sel.a,sel.b), tr=L.trace, X=[],Y=[],Tt=[],Ms=[],Es=[], src='continuous data-logger trace';
+  var rx=rows.filter(function(r){var v=xaxis==='t'?r.t:r.E;return v>=a&&v<=b;});
+  if(rx.length>=3){ rx.forEach(function(r){X.push(xaxis==='t'?r.t:r.E);Y.push(r.T);Tt.push(r.t);Ms.push(r.m);Es.push(r.E);}); src='your '+rx.length+' recorded readings'; }
+  else { var xs=xaxis==='t'?tr.t:tr.E; for(var i=0;i<xs.length;i++){ if(xs[i]>=a&&xs[i]<=b){X.push(xs[i]);Y.push(tr.T[i]);Tt.push(tr.t[i]);Ms.push(tr.m[i]);Es.push(tr.E[i]);} } }
+  if(X.length<2){$('analysis').innerHTML='<div class="msg warn">Not enough data in that region.</div>';return;}
+  var f=linfit(X,Y); f.x0=X[0]; f.x1=X[X.length-1]; sel.fit=f;
+  var s=sub(), m=L.m0, dTheta=Y[Y.length-1]-Y[0], dt=Tt[Tt.length-1]-Tt[0], dE=Es[Es.length-1]-Es[0], dm=Ms[0]-Ms[Ms.length-1];
+  var flat= xaxis==='t' ? Math.abs(f.m)<0.004 : Math.abs(f.m)<0.004/ Math.max(cfg.P,1);
+  var h='<div class="calc">Using '+src+'\n';
+  var trueC=null;
+  if(!flat){
+    if(xaxis==='t'){ var c=cfg.P/(m*f.m); h+='gradient = Δθ/Δt = '+fmt(f.m,3)+' °C/s\n\nP = m c × gradient\nc = P ÷ (m × gradient)\n  = '+cfg.P+' ÷ ('+fmt(m,3)+' × '+fmt(f.m,3)+')\n  = <b>'+fmt(c,3)+' J/kg °C</b>'; resC(c); }
+    else { var c2=1/(m*f.m); h+='gradient = Δθ/ΔE = '+fmt(f.m*1000,3)+' °C/kJ\n                = '+fmt(f.m,3)+' °C/J\n\nΔE = m c Δθ  →  gradient = 1 ÷ (m c)\nc = 1 ÷ (m × gradient)\n  = 1 ÷ ('+fmt(m,3)+' × '+fmt(f.m,3)+')\n  = <b>'+fmt(c2,3)+' J/kg °C</b>'; resC(c2); }
+    h+='</div>';
+    if(f.m<0) h+='<div class="msg">The temperature is falling here, so this is a cooling section. The heater isn\'t supplying the energy, so the method above doesn\'t apply.</div>';
+  } else {
+    var Eused=dE>0?dE:cfg.P*dt;
+    h+='flat section: θ ≈ '+fmt(f.m*(a+b)/2+f.c,3)+' °C for Δt = '+Math.round(dt)+' s\n';
+    if(dE<=0){ h+='\nThe heater was off here. This is a plateau on a cooling curve:\nthe substance is freezing and releasing latent heat.</div>'; if(cfg.mat==='stearic') award('cool'); }
+    else {
+      h+='energy supplied E = '+fmt(Eused,4)+' J  (P × Δt = '+cfg.P+' × '+Math.round(dt)+')\n';
+      if(dm>1e-5){ var Lv=Eused/dm; h+='mass boiled off Δm = '+fmt(dm*1000,3)+' g (from balance)\n\nE = m L  →  L = E ÷ m\nLv = '+fmt(Eused,4)+' ÷ '+fmt(dm,3)+'\n   = <b>'+fmt(Lv,3)+' J/kg</b></div>'; resL(Lv,s.Lv,'Lv'); }
+      else if(s.mp!=null && Math.abs(f.m*(a+b)/2+f.c-s.mp)<1){ var Lf=Eused/m; h+='mass melted = '+fmt(m,3)+' kg (all of it, if you selected the whole plateau)\n\nE = m L  →  L = E ÷ m\nLf = '+fmt(Eused,4)+' ÷ '+fmt(m,3)+'\n   = <b>'+fmt(Lf,3)+' J/kg</b></div>'; resL(Lf,s.Lf,'Lf'); }
+      else h+='\nNo change of state here. The heater may still be warming up.</div>';
+    }
+  }
+  $('analysis').innerHTML=h;
+  function resC(c){ award('fit'); var mi=$('analysis'); if(cfg.mat==='mystery'){ $('mc').value=Math.round(c); return; }
+    if(isBlock()||(s.mp==null)||(s.mp!=null&&((L.fl===1&&Y[0]>s.mp)||(Y[Y.length-1]<s.mp)))){
+      var solidRange=s.mp!=null&&Y[Y.length-1]<s.mp; trueC=solidRange?s.cs:s.cl; var err=(c-trueC)/trueC*100;
+      setTimeout(function(){ var d=document.createElement('div'); d.className='msg '+(Math.abs(err)<5?'good':'warn');
+        d.innerHTML='Accepted value: '+trueC+' J/kg °C. Your result is '+Math.abs(err).toFixed(1)+'% '+(err>0?'too high':'too low')+'. '+(err>5?'Energy is going into the heater and out to the surroundings, so not all of E heats the sample. Did you include the warm-up curve, or turn off the insulation?':err<-5?'You may have included part of a plateau or the warm-up curve.':'Excellent technique.');
+        mi.appendChild(d);},0);
+      if(Math.abs(err)<5) award('shc5'); logLab(s.name+(solidRange&&!isBlock()?' (solid)':''),c,trueC,'c'); if(Math.abs(err)<5) addXP(15,'Accurate measurement'); }
+  }
+  function resL(v,t,k){ var err=(v-t)/t*100; setTimeout(function(){var d=document.createElement('div'); d.className='msg '+(Math.abs(err)<5?'good':'warn'); d.innerHTML='Accepted value: '+grp(String(t))+' J/kg. Your result is '+Math.abs(err).toFixed(1)+'% '+(err>0?'too high':'too low')+'. '+(Math.abs(err)<5?'Well measured.':'Make sure your selection covers the plateau only, and try better insulation.'); $('analysis').appendChild(d);},0);
+    if(Math.abs(err)<5){award('plateau');addXP(15,'Latent heat measured');} logLab(s.name+' '+(k==='Lv'?'L (vaporisation)':'L (fusion)'),v,t,k); }
+}
+
+/* ================= MAIN LOOP ================= */
+var lastTs=null, noiseT=0;
+function frame(ts){ var dtR=lastTs?Math.min(0.05,(ts-lastTs)/1000):0; lastTs=ts;
+  if(L.running){ var simT=dtR*speed, n=Math.ceil(simT/0.05); for(var i=0;i<n;i++) step(simT/n);
+    noiseT+=dtR; if(noiseT>0.4){noiseT=0;L.noise=(Math.random()-.5)*0.3;}
+    if(L.seenMelt&&L.seenBoil&&L.startedBelow) award('steam');
+    if(L.cooledThroughMp) award('cool');
+  }
+  if($('v-lab').classList.contains('on')){ drawApparatus(); updReadouts(); if(L.running) drawGraph(); }
+  if($('v-mix').classList.contains('on')) mixFrame(dtR);
+  requestAnimationFrame(frame); }
+
+/* ================= MIXTURES ================= */
+var MIXOBJ=[['al','Aluminium'],['cu','Copper'],['fe','Iron'],['pb','Lead'],['brass','Brass'],['glass','Glass marbles'],['conc','Concrete'],['hotwater','Hot water']];
+(function(){var s=$('xobj');MIXOBJ.forEach(function(m){var o=document.createElement('option');o.value=m[0];o.textContent=m[1];s.appendChild(o);});})();
+var CW=4200,CI=2100,LF=334000;
+var MX={obj:'al',mb:0.25,Tb:100,mw:0.2,Tw:18,mi:0,anim:null};
+function cObj(k){return k==='hotwater'?CW:SUBS[k].cs;}
+function mixSolve(o){ // returns {T, fl}
+  var cb=cObj(o.obj), M=o.mw+o.mi;
+  // enthalpy reference: ice at 0 °C solid = 0
+  var Hw = o.mw*(LF+CW*o.Tw) + o.mi*(CI*o.Ti);
+  var Hb = o.mb*cb*o.Tb, H=Hw+Hb;
+  if(M===0) return {T:o.Tb,fl:1};
+  if(H>=M*LF){ return {T:(H-M*LF)/(M*CW+o.mb*cb), fl:1}; }
+  if(H>=0) return {T:0, fl:H/(M*LF)};
+  return {T:H/(M*CI+o.mb*cb), fl:0};
+}
+function waterT(H,M){ if(M<=0) return 0; if(H>=M*LF) return (H-M*LF)/(M*CW); if(H>=0) return 0; return H/(M*CI); }
+function mixState(){return {obj:MX.obj,mb:MX.mb,Tb:MX.Tb,mw:MX.mw,Tw:MX.Tw,mi:MX.mi,Ti:-18};}
+function mixOut(){ $('xm-o').textContent=fixed(MX.mb*1000,0)+' g'; $('xT-o').textContent=MX.Tb+' °C'; $('wm-o').textContent=fixed(MX.mw*1000,0)+' g'; $('wT-o').textContent=MX.Tw+' °C'; $('im-o').textContent=fixed(MX.mi*1000,0)+' g'; }
+function mixBind(id,key,scale){ $(id).oninput=function(){MX[key]=+this.value; MX.anim=null; $('xres').innerHTML=''; $('mixsol').style.display='none'; mixOut();}; }
+mixBind('xm','mb');mixBind('xT','Tb');mixBind('wm','mw');mixBind('wT','Tw');mixBind('im','mi');
+$('xobj').onchange=function(){MX.obj=this.value;MX.anim=null;$('xres').innerHTML='';$('mixsol').style.display='none';};
+$('xrand').onclick=function(){ var r=Math.random; MX.obj=MIXOBJ[Math.floor(r()*MIXOBJ.length)][0]; MX.mb=Math.round((0.1+r()*0.8)*100)/100; MX.Tb=Math.round(60+r()*40); MX.mw=Math.round((0.1+r()*0.35)*100)/100; MX.Tw=Math.round(5+r()*20); MX.mi=r()<0.3?Math.round(r()*16)*0.005:0;
+  $('xobj').value=MX.obj;$('xm').value=MX.mb;$('xT').value=MX.Tb;$('wm').value=MX.mw;$('wT').value=MX.Tw;$('im').value=MX.mi; MX.anim=null; $('xres').innerHTML=''; $('xpred').value=''; $('mixsol').style.display='none'; mixOut(); };
+$('xgo').onclick=function(){ var o=mixState(); var res=mixSolve(o); var cb=cObj(o.obj);
+  var Hb0=o.mb*cb*o.Tb, Hw0=o.mw*(LF+CW*o.Tw)+o.mi*(CI*o.Ti), HbF=o.mb*cb*res.T, Q=Hb0-HbF;
+  MX.anim={t:0,o:o,res:res,Q:Q,Hb0:Hb0,Hw0:Hw0,cb:cb,hist:[],drop:0,tau:4};
+  var pred=parseFloat($('xpred').value), h='';
+  if(isFinite(pred)){ var e=Math.abs(pred-res.T);
+    if(e<=1){h='<div class="msg good"><b>Spot on!</b> Final temperature '+res.T.toFixed(1)+' °C (you said '+pred+' °C).</div>'; P.mixGood++; save(); addXP(20,'Great prediction'); award('mix'); if(P.mixGood>=5) award('mix5'); if(o.mi>0) award('ice');}
+    else if(e<=3){h='<div class="msg">Close. Final temperature '+res.T.toFixed(1)+' °C (you said '+pred+' °C).</div>'; addXP(8,'Close prediction');}
+    else h='<div class="msg warn">Final temperature '+res.T.toFixed(1)+' °C (you said '+pred+' °C). Check the working below.</div>';
+  } else h='<div class="msg">Final temperature '+res.T.toFixed(1)+' °C. Make a prediction first next time to earn XP.</div>';
+  $('xres').innerHTML=h; mixSolution(o,res,cb); };
+function mixSolution(o,res,cb){
+  var name=o.obj==='hotwater'?'hot water':SUBS[o.obj].name.toLowerCase(); var el=$('mixsol'); el.style.display='block';
+  var h='<h3>Worked solution</h3><div class="sol">';
+  if(o.mi===0){
+    h+='<div class="stp">Energy lost by the '+name+' = energy gained by the water</div>';
+    h+='<div class="stp eq">m₁c₁(θ₁ − θ) = m₂c₂(θ − θ₂)</div>';
+    h+='<div class="stp eq">'+o.mb+' × '+cb+' × ('+o.Tb+' − θ) = '+o.mw+' × '+CW+' × (θ − '+o.Tw+')</div>';
+    var A=o.mb*cb, B=o.mw*CW;
+    h+='<div class="stp eq">'+nz(A)+' × ('+o.Tb+' − θ) = '+nz(B)+' × (θ − '+o.Tw+')</div>';
+    h+='<div class="stp eq">'+nz(A*o.Tb)+' − '+nz(A)+'θ = '+nz(B)+'θ − '+nz(B*o.Tw)+'</div>';
+    h+='<div class="stp eq">'+nz(A*o.Tb+B*o.Tw)+' = '+nz(A+B)+'θ</div>';
+    h+='<div class="stp eq">θ = '+nz(A*o.Tb+B*o.Tw)+' ÷ '+nz(A+B)+' = <b>'+res.T.toFixed(1)+' °C</b></div>';
+    h+='<div class="stp note">Energy transferred: '+fmt(A*(o.Tb-res.T),3)+' J. '+(o.mb*cb<o.mw*CW?'The water has the larger heat capacity (m c), so its temperature changes less.':'The '+name+' has the larger heat capacity (m c), so its temperature changes less.')+'</div>';
+  } else {
+    var e1=o.mi*CI*(0-o.Ti), e2=o.mi*LF, avail=o.mb*cb*o.Tb+o.mw*CW*o.Tw;
+    h+='<div class="stp">With ice, take each stage separately.</div>';
+    h+='<div class="stp eq">Warm ice to 0 °C:  m c Δθ = '+o.mi+' × '+CI+' × 18 = '+nz(e1)+' J</div>';
+    h+='<div class="stp eq">Melt the ice:      m L    = '+o.mi+' × '+grp(String(LF))+' = '+nz(e2)+' J</div>';
+    h+='<div class="stp eq">Energy available if '+name+' and water cool to 0 °C:\n  '+o.mb+' × '+cb+' × '+o.Tb+' + '+o.mw+' × '+CW+' × '+o.Tw+' = '+nz(avail)+' J</div>';
+    if(res.fl<1){ h+='<div class="stp">That is not enough to melt all the ice, so the mixture ends at <b>0 °C</b> with '+fmt((1-res.fl)*(o.mi+o.mw)*1000,3)+' g of ice left.</div>'; }
+    else { var rem=avail-e1-e2; h+='<div class="stp eq">Left over after melting: '+nz(avail)+' − '+nz(e1)+' − '+nz(e2)+' = '+nz(rem)+' J</div>';
+      h+='<div class="stp eq">This warms everything from 0 °C:\nθ = '+nz(rem)+' ÷ ('+o.mb+' × '+cb+' + '+fmt(o.mw+o.mi,3)+' × '+CW+') = <b>'+res.T.toFixed(1)+' °C</b></div>'; }
+  }
+  h+='</div>'; el.innerHTML=h; }
+var mixImg={};
+function mixFrame(dt){
+  var o1=fitCanvas($('mixcv')), x=o1.x, W=o1.w, H=o1.h; x.clearRect(0,0,W,H);
+  var A=MX.anim, o=A?A.o:mixState(), cb=cObj(o.obj);
+  var Tb=o.Tb, Tw=waterT(o.mw*(LF+CW*o.Tw)+o.mi*CI*o.Ti,o.mw+o.mi), iceFrac=o.mi/(o.mw+o.mi||1), flow=0;
+  if(A){ A.drop=Math.min(1,A.drop+dt*1.6); if(A.drop>=1){ A.t+=dt; }
+    var q=A.drop>=1?A.Q*(1-Math.exp(-A.t/A.tau)):0; var M=o.mw+o.mi;
+    Tb=(A.Hb0-q)/(o.mb*cb); var Hw=A.Hw0+q; Tw=waterT(Hw,M); iceFrac = Hw>=M*LF?0:(Hw>=0?1-Hw/(M*LF):1)*(1); if(o.mi===0) iceFrac=0;
+    flow=A.drop>=1?A.Q/A.tau*Math.exp(-A.t/A.tau):0;
+    if(A.drop>=1 && (A.hist.length===0 || A.t-A.hist[A.hist.length-1].t>0.05) && A.t<A.tau*7) A.hist.push({t:A.t,b:Tb,w:Tw});
+  }
+  var base=H-30; x.fillStyle='#d5dde9'; x.fillRect(0,base,W,H-base);
+  var cx=W*0.42, cw=Math.min(200,W*0.36), ch=Math.min(200,H*0.6), cxL=cx-cw/2, cyT=base-ch;
+  // cup (polystyrene)
+  x.fillStyle='#fbfcfe'; x.strokeStyle='#aab6c8'; x.lineWidth=2; x.beginPath(); x.moveTo(cxL-10,cyT); x.lineTo(cxL+8,base); x.lineTo(cxL+cw-8,base); x.lineTo(cxL+cw+10,cyT); x.closePath(); x.fill(); x.stroke();
+  var wl=cyT+ch*0.35; x.fillStyle=tempColour(Tw).replace('rgb','rgba').replace(')',',.45)'); x.beginPath(); x.moveTo(cxL-10+18*(wl-cyT)/ch+4,wl); x.lineTo(cxL+12,base-4); x.lineTo(cxL+cw-12,base-4); x.lineTo(cxL+cw+10-18*(wl-cyT)/ch-4,wl); x.closePath(); x.fill();
+  // ice cubes
+  if(o.mi>0 && iceFrac>0.001){ var nI=Math.max(1,Math.round(o.mi/0.02)); for(var i=0;i<nI;i++){ var sz=Math.max(4,22*Math.sqrt(iceFrac*(o.mw+o.mi)/o.mi>1?1:iceFrac*(o.mw+o.mi)/o.mi)); var ix=cxL+30+i*(cw-60)/Math.max(1,nI-1||1), iy=wl-sz*0.3+Math.sin(performance.now()/600+i)*2;
+    x.fillStyle='rgba(235,247,255,.95)'; x.strokeStyle='#8fbfe8'; x.lineWidth=1.3; rr(x,ix-sz/2,iy-sz/2,sz,sz,3); x.fill(); x.stroke(); } }
+  // object
+  var name=o.obj==='hotwater'?'Hot water':SUBS[o.obj].name;
+  var ow=Math.min(70,30+o.mb*60), oh=ow*0.8, ox, oy;
+  if(o.obj==='hotwater'){ // beaker pouring
+    var t0=A?A.drop:0; ox=cx+cw*0.85; oy=cyT-80+(t0*20);
+    x.save(); x.translate(ox,oy); x.rotate(-t0*1.1); x.fillStyle=tempColour(Tb).replace('rgb','rgba').replace(')',','+(0.55*(1-t0)+0.05)+')'); x.fillRect(-25,-10+40*t0,50,50-40*t0); x.strokeStyle='#5d6a80'; x.lineWidth=2; x.strokeRect(-25,-30,50,70); x.restore();
+    if(A&&A.drop<1){x.strokeStyle=tempColour(Tb);x.lineWidth=4;x.beginPath();x.moveTo(ox-30,oy-20);x.quadraticCurveTo(cx+10,oy-10,cx,wl);x.stroke();}
+  } else {
+    var d=A?A.drop:0; ox=cx-ow/2+(1-d)*cw*0.9; oy=lerp(cyT-110,base-oh-12,d*d);
+    // thread
+    x.strokeStyle='#8a97ad'; x.lineWidth=1; x.beginPath(); x.moveTo(ox+ow/2,0); x.lineTo(ox+ow/2,oy); x.stroke();
+    x.fillStyle=SUBS[o.obj].col||'#999'; rr(x,ox,oy,ow,oh,6); x.fill(); x.fillStyle=tempColour(Tb).replace('rgb','rgba').replace(')',','+clamp((Tb-20)/200,0,.45)+')'); rr(x,ox,oy,ow,oh,6); x.fill();
+    if(A&&A.drop>=1){ x.fillStyle=tempColour(Tw).replace('rgb','rgba').replace(')',',.35)'); x.fillRect(ox,Math.max(oy,wl),ow,oy+oh-Math.max(oy,wl)); }
+  }
+  // energy flow arrows
+  if(flow>0.5){ var a=clamp(Math.log10(flow)/4,0.1,1); x.strokeStyle='rgba(242,81,45,'+a+')'; x.lineWidth=2+a*5; for(var k=0;k<3;k++){ var ang=k*2.1+performance.now()/400; var r0=ow*0.7, r1=r0+20+((performance.now()/20+k*20)%30); var ax=cx+Math.cos(ang)*r0, ay=base-oh/2-12+Math.sin(ang)*r0*0.4; x.beginPath(); x.moveTo(ax,ay); x.lineTo(cx+Math.cos(ang)*r1,base-oh/2-12+Math.sin(ang)*r1*0.4); x.stroke(); } }
+  // thermometers readouts
+  function badge(X,Y,lab,T,col){ x.fillStyle='#0e1a2c'; rr(x,X,Y,150,46,10); x.fill(); x.fillStyle='#9fb3cf'; x.font='700 10.5px "Avenir Next",system-ui'; x.textAlign='left'; x.fillText(lab.toUpperCase(),X+10,Y+16); x.fillStyle=col; x.font='600 18px "JetBrains Mono",Consolas,monospace'; x.fillText(T.toFixed(1)+' °C',X+10,Y+37); }
+  badge(W-166,14,name,Tb,'#ffb4a0'); badge(W-166,68,o.mi>0?'Water + ice':'Water',Tw,'#9fd2ff');
+  if(A&&A.drop>=1){ x.fillStyle='#13203a'; x.font='600 12.5px "Avenir Next",system-ui'; x.textAlign='left'; x.fillText('Energy transferred: '+fmt(A.Q*(1-Math.exp(-A.t/A.tau)),3)+' J of '+fmt(A.Q,3)+' J',14,24);
+    if(A.t>A.tau*5){ x.fillStyle='#0f8a5f'; x.fillText('Thermal equilibrium: both at '+A.res.T.toFixed(1)+' °C',14,44);} }
+  else { x.fillStyle='#55657f'; x.font='12.5px "Avenir Next",system-ui'; x.textAlign='left'; x.fillText('Set up, predict, then drop it in.',14,24); }
+  // graph
+  var o2=fitCanvas($('mixg')), g=o2.x, GW=o2.w, GH=o2.h; g.clearRect(0,0,GW,GH);
+  var ml=46,mr=12,mt=10,mb=30,pw=GW-ml-mr,ph=GH-mt-mb, tmax=(A?A.tau:4)*7;
+  var ylo=Math.min(-20,0), yhi=Math.max(o.Tb,o.Tw)+5; ylo=Math.floor(Math.min(o.mi>0?-20:o.Tw-5,(A?A.res.T:0)-5)/5)*5; if(o.mi===0) ylo=Math.max(0,Math.floor((Math.min(o.Tw,o.Tb)-5)/5)*5);
+  var sx=function(t){return ml+t/tmax*pw;}, sy=function(T){return mt+ph-(T-ylo)/(yhi-ylo)*ph;};
+  g.strokeStyle='#e6ecf4'; g.fillStyle='#55657f'; g.font='11px "JetBrains Mono",Consolas,monospace'; g.textAlign='right'; var st=niceStep(yhi-ylo,5);
+  for(var yv=Math.ceil(ylo/st)*st;yv<=yhi;yv+=st){g.beginPath();g.moveTo(ml,sy(yv));g.lineTo(ml+pw,sy(yv));g.stroke();g.fillText(String(Math.round(yv)),ml-5,sy(yv)+4);}
+  g.strokeStyle='#13203a'; g.lineWidth=1.4; g.beginPath(); g.moveTo(ml,mt); g.lineTo(ml,mt+ph); g.lineTo(ml+pw,mt+ph); g.stroke();
+  g.fillStyle='#13203a'; g.font='700 11.5px "Avenir Next",system-ui'; g.textAlign='center'; g.fillText('time after mixing',ml+pw/2,GH-8);
+  g.save(); g.translate(12,mt+ph/2); g.rotate(-Math.PI/2); g.fillText('θ / °C',0,0); g.restore();
+  if(A&&A.hist.length>1){ [['b','#f2512d'],['w','#2a7de1']].forEach(function(z){ g.strokeStyle=z[1]; g.lineWidth=2.4; g.beginPath(); A.hist.forEach(function(h,i){ var X=sx(h.t),Y=sy(h[z[0]]); if(i) g.lineTo(X,Y); else g.moveTo(X,Y); }); g.stroke(); });
+    var pr=parseFloat($('xpred').value); if(isFinite(pr)){ g.setLineDash([5,4]); g.strokeStyle='#5b3df5'; g.lineWidth=1.5; g.beginPath(); g.moveTo(ml,sy(pr)); g.lineTo(ml+pw,sy(pr)); g.stroke(); g.setLineDash([]); g.fillStyle='#5b3df5'; g.textAlign='right'; g.font='11px "Avenir Next",system-ui'; g.fillText('your prediction',ml+pw-4,sy(pr)-4);} }
+  else { g.fillStyle='#8a97ad'; g.font='12.5px "Avenir Next",system-ui'; g.textAlign='center'; g.fillText('Temperatures of both will be plotted here',ml+pw/2,mt+ph/2); }
+}
+mixOut();
+
+/* ================= PRACTICE ================= */
+var SKILLS=[
+ {id:'mct',name:'ΔE = m c Δθ',lvl:1},
+ {id:'mcr',name:'Rearranging m c Δθ',lvl:2},
+ {id:'ml',name:'E = m L',lvl:1},
+ {id:'mlr',name:'Rearranging m L',lvl:2},
+ {id:'pt',name:'Heater power & time',lvl:2},
+ {id:'stage',name:'Multi-stage heating',lvl:2},
+ {id:'mix',name:'Method of mixtures',lvl:3},
+ {id:'graph',name:'Heating-curve graphs',lvl:1},
+ {id:'concept',name:'Concepts & practicals',lvl:1},
+ {id:'eff',name:'Losses & efficiency',lvl:2}
+];
+(function(){var s=$('skill');SKILLS.forEach(function(k){var o=document.createElement('option');o.value=k.id;o.textContent=k.name;s.appendChild(o);});})();
+var level=2, mode='smart', Q=null, qState=null, daily=null;
+segInit('level',function(b){level=+b.dataset.l;newQ();});
+segInit('mode',function(b){mode=b.dataset.m;$('topicpick').style.display=mode==='topic'?'block':'none';
+  $('modenote').textContent=mode==='smart'?'Smart mix serves more questions from the skills you find hardest.':mode==='topic'?'Drill one skill until it sticks.':'Five questions, the same for everyone today. Come back tomorrow to keep your streak.'; newQ();});
+$('skill').onchange=function(){newQ();};
+function mastery(id){var a=P.skills[id]||[]; if(!a.length) return 0; var last=a.slice(-8); var s=0; last.forEach(function(v){s+=v;}); return Math.round(s/8*100);}
+function pickSkill(rng){ var avail=SKILLS.filter(function(s){return s.lvl<=level;});
+  if(mode==='topic'){ var k=$('skill').value; var sk=SKILLS.find(function(s){return s.id===k;}); return sk.lvl<=level?k:avail[0].id; }
+  var w=avail.map(function(s){return 1.15-mastery(s.id)/100;}), tot=w.reduce(function(a,b){return a+b;},0), r=rng()*tot;
+  for(var i=0;i<avail.length;i++){r-=w[i];if(r<=0) return avail[i].id;} return avail[0].id; }
+function pick(rng,a){return a[Math.floor(rng()*a.length)];}
+function rnd(rng,lo,hi,stp){return Math.round((lo+rng()*(hi-lo))/stp)*stp;}
+function n(v){return nz(v);} // display numbers
+var SOLIDS=[['aluminium',900],['copper',385],['iron',450],['lead',130],['brass',380],['concrete',880],['glass',670]];
+var LIQ=[['water',4200],['vegetable oil',1970],['ethanol',2400]];
+function gen(skill,rng){
+  var q={skill:skill,type:'num',tol:0.02};
+  var Lv='<span class="pill '+(level===1?'f':level===2?'h':'a')+'">'+SKILLS.find(function(s){return s.id===skill;}).name+'</span> ';
+  if(skill==='mct'){ var s=pick(rng,SOLIDS.concat(LIQ)), m=pick(rng,[0.2,0.25,0.5,0.75,1.2,1.5,2,2.5,3]), a=rnd(rng,10,30,1), b=a+rnd(rng,5,60,1);
+    var E=m*s[1]*(b-a); q.ans=E; q.unit='J';
+    q.text='A '+m+' kg sample of '+s[0]+' is heated from '+a+' °C to '+b+' °C. The specific heat capacity of '+s[0]+' is '+s[1]+' J/kg °C.<br><br>Calculate the energy transferred to the '+s[0]+'.';
+    q.hint='First find the temperature change, Δθ = final − initial.';
+    q.sol=['ΔE = m c Δθ','Δθ = '+b+' − '+a+' = '+(b-a)+' °C','ΔE = '+m+' × '+s[1]+' × '+(b-a),'ΔE = <b>'+n(E)+' J</b>']; }
+  else if(skill==='mcr'){ var v=Math.floor(rng()*3), s2=pick(rng,SOLIDS.concat(LIQ)), m2=pick(rng,[0.2,0.4,0.5,0.8,1.5,2]), dT=rnd(rng,8,45,1), E2=m2*s2[1]*dT;
+    if(v===0){ q.ans=s2[1]; q.unit='J/kg °C'; q.text='A '+m2+' kg block gains '+n(E2)+' J of energy and its temperature rises by '+dT+' °C.<br><br>Calculate the specific heat capacity of the block.'; q.hint='Write ΔE = m c Δθ, substitute the numbers, then divide both sides by (m × Δθ).';
+      q.sol=['ΔE = m c Δθ',n(E2)+' = '+m2+' × c × '+dT,n(E2)+' = '+n(m2*dT)+' × c','Divide both sides by '+n(m2*dT)+':','c = '+n(E2)+' ÷ '+n(m2*dT)+' = <b>'+n(s2[1])+' J/kg °C</b>'];}
+    else if(v===1){ q.ans=dT; q.unit='°C'; q.tol=0.02; q.text=n(E2)+' J of energy is transferred to '+m2+' kg of '+s2[0]+' (c = '+s2[1]+' J/kg °C).<br><br>Calculate the temperature rise.'; q.hint='Substitute into ΔE = m c Δθ, then divide both sides by (m × c).';
+      q.sol=['ΔE = m c Δθ',n(E2)+' = '+m2+' × '+s2[1]+' × Δθ',n(E2)+' = '+n(m2*s2[1])+' × Δθ','Δθ = '+n(E2)+' ÷ '+n(m2*s2[1])+' = <b>'+n(dT)+' °C</b>'];}
+    else { q.ans=m2; q.unit='kg'; q.text='Heating some '+s2[0]+' (c = '+s2[1]+' J/kg °C) by '+dT+' °C needs '+n(E2)+' J.<br><br>Calculate the mass of '+s2[0]+'.'; q.hint='Substitute, then divide both sides by (c × Δθ).';
+      q.sol=['ΔE = m c Δθ',n(E2)+' = m × '+s2[1]+' × '+dT,n(E2)+' = m × '+n(s2[1]*dT),'m = '+n(E2)+' ÷ '+n(s2[1]*dT)+' = <b>'+n(m2)+' kg</b>'];} }
+  else if(skill==='ml'){ var opts=[['ice','melt','334 000',334000],['water at 100 °C','boil away','2 260 000',2260000],['stearic acid at 69 °C','melt','199 000',199000],['ethanol at 78 °C','boil away','850 000',850000]], o=pick(rng,opts), m3=pick(rng,[0.05,0.1,0.15,0.2,0.25,0.4,0.5,1.2]);
+    q.ans=m3*o[3]; q.unit='J'; q.text='Calculate the energy needed to '+o[1]+' '+m3+' kg of '+o[0]+'.<br>Specific latent heat = '+o[2]+' J/kg.';
+    q.hint='During a change of state the temperature does not change, so use E = m L.'; q.sol=['E = m L','E = '+m3+' × '+o[2],'E = <b>'+n(q.ans)+' J</b>']; }
+  else if(skill==='mlr'){ var m4=pick(rng,[0.02,0.05,0.08,0.12,0.25,0.3]), Lx=pick(rng,[[334000,'fusion of ice'],[2260000,'vaporisation of water'],[199000,'fusion of stearic acid']]), E4=m4*Lx[0];
+    if(rng()<0.5){ q.ans=Lx[0]; q.unit='J/kg'; q.text='It takes '+n(E4)+' J to change the state of '+m4+' kg of a substance at constant temperature.<br><br>Calculate the specific latent heat.'; q.hint='Substitute into E = m L, then divide both sides by m.';
+      q.sol=['E = m L',n(E4)+' = '+m4+' × L','L = '+n(E4)+' ÷ '+m4+' = <b>'+n(Lx[0])+' J/kg</b>']; }
+    else { q.ans=m4; q.unit='kg'; q.text=n(E4)+' J is supplied. The specific latent heat of '+Lx[1]+' is '+n(Lx[0])+' J/kg.<br><br>What mass changes state?'; q.hint='Substitute into E = m L, then divide both sides by L.';
+      q.sol=['E = m L',n(E4)+' = m × '+n(Lx[0]),'m = '+n(E4)+' ÷ '+n(Lx[0])+' = <b>'+n(m4)+' kg</b>']; } }
+  else if(skill==='pt'){ var Pw=pick(rng,[24,36,48,50,60,100,2000,3000]), kettle=Pw>=2000, mw=kettle?pick(rng,[0.5,1,1.5,1.7]):pick(rng,[0.5,1,2]), cc=kettle?4200:pick(rng,[900,385,450]), dTh=kettle?rnd(rng,60,85,1):rnd(rng,10,25,1);
+    var t=mw*cc*dTh/Pw; var mat=kettle?'water in a kettle':(cc===900?'aluminium':cc===385?'copper':'iron')+' block';
+    if(rng()<0.5){ q.ans=t; q.unit='s'; q.text='A '+Pw+' W heater warms '+mw+' kg of '+mat+' (c = '+cc+' J/kg °C) by '+dTh+' °C. Assume all the energy goes into the '+(kettle?'water':'block')+'.<br><br>Calculate how long this takes.'; q.hint='Find the energy with ΔE = m c Δθ, then use E = P t.';
+      q.sol=['ΔE = m c Δθ = '+mw+' × '+cc+' × '+dTh+' = '+n(mw*cc*dTh)+' J','E = P t',n(mw*cc*dTh)+' = '+Pw+' × t','t = '+n(mw*cc*dTh)+' ÷ '+Pw+' = <b>'+n(t)+' s</b>']; }
+    else { var tt=Math.round(t/10)*10||10; var rise=Pw*tt/(mw*cc); q.ans=rise; q.unit='°C'; q.text='A '+Pw+' W heater is switched on for '+tt+' s in '+mw+' kg of '+mat+' (c = '+cc+' J/kg °C). Assume no energy is lost.<br><br>Calculate the temperature rise.'; q.hint='E = P t first, then rearrange ΔE = m c Δθ.';
+      q.sol=['E = P t = '+Pw+' × '+tt+' = '+n(Pw*tt)+' J','ΔE = m c Δθ',n(Pw*tt)+' = '+mw+' × '+cc+' × Δθ','Δθ = '+n(Pw*tt)+' ÷ '+n(mw*cc)+' = <b>'+n(rise)+' °C</b>']; } }
+  else if(skill==='stage'){ var mi=pick(rng,[0.05,0.1,0.2,0.25,0.5]), Ti=-rnd(rng,5,20,1), Tf=rnd(rng,10,60,1);
+    var e1=mi*2100*(-Ti), e2=mi*334000, e3=mi*4200*Tf, tot=e1+e2+e3; q.ans=tot; q.unit='J';
+    q.text='Calculate the total energy needed to turn '+mi+' kg of ice at '+Ti+' °C into water at '+Tf+' °C.<br>c(ice) = 2100 J/kg °C, c(water) = 4200 J/kg °C, specific latent heat of fusion of ice = 334 000 J/kg.';
+    q.hint='There are three stages: warm the ice to 0 °C, melt it, then warm the water.';
+    q.sol=['Warm ice: m c Δθ = '+mi+' × 2100 × '+(-Ti)+' = '+n(e1)+' J','Melt: m L = '+mi+' × 334 000 = '+n(e2)+' J','Warm water: m c Δθ = '+mi+' × 4200 × '+Tf+' = '+n(e3)+' J','Total = <b>'+n(tot)+' J</b>']; }
+  else if(skill==='mix'){ var s5=pick(rng,SOLIDS), mb=pick(rng,[0.1,0.2,0.25,0.3,0.5]), Tb=pick(rng,[80,90,100]), mw5=pick(rng,[0.1,0.2,0.25,0.3]), Tw=rnd(rng,12,22,1);
+    var A=mb*s5[1],B=mw5*4200,Tf5=(A*Tb+B*Tw)/(A+B);
+    if(rng()<0.6){ q.ans=Tf5; q.unit='°C'; q.tol=0.01; q.text='A '+mb+' kg '+s5[0]+' block at '+Tb+' °C is dropped into '+mw5+' kg of water at '+Tw+' °C in an insulated cup. c('+s5[0]+') = '+s5[1]+' J/kg °C, c(water) = 4200 J/kg °C.<br><br>Calculate the final temperature. Give your answer to 3 significant figures.';
+      q.hint='Energy lost by block = energy gained by water. Put θ for the final temperature in both brackets.';
+      q.sol=['m₁c₁(θ₁ − θ) = m₂c₂(θ − θ₂)',mb+' × '+s5[1]+' × ('+Tb+' − θ) = '+mw5+' × 4200 × (θ − '+Tw+')',n(A)+'('+Tb+' − θ) = '+n(B)+'(θ − '+Tw+')',n(A*Tb)+' + '+n(B*Tw)+' = ('+n(A)+' + '+n(B)+')θ','θ = '+n(A*Tb+B*Tw)+' ÷ '+n(A+B)+' = <b>'+n(Tf5)+' °C</b>']; }
+    else { var Tfr=Math.round(Tf5*10)/10; var c5=mw5*4200*(Tfr-Tw)/(mb*(Tb-Tfr)); q.ans=c5; q.unit='J/kg °C'; q.tol=0.03;
+      q.text='A '+mb+' kg metal block is heated to '+Tb+' °C in boiling water, then quickly moved to '+mw5+' kg of water at '+Tw+' °C. The final temperature is '+Tfr+' °C. c(water) = 4200 J/kg °C.<br><br>Calculate the specific heat capacity of the metal.'; q.hint='Energy gained by the water = energy lost by the block. Work out the water side first.';
+      q.sol=['Energy gained by water = '+mw5+' × 4200 × ('+Tfr+' − '+Tw+') = '+n(mw5*4200*(Tfr-Tw))+' J','Energy lost by block = '+mb+' × c × ('+Tb+' − '+Tfr+') = '+n(mb*(Tb-Tfr))+' × c',n(mw5*4200*(Tfr-Tw))+' = '+n(mb*(Tb-Tfr))+' × c','c = <b>'+n(c5)+' J/kg °C</b>']; } }
+  else if(skill==='graph'){ return genGraphQ(rng,q,Lv); }
+  else if(skill==='concept'){ var b=CONCEPTS.filter(function(c){return c.l<=level;}); var c=pick(rng,b); q.type='mcq'; q.opts=shuffle(c.o.slice(),rng); q.ansText=c.o[0]; q.text=c.q; q.sol=[c.e]; q.hint=c.h||null; }
+  else if(skill==='eff'){ var Pq=pick(rng,[30,40,50,60]), tq=pick(rng,[300,400,600,900]), mq=pick(rng,[0.5,1]), cq=pick(rng,[900,450,385]), Ein=Pq*tq, eta=0.6+rng()*0.3, rise=Math.round(Ein*eta/(mq*cq)*10)/10, Eu=mq*cq*rise;
+    var v2=rng()<0.5;
+    q.ans=v2?Ein-Eu:Eu/Ein*100; q.unit=v2?'J':'%'; q.tol=0.02;
+    q.text='A '+Pq+' W heater is used for '+tq+' s to heat a '+mq+' kg block (c = '+cq+' J/kg °C). Its temperature rises by '+rise+' °C.<br><br>'+(v2?'Calculate the energy wasted (not used to heat the block).':'Calculate the percentage of the supplied energy that heated the block.');
+    q.hint='Energy supplied = P t. Useful energy = m c Δθ.';
+    q.sol=['Energy supplied = P t = '+Pq+' × '+tq+' = '+n(Ein)+' J','Energy into block = m c Δθ = '+mq+' × '+cq+' × '+rise+' = '+n(Eu)+' J',v2?'Wasted = '+n(Ein)+' − '+n(Eu)+' = <b>'+n(Ein-Eu)+' J</b>':'Efficiency = '+n(Eu)+' ÷ '+n(Ein)+' × 100 = <b>'+n(Eu/Ein*100)+' %</b>','The wasted energy heats the heater, the thermometer and the surroundings.']; }
+  q.text=Lv+'<div class="qtext">'+q.text+'</div>'; return q;
+}
+function shuffle(a,rng){for(var i=a.length-1;i>0;i--){var j=Math.floor(rng()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function genGraphQ(rng,q,Lv){
+  var subs=[['stearic acid',69],['lauric acid',44],['salol',43],['a candle wax',56]], s=pick(rng,subs), P=pick(rng,[20,30,40,50]), m=pick(rng,[0.05,0.08,0.1,0.2]);
+  var T0=s[1]-rnd(rng,20,40,2), T3=s[1]+rnd(rng,16,30,2);
+  var t1=rnd(rng,60,160,10), tp=rnd(rng,150,400,10), t2=t1+tp, t3=t2+rnd(rng,60,160,10);
+  var c1=P*t1/(m*(s[1]-T0)), Ls=P*tp/m, c2=P*(t3-t2)/(m*(T3-s[1]));
+  var pts=[[0,T0],[t1,s[1]],[t2,s[1]],[t3,T3]];
+  q.graph={pts:pts,mp:s[1]};
+  var v=level===1?Math.floor(rng()*2):Math.floor(rng()*4);
+  var base='The graph shows how the temperature of '+m+' kg of '+s[0]+' changes as it is heated by a '+P+' W heater.';
+  if(v===0){ q.ans=s[1]; q.unit='°C'; q.tol=0.02; q.text=base+'<br><br>What is the melting point of '+s[0]+'?'; q.hint='Look for the flat section of the graph.'; q.sol=['The flat section shows the change of state from solid to liquid.','Melting point = <b>'+s[1]+' °C</b>']; }
+  else if(v===1){ q.ans=t2-t1; q.unit='s'; q.tol=0.05; q.text=base+'<br><br>For how long was the '+s[0]+' melting?'; q.hint='Read the start and end times of the flat section.'; q.sol=['Plateau starts at '+Math.round(t1)+' s and ends at '+Math.round(t2)+' s.','Duration = <b>'+Math.round(t2-t1)+' s</b>']; }
+  else if(v===2){ q.ans=Ls; q.unit='J/kg'; q.tol=0.06; q.text=base+'<br><br>Use the graph to calculate the specific latent heat of fusion of '+s[0]+'.'; q.hint='Energy for melting = P × (length of the plateau). Then use E = m L.';
+    q.sol=['Plateau lasts '+Math.round(t1)+' s → '+Math.round(t2)+' s = '+Math.round(t2-t1)+' s','E = P t = '+P+' × '+Math.round(t2-t1)+' = '+n(P*(t2-t1))+' J','E = m L  →  L = E ÷ m = '+n(P*(t2-t1))+' ÷ '+m,'L = <b>'+n(Ls)+' J/kg</b>']; }
+  else { q.ans=c1; q.unit='J/kg °C'; q.tol=0.06; q.text=base+'<br><br>Use the first section of the graph to calculate the specific heat capacity of the solid.'; q.hint='Energy = P × time for the first section. Then use ΔE = m c Δθ.';
+    q.sol=['First section: '+T0+' °C → '+s[1]+' °C in '+Math.round(t1)+' s','E = P t = '+P+' × '+Math.round(t1)+' = '+n(P*t1)+' J','ΔE = m c Δθ  →  '+n(P*t1)+' = '+m+' × c × '+(s[1]-T0),'c = '+n(P*t1)+' ÷ '+n(m*(s[1]-T0))+' = <b>'+n(c1)+' J/kg °C</b>']; }
+  q.text=Lv+'<div class="qtext">'+q.text+'</div><canvas id="tl-qg" style="height:240px;border:1px solid var(--line);border-radius:10px;background:#fff"></canvas>'; return q;
+}
+var CONCEPTS=[
+ {l:1,q:'While ice is melting at 0 °C, energy is still being supplied but the temperature does not rise. Where does the energy go?',o:['It increases the potential energy of the particles as the bonds between them break','It increases the kinetic energy of the particles','It is destroyed during the change of state','It is all lost to the surroundings'],e:'During a change of state the energy breaks or weakens the bonds between particles, so it increases their potential energy. The average kinetic energy, and therefore the temperature, stays the same.'},
+ {l:1,q:'Which has the greater internal energy?',o:['A bath of water at 40 °C','A cup of tea at 90 °C','They are the same','You cannot tell without knowing the material'],e:'Internal energy depends on the number of particles as well as their energy. The bath contains so much more water that its total internal energy is far greater, even though its temperature is lower.'},
+ {l:1,q:'What does the specific heat capacity of a substance tell you?',o:['The energy needed to raise the temperature of 1 kg of it by 1 °C','The energy needed to melt 1 kg of it','The temperature at which it boils','How quickly it conducts energy'],e:'Specific heat capacity is the energy needed to raise the temperature of 1 kg by 1 °C (or 1 K).'},
+ {l:1,q:'What does the specific latent heat of a substance tell you?',o:['The energy needed to change the state of 1 kg of it with no change in temperature','The energy needed to raise 1 kg of it by 1 °C','The energy released when it cools by 1 °C','The temperature at which its state changes'],e:'Specific latent heat is the energy needed to change the state of 1 kg of a substance without changing its temperature.'},
+ {l:1,q:'In the specific heat capacity practical, the measured value is usually higher than the accepted value. Why?',o:['Some of the energy supplied heats the surroundings, so the temperature rises less than expected','The thermometer reads too high','The heater supplies more energy than the joulemeter shows','The block gains mass as it is heated'],e:'Energy lost to the surroundings, the heater and the thermometer means Δθ is smaller than it would be. In c = ΔE ÷ (m Δθ), a smaller Δθ gives a larger c.'},
+ {l:1,q:'Why is a drop of water or oil put in the thermometer hole of the block?',o:['To improve thermal contact between the block and the thermometer','To cool the thermometer','To stop the block from heating too quickly','To insulate the block'],e:'Air is a poor conductor. A liquid fills the gap so the thermometer reaches the same temperature as the block.'},
+ {l:1,q:'Why is water used in central-heating radiators?',o:['It has a high specific heat capacity, so it stores a lot of energy per kg per °C','It has a low specific heat capacity, so it heats up quickly','It has a low boiling point','It is a good thermal insulator'],e:'Water\'s specific heat capacity (about 4200 J/kg °C) is high, so each kilogram carries a lot of energy from the boiler to the radiators for a given temperature drop.'},
+ {l:1,q:'On a sunny day the sand on a beach becomes much hotter than the sea. The main reason is that sand…',o:['has a much lower specific heat capacity than water','has a much higher specific heat capacity than water','reflects more sunlight than water','has a lower melting point than water'],e:'With a lower c, each kilogram of sand needs less energy for each degree of temperature rise, so it heats up (and cools down) faster.'},
+ {l:2,q:'Scalds from steam at 100 °C are usually worse than scalds from water at 100 °C. Why?',o:['Steam releases its latent heat of vaporisation as it condenses on the skin','Steam is hotter than 100 °C','Steam has a higher specific heat capacity','Steam particles move more slowly'],e:'When steam condenses on skin it releases 2.26 MJ/kg of latent heat before the water even starts to cool, so far more energy is transferred to the skin.'},
+ {l:1,q:'A temperature change of 15 °C is the same as a temperature change of…',o:['15 K','288 K','258 K','−258 K'],e:'The kelvin and the degree Celsius are the same size, so a change of 15 °C is a change of 15 K. Only the starting point (zero) differs.'},
+ {l:2,q:'Why does evaporation cause a liquid to cool?',o:['The fastest-moving particles escape, so the average kinetic energy of those left falls','The liquid gains particles from the air','Evaporation requires the liquid to be boiling','The surface particles stop moving'],e:'Only particles with enough energy escape from the surface. Removing the most energetic particles lowers the average kinetic energy, and so the temperature, of the liquid left behind.'},
+ {l:1,q:'On a cooling curve for stearic acid, the temperature stays at 69 °C for several minutes. What is happening?',o:['It is freezing and releasing energy, which balances the energy lost to the surroundings','It is boiling','It has stopped losing energy','The thermometer has broken'],e:'As the liquid freezes, bonds form and energy (latent heat) is released. This makes up for the energy lost to the room, so the temperature stays steady until all of it has solidified.'},
+ {l:2,q:'In the heating-block practical, why is the first part of the temperature–time graph ignored?',o:['The heater must warm up before energy flows steadily into the block','The block is cooling at first','The joulemeter is inaccurate at first','The block\'s specific heat capacity changes'],e:'The heater and thermometer take time to warm up, so the temperature lags behind at first. Only the straight section represents a steady rate of energy transfer.'},
+ {l:2,q:'Two blocks are heated by identical heaters. Block A\'s temperature rises twice as fast as block B\'s. What can you conclude?',o:['Block A has half the heat capacity (m × c) of block B','Block A has twice the specific heat capacity','Block A has twice the mass','Block A is losing more energy'],e:'With the same power, the rate of temperature rise is P ÷ (m c). A rate twice as large means m × c is half as big. It could be a lower mass, a lower c, or both.'},
+ {l:2,q:'Why is the specific latent heat of vaporisation of water much larger than its specific latent heat of fusion?',o:['Boiling separates the particles completely, which needs far more energy than loosening them','Water boils at a higher temperature than it melts','Steam has a larger mass than ice','Melting releases energy, boiling absorbs it'],e:'Melting only loosens the bonds so particles can slide past one another. Boiling must overcome the attractions completely so that the particles are far apart.'},
+ {l:1,q:'The internal energy of a system is…',o:['the total kinetic and potential energy of all its particles','the average kinetic energy of its particles','the same thing as its temperature','the energy needed to melt it'],e:'Internal energy is the sum of the kinetic and potential energies of all the particles in the system.'},
+ {l:3,q:'In the method of mixtures, a hot metal is transferred slowly from boiling water to a cup of cold water. How does this affect the calculated specific heat capacity of the metal?',o:['It is too low, because the metal cools in the air and the water gains less energy than expected','It is too high, because the metal gains energy in the air','It is unaffected','It is too low, because the water evaporates'],e:'The metal loses some energy to the air during transfer, so the water warms less. Using θ₁ = 100 °C in the calculation overstates the metal\'s temperature drop, which gives a value of c that is too low.'},
+ {l:3,q:'A liquid is heated by an immersion heater at constant power. Its temperature rises steadily, then the graph starts to curve and levels off below its boiling point. The best explanation is…',o:['The rate of energy loss to the surroundings rises with temperature until it equals the heater power','The specific heat capacity falls as it warms','The heater power drops as the liquid warms','The liquid is melting'],e:'Energy loss increases with the temperature difference from the room. When the loss rate equals the input power, there is no net gain and the temperature stays constant (a steady state).'}
+];
+function newQ(){ var rng; qState={tries:0,hint:false,done:false};
+  if(mode==='daily'){ var k=todayKey(); if(!P.daily[k]) P.daily[k]={i:0,score:0,res:[]}; daily=P.daily[k];
+    if(daily.i>=5){ renderDailyDone(); renderDaily(); return; }
+    rng=mulberry(hashStr('daily'+k+'#'+daily.i+'L'+level)); var sk=pickDaily(rng); Q=gen(sk,rng); }
+  else { rng=Math.random; Q=gen(pickSkill(rng),rng); }
+  renderQ(); renderDaily(); }
+function pickDaily(rng){ var avail=SKILLS.filter(function(s){return s.lvl<=level;}); return avail[Math.floor(rng()*avail.length)].id; }
+function renderQ(){ var c=$('qcard'); var h='';
+  if(mode==='daily') h+='<div class="row" style="justify-content:space-between"><b>Daily 5 · question '+(daily.i+1)+' of 5</b><span class="note">'+todayKey()+'</span></div>';
+  h+=Q.text;
+  if(Q.type==='mcq'){ h+='<div class="opts">'; Q.opts.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'">'+o+'</button>';}); h+='</div>'; }
+  else h+='<div class="ans"><input id="tl-qa" type="text" inputmode="decimal" placeholder="your answer" autocomplete="off"><span><b>'+Q.unit+'</b></span><button class="btn pri" id="tl-qsub">Check</button>'+(Q.hint?'<button class="btn" id="tl-qhint">Hint</button>':'')+'<button class="btn" id="tl-qskip">Show solution</button></div><p class="note" style="margin:6px 0 0">You can type 1.2e4 or 12 000. Answers within '+Math.round(Q.tol*100)+'% are accepted.</p>';
+  h+='<div id="tl-qfb"></div>';
+  c.innerHTML=h;
+  if(Q.graph) drawQGraph();
+  if(Q.type==='mcq'){ Array.prototype.forEach.call(c.querySelectorAll('.opt'),function(b){b.onclick=function(){ if(qState.done) return; var ok=Q.opts[+b.dataset.i]===Q.ansText; b.classList.add(ok?'right':'wrong');
+      if(!ok){ Array.prototype.forEach.call(c.querySelectorAll('.opt'),function(z){if(Q.opts[+z.dataset.i]===Q.ansText) z.classList.add('right');}); }
+      finish(ok,true); };}); }
+  else { $('qsub').onclick=checkNum; $('qa').onkeydown=function(e){if(e.key==='Enter') checkNum();}; if($('qhint')) $('qhint').onclick=function(){qState.hint=true; $('qfb').innerHTML='<div class="hint">💡 '+Q.hint+'</div>';}; $('qskip').onclick=function(){ if(!qState.done) finish(false,true);}; setTimeout(function(){try{$('qa').focus({preventScroll:true});}catch(e){}},0); }
+}
+function parseNum(s){ s=String(s).replace(/[\s\u2009,]/g,'').replace(/×10\^?/,'e').replace(/x10\^?/i,'e'); var v=parseFloat(s); return v; }
+function checkNum(){ if(qState.done) return; var v=parseNum($('qa').value); if(!isFinite(v)){ $('qfb').innerHTML='<div class="msg warn">Type a number.</div>'; return; }
+  var err=Math.abs(v-Q.ans)/Math.max(Math.abs(Q.ans),1e-9); qState.tries++;
+  if(err<=Q.tol) finish(true,true);
+  else if(Math.abs(v*1000-Q.ans)/Math.abs(Q.ans)<=Q.tol || Math.abs(v/1000-Q.ans)/Math.abs(Q.ans)<=Q.tol){ $('qfb').innerHTML='<div class="msg warn">Check your units: the answer should be in <b>'+Q.unit+'</b>. Are you out by a factor of 1000?</div>'; if(qState.tries>=2) finish(false,true); }
+  else if(qState.tries<2){ $('qfb').innerHTML='<div class="msg warn">Not quite. Try again'+(Q.hint&&!qState.hint?' or take a hint':'')+'.</div>'; }
+  else finish(false,true); }
+function finish(ok){ qState.done=true; var id=Q.skill; if(!P.skills[id]) P.skills[id]=[]; P.skills[id].push(ok?1:0); P.skills[id]=P.skills[id].slice(-20); P.answered++; if(ok) P.correct++; save();
+  if(ok){ var xp=10+(qState.tries<=1&&!qState.hint?5:0); addXP(xp,'Correct'); if(P.correct>=10) award('q10'); if(P.correct>=50) award('q50'); if(mastery(id)>=100) award('master'); }
+  var h=ok?'<div class="msg good"><b>Correct!</b></div>':'<div class="msg warn"><b>Here\'s how to do it.</b></div>';
+  h+='<div class="sol">'+Q.sol.map(function(s){return '<div class="stp eq">'+s+'</div>';}).join('')+'</div>';
+  h+='<div class="row" style="margin-top:12px"><button class="btn pri" id="tl-qnext">Next question →</button></div>';
+  $('qfb').innerHTML=h; $('qnext').onclick=function(){ if(mode==='daily'){ daily.i++; save(); } newQ(); };
+  if(mode==='daily'){ daily.res[daily.i]=ok?1:0; if(ok) daily.score++; save(); if(daily.i===4){ completeDaily(); } }
+  renderMastery(); renderDaily(); }
+function completeDaily(){ var k=todayKey(); if(P.lastDaily===k) return; var prev=P.lastDaily; P.dailyStreak=(prev&&dayDiff(prev,k)===1)?P.dailyStreak+1:1; P.lastDaily=k; save(); addXP(30,'Daily 5 complete'); award('daily'); if(daily.score===5) award('perfect'); if(P.dailyStreak>=3) award('streak3'); if(P.dailyStreak>=7) award('streak7'); updXP(); }
+function renderDailyDone(){ $('qcard').innerHTML='<h3>Daily 5 complete</h3><p style="font-size:28px;margin:6px 0"><b>'+daily.score+' / 5</b></p><p class="note">Come back tomorrow for a new set'+(P.dailyStreak>1?', and keep your '+P.dailyStreak+'-day streak going':'')+'. Switch to Smart mix to keep practising.</p>'; }
+function renderDaily(){ var k=todayKey(), d=P.daily[k]||{i:0,res:[],score:0}, h=''; for(var i=0;i<5;i++){ var cl=d.res[i]===1?'d':d.res[i]===0?'x':''; if(i===d.i&&mode==='daily'&&d.i<5) cl+=' c'; h+='<i class="'+cl+'"></i>'; } $('dailybar').innerHTML=h;
+  $('dailytxt').textContent=(d.i>=5||P.lastDaily===k)?'Done today: '+d.score+'/5. Streak: '+P.dailyStreak+' day'+(P.dailyStreak===1?'':'s')+'.':'Today: '+(d.res.filter(function(v){return v!=null;}).length)+'/5 answered. Streak: '+P.dailyStreak+' day'+(P.dailyStreak===1?'':'s')+'.'; }
+function renderMastery(){ var h=''; SKILLS.forEach(function(s){ var m=mastery(s.id); h+='<span>'+s.name+'</span><div class="mbar"><i style="width:'+m+'%"></i></div><span class="note">'+m+'%</span>'; }); $('mast-s').innerHTML=h; $('mast-p').innerHTML=h; }
+function drawQGraph(){ var cv=$('qg'); if(!cv) return; var o=fitCanvas(cv), x=o.x, W=o.w, H=o.h, G=Q.graph, pts=G.pts;
+  var tmax=pts[3][0], ymin=Math.floor((pts[0][1]-5)/10)*10, ymax=Math.ceil((pts[3][1]+5)/10)*10, ml=50,mr=14,mt=12,mb=36,pw=W-ml-mr,ph=H-mt-mb;
+  var xst=niceStep(tmax,8), xm=Math.ceil(tmax*1.05/xst)*xst; var sx=function(t){return ml+t/xm*pw;}, sy=function(T){return mt+ph-(T-ymin)/(ymax-ymin)*ph;};
+  // fine grid
+  x.strokeStyle='#f0f3f8'; x.lineWidth=1; for(var gx=0;gx<=xm;gx+=xst/5){x.beginPath();x.moveTo(sx(gx),mt);x.lineTo(sx(gx),mt+ph);x.stroke();} for(var gy=ymin;gy<=ymax;gy+=2){x.beginPath();x.moveTo(ml,sy(gy));x.lineTo(ml+pw,sy(gy));x.stroke();}
+  x.strokeStyle='#d6dfeb'; x.fillStyle='#55657f'; x.font='11px "JetBrains Mono",Consolas,monospace'; x.textAlign='center';
+  for(gx=0;gx<=xm;gx+=xst){x.beginPath();x.moveTo(sx(gx),mt);x.lineTo(sx(gx),mt+ph);x.stroke();x.fillText(String(Math.round(gx)),sx(gx),mt+ph+15);} x.textAlign='right';
+  for(gy=ymin;gy<=ymax;gy+=10){x.beginPath();x.moveTo(ml,sy(gy));x.lineTo(ml+pw,sy(gy));x.stroke();x.fillText(String(gy),ml-6,sy(gy)+4);}
+  x.strokeStyle='#13203a'; x.lineWidth=1.5; x.beginPath(); x.moveTo(ml,mt); x.lineTo(ml,mt+ph); x.lineTo(ml+pw,mt+ph); x.stroke();
+  x.fillStyle='#13203a'; x.font='700 12px "Avenir Next",system-ui'; x.textAlign='center'; x.fillText('time / s',ml+pw/2,H-6); x.save(); x.translate(14,mt+ph/2); x.rotate(-Math.PI/2); x.fillText('temperature / °C',0,0); x.restore();
+  x.strokeStyle='#f2512d'; x.lineWidth=2.6; x.beginPath(); pts.forEach(function(p,i){ if(i) x.lineTo(sx(p[0]),sy(p[1])); else x.moveTo(sx(p[0]),sy(p[1])); }); x.stroke(); }
+
+/* ================= PROGRESS ================= */
+function renderProgress(){ var l=levelOf(P.xp);
+  $('progsum').innerHTML='<div class="kv" style="max-width:420px"><span>Level</span><span>'+(l+1)+' · '+TITLES[l]+'</span><span>Total XP</span><span>'+P.xp+'</span><span>Questions answered</span><span>'+P.answered+'</span><span>Correct</span><span>'+P.correct+(P.answered?' ('+Math.round(P.correct/P.answered*100)+'%)':'')+'</span><span>Daily 5 streak</span><span>'+P.dailyStreak+' day'+(P.dailyStreak===1?'':'s')+'</span><span>Mysteries solved</span><span>'+Object.keys(P.mystery).length+'</span><span>Mixture predictions within 1 °C</span><span>'+P.mixGood+'</span></div>';
+  $('badges').innerHTML=BADGES.map(function(b){var g=P.badges[b[0]]; return '<div class="badge'+(g?' got':'')+'"><div class="ic">'+b[1]+'</div><b>'+b[2]+'</b>'+b[3]+(g?'<div class="note" style="margin-top:3px">'+g+'</div>':'')+'</div>';}).join('');
+  renderMastery();
+  $('labhist').innerHTML=P.labs.length?'<div class="tblwrap" style="max-height:260px"><table><thead><tr><th style="text-align:left">Date</th><th style="text-align:left">Measurement</th><th>Yours</th><th>Accepted</th><th>Error</th></tr></thead><tbody>'+P.labs.map(function(r){var e=(r.v-r.t)/r.t*100;return '<tr><td style="text-align:left">'+r.d+'</td><td style="text-align:left;font-family:inherit">'+r.n+'</td><td>'+fmt(r.v,3)+'</td><td>'+fmt(r.t,3)+'</td><td style="color:'+(Math.abs(e)<5?'#0f8a5f':'#c2410c')+'">'+(e>0?'+':'')+e.toFixed(1)+'%</td></tr>';}).join('')+'</tbody></table></div>':'<p class="note">Analyse a section of a graph in the Heating lab and your results will appear here.</p>';
+}
+var wipeArm=false; $('wipe').onclick=function(){ if(!wipeArm){wipeArm=true;this.textContent='Click again to confirm';var b=this;setTimeout(function(){wipeArm=false;b.textContent='Reset all progress';},3000);return;} P=blank(); save(); wipeArm=false; this.textContent='Reset all progress'; updXP(); renderProgress(); renderDaily(); toast('Progress reset'); };
+
+/* ================= INIT ================= */
+function resizeAll(){ drawApparatus(); drawGraph(); if(Q&&Q.graph) drawQGraph(); }
+if(window.ResizeObserver){ new ResizeObserver(function(){ resizeAll(); }).observe(root); }
+syncCtlOutputs(); matChanged(); updXP(); newQ(); renderMastery();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
