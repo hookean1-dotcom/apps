@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Potentiometer as Two Resistors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: clear, classroom-confident, like a well-made lab handout.
+   IDEA: two exam-style circuit diagrams side by side, one a "translation" of the other.
+   PICTURE: the paired circuits, colour-coded upper (blue) and lower (raspberry) parts.
+   COLOUR and TYPE: white ground, battery-yellow band, blue + raspberry pair; Lexend + Source Sans 3.
+   LAYOUT: band with controls on top, circuits in two columns, split bars and live equation below. */
+#rheo{color-scheme:light dark;
+  --bg:light-dark(#ffffff,#12131c);--card:light-dark(#ffffff,#1a1c28);--line:light-dark(#e2e4ee,#2c2f40);
+  --ink:light-dark(#171a26,#eceef6);--muted:light-dark(#555b70,#a6abc0);--wire:light-dark(#1b1e2b,#e4e6f0);
+  --band:light-dark(#ffcf3f,#e3b130);--bandink:#1a1606;
+  --up:light-dark(#2f55d4,#86a2ff);--upf:light-dark(#c9d5ff,#2a3a7a);
+  --lo:light-dark(#cc2b58,#ff7398);--lof:light-dark(#ffd0dd,#6e2440);
+  --flow:light-dark(#f0a400,#ffcf3f);
+  background:var(--bg);color:var(--ink);font:16px/1.55 "Source Sans 3",system-ui,sans-serif;width:100%;min-height:600px;overflow-x:clip}
+:root[data-theme=light] #rheo{color-scheme:light}:root[data-theme=dark] #rheo{color-scheme:dark}
+#rheo *{box-sizing:border-box;min-width:0}
+#rheo .band{padding:clamp(22px,3.4vw,44px) max(4vw,16px)}
+#rheo .top{background:var(--band);color:var(--bandink)}
+#rheo h1{font:700 clamp(28px,4vw,42px)/1.05 Lexend,sans-serif;margin:0 0 8px;text-wrap:balance}
+#rheo h2{font:600 19px/1.2 Lexend,sans-serif;margin:0 0 4px}
+#rheo h3{font:600 17px/1.2 Lexend,sans-serif;margin:0 0 10px}
+#rheo .lede{margin:0;max-width:68ch;font-size:17px}
+#rheo .wrap{max-width:1240px;margin:0 auto}
+#rheo .ctrls{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr) minmax(0,1fr);gap:14px 22px;margin-top:20px;align-items:end}
+#rheo label,#rheo .lbl{display:block;font-weight:700;font-size:15px;margin-bottom:4px}
+#rheo .val{font-variant-numeric:tabular-nums;font-weight:400}
+#rheo input[type=range]{width:100%;height:44px;accent-color:#1a1606;cursor:pointer}
+#rheo select{font:16px "Source Sans 3",sans-serif;height:44px;width:100%;border-radius:10px;border:2px solid #1a1606;background:#fff8dc;color:#1a1606;padding:0 10px}
+#rheo .row2{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:14px;align-items:center}
+#rheo .seg{display:inline-flex;border:2px solid #1a1606;border-radius:12px;overflow:hidden}
+#rheo .seg button{font:600 15px "Source Sans 3",sans-serif;min-height:44px;padding:0 14px;border:0;background:#fff8dc;color:#1a1606;cursor:pointer}
+#rheo .seg button[aria-pressed=true]{background:#1a1606;color:#ffcf3f}
+#rheo .chip{font:600 15px "Source Sans 3",sans-serif;min-height:44px;padding:0 14px;border:2px solid #1a1606;border-radius:12px;background:#fff8dc;color:#1a1606;cursor:pointer}
+#rheo button:focus-visible,#rheo input:focus-visible,#rheo select:focus-visible{outline:3px solid var(--up);outline-offset:2px}
+#rheo .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+#rheo .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 14px}
+#rheo .sub{color:var(--muted);margin:0 0 6px;font-size:15px}
+#rheo .fig{position:relative;width:100%;aspect-ratio:470/430}
+#rheo .fig>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#rheo .read{display:flex;flex-wrap:wrap;gap:8px 20px;border-top:1px solid var(--line);padding-top:10px;font-size:16px}
+#rheo .read b{font-variant-numeric:tabular-nums;font-size:19px;font-family:Lexend,sans-serif}
+#rheo svg .w{stroke:var(--wire);stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round}
+#rheo svg .tx{fill:var(--ink);font:600 15px "Source Sans 3",sans-serif}
+#rheo svg .tm{fill:var(--muted);font:600 14px "Source Sans 3",sans-serif}
+#rheo svg .big{font:700 17px Lexend,sans-serif;font-variant-numeric:tabular-nums}
+#rheo svg .up{fill:var(--up)}#rheo svg .lo{fill:var(--lo)}
+#rheo svg .meter{fill:var(--card);stroke:var(--wire);stroke-width:3}
+#rheo svg .dot{fill:var(--wire)}
+#rheo svg .flow{stroke:var(--flow);stroke-width:5;fill:none;stroke-dasharray:3 13;stroke-linecap:round;animation:rheoflow 2s linear infinite;opacity:.95}
+#rheo[data-sym=us] .ukS,#rheo:not([data-sym=us]) .usS{display:none}
+#rheo svg .hit{fill:transparent;cursor:grab;touch-action:none}
+#rheo svg .hit:active{cursor:grabbing}
+@keyframes rheoflow{to{stroke-dashoffset:-32}}
+@media (prefers-reduced-motion:reduce){#rheo svg .flow{animation:none}}
+#rheo .bars{display:grid;gap:14px}
+#rheo .barlab{display:flex;justify-content:space-between;gap:10px;font-size:15px;color:var(--muted);margin-bottom:4px}
+#rheo .bar{display:flex;height:42px;border-radius:10px;overflow:hidden;border:2px solid var(--wire)}
+#rheo .bar div{display:flex;align-items:center;justify-content:center;font:700 15px Lexend,sans-serif;white-space:nowrap;overflow:hidden;transition:flex-basis .08s linear;color:#fff}
+#rheo .bar .bu{background:var(--up)}#rheo .bar .bl{background:var(--lo)}
+#rheo .eq{font:600 clamp(17px,2.2vw,22px)/1.6 Lexend,sans-serif;font-variant-numeric:tabular-nums;overflow-x:auto;white-space:nowrap;padding:12px 0}
+#rheo .pts{margin:0;padding-left:20px;max-width:70ch}#rheo .pts li{margin-bottom:6px}
+#rheo .cu{color:var(--up);font-weight:700}#rheo .cl{color:var(--lo);font-weight:700}
+#rheo .chal{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:8px}
+#rheo .status{font-weight:700;font-size:17px}
+#rheo .ok{color:light-dark(#0b7a3b,#5fe09a)}
+@media(max-width:820px){#rheo .ctrls{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#rheo .ctrls .wide{grid-column:1/-1}}
+@media(max-width:640px){#rheo .grid{grid-template-columns:minmax(0,1fr)}#rheo .ctrls{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body style="margin:0">
+<div id="rheo" data-sym="uk">
+  <section class="band top">
+    <div class="wrap">
+      <h1>A potentiometer is just two resistors sharing the cell's voltage</h1>
+      <p class="lede">Move the sliding contact on the potentiometer (also called a three-terminal rheostat). The circuit on the right shows the same thing drawn as two fixed resistors, whose values change as you slide. Swap the voltmeter for a bulb to see it dim smoothly all the way from fully bright to off.</p>
+      <div class="ctrls">
+        <div class="wide"><label for="pos">Sliding contact position, from B (bottom) to A (top): <span class="val" id="posv"></span></label>
+          <input type="range" id="pos" min="0" max="100" step="1" value="60"></div>
+        <div><label for="emf">Cell voltage: <span class="val" id="emfv"></span></label>
+          <input type="range" id="emf" min="1" max="12" step="0.5" value="9"></div>
+        <div><label for="rt">Potentiometer total resistance</label>
+          <select id="rt"><option value="10">10 Ω</option><option value="20">20 Ω</option><option value="50" selected>50 Ω</option><option value="100">100 Ω</option></select></div>
+      </div>
+      <div class="row2">
+        <span class="lbl" style="margin:0">Connect:</span>
+        <div class="seg" role="group" aria-label="Component connected to the sliding contact">
+          <button type="button" id="tV" aria-pressed="true">Voltmeter</button>
+          <button type="button" id="tB" aria-pressed="false">Bulb</button>
+        </div>
+        <span class="lbl" style="margin:0">across:</span>
+        <div class="seg" role="group" aria-label="Which part of the track">
+          <button type="button" id="mLo" aria-pressed="true">Lower part (B to C)</button>
+          <button type="button" id="mUp" aria-pressed="false">Upper part (A to C)</button>
+        </div>
+        <div class="seg" role="group" aria-label="Circuit symbols">
+          <button type="button" id="sUK" aria-pressed="true">UK symbols</button>
+          <button type="button" id="sUS" aria-pressed="false">US symbols</button>
+        </div>
+        <button type="button" class="chip" id="flowBtn" aria-pressed="true">Hide current flow</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="wrap grid">
+      <div class="card">
+        <h2>Potentiometer</h2>
+        <p class="sub">Drag the arrow (C) up and down the track.</p>
+        <div class="fig"><svg id="svgL" viewBox="0 0 470 430" role="img" aria-label="Cell in series with a potentiometer, ammeter in the main loop and voltmeter connected to the sliding contact"></svg></div>
+        <div class="read"><span>Ammeter: <b id="aL"></b></span><span><span class="ldN">Voltmeter</span>: <b id="vL"></b></span></div>
+      </div>
+      <div class="card">
+        <h2>Same circuit as two fixed resistors</h2>
+        <p class="sub">C is now the junction between R<sub>1</sub> and R<sub>2</sub>.</p>
+        <div class="fig"><svg id="svgR" viewBox="0 0 470 430" role="img" aria-label="Cell in series with two fixed resistors, ammeter in the main loop and voltmeter across one resistor"></svg></div>
+        <div class="read"><span>Ammeter: <b id="aR"></b></span><span><span class="ldN">Voltmeter</span>: <b id="vR"></b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0">
+    <div class="wrap grid">
+      <div class="card">
+        <h3>How the resistance and the voltage are shared</h3>
+        <div class="bars">
+          <div><div class="barlab"><span>Resistance</span><span id="rsum"></span></div>
+            <div class="bar"><div class="bu" id="rbU"></div><div class="bl" id="rbL"></div></div></div>
+          <div><div class="barlab"><span>Voltage</span><span id="vsum"></span></div>
+            <div class="bar"><div class="bu" id="vbU"></div><div class="bl" id="vbL"></div></div></div>
+        </div>
+        <p class="sub" style="margin-top:10px" id="barNote"></p>
+      </div>
+      <div class="card">
+        <h3>The potential divider equation</h3>
+        <div class="eq" id="eq"></div>
+        <ul class="pts" id="pts"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="band" style="padding-top:0">
+    <div class="wrap card">
+      <h3>Quick challenge</h3>
+      <p class="sub" style="margin:0">Set the sliding contact so the voltage across the voltmeter or bulb matches the target. Then predict R<sub>1</sub> and R<sub>2</sub> before you look.</p>
+      <div class="chal"><button type="button" class="chip" id="newT">New target</button><span class="status" id="tgt">Press “New target” to start.</span></div>
+    </div>
+  </section>
+</div>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const st={f:0.6,E:9,R:50,mode:'lo',load:'volt',flow:true,target:null};
+const TOP=120,BOT=320,LEN=BOT-TOP;
+const ohm=x=>(x<10?x.toFixed(2):x.toFixed(1))+' Ω';
+const volt=x=>x.toFixed(2)+' V';
+const amp=x=>x<0.1?(x*1000).toFixed(0)+' mA':x.toFixed(2)+' A';
+
+/* shared parts: cell, rails, ammeter, voltmeter group */
+const common=`
+<path id="@FLOW" class="flow" d="M60,212 L60,70 L200,70 L200,370 L60,370 L60,228"></path>
+<line class="w" x1="60" y1="70" x2="60" y2="212"></line>
+<line class="w" x1="60" y1="228" x2="60" y2="370"></line>
+<line class="w" x1="38" y1="212" x2="82" y2="212"></line>
+<line x1="49" y1="228" x2="71" y2="228" stroke="var(--wire)" stroke-width="7"></line>
+<text class="tm" x="30" y="206" text-anchor="end">+</text>
+<text class="tx" x="30" y="226" text-anchor="end" id="@EMF"></text>
+<line class="w" x1="60" y1="70" x2="200" y2="70"></line>
+<line class="w" x1="60" y1="370" x2="110" y2="370"></line>
+<line class="w" x1="150" y1="370" x2="200" y2="370"></line>
+<circle class="meter" cx="130" cy="370" r="20"></circle>
+<text class="tx" x="130" y="376" text-anchor="middle" style="font-size:17px">A</text>
+<text class="tx big" x="130" y="414" text-anchor="middle" id="@AM"></text>
+<line class="w" id="@EXTT" x1="200" y1="70" x2="340" y2="70"></line>
+<line class="w" id="@EXTB" x1="200" y1="370" x2="340" y2="370"></line>
+<circle class="dot" id="@DT" cx="200" cy="70" r="5"></circle>
+<circle class="dot" id="@DB" cx="200" cy="370" r="5"></circle>
+<defs><radialGradient id="@GRAD"><stop offset="0" stop-color="#ffe066" stop-opacity="1"></stop><stop offset="0.45" stop-color="#ffd23f" stop-opacity=".55"></stop><stop offset="1" stop-color="#ffd23f" stop-opacity="0"></stop></radialGradient></defs>
+<path id="@BFLOW" class="flow" d=""></path>
+<g id="@VM">
+  <line class="w" x1="340" y1="220" x2="340" y2="273"></line>
+  <line class="w" x1="340" y1="317" x2="340" y2="370"></line>
+  <circle id="@GLOW" cx="340" cy="295" r="22" fill="url(#@GRAD)" opacity="0"></circle>
+  <circle class="meter" id="@BODY" cx="340" cy="295" r="22"></circle>
+  <g id="@VSYM"><text class="tx" x="340" y="301" text-anchor="middle" style="font-size:18px">V</text></g>
+  <g id="@BSYM"><g class="ukS"><line class="w" x1="324.4" y1="279.4" x2="355.6" y2="310.6"></line><line class="w" x1="355.6" y1="279.4" x2="324.4" y2="310.6"></line></g><g class="usS"><path class="w" d="M332,317 L332,294 A8,8 0 1 1 348,294 L348,317"></path></g></g>
+  <text class="tx big" x="370" y="292" id="@VR"></text>
+  <text class="tm" x="370" y="312" id="@BR"></text>
+</g>`;
+const mk=(p)=>common.replace(/@([A-Z]+)/g,(m,k)=>p+k);
+
+const zz=(y0,y1,n=8,a=11)=>{let p=`200,${y0} `;const s=(y1-y0)/n;for(let i=0;i<n;i++)p+=`${i%2?200-a:200+a},${(y0+s*(i+0.5)).toFixed(1)} `;return p+`200,${y1}`;};
+
+$('svgL').innerHTML=mk('L')+`
+<defs><clipPath id="cpU"><rect id="cpUr" x="150" y="${TOP}" width="100" height="80"></rect></clipPath><clipPath id="cpL"><rect id="cpLr" x="150" y="200" width="100" height="120"></rect></clipPath></defs>
+<line class="w" x1="200" y1="70" x2="200" y2="${TOP}"></line>
+<line class="w" x1="200" y1="${BOT}" x2="200" y2="370"></line>
+<g class="ukS">
+<rect id="segU" x="182" y="${TOP}" width="36" height="80" style="fill:var(--upf)"></rect>
+<rect id="segL" x="182" y="200" width="36" height="120" style="fill:var(--lof)"></rect>
+<rect x="182" y="${TOP}" width="36" height="${LEN}" fill="none" stroke="var(--wire)" stroke-width="3"></rect>
+</g>
+<g class="usS">
+<polyline points="${zz(TOP,BOT,14,13)}" fill="none" stroke="var(--up)" stroke-width="3.5" stroke-linejoin="round" clip-path="url(#cpU)"></polyline>
+<polyline points="${zz(TOP,BOT,14,13)}" fill="none" stroke="var(--lo)" stroke-width="3.5" stroke-linejoin="round" clip-path="url(#cpL)"></polyline>
+</g>
+<text class="tx" x="210" y="100">A</text><text class="tx" x="210" y="350">B</text>
+<g id="labU"><text class="tm up" x="170" y="0" text-anchor="end">upper part</text><text class="tx big up" x="170" y="18" text-anchor="end" id="lUv"></text></g>
+<g id="labL"><text class="tm lo" x="170" y="0" text-anchor="end">lower part</text><text class="tx big lo" x="170" y="18" text-anchor="end" id="lLv"></text></g>
+<polyline class="w" id="leg" points="262,200 300,200 300,220 340,220"></polyline>
+<line class="w" id="arr" x1="262" y1="200" x2="230" y2="200"></line>
+<polygon id="head" points="220,200 233,193 233,207" fill="var(--wire)"></polygon>
+<text class="tx" id="cLab" x="266" y="190">C</text>
+<rect class="hit" id="hit" x="160" y="110" width="160" height="40" rx="8"></rect>`;
+
+$('svgR').innerHTML=mk('R')+`
+<line class="w" x1="200" y1="70" x2="200" y2="100"></line>
+<line class="w" x1="200" y1="190" x2="200" y2="250"></line>
+<line class="w" x1="200" y1="340" x2="200" y2="370"></line>
+<g class="ukS">
+<rect x="182" y="100" width="36" height="90" stroke="var(--wire)" stroke-width="3" style="fill:var(--upf)"></rect>
+<rect x="182" y="250" width="36" height="90" stroke="var(--wire)" stroke-width="3" style="fill:var(--lof)"></rect>
+</g>
+<g class="usS">
+<polyline points="${zz(100,190)}" fill="none" stroke="var(--up)" stroke-width="3.5" stroke-linejoin="round"></polyline>
+<polyline points="${zz(250,340)}" fill="none" stroke="var(--lo)" stroke-width="3.5" stroke-linejoin="round"></polyline>
+</g>
+<line class="w" x1="200" y1="220" x2="340" y2="220"></line>
+<circle class="dot" cx="200" cy="220" r="5"></circle>
+<text class="tx" x="210" y="92">A</text><text class="tx" x="226" y="212">C</text><text class="tx" x="210" y="360">B</text>
+<text class="tm up" x="170" y="128" text-anchor="end">R₁ (upper)</text>
+<text class="tx big up" x="170" y="148" text-anchor="end" id="r1v"></text>
+<text class="tm up" x="170" y="166" text-anchor="end" id="v1v"></text>
+<text class="tm lo" x="170" y="278" text-anchor="end">R₂ (lower)</text>
+<text class="tx big lo" x="170" y="298" text-anchor="end" id="r2v"></text>
+<text class="tm lo" x="170" y="316" text-anchor="end" id="v2v"></text>`;
+
+const RB=20; /* bulb treated as a constant 20 Ω resistor */
+const par=(a,b)=>a*b/(a+b);
+/* returns everything for a contact position f */
+function solve(f){
+  const {E,R,mode,load}=st;
+  const Rl=f*R,Ru=R-Rl;
+  const Rp=mode==='lo'?Rl:Ru,Rq=R-Rp;            /* part with the load across it, and the other part */
+  const Rpe=load==='bulb'?(Rp===0?0:par(Rp,RB)):Rp; /* effective resistance of that part */
+  const Rtot=Rq+Rpe;
+  const I=Rtot===0?Infinity:E/Rtot;
+  const Vload=Rtot===0?E:E*Rpe/Rtot;
+  const Vl=mode==='lo'?Vload:E-Vload,Vu=E-Vl;
+  const Ib=load==='bulb'?Vload/RB:0;
+  return {Rl,Ru,Rp,Rq,Rpe,Rtot,I,Vload,Vl,Vu,Ib,bright:(Vload/E)**2};
+}
+
+function render(){
+  const {f,E,R,mode,load}=st;
+  const s=solve(f),bulb=load==='bulb';
+  $('posv').textContent=Math.round(f*100)+'% of the way up';
+  $('emfv').textContent=E.toFixed(1)+' V';
+  /* potentiometer geometry */
+  const wy=BOT-f*LEN;
+  $('segU').setAttribute('y',TOP);$('segU').setAttribute('height',Math.max(0,wy-TOP));
+  $('segL').setAttribute('y',wy);$('segL').setAttribute('height',Math.max(0,BOT-wy));
+  $('cpUr').setAttribute('y',TOP-10);$('cpUr').setAttribute('height',Math.max(0,wy-TOP+10));
+  $('cpLr').setAttribute('y',wy);$('cpLr').setAttribute('height',Math.max(0,BOT-wy+10));
+  $('leg').setAttribute('points',`262,${wy} 300,${wy} 300,220 340,220`);
+  $('arr').setAttribute('y1',wy);$('arr').setAttribute('y2',wy);
+  $('head').setAttribute('points',`220,${wy} 233,${wy-7} 233,${wy+7}`);
+  $('cLab').setAttribute('y',wy-10);
+  $('hit').setAttribute('y',wy-20);
+  let u=(TOP+wy)/2,l=(wy+BOT)/2;
+  if(l-u<44){const c=(u+l)/2;u=c-22;l=c+22;}
+  if(u<108){l+=108-u;u=108;} if(l>322){u-=l-322;l=322;}
+  $('labU').setAttribute('transform',`translate(0,${u-4})`);
+  $('labL').setAttribute('transform',`translate(0,${l-4})`);
+  $('lUv').textContent='≡ '+ohm(s.Ru);$('lLv').textContent='≡ '+ohm(s.Rl);
+  /* fixed resistors */
+  $('r1v').textContent=ohm(s.Ru);$('r2v').textContent=ohm(s.Rl);
+  $('v1v').textContent='V₁ = '+volt(s.Vu);$('v2v').textContent='V₂ = '+volt(s.Vl);
+  /* shared */
+  const dur=I=>Math.min(5,Math.max(0.6,1.2/Math.sqrt(Math.max(I,1e-4))))+'s';
+  const bpL=mode==='lo'?`M262,${wy} L300,${wy} L300,220 L340,220 L340,370 L200,370`:`M200,70 L340,70 L340,220 L300,220 L300,${wy} L262,${wy}`;
+  const bpR=mode==='lo'?'M200,220 L340,220 L340,370 L200,370':'M200,70 L340,70 L340,220 L200,220';
+  for(const p of ['L','R']){
+    $(p+'EMF').textContent=E.toFixed(1)+' V';
+    $(p+'AM').textContent=amp(s.I);
+    $(p+'VR').textContent=volt(s.Vload);
+    $(p+'BR').textContent=bulb?Math.round(s.bright*100)+'% brightness':'';
+    $(p+'VM').setAttribute('transform',mode==='lo'?'':'translate(0,-150)');
+    $(p+'EXTT').style.display=$(p+'DT').style.display=mode==='up'?'':'none';
+    $(p+'EXTB').style.display=$(p+'DB').style.display=mode==='lo'?'':'none';
+    $(p+'VSYM').style.display=bulb?'none':'';
+    $(p+'BSYM').style.display=bulb?'':'none';
+    $(p+'GLOW').setAttribute('opacity',bulb?Math.min(1,s.bright*1.1):0);
+    $(p+'GLOW').setAttribute('r',22+46*s.bright);
+    $(p+'BODY').style.fill=bulb&&s.bright>0.003?`rgba(255,214,64,${(0.15+0.85*s.bright).toFixed(3)})`:'';
+    const us=$('rheo').dataset.sym==='us',zp=pts=>'L'+pts.split(' ').join(' L');
+    const mid=p==='L'?(us?zp(zz(TOP,BOT,14,13)):'L200,'+BOT):(us?zp(zz(100,190))+' '+zp(zz(250,340)):'L200,340');
+    $(p+'FLOW').setAttribute('d',`M60,212 L60,70 L200,70 ${mid} L200,370 L60,370 L60,228`);
+    const fl=$(p+'FLOW');fl.style.display=st.flow?'':'none';fl.style.animationDuration=dur(s.I);
+    const bf=$(p+'BFLOW');bf.setAttribute('d',p==='L'?bpL:bpR);bf.style.display=st.flow&&bulb&&s.Ib>1e-6?'':'none';bf.style.animationDuration=dur(s.Ib);
+    $('a'+p).textContent=amp(s.I);
+    $('v'+p).textContent=volt(s.Vload)+(bulb?' ('+Math.round(s.bright*100)+'% brightness)':'');
+  }
+  for(const n of document.querySelectorAll('#rheo .ldN'))n.textContent=bulb?'Bulb':'Voltmeter';
+  /* bars */
+  const bars=(a,b,fa,fb,ta,tb)=>{a.style.flexBasis=fa*100+'%';b.style.flexBasis=fb*100+'%';a.textContent=fa>0.14?ta:'';b.textContent=fb>0.14?tb:'';};
+  bars($('rbU'),$('rbL'),1-f,f,'R₁ '+ohm(s.Ru),'R₂ '+ohm(s.Rl));
+  bars($('vbU'),$('vbL'),s.Vu/E,s.Vl/E,'V₁ '+volt(s.Vu),'V₂ '+volt(s.Vl));
+  $('rsum').textContent='total '+ohm(R);$('vsum').textContent='total '+volt(E);
+  $('barNote').textContent=bulb?`With the bulb connected the split no longer matches exactly: the bulb (${RB} Ω) in parallel with ${mode==='lo'?'R₂':'R₁'} lowers that part's resistance, so it takes a smaller share of the voltage.`:'The two bars split in the same proportion: the bigger resistor takes the bigger share of the voltage.';
+  /* equation */
+  const cls=mode==='lo'?'cl':'cu',nm=mode==='lo'?'R₂':'R₁',vn=mode==='lo'?'V₂':'V₁',on=mode==='lo'?'R₁':'R₂',ocl=mode==='lo'?'cu':'cl';
+  if(!bulb){
+    $('eq').innerHTML=`<span class="${cls}">${vn}</span> = ${nm} ÷ (R₁ + R₂) × V<sub>cell</sub><br>`+
+      `<span class="${cls}">${vn}</span> = <span class="${cls}">${s.Rp.toFixed(1)}</span> ÷ (<span class="cu">${s.Ru.toFixed(1)}</span> + <span class="cl">${s.Rl.toFixed(1)}</span>) × ${E.toFixed(1)} = <span class="${cls}">${volt(s.Vload)}</span>`;
+    $('pts').innerHTML=`<li>The ammeter reading does not change as you slide: the total resistance is always the full track, R<sub>1</sub> + R<sub>2</sub>.</li><li>The ideal voltmeter takes no current, so it just reads the voltage across one part.</li><li>V<sub>1</sub> + V<sub>2</sub> always equals the cell voltage.</li>`;
+  }else{
+    $('eq').innerHTML=`R<sub>${mode==='lo'?'2':'1'}∥bulb</sub> = (<span class="${cls}">${s.Rp.toFixed(1)}</span> × ${RB}) ÷ (<span class="${cls}">${s.Rp.toFixed(1)}</span> + ${RB}) = ${s.Rpe.toFixed(1)} Ω<br>`+
+      `V<sub>bulb</sub> = ${s.Rpe.toFixed(1)} ÷ (<span class="${ocl}">${s.Rq.toFixed(1)}</span> + ${s.Rpe.toFixed(1)}) × ${E.toFixed(1)} = <span class="${cls}">${volt(s.Vload)}</span>`;
+    const zero=mode==='lo'?'B':'A',full=mode==='lo'?'A':'B';
+    $('pts').innerHTML=`<li>With C at ${zero}, the bulb is shorted out: 0 V, so it is off. With C at ${full}, it gets the full ${E.toFixed(1)} V: maximum brightness.</li><li>Everything in between is available, so the bulb dims smoothly all the way to off. A single variable resistor in series cannot do that.</li><li>The bulb takes current, so the ammeter reading now changes as you slide.</li>`;
+  }
+  /* challenge */
+  if(st.target!==null){
+    const hit=Math.abs(s.Vload-st.target)<0.005+1e-9;
+    $('tgt').innerHTML=hit?`<span class="ok">✓ ${volt(s.Vload)} — on target! R₁ = ${ohm(s.Ru)}, R₂ = ${ohm(s.Rl)}.</span>`:`Target: ${volt(st.target)} across the ${bulb?'bulb':'voltmeter'} (${mode==='lo'?'lower':'upper'} part). Now ${volt(s.Vload)}.`;
+  }
+}
+
+const reset=msg=>{if(st.target!==null){st.target=null;$('tgt').textContent=msg+' Press “New target”.';}};
+$('pos').addEventListener('input',e=>{st.f=e.target.value/100;render();});
+$('emf').addEventListener('input',e=>{st.E=+e.target.value;reset('Cell voltage changed.');render();});
+$('rt').addEventListener('change',e=>{st.R=+e.target.value;reset('Resistance changed.');render();});
+const press=(a,b,on)=>{$(a).setAttribute('aria-pressed',on);$(b).setAttribute('aria-pressed',!on);};
+const setMode=m=>{st.mode=m;press('mLo','mUp',m==='lo');reset('Connection moved.');render();};
+$('mLo').addEventListener('click',()=>setMode('lo'));
+$('mUp').addEventListener('click',()=>setMode('up'));
+const setLoad=m=>{st.load=m;press('tV','tB',m==='volt');reset('Component changed.');render();};
+$('tV').addEventListener('click',()=>setLoad('volt'));
+$('tB').addEventListener('click',()=>setLoad('bulb'));
+const setSym=m=>{$('rheo').dataset.sym=m;press('sUK','sUS',m==='uk');render();};
+$('sUK').addEventListener('click',()=>setSym('uk'));
+$('sUS').addEventListener('click',()=>setSym('us'));
+$('flowBtn').addEventListener('click',e=>{st.flow=!st.flow;e.target.setAttribute('aria-pressed',st.flow);e.target.textContent=st.flow?'Hide current flow':'Show current flow';render();});
+$('newT').addEventListener('click',()=>{let ft;do{ft=(10+Math.floor(Math.random()*81))/100;}while(Math.abs(ft-st.f)<0.08);st.target=Math.round(solve(ft).Vload*100)/100;render();});
+
+/* dragging the sliding contact */
+const svg=$('svgL');let drag=false;
+const toF=ev=>{const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const y=pt.matrixTransform(svg.getScreenCTM().inverse()).y;return Math.round(Math.min(1,Math.max(0,(BOT-y)/LEN))*100)/100;};
+const move=ev=>{if(!drag)return;st.f=toF(ev);$('pos').value=Math.round(st.f*100);render();};
+$('hit').addEventListener('pointerdown',ev=>{drag=true;$('hit').setPointerCapture(ev.pointerId);move(ev);});
+$('hit').addEventListener('pointermove',move);
+$('hit').addEventListener('pointerup',()=>{drag=false;});
+$('hit').addEventListener('pointercancel',()=>{drag=false;});
+
+render();
+}
+</script>
+</body>
+</html>
