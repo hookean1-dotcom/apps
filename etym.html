@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Science Etymology Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Noto+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+#ety{--bg:#edf3f6;--surface:#ffffff;--ink:#0f2230;--muted:#475c6b;--line:#d3dfe6;--soft:#f5f9fb;--accent:#07737d;--accent-soft:#dff2f3;--night:#10242e;--gold:#ffd166;
+--bio:#2e7d32;--chem:#c2185b;--phys:#3949ab;--earth:#9a5700;--greek:#1b5aa0;--latin:#9c2a3c;--other:#5d4a9b;
+width:100%;height:100%;min-height:1400px;box-sizing:border-box;margin:0;padding:24px 18px 40px;background:var(--bg);color:var(--ink);
+font-family:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;line-height:1.45}
+#ety *,#ety *::before,#ety *::after{box-sizing:border-box}
+#ety .wrap{max-width:1240px;margin:0 auto}
+#ety button{font:inherit;color:inherit;cursor:pointer}
+#ety input{font:inherit;color:inherit}
+#ety .disp{font-family:'Bricolage Grotesque','Atkinson Hyperlegible',system-ui,sans-serif}
+#ety .script{font-family:'Noto Serif','Palatino Linotype','Times New Roman',serif}
+
+/* Header */
+#ety .top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px 24px;margin-bottom:18px}
+#ety .kicker{font-size:.86rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700;margin:0 0 4px}
+#ety .kicker .script{text-transform:none;letter-spacing:0;font-size:1rem}
+#ety h1{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-weight:800;font-size:clamp(1.8rem,3.6vw,2.6rem);line-height:1.05;margin:0;letter-spacing:-.02em}
+#ety .sub{color:var(--muted);margin:6px 0 0;max-width:640px}
+#ety .counts{display:flex;gap:8px;flex-wrap:wrap}
+#ety .count{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;text-align:center;min-width:88px}
+#ety .count b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:1.35rem;line-height:1.1}
+#ety .count span{font-size:.78rem;color:var(--muted)}
+
+/* Tabs */
+#ety .tabs{display:flex;gap:6px;flex-wrap:wrap;background:var(--night);padding:6px;border-radius:16px;margin-bottom:18px}
+#ety .tab{background:transparent;border:0;color:#cfe0e8;padding:10px 16px;border-radius:11px;font-weight:700;display:flex;align-items:center;gap:8px}
+#ety .tab:hover{background:rgba(255,255,255,.08);color:#fff}
+#ety .tab[aria-selected="true"]{background:var(--gold);color:var(--night)}
+#ety .tab .n{font-size:.75rem;font-weight:700;opacity:.8}
+#ety .panel{display:none}
+#ety .panel.on{display:block}
+
+/* Generic controls */
+#ety .box{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:18px}
+#ety .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#ety .lbl{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);min-width:64px}
+#ety .chip{border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:6px 13px;font-size:.9rem;font-weight:700;color:var(--ink)}
+#ety .chip:hover{border-color:#9fb6c3}
+#ety .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+#ety .chip.c-b[aria-pressed="true"]{background:var(--bio);border-color:var(--bio)}
+#ety .chip.c-c[aria-pressed="true"]{background:var(--chem);border-color:var(--chem)}
+#ety .chip.c-p[aria-pressed="true"]{background:var(--phys);border-color:var(--phys)}
+#ety .chip.c-e[aria-pressed="true"]{background:var(--earth);border-color:var(--earth)}
+#ety .chip .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+#ety .btn{border:0;border-radius:12px;padding:10px 16px;font-weight:700;background:var(--accent);color:#fff}
+#ety .btn:hover{background:#055d66}
+#ety .btn.ghost{background:var(--surface);color:var(--ink);border:1px solid var(--line)}
+#ety .btn.ghost:hover{background:var(--soft)}
+#ety .btn:disabled{opacity:.45;cursor:default}
+#ety .search{flex:1 1 280px;min-width:200px;border:2px solid var(--line);border-radius:12px;padding:11px 14px;background:var(--surface);outline:none}
+#ety .search:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(7,115,125,.15)}
+#ety :focus-visible{outline:3px solid #f0a500;outline-offset:2px}
+#ety .muted{color:var(--muted)}
+#ety .small{font-size:.86rem}
+
+/* Roots toolbar */
+#ety .toolbar{display:grid;gap:12px}
+#ety .prog{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:space-between}
+#ety .bar{flex:1 1 220px;height:10px;background:#e3ebf0;border-radius:99px;overflow:hidden;display:flex}
+#ety .bar i{display:block;height:100%}
+#ety .showing{font-size:.9rem;color:var(--muted);margin:14px 2px 10px}
+
+/* Cards */
+#ety .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:16px}
+#ety .card{perspective:1200px;cursor:pointer;border-radius:16px;outline:none}
+#ety .inner{display:grid;transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d;min-height:236px}
+#ety .card.flipped .inner{transform:rotateY(180deg)}
+#ety .face{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;border-radius:16px;padding:16px 16px 14px;display:flex;flex-direction:column;position:relative;overflow:hidden}
+#ety .front{background:var(--surface);border:1px solid var(--line);box-shadow:0 6px 16px rgba(15,34,48,.06)}
+#ety .card:hover .front{border-color:#a9c0cc}
+#ety .card:focus-visible .face{outline:3px solid #f0a500}
+#ety .stripe{position:absolute;left:0;top:0;right:0;height:6px;display:flex}
+#ety .stripe i{flex:1}
+#ety .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+#ety .tag{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:3px 8px;border-radius:6px;background:#eef3f6;color:var(--muted)}
+#ety .tag.G{background:#e4eefa;color:var(--greek)}
+#ety .tag.L{background:#f9e7ea;color:var(--latin)}
+#ety .tag.O{background:#eeeaf8;color:var(--other)}
+#ety .rw{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.75rem;line-height:1.1;margin:auto 0 6px;letter-spacing:-.01em;word-break:break-word;padding-top:14px}
+#ety .og{font-family:'Noto Serif',serif;color:var(--muted);font-size:1.05rem;min-height:1.4em}
+#ety .hint{font-size:.78rem;color:#5c707d;margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center}
+#ety .star{font-size:1rem;color:#c99a00;font-weight:700}
+#ety .back{transform:rotateY(180deg);background:var(--night);color:#e9f2f5;border:1px solid var(--night)}
+#ety .mean{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.3rem;color:var(--gold);line-height:1.15;margin-bottom:6px}
+#ety .from{font-size:.88rem;color:#b9cdd6;margin-bottom:10px}
+#ety .from .script{color:#fff;font-size:1rem}
+#ety .exs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+#ety .ex{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.07);color:#f1f7f9;border-radius:7px;padding:3px 8px;font-size:.84rem}
+#ety .ex:hover{background:rgba(255,209,102,.2);border-color:var(--gold)}
+#ety .note{font-size:.82rem;color:#c8d8df;line-height:1.38;margin-bottom:8px}
+#ety .twin{background:none;border:0;padding:0;color:#9fe3e8;font-size:.84rem;text-decoration:underline;text-underline-offset:3px;text-align:left;margin-bottom:8px}
+#ety .learn{margin-top:auto;align-self:flex-start;background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:8px;padding:5px 10px;font-size:.82rem;font-weight:700}
+#ety .learn.on{background:var(--gold);border-color:var(--gold);color:var(--night)}
+#ety .empty{grid-column:1/-1;padding:40px;text-align:center;background:var(--surface);border:1px dashed #b7c8d2;border-radius:16px;color:var(--muted)}
+
+/* Decoder */
+#ety .dec-in{display:flex;gap:10px;flex-wrap:wrap}
+#ety .dec-in .search{font-size:1.2rem;padding:14px 16px}
+#ety .tries{margin-top:12px}
+#ety .tries .chip{font-weight:400}
+#ety .words{margin-top:20px;display:grid;gap:18px}
+#ety .wordblock{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+#ety .wtitle{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:0 0 14px}
+#ety .segs{display:flex;flex-wrap:wrap;gap:6px;align-items:stretch}
+#ety .seg{border-radius:12px;padding:10px 12px 9px;min-width:56px;text-align:center;border:2px solid transparent;background:var(--soft)}
+#ety button.seg{cursor:pointer}
+#ety .seg .st{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.45rem;line-height:1.1}
+#ety .seg .sm{font-size:.86rem;margin-top:3px;max-width:180px}
+#ety .seg .sl{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;margin-top:4px}
+#ety .seg.G{background:#e4eefa;border-color:#bcd2ef}
+#ety .seg.G .sl{color:var(--greek)}
+#ety .seg.L{background:#f9e7ea;border-color:#ecc3ca}
+#ety .seg.L .sl{color:var(--latin)}
+#ety .seg.O{background:#eeeaf8;border-color:#d3caee}
+#ety .seg.O .sl{color:var(--other)}
+#ety .seg.sel{border-color:var(--ink);box-shadow:0 4px 12px rgba(15,34,48,.15)}
+#ety .seg.link{background:transparent;min-width:28px;padding:10px 2px}
+#ety .seg.link .st{color:#7a8c97;font-weight:500}
+#ety .seg.link .sm{font-size:.72rem;color:#7a8c97}
+#ety .seg.unk{background:#fff;border:2px dashed #c3d0d8}
+#ety .seg.unk .st{color:#6a7d8a}
+#ety .seg.unk .sm{color:#6a7d8a}
+#ety .literal{margin-top:16px;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:#053f45;font-size:1rem}
+#ety .literal b{font-weight:700}
+#ety .segdetail{margin-top:14px;border-top:1px solid var(--line);padding-top:14px;display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:.95rem}
+#ety .segdetail .k{color:var(--muted);font-weight:700;font-size:.82rem;text-transform:uppercase;letter-spacing:.05em;padding-top:2px}
+#ety .linkbtn{background:none;border:0;padding:0;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+#ety .exlist .linkbtn{margin-right:10px}
+#ety .help{margin-top:18px;font-size:.92rem;color:var(--muted)}
+
+/* Quiz */
+#ety .qsetup{display:grid;gap:14px}
+#ety .qcard{max-width:760px;margin:0 auto}
+#ety .qtop{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+#ety .pips{display:flex;gap:4px;flex-wrap:wrap}
+#ety .pip{width:14px;height:6px;border-radius:3px;background:#d3dfe6}
+#ety .pip.ok{background:#2e7d32}
+#ety .pip.no{background:#c62828}
+#ety .pip.cur{background:var(--ink)}
+#ety .qkind{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}
+#ety .qtext{font-family:'Bricolage Grotesque',sans-serif;font-size:1.55rem;font-weight:700;line-height:1.2;margin:6px 0 18px}
+#ety .qtext mark{background:var(--gold);color:var(--night);padding:0 3px;border-radius:4px}
+#ety .opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+#ety .opt{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:14px 16px;font-size:1.05rem;display:flex;gap:12px;align-items:center}
+#ety .opt:hover:not(:disabled){border-color:var(--accent);background:var(--soft)}
+#ety .opt .k{flex:0 0 26px;height:26px;border-radius:7px;background:#e3ebf0;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:var(--muted)}
+#ety .opt.right{border-color:#2e7d32;background:#e8f5e9}
+#ety .opt.wrong{border-color:#c62828;background:#fdecea}
+#ety .opt:disabled{cursor:default;color:var(--ink)}
+#ety .feedback{margin-top:16px;border-radius:14px;padding:14px 16px;font-size:.98rem}
+#ety .feedback.ok{background:#e8f5e9;color:#1b4d1e}
+#ety .feedback.no{background:#fdecea;color:#7a1717}
+#ety .feedback b.v{display:block;font-size:1.05rem;margin-bottom:4px}
+#ety .qnav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;gap:10px;flex-wrap:wrap}
+#ety .score{font-family:'Bricolage Grotesque',sans-serif;font-size:3.2rem;font-weight:800;line-height:1}
+#ety .missed{display:grid;gap:6px;margin:14px 0}
+#ety .missed div{background:var(--soft);border-radius:10px;padding:8px 12px}
+
+/* Elements */
+#ety .el-layout{display:grid;gap:16px}
+#ety .el-detail{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;min-height:120px}
+#ety .el-big{width:104px;height:104px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid}
+#ety .el-big .z{font-size:.85rem;font-weight:700}
+#ety .el-big .sy{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2.4rem;line-height:1}
+#ety .el-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;margin:0}
+#ety .el-cat{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin:2px 0 6px}
+#ety .ptable-wrap{overflow-x:auto;padding-bottom:6px}
+#ety .ptable{display:grid;grid-template-columns:repeat(18,minmax(44px,1fr));gap:3px;min-width:820px}
+#ety .el{border:0;border-radius:6px;padding:4px 2px 3px;text-align:center;min-height:54px;display:flex;flex-direction:column;justify-content:center;border-left:4px solid;line-height:1.05}
+#ety .el .z{font-size:.62rem;color:#3c4f5c}
+#ety .el .sy{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.05rem}
+#ety .el .nm{font-size:.55rem;color:#3c4f5c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#ety .el.dim{opacity:.22}
+#ety .el.sel{outline:3px solid var(--ink);outline-offset:1px}
+#ety .el.ph{background:transparent;border:1px dashed #a9bcc8;color:var(--muted);font-size:.62rem;cursor:default}
+#ety .gap{grid-column:1/-1;height:10px}
+#ety .cat-P{--c:#6d2e99;--cb:#f2e8fa}
+#ety .cat-L{--c:#066b74;--cb:#ddf2f3}
+#ety .cat-M{--c:#1b5aa0;--cb:#e4edfa}
+#ety .cat-X{--c:#b0154f;--cb:#fde7ef}
+#ety .cat-N{--c:#765800;--cb:#faf1d4}
+#ety .cat-O{--c:#4a5a66;--cb:#e9eef1}
+#ety .el[class*="cat-"]{background:var(--cb);border-left-color:var(--c)}
+#ety .el[class*="cat-"] .sy{color:var(--c)}
+#ety .el-big[class*="cat-"]{background:var(--cb);border-color:var(--c);color:var(--c)}
+#ety .el-cat[class*="cat-"]{color:var(--c)}
+#ety .legend .chip{font-weight:700}
+#ety .legend .chip .dot{background:var(--c)}
+
+/* Stories */
+#ety .stories{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-top:14px}
+#ety .story{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+#ety .story h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.35rem;margin:0;line-height:1.15}
+#ety .story .o{font-size:.92rem;color:var(--accent);font-weight:700}
+#ety .story .w{font-size:.82rem;color:var(--muted)}
+#ety .story p{margin:4px 0 0;font-size:.95rem}
+#ety .story .ct{align-self:flex-start;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 8px;border-radius:6px;background:#eef3f6;color:var(--muted)}
+
+@media (max-width:640px){
+ #ety{padding:16px 10px 30px}
+ #ety .tab{padding:9px 11px;font-size:.92rem}
+ #ety .tab .n{display:none}
+ #ety .qtext{font-size:1.3rem}
+ #ety .el-detail{grid-template-columns:1fr}
+ #ety .lbl{min-width:100%}
+}
+@media (prefers-reduced-motion:reduce){#ety .inner{transition:none}}
+</style>
+</head>
+<body style="margin:0">
+<div id="ety">
+<div class="wrap">
+ <div class="top">
+  <div>
+   <p class="kicker"><span class="script">ἔτυμον</span> · etymon · the true sense of a word</p>
+   <h1>Science Etymology Explorer</h1>
+   <p class="sub">The Greek, Latin and Arabic building blocks behind the words of biology, chemistry, physics and astronomy. Learn the pieces, then take long words apart yourself.</p>
+  </div>
+  <div class="counts" id="ety-counts"></div>
+ </div>
+
+ <div class="tabs" role="tablist" aria-label="Sections">
+  <button class="tab" role="tab" data-tab="roots" aria-selected="true">Root cards <span class="n" id="ety-n-roots"></span></button>
+  <button class="tab" role="tab" data-tab="decode" aria-selected="false">Word decoder</button>
+  <button class="tab" role="tab" data-tab="quiz" aria-selected="false">Quiz</button>
+  <button class="tab" role="tab" data-tab="elements" aria-selected="false">Element names <span class="n">118</span></button>
+  <button class="tab" role="tab" data-tab="stories" aria-selected="false">Word stories <span class="n" id="ety-n-stories"></span></button>
+ </div>
+
+ <!-- ROOTS -->
+ <section class="panel on" id="ety-p-roots" role="tabpanel">
+  <div class="box toolbar">
+   <div class="row">
+    <input class="search" id="ety-q" type="search" placeholder="Search roots, meanings or words — try ‘blood’, ‘light’ or ‘haemoglobin’" aria-label="Search roots">
+    <button class="btn ghost" id="ety-random">Random root</button>
+    <button class="btn ghost" id="ety-flipall">Flip all</button>
+   </div>
+   <div class="row" id="ety-f-subj"><span class="lbl">Subject</span></div>
+   <div class="row" id="ety-f-lang"><span class="lbl">Origin</span></div>
+   <div class="row" id="ety-f-type"><span class="lbl">Type</span></div>
+   <div class="row" id="ety-f-show"><span class="lbl">Show</span></div>
+   <div class="prog">
+    <span class="small"><b id="ety-learnt-n">0</b> of <span id="ety-total-n"></span> roots learnt</span>
+    <div class="bar" id="ety-bar" aria-hidden="true"></div>
+    <button class="linkbtn small" id="ety-reset">Reset progress</button>
+   </div>
+  </div>
+  <p class="showing" id="ety-showing"></p>
+  <div class="grid" id="ety-grid"></div>
+ </section>
+
+ <!-- DECODER -->
+ <section class="panel" id="ety-p-decode" role="tabpanel">
+  <div class="box">
+   <div class="dec-in">
+    <input class="search" id="ety-dq" type="text" placeholder="Type a scientific word, e.g. electrocardiogram" aria-label="Word to decode" autocomplete="off" spellcheck="false">
+    <button class="btn" id="ety-dgo">Decode</button>
+   </div>
+   <div class="row tries" id="ety-tries"><span class="lbl">Try</span></div>
+  </div>
+  <div class="words" id="ety-words"></div>
+  <p class="help">The decoder splits a word into the roots in this dictionary. Dashed boxes are parts it doesn’t know — often a standard English ending, or a root not yet in the collection. Small grey letters are linking vowels (the <i>o</i> in thermometer) that just join roots together.</p>
+ </section>
+
+ <!-- QUIZ -->
+ <section class="panel" id="ety-p-quiz" role="tabpanel">
+  <div id="ety-quiz"></div>
+ </section>
+
+ <!-- ELEMENTS -->
+ <section class="panel" id="ety-p-elements" role="tabpanel">
+  <div class="el-layout">
+   <div class="box el-detail" id="ety-eldetail"></div>
+   <div class="box">
+    <div class="row legend" id="ety-legend"><span class="lbl">Named after</span></div>
+    <div class="row" style="margin-top:10px"><input class="search" id="ety-elq" type="search" placeholder="Find an element by name or symbol" aria-label="Find element"></div>
+   </div>
+   <div class="box ptable-wrap"><div class="ptable" id="ety-ptable"></div></div>
+  </div>
+ </section>
+
+ <!-- STORIES -->
+ <section class="panel" id="ety-p-stories" role="tabpanel">
+  <div class="box">
+   <div class="row" id="ety-f-story"><span class="lbl">Theme</span></div>
+   <div class="row" style="margin-top:10px"><input class="search" id="ety-sq" type="search" placeholder="Search the stories" aria-label="Search stories"></div>
+  </div>
+  <div class="stories" id="ety-stories"></div>
+ </section>
+</div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------------------------------------------------------------
+   ROOT DATA
+   display | match forms | lang (G/L/O) | original | transliteration (or language for O) |
+   meaning | subjects (b c p e) | examples | type (p prefix, r root, s suffix, g ending, u SI) | twin | note
+---------------------------------------------------------------- */
+var RAW = `a- / an-|a,an|G|ἀ-, ἀν-|a-, an-|not / without|bc|abiotic,anaerobic,anhydrous,asymmetric|p||Called the ‘alpha privative’. Before a vowel it becomes an- (an + aerobic).
+ab-|ab,abs|L|ab||away from|bp|absorption,aberration,abduction|p||
+ad-|ad,adh|L|ad||to / towards|bc|adhesion,adsorption,adduction|p||Adsorption (sticking to a surface) and absorption (soaking in) differ only by ad- and ab-.
+amphi-|amphi,amph|G|ἀμφί|amphi|on both sides / of both kinds|bc|amphibian,amphoteric|p||Amphibians live a double life (bios) — in water and on land. Amphoteric oxides react with both acids and bases.
+ana-|ana|G|ἀνά|ana|up / back / again|bc|anabolism,anaphase,anode,analysis|p||
+anti-|anti,ant|G|ἀντί|anti|against / opposite|bcp|antibiotic,antibody,antimatter,antinode,antacid|p||
+apo-|apo,aph,ap|G|ἀπό|apo|away from|bpe|apogee,aphelion,apoptosis|p||Before an h-sound apo- becomes aph-: ap(o) + hēlios gives aphelion, the point furthest from the Sun.
+auto-|auto,aut|G|αὐτός|autos|self|bp|autotroph,autoimmune,automatic,autoclave|p||
+bi-|bi,bin|L|bis / bīnī||two / twice|bcp|bipedal,binary fission,bicarbonate,binocular|p|di|
+cata-|cata,cath,cat,kata|G|κατά|kata|down / against / completely|bc|catabolism,catalyst,cathode,cation|p||
+circum-|circum,circu|L|circum||around|pe|circumference,circumpolar,circuit|p|peri|A circuit is a path that goes (īre) around (circum).
+co- / con-|con,com,co|L|cum||with / together|bcp|covalent,concentric,conduction,compound,convection|p|syn|
+contra-|contra,counter|L|contrā||against|bp|contralateral,counterweight,contraception|p||
+de-|de|L|dē||down / away / removing|bc|dehydration,decomposition,deceleration,denatured|p||
+di-|di|G|δίς|dis|two / twice|c|dioxide,diatomic,dipole,disaccharide|p|bi|
+dia-|dia|G|διά|dia|through / across / apart|bcp|diameter,dialysis,diaphragm,diagonal|p||A diameter measures right through a circle.
+dis- / dif-|dis,dif|L|dis||apart / in different directions|bcp|dissolve,diffraction,diffusion,dispersion,dissection|p||
+dys-|dys|G|δυσ-|dys-|bad / difficult|b|dysfunction,dysprosium|p||
+ecto-|ecto,ect|G|ἐκτός|ektos|outside|b|ectotherm,ectoderm,ectoparasite|p||The opposite of endo-.
+en- / em-|en,em|G|ἐν|en|in / within|bcp|enzyme,energy,encephalitis,endemic|p||
+endo-|endo,end|G|ἔνδον|endon|within / inside|bcp|endothermic,endoskeleton,endoplasmic reticulum,endocytosis|p|intra|
+epi-|epi,ep|G|ἐπί|epi|upon / over / on top of|bpe|epidermis,epicentre,epiglottis,epiphyte|p||The epicentre is the point on the surface directly above an earthquake’s focus.
+equi-|equi,equa,equ|L|aequus||equal|pce|equilibrium,equinox,equipotential,equation,equator|p|iso|At an equinox, day and night (nox) are equal.
+eu-|eu|G|εὖ|eu|well / good / true|b|eukaryote,eutrophication|p||Eukaryotes have a ‘true kernel’ — a real nucleus.
+ex- / ef-|ex,ef|L|ex||out of|bcp|excretion,exhale,effervescence,extension|p||
+exo-|exo|G|ἔξω|exō|outside / outer|bcpe|exothermic,exoskeleton,exoplanet,exocytosis|p|extra|
+extra-|extra|L|extrā||outside / beyond|bpe|extracellular,extraterrestrial,extrapolate|p|exo|
+hemi-|hemi|G|ἡμι-|hēmi-|half|bpe|hemisphere,hemicellulose|p|semi|
+semi-|semi|L|sēmi-||half|pbc|semiconductor,semicircular canals,semipermeable|p|hemi|
+hetero-|hetero,heter|G|ἕτερος|heteros|other / different|bc|heterotroph,heterozygous,heterogeneous|p|homo|
+homo-|homo,hom|G|ὁμός|homos|same|bc|homozygous,homologous,homogeneous|p|hetero|False friend: in Homo sapiens, homo is Latin for ‘human’ — nothing to do with Greek homos.
+homeo-|homeo,homoeo,homoio|G|ὅμοιος|homoios|similar / like|b|homeostasis,homeotherm|p||Homeostasis: staying (stasis) similar — keeping internal conditions steady.
+hyper-|hyper|G|ὑπέρ|hyper|over / above / excessive|bp|hypertonic,hyperthermia,hyperglycaemia,hypermetropia|p|super|
+hypo-|hypo,hyp|G|ὑπό|hypo|under / below / too little|bcp|hypothermia,hypotonic,hypothalamus,hypothesis,hypotenuse|p|sub|The hypotenuse is the side ‘stretching under’ the right angle.
+infra-|infra|L|īnfrā||below / beneath|p|infrared,infrasound|p||Infrared lies ‘below red’ in frequency.
+inter-|inter|L|inter||between|bcp|intermolecular,interference,interphase,intercostal|p||
+intra-|intra|L|intrā||within / inside|bc|intracellular,intramolecular,intravenous|p|endo|
+macro-|macro,macr|G|μακρός|makros|large / long|bcp|macromolecule,macrophage,macroscopic|p|magn|
+magn-|magni,magn|L|magnus||great / large|pe|magnify,magnification,magnitude|p|macro|Not the root of magnet — that comes from Magnesia, a region of Greece.
+mega-|mega,megal|G|μέγας|megas|great; ×10⁶|p|megawatt,megajoule,megahertz|pu||
+meso-|meso,mes|G|μέσος|mesos|middle|bpe|mesosphere,mesophyll,mesoderm,meson|p|medi|The meson was named because its mass lies between those of the electron and proton.
+medi-|medi|L|medius||middle|bp|medium,median,intermediate|p|meso|
+meta-|meta,met|G|μετά|meta|after / beyond / change|bc|metabolism,metamorphosis,metaphase,metastable|p||
+micro-|micro,micr|G|μικρός|mikros|small; ×10⁻⁶|bcp|microscope,microorganism,micrometre,microwave|pu||
+multi-|multi|L|multus||many|bp|multicellular,multimeter,multiplication|p|poly|
+neo-|neo|G|νέος|neos|new|bc|neon,neodymium,Neolithic,neonatal|p|nov|
+omni-|omni|L|omnis||all|bp|omnivore,omnidirectional|p|pan|
+pan-|pan,pant|G|πᾶς, παντός|pas, pantos|all / every|be|pandemic,Pangaea,pancreas|p|omni|Pangaea, the supercontinent, is ‘all earth’ (gaia).
+para-|para|G|παρά|para|beside / beyond|bp|parallel,parallax,parasite,paramagnetic|p||A parasite feeds ‘beside’ another — Greek parasitos, one who eats (sitos, food) at another’s table.
+per-|per|L|per||through / thoroughly|bc|permeable,peroxide,perspiration|p||
+peri-|peri|G|περί|peri|around|bpe|perimeter,periscope,pericardium,perihelion,period|p|circum|Period is peri + hodos, ‘a way round’ — one full cycle.
+poly-|poly|G|πολύς|polys|many|bc|polymer,polygon,polypeptide,polyunsaturated|p|multi|
+post-|post|L|post||after / behind|b|posterior,postnatal|p||
+pre-|pre,prae|L|prae||before / in front|bc|precipitate,premolar|p||A precipitate falls out of solution ‘headlong’ (prae + caput, head).
+pro-|pro|G|πρό|pro|before / in front|b|prokaryote,prophase,proboscis|p||Latin prō (‘forward’) gives the same pro-, as in propulsion.
+proto-|proto,prot|G|πρῶτος|prōtos|first|bcp|proton,protozoa,protostar,protein,protist|p||
+pseudo-|pseudo,pseud|G|ψευδής|pseudēs|false|b|pseudopodium,pseudoscience|p||
+quadr-|quadri,quadru,quadr|L|quattuor / quadrus||four|bpc|quadrat,quadruped,quadrant,quadratic|p|tetra|A quadrat is the square frame used for sampling in ecology.
+re-|re|L|re-||back / again|pbc|reflection,refraction,respiration,resonance,reversible|p||
+retro-|retro|L|retrō||backwards|pbe|retrograde,retroreflector,retrovirus|p||
+sub-|sub|L|sub||under / below|bcpe|subatomic,subduction,subcutaneous,subsonic|p|hypo|
+super- / supra-|super,supra|L|super / suprā||above / beyond|bcpe|supersonic,superconductor,supernova,supersaturated|p|hyper|
+syn- / sym-|syn,sym|G|σύν|syn|together / with|bcp|synthesis,symbiosis,synapse,symmetry,synchronous|p|con|
+tele-|tele,tel|G|τῆλε|tēle|far off|pe|telescope,telemetry,telecommunications,television|p||Television is a hybrid word: Greek tēle + Latin vīsiō.
+trans-|trans,tran|L|trāns||across / through|bcp|transverse,transformer,transpiration,transition metal,translucent|p||
+ultra-|ultra|L|ultrā||beyond|p|ultraviolet,ultrasound,ultracentrifuge|p||Ultraviolet lies ‘beyond violet’ in frequency.
+uni-|uni|L|ūnus||one|bp|unicellular,uniform,universal indicator|p|mono|
+mono-|mono,mon|G|μόνος|monos|alone / single|bc|monomer,monosaccharide,monochromatic,monatomic|p|uni|
+tri-|tri|G|τρία|tria|three|bcp|triglyceride,tripod,trichromatic,triatomic|p||Latin trēs gives exactly the same tri-.
+tetra-|tetra,tetr|G|τετρα-|tetra-|four|bc|tetrahedral,tetrapod,tetrachloromethane|p|quadr|
+penta-|penta,pent|G|πέντε|pente|five|bc|pentagon,pentane,pentose,pentadactyl limb|p||
+hexa-|hexa,hex|G|ἕξ|hex|six|c|hexagon,hexane,hexose|p||
+hepta-|hepta,hept|G|ἑπτά|hepta|seven|c|heptane,heptagon|p||
+octa- / octo-|octa,octo,oct|G|ὀκτώ|oktō|eight|bc|octet rule,octane,octahedral,octopus|p||Latin octō is the same word — hence October, once the eighth month.
+nona-|nona|L|nōnus||ninth (nine)|c|nonane,nonagon|p||
+deca-|deca,deka|G|δέκα|deka|ten; ×10|bcp|decane,decapod,decagon|pu||
+kilo-|kilo|G|χίλιοι|chilioi|thousand; ×10³|pc|kilogram,kilowatt,kilojoule|pu||The metric system (France, 1795) used Greek for multiples and Latin for fractions: kilo- (Greek) versus milli- (Latin).
+hecto-|hecto,hect|G|ἑκατόν|hekaton|hundred; ×10²|pe|hectopascal,hectare|pu||Weather maps give air pressure in hectopascals.
+deci-|deci|L|decimus||tenth; ×10⁻¹|pc|decibel,decimetre,decimal|pu||
+centi-|centi|L|centum||hundredth; ×10⁻²|pb|centimetre,centipede,centigrade|pu||Not to be confused with centr- (centre).
+milli-|milli,mill|L|mīlle||thousandth; ×10⁻³|pcb|millimetre,millilitre,milliamp,millipede|pu||
+nano-|nano,nan|G|νᾶνος|nanos|dwarf; ×10⁻⁹|pc|nanometre,nanoparticle,nanotechnology|pu||
+pico-|pico|O|pico|Spanish|a little bit; ×10⁻¹²|p|picometre,picofarad,picosecond|pu||Usually traced to Spanish pico, ‘a small amount’ (some suggest Italian piccolo, ‘small’).
+femto-|femto|O|femten|Danish|fifteen; ×10⁻¹⁵|p|femtometre,femtosecond|pu||Adopted in 1964 for 10⁻¹⁵ — hence ‘fifteen’. A femtometre is about the size of a proton.
+atto-|atto|O|atten|Danish|eighteen; ×10⁻¹⁸|p|attosecond|pu||Adopted in 1964 for 10⁻¹⁸ — hence ‘eighteen’.
+zepto-|zepto|L|septem||seven; ×10⁻²¹|p|zeptosecond|pu||Adopted in 1991: 10⁻²¹ = (10⁻³)⁷. The s became z to avoid clashing with other symbols.
+yocto-|yocto|G|ὀκτώ|oktō|eight; ×10⁻²⁴|p|yoctosecond,yoctogram|pu||Adopted in 1991: 10⁻²⁴ = (10⁻³)⁸.
+ronto-|ronto|G|ἐννέα|ennea|loosely ‘nine’; ×10⁻²⁷|p|rontogram|pu||Adopted in 2022. Loosely based on ennea (nine) since 10⁻²⁷ = (10⁻³)⁹; r was one of the few letters not already taken.
+quecto-|quecto|L|decem||loosely ‘ten’; ×10⁻³⁰|p|quectogram|pu||Adopted in 2022. Loosely based on decem (ten) since 10⁻³⁰ = (10⁻³)¹⁰.
+giga-|giga|G|γίγας|gigas|giant; ×10⁹|p|gigawatt,gigahertz,gigabyte|pu||
+tera-|tera|G|τέρας|teras|monster; ×10¹²|p|terawatt,terabyte|pu||It also echoes tetra- (four), since 10¹² = (10³)⁴.
+peta-|peta|G|πέντε|pente|five; ×10¹⁵|p|petajoule,petabyte|pu||From penta- with the n dropped: 10¹⁵ = (10³)⁵.
+exa-|exa|G|ἕξ|hex|six; ×10¹⁸|pe|exajoule,exabyte|pu||From hexa- with the h dropped: 10¹⁸ = (10³)⁶.
+zetta-|zetta|L|septem||seven; ×10²¹|p|zettabyte,zettajoule|pu||Adopted in 1991.
+yotta-|yotta|G|ὀκτώ|oktō|eight; ×10²⁴|pe|yottabyte|pu||Adopted in 1991.
+ronna-|ronna|G|ἐννέα|ennea|loosely ‘nine’; ×10²⁷|pe|ronnagram|pu||Adopted in 2022. The Earth’s mass is about 6 ronnagrams.
+quetta-|quetta|L|decem||loosely ‘ten’; ×10³⁰|pe|quettagram|pu||Adopted in 2022. Jupiter’s mass is about 1.9 quettagrams.
+palaeo-|palaeo,palae,paleo|G|παλαιός|palaios|ancient|be|palaeontology,Palaeozoic,Palaeolithic|p||
+arthr-|arthro,arthr|G|ἄρθρον|arthron|joint|b|arthropod,arthritis|r||Arthropods have jointed legs.
+bio-|bio,bios,biot|G|βίος|bios|life|bce|biology,biosphere,antibiotic,symbiosis,biodiversity|r|vita|
+vit-|vita,vit|L|vīta||life|b|vitamin,vital capacity,vitality|r|bio|
+cardi-|cardio,cardi,card|G|καρδία|kardia|heart|b|cardiac muscle,cardiovascular,electrocardiogram,pericardium|r||
+cephal-|cephalo,cephal|G|κεφαλή|kephalē|head|b|cephalopod,encephalitis,cephalisation|r||Cephalopods (octopus, squid) have their ‘feet’ attached to their heads.
+cerebr-|cerebro,cerebr,cerebell|L|cerebrum||brain|b|cerebral cortex,cerebrospinal fluid,cerebellum|r||Cerebellum means ‘little brain’.
+cortex|cortex,cortic,cort|L|cortex, corticis||bark / outer layer|b|cerebral cortex,adrenal cortex,corticosteroid|r||
+chondr-|chondrion,chondrio,chondri,chondro,chondr|G|χόνδρος|chondros|grain / cartilage|b|mitochondrion,chondrocyte|r||Mitochondrion means ‘thread-granule’ (mitos + chondrion), from how they looked under early microscopes.
+cyt- / -cyte|cyto,cyte,cyt|G|κύτος|kytos|hollow vessel → cell|b|cytoplasm,erythrocyte,leucocyte,cytokinesis,phagocyte|r||
+cell-|cellul,cell|L|cella / cellula||small room|b|cell,cellulose,cellular respiration,multicellular|r||Robert Hooke (1665) saw tiny boxes in cork that reminded him of monks’ cells.
+dent-|denti,dent|L|dēns, dentis||tooth|b|dentition,dentine,dental formula|r|odont|
+odont-|odonto,odont|G|ὀδούς, ὀδόντος|odous, odontos|tooth|b|orthodontist,periodontal,odontoblast|r|dent|
+derm-|dermato,dermat,dermis,derma,derm|G|δέρμα|derma|skin|b|epidermis,dermatology,ectoderm,pachyderm|r|cuti|
+cut-|cuti,cut|L|cutis||skin|b|subcutaneous,cuticle|r|dermato|Cuticle means ‘little skin’.
+gastr-|gastro,gastr|G|γαστήρ, γαστρός|gastēr, gastros|stomach / belly|b|gastric juice,gastropod,gastrointestinal|r||Gastropods (snails and slugs) walk on their belly-foot.
+hepat-|hepato,hepat|G|ἧπαρ, ἥπατος|hēpar, hēpatos|liver|b|hepatic portal vein,hepatitis,hepatocyte|r||
+haem-|haemato,haemat,haemo,haema,haem,hemo,hema,hem|G|αἷμα, αἵματος|haima, haimatos|blood|b|haemoglobin,haematology,haemophilia,haemorrhage|r||American spelling drops the a: hemoglobin.
+-aemia|aemia,emia|G|αἷμα|haima|blood condition|b|anaemia,leukaemia,hyperglycaemia|s||
+hist-|histo,hist|G|ἱστός|histos|web, loom → tissue|b|histology,histone,histamine|r||Tissues were pictured as woven fabric.
+leuc- / leuk-|leuco,leuko,leuc,leuk|G|λευκός|leukos|white|b|leucocyte,leukaemia,leucoplast|r||
+erythr-|erythro,erythr|G|ἐρυθρός|erythros|red|b|erythrocyte,erythropoietin,erythema|r|rubi|
+rub-|rubi,rub|L|ruber / rubidus||red|bc|rubidium,rubella,ruby|r|erythro|Rubidium is named after the deep red lines in its spectrum.
+cyan-|cyano,cyan|G|κύανος|kyanos|dark blue|bc|cyanobacteria,cyanide,anthocyanin|r||Cyanide was first made from the pigment Prussian blue.
+chlor-|chloro,chlor|G|χλωρός|chlōros|pale green / yellow-green|bc|chlorophyll,chloroplast,chlorine,chlorosis|r||Chlorine gas is yellow-green.
+chrom-|chromato,chromat,chromo,chrome,chrom|G|χρῶμα, χρώματος|chrōma, chrōmatos|colour|bcp|chromosome,chromatography,monochromatic,chromium|r|color|
+color-|colour,color|L|color||colour|cp|colorimeter,colorimetry,colour|r|chromo|
+lip-|lipo,lipid,lip|G|λίπος|lipos|fat|bc|lipid,lipase,phospholipid,lipoprotein|r||
+glyc- / gluc-|glyco,glycer,glyc,gluco,gluc|G|γλυκύς|glykys|sweet|bc|glucose,glycogen,glycolysis,glycerol,glucagon|r||
+sacchar-|saccharo,sacchar,saccharide|G|σάκχαρον|sakcharon|sugar|bc|monosaccharide,disaccharide,polysaccharide|r||
+amyl-|amylo,amyl|G|ἄμυλον|amylon|starch|bc|amylase,amylose,amylopectin|r||
+-ase|ase|O|diastase|French|enzyme|bc|amylase,lipase,protease,catalase|g||Taken from diastase (Greek diastasis, separation), the first enzyme isolated, in 1833.
+-ose|ose|O|glucose|French|sugar|bc|glucose,fructose,lactose,cellulose|g||Taken from glucose (French, from Greek gleukos, sweet wine).
+lact-|lacto,lact|L|lac, lactis||milk|b|lactose,lactic acid,lactation,lactobacillus|r|galacto|
+galact-|galacto,galact,galax|G|γάλα, γάλακτος|gala, galaktos|milk|be|galaxy,galactose|r|lacto|Our galaxy is the Milky Way: galaxias kyklos, the ‘milky circle’.
+my-|myo,myos,my|G|μῦς, μυός|mys, myos|muscle (also ‘mouse’)|b|myosin,myocardium,myoglobin|r||Greek mys meant both mouse and muscle — a flexing muscle looks like a mouse moving under the skin.
+neur-|neuro,neuron,neur|G|νεῦρον|neuron|sinew / nerve|b|neurone,neurotransmitter,neurology|r||
+nephr-|nephro,nephr|G|νεφρός|nephros|kidney|b|nephron,nephritis,nephrology|r|reni|
+ren-|reni,ren|L|rēnēs||kidneys|b|renal artery,adrenal gland,renin|r|nephro|Adrenal glands sit ad- (next to) the kidneys.
+oste-|osteo,oste|G|ὀστέον|osteon|bone|b|osteoporosis,osteocyte,osteoblast|r|ossi|
+oss-|ossi,oss|L|os, ossis||bone|b|ossicles,ossification|r|osteo|
+ophthalm-|ophthalmo,ophthalm|G|ὀφθαλμός|ophthalmos|eye|b|ophthalmology,ophthalmoscope|r|oculo|
+ocul-|oculo,ocul|L|oculus||eye|bp|binocular,monocular,ocular|r|ophthalmo|
+opt-|opto,optic,opt|G|ὀπτικός|optikos|relating to sight|bp|optics,optical fibre,optic nerve,optometrist|r|vis|
+vis- / vid-|vis,vid|L|vidēre, vīsus||to see|pb|visible light,vision,television,video|r|opto|
+pneum-|pneumon,pneumo,pneumat,pneum|G|πνεῦμα / πνεύμων|pneuma / pneumōn|breath, air / lung|bp|pneumonia,pneumatic,pneumothorax|r|pulmon|
+pulmo-|pulmon,pulmo|L|pulmō, pulmōnis||lung|b|pulmonary artery,pulmonary vein|r|pneumon|
+bronch-|bronchi,broncho,bronch|G|βρόγχος|bronchos|windpipe|b|bronchus,bronchiole,bronchitis|r||
+alveol-|alveol|L|alveolus||small hollow / cavity|b|alveoli,alveolar|r||
+capill-|capill|L|capillus||hair|bp|capillary,capillary action|r||Capillaries are as fine as hairs.
+pod-|podo,pod,pus|G|πούς, ποδός|pous, podos|foot|b|arthropod,cephalopod,podiatrist,octopus|r|pede|
+ped-|pede,pedi,ped|L|pēs, pedis||foot|b|biped,quadruped,centipede,pedal|r|podo|False friend: paediatrics comes from Greek pais (child), not from pēs.
+rhiz-|rhizo,rrhiza,rhiz|G|ῥίζα|rhiza|root|b|rhizome,mycorrhiza,rhizobium|r|radic|
+radic-|radic,radix|L|rādīx, rādīcis||root|bc|radicle,free radical,eradicate|r|rhizo|
+phyt-|phyto,phyte,phyt|G|φυτόν|phyton|plant|b|phytoplankton,epiphyte,xerophyte,halophyte|r||
+phyll-|phyllo,phyll|G|φύλλον|phyllon|leaf|b|chlorophyll,mesophyll|r|folio|
+foli-|folio,foli|L|folium||leaf|b|foliage,defoliation,trifoliate|r|phyllo|
+flor-|flori,flor|L|flōs, flōris||flower|b|flora,floral,floret|r|antho|
+anth-|antho,anth|G|ἄνθος|anthos|flower|b|anther,anthocyanin,chrysanthemum|r|flori|Anthocyanins are the ‘flower-blue’ pigments of petals and red cabbage.
+sperm-|spermato,spermat,spermo,sperm|G|σπέρμα|sperma|seed|b|gymnosperm,angiosperm,spermatozoa|r||
+gymn-|gymno,gymn|G|γυμνός|gymnos|naked|b|gymnosperm|r||Gymnosperms (conifers) have ‘naked’ seeds, not enclosed in a fruit.
+angi-|angio,angi|G|ἀγγεῖον|angeion|vessel / container|b|angiosperm,angiogram,angioplasty|r|vasculo|Angiosperms have seeds enclosed in a vessel — the fruit.
+vas-|vasculo,vascul,vaso,vas|L|vās / vāsculum||vessel / little vessel|b|vascular bundle,vasodilation,vasoconstriction,cardiovascular|r|angio|
+ven-|veno,vena,ven|L|vēna||vein|b|vena cava,venous,intravenous,venule|r||
+lymph-|lympho,lymph|L|lympha||clear water|b|lymph,lymphocyte,lymphatic system|r||
+xyl-|xylo,xyl|G|ξύλον|xylon|wood|b|xylem,xylophone,xylitol|r||
+phloem|phloem|G|φλοιός|phloios|bark|b|phloem|r||
+xer-|xero,xer|G|ξηρός|xēros|dry|b|xerophyte,xerography|r||Xerophytes, such as cacti, are adapted to dry habitats.
+stom-|stomata,stomat,stoma,stom|G|στόμα, στόματος|stoma, stomatos|mouth|b|stomata,stomach|r||Stomata are the tiny ‘mouths’ on a leaf.
+crin-|crine,crin|G|κρίνειν|krinein|to separate (secrete)|b|endocrine,exocrine|r||
+insul-|insul|L|īnsula||island|bp|insulin,insulator,insulation,peninsula|r||Insulin comes from the ‘islets’ of the pancreas; an insulator ‘islands’ a conductor.
+zo-|zoo,zoa,zoon|G|ζῷον|zōion|animal / living being|b|zoology,zooplankton,protozoa,spermatozoa|r||
+-zoic|zoic|G|ζωικός|zōikos|of animal life|e|Palaeozoic,Mesozoic,Cenozoic|s||Geological eras named after the kinds of animal life in their rocks.
+plankt-|plankton,plankt|G|πλαγκτός|planktos|drifting / wandering|b|plankton,phytoplankton,zooplankton|r||A cousin of planet — both ‘wander’.
+gam-|gameto,gamet,gamy,gamo|G|γάμος|gamos|marriage → union|b|gamete,gametophyte,polygamy|r||Gametes ‘marry’ (fuse) at fertilisation.
+gen-|genet,genesis,genous,genic,genes,geno,gene,gen|G|γένος / γίγνομαι|genos / gignomai|birth, kind / to produce|bc|gene,genetics,pathogen,hydrogen,oxygen,carcinogen|r||
+zyg-|zygo,zyg|G|ζυγόν|zygon|yoke / pair|b|zygote,heterozygous,homozygous|r||
+haplo-|haplo,hapl|G|ἁπλόος|haploos|single|b|haploid|r||
+diplo-|diplo,dipl|G|διπλόος|diploos|double|b|diploid,diplococcus|r||
+-blast|blasto,blast|G|βλαστός|blastos|bud / sprout|b|osteoblast,blastocyst,blastula|s||
+morph-|morpho,morph|G|μορφή|morphē|form / shape|bc|morphology,metamorphosis,polymorphism,amorphous|r|form|
+form-|form|L|forma||shape|bpc|deformation,uniform,formula|r|morpho|
+path-|patho,pathy,path|G|πάθος|pathos|suffering / disease|b|pathogen,pathology,neuropathy|r||
+phag-|phago,phage,phagy,phag|G|φαγεῖν|phagein|to eat|b|phagocyte,bacteriophage,oesophagus,macrophage|r|vorous|A macrophage is a ‘big eater’ that engulfs pathogens.
+vor-|vorous,vore,vor|L|vorāre||to devour|b|herbivore,carnivore,omnivore,insectivorous|r|phago|
+carn-|carni,carn|L|carō, carnis||flesh|b|carnivore,carnassial teeth|r||
+herb-|herbi,herb|L|herba||grass / green plant|b|herbivore,herbicide,herbaceous|r||
+detrit-|detriti,detrit|L|dētrītus||worn away|be|detritivore,detritus|r||
+troph-|tropho,trophy,troph|G|τροφή|trophē|nourishment|b|autotroph,heterotroph,trophic level,eutrophication|r||
+trop-|tropism,tropo,tropy,trop|G|τρόπος / τροπή|tropos / tropē|a turning|bpe|phototropism,gravitropism,troposphere,entropy|r||The troposphere is the ‘turning’ layer where air is constantly mixing.
+tax-|taxo,taxis,tax|G|τάξις|taxis|arrangement|b|taxonomy,phototaxis|r||
+nom-|nomy,nomi,nom|G|νόμος|nomos|law / arrangement|bpe|astronomy,taxonomy,economy|r||
+plasm- / plast-|plasmo,plasma,plasm,plast|G|πλάσμα / πλαστός|plasma / plastos|something moulded|bp|cytoplasm,plasma,chloroplast,plasmid,plastic|r||
+-some / soma-|somato,somat,soma,some,som|G|σῶμα|sōma|body|b|chromosome,ribosome,lysosome,somatic cell|r|corpus|
+corp-|corpus,corpor,corp|L|corpus, corporis||body|b|corpuscle,corpus callosum|r|somato|Corpuscle means ‘little body’.
+lys- / lyt-|lysis,lyso,lyse,lyte,lyst,lytic,lyt,lys|G|λύσις|lysis|loosening / splitting|bc|hydrolysis,electrolysis,lysosome,electrolyte,catalyst|r|solv|
+solv- / solu-|solv,solut,solub,solu|L|solvere, solūtus||to loosen / dissolve|c|solvent,solution,solute,soluble,dissolve|r|lysis|
+-cide|cide,cidal|L|caedere||to kill|bc|pesticide,herbicide,insecticide,fungicide|s||Nothing to do with acid, which comes from Latin acidus, sour.
+acid-|acid|L|acidus||sour|c|acid,acidity,antacid|r||
+alkal-|alkali,alkal|O|al-qalī|Arabic|plant ashes|c|alkali,alkaline,alkali metals|r||Alkane and alkyl are unrelated: they come from alcohol.
+bacter-|bacteria,bacterio,bacteri,bacter|G|βακτήριον|baktērion|little rod / staff|b|bacterium,bacteriophage,bacteriology|r||The first bacteria described clearly were rod-shaped.
+myc-|myco,mycet,mycel,myc|G|μύκης, μύκητος|mykēs, mykētos|fungus / mushroom|b|mycology,mycelium,mycorrhiza|r|fungi|
+fung-|fungi,fung|L|fungus||mushroom / fungus|b|fungicide,fungal|r|myco|
+vir-|viro,viri,virus,vir|L|vīrus||poison / slimy liquid|b|virology,antiviral,virion,retrovirus|r||
+immun-|immuno,immun|L|immūnis||exempt (free from a duty)|b|immunity,immunology,autoimmune|r||
+tox-|toxico,toxic,toxin,toxi,tox|G|τοξικόν|toxikon|arrow poison|b|toxin,toxicology,cytotoxic|r||From toxon, a bow: toxikon pharmakon was poison smeared on arrows.
+-itis|itis|G|-ῖτις|-itis|inflammation|b|arthritis,appendicitis,hepatitis|s||
+-osis|osis|G|-ωσις|-ōsis|condition / process|b|mitosis,meiosis,osmosis,osteoporosis|s||
+osm-|osmo,osm|G|ὠσμός|ōsmos|a push|bc|osmosis,osmotic,osmoregulation|r||Not the root of osmium, which comes from osmē, ‘smell’.
+mit-|mito,mit|G|μίτος|mitos|thread|b|mitosis,mitochondrion|r||Chromosomes look like threads during mitosis.
+mei-|meio,mei|G|μείωσις|meiōsis|a lessening|b|meiosis|r||Meiosis halves the chromosome number.
+kary-|karyo,kary,caryo|G|κάρυον|karyon|nut / kernel|b|prokaryote,eukaryote,karyotype|r|nucleo|
+nucle-|nucleo,nucleus,nucle|L|nucleus||little nut / kernel|bcp|nucleus,nucleotide,nucleon,nuclear fission|r|karyo|Nucleus is the diminutive of nux, a nut.
+-oid|oid,oidal|G|εἶδος|eidos|like / resembling|bcpe|asteroid,diploid,thyroid,solenoid|g||Asteroid means ‘star-like’ (William Herschel, 1802).
+eco-|eco,oeco,oec|G|οἶκος|oikos|house / household|be|ecology,ecosystem,economy|r||Ernst Haeckel coined Ökologie in 1866.
+entom-|entomo,entom|G|ἔντομον|entomon|insect (‘cut into’)|b|entomology|r|sect|
+sect-|sect|L|secāre, sectus||to cut|b|dissection,insect,section|r|entomo|Insects are ‘cut into’ segments — a Latin translation of Greek entomon.
+-tomy / tom-|tomy,tome,tom|G|τομή|tomē|cutting|bp|anatomy,atom,dichotomous key|r||An atom (a + tomos) is ‘uncuttable’.
+ichthy-|ichthyo,ichthy|G|ἰχθύς|ichthys|fish|be|ichthyology,ichthyosaur|r|pisci|
+pisc-|pisci,pisc|L|piscis||fish|b|piscivore,Pisces|r|ichthyo|
+avi-|avia,avi|L|avis||bird|b|avian,aviary,aviation|r|ornitho|
+ornith-|ornitho,ornith|G|ὄρνις, ὄρνιθος|ornis, ornithos|bird|b|ornithology,ornithischian|r|avia|
+saur-|sauro,saur|G|σαῦρος|sauros|lizard|be|dinosaur,ichthyosaur,plesiosaur|r||Dinosaur means ‘terrible lizard’ (Richard Owen, 1842).
+anthrop-|anthropo,anthrop|G|ἄνθρωπος|anthrōpos|human being|be|anthropology,anthropogenic,Anthropocene|r||
+-cene|cene|G|καινός|kainos|new / recent|e|Holocene,Anthropocene,Pleistocene|s||
+mamm-|mamma,mamm|L|mamma||breast|b|mammal,mammary gland|r||
+fossil-|fossil,foss|L|fossilis||dug up|be|fossil,fossil fuel,fossorial|r||
+-phil|philic,phile,philia,phil|G|φίλος|philos|loving|bc|hydrophilic,extremophile,lipophilic,haemophilia|r||
+-phob|phobic,phobe,phobia,phob|G|φόβος|phobos|fear|bc|hydrophobic,phobia|r||Phobos, a moon of Mars, is named after the Greek god of fear.
+stas- / stat-|stasis,stat,stas|G|στάσις|stasis|standing still|bp|homeostasis,electrostatic,thermostat|r||
+bol-|bolism,bol|G|βολή|bolē|a throw|b|metabolism,anabolism,catabolism|r||Metabolism is ‘change’ — Greek metabolē.
+zym-|zyme,zym|G|ζύμη|zymē|leaven / yeast|b|enzyme,zymase|r||Wilhelm Kühne coined enzyme (1877) — ‘in yeast’.
+hormon-|hormon|G|ὁρμῶν|hormōn|setting in motion|b|hormone,hormonal|r||Coined by Ernest Starling in 1905.
+iris|iris,irid|G|ἶρις, ἴριδος|iris, iridos|rainbow|bpc|iris,iridium,iridescence|r||The iris comes in many colours; so do iridium’s salts.
+thes-|thesis,thes,thet|G|θέσις|thesis|a placing / putting|bc|photosynthesis,hypothesis,synthetic|r||Photosynthesis ‘puts together’ sugars using light.
+hydr-|hydro,hydra,hydrat,hydr|G|ὕδωρ, ὕδατος|hydōr, hydatos|water|bcpe|hydrogen,hydroelectric,dehydration,hydrolysis,hydraulic|r|aqua|
+aqu-|aqua,aque,aqui,aqu|L|aqua||water|bce|aqueous solution,aquifer,aquatic|r|hydro|
+hal-|halo,hali,hal|G|ἅλς, ἁλός|hals, halos|salt / sea|bc|halogen,halide,halite,halophyte|r|salin|Halogens are ‘salt-formers’.
+sal-|salin,sali,sal|L|sāl, salis||salt|bc|saline,salinity|r|halo|
+mar-|marin,mari,mar|L|mare||sea|be|marine,submarine,maritime|r||
+oxy-|oxy,oxi,ox|G|ὀξύς|oxys|sharp / acid|bc|oxygen,oxidation,dioxide,peroxide|r||Lavoisier named oxygen ‘acid-former’ (1777), wrongly thinking all acids contain it.
+-ide|ide|O|oxide|French|binary compound|c|chloride,oxide,sulfide,hydride|g||Spread from French oxide (1787), a blend of oxygène and acide.
+-ate / -ite|ate,ite|L|-ātus||salts of oxoacids (-ate more oxygen, -ite less)|c|sulfate,sulfite,nitrate,nitrite|g||In mineral names (halite, graphite) -ite instead comes from Greek -itēs, ‘belonging to’.
+-in / -ine|ine,in|L|-īnus||chemical substance; halogen ending|bc|chlorine,fluorine,amine,haemoglobin,insulin|g||Humphry Davy gave chlorine its -ine in 1810, and the other halogens followed.
+-ium / -um|ium,um|L|-ium||metal / element ending|c|sodium,potassium,uranium,helium|g||Davy began the -ium habit with potassium and sodium (1807). Helium got the metal ending because it was assumed, wrongly, to be a metal.
+-on|on|G|-ον|-on|particle (after electron); noble gas|pc|electron,proton,neutron,photon,neon,argon|g||Later particles copied the ending of electron.
+-ane / -ene / -yne|ane,ene,yne|O|Hofmann|German|single / double / triple C–C bond|c|ethane,ethene,ethyne,propane|g||August Hofmann (1866) proposed running through the vowels: -ane, -ene, -ine, -one, -une.
+-ol|ol|O|alcohol|Arabic via English|alcohol (–OH group)|c|methanol,ethanol,glycerol,cholesterol|g||Taken from the end of alcohol.
+-yl|yl|G|ὕλη|hylē|wood, matter → group of atoms|c|methyl,ethyl,hydroxyl,carbonyl|g||Liebig and Wöhler used -yl (1832) for groups of atoms that behave as a unit.
+meth-|methan,methyl,metha,meth|G|μέθυ + ὕλη|methy + hylē|wine + wood → 1 carbon|c|methane,methanol,methyl orange|r||Methyl alcohol (methanol) was ‘wood wine’ — distilled from wood.
+eth-|ethan,ethyl,etha,eth|G|αἰθήρ|aithēr|upper air → 2 carbons|c|ethane,ethanol,ethene|r||From ether, named after the ‘upper air’ because it evaporates so readily.
+prop-|propan,propyl,propa,prop|G|πρῶτος + πίων|prōtos + piōn|first + fat → 3 carbons|c|propane,propanol,propene|r||From propionic acid, the ‘first fatty’ acid.
+but-|butan,butyl,buta,but|L|būtȳrum||butter → 4 carbons|c|butane,butanol,butene|r||From butyric acid, which gives rancid butter its smell.
+carb-|carbon,carbo,carb|L|carbō, carbōnis||charcoal / coal|cbe|carbon,carbohydrate,carbonate,Carboniferous|r||
+nitr-|nitro,nitr|G|νίτρον|nitron|natron / saltpetre|cb|nitrogen,nitrate,nitrification,nitric acid|r||Nitrogen means ‘saltpetre-former’ (Jean-Antoine Chaptal, 1790).
+sulf- / sulph-|sulpho,sulph,sulfo,sulf|L|sulfur||brimstone|c|sulfate,sulfuric acid,sulfide,sulfur dioxide|r||IUPAC and UK exam boards now use sulfur; sulphur is the older British spelling.
+phosph-|phosphor,phospho,phosph|G|φωσφόρος|phōsphoros|light-bearer|bc|phosphorus,phosphorescence,phosphate,phospholipid|r||White phosphorus glows in the dark.
+calc-|calci,calc|L|calx, calcis||lime / limestone|cbe|calcium,calcium carbonate,calcite,calcification|r||Its diminutive calculus, ‘small pebble’, gave calculate — Romans counted with pebbles.
+silic-|silico,silic|L|silex, silicis||flint|cpe|silicon,silicate,silica|r||
+ferr-|ferro,ferri,ferr|L|ferrum||iron|cp|ferrous,ferric,ferromagnetic|r||
+cupr-|cupro,cupr|L|cuprum||copper (‘metal of Cyprus’)|c|cupric,cuprous|r||
+argent-|argento,argent|L|argentum||silver|c|argentite|r||Argentina is the ‘land of silver’.
+aur-|auri,aur|L|aurum||gold|c|auric,auriferous|r||Aurora is unrelated — it is Latin for ‘dawn’.
+plumb-|plumbo,plumb|L|plumbum||lead|c|plumbing,plumb line|r||Roman water pipes were made of lead.
+stann-|stann|L|stannum||tin|c|stannous,stannic|r||
+chem-|chemi,chemo,chem|O|al-kīmiyā|Arabic|alchemy → chemistry|cb|chemical,chemistry,chemosynthesis|r||Via Medieval Latin alchimia from Arabic al-kīmiyā. Where kīmiyā came from is disputed — perhaps Greek khēmeia, or an old name for Egypt.
+ammon- / amin-|ammon,amin,amid,amm|O|Ammōn|Greek (Egyptian god)|of (the temple of) Ammon|cb|ammonia,amine,amino acid,amide|r||Sal ammoniac, ‘salt of Ammon’, was collected near a temple of the god Ammon in Libya. Ammonia, amines and amino acids all descend from it.
+acet-|aceto,acet|L|acētum||vinegar|c|acetic acid,acetone,acetate|r||Acetic acid (ethanoic acid) gives vinegar its sour taste.
+mer-|mer,meri,mero|G|μέρος|meros|part|c|polymer,monomer,isomer,dimer|r||Berzelius coined isomer (1830) and polymer (1833).
+stereo-|stereo|G|στερεός|stereos|solid / three-dimensional|cp|stereoisomer,stereochemistry,cholesterol|r||Cholesterol was first found as a solid in gallstones (cholē = bile).
+stoichi-|stoichio,stoich|G|στοιχεῖον|stoicheion|element / letter|c|stoichiometry|r||
+crystall-|crystallo,crystall,crystal|G|κρύσταλλος|krystallos|ice → clear crystal|cp|crystal,crystallisation,crystallography|r||The Greeks thought rock crystal (quartz) was ice frozen so hard it could never melt.
+cry-|cryo,cry|G|κρύος|kryos|icy cold / frost|pc|cryogenics,cryopreservation|r||
+ion|ionis,ioniz,ionic|G|ἰόν|ion|going (one that goes)|pc|ion,anion,cation,ionisation|r||Faraday and Whewell (1834): anions go ‘up’ (ana) to the anode; cations go ‘down’ (kata) to the cathode.
+-ode / hod-|ode,hod,odic|G|ὁδός|hodos|way / path|pc|anode,cathode,electrode,diode,period,method|r||
+nod-|node,nodal,nod|L|nōdus||knot|pb|node,antinode,lymph node|r||
+hedr-|hedron,hedral,hedr|G|ἕδρα|hedra|seat / face|cp|tetrahedral,polyhedron,octahedral|r||
+gon-|gon,gono|G|γωνία|gōnia|angle|p|polygon,hexagon,diagonal,trigonometry|r||
+aer-|aero,aer|G|ἀήρ|aēr|air|bp|aerobic,anaerobic,aerodynamics,aerosol|r||
+atm-|atmo,atm|G|ἀτμός|atmos|vapour / steam|pe|atmosphere,atmospheric pressure|r||
+spher-|sphere,sphero,spheric,spher|G|σφαῖρα|sphaira|ball / globe|pe|atmosphere,hemisphere,spherical,lithosphere|r|globu|
+glob-|globu,globul,globe,glob|L|globus||ball / sphere|b|globule,haemoglobin,global|r|sphere|
+astr-|astro,astr,aster,astron|G|ἄστρον / ἀστήρ|astron / astēr|star|pe|astronomy,astrophysics,asteroid,astronaut|r|stell|Disaster (dis + astrum) was a misfortune blamed on an ‘ill star’.
+stell-|stell,stella|L|stella||star|pe|stellar,interstellar,constellation|r|astro|
+cosm-|cosmo,cosm|G|κόσμος|kosmos|order → the universe|pe|cosmology,cosmic microwave background,cosmonaut|r||
+planet-|planet|G|πλανήτης|planētēs|wanderer|pe|planet,planetary nebula,planetesimal|r||Planets ‘wander’ against the background of fixed stars.
+helio-|helio,heli|G|ἥλιος|hēlios|Sun|pec|helium,heliocentric,aphelion,perihelion,heliosphere|r|sol|Helium was first detected in the Sun’s spectrum, in 1868.
+sol-|solar,sol|L|sōl||Sun|pe|solar system,solstice,solar cell|r|helio|At a solstice the Sun seems to stand still (sistere).
+lun-|luna,luni,lun|L|lūna||Moon|pe|lunar,lunar eclipse,lunation|r|seleno|
+selen-|seleno,selene,selen|G|σελήνη|selēnē|Moon|ce|selenium,selenology|r|luna|Selenium (the Moon) was named as a partner for tellurium (the Earth).
+geo-|geo,gee|G|γῆ|gē|Earth|pe|geology,geography,geothermal,perigee,apogee|r|terra|
+terr-|terrestr,terra,terre,terr|L|terra||earth / land|pe|terrestrial,extraterrestrial,subterranean,terrain|r|geo|
+tellur-|tellur|L|tellūs, tellūris||the Earth|c|tellurium|r||
+lith-|litho,lith|G|λίθος|lithos|stone|ce|lithosphere,lithium,monolith,Palaeolithic|r||
+petr-|petro,petr|G|πέτρα|petra|rock|ce|petrol,petroleum,petrology|r||Petroleum is ‘rock oil’ (petra + oleum).
+sed-|sedi,sed|L|sedēre||to sit / settle|ce|sediment,sedimentary rock,sedentary|r||
+strat-|strato,strat|L|strātum||layer (something spread out)|pe|stratosphere,stratum,stratification|r||
+seism-|seismo,seism|G|σεισμός|seismos|shaking / earthquake|pe|seismic wave,seismometer,seismology,seismograph|r||
+ign-|igni,igne,ign|L|ignis||fire|ce|igneous rock,ignition,ignite|r|pyro|
+pyr-|pyro,pyre,pyr|G|πῦρ, πυρός|pyr, pyros|fire|ce|pyrometer,pyroclastic,pyrite,pyrolysis|r|igni|Pyrite (fool’s gold) throws sparks when struck.
+meteor-|meteoro,meteor|G|μετέωρος|meteōros|lofty / high in the air|pe|meteor,meteorite,meteorology|r||Meteorology studies weather, not meteors — both are things ‘high in the air’.
+nebul-|nebul|L|nebula||mist / little cloud|pe|nebula,planetary nebula|r||
+nov-|nova,nov|L|novus||new|pe|nova,supernova,innovation|r|neo|A nova looked like a ‘new star’ — really an old star flaring up.
+umbr-|umbra,umbr|L|umbra||shadow|pe|umbra,penumbra|r||The penumbra is the ‘almost shadow’ (paene + umbra), a word coined by Kepler.
+orb-|orbit,orb|L|orbis / orbita||ring / track of a wheel|pe|orbit,orbital|r||
+naut-|nauti,naut|G|ναύτης|nautēs|sailor|pe|astronaut,cosmonaut,nautical|r||
+chron-|chrono,chron|G|χρόνος|chronos|time|pb|chronometer,synchronous,chronological|r|tempor|
+tempor-|tempor,tempo|L|tempus, temporis||time|p|temporal,temporary,contemporary|r|chrono|False friend: temperature comes from temperāre, ‘to mix in proportion’.
+therm-|thermo,thermi,therm|G|θέρμη|thermē|heat|pcb|thermometer,thermal,endothermic,thermistor,thermodynamics|r|calor|
+calor-|calori,calor|L|calor||heat|pc|calorimeter,calorie,calorific value|r|thermo|
+dynam-|dynamo,dynam,dyna,dyn|G|δύναμις|dynamis|power / force|p|dynamics,thermodynamics,dynamo,aerodynamic|r||
+kine- / cine-|kinemat,kinet,kinesis,kine,cine|G|κινεῖν / κίνησις|kinein / kinēsis|to move / movement|pb|kinetic energy,kinematics,cytokinesis,cinema|r|moti|
+mot- / mov-|moment,motor,moti,mot,mov,mob|L|movēre, mōtus||to move|pb|motion,locomotion,motor neurone,momentum,mobile|r|kine|Momentum is a shortened form of Latin movimentum.
+erg-|ergy,ergo,erg|G|ἔργον|ergon|work|p|energy,ergonomics,synergy|r||Energy is en + ergon: ‘work within’.
+grav-|gravit,gravi,grav|L|gravis||heavy|pe|gravity,gravitational field,gravimetric|r|baro|
+bar-|baro,bary,bar|G|βάρος / βαρύς|baros / barys|weight / heavy|pc|barometer,isobar,barium,baryon,barycentre|r|gravi|
+press-|press|L|premere, pressus||to press|p|pressure,compression,compressor|r||
+vect-|vect,vehic|L|vehere, vectus||to carry|pb|vector,convection,advection,vehicle|r||A vector ‘carries’ you from one point to another — or carries a disease between hosts.
+-fer|ferous,fer|L|ferre||to carry / bear|bpe|conifer,aquifer,transfer,Carboniferous|s||
+flu- / flux|fluct,fluor,flux,flu|L|fluere, fluxus||to flow|pc|fluid,magnetic flux,fluorescence,fluctuation|r||Fluorite (fluorspar) was used as a flux in smelting — and gave fluorine and fluorescence their names.
+fract-|fract,frag,frang|L|frangere, frāctus||to break|p|refraction,diffraction,fracture,fragment|r||Refraction: light ‘breaks back’ at a boundary.
+flect- / flex-|flect,flex|L|flectere, flexus||to bend|p|reflection,reflex,flexible,deflection|r||
+centr-|centri,centre,center,centro,centr|L|centrum||centre (originally a sharp point)|pbe|centripetal force,centrifuge,centre of mass,concentric,centriole|r||From Greek kentron, the sharp point of a pair of compasses.
+pet-|pet|L|petere||to seek / head towards|p|centripetal,impetus|r||Centripetal force is ‘centre-seeking’.
+fug-|fuge,fug|L|fugere||to flee|p|centrifugal,centrifuge,refuge|r||
+gyr-|gyro,gyr|G|γῦρος|gyros|circle / ring|p|gyroscope,gyration,gyre|r||
+rot-|rota,rot|L|rota||wheel|pe|rotation,rotor,rotate|r||
+cycl-|cyclo,cycle,cycl|G|κύκλος|kyklos|circle / wheel|pbe|cycle,cyclotron,bicycle,cyclone|r||
+vert- / vers-|verse,vert,vers|L|vertere, versus||to turn|p|inversion,transverse,reversible,vertex,universe|r||
+torq- / tors-|torq,tors,tort|L|torquēre, tortus||to twist|p|torque,torsion,distortion|r||
+libr-|librium,libra,libr|L|lībra||balance / pair of scales|pc|equilibrium,libration,Libra|r||Equilibrium: ‘equal balance’.
+pend-|pendul,pend,pens|L|pendere||to hang / weigh|p|pendulum,suspension,pendant|r||
+oscill-|oscill|L|ōscillāre||to swing|p|oscillation,oscilloscope,oscillator|r||
+vibr-|vibr|L|vibrāre||to shake|p|vibration,vibrate|r||
+celer-|celer|L|celer||swift|p|acceleration,deceleration,accelerometer|r||
+veloc-|veloci,veloc|L|vēlōx, vēlōcis||swift|p|velocity,Velociraptor|r||
+inert-|inert|L|iners, inertis||idle / inactive|pc|inertia,inert gas|r||Kepler borrowed inertia, ‘idleness’, for matter’s resistance to changes in motion.
+fric-|frict,fric|L|fricāre, frictus||to rub|p|friction,frictional force|r||
+tract-|tract|L|trahere, tractus||to pull / drag|pb|traction,attraction,contraction,tractor|r||
+puls-|puls,pell|L|pellere, pulsus||to push / drive|pb|propulsion,repulsion,impulse,pulse|r||
+lev-|lev|L|levis / levāre||light / to lift|p|lever,levitation,elevation|r||A lever ‘lifts’ a load.
+quant-|quanta,quantum,quant|L|quantus||how much / how great|pc|quantum,quantity,quantisation|r||
+ampl-|ampli,ampl|L|amplus||large / ample|p|amplitude,amplifier|r||
+frequ-|frequ|L|frequēns||crowded / repeated|p|frequency|r||
+potent-|potenti,potent|L|potēns||powerful / able|p|potential difference,potential energy,potentiometer|r||
+curr-|curr,curs|L|currere, cursus||to run|p|current,recurrent,cursor|r||Electric current ‘runs’ round a circuit.
+duct-|duct,duc|L|dūcere, ductus||to lead|pb|conduction,conductor,ductile,induction,oviduct|r||
+sist-|sist|L|sistere||to stand / stop|p|resistance,resistor,persistent|r||
+miss- / mitt-|miss,mitt|L|mittere, missus||to send|p|transmission,emission,transmitter|r||
+dens-|dens|L|dēnsus||thick / crowded|pc|density,condensation,condenser|r||
+vapor-|vapour,vapor|L|vapor||steam|pc|evaporation,vapour,vaporise|r||
+fus- / fund-|fus,fund|L|fundere, fūsus||to pour / melt|pc|fusion,diffusion,fuse|r||Nuclear fusion ‘melts together’ small nuclei.
+fiss-|fiss|L|findere, fissus||to split|pb|nuclear fission,binary fission,fissure|r||
+vac-|vacu,vac|L|vacuus||empty|pb|vacuum,vacuole,evacuate|r||
+neutr-|neutr|L|neuter||neither (of two)|pc|neutron,neutral,neutralisation,neutrino|r||Neutrino, ‘little neutral one’, was Enrico Fermi’s Italian coinage.
+radi-|radio,radia,radi|L|radius||ray / spoke of a wheel|pc|radiation,radioactive,radius,radium|r|actino|
+actin-|actino,actin|G|ἀκτίς, ἀκτῖνος|aktis, aktinos|ray|c|actinium,actinide|r|radio|Actin, the muscle protein, has a different origin.
+lumin- / luc-|lumin,luci,luc,lux|L|lūmen / lūx||light|pb|luminous,bioluminescence,luminosity,translucent|r|photo|
+phot-|photo,phot,phos|G|φῶς, φωτός|phōs, phōtos|light|bp|photon,photosynthesis,phototropism,photoelectric effect|r|lumin|
+spectr-|spectro,spectrum,spectr|L|spectrum||appearance / image|pc|spectrum,spectroscopy,spectrometer|r||Newton used spectrum for the band of colours from a prism (1670s).
+electr-|electro,electr,elect|G|ἤλεκτρον|ēlektron|amber → electricity|pc|electron,electricity,electrolysis,electrode,electromagnet|r||Rubbed amber attracts small pieces of straw — the oldest known electrostatic effect.
+magnet-|magneto,magnet|G|Μαγνῆτις λίθος|Magnētis lithos|stone from Magnesia → magnet|pc|magnet,electromagnet,magnetosphere,magnetic field|r||Lodestones (natural magnets) were found in Magnesia, in Thessaly.
+polar-|polar,pole,pol|G|πόλος|polos|pivot / axis|pe|polarisation,dipole,polar|r||
+solen-|solen|G|σωλήν|sōlēn|pipe / channel|p|solenoid|r||A solenoid is ‘pipe-shaped’ (sōlēn + -oid).
+acoust-|acoust|G|ἀκούειν|akouein|to hear|p|acoustics,acoustic|r|audi|
+audi-|audio,audi|L|audīre||to hear|bp|audible,audiometer,auditory nerve|r|acoust|
+phon-|phono,phone,phony,phon|G|φωνή|phōnē|sound / voice|p|telephone,phonon,microphone,symphony|r|sono|
+son-|sono,soni,sonic,son|L|sonus||sound|p|sonar,supersonic,ultrasonic,resonance|r|phono|
+ton-|tono,tonic,tone,ton|G|τόνος|tonos|stretching → tension, tone|bp|isotonic,hypertonic,monotone|r||In biology tonos means the ‘pull’ of water by osmosis.
+tens- / tend-|tens,tend|L|tendere, tēnsus||to stretch|p|tension,tensile strength,extension|r||
+iso-|iso|G|ἴσος|isos|equal / same|cpe|isotope,isomer,isotonic,isobar|p|equi|
+topo-|tope,topo,top|G|τόπος|topos|place|pce|isotope,topography,biotope|r||Isotopes share the ‘same place’ in the periodic table.
+phas-|phase,phas|G|φάσις|phasis|appearance (of the Moon)|bpe|phase difference,prophase,anaphase|r||Phases of the Moon are its changing ‘appearances’.
+telo-|telo|G|τέλος|telos|end|b|telophase,telomere|r||
+-tron|tron|G|-τρον|-tron|device (ending borrowed from electron)|p|cyclotron,synchrotron,magnetron|s||
+-meter / metr-|metre,meter,metry,metric,metr|G|μέτρον|metron|measure|pcb|thermometer,ammeter,voltmeter,geometry,diameter,symmetry|s||British English: metre for the unit, meter for the measuring instrument.
+-scope|scope,scopy,scopic,scop|G|σκοπεῖν|skopein|to look at / examine|bp|microscope,telescope,stethoscope,spectroscopy,oscilloscope|s||
+steth-|stetho,steth|G|στῆθος|stēthos|chest|b|stethoscope|r||
+-graph / -gram|graphy,graph,grapho,gram|G|γράφειν / γράμμα|graphein / gramma|to write / a record|bpe|seismograph,electrocardiogram,chromatography,graphite,hologram|s||Graphite is the ‘writing’ mineral — pencil ‘lead’.
+-logy|logy,logist,logical,logic,log|G|λόγος|logos|word, reason → study of|bcpe|biology,ecology,geology,cosmology|s||
+-ic / -ics|ics,ical,ic|G|-ικός|-ikos|relating to; -ics = a field of study|bcpe|physics,kinetic,dynamics,electronic|g||Physics is ta physika, ‘natural things’ (physis, nature).
+-al / -ar|ary,al,ar|L|-ālis / -āris||relating to|bcpe|thermal,optical,solar,nuclear|g||
+-ous|aneous,eous,ious,ous|L|-ōsus||having / full of|bc|aqueous,gaseous,ferrous,igneous|g||In chemistry -ous often marks the lower oxidation state: ferrous (Fe²⁺), ferric (Fe³⁺).
+-ion|ation,ition,tion,sion,ion|L|-iō||action or result of|bcpe|radiation,refraction,ionisation,reflection|g||
+-ity|ivity,ity|L|-itās||state / quality|pc|density,gravity,elasticity,conductivity|g||
+-ive|ive|L|-īvus||tending to|pc|conductive,radioactive,relative|g||
+-ism / -ist|ism,ists,ist|G|-ισμός / -ιστής|-ismos / -istēs|state or process / person who does|bp|magnetism,metabolism,physicist,biologist|g||William Whewell coined both scientist (1833) and physicist (1840).
+act-|act|L|agere, āctus||to do / drive|pc|radioactive,reaction,reactivity,activation energy|r||
+organ-|organ|G|ὄργανον|organon|tool / instrument|bc|organism,organelle,organic|r||Organs are the body’s ‘tools’; organic chemistry was first the chemistry of living things.
+por-|poro,pore,por|G|πόρος|poros|passage / pore|b|osteoporosis,porous,pore|r||Osteoporosis: bones that have become full of holes.
+-ance / -ence|ance,ence,ancy,ency|L|-antia / -entia||state / quality|pc|resistance,frequency,conductance,impedance|g||
+-escence|escence,escent|L|-ēscere||beginning to / becoming|pc|fluorescence,luminescence,phosphorescence,effervescence|g||Latin -ēscere marks a process that is starting: lūminēscere, ‘to begin to glow’.
+-ment|ment|L|-mentum||result / means of|bpc|sediment,displacement,element|g||
+-tude|tude,ude|L|-tūdō||state / extent|pe|amplitude,magnitude,latitude,altitude|g||
+-ia|ia|G|-ία|-ia|condition / state|b|pneumonia,anaemia,hypothermia|g||`;
+
+/* Element origins: Z | symbol | name | category | origin
+   P person, L place, M mythology & astronomy, X property, N mineral / substance, O old word */
+var ELRAW = `1|H|Hydrogen|X|Greek hydōr (water) + gen (forming): Lavoisier’s name, because it burns to form water.
+2|He|Helium|M|Greek hēlios, the Sun: first detected in the solar spectrum during an eclipse in 1868.
+3|Li|Lithium|N|Greek lithos, stone: found in a mineral, unlike sodium and potassium, first known from plant ashes.
+4|Be|Beryllium|N|From the mineral beryl (Greek bēryllos).
+5|B|Boron|N|From borax (via Arabic and Persian) + the ending of carbon.
+6|C|Carbon|N|Latin carbō, charcoal.
+7|N|Nitrogen|N|Greek nitron (saltpetre) + gen: ‘saltpetre-forming’.
+8|O|Oxygen|X|Greek oxys (sharp, acid) + gen: Lavoisier wrongly believed all acids contain oxygen.
+9|F|Fluorine|N|Latin fluere, to flow: fluorspar was used as a flux to help metals flow in smelting.
+10|Ne|Neon|X|Greek neos, new.
+11|Na|Sodium|N|From soda. Symbol Na from Latin natrium (natron).
+12|Mg|Magnesium|L|Magnesia, a district of Thessaly in Greece.
+13|Al|Aluminium|N|Latin alumen, alum. Davy also tried alumium and aluminum; Britain kept aluminium.
+14|Si|Silicon|N|Latin silex, flint, with -on to match carbon and boron.
+15|P|Phosphorus|X|Greek phōsphoros, light-bearer: white phosphorus glows in the dark.
+16|S|Sulfur|O|Latin sulfur (sulphur), brimstone — an ancient word.
+17|Cl|Chlorine|X|Greek chlōros, pale green: the colour of the gas (Davy, 1810).
+18|Ar|Argon|X|Greek argos, idle: it would not react with anything.
+19|K|Potassium|N|From potash (‘pot ashes’). Symbol K from Latin kalium, from Arabic al-qalī, plant ashes.
+20|Ca|Calcium|N|Latin calx, lime.
+21|Sc|Scandium|L|Scandinavia.
+22|Ti|Titanium|M|The Titans of Greek mythology, children of the Earth.
+23|V|Vanadium|M|Vanadís, a name of the Norse goddess Freyja, for its beautifully coloured compounds.
+24|Cr|Chromium|X|Greek chrōma, colour: its compounds are brilliantly coloured.
+25|Mn|Manganese|N|Via Italian from Latin magnesia, the name once used for its black oxide ore.
+26|Fe|Iron|O|Old English īsern. Symbol Fe from Latin ferrum.
+27|Co|Cobalt|M|German Kobold, a goblin: miners blamed goblins for ores that gave off poisonous fumes and no useful metal.
+28|Ni|Nickel|M|German Kupfernickel, ‘copper-demon’: an ore that looked like copper ore but yielded none.
+29|Cu|Copper|L|Latin cyprium, ‘metal of Cyprus’. Symbol Cu from cuprum.
+30|Zn|Zinc|O|German Zink, origin uncertain — possibly Zinke, a prong, from the shape of its crystals.
+31|Ga|Gallium|L|Latin Gallia, France.
+32|Ge|Germanium|L|Germany.
+33|As|Arsenic|N|Greek arsenikon, yellow orpiment, from Persian zarnikh, gold-coloured.
+34|Se|Selenium|M|Greek selēnē, the Moon: named as a partner for tellurium (the Earth).
+35|Br|Bromine|X|Greek brōmos, stench.
+36|Kr|Krypton|X|Greek kryptos, hidden.
+37|Rb|Rubidium|X|Latin rubidus, deep red: red lines in its spectrum.
+38|Sr|Strontium|L|Strontian, a village in the Scottish Highlands.
+39|Y|Yttrium|L|Ytterby, a village in Sweden whose quarry also gave terbium, erbium and ytterbium.
+40|Zr|Zirconium|N|From zircon, via Persian zargun, gold-coloured.
+41|Nb|Niobium|M|Niobe, daughter of Tantalus: it is chemically very like tantalum.
+42|Mo|Molybdenum|N|Greek molybdos, lead: its ore was mistaken for lead ore.
+43|Tc|Technetium|X|Greek technētos, artificial: the first element made artificially (1937).
+44|Ru|Ruthenium|L|Ruthenia, Medieval Latin for a region of Russia.
+45|Rh|Rhodium|X|Greek rhodon, rose: its salts are rose-coloured.
+46|Pd|Palladium|M|The asteroid Pallas (found 1802), named after the goddess Pallas Athena.
+47|Ag|Silver|O|Old English seolfor. Symbol Ag from Latin argentum.
+48|Cd|Cadmium|N|Latin cadmia, calamine (a zinc ore), in which it was found.
+49|In|Indium|X|The bright indigo line in its spectrum.
+50|Sn|Tin|O|Old English tin. Symbol Sn from Latin stannum.
+51|Sb|Antimony|O|Medieval Latin antimonium, origin uncertain. Symbol Sb from Latin stibium.
+52|Te|Tellurium|M|Latin tellūs, the Earth.
+53|I|Iodine|X|Greek iōdēs, violet: its vapour is violet.
+54|Xe|Xenon|X|Greek xenos, stranger.
+55|Cs|Caesium|X|Latin caesius, sky blue: blue lines in its spectrum.
+56|Ba|Barium|X|Greek barys, heavy: its ore, baryte, is very dense.
+57|La|Lanthanum|X|Greek lanthanein, to lie hidden: it was hidden in cerium ore.
+58|Ce|Cerium|M|The dwarf planet Ceres (found 1801), after the Roman goddess of farming.
+59|Pr|Praseodymium|X|Greek prasios (leek-green) + didymos (twin): ‘green twin’.
+60|Nd|Neodymium|X|Greek neos (new) + didymos (twin): ‘new twin’.
+61|Pm|Promethium|M|Prometheus, who stole fire from the gods.
+62|Sm|Samarium|P|The mineral samarskite, named after Russian mining official Vasili Samarsky-Bykhovets — the first element named, indirectly, after a person.
+63|Eu|Europium|L|Europe.
+64|Gd|Gadolinium|P|Johan Gadolin, Finnish chemist, via the mineral gadolinite.
+65|Tb|Terbium|L|Ytterby, Sweden.
+66|Dy|Dysprosium|X|Greek dysprositos, hard to get at: it took many separations to isolate.
+67|Ho|Holmium|L|Holmia, Latin for Stockholm.
+68|Er|Erbium|L|Ytterby, Sweden.
+69|Tm|Thulium|L|Thule, an ancient name for a far-northern land.
+70|Yb|Ytterbium|L|Ytterby, Sweden — the village with four elements.
+71|Lu|Lutetium|L|Lutetia, the Latin name for Paris.
+72|Hf|Hafnium|L|Hafnia, Latin for Copenhagen.
+73|Ta|Tantalum|M|Tantalus of Greek myth, who stood in water he could never drink: tantalum resists attack by acids.
+74|W|Tungsten|X|Swedish tung sten, heavy stone. Symbol W from wolfram, from the ore wolframite.
+75|Re|Rhenium|L|Latin Rhenus, the River Rhine.
+76|Os|Osmium|X|Greek osmē, smell: its oxide has a sharp smell.
+77|Ir|Iridium|X|Greek iris, rainbow: its salts come in many colours.
+78|Pt|Platinum|X|Spanish platina, ‘little silver’.
+79|Au|Gold|O|Old English gold. Symbol Au from Latin aurum.
+80|Hg|Mercury|M|The planet and swift messenger god Mercury. Symbol Hg from Latin hydrargyrum, Greek for ‘watery silver’.
+81|Tl|Thallium|X|Greek thallos, green shoot: a bright green spectral line.
+82|Pb|Lead|O|Old English lēad. Symbol Pb from Latin plumbum — hence plumbing.
+83|Bi|Bismuth|O|German Wismut, origin uncertain.
+84|Po|Polonium|L|Poland, Marie Curie’s homeland, then under foreign rule.
+85|At|Astatine|X|Greek astatos, unstable: every isotope is radioactive.
+86|Rn|Radon|X|From radium + -on: the gas given off by radium.
+87|Fr|Francium|L|France.
+88|Ra|Radium|X|Latin radius, ray: intensely radioactive.
+89|Ac|Actinium|X|Greek aktis, ray.
+90|Th|Thorium|M|Thor, the Norse god of thunder.
+91|Pa|Protactinium|X|Greek prōtos (first) + actinium: it decays to form actinium.
+92|U|Uranium|M|The planet Uranus, discovered eight years earlier (1781).
+93|Np|Neptunium|M|The planet Neptune — the next planet after Uranus.
+94|Pu|Plutonium|M|Pluto — next after Neptune.
+95|Am|Americium|L|The Americas, mirroring europium above it in the table.
+96|Cm|Curium|P|Marie and Pierre Curie.
+97|Bk|Berkelium|L|Berkeley, California.
+98|Cf|Californium|L|California.
+99|Es|Einsteinium|P|Albert Einstein.
+100|Fm|Fermium|P|Enrico Fermi.
+101|Md|Mendelevium|P|Dmitri Mendeleev, creator of the periodic table.
+102|No|Nobelium|P|Alfred Nobel.
+103|Lr|Lawrencium|P|Ernest Lawrence, inventor of the cyclotron.
+104|Rf|Rutherfordium|P|Ernest Rutherford.
+105|Db|Dubnium|L|Dubna, home of a Russian nuclear research institute.
+106|Sg|Seaborgium|P|Glenn Seaborg — the first element named after a living person.
+107|Bh|Bohrium|P|Niels Bohr.
+108|Hs|Hassium|L|Hassia, Latin for Hesse in Germany.
+109|Mt|Meitnerium|P|Lise Meitner, who explained nuclear fission.
+110|Ds|Darmstadtium|L|Darmstadt, Germany.
+111|Rg|Roentgenium|P|Wilhelm Röntgen, discoverer of X-rays.
+112|Cn|Copernicium|P|Nicolaus Copernicus.
+113|Nh|Nihonium|L|Nihon, Japan.
+114|Fl|Flerovium|P|Georgy Flerov, via the laboratory named after him.
+115|Mc|Moscovium|L|The Moscow region.
+116|Lv|Livermorium|L|Lawrence Livermore National Laboratory, California.
+117|Ts|Tennessine|L|Tennessee.
+118|Og|Oganesson|P|Yuri Oganessian — the second element named after a living person.`;
+
+var ELCAT = {P:'People',L:'Places',M:'Myths, folklore & astronomy',X:'Properties',N:'Minerals & substances',O:'Ancient words'};
+
+/* Word stories: word | origin | who / when | story | theme */
+var STRAW = `atom|Greek atomos, ‘uncuttable’|Democritus and Leucippus, 5th century BCE|The ancient atomists imagined matter made of indivisible pieces. The name stuck even after 20th-century physicists split atoms apart.|coin
+electricity|Latin electricus, ‘like amber’|William Gilbert (1600); Thomas Browne (1646)|Gilbert found that many substances besides amber attract light objects when rubbed, and called them electrica. Browne turned the idea into the noun electricity.|coin
+electron|Greek ēlektron, amber, + -on|George Johnstone Stoney, 1891|Stoney coined it for the basic unit of electric charge, six years before J. J. Thomson discovered the particle — which Thomson himself called a ‘corpuscle’.|coin
+ion, anode, cathode|Greek ion ‘going’; ana hodos ‘way up’; kata hodos ‘way down’|Michael Faraday and William Whewell, 1834|Faraday wanted neutral words for electrolysis and wrote to the Cambridge scholar Whewell, who supplied them from Greek.|coin
+scientist|Latin scientia, knowledge|William Whewell, 1833|People who studied nature were ‘natural philosophers’. Whewell suggested scientist by analogy with artist, and later coined physicist too.|coin
+gas|Greek chaos|Jan Baptist van Helmont, 17th century|The Flemish chemist respelled chaos the Dutch way — g is pronounced like the ch in loch — to name the ‘wild spirit’ given off by burning charcoal.|coin
+cell|Latin cella, small room|Robert Hooke, 1665|Looking at cork through his microscope, Hooke saw tiny boxes that reminded him of monks’ cells. He described them in Micrographia.|coin
+gene|Greek genos, birth / kind|Wilhelm Johannsen, 1909|Johannsen shortened Hugo de Vries’s ‘pangene’ to make a short, neutral word for a unit of heredity.|coin
+photosynthesis|Greek phōs (light) + synthesis (putting together)|Charles Barnes, 1893|Barnes proposed two names, photosyntax and photosynthesis. Only the second caught on.|coin
+enzyme|Greek en zymē, ‘in leaven’|Wilhelm Kühne, 1877|Named because the best-known biological catalysts were the ferments found in yeast.|coin
+vitamin|Latin vīta (life) + amine|Casimir Funk, 1912|Funk called them ‘vital amines’ — vitamines. When it turned out most are not amines, the final e was dropped.|coin
+hormone|Greek hormōn, setting in motion|Ernest Starling, 1905|Starling needed a word for chemical messengers, such as secretin, that are carried in the blood to set organs to work.|coin
+chromosome|Greek chrōma (colour) + sōma (body)|Wilhelm Waldeyer, 1888|Named because these ‘coloured bodies’ soak up stains strongly under the microscope.|coin
+protein|Greek prōteios, primary|Gerardus Mulder (on Berzelius’s suggestion), 1838|Berzelius proposed the name because he thought these substances were the most important in living things.|coin
+ecology|Greek oikos (house) + logos|Ernst Haeckel, 1866|The study of how organisms run their ‘household’ — their relationships with each other and their surroundings.|coin
+dinosaur|Greek deinos (terrible) + sauros (lizard)|Richard Owen, 1842|Owen named the whole group from just three known animals: Megalosaurus, Iguanodon and Hylaeosaurus.|coin
+photon|Greek phōs, light, + -on|Gilbert N. Lewis, 1926|Lewis meant something slightly different, but physicists adopted his word for Einstein’s quanta of light.|coin
+proton|Greek prōton, ‘first (thing)’|Ernest Rutherford, 1920|The hydrogen nucleus was the first building block of every other nucleus — partly a nod to William Prout, who had suggested all elements were built from hydrogen.|coin
+neutron|Latin neuter (neither) + -on|Rutherford’s laboratory; discovered by James Chadwick, 1932|Rutherford predicted a neutral particle in the nucleus in 1920, and the name was in use in his laboratory long before Chadwick found it.|coin
+quark|a nonsense word from James Joyce|Murray Gell-Mann, 1964|Gell-Mann had the sound ‘kwork’ in mind, then found ‘quark’ in Joyce’s Finnegans Wake, in a line about three of them — perfect for particles that come in threes.|coin
+isotope|Greek isos (equal) + topos (place)|Frederick Soddy, 1913, suggested by Margaret Todd|Isotopes of an element share the same place in the periodic table. Todd, a Scottish doctor and novelist, suggested the word to Soddy.|coin
+radioactivity|Latin radius (ray) + activity|Marie Curie, 1898|Curie coined radioactivité while studying the rays given off by uranium and thorium.|coin
+quantum|Latin quantus, how much|Max Planck, 1900|Planck proposed that energy is emitted in small packets, each a ‘quantum’ (plural quanta).|coin
+plasma (physics)|Greek plasma, something moulded|Irving Langmuir, 1928|Langmuir borrowed the word from biology: an ionised gas carries electrons and ions as blood plasma carries cells.|coin
+boson and fermion|after Satyendra Nath Bose and Enrico Fermi|Paul Dirac, 1945|Dirac named the two great families of particles after the physicists whose statistics describe them.|coin
+entropy|Greek tropē, transformation|Rudolf Clausius, 1865|Clausius deliberately made the word sound like energy, because he saw the two ideas as closely related.|coin
+catalysis|Greek katalysis, loosening|Jöns Jacob Berzelius, 1835|Berzelius grouped together reactions speeded up by substances that were not themselves used up.|coin
+Big Bang|English|Fred Hoyle, 1949|Hoyle, who favoured a steady-state universe, used the phrase on BBC radio. It is often called a sneer, though Hoyle said he only meant it to be vivid.|coin
+cloud names|Latin cumulus (heap), stratus (layer), cirrus (curl), nimbus (rain cloud)|Luke Howard, 1803|A Quaker pharmacist gave clouds Latin names, as Linnaeus had done for living things. Meteorologists still use his system.|coin
+black hole|English|popularised by John Wheeler, 1967|The phrase had appeared a few years earlier, but Wheeler’s lectures made it famous.|coin
+lens|Latin lēns, lentil|—|A converging lens is the same shape as a lentil. Lentil itself comes from lenticula, ‘little lentil’.|pict
+muscle|Latin musculus, ‘little mouse’|—|To the Romans a flexing muscle looked like a mouse moving under the skin. Greek mys meant both mouse and muscle too.|pict
+pupil|Latin pupilla, ‘little doll’|—|Look closely into someone’s eye and you see a tiny reflection of yourself — a little doll. The same word gave pupil for a student.|pict
+cochlea|Latin cochlea, snail shell|—|The hearing organ of the inner ear is coiled like a snail shell.|pict
+vagus nerve|Latin vagus, wandering|—|It wanders from the brain stem through the neck and chest down to the abdomen. Vague and vagrant share the root.|pict
+thyroid|Greek thyreoeidēs, shield-shaped|—|Named after the shield-shaped cartilage it sits beside in the neck — the Adam’s apple.|pict
+calculus|Latin calculus, small pebble|—|Romans counted with pebbles on a board, which is how calculate got its name. Doctors still call kidney stones calculi.|pict
+planet|Greek planētēs, wanderer|—|Ancient sky-watchers noticed five ‘stars’ that wandered against the fixed constellations.|pict
+comet|Greek komētēs, long-haired|—|A comet’s tail looked like a head of hair streaming behind it.|pict
+galaxy|Greek galaxias, milky|—|The Milky Way looks like a streak of spilt milk across the night sky.|pict
+mass|Greek maza, barley cake, via Latin massa, a lump of dough|—|A lump of dough became the physicist’s word for the amount of matter in an object.|pict
+inertia|Latin iners, idle|Johannes Kepler; Isaac Newton|Kepler used it for matter’s ‘laziness’ — its resistance to changing its motion. Newton built his first law around the idea.|pict
+fulcrum|Latin fulcrum, bedpost / support|—|From fulcīre, to prop up: the support a lever pivots on.|pict
+vaccine|Latin vacca, cow|Edward Jenner, 1796; Louis Pasteur, 1881|Jenner used cowpox (variolae vaccinae) to protect against smallpox. Pasteur extended the word to all such treatments in Jenner’s honour.|pict
+disaster|Latin dis- + astrum, ‘ill-starred’|—|A misfortune once blamed on the unlucky position of a star or planet.|pict
+alcohol|Arabic al-kuḥl, a fine powder (kohl eyeliner)|—|Alchemists used it for any refined essence; by the 1700s it meant the ‘essence’ of wine, ethanol.|arab
+alkali|Arabic al-qalī, plant ashes|—|The ashes of saltwort plants gave soda and potash, the first alkalis. Potassium’s symbol K comes from kalium, the same word.|arab
+algebra and algorithm|Arabic al-jabr, ‘restoring’; the name al-Khwārizmī|9th century, Baghdad|Al-Khwārizmī’s book on al-jabr gave us algebra. His own name, written in Latin as Algoritmi, gave us algorithm.|arab
+zenith|Arabic samt ar-ra’s, ‘path over the head’|—|A medieval copying slip turned samt into cenit — our zenith, the point directly overhead.|arab
+nadir|Arabic naẓīr, opposite|—|The point directly beneath an observer, opposite the zenith.|arab
+azimuth|Arabic as-sumūt, the directions|—|An object’s compass bearing measured around the horizon.|arab
+star names|Arabic|medieval astronomers|Many bright stars keep Arabic names: Rigel (‘foot’ of Orion), Deneb (‘tail’ of the swan), Altair (‘the flying’ eagle), Aldebaran (‘the follower’ of the Pleiades).|arab
+elixir|Arabic al-iksīr, from Greek xērion, a drying powder|—|Alchemists’ elixir was the substance that would turn metals to gold or grant long life.|arab
+laser|Light Amplification by Stimulated Emission of Radiation|Gordon Gould, 1957|So familiar it is now written in lower case — and back-formed into the verb ‘to lase’.|odd
+radar|RAdio Detection And Ranging|US Navy, 1940|A palindrome — fitting for a technique that relies on echoes.|odd
+sonar|SOund NAvigation And Ranging|1940s|Deliberately made to sound like radar.|odd
+television|Greek tēle (far) + Latin vīsiō (seeing)|Constantin Perskyi, 1900|A hybrid word, half Greek and half Latin, which annoyed purists at the time. Automobile is another.|odd
+robot|Czech robota, forced labour|Karel Čapek’s play R.U.R. (1920)|The word was suggested to Čapek by his brother Josef, a painter.|odd
+Hooke’s law|Latin ut tensio, sic vis|Robert Hooke, 1676–1678|Hooke first published his law as the anagram ceiiinosssttuv, to claim priority without giving it away. Two years later he revealed it: ‘as the extension, so the force’.|odd
+kelvin|a river in Glasgow|William Thomson, Lord Kelvin, 1892|Thomson took his title from the River Kelvin, which runs past the University of Glasgow — so the unit of temperature is, indirectly, named after a river.|odd
+units named after people|volt, ampere, ohm, watt, joule, newton, hertz, coulomb|19th–20th centuries|Alessandro Volta, André-Marie Ampère, Georg Ohm, James Watt, James Joule, Isaac Newton, Heinrich Hertz and Charles-Augustin de Coulomb. The unit name is lower case; its symbol takes a capital: newton, N.|odd`;
+
+var STCAT = {coin:'Coined by scientists',pict:'Hidden pictures',arab:'From Arabic',odd:'Acronyms & oddities'};
+
+/* Hand-checked breakdowns for words the automatic splitter gets wrong. */
+var OVERRIDES = {
+ ion:'ion=ionis', anion:'an=ana|ion=ionis', cation:'cat=cata|ion=ionis', anode:'an=ana|ode=ode', cathode:'cath=cata|ode=ode',
+ electrode:'electr=electro|ode=ode', diode:'di=di|ode=ode', period:'peri=peri|od=ode|',
+ method:'met=meta|hod=ode', atom:'a=a|tom=tomy', synapse:'syn=syn|apse~fastening (Greek haptein, to fasten)',
+ dinosaur:'dino~terrible (Greek deinos)|saur=sauro', octopus:'octo=octa|pus=podo', oesophagus:'oeso~to carry (Greek oisein)|phag=phago|us',
+ helium:'heli=helio|um=ium', energy:'en=en|ergy=ergy', symmetry:'sym=syn|metry=metre', parasite:'para=para|site~food (Greek sitos)',
+ equinox:'equi=equi|nox~night (Latin nox)', circuit:'circu=circum|it~going (Latin īre)', hypotenuse:'hypo=hypo|tenuse~stretching (Greek teinein)',
+ adrenal:'ad=ad|ren=reni|al=al', aphelion:'ap=apo|heli=helio|on=on', perihelion:'peri=peri|heli=helio|on=on', apogee:'apo=apo|gee=geo', perigee:'peri=peri|gee=geo',
+ eukaryote:'eu=eu|kary=karyo|ote~having', prokaryote:'pro=pro|kary=karyo|ote~having', insect:'in~into|sect=sect', solstice:'sol=solar|stice~standing still (Latin sistere)',
+ asteroid:'aster=astro|oid=oid', penumbra:'pen~almost (Latin paene)|umbra=umbra', television:'tele=tele|vis=vis|ion=ation',
+ aerobic:'aero=aero|b~life (Greek bios)|ic=ics', anaerobic:'an=a|aero=aero|b~life (Greek bios)|ic=ics', nucleotide:'nucleo=nucleo|t|ide=ide',
+ amphibian:'amphi=amphi|bi=bio|an~(ending)', momentum:'moment=moment|um=ium', nucleus:'nucleus=nucleo', spectrum:'spectrum=spectro'
+};
+
+/* --------------------------- PARSING --------------------------- */
+var root = document.getElementById('ety');
+function $(s, el){ return (el||root).querySelector(s); }
+function $$(s, el){ return Array.prototype.slice.call((el||root).querySelectorAll(s)); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function shuffle(a){ for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+var SUBJ = {b:{n:'Biology',c:'var(--bio)'}, c:{n:'Chemistry',c:'var(--chem)'}, p:{n:'Physics',c:'var(--phys)'}, e:{n:'Earth & Space',c:'var(--earth)'}};
+var LANG = {G:'Greek', L:'Latin', O:'Other'};
+var TYPE = {p:'Prefix', r:'Root', s:'Suffix', g:'Ending', u:'SI prefix'};
+
+var ROOTS = RAW.trim().split('\n').map(function(line, i){
+  var f = line.split('|');
+  var forms = f[1].split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+  return { i:i, id:forms[0], disp:f[0].trim(), forms:forms, lang:f[2], orig:f[3], tr:f[4]||'', mean:f[5], subj:f[6]||'',
+    ex:f[7] ? f[7].split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [], type:f[8]||'r', twin:(f[9]||'').trim(), note:(f[10]||'').trim() };
+});
+var BYID = {}, BYFORM = {};
+ROOTS.forEach(function(r){ BYID[r.id] = r; r.forms.forEach(function(fm){ if (!BYFORM[fm]) BYFORM[fm] = r; }); });
+function twinOf(r){ return r.twin ? (BYID[r.twin] || BYFORM[r.twin] || null) : null; }
+function originLine(r){
+  if (r.lang === 'G') return 'Greek <span class="script">'+esc(r.orig)+'</span>'+(r.tr ? ' <i>('+esc(r.tr)+')</i>' : '');
+  if (r.lang === 'L') return 'Latin <i>'+esc(r.orig)+'</i>';
+  return esc(r.tr || 'Other')+' <i>'+esc(r.orig)+'</i>';
+}
+function originPlain(r){
+  if (r.lang === 'G') return 'Greek '+r.orig+(r.tr ? ' ('+r.tr+')' : '');
+  if (r.lang === 'L') return 'Latin '+r.orig;
+  return (r.tr||'Other')+' '+r.orig;
+}
+function langName(r){ return r.lang === 'O' ? (r.tr || 'Other') : LANG[r.lang]; }
+
+var ELEMENTS = ELRAW.trim().split('\n').map(function(l){ var f=l.split('|'); return {z:+f[0], sy:f[1], name:f[2], cat:f[3], text:f[4]}; });
+var STORIES = STRAW.trim().split('\n').map(function(l){ var f=l.split('|'); return {w:f[0], o:f[1], who:f[2], s:f[3], cat:f[4]}; });
+
+/* --------------------------- STORAGE --------------------------- */
+var KEY = 'drjp-etymology-v2';
+var S = { learnt:{}, correct:{}, best:0 };
+try { var saved = JSON.parse(localStorage.getItem(KEY) || 'null'); if (saved) { S.learnt = saved.learnt||{}; S.correct = saved.correct||{}; S.best = saved.best||0; } } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e) {} }
+function learntCount(){ return ROOTS.filter(function(r){ return S.learnt[r.id]; }).length; }
+
+/* --------------------------- HEADER / TABS --------------------------- */
+function renderCounts(){
+  $('#ety-counts').innerHTML =
+    '<div class="count"><b>'+ROOTS.length+'</b><span>roots</span></div>'+
+    '<div class="count"><b>'+ELEMENTS.length+'</b><span>elements</span></div>'+
+    '<div class="count"><b>'+STORIES.length+'</b><span>word stories</span></div>'+
+    '<div class="count"><b>'+learntCount()+'</b><span>learnt</span></div>';
+  $('#ety-n-roots').textContent = ROOTS.length;
+  $('#ety-n-stories').textContent = STORIES.length;
+}
+function showTab(name){
+  $$('.tab').forEach(function(t){ t.setAttribute('aria-selected', t.dataset.tab === name ? 'true' : 'false'); });
+  $$('.panel').forEach(function(p){ p.classList.toggle('on', p.id === 'ety-p-'+name); });
+}
+$$('.tab').forEach(function(t){ t.addEventListener('click', function(){ showTab(t.dataset.tab); }); });
+
+/* --------------------------- ROOT CARDS --------------------------- */
+var F = { subj:'all', lang:'all', type:'all', show:'all', q:'' };
+var flipped = {};
+
+function chipRow(sel, key, opts, cls){
+  var el = $(sel);
+  opts.forEach(function(o){
+    var b = document.createElement('button');
+    b.className = 'chip' + (cls ? ' c-'+o[0] : '');
+    b.dataset.v = o[0];
+    b.setAttribute('aria-pressed', F[key] === o[0] ? 'true' : 'false');
+    b.innerHTML = (o[2] ? '<span class="dot" style="background:'+o[2]+'"></span>' : '') + esc(o[1]);
+    b.addEventListener('click', function(){
+      F[key] = o[0];
+      $$('.chip', el).forEach(function(c){ c.setAttribute('aria-pressed', c.dataset.v === o[0] ? 'true' : 'false'); });
+      renderGrid();
+    });
+    el.appendChild(b);
+  });
+}
+chipRow('#ety-f-subj','subj',[['all','All'],['b','Biology',SUBJ.b.c],['c','Chemistry',SUBJ.c.c],['p','Physics',SUBJ.p.c],['e','Earth & Space',SUBJ.e.c]], true);
+chipRow('#ety-f-lang','lang',[['all','All'],['G','Greek'],['L','Latin'],['O','Other languages']]);
+chipRow('#ety-f-type','type',[['all','All'],['p','Prefixes'],['r','Roots'],['s','Suffixes & endings'],['u','SI prefixes'],['t','Greek–Latin twins']]);
+chipRow('#ety-f-show','show',[['all','Everything'],['todo','Still to learn'],['done','Learnt']]);
+
+function sortKey(r){ return r.disp.replace(/^[-–\s]+/,'').toLowerCase(); }
+var SORTED = ROOTS.slice().sort(function(a,b){ return sortKey(a).localeCompare(sortKey(b)); });
+
+function matches(r){
+  if (F.subj !== 'all' && r.subj.indexOf(F.subj) < 0) return false;
+  if (F.lang !== 'all' && r.lang !== F.lang) return false;
+  if (F.type === 's' && !(r.type.indexOf('s') >= 0 || r.type.indexOf('g') >= 0)) return false;
+  if (F.type === 't' && !twinOf(r)) return false;
+  if (F.type !== 'all' && F.type !== 's' && F.type !== 't' && r.type.indexOf(F.type) < 0) return false;
+  if (F.show === 'todo' && S.learnt[r.id]) return false;
+  if (F.show === 'done' && !S.learnt[r.id]) return false;
+  if (F.q){
+    var q = F.q;
+    var hay = (r.disp+' '+r.forms.join(' ')+' '+r.mean+' '+r.ex.join(' ')+' '+r.orig+' '+r.tr+' '+langName(r)).toLowerCase();
+    if (hay.indexOf(q) < 0){
+      // a whole word typed in: does it contain one of this root's forms?
+      var w = q.replace(/[^a-z]/g,'');
+      if (w.length < 5) return false;
+      var hit = r.forms.some(function(fm){ return fm.length >= 3 && w.indexOf(fm) >= 0; });
+      if (!hit) return false;
+    }
+  }
+  return true;
+}
+
+function cardHTML(r){
+  var stripe = r.subj.split('').map(function(s){ return '<i style="background:'+SUBJ[s].c+'"></i>'; }).join('');
+  var types = r.type.split('').map(function(t){ return '<span class="tag">'+TYPE[t]+'</span>'; }).join('');
+  var tw = twinOf(r);
+  var subjNames = r.subj.split('').map(function(s){ return SUBJ[s].n; }).join(' · ');
+  var learnt = !!S.learnt[r.id];
+  return '<div class="card'+(flipped[r.id]?' flipped':'')+'" data-id="'+esc(r.id)+'" tabindex="0" role="button" aria-pressed="'+(flipped[r.id]?'true':'false')+'" aria-label="'+esc(r.disp)+' — select to reveal meaning">'+
+   '<div class="inner">'+
+    '<div class="face front"><div class="stripe">'+stripe+'</div>'+
+     '<div class="tags">'+types+'<span class="tag '+r.lang+'">'+esc(langName(r))+'</span></div>'+
+     '<div class="rw">'+esc(r.disp)+'</div>'+
+     '<div class="og">'+(r.lang==='G' ? esc(r.orig) : '<i>'+esc(r.orig)+'</i>')+'</div>'+
+     '<div class="hint"><span>'+esc(subjNames)+'</span><span class="star">'+(learnt?'★ learnt':'')+'</span></div>'+
+    '</div>'+
+    '<div class="face back">'+
+     '<div class="mean">'+esc(r.mean)+'</div>'+
+     '<div class="from">From '+originLine(r)+'</div>'+
+     '<div class="exs">'+r.ex.map(function(w){ return '<button class="ex" data-w="'+esc(w)+'" title="Decode this word">'+esc(w)+'</button>'; }).join('')+'</div>'+
+     (tw ? '<button class="twin" data-t="'+esc(tw.id)+'">'+esc(langName(tw))+' twin: '+esc(tw.disp)+' →</button>' : '')+
+     (r.note ? '<div class="note">'+esc(r.note)+'</div>' : '')+
+     '<button class="learn'+(learnt?' on':'')+'" data-l="1">'+(learnt?'★ Learnt':'☆ Mark as learnt')+'</button>'+
+    '</div>'+
+   '</div></div>';
+}
+
+function renderGrid(){
+  var list = SORTED.filter(matches);
+  var g = $('#ety-grid');
+  g.innerHTML = list.length ? list.map(cardHTML).join('') :
+    '<div class="empty">No roots match those filters. Try clearing the search or choosing “All”.</div>';
+  $('#ety-showing').textContent = 'Showing '+list.length+' of '+ROOTS.length+' roots · select a card to flip it, then select an example word to decode it';
+  renderProgress();
+}
+function renderProgress(){
+  var n = learntCount();
+  $('#ety-learnt-n').textContent = n;
+  $('#ety-total-n').textContent = ROOTS.length;
+  var segs = ['b','c','p','e'].map(function(s){
+    var k = ROOTS.filter(function(r){ return S.learnt[r.id] && r.subj.charAt(0) === s; }).length;
+    return '<i style="width:'+(100*k/ROOTS.length)+'%;background:'+SUBJ[s].c+'" title="'+SUBJ[s].n+': '+k+'"></i>';
+  }).join('');
+  $('#ety-bar').innerHTML = segs;
+  renderCounts();
+}
+
+$('#ety-grid').addEventListener('click', function(e){
+  var t = e.target.closest('button');
+  var card = e.target.closest('.card');
+  if (!card) return;
+  var id = card.dataset.id, r = BYID[id];
+  if (t && t.classList.contains('ex')){ e.stopPropagation(); goDecode(t.dataset.w); return; }
+  if (t && t.classList.contains('twin')){ e.stopPropagation(); var tw = BYID[t.dataset.t]; jumpToRoot(tw); return; }
+  if (t && t.dataset.l){
+    e.stopPropagation();
+    if (S.learnt[id]) delete S.learnt[id]; else S.learnt[id] = 1;
+    save();
+    var on = !!S.learnt[id];
+    t.classList.toggle('on', on); t.textContent = on ? '★ Learnt' : '☆ Mark as learnt';
+    $('.star', card).textContent = on ? '★ learnt' : '';
+    renderProgress();
+    return;
+  }
+  flipped[id] = !flipped[id];
+  card.classList.toggle('flipped', !!flipped[id]);
+  card.setAttribute('aria-pressed', flipped[id] ? 'true' : 'false');
+});
+$('#ety-grid').addEventListener('keydown', function(e){
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('card')){ e.preventDefault(); e.target.click(); }
+});
+var qTimer;
+$('#ety-q').addEventListener('input', function(){ clearTimeout(qTimer); var v=this.value; qTimer=setTimeout(function(){ F.q = v.trim().toLowerCase(); renderGrid(); }, 120); });
+$('#ety-flipall').addEventListener('click', function(){
+  var cards = $$('#ety-grid .card');
+  var anyUn = cards.some(function(c){ return !c.classList.contains('flipped'); });
+  cards.forEach(function(c){ flipped[c.dataset.id] = anyUn; c.classList.toggle('flipped', anyUn); c.setAttribute('aria-pressed', anyUn?'true':'false'); });
+  this.textContent = anyUn ? 'Unflip all' : 'Flip all';
+});
+$('#ety-random').addEventListener('click', function(){
+  var cards = $$('#ety-grid .card'); if (!cards.length) return;
+  var c = pick(cards); flipped[c.dataset.id] = true; c.classList.add('flipped');
+  c.scrollIntoView({behavior:'smooth', block:'center'}); c.focus({preventScroll:true});
+});
+$('#ety-reset').addEventListener('click', function(){
+  if (!learntCount()) return;
+  this.textContent = this.dataset.armed ? 'Reset progress' : 'Click again to confirm';
+  if (this.dataset.armed){ S.learnt = {}; S.correct = {}; save(); delete this.dataset.armed; renderGrid(); }
+  else { this.dataset.armed = '1'; var self=this; setTimeout(function(){ delete self.dataset.armed; self.textContent='Reset progress'; }, 3000); }
+});
+function jumpToRoot(r){
+  if (!r) return;
+  showTab('roots');
+  F.subj='all'; F.lang='all'; F.type='all'; F.show='all';
+  ['subj','lang','type','show'].forEach(function(k){ $$('#ety-f-'+k+' .chip').forEach(function(c){ c.setAttribute('aria-pressed', c.dataset.v==='all'?'true':'false'); }); });
+  $('#ety-q').value = r.disp; F.q = r.disp.toLowerCase();
+  flipped[r.id] = true;
+  renderGrid();
+  var c = $('#ety-grid .card[data-id="'+r.id.replace(/"/g,'')+'"]');
+  if (c) { c.scrollIntoView({behavior:'smooth', block:'center'}); c.focus({preventScroll:true}); }
+}
+
+/* --------------------------- DECODER --------------------------- */
+var FORMLIST = [];
+ROOTS.forEach(function(r){ r.forms.forEach(function(fm){ FORMLIST.push({f:fm, r:r}); }); });
+
+function decodeWord(w){
+  if (OVERRIDES[w]){
+    return OVERRIDES[w].split('|').filter(Boolean).map(function(p){
+      if (p.indexOf('=') > 0){ var a=p.split('='); return {t:a[0], r:BYID[a[1]] || BYFORM[a[1]] || null}; }
+      if (p.indexOf('~') > 0){ var b=p.split('~'); return {t:b[0], gloss:b[1]}; }
+      return {t:p, unk:true};
+    }).map(function(s){ if (!s.r && !s.gloss && !s.unk) s.unk = true; return s; });
+  }
+  var n = w.length, INF = 1e9;
+  // best[i][state]: state 0 = in the stem, 1 = in the ending zone (only endings may follow)
+  var best = [];
+  for (var i=0;i<=n;i++) best.push([null,null]);
+  best[0][0] = {c:0, prev:null, seg:null, ps:0, pm:false};
+  function relax(j, st, c, from, fs, seg, isMatch){
+    var cur = best[j][st];
+    if (!cur || c < cur.c - 1e-9){ best[j][st] = {c:c, prev:from, ps:fs, seg:seg, pm:isMatch}; }
+  }
+  for (i=0;i<n;i++){
+    for (var s=0;s<2;s++){
+      var B = best[i][s]; if (!B) continue;
+      // unknown letter
+      relax(i+1, s, B.c + (s ? 2.5 : 1.25), i, s, {t:w[i], unk:true}, false);
+      // linking vowel between two matched pieces
+      if (s===0 && i>0 && i<n-1 && B.pm && 'aeiou'.indexOf(w[i]) >= 0) relax(i+1, 0, B.c + 0.35, i, s, {t:w[i], link:true}, false);
+      for (var k=0;k<FORMLIST.length;k++){
+        var F2 = FORMLIST[k], fm = F2.f, L = fm.length;
+        if (L > n-i || w.substr(i, L) !== fm) continue;
+        var ty = F2.r.type, isEnd = ty.indexOf('g') >= 0;
+        if (isEnd){
+          if (L <= 2 && i === 0) continue;
+          relax(i+L, 1, B.c + 1 - 0.03*L, i, s, {t:fm, r:F2.r}, true);
+        } else {
+          if (s === 1) continue;
+          if (L <= 2 && !(i === 0 && (ty.indexOf('p') >= 0 || ty.indexOf('u') >= 0)) && !(ty.indexOf('r') >= 0 && B.pm)) continue;
+          relax(i+L, 0, B.c + 1 - 0.03*L, i, s, {t:fm, r:F2.r}, true);
+        }
+      }
+    }
+  }
+  var end = null, es = 0;
+  [0,1].forEach(function(st){ var b = best[n][st]; if (b && (!end || b.c < end.c)){ end = b; es = st; } });
+  if (!end) return [];
+  var segs = [], pos = n, st = es;
+  while (pos > 0){ var node = best[pos][st]; segs.unshift(node.seg); var p2 = node.prev; st = node.ps; pos = p2; }
+  // merge adjacent unknowns
+  var out = [];
+  segs.forEach(function(sg){
+    var last = out[out.length-1];
+    if (sg.unk && last && last.unk) last.t += sg.t;
+    else out.push({t:sg.t, r:sg.r||null, unk:!!sg.unk, link:!!sg.link});
+  });
+  // a linking vowel must sit between two known pieces; otherwise treat it as unknown
+  for (var q=0;q<out.length;q++){ if (out[q].link && !(out[q+1] && out[q+1].r)){ out[q].link=false; out[q].unk=true; } }
+  var fin = [];
+  out.forEach(function(sg){ var last = fin[fin.length-1]; if (sg.unk && last && last.unk) last.t += sg.t; else fin.push(sg); });
+  return fin;
+}
+
+function segMeaning(sg){
+  if (sg.r) return sg.r.mean;
+  if (sg.gloss) return sg.gloss;
+  return '';
+}
+var decSel = {};
+function renderDecode(text){
+  var words = text.toLowerCase().split(/[\s\-–]+/).map(function(x){ return x.replace(/[^a-z]/g,''); }).filter(function(x){ return x.length > 0; });
+  var host = $('#ety-words');
+  if (!words.length){ host.innerHTML = ''; return; }
+  host.innerHTML = words.map(function(w, wi){
+    var segs = decodeWord(w);
+    var known = segs.filter(function(s){ return s.r || s.gloss; });
+    var html = '<div class="wordblock" data-wi="'+wi+'"><h2 class="wtitle">'+esc(w)+'</h2><div class="segs">';
+    segs.forEach(function(sg, si){
+      if (sg.link) html += '<div class="seg link"><div class="st">'+esc(sg.t)+'</div><div class="sm">link</div></div>';
+      else if (sg.r) html += '<button class="seg '+sg.r.lang+'" data-r="'+esc(sg.r.id)+'" data-si="'+si+'"><div class="st">'+esc(sg.t)+'</div><div class="sm">'+esc(sg.r.mean)+'</div><div class="sl">'+esc(langName(sg.r))+'</div></button>';
+      else if (sg.gloss) html += '<div class="seg O"><div class="st">'+esc(sg.t)+'</div><div class="sm">'+esc(sg.gloss)+'</div><div class="sl">note</div></div>';
+      else html += '<div class="seg unk"><div class="st">'+esc(sg.t)+'</div><div class="sm">?</div></div>';
+    });
+    html += '</div>';
+    if (known.length){
+      html += '<div class="literal"><b>Piece by piece:</b> '+known.map(function(s){ return esc(segMeaning(s)); }).join(' &nbsp;+&nbsp; ')+'</div>';
+    } else {
+      html += '<div class="literal">No known roots found in this word. Check the spelling (British spellings such as <i>haem-</i> and <i>oes-</i> are used), or try a related word.</div>';
+    }
+    var first = segs.filter(function(s){ return s.r; })[0];
+    html += '<div class="segdetail" data-detail="1">'+(first ? detailHTML(first.r) : '')+'</div></div>';
+    return html;
+  }).join('');
+  $$('.wordblock', host).forEach(function(b){ var s = $('button.seg', b); if (s) s.classList.add('sel'); });
+}
+function detailHTML(r){
+  var tw = twinOf(r);
+  return '<div class="k">Root</div><div><b>'+esc(r.disp)+'</b> — '+esc(r.mean)+'</div>'+
+    '<div class="k">From</div><div>'+originLine(r)+'</div>'+
+    '<div class="k">Also in</div><div class="exlist">'+r.ex.map(function(x){ return '<button class="linkbtn" data-w="'+esc(x)+'">'+esc(x)+'</button>'; }).join('')+'</div>'+
+    (tw ? '<div class="k">Twin</div><div>'+esc(langName(tw))+' <button class="linkbtn" data-jump="'+esc(tw.id)+'">'+esc(tw.disp)+'</button> also means ‘'+esc(tw.mean)+'’</div>' : '')+
+    (r.note ? '<div class="k">Note</div><div>'+esc(r.note)+'</div>' : '')+
+    '<div class="k"></div><div><button class="linkbtn" data-jump="'+esc(r.id)+'">Open root card</button></div>';
+}
+$('#ety-words').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.classList.contains('seg')){
+    var block = b.closest('.wordblock');
+    $$('button.seg', block).forEach(function(x){ x.classList.remove('sel'); });
+    b.classList.add('sel');
+    $('[data-detail]', block).innerHTML = detailHTML(BYID[b.dataset.r]);
+    return;
+  }
+  if (b.dataset.w){ goDecode(b.dataset.w); return; }
+  if (b.dataset.jump){ jumpToRoot(BYID[b.dataset.jump]); }
+});
+function goDecode(word){
+  showTab('decode');
+  $('#ety-dq').value = word;
+  renderDecode(word);
+  root.scrollIntoView({behavior:'smooth', block:'start'});
+}
+var dTimer;
+$('#ety-dq').addEventListener('input', function(){ clearTimeout(dTimer); var v=this.value; dTimer=setTimeout(function(){ renderDecode(v); }, 250); });
+$('#ety-dq').addEventListener('keydown', function(e){ if (e.key==='Enter') renderDecode(this.value); });
+$('#ety-dgo').addEventListener('click', function(){ renderDecode($('#ety-dq').value); });
+var TRIES = ['haemoglobin','photosynthesis','electrocardiogram','hydrophobic','thermodynamics','spectroscopy','centripetal','leucocyte','heterotroph','chlorophyll','aphelion','oesophagus','subcutaneous','cyanobacteria','extraterrestrial','polysaccharide','electromagnetic','mitochondrion','bioluminescence','troposphere','isotope','oscilloscope','arthropod','xerophyte'];
+function renderTries(){
+  var el = $('#ety-tries');
+  $$('.chip', el).forEach(function(c){ c.remove(); });
+  shuffle(TRIES.slice()).slice(0,8).forEach(function(w){
+    var b = document.createElement('button'); b.className='chip'; b.textContent=w;
+    b.addEventListener('click', function(){ $('#ety-dq').value = w; renderDecode(w); });
+    el.appendChild(b);
+  });
+  var more = document.createElement('button'); more.className='chip'; more.textContent='↻ more';
+  more.addEventListener('click', renderTries); el.appendChild(more);
+}
+
+/* --------------------------- QUIZ --------------------------- */
+var QK = {mean:'What does it mean?', root:'Which root?', decode:'Inside a word', lang:'Greek or Latin?', twin:'Find the twin'};
+var QS = { subj:'all', kinds:{mean:true, root:true, decode:true, lang:true, twin:true}, len:10 };
+var Q = null;
+
+function keyWords(m){ return m.toLowerCase().split(/[^a-z]+/).filter(function(x){ return x.length > 3; }); }
+function clash(a, b){ if (a === b) return true; if (twinOf(a) === b) return true; var ka = keyWords(a.mean), kb = keyWords(b.mean); return ka.some(function(x){ return kb.indexOf(x) >= 0; }); }
+function poolFor(subj){ return ROOTS.filter(function(r){ return r.type.indexOf('g') < 0 && (subj === 'all' || r.subj.indexOf(subj) >= 0); }); }
+function distractors(r, pool, n, prop){
+  var cands = shuffle(pool.filter(function(x){ return !clash(r, x); }));
+  var out = [], seen = {}; seen[r[prop]] = 1;
+  for (var i=0;i<cands.length && out.length<n;i++){ var v = cands[i][prop]; if (!seen[v]){ seen[v]=1; out.push(cands[i]); } }
+  return out;
+}
+function findInWord(r, word){
+  var lw = word.toLowerCase(), bestF = '', at = -1;
+  r.forms.forEach(function(fm){ var p = lw.indexOf(fm); if (p >= 0 && fm.length > bestF.length){ bestF = fm; at = p; } });
+  return at < 0 ? null : {at:at, len:bestF.length};
+}
+function makeQuestion(kind, r, pool){
+  var q = {kind:kind, r:r};
+  if (kind === 'mean'){
+    q.text = 'What does <b>'+esc(r.disp)+'</b> mean?';
+    q.sub = 'From '+originPlain(r);
+    q.opts = shuffle([r].concat(distractors(r, pool, 3, 'mean'))).map(function(x){ return {label:x.mean, ok:x===r}; });
+  } else if (kind === 'root'){
+    q.text = 'Which of these means <b>‘'+esc(r.mean)+'’</b>?';
+    q.opts = shuffle([r].concat(distractors(r, pool, 3, 'disp'))).map(function(x){ return {label:x.disp, ok:x===r}; });
+  } else if (kind === 'decode'){
+    var words = shuffle(r.ex.slice()), w = null, hit = null;
+    for (var i=0;i<words.length;i++){ var h = findInWord(r, words[i]); if (h && words[i].length - h.len >= 2){ w = words[i]; hit = h; break; } }
+    if (!w) return null;
+    q.text = 'In <b>'+esc(w.slice(0,hit.at))+'<mark>'+esc(w.substr(hit.at,hit.len))+'</mark>'+esc(w.slice(hit.at+hit.len))+'</b>, what does the highlighted part mean?';
+    q.opts = shuffle([r].concat(distractors(r, pool, 3, 'mean'))).map(function(x){ return {label:x.mean, ok:x===r}; });
+  } else if (kind === 'lang'){
+    if (r.lang === 'O') return null;
+    q.text = 'Does <b>'+esc(r.disp)+'</b> (‘'+esc(r.mean)+'’) come from Greek or Latin?';
+    q.opts = [{label:'Ancient Greek', ok:r.lang==='G'}, {label:'Latin', ok:r.lang==='L'}];
+  } else if (kind === 'twin'){
+    var t = twinOf(r); if (!t || t.lang === r.lang) return null;
+    q.text = '<b>'+esc(r.disp)+'</b> is '+langName(r)+' for ‘'+esc(r.mean)+'’. Which is its '+langName(t)+' twin?';
+    var others = shuffle(ROOTS.filter(function(x){ return x.lang === t.lang && x !== t && x.type.indexOf('g') < 0 && !clash(r, x); })).slice(0,3);
+    q.opts = shuffle([t].concat(others)).map(function(x){ return {label:x.disp, ok:x===t}; });
+    q.answerRoot = t;
+  }
+  if (!q.opts || q.opts.length < 2) return null;
+  return q;
+}
+function buildQuiz(onlyRoots){
+  var pool = poolFor(QS.subj);
+  var kinds = Object.keys(QS.kinds).filter(function(k){ return QS.kinds[k]; });
+  if (!kinds.length) kinds = ['mean'];
+  var src = shuffle((onlyRoots || pool).slice());
+  var qs = [], used = {}, tries = 0, len = onlyRoots ? Math.min(onlyRoots.length*2, QS.len) : QS.len;
+  while (qs.length < len && tries < 600){
+    tries++;
+    var r = src[tries % src.length];
+    if (!onlyRoots && used[r.id]) continue;
+    var q = makeQuestion(pick(kinds), r, pool.length > 8 ? pool : ROOTS);
+    if (q){ qs.push(q); used[r.id] = 1; }
+  }
+  return {qs:qs, i:0, score:0, streak:0, bestStreak:0, answered:false, results:[]};
+}
+function chipsHTML(key, opts, current){
+  return opts.map(function(o){ return '<button class="chip'+(o[2]?' c-'+o[0]:'')+'" data-q="'+key+'" data-v="'+o[0]+'" aria-pressed="'+(current===o[0]?'true':'false')+'">'+(o[2]?'<span class="dot" style="background:'+o[2]+'"></span>':'')+esc(o[1])+'</button>'; }).join('');
+}
+function renderQuizSetup(){
+  var h = '<div class="box qsetup qcard">'+
+   '<div><h2 class="disp" style="margin:0 0 4px;font-size:1.5rem">Test yourself</h2><p class="muted" style="margin:0">Questions are drawn from the root cards. Answer a root correctly twice and it is marked as learnt.</p></div>'+
+   '<div class="row"><span class="lbl">Subject</span>'+chipsHTML('subj',[['all','All'],['b','Biology',SUBJ.b.c],['c','Chemistry',SUBJ.c.c],['p','Physics',SUBJ.p.c],['e','Earth & Space',SUBJ.e.c]], QS.subj)+'</div>'+
+   '<div class="row"><span class="lbl">Types</span>'+Object.keys(QK).map(function(k){ return '<button class="chip" data-kind="'+k+'" aria-pressed="'+(QS.kinds[k]?'true':'false')+'">'+QK[k]+'</button>'; }).join('')+'</div>'+
+   '<div class="row"><span class="lbl">Length</span>'+chipsHTML('len',[['10','10 questions'],['20','20 questions'],['30','30 questions']], String(QS.len))+'</div>'+
+   '<div class="row" style="justify-content:space-between"><span class="small muted">'+(S.best ? 'Best score so far: '+S.best+'%' : 'Keys 1–4 choose an answer; Enter moves on.')+'</span><button class="btn" id="ety-qstart">Start quiz</button></div>'+
+   '</div>';
+  $('#ety-quiz').innerHTML = h;
+}
+function renderQuestion(){
+  var q = Q.qs[Q.i];
+  var pips = Q.qs.map(function(_, k){ var res = Q.results[k]; return '<span class="pip'+(res===true?' ok':res===false?' no':k===Q.i?' cur':'')+'"></span>'; }).join('');
+  var h = '<div class="box qcard">'+
+   '<div class="qtop"><span class="qkind">'+QK[q.kind]+' · '+(Q.i+1)+' of '+Q.qs.length+'</span><span class="small muted">Score '+Q.score+' · streak '+Q.streak+'</span></div>'+
+   '<div class="pips">'+pips+'</div>'+
+   '<div class="qtext">'+q.text+'</div>'+(q.sub ? '<p class="muted" style="margin:-10px 0 16px">'+esc(q.sub)+'</p>' : '')+
+   '<div class="opts">'+q.opts.map(function(o,k){ return '<button class="opt" data-k="'+k+'"><span class="k">'+(k+1)+'</span><span>'+esc(o.label)+'</span></button>'; }).join('')+'</div>'+
+   '<div id="ety-fb"></div>'+
+   '<div class="qnav"><button class="btn ghost" id="ety-qquit">End quiz</button><button class="btn" id="ety-qnext" disabled>'+(Q.i === Q.qs.length-1 ? 'See results' : 'Next question')+'</button></div>'+
+   '</div>';
+  $('#ety-quiz').innerHTML = h;
+  Q.answered = false;
+}
+function answer(k){
+  if (Q.answered) return;
+  Q.answered = true;
+  var q = Q.qs[Q.i], ok = q.opts[k].ok;
+  $$('.opt', $('#ety-quiz')).forEach(function(b, idx){ b.disabled = true; if (q.opts[idx].ok) b.classList.add('right'); else if (idx === k) b.classList.add('wrong'); });
+  Q.results[Q.i] = ok;
+  var r = q.r;
+  if (ok){
+    Q.score++; Q.streak++; Q.bestStreak = Math.max(Q.bestStreak, Q.streak);
+    S.correct[r.id] = (S.correct[r.id]||0) + 1;
+    if (S.correct[r.id] >= 2) S.learnt[r.id] = 1;
+  } else { Q.streak = 0; }
+  save();
+  var shown = q.answerRoot || r;
+  var ex = r.ex.slice(0,3).join(', ');
+  var exp = '<b>'+esc(r.disp)+'</b> comes from '+originLine(r)+', meaning ‘'+esc(r.mean)+'’.'+
+    (q.answerRoot ? ' Its '+esc(langName(shown))+' twin is <b>'+esc(shown.disp)+'</b> ('+originLine(shown)+').' : '')+
+    (ex ? ' Seen in: '+esc(ex)+'.' : '')+(r.note ? ' '+esc(r.note) : '');
+  $('#ety-fb').innerHTML = '<div class="feedback '+(ok?'ok':'no')+'"><b class="v">'+(ok ? pick(['Correct!','Spot on.','Nicely done.','Exactly right.']) : 'Not quite.')+'</b>'+exp+'</div>';
+  var nx = $('#ety-qnext'); nx.disabled = false; nx.focus({preventScroll:true});
+}
+function renderResults(){
+  var answered = Q.results.filter(function(x){ return x !== undefined; }).length;
+  var pct = answered ? Math.round(100*Q.score/answered) : 0;
+  if (answered >= 10 && pct > S.best){ S.best = pct; save(); }
+  var missed = Q.qs.filter(function(q, k){ return Q.results[k] === false; }).map(function(q){ return q.r; });
+  var uniq = []; missed.forEach(function(r){ if (uniq.indexOf(r) < 0) uniq.push(r); });
+  var msg = pct >= 90 ? 'Outstanding — you can take most science words apart.' : pct >= 70 ? 'Strong work. A little more practice and these will stick.' : pct >= 50 ? 'Good start. Review the roots below, then try again.' : 'Keep going — revisit the cards below and have another go.';
+  $('#ety-quiz').innerHTML = '<div class="box qcard">'+
+    '<div class="qkind">Results</div><div class="score">'+Q.score+' / '+answered+'</div>'+
+    '<p style="margin:8px 0 4px"><b>'+pct+'%</b> · best streak '+Q.bestStreak+'</p><p class="muted" style="margin:0">'+msg+'</p>'+
+    (uniq.length ? '<h3 class="disp" style="margin:18px 0 0">Roots to review</h3><div class="missed">'+uniq.map(function(r){ return '<div><b>'+esc(r.disp)+'</b> — '+esc(r.mean)+' <span class="muted small">('+esc(originPlain(r))+')</span> <button class="linkbtn small" data-jump="'+esc(r.id)+'">card</button></div>'; }).join('')+'</div>' : '<p style="margin-top:14px">No mistakes at all!</p>')+
+    '<div class="qnav">'+(uniq.length ? '<button class="btn ghost" id="ety-qretry">Practise these again</button>' : '<span></span>')+'<button class="btn" id="ety-qagain">New quiz</button></div></div>';
+  Q.missedRoots = uniq;
+  renderCounts();
+}
+$('#ety-quiz').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.q){ var key=b.dataset.q; QS[key] = key==='len' ? +b.dataset.v : b.dataset.v; renderQuizSetup(); return; }
+  if (b.dataset.kind){ QS.kinds[b.dataset.kind] = !QS.kinds[b.dataset.kind]; renderQuizSetup(); return; }
+  if (b.id === 'ety-qstart'){ Q = buildQuiz(); if (!Q.qs.length){ return; } renderQuestion(); return; }
+  if (b.classList.contains('opt')){ answer(+b.dataset.k); return; }
+  if (b.id === 'ety-qnext'){ if (Q.i < Q.qs.length-1){ Q.i++; renderQuestion(); } else renderResults(); return; }
+  if (b.id === 'ety-qquit'){ renderResults(); return; }
+  if (b.id === 'ety-qagain'){ Q = null; renderQuizSetup(); return; }
+  if (b.id === 'ety-qretry'){ Q = buildQuiz(Q.missedRoots); renderQuestion(); return; }
+  if (b.dataset.jump){ jumpToRoot(BYID[b.dataset.jump]); }
+});
+root.addEventListener('keydown', function(e){
+  if (!$('#ety-p-quiz').classList.contains('on') || !Q || !Q.qs.length) return;
+  if (e.target.tagName === 'INPUT') return;
+  if (/^[1-4]$/.test(e.key) && !Q.answered && $('.opt')){ var k=+e.key-1; if (Q.qs[Q.i].opts[k]) answer(k); }
+  else if (e.key === 'Enter' && Q.answered && $('#ety-qnext') && document.activeElement !== $('#ety-qnext')){ e.preventDefault(); $('#ety-qnext').click(); }
+});
+
+/* --------------------------- ELEMENTS --------------------------- */
+var EF = {cat:'all', q:''}, elSel = 1;
+function elPos(z){
+  if (z === 1) return [1,1]; if (z === 2) return [1,18];
+  if (z <= 10) return [2, z<=4 ? z-2 : z+8];
+  if (z <= 18) return [3, z<=12 ? z-10 : z];
+  if (z <= 36) return [4, z-18];
+  if (z <= 54) return [5, z-36];
+  if (z <= 56) return [6, z-54];
+  if (z <= 71) return [9, z-54];
+  if (z <= 86) return [6, z-68];
+  if (z <= 88) return [7, z-86];
+  if (z <= 103) return [10, z-86];
+  return [7, z-100];
+}
+function renderLegend(){
+  var el = $('#ety-legend');
+  var opts = [['all','All']].concat(Object.keys(ELCAT).map(function(k){ return [k, ELCAT[k]]; }));
+  opts.forEach(function(o){
+    var n = o[0]==='all' ? ELEMENTS.length : ELEMENTS.filter(function(x){ return x.cat===o[0]; }).length;
+    var b = document.createElement('button');
+    b.className = 'chip' + (o[0]!=='all' ? ' cat-'+o[0] : '');
+    b.dataset.v = o[0];
+    b.setAttribute('aria-pressed', EF.cat===o[0] ? 'true':'false');
+    b.innerHTML = (o[0]!=='all' ? '<span class="dot"></span>' : '')+esc(o[1])+' <span class="muted small">'+n+'</span>';
+    b.addEventListener('click', function(){ EF.cat = o[0]; $$('.chip', el).forEach(function(c){ c.setAttribute('aria-pressed', c.dataset.v===o[0]?'true':'false'); }); renderTable(); });
+    el.appendChild(b);
+  });
+}
+function renderTable(){
+  var h = '';
+  ELEMENTS.forEach(function(e){
+    var p = elPos(e.z);
+    var dim = (EF.cat !== 'all' && e.cat !== EF.cat) || (EF.q && (e.name+' '+e.sy).toLowerCase().indexOf(EF.q) < 0 && String(e.z) !== EF.q);
+    h += '<button class="el cat-'+e.cat+(dim?' dim':'')+(e.z===elSel?' sel':'')+'" data-z="'+e.z+'" style="grid-row:'+p[0]+';grid-column:'+p[1]+'" aria-label="'+esc(e.name)+'"><span class="z">'+e.z+'</span><span class="sy">'+esc(e.sy)+'</span><span class="nm">'+esc(e.name)+'</span></button>';
+  });
+  h += '<div class="el ph" style="grid-row:6;grid-column:3">57–71</div><div class="el ph" style="grid-row:7;grid-column:3">89–103</div>';
+  h += '<div class="gap" style="grid-row:8"></div>';
+  $('#ety-ptable').innerHTML = h;
+}
+function renderElDetail(){
+  var e = ELEMENTS[elSel-1];
+  $('#ety-eldetail').innerHTML = '<div class="el-big cat-'+e.cat+'"><span class="z">'+e.z+'</span><span class="sy">'+esc(e.sy)+'</span></div>'+
+    '<div><h2 class="el-name">'+esc(e.name)+'</h2><div class="el-cat cat-'+e.cat+'">'+esc(ELCAT[e.cat])+'</div><div>'+esc(e.text)+'</div></div>';
+}
+$('#ety-ptable').addEventListener('click', function(ev){
+  var b = ev.target.closest('button.el'); if (!b) return;
+  elSel = +b.dataset.z;
+  $$('#ety-ptable .el').forEach(function(x){ x.classList.toggle('sel', x === b); });
+  renderElDetail();
+});
+$('#ety-elq').addEventListener('input', function(){
+  EF.q = this.value.trim().toLowerCase();
+  if (EF.q){
+    var hit = ELEMENTS.filter(function(e){ return e.sy.toLowerCase() === EF.q || e.name.toLowerCase() === EF.q || String(e.z) === EF.q; })[0] ||
+              ELEMENTS.filter(function(e){ return e.name.toLowerCase().indexOf(EF.q) === 0; })[0];
+    if (hit){ elSel = hit.z; renderElDetail(); }
+  }
+  renderTable();
+});
+
+/* --------------------------- STORIES --------------------------- */
+var SF = {cat:'all', q:''};
+function renderStoryFilters(){
+  var el = $('#ety-f-story');
+  [['all','All']].concat(Object.keys(STCAT).map(function(k){ return [k, STCAT[k]]; })).forEach(function(o){
+    var b = document.createElement('button'); b.className='chip'; b.dataset.v=o[0];
+    b.setAttribute('aria-pressed', SF.cat===o[0]?'true':'false'); b.textContent=o[1];
+    b.addEventListener('click', function(){ SF.cat=o[0]; $$('.chip', el).forEach(function(c){ c.setAttribute('aria-pressed', c.dataset.v===o[0]?'true':'false'); }); renderStories(); });
+    el.appendChild(b);
+  });
+}
+function renderStories(){
+  var list = STORIES.filter(function(s){
+    if (SF.cat !== 'all' && s.cat !== SF.cat) return false;
+    if (SF.q && (s.w+' '+s.o+' '+s.who+' '+s.s).toLowerCase().indexOf(SF.q) < 0) return false;
+    return true;
+  });
+  $('#ety-stories').innerHTML = list.length ? list.map(function(s){
+    return '<article class="story"><span class="ct">'+esc(STCAT[s.cat])+'</span><h3>'+esc(s.w)+'</h3><div class="o">'+esc(s.o)+'</div>'+(s.who && s.who !== '—' ? '<div class="w">'+esc(s.who)+'</div>' : '')+'<p>'+esc(s.s)+'</p></article>';
+  }).join('') : '<div class="empty">No stories match that search.</div>';
+}
+$('#ety-sq').addEventListener('input', function(){ SF.q = this.value.trim().toLowerCase(); renderStories(); });
+
+/* --------------------------- INIT --------------------------- */
+renderCounts();
+renderGrid();
+renderTries();
+renderQuizSetup();
+renderLegend(); renderTable(); renderElDetail();
+renderStoryFilters(); renderStories();
+// expose for testing
+root._ety = {decodeWord:decodeWord, ROOTS:ROOTS, BYID:BYID, buildQuiz:buildQuiz, ELEMENTS:ELEMENTS};
+})();
+</script>
+</body>
+</html>
