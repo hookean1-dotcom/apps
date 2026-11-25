@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacitance Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a precise lab instrument — calm, exact, teacherly.
+   IDEA: a physics bench datasheet: apparatus on a rail, readings on a meter.
+   PICTURE: the 3D plates on an optical-style rail, overlap glowing magenta.
+   COLOUR and TYPE: white and pale cobalt fields, cobalt strip, magenta for overlap; Space Grotesk + Inter.
+   LAYOUT: viewport left with live reading, controls right; equation, graph, ideas below. */
+html,body{margin:0;padding:0}
+#cap-app{--co:#1240e0;--co-d:#0b2fa8;--ink:#10131a;--mute:#475069;--pale:#eef2ff;--line:#d3daef;--mag:#c8175d;--mag-p:#fde7f0;--ok:#0c6b3d;
+  color-scheme:light;width:100%;height:100%;min-height:900px;box-sizing:border-box;background:#fff;color:var(--ink);
+  font:15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:clip}
+#cap-app *,#cap-app *::before,#cap-app *::after{box-sizing:border-box;min-width:0}
+#cap-app .ca-top{background:var(--co);color:#fff;padding:16px max(2.5vw,16px) 14px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 22px}
+#cap-app .ca-top h1{margin:0;font:600 clamp(22px,2.6vw,32px)/1.1 "Space Grotesk",sans-serif;letter-spacing:-.01em;text-wrap:balance}
+#cap-app .ca-top p{margin:0;color:#dfe6ff;font-size:14px}
+#cap-app .ca-main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;border-bottom:1px solid var(--line)}
+#cap-app .ca-view{position:relative;min-height:600px;background:var(--pale);overflow:hidden}
+#cap-app .ca-gl{position:absolute;inset:0}
+#cap-app .ca-gl canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#cap-app .ca-gl canvas:active{cursor:grabbing}
+#cap-app .ca-tags{position:absolute;inset:0;pointer-events:none}
+#cap-app .ca-tag{position:absolute;left:0;top:0;transform:translate(-50%,-100%);white-space:nowrap;font:600 13px/1.2 "Space Grotesk",sans-serif;
+  background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:6px;padding:3px 7px;color:var(--ink)}
+#cap-app .ca-tag.m{color:var(--mag);border-color:#f3b6cf}
+#cap-app .ca-read{position:absolute;left:14px;top:14px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px 12px;
+  box-shadow:0 6px 24px rgba(16,30,90,.10);width:min(300px,calc(100% - 28px))}
+#cap-app .ca-read .lab{font-size:13px;color:var(--mute)}
+#cap-app .ca-read .big{font:700 clamp(30px,3.6vw,44px)/1.05 "Space Grotesk",sans-serif;color:var(--co-d);white-space:nowrap;font-variant-numeric:tabular-nums}
+#cap-app .ca-read .big small{font-size:.55em;font-weight:600;margin-left:4px;color:var(--ink)}
+#cap-app .ca-meter{margin-top:10px;height:10px;border-radius:5px;background:#e4e9f8;position:relative;overflow:hidden}
+#cap-app .ca-meter i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#6f8ff5,var(--co));border-radius:5px;transition:width .25s}
+#cap-app .ca-mscale{display:flex;justify-content:space-between;font-size:13px;color:var(--mute);margin-top:3px}
+#cap-app .ca-read .sub{font-size:13px;color:var(--mute);margin-top:6px}
+#cap-app .ca-vbtns{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+#cap-app .ca-hint{position:absolute;left:14px;bottom:12px;font-size:13px;color:var(--mute);background:rgba(255,255,255,.85);padding:4px 9px;border-radius:6px}
+#cap-app .ca-warn{position:absolute;right:12px;bottom:12px;max-width:min(330px,calc(100% - 24px));font-size:13px;line-height:1.4;background:#fff7e6;border:1px solid #f0c674;color:#5c3b00;border-radius:8px;padding:7px 10px;display:none}
+#cap-app button{font:600 14px/1.2 Inter,system-ui,sans-serif;color:var(--co-d);background:#fff;border:1px solid #b9c6ef;border-radius:8px;padding:0 12px;min-height:40px;cursor:pointer}
+#cap-app button:hover{background:#f4f6ff;border-color:var(--co)}
+#cap-app button:focus-visible,#cap-app input:focus-visible{outline:3px solid #7d9bff;outline-offset:2px}
+#cap-app button[aria-pressed=true]{background:var(--co);color:#fff;border-color:var(--co)}
+#cap-app .ca-panel{padding:16px 18px 20px;border-left:1px solid var(--line);background:#fff}
+#cap-app .ca-grp{padding:10px 0 12px;border-bottom:1px solid #e7ebf6}
+#cap-app .ca-grp:last-child{border-bottom:0}
+#cap-app .ca-row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+#cap-app .ca-row label,#cap-app .ca-h{font:600 15px/1.3 "Space Grotesk",sans-serif;color:var(--ink)}
+#cap-app .ca-val{font:600 15px/1.3 "Space Grotesk",sans-serif;color:var(--co-d);white-space:nowrap;font-variant-numeric:tabular-nums}
+#cap-app .ca-note{font-size:13px;color:var(--mute);margin:4px 0 0}
+#cap-app .ca-note b{color:var(--mag);font-weight:600}
+#cap-app input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:30px;background:transparent;margin:4px 0 0}
+#cap-app input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px;background:#dbe2f7}
+#cap-app input[type=range]::-moz-range-track{height:6px;border-radius:3px;background:#dbe2f7}
+#cap-app input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--co);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3);margin-top:-8px}
+#cap-app input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--co);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+#cap-app input[type=range]:disabled{opacity:.4}
+#cap-app .ca-pair{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap}
+#cap-app .ca-pair button{flex:1 1 0}
+#cap-app .ca-mats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+#cap-app .ca-mats button{display:flex;align-items:center;gap:8px;text-align:left;color:var(--ink);font-weight:500;font-size:13px;padding:4px 8px;min-height:42px}
+#cap-app .ca-mats button .sw{flex:none;width:18px;height:18px;border-radius:4px;border:1px solid rgba(0,0,0,.25)}
+#cap-app .ca-mats button .t{flex:1;line-height:1.2}
+#cap-app .ca-mats button .e{display:block;color:var(--mute);font-size:12.5px;font-variant-numeric:tabular-nums}
+#cap-app .ca-mats button[aria-pressed=true]{background:var(--pale);color:var(--ink);border:2px solid var(--co)}
+#cap-app .ca-mats button.wide{grid-column:1/-1}
+#cap-app .ca-store{margin-top:8px;font-size:14px;color:var(--ink);min-height:21px}
+#cap-app .ca-store b{color:var(--co-d)}
+#cap-app .ca-lower{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,.9fr);gap:0}
+#cap-app .ca-card{padding:18px max(1.6vw,16px) 22px;border-right:1px solid var(--line)}
+#cap-app .ca-card:last-child{border-right:0}
+#cap-app .ca-card h2{margin:0 0 10px;font:600 19px/1.2 "Space Grotesk",sans-serif}
+#cap-app .ca-eq{font:500 26px/1 "Space Grotesk",sans-serif;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 12px}
+#cap-app .fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-size:.95em}
+#cap-app .fr>span:first-child{border-bottom:2px solid currentColor;padding:0 6px 3px}
+#cap-app .fr>span:last-child{padding:3px 6px 0}
+#cap-app .ca-key{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:14px;margin:0 0 12px}
+#cap-app .ca-key dt{font:600 15px/1.4 "Space Grotesk",sans-serif;color:var(--co-d)}
+#cap-app .ca-key dd{margin:0;color:var(--ink)}
+#cap-app .ca-key dd.a{color:var(--mag);font-weight:600}
+#cap-app .ca-sub{background:var(--pale);border-radius:10px;padding:12px 14px;font-size:15px;line-height:1.9;overflow-x:auto}
+#cap-app .ca-sub .s{white-space:nowrap}
+#cap-app .ca-sub .res{font:700 17px/1.6 "Space Grotesk",sans-serif;color:var(--co-d)}
+#cap-app sup,#cap-app sub{font-size:.72em;line-height:0}
+#cap-app .ca-seg{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+#cap-app .ca-seg button{min-height:36px;font-size:13px;padding:0 10px}
+#cap-app .ca-fig{position:relative;height:250px}
+#cap-app .ca-fig canvas{position:absolute;inset:0;width:100%;height:100%}
+#cap-app .ca-ideas{margin:0;padding-left:18px;font-size:14px}
+#cap-app .ca-ideas li{margin-bottom:8px}
+#cap-app .ca-ideas li::marker{color:var(--co)}
+@media (max-width:1060px){#cap-app .ca-lower{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#cap-app .ca-card:nth-child(2){border-right:0}#cap-app .ca-card:last-child{grid-column:1/-1;border-top:1px solid var(--line)}}
+@media (max-width:860px){#cap-app .ca-main{grid-template-columns:minmax(0,1fr)}#cap-app .ca-panel{border-left:0;border-top:1px solid var(--line)}#cap-app .ca-view{min-height:0;height:480px}}
+@media (max-width:640px){#cap-app .ca-lower{grid-template-columns:minmax(0,1fr)}#cap-app .ca-card{border-right:0;border-top:1px solid var(--line)}#cap-app .ca-view{height:460px}#cap-app .ca-hint{display:none}#cap-app .ca-read{left:10px;top:10px;padding:8px 11px;width:auto;max-width:calc(100% - 20px)}#cap-app .ca-read .lab,#cap-app .ca-mscale,#cap-app .ca-meter{display:none}#cap-app .ca-read .sub{margin-top:2px}#cap-app .ca-vbtns{top:auto;bottom:10px;right:10px;flex-direction:row}#cap-app .ca-vbtns button{min-height:38px;padding:0 9px;font-size:13px}#cap-app .ca-vbtns .lg{display:none}#cap-app .ca-warn{bottom:58px;right:10px}#cap-app .ca-eq{font-size:22px}}
+@media (prefers-reduced-motion:reduce){#cap-app .ca-meter i{transition:none}}
+</style>
+</head>
+<body>
+<div id="cap-app">
+  <header class="ca-top">
+    <h1>Capacitance explorer: gap, overlap and dielectrics</h1>
+    <p>A parallel-plate capacitor on a rail. Change d, the area of overlap A, and what fills the gap.</p>
+  </header>
+
+  <div class="ca-main">
+    <section class="ca-view" aria-label="3D view of the capacitor">
+      <div class="ca-gl" id="ca-gl"></div>
+      <div class="ca-tags" id="ca-tags">
+        <div class="ca-tag" id="ca-tag-d">d</div>
+        <div class="ca-tag m" id="ca-tag-a">A</div>
+        <div class="ca-tag" id="ca-tag-s">slab</div>
+      </div>
+      <div class="ca-read">
+        <div class="lab">Capacitance (ideal parallel plates)</div>
+        <div class="big" id="ca-big">35.4<small>pF</small></div>
+        <div class="ca-meter" aria-hidden="true"><i id="ca-bar" style="width:40%"></i></div>
+        <div class="ca-mscale" aria-hidden="true"><span>0.01 pF</span><span>1 pF</span><span>1 nF</span><span>1 µF</span></div>
+        <div class="sub" id="ca-ratio">×1.00 compared with air</div>
+      </div>
+      <div class="ca-vbtns">
+        <button type="button" id="ca-reset">Reset<span class="lg"> view</span></button>
+        <button type="button" id="ca-see" aria-pressed="true">See-through<span class="lg"> plates</span></button>
+        <button type="button" id="ca-field" aria-pressed="true">Field<span class="lg"> region</span></button>
+        <button type="button" id="ca-labels" aria-pressed="true">Labels</button>
+      </div>
+      <div class="ca-hint">Drag to rotate · scroll or pinch to zoom · right-drag or two fingers to pan</div>
+      <div class="ca-warn" id="ca-warn">The gap is no longer small compared with the overlap, so edge (fringing) effects matter: a real capacitor would read a little higher than this ideal value.</div>
+    </section>
+
+    <aside class="ca-panel" aria-label="Controls">
+      <div class="ca-grp">
+        <div class="ca-row"><label for="ca-d">Plate separation, d</label><span class="ca-val" id="ca-dv">10.0 mm</span></div>
+        <input type="range" id="ca-d" min="1" max="60" step="any" value="10">
+        <div class="ca-pair"><button type="button" id="ca-half">Halve d</button><button type="button" id="ca-dbl">Double d</button></div>
+      </div>
+      <div class="ca-grp">
+        <div class="ca-row"><label for="ca-l">Plate side length, L</label><span class="ca-val" id="ca-lv">20.0 cm</span></div>
+        <input type="range" id="ca-l" min="5" max="30" step="0.5" value="20">
+        <div class="ca-row" style="margin-top:6px"><label for="ca-o">Vertical offset of moving plate</label><span class="ca-val" id="ca-ov">0.0 cm</span></div>
+        <input type="range" id="ca-o" min="0" max="20" step="0.25" value="0">
+        <p class="ca-note" id="ca-anote"><b>A is the area of overlap</b> (shaded): only the parts of the plates facing each other count.</p>
+      </div>
+      <div class="ca-grp">
+        <div class="ca-h">Dielectric between the plates</div>
+        <div class="ca-mats" id="ca-mats"></div>
+        <p class="ca-note" id="ca-mnote"></p>
+      </div>
+      <div class="ca-grp">
+        <div class="ca-row"><label for="ca-f">Slab inserted</label><span class="ca-val" id="ca-fv">0%</span></div>
+        <input type="range" id="ca-f" min="0" max="100" step="1" value="0">
+        <div class="ca-pair"><button type="button" id="ca-slide">Slide slab in</button></div>
+      </div>
+      <div class="ca-grp">
+        <div class="ca-pair"><button type="button" id="ca-store">Store this reading</button><button type="button" id="ca-clear">Clear</button></div>
+        <div class="ca-store" id="ca-storeout">Store a reading, change one variable, and compare.</div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="ca-lower">
+    <section class="ca-card">
+      <h2>The equation</h2>
+      <div class="ca-eq"><span>C =</span><span class="fr"><span>ε<sub>0</sub> ε<sub>r</sub> A</span><span>d</span></span></div>
+      <dl class="ca-key">
+        <dt>C</dt><dd>capacitance in farads, F</dd>
+        <dt>ε<sub>0</sub></dt><dd>permittivity of free space, 8.85 × 10<sup>−12</sup> F m<sup>−1</sup></dd>
+        <dt>ε<sub>r</sub></dt><dd>relative permittivity (dielectric constant) of the material in the gap</dd>
+        <dt>A</dt><dd class="a">area of overlap of the plates, in m²</dd>
+        <dt>d</dt><dd>separation of the plates, in m</dd>
+      </dl>
+      <div class="ca-sub" id="ca-sub"></div>
+    </section>
+    <section class="ca-card">
+      <h2>How C depends on each variable</h2>
+      <div class="ca-seg" role="group" aria-label="Graph type">
+        <button type="button" data-g="d" aria-pressed="true">C against d</button>
+        <button type="button" data-g="inv" aria-pressed="false">C against 1/d</button>
+        <button type="button" data-g="A" aria-pressed="false">C against A</button>
+      </div>
+      <div class="ca-fig"><canvas id="ca-graph" aria-label="Graph of capacitance"></canvas></div>
+      <p class="ca-note" id="ca-gnote"></p>
+    </section>
+    <section class="ca-card">
+      <h2>Key ideas</h2>
+      <ul class="ca-ideas">
+        <li><b>C ∝ A.</b> Only the overlap matters. Slide the plate up and the charge can only gather where the plates face each other.</li>
+        <li><b>C ∝ 1/d.</b> Halving the gap doubles C. A graph of C against 1/d is a straight line through the origin.</li>
+        <li><b>Dielectrics raise C by a factor ε<sub>r</sub>.</b> The molecules polarise, and the charges induced on the slab's surfaces partly cancel the field. For the same charge Q the p.d. V is smaller, so C = Q/V is larger.</li>
+        <li><b>Part-filled gap.</b> With the slab part-way in, the two regions act like capacitors in parallel, so their capacitances add.</li>
+        <li>Values of ε<sub>r</sub> shown are typical. Real values vary with temperature, frequency and purity, especially for the titanates.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+{
+const EPS0 = 8.854e-12;
+const MATS = [
+  {id:'air',  name:'Air (no dielectric)', er:1,    col:'#ffffff', op:0,   r:.5, note:'Air has ε<sub>r</sub> ≈ 1.0006, taken as 1 here (the same as a vacuum).'},
+  {id:'ptfe', name:'PTFE (Teflon)',      er:2.1,  col:'#f1efe8', op:.92, r:.75,note:'PTFE: very low loss, used in high-frequency capacitors.'},
+  {id:'ps',   name:'Polystyrene',        er:2.56, col:'#cfe2ee', op:.4,  r:.15,note:'Polystyrene film: stable, used in precision capacitors.'},
+  {id:'nyl',  name:'Nylon',              er:3.4,  col:'#ece3cc', op:.88, r:.6, note:'Nylon: a common engineering plastic.'},
+  {id:'pap',  name:'Paper',              er:3.7,  col:'#f4efdf', op:1,   r:.95,note:'Waxed or oiled paper was used in early capacitors.'},
+  {id:'bak',  name:'Bakelite',           er:4.9,  col:'#6b3518', op:1,   r:.45,note:'Bakelite: an early thermosetting plastic.'},
+  {id:'pyr',  name:'Pyrex glass',        er:5.6,  col:'#b9e0e4', op:.32, r:.05,note:'Borosilicate glass: the Leyden jar used glass as its dielectric.'},
+  {id:'neo',  name:'Neoprene rubber',    er:6.7,  col:'#26272b', op:1,   r:.9, note:'Neoprene: a synthetic rubber.'},
+  {id:'alu',  name:'Alumina (Al₂O₃)',    er:9.8,  col:'#f7f6f2', op:1,   r:.55,note:'Alumina: a ceramic; a thin oxide layer is the dielectric in electrolytic capacitors.'},
+  {id:'sto',  name:'Strontium titanate', er:233,  col:'#ddd6ee', op:.6,  r:.1, note:'Strontium titanate: a very high-permittivity crystal.'},
+  {id:'bto',  name:'Barium titanate',    er:1200, col:'#d4d0c6', op:1,   r:.6, note:'Barium titanate: ceramic used in multilayer capacitors; ε<sub>r</sub> ranges from about 1000 to several thousand.'}
+];
+const S = {d:10, L:20, off:0, mat:MATS[0], f:0, fTarget:null, field:true, see:true, labels:true, graph:'d', stored:null};
+const $ = id => document.getElementById(id);
+const T = 0.3, BASE = 3; // plate thickness and height of plate bottom above rail (scene units: 1 = 1 cm)
+
+/* ---------- physics ---------- */
+const area = () => Math.max(0, S.L * (S.L - S.off)) * 1e-4;          // m²
+const epsEff = () => S.mat.id === 'air' ? 1 : 1 + S.f * (S.mat.er - 1);
+const capOf = (A, d, e) => d > 0 ? EPS0 * e * A / d : 0;
+const capNow = () => capOf(area(), S.d * 1e-3, epsEff());
+
+function sig(x){ return x >= 100 ? x.toFixed(0) : x >= 10 ? x.toFixed(1) : x.toFixed(2); }
+function fmtC(C){
+  if (!(C > 0)) return ['0', 'pF'];
+  if (C < 1e-9) return [sig(C * 1e12), 'pF'];
+  if (C < 1e-6) return [sig(C * 1e9), 'nF'];
+  return [sig(C * 1e6), 'µF'];
+}
+function stdf(x, p = 3){
+  if (x === 0) return '0';
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  let m = (x / 10 ** e).toFixed(p - 1);
+  if (parseFloat(m) >= 10){ e++; m = (x / 10 ** e).toFixed(p - 1); }
+  if (e === 0) return m;
+  return m + ' × 10<sup>' + (e < 0 ? '−' + (-e) : e) + '</sup>';
+}
+const erTxt = e => e >= 100 ? e.toFixed(0) : e >= 10 ? e.toFixed(1) : e.toFixed(2);
+
+/* ---------- material buttons ---------- */
+$('ca-mats').innerHTML = MATS.map((m, i) =>
+  `<button type="button" data-i="${i}" class="${i === 0 ? 'wide' : ''}" aria-pressed="${i === 0}">
+     <span class="sw" style="background:${m.col}${m.op < .6 && m.op > 0 ? ';opacity:.75' : ''}"></span>
+     <span class="t">${m.name}<span class="e">ε<sub>r</sub> ${m.id === 'bto' ? '≈' : '='} ${m.er}</span></span></button>`).join('');
+
+/* ---------- three.js scene ---------- */
+const host = $('ca-gl');
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+host.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xeef2ff);
+const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 900);
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 3; controls.maxDistance = 200;
+controls.maxPolarAngle = Math.PI * 0.53;
+
+// simple studio environment for metal reflections
+{
+  const pm = new THREE.PMREMGenerator(renderer);
+  const env = new THREE.Scene();
+  env.add(new THREE.Mesh(new THREE.BoxGeometry(100, 100, 100), new THREE.MeshBasicMaterial({color:0x7d869c, side:THREE.BackSide})));
+  const panel = (w, h, x, y, z, k) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({color:new THREE.Color(k, k, k), side:THREE.DoubleSide}));
+    m.position.set(x, y, z); m.lookAt(0, 0, 0); env.add(m);
+  };
+  panel(50, 25, 0, 45, 0, 3.2); panel(30, 30, 45, 8, 25, 1.8); panel(30, 22, -45, 10, -15, 1.3); panel(40, 10, 0, 5, 48, 1.1);
+  scene.environment = pm.fromScene(env, 0.04).texture;
+}
+scene.add(new THREE.HemisphereLight(0xffffff, 0xb9c3e0, 0.55));
+const sun = new THREE.DirectionalLight(0xffffff, 1.05);
+sun.position.set(25, 55, 35); sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, {left:-40, right:40, top:40, bottom:-40, near:1, far:150});
+sun.shadow.bias = -0.0005;
+scene.add(sun);
+
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(500, 500), new THREE.MeshStandardMaterial({color:0xe2e8f8, roughness:1, metalness:0}));
+floor.rotation.x = -Math.PI / 2; floor.position.y = -1; floor.receiveShadow = true; scene.add(floor);
+const grid = new THREE.GridHelper(240, 48, 0xc3cdea, 0xd3dbf1); grid.position.y = -0.995; scene.add(grid);
+
+const metal = c => new THREE.MeshStandardMaterial({color:c, metalness:0.85, roughness:0.32});
+const mesh = (geo, mat, cast = true) => { const m = new THREE.Mesh(geo, mat); m.castShadow = cast; m.receiveShadow = true; return m; };
+const box = () => new THREE.BoxGeometry(1, 1, 1);
+
+// rail with mm ruler on its front face
+const RAIL_X0 = -5, RAIL_X1 = 10;
+const rail = mesh(new THREE.BoxGeometry(RAIL_X1 - RAIL_X0, 1, 3), metal(0xaeb5c2));
+rail.position.set((RAIL_X0 + RAIL_X1) / 2, -0.5, 0); scene.add(rail);
+[RAIL_X0 - 0.25, RAIL_X1 + 0.25].forEach(x => { const c = mesh(new THREE.BoxGeometry(0.5, 1.3, 3.4), new THREE.MeshStandardMaterial({color:0x2a2f3a, roughness:.6})); c.position.set(x, -0.35, 0); scene.add(c); });
+{
+  const R0 = -1, R1 = 9, cv = document.createElement('canvas');
+  cv.width = 2400; cv.height = 216;
+  const g = cv.getContext('2d');
+  g.fillStyle = '#fbfbf7'; g.fillRect(0, 0, cv.width, cv.height);
+  const px = x => (x - R0) / (R1 - R0) * cv.width;
+  g.strokeStyle = '#111'; g.fillStyle = '#111';
+  for (let mm = R0 * 10; mm <= R1 * 10; mm++){
+    const x = px(mm / 10), len = mm % 10 === 0 ? 92 : mm % 5 === 0 ? 62 : 38;
+    g.lineWidth = mm % 10 === 0 ? 4 : 2.5;
+    g.beginPath(); g.moveTo(x, 0); g.lineTo(x, len); g.stroke();
+    if (mm % 10 === 0 && mm >= 0){ g.font = '600 64px Arial'; g.textAlign = 'center'; g.fillText(String(mm / 10), x, 170); }
+  }
+  g.font = '600 44px Arial'; g.textAlign = 'left'; g.fillText('cm', px(-0.85), 170);
+  g.fillStyle = '#c8175d'; g.fillRect(px(0) - 3, 0, 6, cv.height);
+  const tex = new THREE.CanvasTexture(cv); tex.encoding = THREE.sRGBEncoding; tex.anisotropy = 8;
+  const ruler = new THREE.Mesh(new THREE.PlaneGeometry(R1 - R0, 0.9), new THREE.MeshStandardMaterial({map:tex, roughness:.7}));
+  ruler.position.set((R0 + R1) / 2, -0.5, 1.505); scene.add(ruler);
+}
+
+// carriages, posts, plates
+const nylon = new THREE.MeshStandardMaterial({color:0xf1f1ec, roughness:.55});
+const carF = mesh(box(), new THREE.MeshStandardMaterial({color:0x3a4050, roughness:.45, metalness:.4})); carF.scale.set(1.6, 0.8, 3.2); scene.add(carF);
+const carM = mesh(box(), new THREE.MeshStandardMaterial({color:0x1f4fe8, roughness:.35, metalness:.45})); carM.scale.set(1.6, 0.8, 3.2); scene.add(carM);
+const knob = mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.5, 24), new THREE.MeshStandardMaterial({color:0x15171c, roughness:.5}));
+knob.rotation.x = Math.PI / 2; scene.add(knob);
+const postF = mesh(box(), nylon), postM = mesh(box(), nylon); scene.add(postF, postM);
+const plateMat = new THREE.MeshStandardMaterial({color:0xd5dae2, metalness:0.9, roughness:0.28});
+function setSee(on){ plateMat.transparent = on; plateMat.opacity = on ? 0.3 : 1; plateMat.depthWrite = !on; plateMat.needsUpdate = true; }
+const plateF = mesh(box(), plateMat), plateM = mesh(box(), plateMat); scene.add(plateF, plateM);
+const termF = mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.7, 20), new THREE.MeshStandardMaterial({color:0xd0202a, roughness:.4}));
+const termM = mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.7, 20), new THREE.MeshStandardMaterial({color:0x1a1b1f, roughness:.4}));
+scene.add(termF, termM);
+const red = new THREE.MeshStandardMaterial({color:0xc8175d, roughness:.4});
+const ptrArm = mesh(box(), red), ptrNeedle = mesh(box(), red, false); scene.add(ptrArm, ptrNeedle);
+
+// overlap shading and field region
+const magFace = new THREE.MeshBasicMaterial({color:0xe0307a, transparent:true, opacity:.42, depthWrite:false, side:THREE.DoubleSide, polygonOffset:true, polygonOffsetFactor:-2});
+const faceF = new THREE.Mesh(box(), magFace), faceM = new THREE.Mesh(box(), magFace); scene.add(faceF, faceM);
+const vol = new THREE.Mesh(box(), new THREE.MeshBasicMaterial({color:0xe0307a, transparent:true, opacity:.07, depthWrite:false}));
+scene.add(vol);
+const fieldMat = new THREE.LineBasicMaterial({color:0xc8175d, transparent:true, opacity:.6});
+let fieldLines = new THREE.LineSegments(new THREE.BufferGeometry(), fieldMat); scene.add(fieldLines);
+
+// dielectric slab
+const slabMat = new THREE.MeshStandardMaterial({color:0xffffff, roughness:.5, metalness:0, transparent:true, opacity:1});
+const slab = mesh(box(), slabMat);
+const slabEdge = new THREE.LineSegments(new THREE.EdgesGeometry(box()), new THREE.LineBasicMaterial({color:0x2b3350, transparent:true, opacity:.55}));
+slab.add(slabEdge); slab.renderOrder = 2; scene.add(slab);
+
+// dimension line for d
+const dimGeo = new THREE.BufferGeometry();
+dimGeo.setAttribute('position', new THREE.Float32BufferAttribute(new Array(24).fill(0), 3));
+const dim = new THREE.LineSegments(dimGeo, new THREE.LineBasicMaterial({color:0x10131a})); scene.add(dim);
+
+const P = {yF:0, yM:0, yc:0, h:0, top:0}; // shared geometry
+function layout(){
+  const {d:dmm, L, off, f} = S, d = dmm / 10; // gap in cm
+  const yF = BASE + L / 2, yM = yF + off, h = Math.max(0, L - off), yc = yM - L / 2 + h / 2;
+  Object.assign(P, {yF, yM, h, yc, top:yM + L / 2, d});
+  plateF.scale.set(T, L, L); plateF.position.set(-T / 2, yF, 0);
+  plateM.scale.set(T, L, L); plateM.position.set(d + T / 2, yM, 0);
+  carF.position.set(-T - 0.8, 0.4, 0);
+  carM.position.set(d + T + 0.8, 0.4, 0);
+  knob.position.set(d + T + 0.8, 0.45, 1.8);
+  const hpF = yF - 0.8, hpM = yM - 0.8;
+  postF.scale.set(0.5, hpF, 0.8); postF.position.set(-T - 0.25, 0.8 + hpF / 2, 0);
+  postM.scale.set(0.5, hpM, 0.8); postM.position.set(d + T + 0.25, 0.8 + hpM / 2, 0);
+  termF.position.set(-T / 2, yF + L / 2 + 0.35, -L / 2 + 1.2);
+  termM.position.set(d + T / 2, yM + L / 2 + 0.35, -L / 2 + 1.2);
+  ptrArm.scale.set(T + 0.8, 0.12, 0.12); ptrArm.position.set(d + (T + 0.8) / 2, 0.12, 1.62);
+  ptrNeedle.scale.set(0.035, 0.62, 0.04); ptrNeedle.position.set(d, -0.25, 1.53);
+
+  const show = h > 0.001;
+  faceF.visible = faceM.visible = show;
+  faceF.scale.set(0.01, h, L); faceF.position.set(0.012, yc, 0);
+  faceM.scale.set(0.01, h, L); faceM.position.set(d - 0.012, yc, 0);
+  vol.visible = show && S.field;
+  vol.scale.set(Math.max(d - 0.03, 0.005), h, L); vol.position.set(d / 2, yc, 0);
+
+  // field lines
+  scene.remove(fieldLines); fieldLines.geometry.dispose();
+  const pts = [];
+  if (show && S.field){
+    const sp = Math.max(1.25, L / 9);
+    const ny = Math.max(1, Math.round(h / sp)), nz = Math.max(1, Math.round(L / sp));
+    for (let i = 0; i < ny; i++) for (let k = 0; k < nz; k++){
+      const y = yc - h / 2 + (i + 0.5) * h / ny, z = -L / 2 + (k + 0.5) * L / nz;
+      pts.push(0.02, y, z, d - 0.02, y, z);
+    }
+  }
+  const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(pts, 3));
+  fieldLines = new THREE.LineSegments(fg, fieldMat); scene.add(fieldLines);
+
+  // slab
+  slab.visible = S.mat.id !== 'air' && show;
+  slab.scale.set(Math.max(d - 0.012, 0.004), h, L);
+  slab.position.set(d / 2, yc, L * (1 - f));
+
+  // dimension line
+  const y = P.top + 1.4, z = L / 2, a = dimGeo.attributes.position.array;
+  const seg = [0, y, z, d, y, z,  0, y - .45, z, 0, y + .45, z,  d, y - .45, z, d, y + .45, z,  0, yF + L / 2 + .15, z, 0, y - .45, z];
+  for (let i = 0; i < 24; i++) a[i] = seg[i];
+  dimGeo.attributes.position.needsUpdate = true; dimGeo.computeBoundingSphere();
+}
+function setMaterial(m){
+  S.mat = m;
+  slabMat.color.set(m.col).convertSRGBToLinear();
+  slabMat.roughness = m.r;
+  slabMat.opacity = m.op;
+  slabMat.transparent = m.op < 1;
+  slabMat.depthWrite = m.op >= 1;
+  slabMat.needsUpdate = true;
+}
+
+function resetView(){
+  const tgt = new THREE.Vector3(S.d / 20, BASE + S.L / 2 + S.off / 2, 0);
+  const asp = Math.max(0.45, Math.min(1.6, camera.aspect || 1));
+  const dist = (2.2 * S.L + 14) * Math.max(1, 1.25 / asp);
+  const dir = new THREE.Vector3(0.55, 0.42, 1).normalize();
+  camera.position.copy(tgt).addScaledVector(dir, dist);
+  controls.target.copy(tgt); controls.update();
+}
+
+/* ---------- labels projected from 3D ---------- */
+const tags = {d:$('ca-tag-d'), a:$('ca-tag-a'), s:$('ca-tag-s')};
+const v3 = new THREE.Vector3();
+function place(el, x, y, z, on){
+  if (!on || !S.labels){ el.style.display = 'none'; return; }
+  v3.set(x, y, z).project(camera);
+  if (v3.z > 1 || Math.abs(v3.x) > 1.1 || Math.abs(v3.y) > 1.1){ el.style.display = 'none'; return; }
+  const w = host.clientWidth, h = host.clientHeight;
+  el.style.display = 'block';
+  el.style.transform = `translate(${((v3.x + 1) / 2 * w).toFixed(1)}px,${((1 - v3.y) / 2 * h).toFixed(1)}px) translate(-50%,-100%)`;
+}
+function placeTags(){
+  const d = S.d / 10;
+  place(tags.d, d / 2, P.top + 1.9, S.L / 2, true);
+  place(tags.a, d / 2, P.yc - P.h / 2 - 0.4, S.L / 2 + 0.6, P.h > 0.001);
+  place(tags.s, d / 2, P.yc + P.h / 2 + 0.6, S.L * (1 - S.f) + S.L / 2, slab.visible);
+}
+
+/* ---------- graph ---------- */
+const gc = $('ca-graph'), gx = gc.getContext('2d');
+function niceStep(r){ const e = 10 ** Math.floor(Math.log10(r)), n = r / e; return (n < 1.5 ? 1 : n < 3 ? 2 : n < 7 ? 5 : 10) * e; }
+function drawGraph(){
+  const W = gc.clientWidth, H = gc.clientHeight; if (!W || !H) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  gc.width = Math.round(W * dpr); gc.height = Math.round(H * dpr);
+  gx.setTransform(dpr, 0, 0, dpr, 0, 0); gx.clearRect(0, 0, W, H);
+  const A = area(), e = epsEff(), dm = S.d * 1e-3;
+  let fn, xMax, xNow, xLab, x0 = 0;
+  if (S.graph === 'd'){ fn = x => capOf(A, x * 1e-3, e); xMax = 60; x0 = 1; xNow = S.d; xLab = 'd / mm'; }
+  else if (S.graph === 'inv'){ fn = x => EPS0 * e * A * x; xMax = 1000; xNow = 1 / dm; xLab = '1/d / m⁻¹'; }
+  else { fn = x => capOf(x * 1e-4, dm, e); xMax = 900; xNow = A * 1e4; xLab = 'A / cm²'; }
+  const yTop = S.graph === 'd' ? Math.max(fn(4), capNow() * 1.1) : fn(xMax);
+  const C = capNow();
+  const uref = Math.max(yTop, 1e-15);
+  const [uf, un] = uref < 1e-9 ? [1e12, 'pF'] : uref < 1e-6 ? [1e9, 'nF'] : [1e6, 'µF'];
+  let yMax = Math.max(yTop * uf, 1e-6) * 1.08;
+  const ys = niceStep(yMax / 4); yMax = Math.ceil(yMax / ys) * ys;
+  const xs = niceStep(xMax / 5);
+  const pl = 54, pr = 14, pt = 12, pb = 40, iw = W - pl - pr, ih = H - pt - pb;
+  const X = x => pl + x / xMax * iw, Y = y => pt + ih - y / yMax * ih;
+  gx.font = '12.5px Inter, system-ui, sans-serif'; gx.lineWidth = 1;
+  gx.strokeStyle = '#e3e8f5'; gx.fillStyle = '#475069'; gx.textAlign = 'right'; gx.textBaseline = 'middle';
+  for (let y = 0; y <= yMax + 1e-9; y += ys){
+    gx.beginPath(); gx.moveTo(pl, Y(y)); gx.lineTo(W - pr, Y(y)); gx.stroke();
+    gx.fillText(+y.toPrecision(4) + '', pl - 6, Y(y));
+  }
+  gx.textAlign = 'center'; gx.textBaseline = 'top';
+  for (let x = 0; x <= xMax + 1e-9; x += xs){ if (W < 420 && Math.round(x / xs) % 2) continue; gx.fillText(+x.toPrecision(4) + '', X(x), pt + ih + 6); }
+  gx.strokeStyle = '#10131a'; gx.lineWidth = 1.5;
+  gx.beginPath(); gx.moveTo(pl, pt); gx.lineTo(pl, pt + ih); gx.lineTo(W - pr, pt + ih); gx.stroke();
+  gx.fillStyle = '#10131a'; gx.font = '600 13px Inter, system-ui, sans-serif';
+  gx.fillText(xLab, pl + iw / 2, pt + ih + 22);
+  gx.save(); gx.translate(13, pt + ih / 2); gx.rotate(-Math.PI / 2); gx.textBaseline = 'middle'; gx.fillText('C / ' + un, 0, 0); gx.restore();
+  // curve
+  gx.save(); gx.beginPath(); gx.rect(pl, pt - 2, iw + 2, ih + 2); gx.clip();
+  gx.strokeStyle = '#1240e0'; gx.lineWidth = 2.5; gx.beginPath();
+  for (let i = 0; i <= 240; i++){ const x = x0 + (xMax - x0) * i / 240, y = fn(x) * uf; i ? gx.lineTo(X(x), Y(y)) : gx.moveTo(X(x), Y(y)); }
+  gx.stroke(); gx.restore();
+  // current point
+  const px = X(Math.min(xNow, xMax)), py = Y(C * uf);
+  gx.setLineDash([4, 4]); gx.strokeStyle = '#c8175d'; gx.lineWidth = 1.2;
+  gx.beginPath(); gx.moveTo(px, pt + ih); gx.lineTo(px, py); gx.lineTo(pl, py); gx.stroke(); gx.setLineDash([]);
+  gx.fillStyle = '#c8175d'; gx.strokeStyle = '#fff'; gx.lineWidth = 2.5;
+  gx.beginPath(); gx.arc(px, py, 6, 0, Math.PI * 2); gx.fill(); gx.stroke();
+  const notes = {
+    d:'Inverse proportion: doubling d halves C. The curve is drawn for the present A and dielectric.',
+    inv:'A straight line through the origin shows C ∝ 1/d. Gradient = ε₀ε<sub>r</sub>A.',
+    A:'A straight line through the origin shows C ∝ A. Gradient = ε₀ε<sub>r</sub>/d.'
+  };
+  $('ca-gnote').innerHTML = notes[S.graph];
+}
+const roG = new ResizeObserver(drawGraph); roG.observe(gc);
+
+/* ---------- readouts ---------- */
+function update(){
+  layout();
+  const A = area(), Acm = A * 1e4, e = epsEff(), C = capNow();
+  const [cv, cu] = fmtC(C);
+  $('ca-big').innerHTML = `${cv}<small>${cu}</small>`;
+  $('ca-bar').style.width = (C > 0 ? Math.max(0, Math.min(100, (Math.log10(C) + 14) / 8 * 100)) : 0).toFixed(1) + '%';
+  $('ca-ratio').innerHTML = A > 0 ? `×${erTxt(e)} compared with air · A = ${Acm.toFixed(Acm < 10 ? 2 : 0)} cm²` : 'No overlap, so no capacitance';
+  $('ca-dv').textContent = S.d.toFixed(1) + ' mm';
+  $('ca-lv').textContent = S.L.toFixed(1) + ' cm';
+  $('ca-ov').textContent = S.off.toFixed(2).replace(/0$/, '') + ' cm';
+  $('ca-fv').textContent = Math.round(S.f * 100) + '%';
+  $('ca-anote').innerHTML = `<b>A is the area of overlap</b> (shaded): A = L × (L − offset) = ${S.L.toFixed(1)} × ${(S.L - S.off).toFixed(2).replace(/0$/, '')} = ${Acm.toFixed(Acm < 10 ? 2 : 1)} cm².`;
+  $('ca-mnote').innerHTML = S.mat.note;
+  const air = S.mat.id === 'air';
+  $('ca-f').disabled = air; $('ca-slide').disabled = air;
+  $('ca-slide').textContent = S.f > 0.5 ? 'Slide slab out' : 'Slide slab in';
+  tags.d.textContent = `d = ${S.d.toFixed(1)} mm`;
+  tags.a.textContent = `A (overlap) = ${Acm.toFixed(Acm < 10 ? 2 : 0)} cm²`;
+  tags.s.innerHTML = `${S.mat.name}, ε<sub>r</sub> ${S.mat.id === 'bto' ? '≈' : '='} ${S.mat.er}`;
+  const hmin = Math.min(S.L, S.L - S.off);
+  $('ca-warn').style.display = A > 0 && S.d / 10 > 0.15 * hmin ? 'block' : 'none';
+
+  // substitution
+  const dm = S.d * 1e-3;
+  let h = '';
+  const fr = Math.round(S.f * 100) / 100;
+  if (A <= 0){
+    h = `<span class="s">The plates do not overlap, so A = 0 and C = 0</span><br><span class="s">(ignoring edge effects).</span>`;
+  } else {
+    if (!air && fr > 0 && fr < 1){
+      h += `<span class="s">Slab part-way in (fraction f = ${fr.toFixed(2)}): two regions in parallel,</span><br>`;
+      h += `<span class="s">ε<sub>r,eff</sub> = f ε<sub>r</sub> + (1 − f) = ${fr.toFixed(2)} × ${S.mat.er} + ${(1 - fr).toFixed(2)} = ${erTxt(e)}</span><br>`;
+    }
+    const erShow = air || fr === 0 ? '1' : fr === 1 ? String(S.mat.er) : erTxt(e);
+    h += `<span class="s">C = (8.85 × 10<sup>−12</sup> × ${erShow} × ${stdf(A)}) ÷ ${stdf(dm)}</span><br>`;
+    h += `<span class="s res">C = ${stdf(C)} F = ${cv} ${cu}</span>`;
+  }
+  $('ca-sub').innerHTML = h;
+
+  // stored comparison
+  if (S.stored){
+    const [sv, su] = fmtC(S.stored);
+    $('ca-storeout').innerHTML = C > 0 ? `Stored ${sv} ${su}. Now <b>×${(C / S.stored).toPrecision(3)}</b> the stored value.` : `Stored ${sv} ${su}. Now zero.`;
+  }
+  drawGraph();
+}
+
+/* ---------- controls ---------- */
+const sd = $('ca-d'), sl = $('ca-l'), so = $('ca-o'), sf = $('ca-f');
+sd.addEventListener('input', () => { S.d = +sd.value; update(); });
+sl.addEventListener('input', () => { S.L = +sl.value; so.max = S.L; if (S.off > S.L){ S.off = S.L; } so.value = S.off; update(); });
+so.addEventListener('input', () => { S.off = +so.value; update(); });
+sf.addEventListener('input', () => { S.fTarget = null; S.f = +sf.value / 100; update(); });
+$('ca-half').addEventListener('click', () => { S.d = Math.max(1, S.d / 2); sd.value = S.d; update(); });
+$('ca-dbl').addEventListener('click', () => { S.d = Math.min(60, S.d * 2); sd.value = S.d; update(); });
+const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+$('ca-slide').addEventListener('click', () => {
+  const t = S.f > 0.5 ? 0 : 1;
+  if (reduce){ S.f = t; sf.value = t * 100; update(); } else S.fTarget = t;
+});
+$('ca-mats').addEventListener('click', ev => {
+  const b = ev.target.closest('button'); if (!b) return;
+  const m = MATS[+b.dataset.i];
+  $('ca-mats').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  const wasAir = S.mat.id === 'air';
+  setMaterial(m);
+  if (m.id !== 'air' && wasAir && S.f === 0){ if (reduce){ S.f = 1; sf.value = 100; } else S.fTarget = 1; }
+  update();
+});
+$('ca-store').addEventListener('click', () => { const C = capNow(); if (C > 0){ S.stored = C; update(); } });
+$('ca-clear').addEventListener('click', () => { S.stored = null; $('ca-storeout').textContent = 'Store a reading, change one variable, and compare.'; });
+$('ca-reset').addEventListener('click', resetView);
+$('ca-field').addEventListener('click', ev => { S.field = !S.field; ev.currentTarget.setAttribute('aria-pressed', S.field); update(); });
+$('ca-see').addEventListener('click', ev => { S.see = !S.see; ev.currentTarget.setAttribute('aria-pressed', S.see); setSee(S.see); });
+$('ca-labels').addEventListener('click', ev => { S.labels = !S.labels; ev.currentTarget.setAttribute('aria-pressed', S.labels); });
+document.querySelectorAll('#cap-app .ca-seg button').forEach(b => b.addEventListener('click', () => {
+  S.graph = b.dataset.g;
+  document.querySelectorAll('#cap-app .ca-seg button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  drawGraph();
+}));
+
+/* ---------- sizing and loop ---------- */
+function resize(){
+  const w = host.clientWidth, h = host.clientHeight; if (!w || !h) return;
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+}
+const roV = new ResizeObserver(resize); roV.observe(host);
+let last = performance.now();
+function loop(now){
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (S.fTarget !== null){
+    const step = dt / 1.4, diff = S.fTarget - S.f;
+    if (Math.abs(diff) <= step){ S.f = S.fTarget; S.fTarget = null; } else S.f += Math.sign(diff) * step;
+    sf.value = S.f * 100; update();
+  }
+  controls.update();
+  renderer.render(scene, camera);
+  placeTags();
+  requestAnimationFrame(loop);
+}
+setMaterial(MATS[0]); setSee(true);
+resize(); update(); resetView();
+requestAnimationFrame(loop);
+}
+</script>
+</body>
+</html>
