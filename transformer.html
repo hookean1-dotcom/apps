@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a transformer works — interactive simulation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;background:transparent;}
+  #djp-tf{
+    --bg:#eef3f8; --surface:#ffffff; --surface-2:#f4f8fc;
+    --ink:#15222f; --ink-soft:#56677a; --line:#d3dde7;
+    --primary:#2360c9; --primary-soft:#80a6e8;
+    --secondary:#d97f06; --secondary-soft:#f2bd6e; --secondary-ink:#a85f00;
+    --field:#7c3aed; --field-soft:#c4abf3;
+    --glow:#f7c948;
+    --iron:#9aa6b2; --iron-dk:#6d7985; --iron-lt:#b9c3cd;
+    --good:#15803d; --bad:#c2410c;
+    --north:#d6453d; --south:#2f6fd1;
+
+    width:100%;max-width:1180px;margin:0 auto;
+    box-sizing:border-box;display:flex;flex-direction:column;
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:15px;line-height:1.45;
+    border:1px solid var(--line);border-radius:14px;overflow:hidden;outline:none;
+  }
+  #djp-tf *{box-sizing:border-box;}
+  #djp-tf h1,#djp-tf h3,#djp-tf h4,#djp-tf p,#djp-tf span,#djp-tf label,#djp-tf b,#djp-tf div{color:inherit;}
+  #djp-tf sub{font-size:.72em;line-height:0;}
+  #djp-tf button{font-family:inherit;}
+
+  /* top bar */
+  #djp-tf .tf-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:11px 18px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#fff,var(--surface-2));}
+  #djp-tf .tf-brand{display:flex;flex-direction:column;min-width:0;flex:1 1 auto;}
+  #djp-tf .tf-brand h1{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:21px;margin:0;letter-spacing:-.01em;line-height:1.15;color:var(--ink);}
+  #djp-tf .tf-brand p{margin:1px 0 0;font-size:12.5px;color:var(--ink-soft);}
+  #djp-tf .tf-seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;}
+  #djp-tf .tf-seg button{font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-soft);border:0;background:transparent;padding:6px 14px;border-radius:7px;transition:.14s;white-space:nowrap;}
+  #djp-tf .tf-seg button[aria-pressed="true"]{background:var(--ink);color:#fff;}
+
+  /* tab bar */
+  #djp-tf .tf-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:6px 18px;border-bottom:1px solid var(--line);background:var(--surface);}
+  #djp-tf .tf-tabs{display:inline-flex;gap:16px;flex-wrap:wrap;}
+  #djp-tf .tf-tab{font-weight:600;font-size:13.5px;cursor:pointer;color:var(--ink-soft);border:0;background:transparent;padding:8px 2px;border-bottom:2.5px solid transparent;transition:.14s;}
+  #djp-tf .tf-tab[aria-selected="true"]{color:var(--ink);border-color:var(--secondary);}
+  #djp-tf .tf-transport{display:inline-flex;align-items:center;gap:12px;margin-left:auto;}
+  #djp-tf .tf-icon-btn{font-weight:600;font-size:13px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 13px;border-radius:8px;display:inline-flex;align-items:center;gap:7px;transition:.14s;}
+  #djp-tf .tf-icon-btn:hover{border-color:var(--primary-soft);}
+  #djp-tf .tf-icon-btn.solid{background:var(--ink);color:#fff;border-color:var(--ink);min-width:92px;justify-content:center;}
+  #djp-tf .tf-spd{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-soft);}
+  #djp-tf .tf-spd input{width:92px;accent-color:var(--secondary);cursor:pointer;}
+
+  #djp-tf .tf-pane{display:none;flex-direction:column;}
+  #djp-tf .tf-pane.active{display:flex;}
+
+  /* step pane */
+  #djp-tf .tf-stepbar{display:flex;align-items:center;gap:12px;padding:9px 18px;border-bottom:1px solid var(--line);background:var(--surface-2);}
+  #djp-tf .tf-stepbar .nav{font-weight:600;font-size:13px;cursor:pointer;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 12px;transition:.14s;white-space:nowrap;}
+  #djp-tf .tf-stepbar .nav:hover{border-color:var(--secondary-soft);}
+  #djp-tf .tf-stepbar .nav:disabled{opacity:.4;cursor:default;}
+  #djp-tf .tf-stepbar .nav.next{background:var(--secondary);color:#fff;border-color:var(--secondary);margin-left:auto;}
+  #djp-tf .tf-stepmeta{display:flex;flex-direction:column;min-width:0;}
+  #djp-tf .tf-stepmeta .lab{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--secondary-ink);font-weight:600;}
+  #djp-tf .tf-stepmeta .ttl{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);}
+  #djp-tf .tf-dots{display:inline-flex;gap:6px;align-items:center;}
+  #djp-tf .tf-dots i{width:8px;height:8px;border-radius:50%;background:var(--line);transition:.18s;cursor:pointer;}
+  #djp-tf .tf-dots i.on{background:var(--secondary);transform:scale(1.3);}
+  #djp-tf .tf-dots i.done{background:var(--secondary-soft);}
+
+  #djp-tf .tf-stepbody{display:grid;grid-template-columns:1fr 318px;}
+  #djp-tf .tf-stage{position:relative;min-width:0;min-height:560px;background:radial-gradient(130% 120% at 50% 35%,#fbfdff,#e6edf5);}
+  #djp-tf .tf-stage canvas{position:absolute;inset:0;display:block;width:100%;height:100%;}
+  #djp-tf .tf-explain{border-left:1px solid var(--line);background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:11px;}
+  #djp-tf .tf-explain h3{margin:0;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:17px;line-height:1.2;color:var(--ink);}
+  #djp-tf .tf-explain p{margin:0;font-size:14px;color:var(--ink-soft);}
+  #djp-tf .tf-explain p em{color:var(--ink);font-style:normal;font-weight:600;}
+  #djp-tf .tf-key{font-size:13px;color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--field);padding:10px 12px;border-radius:0 9px 9px 0;}
+  #djp-tf .tf-key b{color:var(--field);}
+  #djp-tf .tf-chip{align-self:flex-start;font-size:11px;font-weight:600;letter-spacing:.04em;padding:3px 9px;border-radius:999px;background:rgba(124,58,237,.1);color:var(--field);border:1px solid var(--field-soft);}
+  #djp-tf .tf-chip.g{background:rgba(35,96,201,.09);color:var(--primary);border-color:var(--primary-soft);}
+  #djp-tf .tf-mini{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:8px 10px 7px;}
+  #djp-tf .tf-mini .hd{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:4px;}
+  #djp-tf .tf-mini .cv{position:relative;height:92px;}
+  #djp-tf .tf-mini canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  #djp-tf .tf-legend{display:flex;gap:12px;font-size:12px;color:var(--ink-soft);flex-wrap:wrap;margin-top:4px;}
+  #djp-tf .tf-legend span{display:inline-flex;align-items:center;gap:6px;}
+  #djp-tf .tf-sw{width:16px;height:3px;border-radius:2px;display:inline-block;}
+  #djp-tf .tf-sw.dash{background:repeating-linear-gradient(90deg,var(--field) 0 4px,transparent 4px 7px)!important;}
+  #djp-tf .tf-turns{display:flex;flex-direction:column;gap:8px;border:1px solid var(--secondary-soft);border-radius:10px;padding:10px 11px;background:#fff8ee;}
+  #djp-tf .tf-turns .hd{font-size:12.5px;font-weight:600;color:var(--ink);}
+  #djp-tf .tf-turns .row{display:flex;gap:6px;flex-wrap:wrap;}
+  #djp-tf .tf-turns button{flex:1 1 auto;font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:6px 8px;}
+  #djp-tf .tf-turns button[aria-pressed="true"]{background:var(--secondary);border-color:var(--secondary);color:#fff;}
+  #djp-tf .tf-turns .out{font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--ink);}
+
+  /* calc pane */
+  #djp-tf .tf-calc{display:grid;grid-template-columns:350px 1fr;gap:14px;padding:14px 18px 18px;}
+  #djp-tf .tf-col{display:flex;flex-direction:column;gap:12px;min-width:0;}
+  #djp-tf .tf-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;}
+  #djp-tf .tf-card h4{margin:0 0 10px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;color:var(--ink);}
+  #djp-tf .tf-presets{display:flex;flex-wrap:wrap;gap:6px;}
+  #djp-tf .tf-presets button{font-size:12.5px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:5px 11px;transition:.14s;}
+  #djp-tf .tf-presets button:hover{border-color:var(--secondary-soft);background:#fff8ee;}
+  #djp-tf .tf-ctrl{margin-bottom:12px;}
+  #djp-tf .tf-ctrl:last-child{margin-bottom:0;}
+  #djp-tf .tf-ctrl .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;}
+  #djp-tf .tf-ctrl .top span{font-size:13px;font-weight:500;}
+  #djp-tf .tf-ctrl .inp{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--ink-soft);}
+  #djp-tf .tf-ctrl input[type=number]{width:96px;font:600 13.5px 'Space Grotesk',sans-serif;color:var(--primary);text-align:right;border:1px solid var(--line);border-radius:7px;padding:4px 7px;background:#fff;}
+  #djp-tf .tf-ctrl input[type=number]:focus{outline:2px solid var(--primary-soft);outline-offset:0;}
+  #djp-tf input[type=range]{width:100%;accent-color:var(--secondary);cursor:pointer;}
+  #djp-tf .tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  #djp-tf .tf-stat{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-width:0;}
+  #djp-tf .tf-stat .lab{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
+  #djp-tf .tf-stat .num{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;line-height:1.15;margin-top:2px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  #djp-tf .type-up{color:var(--secondary-ink)!important;} #djp-tf .type-down{color:var(--primary)!important;} #djp-tf .type-iso{color:var(--ink-soft)!important;}
+  #djp-tf .tf-diagwrap{position:relative;height:262px;border-radius:9px;background:radial-gradient(130% 120% at 50% 35%,#fbfdff,#e9eff6);}
+  #djp-tf .tf-graphwrap{position:relative;height:190px;}
+  #djp-tf .tf-diagwrap canvas,#djp-tf .tf-graphwrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
+  #djp-tf .tf-graphhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  #djp-tf .tf-scrub{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:12px;color:var(--ink-soft);}
+  #djp-tf .tf-scrub input{flex:1 1 auto;accent-color:var(--field);}
+  #djp-tf .tf-note{font-size:12.5px;color:var(--ink-soft);margin:7px 0 0;}
+  #djp-tf .tf-eqrow{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;}
+  #djp-tf .eqn{font-family:'Space Grotesk',sans-serif;font-size:17px;display:inline-flex;align-items:center;gap:6px;color:var(--ink);}
+  #djp-tf .eqn i{font-style:italic;}
+  #djp-tf .frac{display:inline-flex;flex-direction:column;text-align:center;}
+  #djp-tf .frac span{padding:0 5px;} #djp-tf .frac .nm{border-bottom:1.5px solid var(--ink);}
+  #djp-tf .tf-worked{font-size:13.5px;color:var(--ink);background:var(--surface-2);border:1px dashed var(--line);border-radius:9px;padding:10px 12px;margin:10px 0 0;line-height:1.6;}
+  #djp-tf .tf-worked b{color:var(--secondary-ink);font-family:'Space Grotesk',sans-serif;}
+  #djp-tf .a-only{display:none!important;}
+  #djp-tf[data-level="alevel"] .a-only{display:block!important;}
+  #djp-tf[data-level="alevel"] .a-only.inl{display:inline-flex!important;}
+  #djp-tf[data-level="alevel"] .g-only{display:none!important;}
+
+  /* practice */
+  #djp-tf .tf-prac{padding:16px 18px 20px;display:grid;grid-template-columns:1fr 280px;gap:14px;}
+  #djp-tf .tf-q{font-size:15.5px;line-height:1.6;color:var(--ink);margin:0 0 14px;}
+  #djp-tf .tf-q b{font-family:'Space Grotesk',sans-serif;}
+  #djp-tf .tf-ans{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  #djp-tf .tf-ans input{width:150px;font:600 16px 'Space Grotesk',sans-serif;border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--ink);background:#fff;}
+  #djp-tf .tf-ans input:focus{outline:2px solid var(--primary-soft);}
+  #djp-tf .tf-ans .unit{font-weight:600;color:var(--ink-soft);}
+  #djp-tf .tf-btn{font-weight:600;font-size:13.5px;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:#fff;border-radius:8px;padding:8px 16px;}
+  #djp-tf .tf-btn.ghost{background:#fff;color:var(--ink);border-color:var(--line);}
+  #djp-tf .tf-btn.alt{background:var(--secondary);border-color:var(--secondary);}
+  #djp-tf .tf-opts{display:flex;flex-direction:column;gap:7px;}
+  #djp-tf .tf-opts button{text-align:left;font-size:14px;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:9px;padding:10px 12px;line-height:1.4;transition:.12s;}
+  #djp-tf .tf-opts button:hover:not(:disabled){border-color:var(--primary-soft);}
+  #djp-tf .tf-opts button.right{border-color:var(--good);background:#ecf8f0;}
+  #djp-tf .tf-opts button.wrong{border-color:var(--bad);background:#fdf0ea;}
+  #djp-tf .tf-opts button:disabled{cursor:default;}
+  #djp-tf .tf-fb{margin-top:14px;font-size:14px;line-height:1.6;border-radius:9px;padding:11px 13px;display:none;color:var(--ink);}
+  #djp-tf .tf-fb.show{display:block;}
+  #djp-tf .tf-fb.ok{background:#ecf8f0;border:1px solid #b6e2c4;}
+  #djp-tf .tf-fb.no{background:#fdf0ea;border:1px solid #f3c7b1;}
+  #djp-tf .tf-fb .v{font-weight:700;}
+  #djp-tf .tf-fb.ok .v{color:var(--good);} #djp-tf .tf-fb.no .v{color:var(--bad);}
+  #djp-tf .tf-qtools{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+  #djp-tf .tf-score{font-family:'Space Grotesk',sans-serif;font-size:30px;font-weight:600;color:var(--ink);line-height:1;}
+  #djp-tf .tf-small{font-size:12.5px;color:var(--ink-soft);margin:6px 0 0;}
+  #djp-tf select{font:600 13px 'Inter',sans-serif;border:1px solid var(--line);border-radius:8px;padding:6px 8px;background:#fff;color:var(--ink);width:100%;}
+
+  @media (max-width:860px){
+    #djp-tf .tf-stepbody{grid-template-columns:1fr;}
+    #djp-tf .tf-stage{min-height:400px;}
+    #djp-tf .tf-explain{border-left:0;border-top:1px solid var(--line);}
+    #djp-tf .tf-calc{grid-template-columns:1fr;}
+    #djp-tf .tf-prac{grid-template-columns:1fr;}
+    #djp-tf .tf-dots{display:none;}
+  }
+  @media (max-width:560px){
+    #djp-tf .tf-stage{min-height:360px;}
+    #djp-tf .tf-brand h1{font-size:18px;}
+    #djp-tf .tf-stepmeta .ttl{font-size:13.5px;white-space:normal;}
+    #djp-tf .tf-top,#djp-tf .tf-bar,#djp-tf .tf-stepbar{padding-left:12px;padding-right:12px;}
+    #djp-tf .tf-calc,#djp-tf .tf-prac{padding-left:10px;padding-right:10px;}
+    #djp-tf .tf-transport{margin-left:0;}
+    #djp-tf .tf-stepbar .nav{padding:7px 9px;}
+  }
+</style>
+</head>
+<body>
+<div id="djp-tf" data-level="gcse" tabindex="0">
+
+  <div class="tf-top">
+    <div class="tf-brand">
+      <h1>How a transformer works</h1>
+      <p>Follow the chain — alternating current → changing magnetic field → induced voltage.</p>
+    </div>
+    <div class="tf-seg lvl" role="group" aria-label="Level">
+      <button data-level="gcse" aria-pressed="true">GCSE</button>
+      <button data-level="alevel" aria-pressed="false">A-Level</button>
+    </div>
+  </div>
+
+  <div class="tf-bar">
+    <div class="tf-tabs" role="tablist">
+      <button class="tf-tab" data-tab="step" role="tab" aria-selected="true">Step-by-step</button>
+      <button class="tf-tab" data-tab="calc" role="tab" aria-selected="false">Calculator</button>
+      <button class="tf-tab" data-tab="prac" role="tab" aria-selected="false">Practice questions</button>
+    </div>
+    <div class="tf-transport" id="tf-transport">
+      <div class="tf-spd"><span>Speed</span><input type="range" id="tf-spd" min="0.2" max="2.2" step="0.1" value="1" aria-label="Animation speed"></div>
+      <button class="tf-icon-btn solid" id="tf-play">❚❚ Pause</button>
+    </div>
+  </div>
+
+  <!-- STEP PANE -->
+  <div class="tf-pane active" data-pane="step">
+    <div class="tf-stepbar">
+      <button class="nav" id="tf-prev">‹ Back</button>
+      <div class="tf-stepmeta">
+        <span class="lab" id="tf-steplab">Step 1 of 9</span>
+        <span class="ttl" id="tf-steptitle">The transformer</span>
+      </div>
+      <div class="tf-dots" id="tf-dots"></div>
+      <button class="nav next" id="tf-next">Next ›</button>
+    </div>
+    <div class="tf-stepbody">
+      <div class="tf-stage"><canvas id="tf-scene" aria-label="Animated transformer diagram"></canvas></div>
+      <div class="tf-explain" aria-live="polite">
+        <span class="tf-chip" id="tf-chip" style="display:none"></span>
+        <h3 id="tf-ex-title">The transformer</h3>
+        <p id="tf-ex-text"></p>
+        <div class="tf-key" id="tf-ex-key" style="display:none"></div>
+        <div class="tf-turns" id="tf-turnsctl" style="display:none">
+          <div class="hd">Change the secondary coil</div>
+          <div class="row">
+            <button data-f="0.5">Fewer turns</button>
+            <button data-f="1">Same</button>
+            <button data-f="2">More turns</button>
+          </div>
+          <div class="out" id="tf-turnsout"></div>
+        </div>
+        <div class="tf-mini" id="tf-mini" style="display:none">
+          <div class="hd">Live trace — one cycle</div>
+          <div class="cv"><canvas id="tf-minicv"></canvas></div>
+          <div class="tf-legend" id="tf-minileg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALC PANE -->
+  <div class="tf-pane" data-pane="calc">
+    <div class="tf-calc">
+      <div class="tf-col">
+        <div class="tf-card">
+          <h4>Real-world examples</h4>
+          <div class="tf-presets" id="tf-presets"></div>
+        </div>
+        <div class="tf-card">
+          <h4>Set the transformer</h4>
+          <div class="tf-ctrl" data-k="Np"><div class="top"><span>Primary turns N<sub>p</sub></span><span class="inp"><input type="number" min="1" max="20000" step="1"> turns</span></div><input type="range" min="0" max="1000" step="1" aria-label="Primary turns"></div>
+          <div class="tf-ctrl" data-k="Ns"><div class="top"><span>Secondary turns N<sub>s</sub></span><span class="inp"><input type="number" min="1" max="20000" step="1"> turns</span></div><input type="range" min="0" max="1000" step="1" aria-label="Secondary turns"></div>
+          <div class="tf-ctrl" data-k="Vp"><div class="top"><span>Primary voltage V<sub>p</sub></span><span class="inp"><input type="number" min="1" max="500000" step="any"> V</span></div><input type="range" min="0" max="1000" step="1" aria-label="Primary voltage"></div>
+          <div class="tf-ctrl" data-k="Ip"><div class="top"><span>Primary current I<sub>p</sub></span><span class="inp"><input type="number" min="0.001" max="50000" step="any"> A</span></div><input type="range" min="0" max="1000" step="1" aria-label="Primary current"></div>
+          <div class="tf-ctrl a-only" data-k="eff"><div class="top"><span>Efficiency</span><span class="inp"><input type="number" min="50" max="100" step="1"> %</span></div><input type="range" min="0" max="1000" step="1" aria-label="Efficiency"></div>
+        </div>
+        <div class="tf-card">
+          <h4>Readout</h4>
+          <div class="tf-grid">
+            <div class="tf-stat"><div class="lab">Turns ratio N<sub>s</sub> ÷ N<sub>p</sub></div><div class="num" id="o-ratio">2.00</div></div>
+            <div class="tf-stat"><div class="lab">Type</div><div class="num type-up" id="o-type">Step-up</div></div>
+            <div class="tf-stat"><div class="lab">Output voltage V<sub>s</sub></div><div class="num" id="o-vs">460 V</div></div>
+            <div class="tf-stat"><div class="lab">Output current I<sub>s</sub></div><div class="num" id="o-is">0.25 A</div></div>
+            <div class="tf-stat"><div class="lab">Power in V<sub>p</sub>I<sub>p</sub></div><div class="num" id="o-pin">115 W</div></div>
+            <div class="tf-stat"><div class="lab">Power out V<sub>s</sub>I<sub>s</sub></div><div class="num" id="o-pout">115 W</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tf-col">
+        <div class="tf-card">
+          <h4>Your transformer</h4>
+          <div class="tf-diagwrap"><canvas id="tf-diag" aria-label="Transformer diagram with turns drawn to scale"></canvas></div>
+        </div>
+        <div class="tf-card">
+          <div class="tf-graphhead">
+            <h4 style="margin:0">One cycle of the a.c. supply</h4>
+            <div class="tf-legend">
+              <span><i class="tf-sw" style="background:var(--primary)"></i>Primary current</span>
+              <span><i class="tf-sw dash"></i><span class="g-only">Core field</span><span class="a-only inl">Core flux Φ</span></span>
+              <span><i class="tf-sw" style="background:var(--secondary)"></i>Output voltage</span>
+            </div>
+          </div>
+          <div class="tf-graphwrap"><canvas id="tf-graph"></canvas></div>
+          <div class="tf-scrub">
+            <span>Scrub</span>
+            <input type="range" id="s-phase" min="0" max="1000" step="1" value="0" aria-label="Point in the cycle">
+            <span id="v-phase" style="min-width:64px;text-align:right">running</span>
+          </div>
+          <p class="tf-note" id="tf-graphnote"></p>
+        </div>
+        <div class="tf-card">
+          <h4>The equations</h4>
+          <div class="tf-eqrow">
+            <span class="eqn"><span class="frac"><span class="nm"><i>V</i><sub>p</sub></span><span><i>V</i><sub>s</sub></span></span>=<span class="frac"><span class="nm"><i>N</i><sub>p</sub></span><span><i>N</i><sub>s</sub></span></span></span>
+            <span class="eqn"><span><i>V</i><sub>p</sub><i>I</i><sub>p</sub> = <i>V</i><sub>s</sub><i>I</i><sub>s</sub></span><span style="font-size:12px;color:var(--ink-soft);font-family:Inter,sans-serif">(100% efficient)</span></span>
+            <span class="eqn a-only inl">ε = <i>N</i> <span class="frac"><span class="nm">ΔΦ</span><span>Δ<i>t</i></span></span></span>
+            <span class="eqn a-only inl">efficiency = <span class="frac"><span class="nm"><i>V</i><sub>s</sub><i>I</i><sub>s</sub></span><span><i>V</i><sub>p</sub><i>I</i><sub>p</sub></span></span> × 100%</span>
+          </div>
+          <p class="tf-worked" id="tf-worked"></p>
+          <p class="tf-note a-only">Both coils share one core flux, so every turn of either coil has the same rate of change of flux, ΔΦ/Δ<i>t</i> — the induced voltages are therefore in the ratio of the turns. Lenz's law sets the direction of the induced e.m.f. Real cores are <b>laminated</b> to cut eddy-current losses.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRACTICE PANE -->
+  <div class="tf-pane" data-pane="prac">
+    <div class="tf-prac">
+      <div class="tf-card">
+        <h4 id="tf-qhead">Question</h4>
+        <div class="tf-q" id="tf-q"></div>
+        <div id="tf-qbody"></div>
+        <div class="tf-fb" id="tf-fb"></div>
+        <div class="tf-qtools">
+          <button class="tf-btn alt" id="tf-qnext">New question ›</button>
+          <button class="tf-btn ghost" id="tf-qshow">Show method</button>
+        </div>
+      </div>
+      <div class="tf-col">
+        <div class="tf-card">
+          <h4>Score</h4>
+          <div class="tf-score" id="tf-score">0 / 0</div>
+          <p class="tf-small" id="tf-streak">Answer a question to start.</p>
+          <div style="margin-top:12px"><button class="tf-btn ghost" id="tf-reset" style="padding:6px 12px;font-size:12.5px">Reset score</button></div>
+        </div>
+        <div class="tf-card">
+          <h4>Question type</h4>
+          <select id="tf-qtype">
+            <option value="mix">Mixed</option>
+            <option value="calc">Calculations only</option>
+            <option value="concept">Explaining (multiple choice)</option>
+          </select>
+          <p class="tf-small">Give numerical answers to 2 or 3 significant figures. Questions match the level chosen at the top.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var root=document.getElementById('djp-tf');
+  if(!root) return;
+  var TAU=Math.PI*2;
+
+  var state={
+    level:'gcse', tab:'step', stepIdx:0,
+    playing:true, speed:1, phase:0, scrubbing:false,
+    Np:400, Ns:800, Vp:230, Ip:0.5, eff:100,
+    qP:0, qS:0,
+    tw:{core:1, cfield:0, cflux:0}
+  };
+
+  /* ================= STEPS ================= */
+  var STEPS=[
+    { id:'setup', title:'The transformer', chip:null, trace:null,
+      text:'A transformer has two coils of wire — the <em>primary</em> and the <em>secondary</em> — wound on a shared iron core. The coils are insulated, so they never touch electrically. Everything passes between them through the magnetic field in the core.',
+      flags:{labels:1} },
+
+    { id:'connect', title:'Connect the a.c. supply', chip:null, trace:null,
+      text:'The primary coil is connected to an alternating (a.c.) supply, and a lamp is connected to the secondary coil. Notice there is <em>no wire</em> joining the primary circuit to the secondary circuit.',
+      flags:{supply:1} },
+
+    { id:'accurrent', title:'Alternating current flows in the primary', chip:null, trace:'I',
+      text:'The supply pushes current one way, slows it, stops it, then drives it the other way — over and over. Watch the charges in the primary: they keep <em>changing direction</em>.',
+      key:'A steady d.c. current would do almost nothing here. The whole transformer depends on the current <b>constantly changing</b>.',
+      flags:{supply:1, pCurrent:1} },
+
+    { id:'fieldforms', title:'The current magnetises the coil', chip:'g:Electromagnet', trace:'IB',
+      text:'A current in a coil makes it an <em>electromagnet</em>. A magnetic field forms around the primary coil: the lines run straight through the middle of the coil and loop back round the outside — the same pattern as a bar magnet, with a north and a south end. <em>The iron core is faded for now so you can see the coil’s own field.</em>',
+      key:'Field lines are <b>closed loops</b>. They point one way inside the coil and return the opposite way outside. They never cross or touch.',
+      flags:{supply:1, pCurrent:1, coilField:1} },
+
+    { id:'fieldac', title:'So the magnetic field alternates too', chip:'g:Key idea', trace:'IB',
+      text:'Because the current is a.c., the field is not steady. It grows, <em>collapses to zero</em>, then rebuilds pointing the other way — perfectly in step with the current. Watch the N and S ends of the coil swap over.',
+      key:'Closer lines mean a stronger field. The lines <b>crowd in</b> as the current peaks, <b>disappear</b> as the current passes through zero, then return with every arrow reversed.',
+      flags:{supply:1, pCurrent:1, coilField:1} },
+
+    { id:'core', title:'The iron core carries the field across', chip:null, trace:'B',
+      text:'Now bring back the iron. Iron is magnetised very easily, so the core channels almost all of the changing field round the loop to the secondary coil. Without it, most of the field would spread out and miss the secondary.',
+      textA:'Now bring back the iron. Iron is magnetised very easily, so the core channels almost all of the changing flux round the loop to the secondary coil. Without it, most of the flux would spread out and miss the secondary — a well-designed core keeps this <em>flux leakage</em> tiny.',
+      flags:{supply:1, pCurrent:1, coreFlux:1} },
+
+    { id:'fluxsec', title:'A changing field passes through the secondary', chip:null, trace:'B',
+      text:'The secondary coil is now wrapped around a constantly-changing magnetic field. It is the <em>change</em> that matters — a field sitting still would do nothing.',
+      textA:'The secondary coil now sits in this changing flux. The flux linkage through it is <em>N</em><sub>s</sub>Φ, and it is the <em>rate of change</em> of this flux linkage that counts — a steady flux would induce nothing.',
+      flags:{supply:1, pCurrent:1, coreFlux:1, hiSec:1} },
+
+    { id:'induced', title:'A changing field induces a voltage', chip:'Electromagnetic induction', trace:'BV',
+      text:'The changing magnetic field in the secondary coil <em>induces a potential difference</em> across it. As the field alternates, so does this voltage — driving an alternating current through the lamp.',
+      textA:'By Faraday’s law the induced e.m.f. equals the rate of change of flux linkage: ε = <em>N</em><sub>s</sub>ΔΦ/Δ<em>t</em>. On the trace, that is the <em>gradient</em> of the flux graph. Lenz’s law fixes its direction. As the flux alternates, so does the e.m.f., driving an a.c. through the lamp.',
+      key:'Watch the trace: the output is <b>largest as the field passes through zero</b> (when it is changing fastest) and <b>zero when the field is at a peak</b> (for an instant it is not changing).',
+      flags:{supply:1, pCurrent:1, coreFlux:1, sActive:1, lamp:1} },
+
+    { id:'turns', title:'The turns decide the output voltage', chip:null, trace:'BV',
+      text:'Both coils share the same changing field, so every turn of wire has the same voltage induced in it. More turns on the secondary give a bigger output (<em>step-up</em>); fewer give a smaller one (<em>step-down</em>). The National Grid uses step-up transformers for transmission and step-down transformers to supply homes. Try changing the secondary below.',
+      textA:'Both coils share one core flux, so each turn has the same induced e.m.f.: V<sub>s</sub>/V<sub>p</sub> = N<sub>s</sub>/N<sub>p</sub>. For an ideal transformer power is conserved, so I<sub>s</sub>/I<sub>p</sub> = N<sub>p</sub>/N<sub>s</sub> — step the voltage up and the current steps down. That is why the Grid transmits at high voltage and low current: the I²R loss in the cables is far smaller.',
+      flags:{supply:1, pCurrent:1, coreFlux:1, sActive:1, lamp:1, hiTurns:1, turnsCtl:1} },
+
+    { id:'losses', title:'Why real transformers waste energy', chip:'A-Level only', level:'alevel', trace:null,
+      text:'No real transformer is 100% efficient. Four effects waste energy, mostly as heat:<br><br>'+
+        '<em>Eddy currents</em> — the changing flux induces circulating currents in the iron itself, heating it. The core is made of thin <em>laminations</em> (insulated iron sheets) that block these current paths, raising their resistance and cutting the loss.<br><br>'+
+        '<em>Hysteresis</em> — re-magnetising the core one way then the other every cycle costs energy. A magnetically <em>soft</em> core material (thin hysteresis loop) reduces this.<br><br>'+
+        '<em>I²R heating</em> — the windings have resistance; thick, low-resistance copper wire helps.<br><br>'+
+        '<em>Flux leakage</em> — not all the flux links both coils; good core design keeps this small.',
+      key:'Efficiency = V<sub>s</sub>I<sub>s</sub> / V<sub>p</sub>I<sub>p</sub> × 100%. The thin slices now drawn in the core are the <b>laminations</b> — they exist purely to break up eddy currents.',
+      flags:{supply:1, pCurrent:1, coreFlux:1, sActive:1, lamp:1, lamFocus:1} }
+  ];
+  function visibleSteps(){ return STEPS.filter(function(s){ return !s.level || s.level===state.level; }); }
+
+  /* ================= ELEMENTS ================= */
+  function $(s){ return root.querySelector(s); }
+  var scene=$('#tf-scene'), mini=$('#tf-minicv'), diag=$('#tf-diag'), graph=$('#tf-graph');
+  var elPrev=$('#tf-prev'), elNext=$('#tf-next'), elLab=$('#tf-steplab'), elTtl=$('#tf-steptitle'), elDots=$('#tf-dots');
+  var exChip=$('#tf-chip'), exTitle=$('#tf-ex-title'), exText=$('#tf-ex-text'), exKey=$('#tf-ex-key');
+  var miniBox=$('#tf-mini'), miniLeg=$('#tf-minileg'), turnsCtl=$('#tf-turnsctl'), turnsOut=$('#tf-turnsout');
+  var playBtn=$('#tf-play'), spdS=$('#tf-spd'), transport=$('#tf-transport');
+  var phaseS=$('#s-phase'), phaseV=$('#v-phase'), graphNote=$('#tf-graphnote'), worked=$('#tf-worked');
+
+  /* ================= FORMATTING ================= */
+  function sig(x,n){ n=n||3; if(!isFinite(x)) return '—'; if(x===0) return '0';
+    var v=Number(x.toPrecision(n)); var a=Math.abs(v);
+    if(a>=10000) return v.toLocaleString('en-GB',{maximumFractionDigits:0});
+    return String(v); }
+  function fmtV(v){ return v>=1000? sig(v/1000)+' kV' : sig(v)+' V'; }
+  function fmtA(a){ return a<1? sig(a*1000)+' mA' : (a>=1000? sig(a/1000)+' kA' : sig(a)+' A'); }
+  function fmtW(p){ return p>=1e6? sig(p/1e6)+' MW' : (p>=1000? sig(p/1000)+' kW' : (p<1? sig(p*1000)+' mW' : sig(p)+' W')); }
+  function nTurns(n){ return Math.round(n).toLocaleString('en-GB'); }
+
+  /* ================= TABS & LEVEL ================= */
+  root.querySelectorAll('.tf-tab').forEach(function(t){
+    t.addEventListener('click',function(){
+      state.tab=t.getAttribute('data-tab');
+      root.querySelectorAll('.tf-tab').forEach(function(x){ x.setAttribute('aria-selected', x===t?'true':'false'); });
+      root.querySelectorAll('.tf-pane').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-pane')===state.tab); });
+      transport.style.visibility = state.tab==='prac' ? 'hidden' : 'visible';
+      if(state.tab==='prac' && !curQ) newQuestion();
+      requestAnimationFrame(resizeAll);
+      postHeight();
+    });
+  });
+  root.querySelectorAll('.tf-seg.lvl button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var lv=b.getAttribute('data-level'); if(lv===state.level) return;
+      var curId=visibleSteps()[state.stepIdx].id;
+      state.level=lv; root.setAttribute('data-level',lv);
+      root.querySelectorAll('.tf-seg.lvl button').forEach(function(x){ x.setAttribute('aria-pressed', x===b?'true':'false'); });
+      if(lv!=='alevel'){ setCtl('eff',100); }
+      buildDots();
+      var vs=visibleSteps(); var ni=vs.findIndex(function(s){return s.id===curId;});
+      setStep(ni<0?Math.min(state.stepIdx,vs.length-1):ni, true);
+      updateGraphNote(); updateReadout();
+      if(curQ) newQuestion();
+      postHeight();
+    });
+  });
+  function updateGraphNote(){
+    graphNote.innerHTML = state.level==='alevel'
+      ? 'The output (orange) is proportional to the <b>gradient</b> of the flux graph, ΔΦ/Δ<i>t</i>: it peaks where the flux graph is steepest (its zero-crossings, dashed lines) and is zero at the flux peaks. Traces are drawn to a schematic scale.'
+      : 'The output voltage is biggest when the field is <b>changing fastest</b> (passing through zero) and zero when the field is at a peak. Read the <b>timing</b> and <b>relative size</b> — the scales are schematic.';
+  }
+
+  /* ================= STEPS UI ================= */
+  function buildDots(){
+    var vs=visibleSteps(); elDots.innerHTML='';
+    vs.forEach(function(s,i){
+      var d=document.createElement('i'); d.title=s.title;
+      d.addEventListener('click',function(){ setStep(i); });
+      elDots.appendChild(d);
+    });
+  }
+  var LEG={
+    I:'<span><i class="tf-sw" style="background:var(--primary)"></i>Current in primary</span>',
+    B:function(){ return '<span><i class="tf-sw dash"></i>'+(state.level==='alevel'?'Core flux Φ':'Magnetic field')+'</span>'; },
+    V:'<span><i class="tf-sw" style="background:var(--secondary)"></i>Output voltage</span>'
+  };
+  function setStep(i, keepTween){
+    var vs=visibleSteps();
+    state.stepIdx=Math.max(0,Math.min(vs.length-1,i));
+    var s=vs[state.stepIdx];
+    elLab.textContent='Step '+(state.stepIdx+1)+' of '+vs.length;
+    elTtl.textContent=s.title; exTitle.textContent=s.title;
+    exText.innerHTML=(state.level==='alevel'&&s.textA)?s.textA:s.text;
+    if(s.chip){ var g=s.chip.indexOf('g:')===0; exChip.style.display=''; exChip.className='tf-chip'+(g?' g':''); exChip.textContent=g?s.chip.slice(2):s.chip; }
+    else exChip.style.display='none';
+    var keyHtml=(state.level==='alevel'&&s.keyA)?s.keyA:s.key;
+    if(keyHtml){ exKey.style.display=''; exKey.innerHTML=keyHtml; } else exKey.style.display='none';
+    turnsCtl.style.display=s.flags.turnsCtl?'':'none';
+    if(s.trace){
+      miniBox.style.display='';
+      var h=''; if(s.trace.indexOf('I')>=0) h+=LEG.I; if(s.trace.indexOf('B')>=0) h+=LEG.B(); if(s.trace.indexOf('V')>=0) h+=LEG.V;
+      miniLeg.innerHTML=h;
+    } else miniBox.style.display='none';
+    elPrev.disabled=state.stepIdx===0;
+    elNext.textContent=state.stepIdx===vs.length-1?'Restart ↻':'Next ›';
+    Array.prototype.forEach.call(elDots.children,function(d,j){ d.className=j===state.stepIdx?'on':(j<state.stepIdx?'done':''); });
+    updateTurnsCtl();
+    if(!keepTween && s.id==='setup'){ state.tw.core=1; }
+    requestAnimationFrame(resizeAll);
+    postHeight();
+  }
+  elPrev.addEventListener('click',function(){ setStep(state.stepIdx-1); });
+  elNext.addEventListener('click',function(){ var vs=visibleSteps(); setStep(state.stepIdx===vs.length-1?0:state.stepIdx+1); });
+
+  turnsCtl.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('click',function(){
+      var f=parseFloat(b.getAttribute('data-f'));
+      setCtl('Ns', Math.max(1,Math.round(state.Np*f)));
+      updateReadout();
+    });
+  });
+  function updateTurnsCtl(){
+    var r=state.Ns/state.Np;
+    turnsCtl.querySelectorAll('button').forEach(function(b){
+      var f=parseFloat(b.getAttribute('data-f'));
+      b.setAttribute('aria-pressed', Math.abs(r-f)<1e-6?'true':'false');
+    });
+    var type = r>1?'step-up':(r<1?'step-down':'1 : 1 (isolating)');
+    turnsOut.innerHTML='N<sub>p</sub> = '+nTurns(state.Np)+', N<sub>s</sub> = '+nTurns(state.Ns)+' → '+fmtV(state.Vp)+' in, <b style="color:var(--secondary-ink)">'+fmtV(state.Vp*r)+'</b> out ('+type+')';
+  }
+
+  /* ================= TRANSPORT ================= */
+  function setPlay(p){ state.playing=p; playBtn.textContent=p?'❚❚ Pause':'► Play'; if(p){ phaseV.textContent='running'; state.scrubbing=false; } }
+  playBtn.addEventListener('click',function(){ setPlay(!state.playing); });
+  spdS.addEventListener('input',function(){ state.speed=parseFloat(spdS.value); });
+  phaseS.addEventListener('input',function(){
+    state.scrubbing=true; setPlay(false); state.scrubbing=true;
+    state.phase=(parseFloat(phaseS.value)/1000)*TAU;
+    phaseV.textContent=Math.round(parseFloat(phaseS.value)/1000*360)+'°';
+  });
+  phaseS.addEventListener('change',function(){ state.scrubbing=false; });
+
+  /* ================= CALCULATOR CONTROLS ================= */
+  var CTL={
+    Np:{min:1,max:20000,log:true,int:true},
+    Ns:{min:1,max:20000,log:true,int:true},
+    Vp:{min:1,max:500000,log:true},
+    Ip:{min:0.001,max:50000,log:true},
+    eff:{min:50,max:100,log:false,int:true}
+  };
+  root.querySelectorAll('.tf-ctrl').forEach(function(el){
+    var k=el.getAttribute('data-k'), c=CTL[k];
+    c.num=el.querySelector('input[type=number]'); c.rng=el.querySelector('input[type=range]');
+    c.rng.addEventListener('input',function(){
+      var p=+c.rng.value/1000, v=c.log? c.min*Math.pow(c.max/c.min,p) : c.min+(c.max-c.min)*p;
+      v = c.int? Math.round(v) : Number(v.toPrecision(3));
+      state[k]=v; c.num.value=v; updateReadout();
+    });
+    function fromNum(commit){
+      var v=parseFloat(c.num.value);
+      if(!isFinite(v)){ if(commit) c.num.value=state[k]; return; }
+      if(v<c.min||v>c.max){ if(!commit) return; v=Math.max(c.min,Math.min(c.max,v)); }
+      if(c.int) v=Math.round(v);
+      state[k]=v; if(commit) c.num.value=v; syncRange(k); updateReadout();
+    }
+    c.num.addEventListener('input',function(){ fromNum(false); });
+    c.num.addEventListener('change',function(){ fromNum(true); });
+  });
+  function syncRange(k){ var c=CTL[k], v=state[k];
+    var p=c.log? Math.log(v/c.min)/Math.log(c.max/c.min) : (v-c.min)/(c.max-c.min);
+    c.rng.value=Math.round(Math.max(0,Math.min(1,p))*1000); }
+  function setCtl(k,v){ state[k]=v; CTL[k].num.value=v; syncRange(k); }
+
+  var PRESETS=[
+    {n:'Phone charger', Vp:230, Np:2300, Ns:50, Ip:0.0435, eff:100},
+    {n:'Doorbell', Vp:230, Np:1150, Ns:60, Ip:0.026, eff:100},
+    {n:'Power station → Grid', Vp:25000, Np:500, Ns:8000, Ip:20000, eff:100},
+    {n:'Local substation → homes', Vp:11000, Np:4780, Ns:100, Ip:20, eff:100},
+    {n:'Isolating (1 : 1)', Vp:230, Np:500, Ns:500, Ip:1, eff:100},
+    {n:'Default', Vp:230, Np:400, Ns:800, Ip:0.5, eff:100}
+  ];
+  var presetBox=$('#tf-presets');
+  PRESETS.forEach(function(p){
+    var b=document.createElement('button'); b.type='button'; b.textContent=p.n;
+    b.addEventListener('click',function(){
+      ['Vp','Np','Ns','Ip'].forEach(function(k){ setCtl(k,p[k]); });
+      if(state.level==='alevel'){ setCtl('eff', p.n.indexOf('Grid')>=0||p.n.indexOf('substation')>=0 ? 98 : 95); } else setCtl('eff',100);
+      updateReadout();
+    });
+    presetBox.appendChild(b);
+  });
+
+  var oRatio=$('#o-ratio'),oType=$('#o-type'),oVs=$('#o-vs'),oIs=$('#o-is'),oPin=$('#o-pin'),oPout=$('#o-pout');
+  function updateReadout(){
+    var eff=state.level==='alevel'?state.eff/100:1;
+    var r=state.Ns/state.Np, vs=state.Vp*r, pin=state.Vp*state.Ip, pout=pin*eff, is=pout/vs;
+    oRatio.textContent=sig(r);
+    oVs.textContent=fmtV(vs); oIs.textContent=fmtA(is);
+    oPin.textContent=fmtW(pin); oPout.textContent=fmtW(pout);
+    if(state.Ns>state.Np){ oType.textContent='Step-up'; oType.className='num type-up'; }
+    else if(state.Ns<state.Np){ oType.textContent='Step-down'; oType.className='num type-down'; }
+    else { oType.textContent='1 : 1'; oType.className='num type-iso'; }
+    var w='V<sub>s</sub> = V<sub>p</sub> × N<sub>s</sub>/N<sub>p</sub> = '+sig(state.Vp,4)+' × '+state.Ns+' / '+state.Np+' = <b>'+fmtV(vs)+'</b><br>';
+    if(eff<1){
+      w+='Power in = V<sub>p</sub>I<sub>p</sub> = '+sig(state.Vp,4)+' × '+sig(state.Ip,4)+' = '+fmtW(pin)+'; power out = '+state.eff+'% of that = '+fmtW(pout)+'<br>'+
+         'I<sub>s</sub> = power out ÷ V<sub>s</sub> = <b>'+fmtA(is)+'</b>&nbsp; ('+fmtW(pin-pout)+' wasted as heat)';
+    } else {
+      w+='100% efficient, so V<sub>p</sub>I<sub>p</sub> = V<sub>s</sub>I<sub>s</sub>: I<sub>s</sub> = V<sub>p</sub>I<sub>p</sub> ÷ V<sub>s</sub> = '+sig(state.Vp,4)+' × '+sig(state.Ip,4)+' ÷ '+sig(vs,4)+' = <b>'+fmtA(is)+'</b>';
+    }
+    worked.innerHTML=w;
+    updateTurnsCtl();
+  }
+
+  /* ================= CANVAS SIZING ================= */
+  var dpr=Math.min(window.devicePixelRatio||1,2);
+  var CV={};
+  function fit(cv){
+    var r=cv.getBoundingClientRect();
+    if(r.width<2||r.height<2) return null;
+    var w=Math.round(r.width*dpr), h=Math.round(r.height*dpr);
+    if(cv.width!==w||cv.height!==h){ cv.width=w; cv.height=h; }
+    var c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+    return {c:c,W:r.width,H:r.height};
+  }
+  function resizeAll(){ [scene,mini,diag,graph].forEach(function(cv){ var f=fit(cv); if(f) CV[cv.id]=f; }); }
+  if(window.ResizeObserver){ var ro=new ResizeObserver(resizeAll); [scene,mini,diag,graph].forEach(function(cv){ ro.observe(cv); }); }
+  window.addEventListener('resize',resizeAll);
+
+  /* ================= COLOUR HELPERS ================= */
+  var COL={};
+  function refreshColours(){
+    ['--ink','--ink-soft','--line','--primary','--primary-soft','--secondary','--secondary-soft','--secondary-ink',
+     '--field','--field-soft','--glow','--iron','--iron-dk','--iron-lt','--surface','--north','--south']
+      .forEach(function(k){ COL[k]=getComputedStyle(root).getPropertyValue(k).trim(); });
+  }
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function hex(s){ s=(s||'#000').trim(); if(s[0]==='#'){ if(s.length===4)s='#'+s[1]+s[1]+s[2]+s[2]+s[3]+s[3];
+    return [parseInt(s.substr(1,2),16),parseInt(s.substr(3,2),16),parseInt(s.substr(5,2),16)];}
+    var m=s.match(/\d+/g); return m?[+m[0],+m[1],+m[2]]:[0,0,0]; }
+  function rgba(c,a){ var p=hex(c); return 'rgba('+p[0]+','+p[1]+','+p[2]+','+a+')'; }
+  function mix(a,b,t){ var pa=hex(a),pb=hex(b); return 'rgb('+Math.round(lerp(pa[0],pb[0],t))+','+Math.round(lerp(pa[1],pb[1],t))+','+Math.round(lerp(pa[2],pb[2],t))+')'; }
+  function arrow(c,x,y,ang,size,col,a){
+    c.save(); c.globalAlpha=a==null?1:a; c.translate(x,y); c.rotate(ang);
+    c.beginPath(); c.moveTo(size*0.5,0); c.lineTo(-size*0.6,-size*0.62); c.lineTo(-size*0.6,size*0.62); c.closePath();
+    c.fillStyle=col; c.fill(); c.restore();
+  }
+  function rrectPath(c,x,y,w,h,r){
+    c.moveTo(x+r,y); c.arcTo(x+w,y,x+w,y+h,r); c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r); c.arcTo(x,y,x+w,y,r); c.closePath();
+  }
+
+  /* ================= GEOMETRY ================= */
+  function layout(W,H,opt){
+    opt=opt||{};
+    var cx=W/2, cy=H*(opt.cy||0.52);
+    var coreH=Math.min(H*(opt.hFrac||0.62), 330);
+    var coreW=Math.min(W*0.30, 220, coreH*0.95);
+    var limb=Math.max(20, coreW*0.24);
+    var lead=Math.max(44, Math.min(70, W*0.08));
+    return {cx:cx,cy:cy,coreW:coreW,coreH:coreH,limb:limb,lead:lead,
+      left:cx-coreW/2,right:cx+coreW/2,top:cy-coreH/2,bottom:cy+coreH/2,
+      lLimb:cx-coreW/2+limb/2, rLimb:cx+coreW/2-limb/2, R:limb/2+Math.max(8,limb*0.28)};
+  }
+  // visible turns: drawn in proportion to Np:Ns (capped so the coils stay legible)
+  function visTurns(Np,Ns,span){
+    var maxVis=Math.max(6,Math.min(16,Math.floor(span/13)));
+    var big=Math.max(Np,Ns), small=Math.min(Np,Ns);
+    var sm=Math.max(2,Math.round(maxVis*small/big));
+    var exact = Math.abs(sm/maxVis - small/big) < 0.02;
+    return {p:Np>=Ns?maxVis:sm, s:Ns>=Np?maxVis:sm, exact:exact};
+  }
+  function helix(cx,yTop,yBot,turns,R,side){
+    var pts=[], Theta=turns*TAU, steps=Math.max(60,turns*26);
+    for(var i=0;i<=steps;i++){
+      var t=Theta*i/steps;
+      pts.push([side>0? cx-R*Math.cos(t) : cx+R*Math.cos(t), yTop+(t/Theta)*(yBot-yTop), Math.sin(t)]);
+    }
+    return pts;
+  }
+  function strokeStrands(c,pts,colFront,colBack,front,lw){
+    lw=lw||4.2;
+    c.lineCap='round';
+    for(var i=1;i<pts.length;i++){
+      var d=(pts[i][2]+pts[i-1][2])/2, isFront=d>=0;
+      if(isFront!==front) continue;
+      c.beginPath(); c.moveTo(pts[i-1][0],pts[i-1][1]); c.lineTo(pts[i][0],pts[i][1]);
+      if(front){ c.strokeStyle=colFront; c.lineWidth=lw; c.globalAlpha=1; }
+      else { c.strokeStyle=colBack; c.lineWidth=lw*0.72; c.globalAlpha=.6; }
+      c.stroke();
+    }
+    c.globalAlpha=1;
+  }
+  function flowDots(c,path,offset,n,col,rad){
+    var lens=[],tot=0;
+    for(var i=1;i<path.length;i++){ var l=Math.hypot(path[i][0]-path[i-1][0],path[i][1]-path[i-1][1]); lens.push(l); tot+=l; }
+    if(tot<1) return;
+    for(var k=0;k<n;k++){
+      var f=((k/n)+offset)%1; if(f<0)f+=1;
+      var d=f*tot,seg=0; while(seg<lens.length-1&&d>lens[seg]){ d-=lens[seg]; seg++; }
+      var r=lens[seg]>0?Math.min(1,d/lens[seg]):0;
+      var x=lerp(path[seg][0],path[seg+1][0],r), y=lerp(path[seg][1],path[seg+1][1],r);
+      c.beginPath(); c.arc(x,y,rad*2.1,0,TAU); c.fillStyle=rgba(col,.18); c.fill();
+      c.beginPath(); c.arc(x,y,rad,0,TAU); c.fillStyle=col; c.fill();
+    }
+  }
+
+  /* ================= COIL FIELD (traced field lines) =================
+     The primary is modelled side-on as two sheets of line currents: the
+     left wall carries current out of the page, the right wall into it.
+     Field lines are traced through the resulting field, so they are
+     genuine closed loops: they never cross or touch, all point the same
+     way inside the coil, and return the opposite way outside on BOTH sides. */
+  var fieldCache={key:'',lines:[]};
+  function coilWires(L){
+    var yTop=L.top+L.limb*0.55, yBot=L.bottom-L.limb*0.55, n=34, ws=[];
+    for(var i=0;i<n;i++){
+      var y=lerp(yTop,yBot,(i+0.5)/n);
+      ws.push({x:L.lLimb-L.R, y:y, I:+1});
+      ws.push({x:L.lLimb+L.R, y:y, I:-1});
+    }
+    return {ws:ws, s2:Math.pow((yBot-yTop)/n*0.9,2)};
+  }
+  // screen-coordinate field (y down). For I>0 inside the coil it points UP the screen.
+  function Bat(x,y,W){
+    var bx=0,by=0,ws=W.ws,s2=W.s2;
+    for(var i=0;i<ws.length;i++){ var dx=x-ws[i].x, dy=y-ws[i].y, k=ws[i].I/(dx*dx+dy*dy+s2); bx+=k*dy; by-=k*dx; }
+    return [bx,by];
+  }
+  function unit(x,y,W,sg){ var b=Bat(x,y,W), m=Math.hypot(b[0],b[1])||1; return [sg*b[0]/m, sg*b[1]/m]; }
+  function traceLine(x0,y0,sg,W,bx){
+    var h=1.6, x=x0, y=y0, pts=[[x,y]], len=0, closed=false;
+    for(var i=0;i<6000;i++){
+      var k1=unit(x,y,W,sg), k2=unit(x+k1[0]*h/2,y+k1[1]*h/2,W,sg),
+          k3=unit(x+k2[0]*h/2,y+k2[1]*h/2,W,sg), k4=unit(x+k3[0]*h,y+k3[1]*h,W,sg);
+      x+=h*(k1[0]+2*k2[0]+2*k3[0]+k4[0])/6; y+=h*(k1[1]+2*k2[1]+2*k3[1]+k4[1])/6;
+      pts.push([x,y]); len+=h;
+      if(len>80 && Math.hypot(x-x0,y-y0)<h*1.3){ pts.push([x0,y0]); closed=true; break; }
+      if(x<bx[0]||x>bx[1]||y<bx[2]||y>bx[3]) break;
+    }
+    return {pts:pts,closed:closed};
+  }
+  function buildField(L,Wd,Hd){
+    var key=[Math.round(Wd),Math.round(Hd)].join('x');
+    if(fieldCache.key===key) return fieldCache;
+    var Wr=coilWires(L), midY=(L.top+L.bottom)/2, box=[-40,Wd+40,-40,Hd+40];
+    // 8 seeds evenly spaced across the coil's interior: equal spacing inside = uniform field
+    var nS=8, lines=[];
+    for(var k=0;k<nS;k++){
+      var sx=L.lLimb + ((k+0.5)/nS*2-1)*L.R*0.8;
+      var fw=traceLine(sx,midY,+1,Wr,box), pts, seed, closed=fw.closed;
+      if(closed){ pts=fw.pts; seed=0; }
+      else { var bw=traceLine(sx,midY,-1,Wr,box); pts=bw.pts.slice().reverse().concat(fw.pts.slice(1)); seed=bw.pts.length-1; }
+      // arrow positions: inside the coil + on the outer return path
+      // inside arrows staggered up/down so they do not form a solid row
+      var n=pts.length, st=(k%2===0?16:-16), inner=closed?((seed+st+n)%n):Math.max(0,Math.min(n-1,seed+st)), arr=[inner];
+      if(closed){
+        // outer arrow: the visible point furthest from the coil's axis
+        var best=-1, bd=-1;
+        for(var i=0;i<n;i++){ var q=pts[i]; if(q[0]<16||q[0]>Wd-16||q[1]<16||q[1]>Hd-16) continue;
+          var d=Math.abs(q[0]-L.lLimb); if(d>bd){ bd=d; best=i; } }
+        if(best>=0 && bd>L.R*1.6) arr.push(best);
+      }
+      else { arr.push(Math.floor(seed*0.42)); arr.push(seed+Math.floor((n-1-seed)*0.58)); }
+      lines.push({pts:pts,closed:closed,arr:arr,k:k});
+    }
+    fieldCache={key:key,lines:lines};
+    return fieldCache;
+  }
+  // order in which pairs of lines appear as the field grows (keeps the picture symmetric)
+  var PAIRS=[[2,5],[0,7],[3,4],[1,6]];
+  function drawCoilField(c,L,Wd,Hd,sig,alpha,yTop,yBot){
+    var mag=Math.abs(sig), sg=sig>=0?1:-1;
+    if(mag<0.01||alpha<0.01) return;
+    var F=buildField(L,Wd,Hd), col=COL['--field'];
+    c.save(); c.lineJoin='round'; c.lineCap='round';
+    for(var j=0;j<PAIRS.length;j++){
+      var wgt=Math.max(0,Math.min(1,mag*PAIRS.length*1.05-j));
+      if(wgt<=0) continue;
+      var a=alpha*wgt*0.9;
+      PAIRS[j].forEach(function(idx){
+        var ln=F.lines[idx], p=ln.pts;
+        c.globalAlpha=a; c.strokeStyle=col; c.lineWidth=1.9;
+        c.beginPath(); c.moveTo(p[0][0],p[0][1]);
+        for(var i=1;i<p.length;i++) c.lineTo(p[i][0],p[i][1]);
+        if(ln.closed) c.closePath();
+        c.stroke();
+        ln.arr.forEach(function(ai){
+          var i0=Math.max(0,ai-3), i1=Math.min(p.length-1,ai+3);
+          var ang=Math.atan2(p[i1][1]-p[i0][1],p[i1][0]-p[i0][0]); if(sg<0) ang+=Math.PI;
+          var x=p[ai][0], y=p[ai][1];
+          if(x<4||x>Wd-4||y<4||y>Hd-4) return;
+          arrow(c,x,y,ang,9,col,Math.min(1,a*1.25));
+        });
+      });
+    }
+    // N and S ends — swap with the current
+    if(mag>0.06){
+      var topN = sg>0; // field points up inside → leaves the top end → top is N
+      pole(c,L.lLimb,yTop-20,topN?'N':'S',alpha*Math.min(1,mag*1.6));
+      pole(c,L.lLimb,yBot+20,topN?'S':'N',alpha*Math.min(1,mag*1.6));
+    }
+    c.restore();
+  }
+  function pole(c,x,y,t,a){
+    c.save(); c.globalAlpha=a;
+    c.beginPath(); c.arc(x,y,11,0,TAU); c.fillStyle=t==='N'?COL['--north']:COL['--south']; c.fill();
+    c.strokeStyle='#fff'; c.lineWidth=2; c.stroke();
+    c.fillStyle='#fff'; c.font='700 12.5px "Space Grotesk",Inter,sans-serif'; c.textAlign='center'; c.textBaseline='middle';
+    c.fillText(t,x,y+0.5); c.restore();
+  }
+
+  /* ================= CORE ================= */
+  function corePath(c,L){
+    c.beginPath(); rrectPath(c,L.left,L.top,L.coreW,L.coreH,9);
+    rrectPath(c,L.left+L.limb,L.top+L.limb,L.coreW-2*L.limb,L.coreH-2*L.limb,4);
+  }
+  function drawCore(c,L,fieldMag,alpha,lamFocus,showLam){
+    if(alpha<0.01) return;
+    c.save(); c.globalAlpha=alpha;
+    if(fieldMag>0.03 && alpha>0.5){
+      c.save(); c.globalAlpha=alpha*(.08+.14*fieldMag); c.shadowColor=COL['--field']; c.shadowBlur=20*fieldMag;
+      c.strokeStyle=COL['--field']; c.lineWidth=L.limb+8;
+      c.beginPath(); rrectPath(c,L.left+L.limb/2,L.top+L.limb/2,L.coreW-L.limb,L.coreH-L.limb,8); c.stroke(); c.restore();
+    }
+    var grad=c.createLinearGradient(L.left,0,L.right,0);
+    grad.addColorStop(0,COL['--iron-lt']); grad.addColorStop(.5,COL['--iron']); grad.addColorStop(1,COL['--iron-dk']);
+    c.fillStyle=grad; c.strokeStyle=COL['--iron-dk']; c.lineWidth=1.2;
+    corePath(c,L); c.fill('evenodd'); c.stroke();
+    if(showLam){
+      c.save(); corePath(c,L); c.clip('evenodd');
+      c.strokeStyle=lamFocus?rgba(COL['--ink'],.36):rgba(COL['--ink'],.15);
+      c.lineWidth=lamFocus?1.3:1;
+      var n=Math.max(8,Math.round(L.coreW/8));
+      for(var i=1;i<n;i++){ var x=L.left+i*(L.coreW/n); c.beginPath(); c.moveTo(x,L.top+1); c.lineTo(x,L.bottom-1); c.stroke(); }
+      c.restore();
+    }
+    c.restore();
+  }
+  /* flux in the core: closed loops inside the iron; number of loops tracks |Φ| */
+  function drawCoreFlux(c,L,sig,alpha){
+    var mag=Math.abs(sig), dir=sig>=0?1:-1;
+    if(mag<0.01||alpha<0.01) return;
+    var use=[0.5,0.28,0.72,0.12,0.88];
+    var n=use.length;
+    c.save();
+    for(var i=0;i<n;i++){
+      var wgt=Math.max(0,Math.min(1,mag*n*1.05-i)); if(wgt<=0) continue;
+      var inset=L.limb*use[i]; var x=L.left+inset, y=L.top+inset, w=L.coreW-2*inset, h=L.coreH-2*inset;
+      var a=alpha*wgt*0.9;
+      c.globalAlpha=a; c.strokeStyle=COL['--field']; c.lineWidth=1.8;
+      c.beginPath(); rrectPath(c,x,y,w,h,Math.max(3,L.limb*0.25)); c.stroke();
+      // arrows: clockwise when dir>0 (up the primary limb, down the secondary limb)
+      var fp=[0.5,0.3,0.7,0.18,0.82][i];
+      var marks=[[x+w*fp,y,0],[x+w,y+h*fp,Math.PI/2],[x+w*(1-fp),y+h,Math.PI],[x,y+h*(1-fp),-Math.PI/2]];
+      for(var k=0;k<4;k++){
+        var ang=marks[k][2]+(dir<0?Math.PI:0);
+        arrow(c,marks[k][0],marks[k][1],ang,8,COL['--field'],Math.min(1,a*1.3));
+      }
+    }
+    c.restore();
+  }
+
+  /* ================= SUPPLY & LAMP ================= */
+  function drawSupply(c,x,y,col){
+    c.beginPath(); c.arc(x,y,19,0,TAU); c.fillStyle=COL['--surface']; c.fill();
+    c.strokeStyle=col; c.lineWidth=2.4; c.stroke();
+    c.beginPath();
+    for(var i=0;i<=24;i++){ var t=i/24,xx=x-9+18*t,yy=y-6*Math.sin(t*TAU); if(i===0)c.moveTo(xx,yy); else c.lineTo(xx,yy); }
+    c.strokeStyle=col; c.lineWidth=2; c.stroke();
+  }
+  function drawLamp(c,x,y,col,glow){
+    if(glow>0.02){ c.save(); c.shadowColor=COL['--glow']; c.shadowBlur=32*glow;
+      c.beginPath(); c.arc(x,y,19,0,TAU); c.fillStyle=mix(COL['--surface'],COL['--glow'],Math.min(1,glow)); c.fill(); c.restore(); }
+    else { c.beginPath(); c.arc(x,y,19,0,TAU); c.fillStyle=COL['--surface']; c.fill(); }
+    c.beginPath(); c.arc(x,y,19,0,TAU); c.strokeStyle=col; c.lineWidth=2.4; c.stroke();
+    c.strokeStyle=col; c.lineWidth=2;
+    var d=13.4;
+    c.beginPath(); c.moveTo(x-d,y-d); c.lineTo(x+d,y+d); c.moveTo(x-d,y+d); c.lineTo(x+d,y-d); c.stroke();
+  }
+  function label(c,x,y,txt,col,align,size,weight){
+    c.font=(weight||600)+' '+(size||12.5)+'px Inter,sans-serif'; c.textAlign=align||'center'; c.textBaseline='middle';
+    c.fillStyle=col; c.fillText(txt,x,y);
+  }
+  // label with a subscript, e.g. ("N","p"," = 400")
+  function subLabel(c,x,y,a,sub,rest,col,align){
+    c.textBaseline='middle'; c.fillStyle=col;
+    c.font='italic 600 13px Inter,sans-serif'; var wa=c.measureText(a).width;
+    c.font='600 9.5px Inter,sans-serif'; var ws=c.measureText(sub).width;
+    c.font='600 13px Inter,sans-serif'; var wr=c.measureText(rest).width;
+    var tot=wa+ws+1+wr, x0 = align==='left'? x : (align==='right'? x-tot : x-tot/2);
+    c.textAlign='left';
+    c.font='italic 600 13px Inter,sans-serif'; c.fillText(a,x0,y);
+    c.font='600 9.5px Inter,sans-serif'; c.fillText(sub,x0+wa+0.5,y+4);
+    c.font='600 13px Inter,sans-serif'; c.fillText(rest,x0+wa+ws+1,y);
+  }
+
+  /* ================= MAIN DRAW ================= */
+  function drawTransformer(c,Wd,Hd,f,tw,opt){
+    opt=opt||{};
+    c.clearRect(0,0,Wd,Hd);
+    var L=layout(Wd,Hd,opt.lay);
+    var Ip=Math.sin(state.phase), flux=Math.sin(state.phase), dflux=Math.cos(state.phase);
+    var r=state.Ns/state.Np, VsAmp=Math.min(0.35+r*0.65,2.4), Vs=-dflux*VsAmp;
+    var bMag=f.coreFlux?Math.abs(flux)*tw.cflux:0;
+    var sMag=f.sActive?Math.min(Math.abs(Vs),1):0;
+
+    var yTop=L.top+L.limb*0.55, yBot=L.bottom-L.limb*0.55;
+    var vt=visTurns(state.Np,state.Ns,yBot-yTop);
+    var pPts=helix(L.lLimb,yTop,yBot,vt.p,L.R,1), sPts=helix(L.rLimb,yTop,yBot,vt.s,L.R,-1);
+
+    var pActive=!!f.pCurrent, sActive=!!f.sActive;
+    var pCol=COL['--primary'], pBack=mix(pCol,'#ffffff',.5), sCol=COL['--secondary'], sBack=mix(sCol,'#ffffff',.5);
+    if(!pActive){ pCol=mix(COL['--primary'],COL['--surface'],.42); pBack=mix(pCol,'#fff',.4); }
+    if(!sActive){ sCol=mix(COL['--secondary'],COL['--surface'],.42); sBack=mix(sCol,'#fff',.4); }
+    var lw=opt.small?3.2:4.2;
+
+    strokeStrands(c,pPts,pCol,pBack,false,lw);
+    strokeStrands(c,sPts,sCol,sBack,false,lw);
+
+    drawCore(c,L,bMag,tw.core,!!f.lamFocus,state.level==='alevel');
+    if(tw.core<0.98){ // faded core outline so it is still clear where it will go
+      c.save(); c.globalAlpha=(1-tw.core)*0.7; c.setLineDash([5,5]); c.strokeStyle=COL['--iron-dk']; c.lineWidth=1.2;
+      corePath(c,L); c.stroke(); c.restore();
+    }
+
+    if(tw.cfield>0.01) drawCoilField(c,L,Wd,Hd,Ip,tw.cfield,yTop,yBot);
+    if(tw.cflux>0.01) drawCoreFlux(c,L,flux,tw.cflux);
+
+    if(f.hiSec){ c.save(); c.globalAlpha=.14+.2*bMag; c.fillStyle=COL['--field']; c.fillRect(L.right-L.limb,L.top+L.limb*0.6,L.limb,L.coreH-L.limb*1.2); c.restore(); }
+    if(f.hiTurns){ c.save(); c.globalAlpha=.13; c.fillStyle=COL['--secondary']; c.beginPath(); rrectPath(c,L.rLimb-L.R-7,yTop-7,2*L.R+14,(yBot-yTop)+14,8); c.fill(); c.restore(); }
+
+    strokeStrands(c,pPts,pCol,pBack,true,lw);
+    strokeStrands(c,sPts,sCol,sBack,true,lw);
+
+    var sx=L.left-L.lead, ex=L.right+L.lead;
+    var pT=pPts[0], pB=pPts[pPts.length-1], sT=sPts[0], sB=sPts[sPts.length-1];
+    c.lineCap='round'; c.lineWidth=2.6;
+    c.strokeStyle=pCol; c.beginPath();
+    c.moveTo(pT[0],pT[1]); c.lineTo(sx,pT[1]); c.lineTo(sx,L.cy-19);
+    c.moveTo(pB[0],pB[1]); c.lineTo(sx,pB[1]); c.lineTo(sx,L.cy+19); c.stroke();
+    drawSupply(c,sx,L.cy, f.supply?COL['--primary']:COL['--ink-soft']);
+    c.strokeStyle=sCol; c.beginPath();
+    c.moveTo(sT[0],sT[1]); c.lineTo(ex,sT[1]); c.lineTo(ex,L.cy-19);
+    c.moveTo(sB[0],sB[1]); c.lineTo(ex,sB[1]); c.lineTo(ex,L.cy+19); c.stroke();
+    drawLamp(c,ex,L.cy, sActive?COL['--secondary']:COL['--ink-soft'], f.lamp?sMag:0);
+
+    var dotN=function(t){ return Math.max(10,t*2+4); };
+    if(pActive){
+      var pPath=[[sx,L.cy-19],[sx,pT[1]],[pT[0],pT[1]]].concat(pPts.map(function(p){return [p[0],p[1]];})).concat([[pB[0],pB[1]],[sx,pB[1]],[sx,L.cy+19]]);
+      flowDots(c,pPath,state.qP,dotN(vt.p),COL['--primary'],opt.small?2.5:3.1);
+    }
+    if(sActive){
+      var sPath=[[ex,L.cy-19],[ex,sT[1]],[sT[0],sT[1]]].concat(sPts.map(function(p){return [p[0],p[1]];})).concat([[sB[0],sB[1]],[ex,sB[1]],[ex,L.cy+19]]);
+      flowDots(c,sPath,state.qS,dotN(vt.s),COL['--secondary'],opt.small?2.5:3.1);
+    }
+
+    if(f.labels){
+      label(c,L.lLimb,L.top-16,'Primary coil',COL['--primary']);
+      label(c,L.rLimb,L.top-16,'Secondary coil',COL['--secondary-ink']);
+      label(c,L.cx,L.bottom+17,'Iron core',COL['--iron-dk']);
+      label(c,sx,L.cy+36,'a.c. supply',COL['--ink-soft']);
+      label(c,ex,L.cy+36,'lamp',COL['--ink-soft']);
+    } else if(f.supply && !opt.small){
+      label(c,sx,L.cy+36,'a.c. supply',COL['--ink-soft'],null,12);
+      label(c,ex,L.cy+36,'lamp',COL['--ink-soft'],null,12);
+    }
+    if(tw.cfield>0.05 && !opt.small){
+      c.save(); c.globalAlpha=tw.cfield; label(c,L.cx,Math.min(Hd-14,L.bottom+46),'Iron core faded so you can see the coil’s own field',COL['--ink-soft'],null,12,500); c.restore();
+    }
+    if(opt.small){
+      subLabel(c,L.lLimb,L.top-14,'N','p',' = '+nTurns(state.Np),COL['--primary']);
+      subLabel(c,L.rLimb,L.top-14,'N','s',' = '+nTurns(state.Ns),COL['--secondary-ink']);
+      subLabel(c,sx,L.bottom+15,'V','p',' = '+fmtV(state.Vp),COL['--primary']);
+      subLabel(c,ex,L.bottom+15,'V','s',' = '+fmtV(state.Vp*r),COL['--secondary-ink']);
+      if(!vt.exact) label(c,L.cx,Hd-10,'turns drawn to the ratio as far as space allows',COL['--ink-soft'],null,11,500);
+    }
+  }
+
+  /* ================= TRACES ================= */
+  function drawWave(c,x0,x1,y0,y1,mode,small){
+    var mid=(y0+y1)/2, amp=(y1-y0)/2*0.86;
+    var r=state.Ns/state.Np, vsAmp=Math.min(0.35+r*0.65,2.4), maxA=Math.max(1,vsAmp);
+    c.strokeStyle=COL['--line']; c.lineWidth=1; c.beginPath(); c.moveTo(x0,mid); c.lineTo(x1,mid); c.stroke();
+    c.strokeStyle=rgba(COL['--line'],.75);
+    for(var q=0;q<=4;q++){ var gx=lerp(x0,x1,q/4); c.beginPath(); c.moveTo(gx,y0); c.lineTo(gx,y1); c.stroke(); }
+    c.fillStyle=COL['--ink-soft']; c.font=(small?'9.5px':'10.5px')+' Inter,sans-serif'; c.textAlign='center'; c.textBaseline='top';
+    ['0','¼T','½T','¾T','T'].forEach(function(t,i){ c.fillText(t,lerp(x0,x1,i/4),y1+3); });
+    if(state.level==='alevel' && mode.indexOf('V')>=0){
+      c.setLineDash([3,4]); c.strokeStyle=rgba(COL['--field'],.5);
+      [0,.5,1].forEach(function(p){ var gx=lerp(x0,x1,p); c.beginPath(); c.moveTo(gx,y0); c.lineTo(gx,y1); c.stroke(); }); c.setLineDash([]);
+    }
+    var sc=amp/(mode.indexOf('V')>=0?maxA:1);
+    function plot(fn,col,w,dash){ c.strokeStyle=col; c.lineWidth=w; if(dash) c.setLineDash(dash); c.beginPath();
+      for(var i=0;i<=200;i++){ var p=i/200, x=lerp(x0,x1,p), y=mid-fn(p)*sc; if(i===0)c.moveTo(x,y); else c.lineTo(x,y); }
+      c.stroke(); c.setLineDash([]); }
+    var fI=function(p){return Math.sin(p*TAU);}, fB=function(p){return 0.82*Math.sin(p*TAU);}, fV=function(p){return -Math.cos(p*TAU)*vsAmp;};
+    if(mode.indexOf('I')>=0) plot(fI,COL['--primary'],2.2);
+    if(mode.indexOf('B')>=0) plot(fB,COL['--field'],2.2,[6,4]);
+    if(mode.indexOf('V')>=0) plot(fV,COL['--secondary'],2.6);
+    var pp=(state.phase%TAU)/TAU; if(pp<0)pp+=1; var cx=lerp(x0,x1,pp);
+    c.strokeStyle=rgba(COL['--ink'],.42); c.lineWidth=1.3; c.beginPath(); c.moveTo(cx,y0); c.lineTo(cx,y1); c.stroke();
+    function mk(fn,col){ var y=mid-fn(pp)*sc; c.beginPath(); c.arc(cx,y,small?3.6:4.4,0,TAU); c.fillStyle=col; c.fill(); c.strokeStyle='#fff'; c.lineWidth=1.4; c.stroke(); }
+    if(mode.indexOf('I')>=0) mk(fI,COL['--primary']);
+    if(mode.indexOf('B')>=0) mk(fB,COL['--field']);
+    if(mode.indexOf('V')>=0) mk(fV,COL['--secondary']);
+  }
+
+  /* ================= LOOP ================= */
+  function approach(cur,target,dt){ var k=1-Math.exp(-dt*5); return cur+(target-cur)*k; }
+  var last=performance.now();
+  function frame(now){
+    var dt=(now-last)/1000; last=now; if(dt>0.1)dt=0.1;
+    if(state.playing&&!state.scrubbing){
+      var w=state.speed*1.3;
+      state.phase=(state.phase+w*dt)%TAU;
+      state.qP=(state.qP + Math.sin(state.phase)*dt*w*0.46)%1;
+      state.qS=(state.qS - Math.cos(state.phase)*dt*w*0.54)%1;
+      phaseS.value=Math.round((state.phase/TAU)*1000);
+    }
+    var s=visibleSteps()[state.stepIdx], f=s.flags;
+    var tt=state.tw;
+    tt.core=approach(tt.core, f.coilField?0.16:1, dt);
+    tt.cfield=approach(tt.cfield, f.coilField?1:0, dt);
+    tt.cflux=approach(tt.cflux, f.coreFlux?1:0, dt);
+    if(state.tab==='step'){
+      var S=CV['tf-scene']; if(S) drawTransformer(S.c,S.W,S.H,f,tt,{});
+      var M=CV['tf-minicv']; if(M && s.trace){ M.c.clearRect(0,0,M.W,M.H); drawWave(M.c,6,M.W-6,6,M.H-16,s.trace,true); }
+    } else if(state.tab==='calc'){
+      var D=CV['tf-diag']; if(D) drawTransformer(D.c,D.W,D.H,{supply:1,pCurrent:1,coreFlux:1,sActive:1,lamp:1},{core:1,cfield:0,cflux:1},{small:true,lay:{hFrac:0.6,cy:0.47}});
+      var G=CV['tf-graph']; if(G){ G.c.clearRect(0,0,G.W,G.H); drawWave(G.c,30,G.W-12,10,G.H-18,'IBV',false); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ================= KEYBOARD ================= */
+  root.addEventListener('keydown',function(e){
+    var tag=(e.target.tagName||'').toLowerCase();
+    if(tag==='input'||tag==='select'||tag==='textarea') return;
+    if(state.tab!=='step') return;
+    if(e.key==='ArrowRight'){ e.preventDefault(); elNext.click(); }
+    else if(e.key==='ArrowLeft'){ e.preventDefault(); setStep(state.stepIdx-1); }
+    else if(e.key===' '&&tag!=='button'){ e.preventDefault(); setPlay(!state.playing); }
+  });
+
+  /* ================= PRACTICE ================= */
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+  var RATIOS=[0.05,0.1,0.2,0.25,0.5,2,4,5,10,20];
+  function turnsPair(){
+    for(var g=0;g<100;g++){ var Np=pick([100,200,240,400,500,600,800,1000,1200,1600,2000,2400]), k=pick(RATIOS), Ns=Np*k;
+      if(Ns>=10 && Ns===Math.round(Ns)) return {Np:Np,Ns:Ns,k:k}; }
+    return {Np:400,Ns:800,k:2};
+  }
+  var GEN={
+    vs:function(){ var t=turnsPair(), Vp=pick([6,12,24,120,230,230,400]), Vs=Vp*t.k;
+      return {html:'A transformer has <b>'+t.Np+'</b> turns on its primary coil and <b>'+t.Ns+'</b> turns on its secondary coil. The primary coil is connected to a <b>'+Vp+' V</b> a.c. supply.<br>Calculate the output voltage across the secondary coil.',
+        ans:Vs, unit:'V', alt:Vp/t.k, altMsg:'It looks as if you used the turns ratio upside down. More secondary turns should give more voltage.',
+        method:'V<sub>s</sub>/V<sub>p</sub> = N<sub>s</sub>/N<sub>p</sub><br>V<sub>s</sub> = V<sub>p</sub> × N<sub>s</sub>/N<sub>p</sub> = '+Vp+' × '+t.Ns+'/'+t.Np+' = <b>'+sig(Vs)+' V</b>'}; },
+    ns:function(){ var t=turnsPair(), Vp=pick([12,24,230,230,400]), Vs=Vp*t.k;
+      return {html:'A transformer changes a <b>'+Vp+' V</b> a.c. supply into an output of <b>'+sig(Vs)+' V</b>. Its primary coil has <b>'+t.Np+'</b> turns.<br>Calculate the number of turns on the secondary coil.',
+        ans:t.Ns, unit:'turns', alt:t.Np/t.k, altMsg:'Check the ratio is the right way up: N<sub>s</sub> = N<sub>p</sub> × V<sub>s</sub>/V<sub>p</sub>.',
+        method:'N<sub>s</sub>/N<sub>p</sub> = V<sub>s</sub>/V<sub>p</sub><br>N<sub>s</sub> = N<sub>p</sub> × V<sub>s</sub>/V<sub>p</sub> = '+t.Np+' × '+sig(Vs)+'/'+Vp+' = <b>'+t.Ns+' turns</b>'}; },
+    np:function(){ var t=turnsPair(), Vp=pick([12,24,230,230,400]), Vs=Vp*t.k;
+      return {html:'A transformer has <b>'+t.Ns+'</b> turns on its secondary coil. It gives an output of <b>'+sig(Vs)+' V</b> when the primary is connected to <b>'+Vp+' V</b> a.c.<br>Calculate the number of turns on the primary coil.',
+        ans:t.Np, unit:'turns', alt:t.Ns*t.k, altMsg:'Check the ratio is the right way up: N<sub>p</sub> = N<sub>s</sub> × V<sub>p</sub>/V<sub>s</sub>.',
+        method:'N<sub>p</sub>/N<sub>s</sub> = V<sub>p</sub>/V<sub>s</sub><br>N<sub>p</sub> = N<sub>s</sub> × V<sub>p</sub>/V<sub>s</sub> = '+t.Ns+' × '+Vp+'/'+sig(Vs)+' = <b>'+t.Np+' turns</b>'}; },
+    is:function(){ var k=pick(RATIOS), Vp=pick([230,230,400,120]), Vs=Vp*k, Ip=pick([0.1,0.2,0.25,0.4,0.5,1,2]), Is=Ip/k;
+      return {html:'A transformer is 100% efficient. It has an input of <b>'+Vp+' V</b> and an output of <b>'+sig(Vs)+' V</b>. The current in the primary coil is <b>'+Ip+' A</b>.<br>Calculate the current in the secondary coil.',
+        ans:Is, unit:'A', alt:Ip*k, altMsg:'Remember: if the voltage goes up, the current goes down (V<sub>p</sub>I<sub>p</sub> = V<sub>s</sub>I<sub>s</sub>).',
+        method:'V<sub>p</sub>I<sub>p</sub> = V<sub>s</sub>I<sub>s</sub><br>I<sub>s</sub> = V<sub>p</sub>I<sub>p</sub> ÷ V<sub>s</sub> = '+Vp+' × '+Ip+' ÷ '+sig(Vs)+' = <b>'+sig(Is)+' A</b>'}; },
+    ipdev:function(){ var d=pick([{n:'lamp',V:12,P:36},{n:'lamp',V:12,P:24},{n:'laptop charger output',V:20,P:46},{n:'doorbell',V:6,P:3},{n:'model railway',V:16,P:23},{n:'halogen lamp',V:12,P:50}]);
+      var Ip=d.P/230;
+      return {html:'A <b>'+d.V+' V, '+d.P+' W</b> '+d.n+' is run from the <b>230 V</b> mains using a step-down transformer. The transformer is 100% efficient.<br>Calculate the current in the primary coil.',
+        ans:Ip, unit:'A', alt:d.P/d.V, altMsg:'That is the current in the secondary (the '+d.n+'). The primary is at 230 V, so it needs a much smaller current for the same power.',
+        method:'Power in = power out = '+d.P+' W<br>P = VI, so I<sub>p</sub> = P ÷ V<sub>p</sub> = '+d.P+' ÷ 230 = <b>'+sig(Ip)+' A</b>'}; },
+    eff:function(){ var k=pick([0.05,0.1,0.2,0.5,2,10]), Vp=230, Vs=Vp*k, Ip=pick([0.5,1,1.5,2,2.5,4]), e=pick([0.8,0.85,0.9,0.92,0.95,0.96]);
+      var Is=Number((e*Vp*Ip/Vs).toPrecision(3)), eff=100*Vs*Is/(Vp*Ip);
+      return {html:'A transformer takes a current of <b>'+Ip+' A</b> from a <b>230 V</b> supply. Its output is <b>'+sig(Vs)+' V</b> with a current of <b>'+Is+' A</b>.<br>Calculate the efficiency of the transformer.',
+        ans:eff, unit:'%', method:'Power in = V<sub>p</sub>I<sub>p</sub> = 230 × '+Ip+' = '+sig(Vp*Ip)+' W<br>Power out = V<sub>s</sub>I<sub>s</sub> = '+sig(Vs)+' × '+Is+' = '+sig(Vs*Is)+' W<br>Efficiency = '+sig(Vs*Is)+' ÷ '+sig(Vp*Ip)+' × 100% = <b>'+sig(eff)+'%</b>'}; },
+    effis:function(){ var k=pick([0.05,0.1,0.2,0.5,2,5]), Vp=pick([230,400]), Vs=Vp*k, Ip=pick([0.5,1,2,3,4]), e=pick([80,85,90,92,95]);
+      var Is=e/100*Vp*Ip/Vs;
+      return {html:'A transformer is <b>'+e+'%</b> efficient. The input is <b>'+Vp+' V, '+Ip+' A</b> and the output voltage is <b>'+sig(Vs)+' V</b>.<br>Calculate the output current.',
+        ans:Is, unit:'A', alt:Vp*Ip/Vs, altMsg:'That would be right for a 100% efficient transformer — now allow for the efficiency.',
+        method:'Power in = '+Vp+' × '+Ip+' = '+sig(Vp*Ip)+' W<br>Power out = '+e+'% × '+sig(Vp*Ip)+' = '+sig(e/100*Vp*Ip)+' W<br>I<sub>s</sub> = power out ÷ V<sub>s</sub> = '+sig(e/100*Vp*Ip)+' ÷ '+sig(Vs)+' = <b>'+sig(Is)+' A</b>'}; },
+    emf:function(){ var dP=pick([1.2,1.5,2.0,2.4,3.0,4.0]), dt=pick([2.0,2.5,4.0,5.0,8.0,10]), N=pick([100,150,200,250,400,500]);
+      var e=N*dP/dt; // mWb / ms cancels
+      return {html:'The magnetic flux in a transformer core changes steadily by <b>'+dP.toFixed(1)+' mWb</b> in <b>'+dt.toFixed(1)+' ms</b>. The secondary coil has <b>'+N+'</b> turns.<br>Calculate the magnitude of the e.m.f. induced across the secondary coil during this time.',
+        ans:e, unit:'V', alt:dP/dt, altMsg:'You have found ΔΦ/Δt — the e.m.f. is the rate of change of flux <i>linkage</i>, so multiply by N.',
+        method:'ε = N ΔΦ/Δt<br>= '+N+' × ('+dP.toFixed(1)+' × 10<sup>−3</sup>) ÷ ('+dt.toFixed(1)+' × 10<sup>−3</sup>) = <b>'+sig(e)+' V</b>'}; },
+    type:function(){ var t=turnsPair(); while(t.k===1) t=turnsPair(); var up=t.k>1, f=up?t.k:1/t.k;
+      var opts=[ {t:'Step-up — the output voltage is '+f+' times bigger than the input', ok:up},
+                 {t:'Step-down — the output voltage is '+f+' times smaller than the input', ok:!up},
+                 {t:(up?'Step-down':'Step-up')+' — the output voltage is '+f+' times '+(up?'bigger':'smaller'), ok:false},
+                 {t:'It cannot be worked out without knowing the current', ok:false} ];
+      return {html:'A transformer has <b>'+t.Np+'</b> turns on the primary coil and <b>'+t.Ns+'</b> turns on the secondary coil. Which statement is correct?',
+        mcq:opts, method:'N<sub>s</sub>/N<sub>p</sub> = '+t.Ns+'/'+t.Np+' = '+sig(t.k)+'. '+(up?'More turns on the secondary, so it steps the voltage <b>up</b>.':'Fewer turns on the secondary, so it steps the voltage <b>down</b>.')}; }
+  };
+  var CONCEPTS=[
+    {q:'Why does a transformer not work with a steady d.c. supply?', a:'A steady current gives a steady magnetic field, so no voltage is induced in the secondary.',
+      w:['The iron core would overheat with d.c.','d.c. cannot flow through a coil of wire.','The secondary coil only works with a lamp, not with d.c.'], why:'Induction needs a <b>changing</b> magnetic field. A steady d.c. current makes a field that does not change, so nothing is induced.'},
+    {q:'Why is the core of a transformer made of iron?', a:'Iron is easily magnetised, so it carries the changing magnetic field from the primary coil to the secondary coil.',
+      w:['Iron is a good electrical conductor, so it carries current between the coils.','Iron is strong, so it holds the coils in place.','Iron stops the magnetic field from reaching the secondary coil.'], why:'The core links the two coils <b>magnetically</b>. Iron is magnetised very easily, so nearly all of the changing field passes through both coils.'},
+    {q:'How is energy transferred from the primary circuit to the secondary circuit?', a:'By the changing magnetic field in the core — there is no electrical connection between the coils.',
+      w:['By current flowing through the iron core.','By current flowing along the wire that joins the two coils.','By heat conducted through the core.'], why:'The coils are insulated from each other and from the core. Energy passes via the <b>changing magnetic field</b>.'},
+    {q:'Why does the National Grid transmit electricity at a very high voltage?', a:'For the same power, the current is much smaller, so less energy is wasted heating the cables.',
+      w:['High voltage makes the electricity travel faster.','High voltage is safer for people living near pylons.','The cables have less resistance at high voltage.'], why:'P = VI, so a higher voltage means a <b>lower current</b> for the same power. The heating of the cables depends on the current, so far less energy is wasted.'},
+    {q:'The number of turns on the secondary coil is doubled. Everything else stays the same. What happens to the output voltage?', a:'It doubles.',
+      w:['It halves.','It stays the same.','It becomes four times bigger.'], why:'V<sub>s</sub>/V<sub>p</sub> = N<sub>s</sub>/N<sub>p</sub>, so the output voltage is proportional to the number of secondary turns.'},
+    {q:'An ideal step-up transformer increases the voltage. What happens to the current?', a:'The current in the secondary is smaller than the current in the primary.',
+      w:['The current in the secondary is bigger than in the primary.','The current is the same in both coils.','No current flows in the secondary.'], why:'Power is conserved (V<sub>p</sub>I<sub>p</sub> = V<sub>s</sub>I<sub>s</sub>), so if the voltage goes up the current must go down by the same factor.'},
+    {q:'Why is a step-down transformer used before electricity reaches homes?', a:'To reduce the voltage to a level that is safer to use in homes.',
+      w:['To increase the current so the cables in houses waste less energy.','To change the a.c. into d.c.','To make the supply frequency higher.'], why:'Transmission voltages are hundreds of thousands of volts — far too dangerous for homes, so the voltage is stepped down to 230 V.'},
+    {q:'At the instant the magnetic field in the core is at its maximum, the output voltage is…', a:'zero, because for that instant the field is not changing.',
+      w:['at its maximum, because the field is strongest.','half its maximum value.','reversed and at its maximum.'], why:'The induced voltage depends on how fast the field is <b>changing</b>, not how strong it is. At a peak the field is momentarily not changing.'},
+    {q:'Why is a transformer core made from thin insulated sheets (laminations)?', a:'To reduce eddy currents by increasing the resistance of current paths across the core.', level:'alevel',
+      w:['To reduce hysteresis loss by making the core magnetically soft.','To increase the flux linkage with the secondary coil.','To reduce the resistance of the windings.'], why:'The insulating layers block the large circulating paths eddy currents would take across the core, so their resistance is high and the I²R heating in the core is small.'},
+    {q:'Which change reduces the energy wasted by hysteresis in the core?', a:'Using a magnetically soft core material that is easy to magnetise and demagnetise.', level:'alevel',
+      w:['Laminating the core.','Using thicker copper wire for the windings.','Increasing the number of turns on the secondary.'], why:'Hysteresis loss comes from repeatedly re-magnetising the core. A soft magnetic material (thin hysteresis loop) wastes less energy each cycle. Laminating tackles eddy currents, not hysteresis.'},
+    {q:'Why are the windings of a large transformer made of thick copper wire?', a:'To reduce the resistance of the windings and so reduce I²R heating.', level:'alevel',
+      w:['To reduce eddy currents in the core.','To increase the magnetic flux in the core.','To make the transformer step up the voltage.'], why:'Thick copper has a low resistance, so less energy is transferred as heat by the current in the coils.'},
+    {q:'Faraday’s law says the induced e.m.f. in a coil is equal to…', a:'the rate of change of flux linkage, N ΔΦ/Δt.', level:'alevel',
+      w:['the flux linkage, NΦ.','the flux in the core, Φ.','the rate of change of current in the coil multiplied by the resistance.'], why:'ε = N ΔΦ/Δt. It is the <b>rate of change</b> of flux linkage that matters, not the flux itself.'}
+  ];
+  var curQ=null, score={right:0,tries:0,streak:0}, lastKind='';
+  var qEl=$('#tf-q'), qBody=$('#tf-qbody'), fb=$('#tf-fb'), qHead=$('#tf-qhead'), qType=$('#tf-qtype');
+  function newQuestion(){
+    var mode=qType.value, A=state.level==='alevel';
+    var calcKinds=['vs','vs','ns','np','is','ipdev','type'];
+    if(A) calcKinds=calcKinds.concat(['eff','effis','emf','emf']);
+    var pool=[];
+    if(mode!=='concept') pool=pool.concat(calcKinds);
+    if(mode!=='calc'){ pool=pool.concat(['concept','concept','concept']); }
+    var kind; do{ kind=pick(pool); } while(kind===lastKind && pool.length>1 && Math.random()<0.85);
+    lastKind=kind;
+    if(kind==='concept'){
+      var cs=CONCEPTS.filter(function(c){ return !c.level || A; });
+      var c=pick(cs); if(curQ && curQ.src===c) c=pick(cs);
+      var opts=shuffle([{t:c.a,ok:true}].concat(c.w.map(function(w){return {t:w,ok:false};})));
+      curQ={html:c.q, mcq:opts, method:c.why, src:c};
+      qHead.textContent='Explain';
+    } else {
+      curQ=GEN[kind](); qHead.textContent= curQ.mcq?'Identify':'Calculate';
+      if(curQ.mcq) curQ.mcq=shuffle(curQ.mcq);
+    }
+    curQ.done=false;
+    qEl.innerHTML=curQ.html; fb.className='tf-fb'; fb.innerHTML='';
+    if(curQ.mcq){
+      qBody.innerHTML='<div class="tf-opts"></div>';
+      var box=qBody.firstChild;
+      curQ.mcq.forEach(function(o){
+        var b=document.createElement('button'); b.type='button'; b.textContent=o.t;
+        b.addEventListener('click',function(){ answerMcq(o,b); });
+        box.appendChild(b);
+      });
+    } else {
+      qBody.innerHTML='<div class="tf-ans"><input type="text" inputmode="decimal" id="tf-ansin" aria-label="Your answer" autocomplete="off"><span class="unit">'+curQ.unit+'</span><button class="tf-btn" id="tf-check">Check</button></div>';
+      var inp=$('#tf-ansin');
+      $('#tf-check').addEventListener('click',checkNum);
+      inp.addEventListener('keydown',function(e){ if(e.key==='Enter') checkNum(); });
+    }
+    postHeight();
+  }
+  function tally(ok){
+    if(curQ.done) return; curQ.done=true;
+    score.tries++; if(ok){ score.right++; score.streak++; } else score.streak=0;
+    $('#tf-score').textContent=score.right+' / '+score.tries;
+    $('#tf-streak').textContent= score.streak>=3? score.streak+' in a row — excellent!' : (ok?'Nice work.':'Have a look at the method, then try another.');
+  }
+  function parseAns(s){
+    s=String(s).trim().replace(/,/g,'').replace(/\s+/g,'').replace(/×10\^?/i,'e').replace(/x10\^?/i,'e').replace(/[^\d.eE+\-]/g,'');
+    return parseFloat(s);
+  }
+  function checkNum(){
+    var v=parseAns($('#tf-ansin').value);
+    if(!isFinite(v)){ fb.className='tf-fb show no'; fb.innerHTML='Type a number for your answer.'; return; }
+    var ok=Math.abs(v-curQ.ans)<=Math.abs(curQ.ans)*0.02;
+    var msg;
+    if(ok) msg='<span class="v">Correct</span> — '+sig(curQ.ans)+' '+curQ.unit+'.<br>'+curQ.method;
+    else {
+      var hint='';
+      if(curQ.alt!=null && Math.abs(v-curQ.alt)<=Math.abs(curQ.alt)*0.02) hint=curQ.altMsg+'<br>';
+      msg='<span class="v">Not quite.</span> '+hint+'The answer is '+sig(curQ.ans)+' '+curQ.unit+'.<br>'+curQ.method;
+    }
+    fb.className='tf-fb show '+(ok?'ok':'no'); fb.innerHTML=msg;
+    tally(ok); postHeight();
+  }
+  function answerMcq(o,b){
+    if(curQ.done) return;
+    qBody.querySelectorAll('.tf-opts button').forEach(function(x,i){ x.disabled=true; if(curQ.mcq[i].ok) x.classList.add('right'); });
+    if(!o.ok) b.classList.add('wrong');
+    fb.className='tf-fb show '+(o.ok?'ok':'no');
+    fb.innerHTML='<span class="v">'+(o.ok?'Correct.':'Not quite.')+'</span> '+curQ.method;
+    tally(o.ok); postHeight();
+  }
+  $('#tf-qnext').addEventListener('click',newQuestion);
+  $('#tf-qshow').addEventListener('click',function(){
+    if(!curQ) return;
+    if(curQ.mcq){ qBody.querySelectorAll('.tf-opts button').forEach(function(x,i){ x.disabled=true; if(curQ.mcq[i].ok) x.classList.add('right'); }); }
+    tally(false);
+    fb.className='tf-fb show no';
+    fb.innerHTML='<span class="v">Method</span><br>'+(curQ.mcq?'':'Answer: '+sig(curQ.ans)+' '+curQ.unit+'<br>')+curQ.method;
+    postHeight();
+  });
+  $('#tf-reset').addEventListener('click',function(){ score={right:0,tries:0,streak:0}; $('#tf-score').textContent='0 / 0'; $('#tf-streak').textContent='Answer a question to start.'; });
+  qType.addEventListener('change',newQuestion);
+
+  /* ================= IFRAME HEIGHT ================= */
+  var lastH=0;
+  function postHeight(){
+    if(window.parent===window) return;
+    requestAnimationFrame(function(){
+      var h=Math.ceil(root.getBoundingClientRect().height)+2;
+      if(Math.abs(h-lastH)<2) return; lastH=h;
+      try{ window.parent.postMessage({type:'tf-height',height:h},'*'); }catch(e){}
+    });
+  }
+  if(window.ResizeObserver) new ResizeObserver(postHeight).observe(root);
+  window.addEventListener('load',postHeight);
+
+
+  /* ================= INIT ================= */
+  refreshColours();
+  ['Np','Ns','Vp','Ip','eff'].forEach(function(k){ setCtl(k,state[k]); });
+  buildDots(); setStep(0); updateReadout(); updateGraphNote(); setPlay(true);
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ fieldCache.key=''; });
+  setTimeout(resizeAll,30);
+  requestAnimationFrame(function(){ resizeAll(); requestAnimationFrame(frame); });
+})();
+</script>
+</body>
+</html>
